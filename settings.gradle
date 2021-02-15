@@ -1,0 +1,5 @@
+rootProject.name = "Stock Price"
+include ':app'
+include ':model'
+include ':remote'
+include ':repository'
