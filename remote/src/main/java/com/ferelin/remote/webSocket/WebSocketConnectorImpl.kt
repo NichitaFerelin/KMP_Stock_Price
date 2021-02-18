@@ -1,0 +1,31 @@
+package com.ferelin.remote.webSocket
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.flowOn
+import okhttp3.OkHttpClient
+import okhttp3.Request
+
+class WebSocketConnectorImpl(
+    dataToSubscribe: Collection<String>,
+    token: String
+) : WebSocketConnector {
+
+    private val mBase = "wss://ws.finnhub.io?token=$token"
+    private val mDataToSubscribe = dataToSubscribe
+    private val mConverter = WebResponseConverter()
+
+    override fun openConnection() = channelFlow {
+        val request = Request.Builder().url(mBase).build()
+        OkHttpClient().apply {
+            newWebSocket(request, WebSocketManager(mDataToSubscribe) {
+                offer(mConverter.fromJson(it))
+            })
+            dispatcher.executorService.shutdown()
+        }
+        awaitClose()
+    }.flowOn(Dispatchers.IO).buffer(onBufferOverflow = BufferOverflow.SUSPEND)
+}
