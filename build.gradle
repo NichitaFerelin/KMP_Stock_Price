@@ -3,7 +3,9 @@ buildscript {
     ext.kotlin_version = "1.4.30"
     ext.moxy_version = "2.2.1"
     ext.room_version = "2.2.6"
-
+    ext.retrofit_version = "2.9.0"
+    ext.coroutine_version = "1.4.1"
+    ext.moshi_version = "1.11.0"
 
     repositories {
         google()

@@ -28,6 +28,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        ]
     }
 }
 
@@ -40,4 +44,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    // Moshi
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
 }
