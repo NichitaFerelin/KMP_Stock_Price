@@ -19,9 +19,10 @@ class NetworkManagerImpl : NetworkManager {
 
     private val mCompanyProfileService = mRetrofit.create(CompanyProfileManager.API)
     private val mStockQuoteService = mRetrofit.create(StockCandlesManager.API)
+    private val mStockSymbolsService = mRetrofit.create(StockSymbolManager.API)
 
     override fun loadStockSymbols(): Flow<List<StockSymbolResponse>> = callbackFlow {
-        mRetrofit.create(StockSymbolManager.API)
+        mStockSymbolsService
             .getStockSymbolList(Api.FINNHUB_TOKEN)
             .enqueue(StockSymbolManager {
                 offer(it)

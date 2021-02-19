@@ -1,6 +1,8 @@
 package com.ferelin.remote.utilits
 
 import android.os.SystemClock
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -30,6 +32,8 @@ class RetrofitDelegate(private val mUrl: String) {
             }
         }
 
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
         val httpClient = OkHttpClient.Builder()
             .addInterceptor(rateLimitInterceptor)
             .build()
@@ -37,7 +41,7 @@ class RetrofitDelegate(private val mUrl: String) {
         return Retrofit.Builder()
             .baseUrl(url)
             .client(httpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 }
