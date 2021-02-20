@@ -1,15 +1,15 @@
-package com.ferelin.remote
+package com.ferelin.remote.network
 
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbol.StockSymbolResponse
-import com.ferelin.remote.webSocket.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 
-interface RemoteManagerHelper {
 
-    fun openConnection(dataToSubscribe: Collection<String>): Flow<WebSocketResponse>
-    fun loadStockCandles(symbol: String, from: Double, to: Double): Flow<StockCandlesResponse>
+interface NetworkManagerHelper {
+
+    fun loadStockSymbols(): Flow<List<StockSymbolResponse>>
     fun loadCompanyProfile(symbol: String): Flow<CompanyProfileResponse>
+    fun loadStockCandle(symbol: String, from: Double, to: Double): Flow<StockCandlesResponse>
     fun checkUpdates(previousLoadedSymbols: Collection<String>): Flow<List<StockSymbolResponse>>
 }

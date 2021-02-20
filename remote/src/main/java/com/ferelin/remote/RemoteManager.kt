@@ -1,10 +1,11 @@
 package com.ferelin.remote
 
-import com.ferelin.remote.network.NetworkManager
+import com.ferelin.remote.network.NetworkManagerHelper
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbol.StockSymbolResponse
-import com.ferelin.remote.webSocket.WebSocketConnector
+import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import com.ferelin.remote.webSocket.WebSocketResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,15 +18,16 @@ import kotlinx.coroutines.flow.flowOn
 * */
 
 class RemoteManager(
-    private val mNetworkManager: NetworkManager,
-    private val mWebSocketConnector: WebSocketConnector
+    private val mNetworkManager: NetworkManagerHelper,
+    private val mWebSocketConnector: WebSocketConnectorHelper
 ) : RemoteManagerHelper {
 
-    override fun openConnection(): Flow<WebSocketResponse> = flow {
-        mWebSocketConnector.openConnection().collect {
-            emit(it)
-        }
-    }.flowOn(Dispatchers.IO)
+    override fun openConnection(dataToSubscribe: Collection<String>): Flow<WebSocketResponse> =
+        flow {
+            mWebSocketConnector.openConnection(dataToSubscribe, Api.FINNHUB_TOKEN).collect {
+                emit(it)
+            }
+        }.flowOn(Dispatchers.IO)
 
     override fun loadStockCandles(
         symbol: String,

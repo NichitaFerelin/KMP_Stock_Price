@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RepositoryManagerHelper {
 
-    fun openConnection(): Flow<WebSocketResponse>
+    fun openConnection(dataToSubscribe: Collection<String>): Flow<WebSocketResponse>
 
     fun loadStockCandles(symbol: String, from: Double, to: Double): Flow<StockCandlesResponse>
 
