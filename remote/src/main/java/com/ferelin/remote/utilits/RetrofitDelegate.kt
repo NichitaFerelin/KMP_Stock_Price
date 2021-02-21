@@ -12,14 +12,10 @@ import kotlin.reflect.KProperty
 
 class RetrofitDelegate(private val mUrl: String) {
 
-    private var mRetrofit: Retrofit? = null
     private val mPerSecondRequestLimit = 1000L
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): Retrofit {
-        if (mRetrofit == null) {
-            mRetrofit = buildRetrofit(mUrl)
-        }
-        return mRetrofit!!
+        return buildRetrofit(mUrl)
     }
 
     private fun buildRetrofit(url: String): Retrofit {
