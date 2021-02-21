@@ -1,23 +1,6 @@
 package com.ferelin.repository
 
-import android.content.Context
-import com.ferelin.local.model.Company
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbol.StockSymbolResponse
-import com.ferelin.remote.webSocket.WebSocketResponse
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.repository.tools.local.LocalManagerToolsHelper
+import com.ferelin.repository.tools.remote.RemoteManagerToolsHelper
 
-interface RepositoryManagerHelper {
-
-    fun openConnection(dataToSubscribe: Collection<String>): Flow<WebSocketResponse>
-
-    fun loadStockCandles(symbol: String, from: Double, to: Double): Flow<StockCandlesResponse>
-
-    fun getData(context: Context): Flow<List<Company>>
-
-    fun insertData(data: List<Company>)
-
-    fun insert(company: Company)
-
-    fun checkUpdates(previousLoadedSymbols: Collection<String>): Flow<List<StockSymbolResponse>>
-}
+interface RepositoryManagerHelper : RemoteManagerToolsHelper, LocalManagerToolsHelper
