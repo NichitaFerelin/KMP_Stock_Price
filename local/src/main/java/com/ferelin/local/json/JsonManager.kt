@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class JsonManager : JsonManagerHelper {
+class JsonManager(private val mContext : Context) : JsonManagerHelper {
 
-    override fun getData(context: Context): Flow<List<Company>> = flow {
-        val reader = JsonAssetsReader(context, JsonAssets.COMPANIES)
+    override fun getCompaniesFromJson(): Flow<List<Company>> = flow {
+        val reader = JsonAssetsReader(mContext, JsonAssets.COMPANIES)
         reader.readCompanies().first {
             emit(it)
             true

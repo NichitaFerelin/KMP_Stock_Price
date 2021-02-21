@@ -7,31 +7,31 @@ class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerH
 
     private val mCompaniesDao = companiesDatabase.companiesDao()
 
-    override fun insert(company: Company) {
+    override fun insertCompanyInfo(company: Company) {
         mCompaniesDao.insert(company)
     }
 
-    override fun insertAll(list: List<Company>) {
+    override fun insertAllCompanies(list: List<Company>) {
         mCompaniesDao.insertAll(list)
     }
 
-    override fun update(company: Company) {
+    override fun updateCompanyInfo(company: Company) {
         mCompaniesDao.update(company)
     }
 
-    override fun getAll(): Flow<List<Company>> {
+    override fun getAllCompanies(): Flow<List<Company>> {
         return mCompaniesDao.getAll()
     }
 
-    override fun get(symbol: String): Flow<Company> {
+    override fun getCompany(symbol: String): Flow<Company> {
         return mCompaniesDao.get(symbol)
     }
 
-    override fun delete(symbol: String) {
+    override fun deleteCompany(symbol: String) {
         mCompaniesDao.delete(symbol)
     }
 
-    override fun delete(company: Company) {
+    override fun deleteCompany(company: Company) {
         mCompaniesDao.delete(company)
     }
 }

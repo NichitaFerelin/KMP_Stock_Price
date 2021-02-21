@@ -18,10 +18,10 @@ data class Company(
     @Json(name = "finnhubIndustry") val industry: String,
     @Json(name = "currency") val currency: String,
     @Json(name = "marketCapitalization") val capitalization: Double,
-    val lastPrice: Double = 0.0,
-    val openPrices: List<Double> = emptyList(),
-    val highPrices: List<Double> = emptyList(),
-    val lowPrices: List<Double> = emptyList(),
-    val closePrices: List<Double> = emptyList(),
-    val timestamps: List<Double> = emptyList()
+    var lastPrice: Double = 0.0,
+    var openPrices: List<Double> = emptyList(),
+    var highPrices: List<Double> = emptyList(),
+    var lowPrices: List<Double> = emptyList(),
+    var closePrices: List<Double> = emptyList(),
+    var timestamps: List<Long> = emptyList()
 )

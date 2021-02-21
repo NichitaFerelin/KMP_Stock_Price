@@ -1,12 +1,7 @@
 package com.ferelin.local
 
-import android.content.Context
-import com.ferelin.local.model.Company
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.local.database.CompaniesManagerHelper
+import com.ferelin.local.json.JsonManagerHelper
+import com.ferelin.local.preferences.PreferencesManagerHelper
 
-interface LocalManagerHelper {
-
-    fun getData(context: Context): Flow<List<Company>>
-    fun insertData(data: List<Company>)
-    fun insert(company: Company)
-}
+interface LocalManagerHelper : CompaniesManagerHelper, PreferencesManagerHelper, JsonManagerHelper
