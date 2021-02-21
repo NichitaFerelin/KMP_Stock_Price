@@ -1,15 +1,19 @@
 package com.ferelin.remote.network
 
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbol.StockSymbolResponse
+import com.ferelin.remote.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 
 
 interface NetworkManagerHelper {
 
-    fun loadStockSymbols(): Flow<List<StockSymbolResponse>>
-    fun loadCompanyProfile(symbol: String): Flow<CompanyProfileResponse>
-    fun loadStockCandle(symbol: String, from: Double, to: Double): Flow<StockCandlesResponse>
-    fun checkUpdates(previousLoadedSymbols: Collection<String>): Flow<List<StockSymbolResponse>>
+    fun loadStockSymbols(): Flow<BaseResponse>
+
+    fun loadCompanyProfile(symbol: String): Flow<BaseResponse>
+
+    fun loadStockCandle(
+        symbol: String,
+        from: Long,
+        to: Long,
+        resolution: String
+    ): Flow<BaseResponse>
 }

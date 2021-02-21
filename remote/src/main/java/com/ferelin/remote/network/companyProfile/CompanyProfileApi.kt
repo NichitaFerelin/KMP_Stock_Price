@@ -10,5 +10,5 @@ interface CompanyProfileApi {
     fun getCompanyProfile(
         @Query("symbol") symbol: String,
         @Query("token") token: String
-    ): Call<CompanyProfileResponse.Success>
+    ): Call<CompanyProfileResponse>
 }

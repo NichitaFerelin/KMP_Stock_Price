@@ -1,5 +1,6 @@
 package com.ferelin.remote.webSocket
 
+import com.ferelin.remote.utilits.Api
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -29,7 +30,7 @@ class WebSocketManager(
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
         webSocket.apply {
-            close(WebSocketResponse.SOCKET_CLOSED, null)
+            close(Api.RESPONSE_WEB_SOCKET_CLOSE, null)
             cancel()
         }
     }

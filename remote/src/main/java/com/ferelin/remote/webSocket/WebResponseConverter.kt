@@ -1,21 +1,23 @@
 package com.ferelin.remote.webSocket
 
-import com.squareup.moshi.JsonDataException
+import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.utilits.Api
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 class WebResponseConverter {
 
-    private val mConverter = Moshi.Builder().build()
-    private val mAdapter = mConverter.adapter(WebSocketResponse.Success::class.java)
+    private val mConverter = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val mAdapter = mConverter.adapter(WebSocketResponse::class.java)
 
-    fun fromJson(text: String): WebSocketResponse = try {
-        val response = mAdapter.fromJson(text)
-        when {
-            response == null -> WebSocketResponse.Failed(0)
-            response.volume.toInt() == 0 -> WebSocketResponse.Failed(WebSocketResponse.TRADE_NOT_AVAILABLE)
-            else -> response
+    // TODO check if throw exception
+    fun fromJson(text: String): BaseResponse {
+        val result = mAdapter.fromJson(text)
+        return when {
+            text.isEmpty() -> BaseResponse(Api.RESPONSE_NO_DATA)
+            result == null -> BaseResponse(Api.RESPONSE_UNDEFINED)
+            result.volume == 0.0 -> BaseResponse(Api.RESPONSE_TRADE_NOT_AVAILABLE)
+            else -> result.apply { responseCode = Api.RESPONSE_OK }
         }
-    } catch (e: JsonDataException) {
-        WebSocketResponse.Failed(0)
     }
 }
