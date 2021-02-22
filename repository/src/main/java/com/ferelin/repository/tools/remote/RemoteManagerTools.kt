@@ -5,6 +5,7 @@ import com.ferelin.remote.RemoteManagerHelper
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.stockCandle.StockCandleResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.utilits.Response
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,7 @@ class RemoteManagerTools(
 
     override fun openConnection(dataToSubscribe: Collection<String>): Flow<Response<HashMap<String, Any>>> {
         return mRemoteManagerHelper.openConnection(dataToSubscribe).map { response ->
-            if (response.code == 200) {
+            if (response.code == Api.RESPONSE_OK) {
                 mResponsesConfigurator.configure(response as WebSocketResponse)
             } else Response.Failed(response.code)
         }
@@ -30,7 +31,7 @@ class RemoteManagerTools(
         resolution: String
     ): Flow<Response<HashMap<String, Any>>> {
         return mRemoteManagerHelper.loadStockCandle(symbol, from, to, resolution).map { response ->
-            if (response.code == 200) {
+            if (response.code == Api.RESPONSE_OK) {
                 mResponsesConfigurator.configure(symbol, response as StockCandleResponse)
             } else Response.Failed(response.code)
         }
@@ -38,7 +39,7 @@ class RemoteManagerTools(
 
     override fun loadCompanyProfile(symbol: String): Flow<Response<Company>> {
         return mRemoteManagerHelper.loadCompanyProfile(symbol).map { response ->
-            if (response.code == 200) {
+            if (response.code == Api.RESPONSE_OK) {
                 mResponsesConfigurator.configure(symbol, response as CompanyProfileResponse)
             } else Response.Failed(response.code)
         }
@@ -46,7 +47,7 @@ class RemoteManagerTools(
 
     override fun loadStockSymbols(): Flow<Response<List<String>>> {
         return mRemoteManagerHelper.loadStockSymbols().map { response ->
-            if (response.code == 200) {
+            if (response.code == Api.RESPONSE_OK) {
                 val okResponse = response as StockSymbolResponse
                 Response.Success(okResponse.stockSymbols)
             } else Response.Failed(response.code)
