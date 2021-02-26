@@ -2,31 +2,35 @@ package com.ferelin.local
 
 import com.ferelin.local.database.CompaniesManagerHelper
 import com.ferelin.local.json.JsonManagerHelper
+import com.ferelin.local.model.CompaniesResponse
 import com.ferelin.local.model.Company
-import com.ferelin.local.preferences.PreferencesManagerHelper
+import com.ferelin.local.model.Responses
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class LocalManager(
     private val mJsonManagerHelper: JsonManagerHelper,
-    private val mCompaniesManagerHelper: CompaniesManagerHelper,
-    private val mPreferencesManagerHelper: PreferencesManagerHelper
+    private val mCompaniesManagerHelper: CompaniesManagerHelper
 ) : LocalManagerHelper {
 
-    override fun insertCompanyInfo(company: Company) {
-        mCompaniesManagerHelper.insertCompanyInfo(company)
+    override fun insertCompany(company: Company) {
+        mCompaniesManagerHelper.insertCompany(company)
     }
 
     override fun insertAllCompanies(list: List<Company>) {
         mCompaniesManagerHelper.insertAllCompanies(list)
     }
 
-    override fun updateCompanyInfo(company: Company) {
-        mCompaniesManagerHelper.updateCompanyInfo(company)
+    override fun updateCompany(company: Company) {
+        mCompaniesManagerHelper.updateCompany(company)
     }
 
     override fun getAllCompanies(): Flow<List<Company>> {
+        return getAllCompaniesAsResponse().map { it.data }
+    }
+
+    override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {
                 var localJsonCompanies = emptyList<Company>()
@@ -35,8 +39,8 @@ class LocalManager(
                     localJsonCompanies = parsedList
                     true
                 }
-                localJsonCompanies
-            } else databaseCompanies
+                CompaniesResponse(code = Responses.LOADED_FROM_JSON, data = localJsonCompanies)
+            } else CompaniesResponse(data = databaseCompanies)
         }
     }
 
@@ -50,14 +54,6 @@ class LocalManager(
 
     override fun deleteCompany(company: Company) {
         mCompaniesManagerHelper.deleteCompany(company)
-    }
-
-    override fun getFavouriteList(): Flow<Set<String>> {
-        return mPreferencesManagerHelper.getFavouriteList()
-    }
-
-    override suspend fun setFavouriteList(data: Set<String>) {
-        mPreferencesManagerHelper.setFavouriteList(data)
     }
 
     override fun getCompaniesFromJson(): Flow<List<Company>> {

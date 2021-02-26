@@ -5,11 +5,10 @@ import com.ferelin.local.LocalManager
 import com.ferelin.local.database.CompaniesDatabase
 import com.ferelin.local.database.CompaniesManager
 import com.ferelin.local.json.JsonManager
-import com.ferelin.local.model.Company
-import com.ferelin.local.preferences.PreferencesManager
 import com.ferelin.remote.RemoteManager
 import com.ferelin.remote.network.NetworkManager
 import com.ferelin.remote.webSocket.WebSocketConnector
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.tools.local.LocalManagerTools
 import com.ferelin.repository.tools.local.LocalManagerToolsHelper
 import com.ferelin.repository.tools.remote.RemoteManagerTools
@@ -37,7 +36,7 @@ class RepositoryManager private constructor(
         return mRemoteManagerToolsHelper.loadStockCandles(symbol, from, to, resolution)
     }
 
-    override fun loadCompanyProfile(symbol: String): Flow<Response<Company>> {
+    override fun loadCompanyProfile(symbol: String): Flow<Response<AdaptiveCompany>> {
         return mRemoteManagerToolsHelper.loadCompanyProfile(symbol)
     }
 
@@ -45,20 +44,12 @@ class RepositoryManager private constructor(
         return mRemoteManagerToolsHelper.loadStockSymbols()
     }
 
-    override fun getAllCompanies(): Flow<List<Company>> {
+    override fun getAllCompanies(): Flow<List<AdaptiveCompany>> {
         return mLocalManagerToolsHelper.getAllCompanies()
     }
 
-    override fun insertCompanyInfo(company: Company) {
-        mLocalManagerToolsHelper.insertCompanyInfo(company)
-    }
-
-    override fun getFavouriteList(): Flow<Set<String>> {
-        return mLocalManagerToolsHelper.getFavouriteList()
-    }
-
-    override suspend fun setFavouriteList(data: Set<String>) {
-        mLocalManagerToolsHelper.setFavouriteList(data)
+    override fun insertCompany(company: AdaptiveCompany) {
+        mLocalManagerToolsHelper.insertCompany(company)
     }
 
     companion object : SingletonHolder<RepositoryManager, Context>({
@@ -66,8 +57,7 @@ class RepositoryManager private constructor(
         val remoteTools = RemoteManagerTools(remoteHelper, ResponsesConfigurator())
 
         val dataBase = CompaniesDatabase.getInstance(it)
-        val localHelper =
-            LocalManager(JsonManager(it), CompaniesManager(dataBase), PreferencesManager(it))
+        val localHelper = LocalManager(JsonManager(it), CompaniesManager(dataBase))
         val localTools = LocalManagerTools(localHelper)
 
         RepositoryManager(remoteTools, localTools)

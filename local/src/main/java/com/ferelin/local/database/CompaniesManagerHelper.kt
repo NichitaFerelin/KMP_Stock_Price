@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface CompaniesManagerHelper {
 
-    fun insertCompanyInfo(company: Company)
+    fun insertCompany(company: Company)
 
     fun insertAllCompanies(list: List<Company>)
 
-    fun updateCompanyInfo(company: Company)
+    fun updateCompany(company: Company)
 
     fun getAllCompanies(): Flow<List<Company>>
 

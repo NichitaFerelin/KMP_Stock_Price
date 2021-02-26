@@ -1,12 +1,12 @@
 package com.ferelin.repository.tools.remote
 
-import com.ferelin.local.model.Company
 import com.ferelin.remote.RemoteManagerHelper
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.stockCandle.StockCandleResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utilits.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,10 +16,16 @@ class RemoteManagerTools(
     private val mResponsesConfigurator: ResponsesConfiguratorHelper
 ) : RemoteManagerToolsHelper {
 
-    override fun openConnection(dataToSubscribe: Collection<String>): Flow<Response<HashMap<String, Any>>> {
+    override fun openConnection(
+        dataToSubscribe: Collection<String>,
+        companiesCurrency: Map<String, String>
+    ): Flow<Response<HashMap<String, Any>>> {
         return mRemoteManagerHelper.openConnection(dataToSubscribe).map { response ->
             if (response.code == Api.RESPONSE_OK) {
-                mResponsesConfigurator.configure(response as WebSocketResponse)
+                mResponsesConfigurator.configure(
+                    response as WebSocketResponse,
+                    companiesCurrency[response.symbol] ?: "USD"
+                )
             } else Response.Failed(response.code)
         }
     }
@@ -37,7 +43,7 @@ class RemoteManagerTools(
         }
     }
 
-    override fun loadCompanyProfile(symbol: String): Flow<Response<Company>> {
+    override fun loadCompanyProfile(symbol: String): Flow<Response<AdaptiveCompany>> {
         return mRemoteManagerHelper.loadCompanyProfile(symbol).map { response ->
             if (response.code == Api.RESPONSE_OK) {
                 mResponsesConfigurator.configure(symbol, response as CompanyProfileResponse)

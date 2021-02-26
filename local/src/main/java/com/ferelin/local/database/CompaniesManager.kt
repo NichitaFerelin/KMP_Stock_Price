@@ -7,7 +7,7 @@ class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerH
 
     private val mCompaniesDao = companiesDatabase.companiesDao()
 
-    override fun insertCompanyInfo(company: Company) {
+    override fun insertCompany(company: Company) {
         mCompaniesDao.insert(company)
     }
 
@@ -15,7 +15,7 @@ class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerH
         mCompaniesDao.insertAll(list)
     }
 
-    override fun updateCompanyInfo(company: Company) {
+    override fun updateCompany(company: Company) {
         mCompaniesDao.update(company)
     }
 

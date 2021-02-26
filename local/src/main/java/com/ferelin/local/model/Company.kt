@@ -17,11 +17,12 @@ data class Company(
     @Json(name = "weburl") val webUrl: String,
     @Json(name = "finnhubIndustry") val industry: String,
     @Json(name = "currency") val currency: String,
-    @Json(name = "marketCapitalization") val capitalization: Double,
-    var lastPrice: Double = 0.0,
-    var openPrices: List<Double> = emptyList(),
-    var highPrices: List<Double> = emptyList(),
-    var lowPrices: List<Double> = emptyList(),
-    var closePrices: List<Double> = emptyList(),
-    var timestamps: List<Long> = emptyList()
+    @Json(name = "marketCapitalization") val capitalization: String,
+    var isFavourite: Boolean = false,
+    var lastPrice: String = "0.0",
+    var openPrices: List<String> = emptyList(),
+    var highPrices: List<String> = emptyList(),
+    var lowPrices: List<String> = emptyList(),
+    var closePrices: List<String> = emptyList(),
+    var timestamps: List<String> = emptyList()
 )

@@ -1,26 +1,24 @@
 package com.ferelin.repository.tools.local
 
 import com.ferelin.local.LocalManagerHelper
-import com.ferelin.local.model.Company
+import com.ferelin.local.model.Responses
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.tools.CommonTransformer
+import com.ferelin.repository.tools.CommonTransformer.toDatabaseCompany
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class LocalManagerTools(
-    private val mLocalManager: LocalManagerHelper
-) : LocalManagerToolsHelper {
+class LocalManagerTools(private val mLocalManager: LocalManagerHelper) : LocalManagerToolsHelper {
 
-    override fun getAllCompanies(): Flow<List<Company>> {
-        return mLocalManager.getAllCompanies()
+    override fun getAllCompanies(): Flow<List<AdaptiveCompany>> {
+        return mLocalManager.getAllCompaniesAsResponse().map { response ->
+            if (response.code == Responses.LOADED_FROM_JSON) {
+                response.data.map { CommonTransformer.toAdaptiveCompanyWithTransform(it) }
+            } else response.data.map { CommonTransformer.toAdaptiveCompany(it) }
+        }
     }
 
-    override fun insertCompanyInfo(company: Company) {
-        mLocalManager.insertCompanyInfo(company)
-    }
-
-    override fun getFavouriteList(): Flow<Set<String>> {
-        return mLocalManager.getFavouriteList()
-    }
-
-    override suspend fun setFavouriteList(data: Set<String>) {
-        mLocalManager.setFavouriteList(data)
+    override fun insertCompany(company: AdaptiveCompany) {
+        mLocalManager.insertCompany(toDatabaseCompany(company))
     }
 }
