@@ -17,11 +17,12 @@ class JsonAssetsReader(
 ) {
     private val mMoshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
+    // TODO
     fun readCompanies(): Flow<List<Company>> = flow {
         val json = mContext.assets.open(mFileName).bufferedReader().use { it.readText() }
         val type = Types.newParameterizedType(List::class.java, Company::class.java)
         val adapter: JsonAdapter<List<Company>> = mMoshi.adapter(type)
         val list = adapter.fromJson(json) ?: emptyList()
         emit(list)
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.Default)
 }

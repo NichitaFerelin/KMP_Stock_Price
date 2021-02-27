@@ -4,6 +4,5 @@ import com.ferelin.local.model.Company
 import kotlinx.coroutines.flow.Flow
 
 interface JsonManagerHelper {
-
     fun getCompaniesFromJson(): Flow<List<Company>>
 }

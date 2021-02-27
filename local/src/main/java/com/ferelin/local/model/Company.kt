@@ -24,5 +24,6 @@ data class Company(
     var highPrices: List<String> = emptyList(),
     var lowPrices: List<String> = emptyList(),
     var closePrices: List<String> = emptyList(),
+    var dayProfit: List<String> = emptyList(),
     var timestamps: List<String> = emptyList()
 )

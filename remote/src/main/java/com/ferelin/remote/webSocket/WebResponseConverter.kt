@@ -17,7 +17,7 @@ class WebResponseConverter {
             text.isEmpty() -> BaseResponse(Api.RESPONSE_NO_DATA)
             result == null -> BaseResponse(Api.RESPONSE_UNDEFINED)
             result.volume == 0.0 -> BaseResponse(Api.RESPONSE_TRADE_NOT_AVAILABLE)
-            else -> result.apply { code = Api.RESPONSE_OK }
+            else -> result.apply { responseCode = Api.RESPONSE_OK }
         }
     }
 }

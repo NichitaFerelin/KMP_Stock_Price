@@ -10,7 +10,7 @@ data class AdaptiveCompany(
     val webUrl: String,
     val industry: String,
     val currency: String,
-    val capitalization: String,
+    var capitalization: String,
     var lastPrice: String = "0.0",
     var isFavourite: Boolean = false,
     var openPrices: List<String> = emptyList(),
@@ -21,5 +21,15 @@ data class AdaptiveCompany(
     var timestamps: List<String> = emptyList(),
     var holderBackground: Int = 0,
     var favouriteIconBackground: Int = 0,
-    var tickerProfitBackground: Int = 0
-)
+    var tickerProfitBackground: List<Int> = emptyList()
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is AdaptiveCompany) {
+            name == other.name
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return "$name$symbol$ticker$logoUrl$country$phone$webUrl$capitalization".hashCode()
+    }
+}

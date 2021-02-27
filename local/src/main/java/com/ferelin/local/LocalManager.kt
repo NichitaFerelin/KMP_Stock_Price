@@ -33,12 +33,7 @@ class LocalManager(
     override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {
-                var localJsonCompanies = emptyList<Company>()
-                getCompaniesFromJson().first { parsedList ->
-                    insertAllCompanies(parsedList)
-                    localJsonCompanies = parsedList
-                    true
-                }
+                val localJsonCompanies = getCompaniesFromJson().first()
                 CompaniesResponse(code = Responses.LOADED_FROM_JSON, data = localJsonCompanies)
             } else CompaniesResponse(data = databaseCompanies)
         }

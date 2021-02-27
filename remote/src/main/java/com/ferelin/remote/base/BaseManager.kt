@@ -17,7 +17,7 @@ class BaseManager<T : BaseResponse>(
             responseCode == 429 -> mOnResponse(BaseResponse(Api.RESPONSE_LIMIT))
             responseBody == null -> mOnResponse(BaseResponse(Api.RESPONSE_NO_DATA))
             responseCode == 200 -> {
-                responseBody.code = Api.RESPONSE_OK
+                responseBody.responseCode = Api.RESPONSE_OK
                 mOnResponse(responseBody)
             }
         }
