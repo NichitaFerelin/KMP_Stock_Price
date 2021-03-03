@@ -23,4 +23,6 @@ interface RepositoryManagerHelper {
     fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>>
 
     fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStockSymbols>>
+
+    fun updateCompany(adaptiveCompany: AdaptiveCompany)
 }

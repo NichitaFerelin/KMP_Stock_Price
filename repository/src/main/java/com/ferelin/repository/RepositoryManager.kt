@@ -69,6 +69,11 @@ class RepositoryManager private constructor(
         }
     }
 
+    override fun updateCompany(adaptiveCompany: AdaptiveCompany) {
+        val preparedForInsert = mDataConverterHelper.convertCompanyForInsert(adaptiveCompany)
+        mLocalManagerHelper.updateCompany(preparedForInsert)
+    }
+
     companion object : SingletonHolder<RepositoryManager, Context>({
         val remoteHelper = RemoteManager(NetworkManager(), WebSocketConnector())
         val dataBase = CompaniesDatabase.getInstance(it)
