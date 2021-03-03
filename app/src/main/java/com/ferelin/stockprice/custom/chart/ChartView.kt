@@ -22,6 +22,9 @@ class ChartView @JvmOverloads constructor(
     private var mCharHeight: Int = 0
     private var mChartWidth: Int = 0
 
+    private var mMaxValue: Float = 0F
+    private var mMinValue: Float = 0F
+
     private val mGradientColors = intArrayOf(
         ContextCompat.getColor(context, R.color.black),
         ContextCompat.getColor(context, R.color.colorEnd)
@@ -34,14 +37,15 @@ class ChartView @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.black)
     }
 
+    private var mGradientZeroY: Float = 0F
     private var mGradient: LinearGradient? = null
     private val mGradientPath: Path = Path()
     private lateinit var mGradientPaint: Paint
 
     private val mLinePath: Path = Path()
 
-    private var mZeroY: Float = 0f
-    private var mPxPerUnit: Float = 0f
+    private var mZeroY: Float = 0F
+    private var mPxPerUnit: Float = 0F
 
     override fun onDraw(canvas: Canvas) {
         drawGradient(canvas)
@@ -60,10 +64,16 @@ class ChartView @JvmOverloads constructor(
     }
 
     fun setMarkers(markers: List<Marker>) {
+        mMaxValue = markers.maxByOrNull { it.value }!!.value
+        mMinValue = markers.minByOrNull { it.value }!!.value
+
         mMarkers = markers.toMutableList().apply {
-            add(0, Marker())
-            add(Marker())
+            // Add start/end points
+            val controlPoint = mMinValue + (mMinValue * 5 / 100)
+            add(0, Marker(value = controlPoint))
+            add(Marker(value = controlPoint))
         }.toList()
+
     }
 
     private fun calcAndInvalidate() {
@@ -81,10 +91,10 @@ class ChartView @JvmOverloads constructor(
             this.isAntiAlias = true
         }
         mGradient = LinearGradient(
-            0f,
             0F,
-            0f,
-            mZeroY,
+            paddingTop.toFloat(),
+            0F,
+            mGradientZeroY,
             mGradientColors,
             null,
             Shader.TileMode.CLAMP
@@ -94,7 +104,10 @@ class ChartView @JvmOverloads constructor(
     private fun drawGradient(canvas: Canvas) {
         if (mMarkers.isNotEmpty()) {
             mGradientPath.apply {
-                moveTo(0F, mZeroY)
+                val firstItem = mMarkers.first().currentPos
+                moveTo(firstItem.x, mZeroY)
+                lineTo(firstItem.x, firstItem.y)
+
                 for (index in 1 until mMarkers.size) {
                     val marker = mMarkers[index]
                     val code = mBezierMarkers[mMarkers[index]]!!
@@ -107,6 +120,10 @@ class ChartView @JvmOverloads constructor(
                         marker.currentPos.y
                     )
                 }
+
+                val lastItem = mMarkers.last().currentPos
+                lineTo(lastItem.x, mZeroY)
+
                 close()
             }
 
@@ -116,7 +133,7 @@ class ChartView @JvmOverloads constructor(
 
     private fun drawLine(canvas: Canvas) {
         val firstItem = mMarkers.first()
-        mLinePath.moveTo(firstItem.currentPos.x, mZeroY)
+        mLinePath.moveTo(firstItem.currentPos.x, firstItem.currentPos.y)
 
         for (index in 1 until mMarkers.size) {
             val marker = mMarkers[index]
@@ -135,12 +152,15 @@ class ChartView @JvmOverloads constructor(
     }
 
     private fun calculatePositions() {
-        val max = mMarkers.maxByOrNull { it.value }!!
-        val min = mMarkers.minByOrNull { it.value }!!
-        mPxPerUnit = mCharHeight / (max.value - min.value).toFloat()
-        mZeroY = max.value * mPxPerUnit
+        mPxPerUnit = (mCharHeight - paddingTop - paddingBottom) / (mMaxValue - mMinValue)
+        mZeroY = mMaxValue * mPxPerUnit + paddingTop
+        mGradientZeroY = mZeroY - (mMinValue - (mMinValue * 5 / 100)) * mPxPerUnit
 
-        val step = mChartWidth / (mMarkers.size - 1)
+        val step = (mChartWidth) / (mMarkers.size - 1)
+        mMarkers.first().apply {
+            currentPos.x = (step * 0).toFloat()
+            currentPos.y = mZeroY - value * mPxPerUnit
+        }
 
         for (index in 1 until mMarkers.size) {
             val marker = mMarkers[index].apply {
