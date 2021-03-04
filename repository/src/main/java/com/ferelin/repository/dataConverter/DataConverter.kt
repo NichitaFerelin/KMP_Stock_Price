@@ -50,6 +50,7 @@ class DataConverter : DataConverterHelper {
             val itemResponse = response as StockCandleResponse
             val successResponse = RepositoryResponse.Success(
                 AdaptiveStockCandle(
+                    company,
                     itemResponse.openPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.highPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.lowPrices.map { mAdapter.adaptPrice(it) },

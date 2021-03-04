@@ -25,7 +25,7 @@ data class AdaptiveCompany(
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is AdaptiveCompany) {
-            name == other.name
+            symbol == other.symbol
         } else false
     }
 

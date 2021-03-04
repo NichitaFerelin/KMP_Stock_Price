@@ -3,7 +3,7 @@ package com.ferelin.remote.utilits
 object Api {
     // https://finnhub.io/docs/api/introduction
     const val FINNHUB_BASE_URL = "https://finnhub.io/api/v1/"
-    const val FINNHUB_TOKEN = "c0lqrff48v6ol6tu571g"
+    const val FINNHUB_TOKEN = "c0toc6v48v6qoe9bl7ug"
 
     const val RESPONSE_OK = 200
     const val RESPONSE_LIMIT = 429

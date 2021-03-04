@@ -1,5 +1,6 @@
 package com.ferelin.remote.webSocket
 
+import android.util.Log
 import com.ferelin.remote.utilits.Api
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -12,18 +13,22 @@ class WebSocketManager(
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
-        mDataToSubscribe.forEach {
-            webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"$it\"}")
-        }
+        Log.d("Test", "onOpen $response")
+        //mDataToSubscribe.forEach {
+            webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"AAPL\"}")
+        //}
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
+        Log.d("Test", "onMessage: $text")
         mOnResponse(text)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
+        Log.d("Test", "on failure: $response")
+        Log.d("Test", "$t")
         mOnResponse("")
     }
 
