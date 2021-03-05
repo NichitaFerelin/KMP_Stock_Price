@@ -16,9 +16,7 @@ interface DataConverterHelper {
     fun convertWebSocketResponse(response: BaseResponse): RepositoryResponse<AdaptiveLastPrice>
 
     fun convertStockCandleResponse(
-        response: BaseResponse,
-        company: AdaptiveCompany,
-        onNewData: (AdaptiveCompany) -> Unit
+        response: BaseResponse
     ): RepositoryResponse<AdaptiveStockCandle>
 
     fun convertCompanyProfileResponse(

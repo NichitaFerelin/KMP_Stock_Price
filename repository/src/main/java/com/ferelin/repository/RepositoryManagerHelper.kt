@@ -9,12 +9,13 @@ interface RepositoryManagerHelper {
 
     fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>>
 
-    fun openConnection(
-        dataToSubscribe: Collection<String>
-    ): Flow<RepositoryResponse<AdaptiveLastPrice>>
+    fun openConnection(): Flow<RepositoryResponse<AdaptiveLastPrice>>
+
+    fun subscribeItem(symbol: String)
 
     fun loadStockCandles(
         company: AdaptiveCompany,
+        position: Int,
         from: Long = TimeMillis.convertForRequest(System.currentTimeMillis() - TimeMillis.ONE_YEAR),
         to: Long = TimeMillis.convertForRequest(System.currentTimeMillis()),
         resolution: String = "D"

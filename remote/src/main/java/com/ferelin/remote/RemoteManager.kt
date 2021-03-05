@@ -10,20 +10,26 @@ class RemoteManager(
     private val mWebSocketConnector: WebSocketConnectorHelper
 ) : RemoteManagerHelper {
 
-    override fun openConnection(
-        dataToSubscribe: Collection<String>,
-        token: String
-    ): Flow<BaseResponse> {
-        return mWebSocketConnector.openConnection(dataToSubscribe, token)
+    override fun openConnection(token: String): Flow<BaseResponse> {
+        return mWebSocketConnector.openConnection(token)
+    }
+
+    override fun closeConnection() {
+        mWebSocketConnector.closeConnection()
+    }
+
+    override fun subscribeItem(symbol: String) {
+        mWebSocketConnector.subscribeItem(symbol)
     }
 
     override fun loadStockCandle(
         symbol: String,
+        position: Int,
         from: Long,
         to: Long,
         resolution: String
     ): Flow<BaseResponse> {
-        return mNetworkManager.loadStockCandle(symbol, from, to, resolution)
+        return mNetworkManager.loadStockCandle(symbol, position, from, to, resolution)
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<BaseResponse> {

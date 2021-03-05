@@ -33,25 +33,31 @@ class RepositoryManager private constructor(
         }
     }
 
-    override fun openConnection(
-        dataToSubscribe: Collection<String>
-    ): Flow<RepositoryResponse<AdaptiveLastPrice>> {
-        return mRemoteManagerHelper.openConnection(dataToSubscribe).map {
+    override fun openConnection(): Flow<RepositoryResponse<AdaptiveLastPrice>> {
+        return mRemoteManagerHelper.openConnection().map {
             mDataConverterHelper.convertWebSocketResponse(it)
         }
     }
 
+    override fun subscribeItem(symbol: String) {
+        mRemoteManagerHelper.subscribeItem(symbol)
+    }
+
     override fun loadStockCandles(
         company: AdaptiveCompany,
+        position: Int,
         from: Long,
         to: Long,
         resolution: String
     ): Flow<RepositoryResponse<AdaptiveStockCandle>> {
-        return mRemoteManagerHelper.loadStockCandle(company.symbol, from, to, resolution).map {
-            mDataConverterHelper.convertStockCandleResponse(it, company) {
-                val preparedForUpdate = mDataConverterHelper.convertCompanyForInsert(it)
-                mLocalManagerHelper.updateCompany(preparedForUpdate)
-            }
+        return mRemoteManagerHelper.loadStockCandle(
+            company.symbol,
+            position,
+            from,
+            to,
+            resolution
+        ).map {
+            mDataConverterHelper.convertStockCandleResponse(it)
         }
     }
 

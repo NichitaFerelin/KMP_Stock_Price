@@ -5,7 +5,7 @@ import com.ferelin.local.model.Company
 import com.ferelin.local.model.Responses
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.stockCandle.StockCandleResponse
+import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
@@ -42,15 +42,14 @@ class DataConverter : DataConverterHelper {
     }
 
     override fun convertStockCandleResponse(
-        response: BaseResponse,
-        company: AdaptiveCompany,
-        onNewData: (AdaptiveCompany) -> Unit
+        response: BaseResponse
     ): RepositoryResponse<AdaptiveStockCandle> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as StockCandleResponse
-            val successResponse = RepositoryResponse.Success(
+            val itemResponse = response as StockCandlesResponse
+            itemResponse.symbol = response.message!!
+            /*val successResponse = */RepositoryResponse.Success(
                 AdaptiveStockCandle(
-                    company,
+                    response.symbol,
                     itemResponse.openPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.highPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.lowPrices.map { mAdapter.adaptPrice(it) },
@@ -60,7 +59,7 @@ class DataConverter : DataConverterHelper {
                 )
             )
 
-            val updatedCompany = company.apply {
+            /*val updatedCompany = company.apply {
                 openPrices = successResponse.data.openPrices
                 highPrices = successResponse.data.highPrices
                 lowPrices = successResponse.data.lowPrices
@@ -69,8 +68,7 @@ class DataConverter : DataConverterHelper {
                 dayProfitPercents = successResponse.data.dayProfit
             }
             onNewData.invoke(updatedCompany)
-
-            successResponse
+            successResponse*/
         } else RepositoryResponse.Failed(response.responseCode)
     }
 

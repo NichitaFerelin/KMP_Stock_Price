@@ -1,18 +1,14 @@
 package com.ferelin.remote.utilits
 
-import android.os.SystemClock
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import kotlin.reflect.KProperty
 
 class RetrofitDelegate(private val mUrl: String) {
-
-    private val mPerSecondRequestLimit = 1000L
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): Retrofit {
         return buildRetrofit(mUrl)
@@ -20,18 +16,10 @@ class RetrofitDelegate(private val mUrl: String) {
 
     private fun buildRetrofit(url: String): Retrofit {
 
-        val rateLimitInterceptor = object : Interceptor {
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val response = chain.proceed(chain.request())
-                SystemClock.sleep(mPerSecondRequestLimit)
-                return response
-            }
-        }
-
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
         val httpClient = OkHttpClient.Builder()
-            .addInterceptor(rateLimitInterceptor)
+            .addInterceptor(HttpLoggingInterceptor())
             .build()
 
         return Retrofit.Builder()

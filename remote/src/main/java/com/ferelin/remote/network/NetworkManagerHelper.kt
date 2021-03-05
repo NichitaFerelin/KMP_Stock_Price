@@ -12,6 +12,7 @@ interface NetworkManagerHelper {
 
     fun loadStockCandle(
         symbol: String,
+        position: Int,
         from: Long,
         to: Long,
         resolution: String
