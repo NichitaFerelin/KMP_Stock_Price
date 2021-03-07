@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Stock Price</string>
+
+    <string name="errorLoadingData">Error loading data</string>
 </resources>

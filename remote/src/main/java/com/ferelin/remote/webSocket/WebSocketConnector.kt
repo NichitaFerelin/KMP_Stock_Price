@@ -20,9 +20,6 @@ class WebSocketConnector : WebSocketConnectorHelper {
     private var mWebSocket: WebSocket? = null
     private var mMessagesQueue: Queue<String> = LinkedList()
 
-    /*
-    * If webSocket was not initialized -> add messages to queue
-    * */
     override fun subscribeItem(symbol: String) {
         mWebSocket?.let {
             subscribe(it, symbol)

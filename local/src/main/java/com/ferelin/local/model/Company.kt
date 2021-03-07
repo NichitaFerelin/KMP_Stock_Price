@@ -19,7 +19,7 @@ data class Company(
     @Json(name = "currency") val currency: String,
     @Json(name = "marketCapitalization") val capitalization: String,
     var isFavourite: Boolean = false,
-    var lastPrice: String = "0.0",
+    var lastPrice: String = "",
     var openPrices: List<String> = emptyList(),
     var highPrices: List<String> = emptyList(),
     var lowPrices: List<String> = emptyList(),

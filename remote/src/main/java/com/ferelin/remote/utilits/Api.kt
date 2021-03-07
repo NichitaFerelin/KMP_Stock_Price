@@ -10,7 +10,6 @@ object Api {
     const val FINNHUB_TOKEN = "c0toc6v48v6qoe9bl7ug"
 
     const val RESPONSE_OK = 200
-
     const val RESPONSE_LIMIT = 429
     const val RESPONSE_NO_DATA = 490
     const val RESPONSE_UNDEFINED = 491

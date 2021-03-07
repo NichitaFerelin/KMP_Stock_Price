@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="frame_padding">8dp</dimen>
+    <dimen name="frame_line_width">1dp</dimen>
+    <dimen name="frame_text_size">14sp</dimen>
+
+    <dimen name="defaultMargin">16dp</dimen>
+    <dimen name="smallMargin">8dp</dimen>
+
+    <dimen name="line_width">3dp</dimen>
+    <dimen name="radius">6dp</dimen>
+    <dimen name="iner_radius">5dp</dimen>
+</resources>

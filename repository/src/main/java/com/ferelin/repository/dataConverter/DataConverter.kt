@@ -34,6 +34,7 @@ class DataConverter : DataConverterHelper {
             val itemResponse = response as WebSocketResponse
             RepositoryResponse.Success(
                 AdaptiveLastPrice(
+                    null, // is delegated to dataInteractor class in app module
                     itemResponse.symbol,
                     mAdapter.adaptPrice(itemResponse.lastPrice)
                 )
@@ -47,8 +48,9 @@ class DataConverter : DataConverterHelper {
         return if (response.responseCode == Api.RESPONSE_OK) {
             val itemResponse = response as StockCandlesResponse
             itemResponse.symbol = response.message!!
-            /*val successResponse = */RepositoryResponse.Success(
+            RepositoryResponse.Success(
                 AdaptiveStockCandle(
+                    null, // is delegated to dataInteractor class in app module
                     response.symbol,
                     itemResponse.openPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.highPrices.map { mAdapter.adaptPrice(it) },
@@ -58,17 +60,6 @@ class DataConverter : DataConverterHelper {
                     mAdapter.createDayProfitList(itemResponse.openPrices, itemResponse.closePrices)
                 )
             )
-
-            /*val updatedCompany = company.apply {
-                openPrices = successResponse.data.openPrices
-                highPrices = successResponse.data.highPrices
-                lowPrices = successResponse.data.lowPrices
-                closePrices = successResponse.data.closePrices
-                timestamps = successResponse.data.timestamps
-                dayProfitPercents = successResponse.data.dayProfit
-            }
-            onNewData.invoke(updatedCompany)
-            successResponse*/
         } else RepositoryResponse.Failed(response.responseCode)
     }
 

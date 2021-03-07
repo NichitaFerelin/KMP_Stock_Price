@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewIcon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@mipmap/msft" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textViewTicker"
+            style="@style/textViewH2"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toTopOf="@id/textViewTickerName"
+            app:layout_constraintStart_toEndOf="@id/cardViewIcon"
+            app:layout_constraintTop_toTopOf="@id/cardViewIcon"
+            tools:text="MSFT" />
+
+        <ImageView
+            android:id="@+id/imageViewFavourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_favourite"
+            app:layout_constraintBottom_toBottomOf="@id/textViewTicker"
+            app:layout_constraintStart_toEndOf="@id/textViewTicker"
+            app:layout_constraintTop_toTopOf="@id/textViewTicker" />
+
+        <TextView
+            android:id="@+id/textViewTickerName"
+            style="@style/textViewBody"
+            android:layout_marginEnd="6dp"
+            android:ellipsize="end"
+            android:lines="1"
+            app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
+            app:layout_constraintEnd_toStartOf="@id/textViewDynamic"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/textViewTicker"
+            app:layout_constraintTop_toBottomOf="@id/textViewTicker"
+            tools:text="Microsoft Corporation" />
+
+        <TextView
+            android:id="@+id/textViewLastPrice"
+            style="@style/textViewH2"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="$72.16" />
+
+        <TextView
+            android:id="@+id/textViewDynamic"
+            style="@style/textViewBody"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="14dp"
+            android:gravity="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="+$0.12(1,15%)" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

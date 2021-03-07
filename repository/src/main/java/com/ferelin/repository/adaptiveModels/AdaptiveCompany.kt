@@ -11,7 +11,7 @@ data class AdaptiveCompany(
     val industry: String,
     val currency: String,
     var capitalization: String,
-    var lastPrice: String = "0.0",
+    var lastPrice: String = "",
     var isFavourite: Boolean = false,
     var openPrices: List<String> = emptyList(),
     var highPrices: List<String> = emptyList(),

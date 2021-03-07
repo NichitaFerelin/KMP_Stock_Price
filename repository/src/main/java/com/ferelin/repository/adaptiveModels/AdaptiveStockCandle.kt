@@ -1,6 +1,7 @@
 package com.ferelin.repository.adaptiveModels
 
 data class AdaptiveStockCandle(
+    var company: AdaptiveCompany? = null,
     val symbol: String,
     val openPrices: List<String>,
     val highPrices: List<String>,
