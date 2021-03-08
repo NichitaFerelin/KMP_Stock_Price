@@ -3,8 +3,10 @@ package com.ferelin.repository
 import android.content.Context
 import com.ferelin.local.LocalManager
 import com.ferelin.local.LocalManagerHelper
-import com.ferelin.local.database.CompaniesDatabase
-import com.ferelin.local.database.CompaniesManager
+import com.ferelin.local.databases.companies.CompaniesDatabase
+import com.ferelin.local.databases.companies.CompaniesManager
+import com.ferelin.local.databases.searchesHistory.SearchesHistoryDatabase
+import com.ferelin.local.databases.searchesHistory.SearchesHistoryManager
 import com.ferelin.local.json.JsonManager
 import com.ferelin.remote.RemoteManager
 import com.ferelin.remote.RemoteManagerHelper
@@ -80,10 +82,31 @@ class RepositoryManager private constructor(
         mLocalManagerHelper.updateCompany(preparedForInsert)
     }
 
+    override fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearch>>> {
+        return mLocalManagerHelper.getSearchesHistory().map {
+            mDataConverterHelper.convertSearchesForResponse(it)
+        }
+    }
+
+    override fun getPopularSearches(): List<AdaptiveSearch> {
+        return mLocalManagerHelper.getPopularSearches().map {
+            mDataConverterHelper.convertSearchForResponse(it)
+        }
+    }
+
+    override fun insertSearch(search: AdaptiveSearch) {
+        val preparedForInsert = mDataConverterHelper.convertSearchForInsert(search)
+        mLocalManagerHelper.insertSearch(preparedForInsert)
+    }
+
     companion object : SingletonHolder<RepositoryManager, Context>({
         val remoteHelper = RemoteManager(NetworkManager(), WebSocketConnector())
         val dataBase = CompaniesDatabase.getInstance(it)
-        val localHelper = LocalManager(JsonManager(it), CompaniesManager(dataBase))
+
+        val searchesDatabase = SearchesHistoryDatabase.getInstance(it)
+        val searchesHelper = SearchesHistoryManager(searchesDatabase)
+
+        val localHelper = LocalManager(JsonManager(it), CompaniesManager(dataBase), searchesHelper)
         val dataConverter = DataConverter()
         RepositoryManager(remoteHelper, localHelper, dataConverter)
     })

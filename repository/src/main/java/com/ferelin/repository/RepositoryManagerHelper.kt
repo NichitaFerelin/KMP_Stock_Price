@@ -26,4 +26,10 @@ interface RepositoryManagerHelper {
     fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStockSymbols>>
 
     fun updateCompany(adaptiveCompany: AdaptiveCompany)
+
+    fun getSearchesHistory() : Flow<RepositoryResponse<List<AdaptiveSearch>>>
+
+    fun getPopularSearches() : List<AdaptiveSearch>
+
+    fun insertSearch(search: AdaptiveSearch)
 }

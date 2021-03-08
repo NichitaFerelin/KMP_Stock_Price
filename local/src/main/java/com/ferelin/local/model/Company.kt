@@ -2,7 +2,7 @@ package com.ferelin.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ferelin.local.database.CompaniesDatabase
+import com.ferelin.local.databases.companies.CompaniesDatabase
 import com.squareup.moshi.Json
 
 @Entity(tableName = CompaniesDatabase.DB_NAME)

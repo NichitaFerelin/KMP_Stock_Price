@@ -1,4 +1,4 @@
-package com.ferelin.local.database
+package com.ferelin.local.databases.companies
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi

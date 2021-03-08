@@ -1,6 +1,6 @@
 package com.ferelin.local.model
 
-object Responses {
+object CompaniesResponses {
     const val LOADED_FROM_DB = 200
     const val LOADED_FROM_JSON = 201
 }

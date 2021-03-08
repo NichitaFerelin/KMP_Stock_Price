@@ -1,17 +1,20 @@
 package com.ferelin.local
 
-import com.ferelin.local.database.CompaniesManagerHelper
+import com.ferelin.local.databases.companies.CompaniesManagerHelper
+import com.ferelin.local.databases.searchesHistory.SearchesHistoryManagerHelper
 import com.ferelin.local.json.JsonManagerHelper
 import com.ferelin.local.model.CompaniesResponse
+import com.ferelin.local.model.CompaniesResponses
 import com.ferelin.local.model.Company
-import com.ferelin.local.model.Responses
+import com.ferelin.local.model.Search
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class LocalManager(
     private val mJsonManagerHelper: JsonManagerHelper,
-    private val mCompaniesManagerHelper: CompaniesManagerHelper
+    private val mCompaniesManagerHelper: CompaniesManagerHelper,
+    private val mSearchesHistoryManagerHelper: SearchesHistoryManagerHelper
 ) : LocalManagerHelper {
 
     override fun insertCompany(company: Company) {
@@ -34,7 +37,10 @@ class LocalManager(
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {
                 val localJsonCompanies = getCompaniesFromJson().first()
-                CompaniesResponse(code = Responses.LOADED_FROM_JSON, data = localJsonCompanies)
+                CompaniesResponse(
+                    code = CompaniesResponses.LOADED_FROM_JSON,
+                    data = localJsonCompanies
+                )
             } else CompaniesResponse(data = databaseCompanies)
         }
     }
@@ -53,5 +59,25 @@ class LocalManager(
 
     override fun getCompaniesFromJson(): Flow<List<Company>> {
         return mJsonManagerHelper.getCompaniesFromJson()
+    }
+
+    override fun insertSearch(search: Search) {
+        mSearchesHistoryManagerHelper.insertSearch(search)
+    }
+
+    override fun getSearchesHistory(): Flow<List<Search>> {
+        return mSearchesHistoryManagerHelper.getSearchesHistory()
+    }
+
+    override fun getPopularSearches(): List<Search> {
+        return mSearchesHistoryManagerHelper.getPopularSearches()
+    }
+
+    override fun deleteSearch(name: String) {
+        mSearchesHistoryManagerHelper.deleteSearch(name)
+    }
+
+    override fun deleteSearch(search: Search) {
+        mSearchesHistoryManagerHelper.deleteSearch(search)
     }
 }

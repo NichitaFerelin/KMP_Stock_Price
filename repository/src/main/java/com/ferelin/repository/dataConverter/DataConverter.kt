@@ -1,8 +1,9 @@
 package com.ferelin.repository.dataConverter
 
 import com.ferelin.local.model.CompaniesResponse
+import com.ferelin.local.model.CompaniesResponses
 import com.ferelin.local.model.Company
-import com.ferelin.local.model.Responses
+import com.ferelin.local.model.Search
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
@@ -21,7 +22,7 @@ class DataConverter : DataConverterHelper {
         onNewData: (companies: List<AdaptiveCompany>) -> Unit
     ): RepositoryResponse<List<AdaptiveCompany>> {
         return RepositoryResponse.Success(
-            if (response.code == Responses.LOADED_FROM_JSON) {
+            if (response.code == CompaniesResponses.LOADED_FROM_JSON) {
                 val convertedData = response.data.map { mAdapter.toAdaptiveCompanyFromJson(it) }
                 onNewData.invoke(convertedData)
                 convertedData
@@ -114,7 +115,19 @@ class DataConverter : DataConverterHelper {
         return companies.map { convertCompanyForInsert(it) }
     }
 
+    override fun convertSearchForResponse(search: Search): AdaptiveSearch {
+        return AdaptiveSearch(search.tickerName)
+    }
+
     override fun convertCompanyForInsert(company: AdaptiveCompany): Company {
         return mAdapter.toDatabaseCompany(company)
+    }
+
+    override fun convertSearchesForResponse(searches: List<Search>): RepositoryResponse<List<AdaptiveSearch>> {
+        return RepositoryResponse.Success(List(searches.size) { convertSearchForResponse(searches[it]) })
+    }
+
+    override fun convertSearchForInsert(search: AdaptiveSearch): Search {
+        return Search(search.tickerName)
     }
 }
