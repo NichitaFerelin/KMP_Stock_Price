@@ -37,6 +37,8 @@ class StocksFragment : StocksBaseFragment() {
             adapter = mRecyclerAdapter
             addItemDecoration(StocksItemDecoration(requireContext()))
         }
+
+        mBinding
     }
 
     override fun initObservers() {

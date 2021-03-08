@@ -1,7 +1,9 @@
 package com.ferelin.stockprice.dataInteractor
 
+import android.util.Log
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveLastPrice
+import com.ferelin.repository.adaptiveModels.AdaptiveSearch
 import com.ferelin.repository.adaptiveModels.AdaptiveStockCandle
 import com.ferelin.repository.utilits.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
@@ -13,6 +15,8 @@ class DataManager(private val mLocalInteractorHelper: LocalInteractorHelper) {
 
     private var mCompanies: List<AdaptiveCompany>? = null
     private var mFavouriteCompanies: MutableList<AdaptiveCompany>? = null
+    private var mPopularRequests: List<AdaptiveSearch>? = null
+    private var mSearchedRequests: MutableList<AdaptiveSearch>? = null
 
     private val mCompaniesState = MutableStateFlow<DataNotificator<List<AdaptiveCompany>>>(
         DataNotificator.Loading()
@@ -27,7 +31,18 @@ class DataManager(private val mLocalInteractorHelper: LocalInteractorHelper) {
     val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mFavouriteCompaniesState
 
-    fun onDataPrepared(
+    private var mPopularRequestsState = MutableStateFlow<DataNotificator<List<AdaptiveSearch>>>(
+        DataNotificator.Loading()
+    )
+    val popularRequestsState: StateFlow<DataNotificator<List<AdaptiveSearch>>>
+        get() = mPopularRequestsState
+
+    private var mSearchedRequestsState =
+        MutableStateFlow<DataNotificator<MutableList<AdaptiveSearch>>>(DataNotificator.Loading())
+    val searchedRequestsState: StateFlow<DataNotificator<MutableList<AdaptiveSearch>>>
+        get() = mSearchedRequestsState
+
+    fun onCompaniesDataPrepared(
         companies: List<AdaptiveCompany>,
         favouriteCompanies: List<AdaptiveCompany>
     ) {
@@ -35,6 +50,19 @@ class DataManager(private val mLocalInteractorHelper: LocalInteractorHelper) {
         mFavouriteCompanies = favouriteCompanies.toMutableList()
         mCompaniesState.value = DataNotificator.Success(companies)
         mFavouriteCompaniesState.value = DataNotificator.Success(favouriteCompanies.toMutableList())
+    }
+
+    fun onSearchesDataPrepared(
+        searches: List<AdaptiveSearch>,
+        popularRequests: List<AdaptiveSearch>
+    ) {
+        Log.d("Test", "Prepare")
+        val searchesHistory = searches.toMutableList()
+        mSearchedRequests = searchesHistory
+        mSearchedRequestsState.value = DataNotificator.Success(searchesHistory)
+
+        mPopularRequests = popularRequests
+        mPopularRequestsState.value = DataNotificator.Success(popularRequests)
     }
 
     suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveStockCandle>) {

@@ -5,6 +5,7 @@ import com.ferelin.repository.RepositoryManager
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveLastPrice
+import com.ferelin.repository.adaptiveModels.AdaptiveSearch
 import com.ferelin.repository.adaptiveModels.AdaptiveStockCandle
 import com.ferelin.repository.utilits.RepositoryResponse
 import com.ferelin.shared.SingletonHolder
@@ -29,6 +30,12 @@ class DataInteractor private constructor(
     val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mDataManager.favouriteCompaniesState
 
+    val popularRequestsState: StateFlow<DataNotificator<List<AdaptiveSearch>>>
+        get() = mDataManager.popularRequestsState
+
+    val searchedRequestsState: StateFlow<DataNotificator<MutableList<AdaptiveSearch>>>
+        get() = mDataManager.searchedRequestsState
+
     private val mFavouriteCompaniesUpdateState = MutableStateFlow<DataNotificator<AdaptiveCompany>>(
         DataNotificator.Loading()
     )
@@ -39,11 +46,23 @@ class DataInteractor private constructor(
     val errorState: StateFlow<DataNotificator<String>>
         get() = mErrorState
 
-    override suspend fun prepareData(context: Context) {
-        val response = mLocalInteractorHelper.prepareData(context)
-        if (response is LocalInteractorResponse.Success) {
-            mDataManager.onDataPrepared(response.companies, response.favouriteCompanies)
+    override suspend fun prepareCompaniesData(context: Context) {
+        val responseCompanies = mLocalInteractorHelper.getCompaniesData(context)
+        if (responseCompanies is LocalInteractorResponse.Success) {
+            mDataManager.onCompaniesDataPrepared(
+                responseCompanies.companies,
+                responseCompanies.favouriteCompanies
+            )
         } else mErrorState.value = DataNotificator.Error(R.string.errorLoadingData.toString())
+
+        val response = mLocalInteractorHelper.getSearchesData(context)
+        if (response is LocalInteractorResponse.Success) {
+            mDataManager.onSearchesDataPrepared(response.searchesHistory, response.popularRequests)
+        } else mErrorState.value = DataNotificator.Error(R.string.errorLoadingData.toString())
+    }
+
+    override suspend fun prepareSearchesHistory(context: Context) {
+
     }
 
     override suspend fun loadStockCandles(

@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            dataInteractor.prepareData(this@MainActivity)
+            dataInteractor.prepareCompaniesData(this@MainActivity)
         }
 
         with(supportFragmentManager) {

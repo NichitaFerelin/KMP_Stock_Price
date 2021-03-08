@@ -6,6 +6,7 @@
 
     <dimen name="defaultMargin">16dp</dimen>
     <dimen name="smallMargin">8dp</dimen>
+    <dimen name="small">4dp</dimen>
 
     <dimen name="line_width">3dp</dimen>
     <dimen name="radius">6dp</dimen>

@@ -7,7 +7,9 @@ import com.ferelin.stockprice.dataInteractor.DataInteractorHelper
 
 interface LocalInteractorHelper {
 
-    suspend fun prepareData(context: Context): LocalInteractorResponse
+    suspend fun getCompaniesData(context: Context): LocalInteractorResponse
+
+    suspend fun getSearchesData(context: Context) : LocalInteractorResponse
 
     suspend fun updateCompany(adaptiveCompany: AdaptiveCompany)
 

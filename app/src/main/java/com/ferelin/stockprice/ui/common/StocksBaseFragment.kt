@@ -17,7 +17,7 @@ abstract class StocksBaseFragment : BaseFragment(), StocksClickListener {
     protected abstract val mRecyclerAdapterType: StocksAdapterType
     protected lateinit var mRecyclerAdapter: StocksRecyclerAdapter
 
-    protected val mViewModel: StocksViewModel by activityViewModels {
+    protected val mStocksViewModel: StocksViewModel by activityViewModels {
         DataViewModelFactory(mDataInteractor)
     }
 
@@ -28,11 +28,11 @@ abstract class StocksBaseFragment : BaseFragment(), StocksClickListener {
     }
 
     protected open fun setUpComponents() {
-        mRecyclerAdapter = mViewModel.getRecyclerAdapter(mRecyclerAdapterType).also {
+        mRecyclerAdapter = mStocksViewModel.getRecyclerAdapter(mRecyclerAdapterType).also {
             it.setOnBindCallback { _, company, position ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     mDataInteractor.loadStockCandles(company, position).collect { response ->
-                        response.company?.let { mRecyclerAdapter.updateCompany(it) }
+                        mStocksViewModel.onStocksCandlesResponse(response, mRecyclerAdapterType)
                     }
                 }
             }
@@ -44,7 +44,7 @@ abstract class StocksBaseFragment : BaseFragment(), StocksClickListener {
 
     override fun onFavouriteIconClicked(company: AdaptiveCompany) {
         lifecycleScope.launch(Dispatchers.IO) {
-            mViewModel.onFavouriteIconClicked(company)
+            mStocksViewModel.onFavouriteIconClicked(company)
         }
     }
 

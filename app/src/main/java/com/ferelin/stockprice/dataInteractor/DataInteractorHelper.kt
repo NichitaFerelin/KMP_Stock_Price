@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface DataInteractorHelper {
 
-    suspend fun prepareData(context: Context)
+    suspend fun prepareCompaniesData(context: Context)
+
+    suspend fun prepareSearchesHistory(context: Context)
 
     suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany)
 

@@ -15,8 +15,6 @@ class StocksItemDecoration(private val mContext: Context) : RecyclerView.ItemDec
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        outRect.left = mContext.resources.getDimension(R.dimen.defaultMargin).toInt()
-        outRect.right = mContext.resources.getDimension(R.dimen.defaultMargin).toInt()
         outRect.bottom = mContext.resources.getDimension(R.dimen.smallMargin).toInt()
     }
 }

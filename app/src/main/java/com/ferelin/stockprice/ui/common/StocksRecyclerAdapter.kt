@@ -45,6 +45,14 @@ class StocksRecyclerAdapter(
         return mCompanies.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return mCompanies[position].hashCode().toLong()
+    }
+
+    override fun setHasStableIds(hasStableIds: Boolean) {
+        super.setHasStableIds(true)
+    }
+
     fun setOnStocksCLickListener(listener: StocksClickListener) {
         mStocksClickListener = listener
     }
@@ -56,8 +64,10 @@ class StocksRecyclerAdapter(
     }
 
     suspend fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
-        mCompanies = companies
-        withContext(Dispatchers.Main) { notifyDataSetChanged() }
+        withContext(Dispatchers.Main) {
+            mCompanies = companies
+            notifyDataSetChanged()
+        }
     }
 
     suspend fun updateCompany(company: AdaptiveCompany) {
@@ -69,8 +79,10 @@ class StocksRecyclerAdapter(
     }
 
     suspend fun addCompany(company: AdaptiveCompany) {
-        mCompanies.add(0, company)
-        withContext(Dispatchers.Main) { notifyItemInserted(0) }
+        withContext(Dispatchers.Main) {
+            mCompanies.add(0, company)
+            notifyItemInserted(0)
+        }
     }
 
     suspend fun removeCompany(company: AdaptiveCompany) {

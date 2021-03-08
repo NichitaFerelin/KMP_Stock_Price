@@ -37,14 +37,14 @@
                     android:layout_marginStart="20dp"
                     android:src="@drawable/ic_search" />
 
-                <EditText
+                <TextView
                     style="@style/textViewH3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="48dp"
                     android:layout_marginEnd="20dp"
-                    android:hint="Find company or ticker"
+                    android:text="Find company or ticker"
                     android:textColorHint="@color/black" />
 
             </com.google.android.material.card.MaterialCardView>

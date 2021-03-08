@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.first
 
 class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
 
-    override suspend fun prepareData(context: Context): LocalInteractorResponse {
+    override suspend fun getCompaniesData(context: Context): LocalInteractorResponse {
         val responseCompanies = mRepository.getAllCompanies().first()
         return if (responseCompanies is RepositoryResponse.Success) {
             val companies = responseCompanies.data.mapIndexed { index, adaptiveCompany ->
@@ -21,6 +21,18 @@ class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalI
             LocalInteractorResponse.Success(
                 companies,
                 favouriteCompanies
+            )
+        } else LocalInteractorResponse.Failed()
+    }
+
+    override suspend fun getSearchesData(context: Context): LocalInteractorResponse {
+        val responseSearches = mRepository.getSearchesHistory().first()
+        val popularRequests = mRepository.getPopularSearches()
+
+        return if (responseSearches is RepositoryResponse.Success) {
+            LocalInteractorResponse.Success(
+                searchesHistory = responseSearches.data,
+                popularRequests = popularRequests
             )
         } else LocalInteractorResponse.Failed()
     }

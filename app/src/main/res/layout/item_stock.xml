@@ -53,7 +53,7 @@
 
         <TextView
             android:id="@+id/textViewTickerName"
-            style="@style/textViewBody"
+            style="@style/textViewBodySemiBold"
             android:layout_marginEnd="6dp"
             android:ellipsize="end"
             android:lines="1"
