@@ -144,8 +144,7 @@ class DataConverter : DataConverterHelper {
                     mAdapter.adaptPrice(itemResponse.highPrice),
                     mAdapter.adaptPrice(itemResponse.lowPrice),
                     mAdapter.adaptPrice(itemResponse.currentPrice),
-                    mAdapter.adaptPrice(itemResponse.previousClosePrice),
-                    mAdapter.calculateProfit(itemResponse.currentPrice, itemResponse.openPrice)
+                    mAdapter.adaptPrice(itemResponse.previousClosePrice)
                 )
             )
         } else RepositoryResponse.Failed()

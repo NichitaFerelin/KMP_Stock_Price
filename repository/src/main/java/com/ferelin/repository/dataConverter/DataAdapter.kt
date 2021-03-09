@@ -1,6 +1,5 @@
 package com.ferelin.repository.dataConverter
 
-import android.util.Log
 import com.ferelin.local.model.Company
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utilits.Currency
@@ -44,51 +43,6 @@ class DataAdapter {
             Currency.RUB_SYMBOL -> "$resultStr $currencySymbol"
             else -> "?$resultStr"
         }
-    }
-
-    /*fun createDayProfitList(
-        openPrices: List<Double>,
-        closePrices: List<Double>
-    ): List<String> {
-        return List(openPrices.size) {
-            val openPrice = openPrices[it]
-            val closePrice = closePrices[it]
-            val numberProfit = closePrice - openPrice
-            val numberProfitStr = numberProfit.toString()
-
-            val digitNumberProfit = numberProfitStr.substringBefore('.').filter { it.isDigit() }
-            val remainderNumberProfit = with(numberProfitStr.substringAfter('.')) {
-                if (length >= 2) substring(0, 2) else this
-            }
-
-            val percentProfit = (100 * (closePrice - openPrice) / openPrice).toString()
-            val digitPercentProfit = percentProfit.substringBefore('.').filter { it.isDigit() }
-            val remainderPercentProfit = with(percentProfit.substringAfter('.')) {
-                if (length >= 2) substring(0, 2) else this
-            }
-
-            val prefix = if (closePrice > openPrice) "+" else "-"
-            "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
-        }
-    }*/
-
-    fun calculateProfit(currentPrice: Double, previousPrice: Double): String {
-        val numberProfit = currentPrice - previousPrice
-        val numberProfitStr = numberProfit.toString()
-
-        val digitNumberProfit = numberProfitStr.substringBefore('.').filter { it.isDigit() }
-        val remainderNumberProfit = with(numberProfitStr.substringAfter('.')) {
-            if (length >= 2) substring(0, 2) else this
-        }
-
-        val percentProfit = (100 * (currentPrice - previousPrice) / currentPrice).toString()
-        val digitPercentProfit = percentProfit.substringBefore('.').filter { it.isDigit() }
-        val remainderPercentProfit = with(percentProfit.substringAfter('.')) {
-            if (length >= 2) substring(0, 2) else this
-        }
-
-        val prefix = if (currentPrice > previousPrice) "+" else "-"
-        return "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
     }
 
     fun toDatabaseCompany(adaptiveCompany: AdaptiveCompany): Company {
@@ -166,7 +120,6 @@ class DataAdapter {
     }
 
     private fun adaptPrice(price: Double, separator: Char = '.'): String {
-        Log.d("Test", "[price: ${price.toString()}]")
         var resultStr = ""
         val priceStr = price.toString()
 

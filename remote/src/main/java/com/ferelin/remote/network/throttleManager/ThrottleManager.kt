@@ -1,6 +1,5 @@
 package com.ferelin.remote.network.throttleManager
 
-import android.util.Log
 import com.ferelin.remote.utilits.Api
 import kotlinx.coroutines.*
 import java.util.*
@@ -92,8 +91,6 @@ class ThrottleManager {
                 val api = it[sApi] as String
                 val eraseIfNotActual = it[sEraseState] as Boolean
                 mMessagesQueue.remove(it)
-
-                Log.d("Test", "invoke with symbol: $symbol")
 
                 if (isNotActual(currentPosition, lastPosition, eraseIfNotActual)) {
                     return@let

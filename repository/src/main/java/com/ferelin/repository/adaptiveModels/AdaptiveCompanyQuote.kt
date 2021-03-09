@@ -8,5 +8,4 @@ data class AdaptiveCompanyQuote(
     val lowPrice: String,
     val currentPrice: String,
     val previousClosePrice: String,
-    val dayDelta: String
 )

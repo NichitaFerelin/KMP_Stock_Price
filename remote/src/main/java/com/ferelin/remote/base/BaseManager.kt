@@ -1,6 +1,5 @@
 package com.ferelin.remote.base
 
-import android.util.Log
 import com.ferelin.remote.utilits.Api
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,8 +12,6 @@ class BaseManager<T : BaseResponse>(
     override fun onResponse(call: Call<T>, response: Response<T>) {
         val responseBody = response.body()
         val responseCode = response.code()
-
-        Log.d("Test1", "${responseBody.toString()}")
 
         when {
             responseCode == 429 -> mOnResponse(BaseResponse(Api.RESPONSE_LIMIT))
