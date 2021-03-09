@@ -11,29 +11,14 @@ class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalI
     override suspend fun getCompaniesData(context: Context): LocalInteractorResponse {
         val responseCompanies = mRepository.getAllCompanies().first()
         return if (responseCompanies is RepositoryResponse.Success) {
-            val companies = responseCompanies.data.mapIndexed { index, adaptiveCompany ->
-                prepareStyles(adaptiveCompany, index, context)
-                adaptiveCompany
-            }
-            val favouriteCompanies = mutableListOf<AdaptiveCompany>()
-            companies.forEach { if (it.isFavourite) favouriteCompanies.add(it) }
-
-            LocalInteractorResponse.Success(
-                companies,
-                favouriteCompanies
-            )
+            LocalInteractorResponse.Success(responseCompanies.data)
         } else LocalInteractorResponse.Failed()
     }
 
     override suspend fun getSearchesData(context: Context): LocalInteractorResponse {
         val responseSearches = mRepository.getSearchesHistory().first()
-        val popularRequests = mRepository.getPopularSearches()
-
         return if (responseSearches is RepositoryResponse.Success) {
-            LocalInteractorResponse.Success(
-                searchesHistory = responseSearches.data,
-                popularRequests = popularRequests
-            )
+            LocalInteractorResponse.Success(searchesHistory = responseSearches.data)
         } else LocalInteractorResponse.Failed()
     }
 
