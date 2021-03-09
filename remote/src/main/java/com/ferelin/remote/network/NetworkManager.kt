@@ -2,8 +2,12 @@ package com.ferelin.remote.network
 
 import com.ferelin.remote.base.BaseManager
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.network.companyNews.CompanyNewsApi
+import com.ferelin.remote.network.companyNews.CompanyNewsResponse
 import com.ferelin.remote.network.companyProfile.CompanyProfileApi
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.network.companyQuote.CompanyQuoteApi
+import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesApi
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolApi
@@ -23,7 +27,9 @@ class NetworkManager : NetworkManagerHelper {
     private val mRetrofit: Retrofit by RetrofitDelegate(Api.FINNHUB_BASE_URL)
 
     private val mCompanyProfileService = mRetrofit.create(CompanyProfileApi::class.java)
-    private val mStockQuoteService = mRetrofit.create(StockCandlesApi::class.java)
+    private val mCompanyNewsService = mRetrofit.create(CompanyNewsApi::class.java)
+    private val mCompanyQuoteService = mRetrofit.create(CompanyQuoteApi::class.java)
+    private val mStockCandlesService = mRetrofit.create(StockCandlesApi::class.java)
     private val mStockSymbolsService = mRetrofit.create(StockSymbolApi::class.java)
 
     private val mThrottleManager = ThrottleManager()
@@ -46,22 +52,45 @@ class NetworkManager : NetworkManagerHelper {
         awaitClose()
     }.flowOn(Dispatchers.IO)
 
-    override fun loadStockCandle(
+    override fun loadStockCandles(
         symbol: String,
-        position: Int,
         from: Long,
         to: Long,
         resolution: String
     ): Flow<BaseResponse> = callbackFlow {
-        mThrottleManager.addMessage(symbol, Api.STOCK_CANDLE, position)
-        mThrottleManager.setUpApi(Api.STOCK_CANDLE) { symbolToRequest ->
-            mStockQuoteService
-                .getStockCandle(symbolToRequest, Api.FINNHUB_TOKEN, from, to, resolution)
-                .enqueue(BaseManager<StockCandlesResponse> {
-                    it.message = symbolToRequest
+        mStockCandlesService
+            .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
+            .enqueue(BaseManager<StockCandlesResponse> {
+                offer(it)
+            })
+        awaitClose()
+    }.flowOn(Dispatchers.IO)
+
+    override fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse> =
+        callbackFlow {
+            mCompanyNewsService
+                .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
+                .enqueue(BaseManager<CompanyNewsResponse> {
                     offer(it)
                 })
-        }
-        awaitClose { mThrottleManager.invalidate() }
-    }.flowOn(Dispatchers.IO)
+            awaitClose()
+        }.flowOn(Dispatchers.IO)
+
+    override fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse> =
+        callbackFlow {
+            mThrottleManager.addMessage(symbol, Api.COMPANY_QUOTE, position)
+            mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
+                mCompanyQuoteService
+                    .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
+                    .enqueue(BaseManager<CompanyQuoteResponse> {
+                        it.message = symbolToRequest
+                        offer(it)
+                    })
+            }
+            awaitClose { mThrottleManager.invalidate() }
+        }.flowOn(Dispatchers.IO)
+
+    override fun setThrottleManagerHistory(map: HashMap<String, Any?>) {
+        mThrottleManager.setUpMessagesHistory(map)
+    }
 }

@@ -19,7 +19,7 @@ class RetrofitDelegate(private val mUrl: String) {
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
         val httpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .build()
 
         return Retrofit.Builder()

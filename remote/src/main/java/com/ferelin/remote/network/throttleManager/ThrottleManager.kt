@@ -1,5 +1,6 @@
 package com.ferelin.remote.network.throttleManager
 
+import android.util.Log
 import com.ferelin.remote.utilits.Api
 import kotlinx.coroutines.*
 import java.util.*
@@ -24,8 +25,10 @@ import kotlin.math.abs
 
 class ThrottleManager {
 
-    private var mCompanyApi: ((String) -> Unit)? = null
-    private var mStockCandleApi: ((String) -> Unit)? = null
+    private var mCompanyProfileApi: ((String) -> Unit)? = null
+    private var mCompanyNewsApi: ((String) -> Unit)? = null
+    private var mCompanyQuoteApi: ((String) -> Unit)? = null
+    private var mStockCandlesApi: ((String) -> Unit)? = null
     private var mStockSymbolsApi: ((String) -> Unit)? = null
 
     private val mMessagesQueue =
@@ -53,15 +56,14 @@ class ThrottleManager {
         }
     }
 
-    fun stop() {
-        mIsRunning = false
-    }
-
     fun setUpApi(api: String, func: (String) -> Unit) {
         when (api) {
-            Api.COMPANY_PROFILE -> if (mCompanyApi == null) mCompanyApi = func
-            Api.STOCK_CANDLE -> if (mStockCandleApi == null) mStockCandleApi = func
+            Api.COMPANY_PROFILE -> if (mCompanyProfileApi == null) mCompanyProfileApi = func
+            Api.COMPANY_NEWS -> if (mCompanyNewsApi == null) mCompanyNewsApi = func
+            Api.COMPANY_QUOTE -> if (mCompanyQuoteApi == null) mCompanyQuoteApi = func
+            Api.STOCK_CANDLES -> if (mStockCandlesApi == null) mStockCandlesApi = func
             Api.STOCK_SYMBOLS -> if (mStockSymbolsApi == null) mStockSymbolsApi = func
+            else -> throw IllegalStateException("Unknown api for throttleManager: $api")
         }
     }
 
@@ -70,8 +72,10 @@ class ThrottleManager {
     }
 
     fun invalidate() {
-        mCompanyApi = null
-        mStockCandleApi = null
+        mCompanyProfileApi = null
+        mCompanyNewsApi = null
+        mCompanyQuoteApi = null
+        mStockCandlesApi = null
         mStockSymbolsApi = null
         mJob?.cancel()
         mJob = null
@@ -89,15 +93,18 @@ class ThrottleManager {
                 val eraseIfNotActual = it[sEraseState] as Boolean
                 mMessagesQueue.remove(it)
 
+                Log.d("Test", "invoke with symbol: $symbol")
+
                 if (isNotActual(currentPosition, lastPosition, eraseIfNotActual)) {
                     return@let
                 }
 
                 when (api) {
-                    Api.COMPANY_PROFILE -> mCompanyApi?.invoke(symbol)
-                    Api.STOCK_CANDLE -> mStockCandleApi?.invoke(symbol)
+                    Api.COMPANY_PROFILE -> mCompanyProfileApi?.invoke(symbol)
+                    Api.COMPANY_NEWS -> mCompanyNewsApi?.invoke(symbol)
+                    Api.COMPANY_QUOTE -> mCompanyQuoteApi?.invoke(symbol)
+                    Api.STOCK_CANDLES -> mStockCandlesApi?.invoke(symbol)
                     Api.STOCK_SYMBOLS -> mStockSymbolsApi?.invoke(symbol)
-                    else -> throw IllegalStateException("Unknown throttle manager api: $api")
                 }
                 mMessagesHistory[symbol] = null
                 delay(mPerSecondRequestLimit)
@@ -130,7 +137,7 @@ class ThrottleManager {
         lastPosition: Int,
         eraseIfNotActual: Boolean
     ): Boolean {
-        return abs(currentPosition - lastPosition) >= 10 && eraseIfNotActual
+        return abs(currentPosition - lastPosition) >= 15 && eraseIfNotActual
     }
 
     companion object {

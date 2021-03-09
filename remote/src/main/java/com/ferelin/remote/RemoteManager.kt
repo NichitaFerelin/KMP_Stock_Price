@@ -22,14 +22,13 @@ class RemoteManager(
         mWebSocketConnector.subscribeItem(symbol)
     }
 
-    override fun loadStockCandle(
+    override fun loadStockCandles(
         symbol: String,
-        position: Int,
         from: Long,
         to: Long,
         resolution: String
     ): Flow<BaseResponse> {
-        return mNetworkManager.loadStockCandle(symbol, position, from, to, resolution)
+        return mNetworkManager.loadStockCandles(symbol, from, to, resolution)
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<BaseResponse> {
@@ -38,5 +37,17 @@ class RemoteManager(
 
     override fun loadStockSymbols(): Flow<BaseResponse> {
         return mNetworkManager.loadStockSymbols()
+    }
+
+    override fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse> {
+        return mNetworkManager.loadCompanyNews(symbol, from, to)
+    }
+
+    override fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse> {
+        return mNetworkManager.loadCompanyQuote(symbol, position)
+    }
+
+    override fun setThrottleManagerHistory(map: HashMap<String, Any?>) {
+        mNetworkManager.setThrottleManagerHistory(map)
     }
 }

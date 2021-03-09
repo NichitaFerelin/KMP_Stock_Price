@@ -1,17 +1,17 @@
 package com.ferelin.repository.dataConverter
 
-import com.ferelin.local.model.CompaniesResponse
-import com.ferelin.local.model.CompaniesResponses
-import com.ferelin.local.model.Company
-import com.ferelin.local.model.Search
+import com.ferelin.local.model.*
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.network.companyNews.CompanyNewsResponse
 import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utilits.RepositoryResponse
+import com.ferelin.repository.utilits.Time
 
 class DataConverter : DataConverterHelper {
 
@@ -45,20 +45,19 @@ class DataConverter : DataConverterHelper {
 
     override fun convertStockCandleResponse(
         response: BaseResponse
-    ): RepositoryResponse<AdaptiveStockCandle> {
+    ): RepositoryResponse<AdaptiveStockCandles> {
         return if (response.responseCode == Api.RESPONSE_OK) {
             val itemResponse = response as StockCandlesResponse
             itemResponse.symbol = response.message!!
             RepositoryResponse.Success(
-                AdaptiveStockCandle(
+                AdaptiveStockCandles(
                     null, // is delegated to dataInteractor class in app module
                     response.symbol,
                     itemResponse.openPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.highPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.lowPrices.map { mAdapter.adaptPrice(it) },
                     itemResponse.closePrices.map { mAdapter.adaptPrice(it) },
-                    itemResponse.timestamps.map { mAdapter.fromLongToDateStr(it) },
-                    mAdapter.createDayProfitList(itemResponse.openPrices, itemResponse.closePrices)
+                    itemResponse.timestamps.map { mAdapter.fromLongToDateStr(it) }
                 )
             )
         } else RepositoryResponse.Failed(response.responseCode)
@@ -111,23 +110,65 @@ class DataConverter : DataConverterHelper {
         } else RepositoryResponse.Failed(response.responseCode)
     }
 
-    override fun convertCompaniesForInsert(companies: List<AdaptiveCompany>): List<Company> {
-        return companies.map { convertCompanyForInsert(it) }
+    override fun convertCompanyNewsResponse(
+        response: BaseResponse,
+        symbol: String
+    ): RepositoryResponse<AdaptiveCompanyNews> {
+        return if (response.responseCode == Api.RESPONSE_OK) {
+            val itemResponse = response as CompanyNewsResponse
+            RepositoryResponse.Success(
+                AdaptiveCompanyNews(
+                    symbol,
+                    itemResponse.dateTime.map {
+                        Time.convertMillisFromResponse(it.toLong()).toString()
+                    },
+                    itemResponse.headline,
+                    itemResponse.newsId.map { toString().substringBefore(".") },
+                    itemResponse.previewImageUrl,
+                    itemResponse.newsSource,
+                    itemResponse.newsSummary,
+                    itemResponse.newsUrl
+                )
+            )
+        } else RepositoryResponse.Failed()
     }
 
-    override fun convertSearchForResponse(search: Search): AdaptiveSearch {
-        return AdaptiveSearch(search.tickerName)
+    override fun convertCompanyQuoteResponse(response: BaseResponse): RepositoryResponse<AdaptiveCompanyQuote> {
+        return if (response.responseCode == Api.RESPONSE_OK) {
+            val itemResponse = response as CompanyQuoteResponse
+            RepositoryResponse.Success(
+                AdaptiveCompanyQuote(
+                    null,
+                    itemResponse.message!!,
+                    mAdapter.adaptPrice(itemResponse.openPrice),
+                    mAdapter.adaptPrice(itemResponse.highPrice),
+                    mAdapter.adaptPrice(itemResponse.lowPrice),
+                    mAdapter.adaptPrice(itemResponse.currentPrice),
+                    mAdapter.adaptPrice(itemResponse.previousClosePrice),
+                    mAdapter.calculateProfit(itemResponse.currentPrice, itemResponse.openPrice)
+                )
+            )
+        } else RepositoryResponse.Failed()
+    }
+
+    override fun convertSearchesForResponse(response: PreferencesResponse): RepositoryResponse<List<AdaptiveSearchRequest>> {
+        return if (response is PreferencesResponse.Success<*>) {
+            val data = response.data as List<*>
+            RepositoryResponse.Success(
+                data.map { AdaptiveSearchRequest((it as SearchRequest).searches) }
+            )
+        } else RepositoryResponse.Failed()
+    }
+
+    override fun convertCompaniesForInsert(companies: List<AdaptiveCompany>): List<Company> {
+        return companies.map { convertCompanyForInsert(it) }
     }
 
     override fun convertCompanyForInsert(company: AdaptiveCompany): Company {
         return mAdapter.toDatabaseCompany(company)
     }
 
-    override fun convertSearchesForResponse(searches: List<Search>): RepositoryResponse<List<AdaptiveSearch>> {
-        return RepositoryResponse.Success(List(searches.size) { convertSearchForResponse(searches[it]) })
-    }
-
-    override fun convertSearchForInsert(search: AdaptiveSearch): Search {
-        return Search(search.tickerName)
+    override fun convertSearchForInsert(search: AdaptiveSearchRequest): SearchRequest {
+        return SearchRequest(search.search)
     }
 }

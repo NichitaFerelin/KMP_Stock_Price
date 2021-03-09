@@ -1,16 +1,17 @@
 package com.ferelin.repository.dataConverter
 
+import android.util.Log
 import com.ferelin.local.model.Company
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utilits.Currency
-import com.ferelin.repository.utilits.TimeMillis
+import com.ferelin.repository.utilits.Time
 import java.text.DateFormat
 import java.util.*
 
 class DataAdapter {
 
     fun fromLongToDateStr(time: Long): String {
-        val convertedTime = TimeMillis.convertFromResponse(time)
+        val convertedTime = Time.convertMillisFromResponse(time)
         val locale = Locale("en", "EN")
         val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
         return dateFormat.format(Date(convertedTime)).filter { it != ',' }
@@ -39,13 +40,13 @@ class DataAdapter {
 
         val resultStr = adaptPrice(price, separatorSymbol)
         return when (currencySymbol) {
-            Currency.USD_SYMBOL -> "${currencySymbol}${resultStr.reversed()}"
-            Currency.RUB_SYMBOL -> "${resultStr.reversed()} $currencySymbol"
-            else -> "?${resultStr.reversed()}"
+            Currency.USD_SYMBOL -> "$currencySymbol$resultStr"
+            Currency.RUB_SYMBOL -> "$resultStr $currencySymbol"
+            else -> "?$resultStr"
         }
     }
 
-    fun createDayProfitList(
+    /*fun createDayProfitList(
         openPrices: List<Double>,
         closePrices: List<Double>
     ): List<String> {
@@ -69,6 +70,25 @@ class DataAdapter {
             val prefix = if (closePrice > openPrice) "+" else "-"
             "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
         }
+    }*/
+
+    fun calculateProfit(currentPrice: Double, previousPrice: Double): String {
+        val numberProfit = currentPrice - previousPrice
+        val numberProfitStr = numberProfit.toString()
+
+        val digitNumberProfit = numberProfitStr.substringBefore('.').filter { it.isDigit() }
+        val remainderNumberProfit = with(numberProfitStr.substringAfter('.')) {
+            if (length >= 2) substring(0, 2) else this
+        }
+
+        val percentProfit = (100 * (currentPrice - previousPrice) / currentPrice).toString()
+        val digitPercentProfit = percentProfit.substringBefore('.').filter { it.isDigit() }
+        val remainderPercentProfit = with(percentProfit.substringAfter('.')) {
+            if (length >= 2) substring(0, 2) else this
+        }
+
+        val prefix = if (currentPrice > previousPrice) "+" else "-"
+        return "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
     }
 
     fun toDatabaseCompany(adaptiveCompany: AdaptiveCompany): Company {
@@ -84,13 +104,24 @@ class DataAdapter {
             adaptiveCompany.currency,
             adaptiveCompany.capitalization,
             adaptiveCompany.isFavourite,
-            adaptiveCompany.lastPrice,
-            adaptiveCompany.openPrices,
-            adaptiveCompany.highPrices,
-            adaptiveCompany.lowPrices,
-            adaptiveCompany.closePrices,
-            adaptiveCompany.dayProfitPercents,
-            adaptiveCompany.timestamps
+            adaptiveCompany.dayCurrentPrice,
+            adaptiveCompany.dayPreviousClosePrice,
+            adaptiveCompany.dayOpenPrice,
+            adaptiveCompany.dayHighPrice,
+            adaptiveCompany.dayLowPrice,
+            adaptiveCompany.dayProfit,
+            adaptiveCompany.historyOpenPrices,
+            adaptiveCompany.historyHighPrices,
+            adaptiveCompany.historyLowPrices,
+            adaptiveCompany.historyClosePrices,
+            adaptiveCompany.historyTimestampsPrices,
+            adaptiveCompany.newsTimestamps,
+            adaptiveCompany.newsHeadline,
+            adaptiveCompany.newsIds,
+            adaptiveCompany.newsImages,
+            adaptiveCompany.newsSource,
+            adaptiveCompany.newsSummary,
+            adaptiveCompany.newsUrl
         )
     }
 
@@ -106,14 +137,25 @@ class DataAdapter {
             company.industry,
             company.currency,
             company.capitalization,
-            company.lastPrice,
+            company.dayCurrentPrice,
+            company.dayPreviousClosePrice,
+            company.dayOpenPrice,
+            company.dayHighPrice,
+            company.dayLowPrice,
+            company.dayProfit,
             company.isFavourite,
-            company.openPrices,
-            company.highPrices,
-            company.lowPrices,
-            company.closePrices,
-            timestamps = company.timestamps,
-            dayProfitPercents = company.dayProfit
+            company.historyOpenPrices,
+            company.historyHighPrices,
+            company.historyLowPrices,
+            company.historyClosePrices,
+            company.historyTimestampsPrices,
+            company.newsTimestamps,
+            company.newsHeadline,
+            company.newsIds,
+            company.newsImages,
+            company.newsSource,
+            company.newsSummary,
+            company.newsUrl
         )
     }
 
@@ -124,33 +166,31 @@ class DataAdapter {
     }
 
     private fun adaptPrice(price: Double, separator: Char = '.'): String {
-        val priceStr = price.toString()
+        Log.d("Test", "[price: ${price.toString()}]")
         var resultStr = ""
-        if (priceStr.last() == '0' && priceStr[priceStr.lastIndex - 1] == '.') {
-            resultStr = priceStr.substring(0, priceStr.lastIndex - 1)
-        } else {
-            var cursor = priceStr.lastIndex
-            var digitCounter = 0
-            while (cursor >= 0) {
-                val currentSymbol = priceStr[cursor]
-                when {
-                    currentSymbol.isDigit() -> {
-                        resultStr += currentSymbol
-                        digitCounter++
-                        if (digitCounter == 3 && cursor != 0) {
-                            resultStr += " "
-                            digitCounter = 0
-                        }
-                    }
-                    else -> {
-                        resultStr += separator
-                        resultStr.trim()
-                        digitCounter = 0
-                    }
-                }
-                cursor--
+        val priceStr = price.toString()
+
+        val reminder = priceStr.substringAfter(".")
+        var formattedSeparator = separator.toString()
+        val formattedReminder = when {
+            reminder.length > 2 -> reminder.substring(0, 2)
+            reminder.last() == '0' -> {
+                formattedSeparator = ""
+                ""
+            }
+            else -> reminder
+        }
+
+        val integer = priceStr.substringBefore(".")
+        var counter = 0
+        for (index in integer.length - 1 downTo 0) {
+            resultStr += integer[index]
+            counter++
+            if (counter == 3 && index != 0) {
+                resultStr += " "
+                counter = 0
             }
         }
-        return resultStr
+        return "${resultStr.reversed()}$formattedSeparator$formattedReminder"
     }
 }

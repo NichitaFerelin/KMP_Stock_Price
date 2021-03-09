@@ -2,7 +2,8 @@ package com.ferelin.repository.dataConverter
 
 import com.ferelin.local.model.CompaniesResponse
 import com.ferelin.local.model.Company
-import com.ferelin.local.model.Search
+import com.ferelin.local.model.PreferencesResponse
+import com.ferelin.local.model.SearchRequest
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utilits.RepositoryResponse
@@ -18,7 +19,7 @@ interface DataConverterHelper {
 
     fun convertStockCandleResponse(
         response: BaseResponse
-    ): RepositoryResponse<AdaptiveStockCandle>
+    ): RepositoryResponse<AdaptiveStockCandles>
 
     fun convertCompanyProfileResponse(
         response: BaseResponse,
@@ -28,13 +29,18 @@ interface DataConverterHelper {
 
     fun convertStockSymbolsResponse(response: BaseResponse): RepositoryResponse<AdaptiveStockSymbols>
 
+    fun convertCompanyNewsResponse(
+        response: BaseResponse,
+        symbol: String
+    ): RepositoryResponse<AdaptiveCompanyNews>
+
+    fun convertCompanyQuoteResponse(response: BaseResponse): RepositoryResponse<AdaptiveCompanyQuote>
+
+    fun convertSearchesForResponse(response: PreferencesResponse): RepositoryResponse<List<AdaptiveSearchRequest>>
+
     fun convertCompaniesForInsert(companies: List<AdaptiveCompany>): List<Company>
 
     fun convertCompanyForInsert(company: AdaptiveCompany): Company
 
-    fun convertSearchForResponse(search: Search) : AdaptiveSearch
-
-    fun convertSearchesForResponse(searches: List<Search>): RepositoryResponse<List<AdaptiveSearch>>
-
-    fun convertSearchForInsert(search: AdaptiveSearch): Search
+    fun convertSearchForInsert(search: AdaptiveSearchRequest): SearchRequest
 }

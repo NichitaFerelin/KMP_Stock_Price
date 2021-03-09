@@ -10,11 +10,16 @@ interface NetworkManagerHelper {
 
     fun loadCompanyProfile(symbol: String): Flow<BaseResponse>
 
-    fun loadStockCandle(
+    fun loadStockCandles(
         symbol: String,
-        position: Int,
         from: Long,
         to: Long,
         resolution: String
     ): Flow<BaseResponse>
+
+    fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse>
+
+    fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse>
+
+    fun setThrottleManagerHistory(map: HashMap<String, Any?>)
 }

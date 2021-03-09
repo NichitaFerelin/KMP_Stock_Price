@@ -2,7 +2,7 @@ package com.ferelin.repository
 
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utilits.RepositoryResponse
-import com.ferelin.repository.utilits.TimeMillis
+import com.ferelin.repository.utilits.Time
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryManagerHelper {
@@ -15,21 +15,25 @@ interface RepositoryManagerHelper {
 
     fun loadStockCandles(
         company: AdaptiveCompany,
-        position: Int,
-        from: Long = TimeMillis.convertForRequest(System.currentTimeMillis() - TimeMillis.ONE_YEAR),
-        to: Long = TimeMillis.convertForRequest(System.currentTimeMillis()),
+        from: Long = Time.convertMillisForRequest(System.currentTimeMillis() - Time.ONE_YEAR),
+        to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
         resolution: String = "D"
-    ): Flow<RepositoryResponse<AdaptiveStockCandle>>
+    ): Flow<RepositoryResponse<AdaptiveStockCandles>>
 
     fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>>
 
     fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStockSymbols>>
 
+    fun loadCompanyNews(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyNews>>
+
+    fun loadCompanyQuote(
+        symbol: String,
+        position: Int
+    ): Flow<RepositoryResponse<AdaptiveCompanyQuote>>
+
     fun updateCompany(adaptiveCompany: AdaptiveCompany)
 
-    fun getSearchesHistory() : Flow<RepositoryResponse<List<AdaptiveSearch>>>
+    fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
 
-    fun getPopularSearches() : List<AdaptiveSearch>
-
-    fun insertSearch(search: AdaptiveSearch)
+    suspend fun insertSearch(search: AdaptiveSearchRequest)
 }

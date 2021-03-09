@@ -3,7 +3,9 @@ package com.ferelin.remote.utilits
 object Api {
     // https://finnhub.io/docs/api/introduction
     const val COMPANY_PROFILE = "company-profile-api"
-    const val STOCK_CANDLE = "stock-candle-api"
+    const val COMPANY_QUOTE = "company-quote-api"
+    const val COMPANY_NEWS = "company-news-api"
+    const val STOCK_CANDLES = "stock-candle-api"
     const val STOCK_SYMBOLS = "stock-symbols-api"
 
     const val FINNHUB_BASE_URL = "https://finnhub.io/api/v1/"

@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface StockCandlesApi {
 
     @GET("stock/candle")
-    fun getStockCandle(
+    fun getStockCandles(
         @Query("symbol") symbol: String,
         @Query("token") token: String,
         @Query("from") from: Long,
