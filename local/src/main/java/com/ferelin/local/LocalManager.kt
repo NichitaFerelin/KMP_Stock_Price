@@ -1,12 +1,9 @@
 package com.ferelin.local
 
-import com.ferelin.local.databases.companies.CompaniesManagerHelper
-import com.ferelin.local.databases.searchesHistory.SearchesHistoryManagerHelper
+import com.ferelin.local.database.CompaniesManagerHelper
 import com.ferelin.local.json.JsonManagerHelper
-import com.ferelin.local.model.CompaniesResponse
-import com.ferelin.local.model.CompaniesResponses
-import com.ferelin.local.model.Company
-import com.ferelin.local.model.Search
+import com.ferelin.local.model.*
+import com.ferelin.local.prefs.StorePreferencesHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -14,7 +11,7 @@ import kotlinx.coroutines.flow.map
 class LocalManager(
     private val mJsonManagerHelper: JsonManagerHelper,
     private val mCompaniesManagerHelper: CompaniesManagerHelper,
-    private val mSearchesHistoryManagerHelper: SearchesHistoryManagerHelper
+    private val mStorePreferencesHelper: StorePreferencesHelper
 ) : LocalManagerHelper {
 
     override fun insertCompany(company: Company) {
@@ -45,6 +42,16 @@ class LocalManager(
         }
     }
 
+    override fun getSearchesHistoryAsResponse(): Flow<PreferencesResponse> {
+        return getSearchesHistory().map {
+            it?.let {
+                val result = mutableListOf<SearchRequest>()
+                it.forEach { result.add(SearchRequest(it)) }
+                PreferencesResponse.Success(result.toList())
+            } ?: PreferencesResponse.Failed
+        }
+    }
+
     override fun getCompany(symbol: String): Flow<Company> {
         return mCompaniesManagerHelper.getCompany(symbol)
     }
@@ -61,23 +68,11 @@ class LocalManager(
         return mJsonManagerHelper.getCompaniesFromJson()
     }
 
-    override fun insertSearch(search: Search) {
-        mSearchesHistoryManagerHelper.insertSearch(search)
+    override fun getSearchesHistory(): Flow<Set<String>?> {
+        return mStorePreferencesHelper.getSearchesHistory()
     }
 
-    override fun getSearchesHistory(): Flow<List<Search>> {
-        return mSearchesHistoryManagerHelper.getSearchesHistory()
-    }
-
-    override fun getPopularSearches(): List<Search> {
-        return mSearchesHistoryManagerHelper.getPopularSearches()
-    }
-
-    override fun deleteSearch(name: String) {
-        mSearchesHistoryManagerHelper.deleteSearch(name)
-    }
-
-    override fun deleteSearch(search: Search) {
-        mSearchesHistoryManagerHelper.deleteSearch(search)
+    override suspend fun addSearch(request: String) {
+        mStorePreferencesHelper.addSearch(request)
     }
 }

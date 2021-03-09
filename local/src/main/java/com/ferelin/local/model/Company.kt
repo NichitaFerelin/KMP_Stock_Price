@@ -2,7 +2,7 @@ package com.ferelin.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ferelin.local.databases.companies.CompaniesDatabase
+import com.ferelin.local.database.CompaniesDatabase
 import com.squareup.moshi.Json
 
 @Entity(tableName = CompaniesDatabase.DB_NAME)
@@ -19,11 +19,22 @@ data class Company(
     @Json(name = "currency") val currency: String,
     @Json(name = "marketCapitalization") val capitalization: String,
     var isFavourite: Boolean = false,
-    var lastPrice: String = "",
-    var openPrices: List<String> = emptyList(),
-    var highPrices: List<String> = emptyList(),
-    var lowPrices: List<String> = emptyList(),
-    var closePrices: List<String> = emptyList(),
-    var dayProfit: List<String> = emptyList(),
-    var timestamps: List<String> = emptyList()
+    var dayCurrentPrice: String = "",
+    var dayPreviousClosePrice: String = "",
+    var dayOpenPrice: String = "",
+    var dayHighPrice: String = "",
+    var dayLowPrice: String = "",
+    var dayProfit: String = "",
+    var historyOpenPrices: List<String> = emptyList(),
+    var historyHighPrices: List<String> = emptyList(),
+    var historyLowPrices: List<String> = emptyList(),
+    var historyClosePrices: List<String> = emptyList(),
+    var historyTimestampsPrices: List<String> = emptyList(),
+    var newsTimestamps: List<String> = emptyList(),
+    var newsHeadline: List<String> = emptyList(),
+    var newsIds: List<String> = emptyList(),
+    var newsImages: List<String> = emptyList(),
+    var newsSource: List<String> = emptyList(),
+    var newsSummary: List<String> = emptyList(),
+    var newsUrl: List<String> = emptyList(),
 )

@@ -1,4 +1,4 @@
-package com.ferelin.local.databases.companies
+package com.ferelin.local.database
 
 import androidx.room.*
 import com.ferelin.local.model.Company
