@@ -6,17 +6,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.ItemStockBinding
-import com.ferelin.stockprice.utils.StocksClickListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.ferelin.stockprice.utils.StockClickListener
 
 class StocksRecyclerAdapter(
-    private var mStocksClickListener: StocksClickListener? = null
+    private var mStockClickListener: StockClickListener? = null
 ) : RecyclerView.Adapter<StocksRecyclerAdapter.StockViewHolder>() {
 
     private var mCompanies = ArrayList<AdaptiveCompany>()
+    val companies: List<AdaptiveCompany>
+        get() = mCompanies.toList()
 
     private var mOnBindCallback: ((
         holder: StockViewHolder,
@@ -32,10 +31,10 @@ class StocksRecyclerAdapter(
         holder.apply {
             bind(mCompanies[position])
             itemView.setOnClickListener {
-                mStocksClickListener?.onStockClicked(mCompanies[holder.adapterPosition])
+                mStockClickListener?.onStockClicked(mCompanies[holder.adapterPosition])
             }
             binding.imageViewFavourite.setOnClickListener {
-                mStocksClickListener?.onFavouriteIconClicked(mCompanies[holder.adapterPosition])
+                mStockClickListener?.onFavouriteIconClicked(mCompanies[holder.adapterPosition])
             }
             mOnBindCallback?.invoke(holder, mCompanies[position], position)
         }
@@ -53,8 +52,8 @@ class StocksRecyclerAdapter(
         super.setHasStableIds(true)
     }
 
-    fun setOnStocksCLickListener(listener: StocksClickListener) {
-        mStocksClickListener = listener
+    fun setOnStockCLickListener(listener: StockClickListener) {
+        mStockClickListener = listener
     }
 
     fun setOnBindCallback(
@@ -63,34 +62,28 @@ class StocksRecyclerAdapter(
         mOnBindCallback = func
     }
 
-    suspend fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
-        withContext(Dispatchers.Main) {
-            mCompanies = companies
-            notifyDataSetChanged()
-        }
+    fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
+        mCompanies = companies
+        notifyDataSetChanged()
     }
 
-    suspend fun updateCompany(company: AdaptiveCompany) {
-        val index = mCompanies.indexOf(company)
-        if (index != -1) {
-            mCompanies[index] = company
-            withContext(Dispatchers.Main) { notifyItemChanged(index) }
-        }
+    fun updateCompany(company: AdaptiveCompany, index: Int) {
+        mCompanies[index] = company
+        notifyItemChanged(index)
     }
 
-    suspend fun addCompany(company: AdaptiveCompany) {
-        withContext(Dispatchers.Main) {
-            mCompanies.add(0, company)
-            notifyItemInserted(0)
-        }
+    fun addCompany(company: AdaptiveCompany) {
+        mCompanies.add(0, company)
+        notifyItemInserted(0)
     }
 
-    suspend fun removeCompany(company: AdaptiveCompany) {
-        val index = mCompanies.indexOf(company)
-        if (index != -1) {
-            mCompanies.removeAt(index)
-            withContext(Dispatchers.Main) { notifyItemRemoved(index) }
-        }
+    fun removeCompany(index: Int) {
+        mCompanies.removeAt(index)
+        notifyItemRemoved(index)
+    }
+
+    fun invalidate() {
+        mCompanies.clear()
     }
 
     class StockViewHolder private constructor(
@@ -99,14 +92,12 @@ class StocksRecyclerAdapter(
 
         fun bind(item: AdaptiveCompany) {
             binding.apply {
-                textViewTicker.text = item.ticker
-                textViewTickerName.text = item.name
-                textViewLastPrice.text = item.lastPrice
-                textViewDynamic.text = item.dayProfitPercents.lastOrNull() ?: ""
-                textViewDynamic.setTextColor(
-                    item.tickerProfitBackground.lastOrNull() ?: R.color.black
-                )
-                imageViewFavourite.setImageResource(item.favouriteIconBackground)
+                textViewCompanyName.text = item.name
+                textViewCompanySymbol.text = item.symbol
+                textViewCurrentPrice.text = item.dayCurrentPrice
+                textViewDayProfit.text = item.dayProfit
+                textViewDayProfit.setTextColor(item.dayProfitBackground)
+                imageViewFavourite.setImageResource(item.favouriteIconDrawable)
                 root.setCardBackgroundColor(item.holderBackground)
 
                 Glide

@@ -95,7 +95,10 @@ class DataManager(
                 dayLowPrice = responseData.lowPrice
                 dayCurrentPrice = responseData.currentPrice
                 dayPreviousClosePrice = responseData.previousClosePrice
-                dayProfit = responseData.dayDelta
+                dayProfit = DataManagerHelper.calculateProfit(
+                    dayCurrentPrice.filter { it.isDigit() || it == '.' }.toDouble(),
+                    dayOpenPrice.filter { it.isDigit() || it == '.' }.toDouble()
+                )
                 dayProfitBackground = mDataStylesManager.getProfitBackground(dayProfit)
             }
             mLocalInteractorHelper.updateCompany(it)
@@ -134,6 +137,12 @@ class DataManager(
         val companyToUpdate = mCompanies?.find { it.symbol == response.data.symbol }
         companyToUpdate?.apply {
             dayCurrentPrice = response.data.lastPrice
+            dayProfit = DataManagerHelper.calculateProfit(
+                dayCurrentPrice.filter { it.isDigit() || it == '.' }.toDouble(),
+                dayOpenPrice.filter { it.isDigit() || it == '.' }.toDouble()
+            )
+            dayProfitBackground = mDataStylesManager.getProfitBackground(dayProfit)
         }
+        response.data.company = companyToUpdate
     }
 }

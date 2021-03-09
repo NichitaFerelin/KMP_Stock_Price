@@ -1,22 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:ignore="MissingConstraints">
 
-    <include
-        android:id="@+id/item_suggestion"
-        layout="@layout/item_suggestion"/>
+    <TextView
+        android:id="@+id/textViewCurrentPrice"
+        style="@style/textViewH1"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="$131.93" />
+
+    <TextView
+        android:id="@+id/textViewPercents"
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewCurrentPrice"
+        tools:text="+$0.12(1,15%)"
+        tools:textColor="@color/green" />
 
     <com.ferelin.stockprice.custom.chart.ChartView
-        android:id="@+id/charView"
+        android:id="@+id/chartView"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="260dp"
         android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewPercents" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="cardView, textViewPrice, textViewDate" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="99dp"
+        android:layout_height="64dp"
+        android:background="@color/black"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:text="$124.53"
+        app:layout_constraintBottom_toTopOf="@id/textViewDate"
+        app:layout_constraintEnd_toEndOf="@id/cardView"
+        app:layout_constraintStart_toStartOf="@id/cardView"
+        app:layout_constraintTop_toTopOf="@id/cardView" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_horizontal"
+        android:text="3 nov 2020"
+        app:layout_constraintBottom_toBottomOf="@id/cardView"
+        app:layout_constraintEnd_toEndOf="@id/cardView"
+        app:layout_constraintStart_toStartOf="@id/cardView"
+        app:layout_constraintTop_toBottomOf="@id/textViewPrice" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flowButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="18dp"
+        app:constraint_referenced_ids="cardViewDay, cardViewWeek, cardViewMonth, cardViewHalfYear, cardViewYear, cardViewAll"
+        app:flow_horizontalGap="10dp"
+        app:flow_horizontalStyle="spread"
+        app:flow_verticalGap="10dp"
+        app:flow_verticalStyle="spread"
+        app:flow_wrapMode="chain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chartView" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewDay"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/whiteDark"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="D"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewDay"
+        app:layout_constraintEnd_toEndOf="@id/cardViewDay"
+        app:layout_constraintStart_toStartOf="@id/cardViewDay"
+        app:layout_constraintTop_toTopOf="@id/cardViewDay" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewWeek"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/whiteDark"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="W"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewWeek"
+        app:layout_constraintEnd_toEndOf="@id/cardViewWeek"
+        app:layout_constraintStart_toStartOf="@id/cardViewWeek"
+        app:layout_constraintTop_toTopOf="@id/cardViewWeek" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewMonth"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/whiteDark"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="M"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewMonth"
+        app:layout_constraintEnd_toEndOf="@id/cardViewMonth"
+        app:layout_constraintStart_toStartOf="@id/cardViewMonth"
+        app:layout_constraintTop_toTopOf="@id/cardViewMonth" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewHalfYear"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/whiteDark"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="6M"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewHalfYear"
+        app:layout_constraintEnd_toEndOf="@id/cardViewHalfYear"
+        app:layout_constraintStart_toStartOf="@id/cardViewHalfYear"
+        app:layout_constraintTop_toTopOf="@id/cardViewHalfYear" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewYear"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/whiteDark"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="1Y"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewYear"
+        app:layout_constraintEnd_toEndOf="@id/cardViewYear"
+        app:layout_constraintStart_toStartOf="@id/cardViewYear"
+        app:layout_constraintTop_toTopOf="@id/cardViewYear" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewAll"
+        android:layout_width="42dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/black"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp" />
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:text="All"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewAll"
+        app:layout_constraintEnd_toEndOf="@id/cardViewAll"
+        app:layout_constraintStart_toStartOf="@id/cardViewAll"
+        app:layout_constraintTop_toTopOf="@id/cardViewAll" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewBuy"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/black"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/flowButtons"
+        app:layout_constraintVertical_bias="0" />
+
+    <TextView
+        android:id="@+id/textViewBuy"
+        style="@style/textViewH3"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewBuy"
+        app:layout_constraintEnd_toEndOf="@id/cardViewBuy"
+        app:layout_constraintStart_toStartOf="@id/cardViewBuy"
+        app:layout_constraintTop_toTopOf="@id/cardViewBuy"
+        tools:text="Buy for $132.04" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

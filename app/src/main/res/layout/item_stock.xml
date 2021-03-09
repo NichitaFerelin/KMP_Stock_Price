@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="68dp"
-    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="16dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    tools:backgroundTint="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,7 +18,9 @@
             android:layout_height="52dp"
             android:layout_marginVertical="8dp"
             android:layout_marginStart="8dp"
+            android:backgroundTint="@color/white"
             app:cardCornerRadius="13dp"
+            app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -32,13 +34,14 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/textViewTicker"
+            android:id="@+id/textViewCompanySymbol"
             style="@style/textViewH2"
             android:layout_width="wrap_content"
             android:layout_marginStart="12dp"
-            app:layout_constraintBottom_toTopOf="@id/textViewTickerName"
+            android:layout_marginTop="14dp"
+            app:layout_constraintBottom_toTopOf="@id/textViewCompanyName"
             app:layout_constraintStart_toEndOf="@id/cardViewIcon"
-            app:layout_constraintTop_toTopOf="@id/cardViewIcon"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="MSFT" />
 
         <ImageView
@@ -47,39 +50,40 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:src="@drawable/ic_favourite"
-            app:layout_constraintBottom_toBottomOf="@id/textViewTicker"
-            app:layout_constraintStart_toEndOf="@id/textViewTicker"
-            app:layout_constraintTop_toTopOf="@id/textViewTicker" />
+            app:layout_constraintBottom_toBottomOf="@id/textViewCompanySymbol"
+            app:layout_constraintStart_toEndOf="@id/textViewCompanySymbol"
+            app:layout_constraintTop_toTopOf="@id/textViewCompanySymbol" />
 
         <TextView
-            android:id="@+id/textViewTickerName"
+            android:id="@+id/textViewCompanyName"
             style="@style/textViewBodySemiBold"
-            android:layout_marginEnd="6dp"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:ellipsize="end"
             android:lines="1"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
-            app:layout_constraintEnd_toStartOf="@id/textViewDynamic"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@id/textViewTicker"
-            app:layout_constraintTop_toBottomOf="@id/textViewTicker"
+            app:layout_constraintEnd_toStartOf="@id/textViewDayProfit"
+            app:layout_constraintStart_toEndOf="@id/cardViewIcon"
+            app:layout_constraintTop_toBottomOf="@id/textViewCompanySymbol"
             tools:text="Microsoft Corporation" />
 
         <TextView
-            android:id="@+id/textViewLastPrice"
+            android:id="@+id/textViewCurrentPrice"
             style="@style/textViewH2"
+            android:layout_width="wrap_content"
             android:layout_marginTop="14dp"
             android:layout_marginEnd="17dp"
             android:layout_marginBottom="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="$72.16" />
+            tools:text="$ 712.16" />
 
         <TextView
-            android:id="@+id/textViewDynamic"
+            android:id="@+id/textViewDayProfit"
             style="@style/textViewBody"
+            android:layout_width="wrap_content"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="14dp"
-            android:gravity="end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="+$0.12(1,15%)" />

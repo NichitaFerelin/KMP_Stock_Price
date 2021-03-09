@@ -4,23 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.databinding.FragmentPagerBinding
+import com.ferelin.stockprice.base.BaseFragment
+import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.ui.search.SearchFragment
 
-class StocksPagerFragment : Fragment() {
+class StocksPagerFragment : BaseFragment() {
 
-    private lateinit var mBinding: FragmentPagerBinding
+    private lateinit var mBinding: FragmentStocksPagerBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentPagerBinding.inflate(inflater, container, false)
+        mBinding = FragmentStocksPagerBinding.inflate(inflater, container, false)
         return mBinding.root
     }
 
@@ -31,7 +31,7 @@ class StocksPagerFragment : Fragment() {
 
     private fun setUpComponents() {
         mBinding.viewPager.apply {
-            adapter = StocksPagerAdapter(parentFragmentManager, lifecycle)
+            adapter = StocksPagerAdapter(childFragmentManager, lifecycle)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -42,7 +42,8 @@ class StocksPagerFragment : Fragment() {
 
         mBinding.cardViewSearch.setOnClickListener {
             requireActivity().supportFragmentManager.commit {
-                replace(R.id.fragmentContainer, SearchFragment()).addToBackStack(null)
+                replace(R.id.fragmentContainer, SearchFragment())
+                addToBackStack(null)
             }
         }
     }

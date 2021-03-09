@@ -9,7 +9,7 @@
         android:id="@+id/sectionHints"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:constraint_referenced_ids="textViewRequests, recyclerViewPopularRequests, textViewSearched, recyclerViewSearched" />
+        app:constraint_referenced_ids="textViewRequests, recyclerViewPopularRequests, textViewSearched, recyclerViewSearchedHistory" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/sectionResults"
@@ -94,7 +94,7 @@
         app:layout_constraintTop_toBottomOf="@id/recyclerViewPopularRequests" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSearched"
+        android:id="@+id/recyclerViewSearchedHistory"
         android:layout_width="0dp"
         android:layout_height="88dp"
         android:layout_marginTop="11dp"

@@ -8,10 +8,12 @@ import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksPager.StocksPagerFragment
-import kotlinx.coroutines.Dispatchers
+import com.ferelin.stockprice.utils.CoroutineContextProvider
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    private val mCoroutineContext = CoroutineContextProvider()
 
     val dataInteractor: DataInteractor
         get() = (application as App).dataInteractor
@@ -20,8 +22,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            dataInteractor.prepareCompaniesData(this@MainActivity)
+        lifecycleScope.launch(mCoroutineContext.IO) {
+            dataInteractor.prepareData(this@MainActivity)
         }
 
         with(supportFragmentManager) {

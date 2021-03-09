@@ -14,6 +14,7 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 
@@ -83,6 +84,7 @@ class DataInteractor private constructor(
         awaitClose()
     }.flowOn(Dispatchers.IO)
 
+    @FlowPreview
     override suspend fun openConnection(): Flow<AdaptiveLastPrice> = callbackFlow {
         mRepositoryHelper.openConnection().collect {
             if (it is RepositoryResponse.Success) {
@@ -91,7 +93,7 @@ class DataInteractor private constructor(
             }
         }
         awaitClose()
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO).debounce(100)
 
     override suspend fun subscribeItem(symbol: String) {
         mRepositoryHelper.subscribeItem(symbol)
