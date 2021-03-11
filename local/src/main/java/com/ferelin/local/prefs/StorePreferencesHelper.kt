@@ -6,5 +6,5 @@ interface StorePreferencesHelper {
 
     fun getSearchesHistory(): Flow<Set<String>?>
 
-    suspend fun addSearch(request: String)
+    suspend fun setSearchesHistory(requests: Set<String>)
 }

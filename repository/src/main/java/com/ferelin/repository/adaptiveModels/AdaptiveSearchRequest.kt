@@ -1,3 +1,3 @@
 package com.ferelin.repository.adaptiveModels
 
-data class AdaptiveSearchRequest(val search: String)
+class AdaptiveSearchRequest(val searchText: String)

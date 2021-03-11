@@ -18,8 +18,8 @@ class RemoteManager(
         mWebSocketConnector.closeConnection()
     }
 
-    override fun subscribeItem(symbol: String) {
-        mWebSocketConnector.subscribeItem(symbol)
+    override fun subscribeItem(symbol: String, openPrice: Double) {
+        mWebSocketConnector.subscribeItem(symbol, openPrice)
     }
 
     override fun loadStockCandles(
@@ -45,9 +45,5 @@ class RemoteManager(
 
     override fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse> {
         return mNetworkManager.loadCompanyQuote(symbol, position)
-    }
-
-    override fun setThrottleManagerHistory(map: HashMap<String, Any?>) {
-        mNetworkManager.setThrottleManagerHistory(map)
     }
 }

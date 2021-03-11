@@ -1,39 +1,43 @@
 package com.ferelin.repository
 
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.utilits.RepositoryResponse
-import com.ferelin.repository.utilits.Time
+import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.repository.utils.Time
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryManagerHelper {
 
-    fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>>
-
-    fun openConnection(): Flow<RepositoryResponse<AdaptiveLastPrice>>
-
-    fun subscribeItem(symbol: String)
-
     fun loadStockCandles(
-        company: AdaptiveCompany,
+        symbol: String,
         from: Long = Time.convertMillisForRequest(System.currentTimeMillis() - Time.ONE_YEAR),
         to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
         resolution: String = "D"
-    ): Flow<RepositoryResponse<AdaptiveStockCandles>>
+    ): Flow<RepositoryResponse<AdaptiveCompanyHistory>>
 
     fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>>
 
-    fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStockSymbols>>
+    fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStocksSymbols>>
 
-    fun loadCompanyNews(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyNews>>
+    fun loadCompanyNews(
+        symbol: String,
+        from: String = Time.getYearAgoDateForRequest(),
+        to: String = Time.getCurrentDateForRequest()
+    ): Flow<RepositoryResponse<AdaptiveCompanyNews>>
+
+    fun openConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
 
     fun loadCompanyQuote(
         symbol: String,
         position: Int
-    ): Flow<RepositoryResponse<AdaptiveCompanyQuote>>
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 
-    fun updateCompany(adaptiveCompany: AdaptiveCompany)
+    fun saveCompanyData(adaptiveCompany: AdaptiveCompany)
+
+    fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>>
+
+    fun subscribeItem(symbol: String, openPrice: Double)
 
     fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
 
-    suspend fun insertSearch(search: AdaptiveSearchRequest)
+    suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>)
 }

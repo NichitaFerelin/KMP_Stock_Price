@@ -20,6 +20,4 @@ interface NetworkManagerHelper {
     fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse>
 
     fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse>
-
-    fun setThrottleManagerHistory(map: HashMap<String, Any?>)
 }

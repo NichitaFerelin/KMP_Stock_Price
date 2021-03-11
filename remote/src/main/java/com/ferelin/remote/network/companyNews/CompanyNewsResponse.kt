@@ -4,7 +4,6 @@ import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
 data class CompanyNewsResponse(
-    var symbol: String = "",
     @Json(name = "datetime") val dateTime: List<Double>,
     @Json(name = "headline") val headline: List<String>,
     @Json(name = "id") val newsId: List<Double>,

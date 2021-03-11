@@ -11,10 +11,12 @@ class WebResponseConverter {
     private val mListAdapter = mConverter.adapter(WebSocketSubResponse::class.java)
     private val mResponseAdapter = mConverter.adapter(WebSocketResponse::class.java).lenient()
 
-    fun fromJson(text: String): BaseResponse = try {
+    fun fromJson(text: String, openPricesHolder: HashMap<String, Double>): BaseResponse = try {
         val webSocketListResponse = mListAdapter.fromJson(text)!!
         val parsedJsonListStr = webSocketListResponse.data.first().toString()
-        val webSocketResponse = mResponseAdapter.fromJson(parsedJsonListStr)!!
+        val webSocketResponse = mResponseAdapter.fromJson(parsedJsonListStr)!!.apply {
+            message = openPricesHolder[symbol].toString()
+        }
 
         when {
             webSocketResponse.symbol.isEmpty() -> BaseResponse(Api.RESPONSE_NO_DATA)

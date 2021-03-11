@@ -19,6 +19,6 @@ class CompaniesConverter {
     fun jsonToListString(json: String): List<String> {
         val type = Types.newParameterizedType(List::class.java, String::class.javaObjectType)
         val adapter = mMoshi.adapter<List<String>>(type)
-        return adapter.fromJson(json)!!
+        return adapter.fromJson(json) ?: emptyList()
     }
 }

@@ -1,4 +1,4 @@
-package com.ferelin.repository.utilits
+package com.ferelin.repository.utils
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,12 +19,18 @@ object Time {
         return resultStr.toLong()
     }
 
-    fun getDataForRequest(): Pair<String, String> {
+    fun getCurrentDateForRequest(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+        val currentTimeMillis = System.currentTimeMillis()
+        val date = Date(currentTimeMillis)
+        return dateFormat.format(date)
+    }
+
+    fun getYearAgoDateForRequest(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
         val currentTimeMillis = System.currentTimeMillis()
         val yearAgoTimeMillis = currentTimeMillis - ONE_YEAR
-        val date = Date(currentTimeMillis)
         val yearAgoDate = Date(yearAgoTimeMillis)
-        return Pair(dateFormat.format(date), dateFormat.format(yearAgoDate))
+        return dateFormat.format(yearAgoDate)
     }
 }

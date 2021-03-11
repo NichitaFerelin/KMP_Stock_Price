@@ -1,12 +1,14 @@
-package com.ferelin.repository.utilits
+package com.ferelin.repository.utils
 
 import com.ferelin.remote.utilits.Api
 
 sealed class RepositoryResponse<out T> {
-    data class Success<out T>(
+
+    class Success<out T>(
+        val owner: String? = null,
         val data: T,
         val code: Int = Api.RESPONSE_OK
     ) : RepositoryResponse<T>()
 
-    data class Failed<out T>(val code: Int? = null) : RepositoryResponse<T>()
+    class Failed<out T>(val code: Int? = null) : RepositoryResponse<T>()
 }

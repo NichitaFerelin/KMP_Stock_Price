@@ -14,8 +14,7 @@ import com.ferelin.remote.webSocket.WebSocketConnector
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.dataConverter.DataConverter
 import com.ferelin.repository.dataConverter.DataConverterHelper
-import com.ferelin.repository.utilits.RepositoryResponse
-import com.ferelin.repository.utilits.Time
+import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.SingletonHolder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,60 +27,49 @@ class RepositoryManager private constructor(
 
     override fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>> {
         return mLocalManagerHelper.getAllCompaniesAsResponse().map {
-            mDataConverterHelper.convertDatabaseCompanies(it) { companies ->
-                val preparedForInsert = mDataConverterHelper.convertCompaniesForInsert(companies)
-                mLocalManagerHelper.insertAllCompanies(preparedForInsert)
-            }
+            mDataConverterHelper.convertCompaniesResponse(it)
         }
     }
 
-    override fun openConnection(): Flow<RepositoryResponse<AdaptiveLastPrice>> {
+    override fun openConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
         return mRemoteManagerHelper.openConnection().map {
             mDataConverterHelper.convertWebSocketResponse(it)
         }
     }
 
-    override fun subscribeItem(symbol: String) {
-        mRemoteManagerHelper.subscribeItem(symbol)
+    override fun subscribeItem(symbol: String, openPrice: Double) {
+        mRemoteManagerHelper.subscribeItem(symbol, openPrice)
     }
 
     override fun loadStockCandles(
-        company: AdaptiveCompany,
+        symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<RepositoryResponse<AdaptiveStockCandles>> {
-        return mRemoteManagerHelper.loadStockCandles(
-            company.symbol,
-            from,
-            to,
-            resolution
-        ).map {
-            mDataConverterHelper.convertStockCandleResponse(it)
+    ): Flow<RepositoryResponse<AdaptiveCompanyHistory>> {
+        return mRemoteManagerHelper.loadStockCandles(symbol, from, to, resolution).map {
+            mDataConverterHelper.convertStockCandlesResponse(it, symbol)
         }
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>> {
         return mRemoteManagerHelper.loadCompanyProfile(symbol).map {
-            mDataConverterHelper.convertCompanyProfileResponse(it, symbol) { company ->
-                mLocalManagerHelper.insertCompany(company)
-            }
+            mDataConverterHelper.convertCompanyProfileResponse(it, symbol)
         }
     }
 
-    override fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStockSymbols>> {
+    override fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStocksSymbols>> {
         return mRemoteManagerHelper.loadStockSymbols().map {
             mDataConverterHelper.convertStockSymbolsResponse(it)
         }
     }
 
-    override fun loadCompanyNews(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyNews>> {
-        val dateForRequest = Time.getDataForRequest()
-        return mRemoteManagerHelper.loadCompanyNews(
-            symbol,
-            dateForRequest.second,
-            dateForRequest.first
-        ).map {
+    override fun loadCompanyNews(
+        symbol: String,
+        from: String,
+        to: String
+    ): Flow<RepositoryResponse<AdaptiveCompanyNews>> {
+        return mRemoteManagerHelper.loadCompanyNews(symbol, from, to).map {
             mDataConverterHelper.convertCompanyNewsResponse(it, symbol)
         }
     }
@@ -89,13 +77,13 @@ class RepositoryManager private constructor(
     override fun loadCompanyQuote(
         symbol: String,
         position: Int
-    ): Flow<RepositoryResponse<AdaptiveCompanyQuote>> {
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
         return mRemoteManagerHelper.loadCompanyQuote(symbol, position).map {
             mDataConverterHelper.convertCompanyQuoteResponse(it)
         }
     }
 
-    override fun updateCompany(adaptiveCompany: AdaptiveCompany) {
+    override fun saveCompanyData(adaptiveCompany: AdaptiveCompany) {
         val preparedForInsert = mDataConverterHelper.convertCompanyForInsert(adaptiveCompany)
         mLocalManagerHelper.updateCompany(preparedForInsert)
     }
@@ -106,9 +94,9 @@ class RepositoryManager private constructor(
         }
     }
 
-    override suspend fun insertSearch(search: AdaptiveSearchRequest) {
-        val preparedForInsert = search.search
-        mLocalManagerHelper.addSearch(preparedForInsert)
+    override suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>) {
+        val preparedForInsert = mDataConverterHelper.convertSearchesForInsert(requests)
+        mLocalManagerHelper.setSearchesHistory(preparedForInsert)
     }
 
     companion object : SingletonHolder<RepositoryManager, Context>({

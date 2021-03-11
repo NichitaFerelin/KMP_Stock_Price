@@ -13,6 +13,7 @@ import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolApi
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.network.throttleManager.ThrottleManager
+import com.ferelin.remote.network.throttleManager.ThrottleManagerHelper
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.utilits.RetrofitDelegate
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ class NetworkManager : NetworkManagerHelper {
     private val mStockCandlesService = mRetrofit.create(StockCandlesApi::class.java)
     private val mStockSymbolsService = mRetrofit.create(StockSymbolApi::class.java)
 
-    private val mThrottleManager = ThrottleManager()
+    private val mThrottleManager: ThrottleManagerHelper = ThrottleManager()
 
     override fun loadStockSymbols(): Flow<BaseResponse> = callbackFlow {
         mStockSymbolsService
@@ -89,8 +90,4 @@ class NetworkManager : NetworkManagerHelper {
             }
             awaitClose { mThrottleManager.invalidate() }
         }.flowOn(Dispatchers.IO)
-
-    override fun setThrottleManagerHistory(map: HashMap<String, Any?>) {
-        mThrottleManager.setUpMessagesHistory(map)
-    }
 }

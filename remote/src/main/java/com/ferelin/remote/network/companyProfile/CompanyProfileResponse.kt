@@ -5,7 +5,6 @@ import com.squareup.moshi.Json
 
 data class CompanyProfileResponse(
     @Json(name = "name") val name: String,
-    @Json(name = "ticker") val ticker: String,
     @Json(name = "logo") val logoUrl: String,
     @Json(name = "country") val country: String,
     @Json(name = "phone") val phone: String,

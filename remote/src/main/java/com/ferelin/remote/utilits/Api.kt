@@ -2,6 +2,7 @@ package com.ferelin.remote.utilits
 
 object Api {
     // https://finnhub.io/docs/api/introduction
+
     const val COMPANY_PROFILE = "company-profile-api"
     const val COMPANY_QUOTE = "company-quote-api"
     const val COMPANY_NEWS = "company-news-api"
@@ -17,6 +18,4 @@ object Api {
     const val RESPONSE_UNDEFINED = 491
     const val RESPONSE_WEB_SOCKET_CLOSED = 492
     const val RESPONSE_TRADE_NOT_AVAILABLE = 493
-
-    // TODO CHECK code without internet
 }

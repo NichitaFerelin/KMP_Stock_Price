@@ -1,6 +1,6 @@
 package com.ferelin.local.json
 
-import com.ferelin.local.model.Company
+import com.ferelin.local.models.Company
 import kotlinx.coroutines.flow.Flow
 
 interface JsonManagerHelper {

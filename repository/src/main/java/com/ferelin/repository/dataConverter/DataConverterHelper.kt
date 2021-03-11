@@ -1,46 +1,42 @@
 package com.ferelin.repository.dataConverter
 
-import com.ferelin.local.model.CompaniesResponse
-import com.ferelin.local.model.Company
-import com.ferelin.local.model.PreferencesResponse
-import com.ferelin.local.model.SearchRequest
+import com.ferelin.local.models.Company
+import com.ferelin.local.responses.CompaniesResponse
+import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.utilits.RepositoryResponse
+import com.ferelin.repository.utils.RepositoryResponse
 
 interface DataConverterHelper {
 
-    fun convertDatabaseCompanies(
-        response: CompaniesResponse,
-        onNewData: (companies: List<AdaptiveCompany>) -> Unit
-    ): RepositoryResponse<List<AdaptiveCompany>>
+    fun convertCompaniesResponse(response: CompaniesResponse): RepositoryResponse<List<AdaptiveCompany>>
 
-    fun convertWebSocketResponse(response: BaseResponse): RepositoryResponse<AdaptiveLastPrice>
+    fun convertWebSocketResponse(response: BaseResponse): RepositoryResponse<AdaptiveWebSocketPrice>
 
-    fun convertStockCandleResponse(
-        response: BaseResponse
-    ): RepositoryResponse<AdaptiveStockCandles>
+    fun convertStockCandlesResponse(
+        response: BaseResponse,
+        symbol: String
+    ): RepositoryResponse<AdaptiveCompanyHistory>
 
     fun convertCompanyProfileResponse(
         response: BaseResponse,
-        symbol: String,
-        onNewData: (Company) -> Unit
+        symbol: String
     ): RepositoryResponse<AdaptiveCompanyProfile>
 
-    fun convertStockSymbolsResponse(response: BaseResponse): RepositoryResponse<AdaptiveStockSymbols>
+    fun convertStockSymbolsResponse(response: BaseResponse): RepositoryResponse<AdaptiveStocksSymbols>
 
     fun convertCompanyNewsResponse(
         response: BaseResponse,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews>
 
-    fun convertCompanyQuoteResponse(response: BaseResponse): RepositoryResponse<AdaptiveCompanyQuote>
+    fun convertCompanyQuoteResponse(response: BaseResponse): RepositoryResponse<AdaptiveCompanyDayData>
 
-    fun convertSearchesForResponse(response: PreferencesResponse): RepositoryResponse<List<AdaptiveSearchRequest>>
+    fun convertSearchesForResponse(response: SearchesResponse): RepositoryResponse<List<AdaptiveSearchRequest>>
 
     fun convertCompaniesForInsert(companies: List<AdaptiveCompany>): List<Company>
 
     fun convertCompanyForInsert(company: AdaptiveCompany): Company
 
-    fun convertSearchForInsert(search: AdaptiveSearchRequest): SearchRequest
+    fun convertSearchesForInsert(search: List<AdaptiveSearchRequest>): Set<String>
 }

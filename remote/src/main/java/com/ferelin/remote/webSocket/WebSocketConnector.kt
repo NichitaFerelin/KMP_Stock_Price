@@ -20,7 +20,10 @@ class WebSocketConnector : WebSocketConnectorHelper {
     private var mWebSocket: WebSocket? = null
     private var mMessagesQueue: Queue<String> = LinkedList()
 
-    override fun subscribeItem(symbol: String) {
+    private var mOpenPricesHolder = hashMapOf<String, Double>()
+
+    override fun subscribeItem(symbol: String, openPrice: Double) {
+        mOpenPricesHolder[symbol] = openPrice
         mWebSocket?.let {
             subscribe(it, symbol)
         } ?: mMessagesQueue.offer(symbol)
@@ -30,7 +33,8 @@ class WebSocketConnector : WebSocketConnectorHelper {
         val request = Request.Builder().url("$mBase$token").build()
         val okHttp = OkHttpClient()
         mWebSocket = okHttp.newWebSocket(request, WebSocketManager {
-            offer(mConverter.fromJson(it))
+            val converted = mConverter.fromJson(it, mOpenPricesHolder)
+            offer(converted)
         }).also { while (mMessagesQueue.isNotEmpty()) subscribe(it, mMessagesQueue.poll()!!) }
         okHttp.dispatcher.executorService.shutdown()
 

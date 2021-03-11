@@ -10,19 +10,17 @@ import kotlinx.coroutines.flow.map
 class StorePreferences(private val mContext: Context) : StorePreferencesHelper {
 
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
-
-    private val mSearchesRequestsHistoryKey = stringSetPreferencesKey("hisotory-key")
+    private val mSearchRequestsHistoryKey = stringSetPreferencesKey("hisotory-key")
 
     override fun getSearchesHistory(): Flow<Set<String>?> {
         return mContext.dataStorePreferences.data.map {
-            it[mSearchesRequestsHistoryKey]
+            it[mSearchRequestsHistoryKey]
         }
     }
 
-    override suspend fun addSearch(request: String) {
+    override suspend fun setSearchesHistory(requests: Set<String>) {
         mContext.dataStorePreferences.edit {
-            it[mSearchesRequestsHistoryKey]?.toMutableSet()?.add(request)
-            it[mSearchesRequestsHistoryKey]
+            it[mSearchRequestsHistoryKey] = requests
         }
     }
 }

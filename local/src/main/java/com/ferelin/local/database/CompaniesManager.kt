@@ -1,6 +1,6 @@
 package com.ferelin.local.database
 
-import com.ferelin.local.model.Company
+import com.ferelin.local.models.Company
 import kotlinx.coroutines.flow.Flow
 
 class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerHelper {
@@ -21,14 +21,6 @@ class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerH
 
     override fun getAllCompanies(): Flow<List<Company>> {
         return mCompaniesDao.getAll()
-    }
-
-    override fun getCompany(symbol: String): Flow<Company> {
-        return mCompaniesDao.get(symbol)
-    }
-
-    override fun deleteCompany(symbol: String) {
-        mCompaniesDao.delete(symbol)
     }
 
     override fun deleteCompany(company: Company) {

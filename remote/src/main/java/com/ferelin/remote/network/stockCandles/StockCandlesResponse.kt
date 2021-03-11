@@ -4,7 +4,6 @@ import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
 data class StockCandlesResponse(
-    var symbol: String = "",
     @Json(name = "o") val openPrices: List<Double>,
     @Json(name = "h") val highPrices: List<Double>,
     @Json(name = "l") val lowPrices: List<Double>,

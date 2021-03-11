@@ -2,8 +2,11 @@ package com.ferelin.local
 
 import com.ferelin.local.database.CompaniesManagerHelper
 import com.ferelin.local.json.JsonManagerHelper
-import com.ferelin.local.model.*
+import com.ferelin.local.models.Company
 import com.ferelin.local.prefs.StorePreferencesHelper
+import com.ferelin.local.responses.CompaniesResponse
+import com.ferelin.local.responses.Responses
+import com.ferelin.local.responses.SearchesResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -27,37 +30,35 @@ class LocalManager(
     }
 
     override fun getAllCompanies(): Flow<List<Company>> {
-        return getAllCompaniesAsResponse().map { it.data }
+        return mCompaniesManagerHelper.getAllCompanies()
     }
 
     override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {
-                val localJsonCompanies = getCompaniesFromJson().first()
-                CompaniesResponse(
-                    code = CompaniesResponses.LOADED_FROM_JSON,
-                    data = localJsonCompanies
-                )
-            } else CompaniesResponse(data = databaseCompanies)
+                val localJsonCompanies = getCompaniesFromJson().first().also {
+                    it.forEachIndexed { index, company ->
+                        company.id = index
+                    }
+                }
+                if (localJsonCompanies.isNotEmpty()) {
+                    insertAllCompanies(localJsonCompanies)
+
+                    CompaniesResponse.Success(
+                        code = Responses.LOADED_FROM_JSON,
+                        companies = localJsonCompanies
+                    )
+                } else CompaniesResponse.Failed
+            } else CompaniesResponse.Success(companies = databaseCompanies)
         }
     }
 
-    override fun getSearchesHistoryAsResponse(): Flow<PreferencesResponse> {
+    override fun getSearchesHistoryAsResponse(): Flow<SearchesResponse> {
         return getSearchesHistory().map {
-            it?.let {
-                val result = mutableListOf<SearchRequest>()
-                it.forEach { result.add(SearchRequest(it)) }
-                PreferencesResponse.Success(result.toList())
-            } ?: PreferencesResponse.Failed
+            if (it != null) {
+                SearchesResponse.Success(it)
+            } else SearchesResponse.Failed
         }
-    }
-
-    override fun getCompany(symbol: String): Flow<Company> {
-        return mCompaniesManagerHelper.getCompany(symbol)
-    }
-
-    override fun deleteCompany(symbol: String) {
-        mCompaniesManagerHelper.deleteCompany(symbol)
     }
 
     override fun deleteCompany(company: Company) {
@@ -72,7 +73,7 @@ class LocalManager(
         return mStorePreferencesHelper.getSearchesHistory()
     }
 
-    override suspend fun addSearch(request: String) {
-        mStorePreferencesHelper.addSearch(request)
+    override suspend fun setSearchesHistory(requests: Set<String>) {
+        mStorePreferencesHelper.setSearchesHistory(requests)
     }
 }

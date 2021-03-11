@@ -1,16 +1,14 @@
 package com.ferelin.repository.dataConverter
 
-import com.ferelin.local.model.Company
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.utilits.Currency
-import com.ferelin.repository.utilits.Time
+import com.ferelin.local.models.Company
+import com.ferelin.repository.adaptiveModels.*
 import java.text.DateFormat
 import java.util.*
 
 class DataAdapter {
 
     fun fromLongToDateStr(time: Long): String {
-        val convertedTime = Time.convertMillisFromResponse(time)
+        val convertedTime = convertMillisFromResponse(time)
         val locale = Locale("en", "EN")
         val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
         return dateFormat.format(Date(convertedTime)).filter { it != ',' }
@@ -25,106 +23,131 @@ class DataAdapter {
         return phone.substringBefore('.')
     }
 
-    fun adaptPrice(price: Double, currency: String = Currency.USD): String {
-        val currencySymbol = when (currency) {
-            Currency.RUB -> Currency.RUB_SYMBOL
-            Currency.USD -> Currency.USD_SYMBOL
-            else -> "?"
-        }
+    fun formatPrice(price: Double): String {
+        return "$${adaptPrice(price)}"
+    }
 
-        val separatorSymbol = when (currencySymbol) {
-            Currency.RUB_SYMBOL -> ','
-            else -> '.'
-        }
-
-        val resultStr = adaptPrice(price, separatorSymbol)
-        return when (currencySymbol) {
-            Currency.USD_SYMBOL -> "$currencySymbol$resultStr"
-            Currency.RUB_SYMBOL -> "$resultStr $currencySymbol"
-            else -> "?$resultStr"
-        }
+    fun convertMillisFromResponse(time: Long): Long {
+        val timeStr = time.toString()
+        val resultStr = "${timeStr}000"
+        return resultStr.toLong()
     }
 
     fun toDatabaseCompany(adaptiveCompany: AdaptiveCompany): Company {
         return Company(
-            adaptiveCompany.name,
-            adaptiveCompany.symbol,
-            adaptiveCompany.ticker,
-            adaptiveCompany.logoUrl,
-            adaptiveCompany.country,
-            adaptiveCompany.phone,
-            adaptiveCompany.webUrl,
-            adaptiveCompany.industry,
-            adaptiveCompany.currency,
-            adaptiveCompany.capitalization,
-            adaptiveCompany.isFavourite,
-            adaptiveCompany.dayCurrentPrice,
-            adaptiveCompany.dayPreviousClosePrice,
-            adaptiveCompany.dayOpenPrice,
-            adaptiveCompany.dayHighPrice,
-            adaptiveCompany.dayLowPrice,
-            adaptiveCompany.dayProfit,
-            adaptiveCompany.historyOpenPrices,
-            adaptiveCompany.historyHighPrices,
-            adaptiveCompany.historyLowPrices,
-            adaptiveCompany.historyClosePrices,
-            adaptiveCompany.historyTimestampsPrices,
-            adaptiveCompany.newsTimestamps,
-            adaptiveCompany.newsHeadline,
-            adaptiveCompany.newsIds,
-            adaptiveCompany.newsImages,
-            adaptiveCompany.newsSource,
-            adaptiveCompany.newsSummary,
-            adaptiveCompany.newsUrl
+            id = adaptiveCompany.id,
+
+            name = adaptiveCompany.companyProfile.name,
+
+            symbol = adaptiveCompany.companyProfile.symbol,
+            logoUrl = adaptiveCompany.companyProfile.logoUrl,
+            country = adaptiveCompany.companyProfile.country,
+            phone = adaptiveCompany.companyProfile.phone,
+            webUrl = adaptiveCompany.companyProfile.webUrl,
+            industry = adaptiveCompany.companyProfile.industry,
+            currency = adaptiveCompany.companyProfile.currency,
+            capitalization = adaptiveCompany.companyProfile.capitalization,
+
+            dayCurrentPrice = adaptiveCompany.companyDayData.currentPrice,
+            dayPreviousClosePrice = adaptiveCompany.companyDayData.previousClosePrice,
+            dayOpenPrice = adaptiveCompany.companyDayData.openPrice,
+            dayHighPrice = adaptiveCompany.companyDayData.highPrice,
+            dayLowPrice = adaptiveCompany.companyDayData.lowPrice,
+            dayProfit = adaptiveCompany.companyDayData.profit,
+
+            historyOpenPrices = adaptiveCompany.companyHistory.openPrices,
+            historyHighPrices = adaptiveCompany.companyHistory.highPrices,
+            historyLowPrices = adaptiveCompany.companyHistory.lowPrices,
+            historyClosePrices = adaptiveCompany.companyHistory.closePrices,
+            historyDatePrices = adaptiveCompany.companyHistory.datePrices,
+
+            newsDates = adaptiveCompany.companyNews.dates,
+            newsHeadlines = adaptiveCompany.companyNews.headlines,
+            newsIds = adaptiveCompany.companyNews.ids,
+            newsPreviewImagesUrls = adaptiveCompany.companyNews.previewImagesUrls,
+            newsSources = adaptiveCompany.companyNews.sources,
+            newsSummaries = adaptiveCompany.companyNews.summaries,
+            newsUrls = adaptiveCompany.companyNews.urls,
+
+            isFavourite = adaptiveCompany.isFavourite
         )
     }
 
     fun toAdaptiveCompany(company: Company): AdaptiveCompany {
         return AdaptiveCompany(
-            company.name,
-            company.symbol,
-            company.ticker,
-            company.logoUrl,
-            company.country,
-            company.phone,
-            company.webUrl,
-            company.industry,
-            company.currency,
-            company.capitalization,
-            company.dayCurrentPrice,
-            company.dayPreviousClosePrice,
-            company.dayOpenPrice,
-            company.dayHighPrice,
-            company.dayLowPrice,
-            company.dayProfit,
-            company.isFavourite,
-            company.historyOpenPrices,
-            company.historyHighPrices,
-            company.historyLowPrices,
-            company.historyClosePrices,
-            company.historyTimestampsPrices,
-            company.newsTimestamps,
-            company.newsHeadline,
-            company.newsIds,
-            company.newsImages,
-            company.newsSource,
-            company.newsSummary,
-            company.newsUrl
+            id = company.id,
+            companyProfile = AdaptiveCompanyProfile(
+                name = company.name,
+                symbol = company.symbol,
+                logoUrl = company.logoUrl,
+                country = company.country,
+                phone = company.phone,
+                webUrl = company.webUrl,
+                industry = company.industry,
+                currency = company.currency,
+                capitalization = company.capitalization
+            ),
+            companyDayData = AdaptiveCompanyDayData(
+                currentPrice = company.dayCurrentPrice,
+                previousClosePrice = company.dayPreviousClosePrice,
+                openPrice = company.dayOpenPrice,
+                highPrice = company.dayHighPrice,
+                lowPrice = company.dayLowPrice,
+                profit = company.dayProfit
+            ),
+            companyHistory = AdaptiveCompanyHistory(
+                openPrices = company.historyOpenPrices,
+                highPrices = company.historyHighPrices,
+                lowPrices = company.historyLowPrices,
+                closePrices = company.historyClosePrices,
+                datePrices = company.historyDatePrices
+            ),
+            companyNews = AdaptiveCompanyNews(
+                dates = company.newsDates,
+                headlines = company.newsHeadlines,
+                ids = company.newsIds,
+                previewImagesUrls = company.newsPreviewImagesUrls,
+                sources = company.newsSources,
+                summaries = company.newsSummaries,
+                urls = company.newsUrls
+            ),
+            companyStyle = AdaptiveCompanyStyle(),
+            isFavourite = company.isFavourite
         )
+    }
+
+    fun calculateProfit(currentPrice: Double, previousPrice: Double): String {
+        val numberProfit = currentPrice - previousPrice
+        val numberProfitStr = numberProfit.toString()
+
+        val digitNumberProfit = numberProfitStr.substringBefore('.').filter { it.isDigit() }
+        val remainderNumberProfit = with(numberProfitStr.substringAfter('.')) {
+            if (length >= 2) substring(0, 2) else this
+        }
+
+        val percentProfit = (100 * (currentPrice - previousPrice) / currentPrice).toString()
+        val digitPercentProfit = percentProfit.substringBefore('.').filter { it.isDigit() }
+        val remainderPercentProfit = with(percentProfit.substringAfter('.')) {
+            if (length >= 2) substring(0, 2) else this
+        }
+
+        val prefix = if (currentPrice > previousPrice) "+" else "-"
+        return "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
     }
 
     fun toAdaptiveCompanyFromJson(company: Company): AdaptiveCompany {
         return toAdaptiveCompany(company).also {
-            it.capitalization = adaptPrice(it.capitalization.toDouble(), Currency.USD)
+            it.companyProfile.capitalization =
+                adaptPrice(it.companyProfile.capitalization.toDouble())
         }
     }
 
-    private fun adaptPrice(price: Double, separator: Char = '.'): String {
+    private fun adaptPrice(price: Double): String {
         var resultStr = ""
         val priceStr = price.toString()
 
         val reminder = priceStr.substringAfter(".")
-        var formattedSeparator = separator.toString()
+        var formattedSeparator = "."
         val formattedReminder = when {
             reminder.length > 2 -> reminder.substring(0, 2)
             reminder.last() == '0' -> {
