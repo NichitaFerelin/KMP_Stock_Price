@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.utils
+package com.ferelin.shared
 
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
