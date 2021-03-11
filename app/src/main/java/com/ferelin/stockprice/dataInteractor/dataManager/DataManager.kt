@@ -1,10 +1,12 @@
 package com.ferelin.stockprice.dataInteractor.dataManager
 
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.utilits.RepositoryResponse
+import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class DataManager(
@@ -13,7 +15,7 @@ class DataManager(
 ) {
     private var mCompanies: List<AdaptiveCompany>? = null
     private var mFavouriteCompanies: MutableList<AdaptiveCompany>? = null
-    private var mSearchedRequests: MutableList<AdaptiveSearchRequest>? = null
+    private var mSearchRequests: List<AdaptiveSearchRequest>? = null
 
     private val mCompaniesState = MutableStateFlow<DataNotificator<List<AdaptiveCompany>>>(
         DataNotificator.Loading()
@@ -28,12 +30,10 @@ class DataManager(
     val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mFavouriteCompaniesState
 
-    private var mSearchedRequestsState =
-        MutableStateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
-    val searchedRequestsState: StateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>
-        get() = mSearchedRequestsState
-
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
+        mCompaniesState.value = DataNotificator.Loading()
+        mFavouriteCompaniesState.value = DataNotificator.Loading()
+
         val favouriteCompanies = mutableListOf<AdaptiveCompany>()
         companies.forEachIndexed { index, company ->
             mDataStylesManager.applyStyles(company, index)
@@ -45,70 +45,48 @@ class DataManager(
         mFavouriteCompaniesState.value = DataNotificator.Success(favouriteCompanies.toMutableList())
     }
 
+    private val mSearchRequestsState =
+        MutableStateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
+    val searchRequestsState: StateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>
+        get() = mSearchRequestsState
+
+    private val mSearchRequestsUpdateState =
+        MutableSharedFlow<DataNotificator<List<AdaptiveSearchRequest>>>()
+    val searchRequestsUpdateState: SharedFlow<DataNotificator<List<AdaptiveSearchRequest>>>
+        get() = mSearchRequestsUpdateState
+
     fun onSearchesDataPrepared(searches: List<AdaptiveSearchRequest>) {
-        val searchesHistory = searches.toMutableList()
-        mSearchedRequests = searchesHistory
-        mSearchedRequestsState.value = DataNotificator.Success(searchesHistory)
+        mSearchRequests = searches
+        mSearchRequestsState.value = DataNotificator.Success(searches.toMutableList())
     }
 
-    suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveStockCandles>) {
-        val responseData = response.data
-        val companyToUpdate = mCompanies?.find { it.symbol == responseData.symbol }
-        companyToUpdate?.let {
-            responseData.company = it
-            it.apply {
-                historyOpenPrices = responseData.openPrices
-                historyHighPrices = responseData.highPrices
-                historyLowPrices = responseData.lowPrices
-                historyClosePrices = responseData.closePrices
-                historyTimestampsPrices = responseData.timestamps
+    suspend fun onNewSearch(searchText: String) {
+        val searchItem = AdaptiveSearchRequest(searchText)
+        mSearchRequests?.let {
+            val searchesData = it.toMutableList()
+            for (index in 0 until searchesData.size - 1) {
+                val item = searchesData[index]
+                if (item.searchText.contains(searchText)) {
+                    searchesData.remove(item)
+                }
             }
-            mLocalInteractorHelper.updateCompany(it)
+            searchesData.add(searchItem)
+            val dataToEmit = searchesData.toList()
+            mSearchRequestsState.value = DataNotificator.Success(searchesData)
+            mSearchRequestsUpdateState.emit(DataNotificator.Success(dataToEmit))
+            mLocalInteractorHelper.setSearchesData(dataToEmit)
         }
     }
 
-    suspend fun onCompanyNewsLoaded(response: RepositoryResponse.Success<AdaptiveCompanyNews>) {
-        val responseData = response.data
-        val companyToUpdate = mCompanies?.find { it.symbol == responseData.symbol }
-        companyToUpdate?.let {
-            it.apply {
-                newsTimestamps = responseData.date
-                newsHeadline = responseData.headline
-                newsIds = responseData.newsId
-                newsImages = responseData.previewImageUrl
-                newsSource = responseData.source
-                newsSummary = responseData.summary
-                newsUrl = responseData.url
-            }
-            mLocalInteractorHelper.updateCompany(it)
-        }
-    }
-
-    suspend fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyQuote>) {
-        val responseData = response.data
-        val companyToUpdate = mCompanies?.find { it.symbol == responseData.symbol }
-        companyToUpdate?.let {
-            responseData.company = it
-            it.apply {
-                dayOpenPrice = responseData.openPrice
-                dayHighPrice = responseData.highPrice
-                dayLowPrice = responseData.lowPrice
-                dayCurrentPrice = responseData.currentPrice
-                dayPreviousClosePrice = responseData.previousClosePrice
-                dayProfit = DataManagerHelper.calculateProfit(
-                    dayCurrentPrice.filter { it.isDigit() || it == '.' }.toDouble(),
-                    dayOpenPrice.filter { it.isDigit() || it == '.' }.toDouble()
-                )
-                dayProfitBackground = mDataStylesManager.getProfitBackground(dayProfit)
-            }
-            mLocalInteractorHelper.updateCompany(it)
-        }
-    }
+    private val mFavouriteCompaniesUpdateState =
+        MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
+    val favouriteCompaniesUpdateState: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mFavouriteCompaniesUpdateState
 
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany) {
         company.apply {
             isFavourite = true
-            favouriteIconDrawable = mDataStylesManager.getIconDrawable(isFavourite)
+            companyStyle.favouriteIconResource = mDataStylesManager.getIconDrawable(true)
         }
         mFavouriteCompanies?.add(company)
         mFavouriteCompaniesState.value.also {
@@ -116,13 +94,14 @@ class DataManager(
                 it.data.add(company)
             }
         }
+        mFavouriteCompaniesUpdateState.emit(DataNotificator.NewItem(company))
         mLocalInteractorHelper.updateCompany(company)
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
         company.apply {
             isFavourite = false
-            favouriteIconDrawable = mDataStylesManager.getIconDrawable(isFavourite)
+            companyStyle.favouriteIconResource = mDataStylesManager.getIconDrawable(false)
         }
         mFavouriteCompanies?.remove(company)
         mFavouriteCompaniesState.value.also {
@@ -130,19 +109,78 @@ class DataManager(
                 it.data.remove(company)
             }
         }
+        mFavouriteCompaniesUpdateState.emit(DataNotificator.Remove(company))
         mLocalInteractorHelper.updateCompany(company)
     }
 
-    fun onWebSocketResponse(response: RepositoryResponse.Success<AdaptiveLastPrice>) {
-        val companyToUpdate = mCompanies?.find { it.symbol == response.data.symbol }
-        companyToUpdate?.apply {
-            dayCurrentPrice = response.data.lastPrice
-            dayProfit = DataManagerHelper.calculateProfit(
-                dayCurrentPrice.filter { it.isDigit() || it == '.' }.toDouble(),
-                dayOpenPrice.filter { it.isDigit() || it == '.' }.toDouble()
-            )
-            dayProfitBackground = mDataStylesManager.getProfitBackground(dayProfit)
+    suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>) : AdaptiveCompany? {
+        val responseData = response.data
+        val companyToUpdate = findCompany(response.owner)
+        companyToUpdate?.let {
+            it.companyHistory.apply {
+                openPrices = responseData.openPrices
+                highPrices = responseData.highPrices
+                lowPrices = responseData.lowPrices
+                closePrices = responseData.closePrices
+                datePrices = responseData.datePrices
+            }
+            mLocalInteractorHelper.updateCompany(it)
         }
-        response.data.company = companyToUpdate
+        return companyToUpdate
+    }
+
+    suspend fun onCompanyNewsLoaded(response: RepositoryResponse.Success<AdaptiveCompanyNews>) : AdaptiveCompany? {
+        val responseData = response.data
+        val companyToUpdate = findCompany(response.owner)
+        companyToUpdate?.let {
+            it.companyNews.apply {
+                dates = responseData.dates
+                headlines = responseData.headlines
+                ids = responseData.ids
+                previewImagesUrls = responseData.previewImagesUrls
+                sources = responseData.sources
+                summaries = responseData.summaries
+                urls = responseData.urls
+            }
+            mLocalInteractorHelper.updateCompany(it)
+        }
+        return companyToUpdate
+    }
+
+    suspend fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyDayData>) : AdaptiveCompany? {
+        val responseData = response.data
+        val companyToUpdate = findCompany(response.owner)
+        companyToUpdate?.let {
+            it.companyDayData.apply {
+                openPrice = responseData.openPrice
+                highPrice = responseData.highPrice
+                lowPrice = responseData.lowPrice
+                currentPrice = responseData.currentPrice
+                previousClosePrice = responseData.previousClosePrice
+                profit = responseData.profit
+            }
+            it.companyStyle.dayProfitBackground =
+                mDataStylesManager.getProfitBackground(it.companyDayData.profit)
+            mLocalInteractorHelper.updateCompany(it)
+        }
+        return companyToUpdate
+    }
+
+    suspend fun onWebSocketResponse(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>): AdaptiveCompany? {
+        val companyToUpdate = findCompany(response.owner)
+        companyToUpdate?.let {
+            it.companyDayData.apply {
+                currentPrice = response.data.price
+                profit = response.data.profit
+            }
+            it.companyStyle.dayProfitBackground =
+                mDataStylesManager.getProfitBackground(it.companyDayData.profit)
+            mLocalInteractorHelper.updateCompany(it)
+        }
+        return companyToUpdate
+    }
+
+    private fun findCompany(symbol: String?): AdaptiveCompany? {
+        return mCompanies?.find { it.companyProfile.symbol == symbol }
     }
 }

@@ -16,10 +16,10 @@ class DataStylesManager(private val mContext: Context) {
 
 
     fun applyStyles(adaptiveCompany: AdaptiveCompany, index: Int) {
-        adaptiveCompany.apply {
+        adaptiveCompany.companyStyle.apply {
             holderBackground = getHolderBackground(index)
-            favouriteIconDrawable = getIconDrawable(isFavourite)
-            dayProfitBackground = getProfitBackground(dayProfit)
+            favouriteIconResource = getIconDrawable(adaptiveCompany.isFavourite)
+            dayProfitBackground = getProfitBackground(adaptiveCompany.companyDayData.profit)
         }
     }
 

@@ -3,7 +3,8 @@ package com.ferelin.stockprice.dataInteractor.local
 import android.content.Context
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.utilits.RepositoryResponse
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.first
 
 class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
@@ -22,7 +23,11 @@ class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalI
         } else LocalInteractorResponse.Failed()
     }
 
+    override suspend fun setSearchesData(requests: List<AdaptiveSearchRequest>) {
+        mRepository.setSearchesHistory(requests)
+    }
+
     override suspend fun updateCompany(adaptiveCompany: AdaptiveCompany) {
-        mRepository.updateCompany(adaptiveCompany)
+        mRepository.saveCompanyData(adaptiveCompany)
     }
 }
