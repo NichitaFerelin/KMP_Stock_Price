@@ -16,6 +16,6 @@ object Api {
     const val RESPONSE_LIMIT = 429
     const val RESPONSE_NO_DATA = 490
     const val RESPONSE_UNDEFINED = 491
-    const val RESPONSE_WEB_SOCKET_CLOSED = 492
+    const val RESPONSE_WEB_SOCKET_CLOSED = 1001
     const val RESPONSE_TRADE_NOT_AVAILABLE = 493
 }
