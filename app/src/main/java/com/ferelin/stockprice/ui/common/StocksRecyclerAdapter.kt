@@ -82,27 +82,23 @@ class StocksRecyclerAdapter(
         notifyItemRemoved(index)
     }
 
-    fun invalidate() {
-        mCompanies.clear()
-    }
-
     class StockViewHolder private constructor(
         val binding: ItemStockBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: AdaptiveCompany) {
             binding.apply {
-                textViewCompanyName.text = item.name
-                textViewCompanySymbol.text = item.symbol
-                textViewCurrentPrice.text = item.dayCurrentPrice
-                textViewDayProfit.text = item.dayProfit
-                textViewDayProfit.setTextColor(item.dayProfitBackground)
-                imageViewFavourite.setImageResource(item.favouriteIconDrawable)
-                root.setCardBackgroundColor(item.holderBackground)
+                textViewCompanyName.text = item.companyProfile.name
+                textViewCompanySymbol.text = item.companyProfile.symbol
+                textViewCurrentPrice.text = item.companyDayData.currentPrice
+                textViewDayProfit.text = item.companyDayData.profit
+                textViewDayProfit.setTextColor(item.companyStyle.dayProfitBackground)
+                imageViewFavourite.setImageResource(item.companyStyle.favouriteIconResource)
+                root.setCardBackgroundColor(item.companyStyle.holderBackground)
 
                 Glide
                     .with(root)
-                    .load(item.logoUrl)
+                    .load(item.companyProfile.logoUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageViewIcon)
             }

@@ -1,10 +1,21 @@
 package com.ferelin.stockprice.utils
 
 
-sealed class DataNotificator<out T> {
-    data class Success<out T>(val data: T) : DataNotificator<T>()
-    data class NewItem<out T>(val data: T) : DataNotificator<T>()
-    data class Remove<out T>(val data: T) : DataNotificator<T>()
-    data class Error<out T>(val message: String, val data: T? = null) : DataNotificator<T>()
+sealed class DataNotificator<out T>(val data: T? = null) {
+
+    class DataPrepared<out T>(data: T) : DataNotificator<T>(data)
+
+    class NewItemAdded<out T>(data: T) : DataNotificator<T>(data)
+
+    class ItemRemoved<out T>(data: T) : DataNotificator<T>(data)
+
+    class ItemUpdatedDefault<out T>(data: T) : DataNotificator<T>(data)
+
+    class ItemUpdatedQuote<out T>(data: T) : DataNotificator<T>(data)
+
+    class ItemUpdatedLiveTime<out T>(data: T) : DataNotificator<T>(data)
+
+    class Error<out T>(val message: String) : DataNotificator<T>()
+
     class Loading<out T> : DataNotificator<T>()
 }

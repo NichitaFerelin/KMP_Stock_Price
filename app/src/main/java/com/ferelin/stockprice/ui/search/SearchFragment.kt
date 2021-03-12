@@ -4,17 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseStocksFragment
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
-import com.ferelin.stockprice.ui.common.StocksItemDecoration
-import com.ferelin.stockprice.utils.CoroutineContextProvider
 import com.ferelin.stockprice.utils.DataViewModelFactory
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchFragment(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
@@ -37,30 +32,40 @@ class SearchFragment(
 
     override fun setUpComponents() {
         super.setUpComponents()
-
+        mFragmentManager = parentFragmentManager
+/*
         with(mBinding) {
             recyclerViewSearchResults.apply {
                 addItemDecoration(StocksItemDecoration(requireContext()))
                 adapter = mViewModel.recyclerAdapter
             }
             recyclerViewSearchedHistory.apply {
-                adapter = mViewModel.searchesAdapter
+                adapter = mViewModel.searchesAdapter.also {
+                    it.setOnTickerClickListener { item, _ ->
+                        onSearchTickerClicked(item)
+                    }
+                }
                 addItemDecoration(SearchItemDecoration(requireContext()))
             }
             recyclerViewPopularRequests.apply {
-                adapter = mViewModel.popularRequestsAdapter
+                adapter = mViewModel.popularRequestsAdapter.also {
+                    it.setPopularSearches()
+                    it.setOnTickerClickListener { item, _ ->
+                        onSearchTickerClicked(item)
+                    }
+                }
                 addItemDecoration(SearchItemDecoration(requireContext()))
             }
             editTextSearch.addTextChangedListener {
                 mViewModel.onSearchTextChanged(it)
             }
-        }
+        }*/
     }
 
     override fun initObservers() {
         super.initObservers()
 
-        lifecycleScope.launch(mCoroutineContext.IO) {
+       /* lifecycleScope.launch(mCoroutineContext.IO) {
             mViewModel.actionShowHintsHideResults.collect {
                 withContext(mCoroutineContext.Main) {
                     if (it) {
@@ -72,6 +77,10 @@ class SearchFragment(
                     }
                 }
             }
-        }
+        }*/
+    }
+
+    private fun onSearchTickerClicked(item: AdaptiveSearchRequest) {
+        mBinding.editTextSearch.setText(item.searchText)
     }
 }

@@ -10,7 +10,10 @@ class SearchRecyclerAdapter(
     private var mTickerClickListener: ((item: AdaptiveSearchRequest, position: Int) -> Unit)? = null
 ) : RecyclerView.Adapter<SearchRecyclerAdapter.TickerViewHolder>() {
 
-    private var mSearches = arrayListOf(
+    private var mSearches = arrayListOf<AdaptiveSearchRequest>()
+
+    // TODO
+    private var mPopularSearches = arrayListOf(
         AdaptiveSearchRequest("Apple"),
         AdaptiveSearchRequest("Microsoft Corp"),
         AdaptiveSearchRequest("Amazon.com"),
@@ -66,12 +69,17 @@ class SearchRecyclerAdapter(
         mTickerClickListener = func
     }
 
+    fun setPopularSearches() {
+        mSearches = mPopularSearches
+        notifyDataSetChanged()
+    }
+
     class TickerViewHolder private constructor(
         private val binding: ItemTickerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: AdaptiveSearchRequest) {
-            binding.textViewName.text = item.search
+            binding.textViewName.text = item.searchText
         }
 
         companion object {

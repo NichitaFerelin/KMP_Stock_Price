@@ -25,11 +25,12 @@ class InfoPagerFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            mBinding.textViewCompanyName.text = it[sCompanyName] as String
-            mBinding.textViewCompanySymbol.text = it[sCompanySymbol] as String
+            mBinding.textViewCompanyName.text = it[KEY_COMPANY_NAME] as String
+            mBinding.textViewCompanySymbol.text = it[KEY_COMPANY_SYMBOL] as String
+            //mBinding.imageViewStar.background = ContextCompat.getDrawable(requireContext(), it[KEY_FAVOURITE_ICON_RESOURCE] as Int)
             val args = bundleOf(
-                InfoPagerAdapter.CURRENT_PRICE_KEY to it[sCurrentPrice],
-                InfoPagerAdapter.DAY_DELTA_KEY to it[sDayDelta]
+                InfoPagerAdapter.CURRENT_PRICE_KEY to it[KEY_CURRENT_PRICE],
+                InfoPagerAdapter.DAY_DELTA_KEY to it[KEY_DAY_DELTA]
             )
             mBinding.viewPager.adapter = InfoPagerAdapter(parentFragmentManager, lifecycle, args)
         }
@@ -37,27 +38,15 @@ class InfoPagerFragment : BaseFragment() {
 
     companion object {
 
-        private const val sCurrentPrice = "current_price"
-        private const val sDayDelta = "day_delta"
-        private const val sCompanySymbol = "company_symbol"
-        private const val sCompanyName = "company_name"
-        private const val sIsFavourite = "is_favourite"
+        const val KEY_CURRENT_PRICE = "current_price"
+        const val KEY_DAY_DELTA = "day_delta"
+        const val KEY_COMPANY_SYMBOL = "company_symbol"
+        const val KEY_COMPANY_NAME = "company_name"
+        const val KEY_FAVOURITE_ICON_RESOURCE = "favourite_icon"
 
-        fun newInstance(
-            currentPrice: String,
-            dayDelta: String,
-            companySymbol: String,
-            companyName: String,
-            isFavourite: Boolean
-        ): InfoPagerFragment {
+        fun newInstance(bundle: Bundle): InfoPagerFragment {
             return InfoPagerFragment().apply {
-                arguments = bundleOf(
-                    sCurrentPrice to "$124.14",
-                    sDayDelta to "+1.0",
-                    sCompanySymbol to "AAPL",
-                    sCompanyName to "AppleInc",
-                    sIsFavourite to false
-                )
+                arguments = bundle
             }
         }
     }

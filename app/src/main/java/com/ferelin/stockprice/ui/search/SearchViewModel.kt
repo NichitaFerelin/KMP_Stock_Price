@@ -1,40 +1,21 @@
 package com.ferelin.stockprice.ui.search
 
-import android.text.Editable
-import androidx.lifecycle.viewModelScope
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseStocksViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.utils.CoroutineContextProvider
-import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.search
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
-
+/*
     private var mCompanies: List<AdaptiveCompany>? = null
 
-    private val mPopularRequestsAdapter = SearchRecyclerAdapter().apply {
-        setOnTickerClickListener { item, position ->
-
-        }
-    }
+    private val mPopularRequestsAdapter = SearchRecyclerAdapter()
     val popularRequestsAdapter: SearchRecyclerAdapter
         get() = mPopularRequestsAdapter
 
-    private val mSearchesAdapter = SearchRecyclerAdapter().apply {
-        setOnTickerClickListener { item, position ->
-
-        }
-    }
+    private val mSearchesAdapter = SearchRecyclerAdapter()
     val searchesAdapter: SearchRecyclerAdapter
         get() = mSearchesAdapter
 
@@ -51,7 +32,7 @@ class SearchViewModel(
                     onCompaniesStateResponse(it)
                 }
             }
-            launch {
+            *//*launch {
                 mDataInteractor.searchesRequestsState.collect {
                     onSearchRequestsResponse(it)
                 }
@@ -60,7 +41,7 @@ class SearchViewModel(
                 mDataInteractor.favouriteCompaniesUpdateState.collect {
                     onFavouriteCompaniesStateUpdate(it)
                 }
-            }
+            }*//*
         }
     }
 
@@ -83,21 +64,30 @@ class SearchViewModel(
                         withContext(mCoroutineContext.Main) {
                             mRecyclerAdapter.setCompanies(resultArray)
                         }
+                        if (results.size <= 10) {
+                            addToSearched(searchText)
+                        }
                     } else switchSectionsVisibility(true)
                 } else switchSectionsVisibility(true)
             }
         }
     }
 
+    private fun addToSearched(searchText: String) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.onNewSearch(searchText)
+        }
+    }
+
     private fun onCompaniesStateResponse(response: DataNotificator<List<AdaptiveCompany>>) {
-        if (response is DataNotificator.Success) {
+        if (response is DataNotificator.DataPrepared) {
             mCompanies = response.data
         }
     }
 
     private fun onSearchRequestsResponse(response: DataNotificator<List<AdaptiveSearchRequest>>) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            if (response is DataNotificator.Success) {
+            if (response is DataNotificator.DataPrepared) {
                 val array = ArrayList(response.data)
                 withContext(mCoroutineContext.Main) {
                     mSearchesAdapter.setData(array)
@@ -105,17 +95,17 @@ class SearchViewModel(
             }
         }
     }
-
+*//*
     private fun onFavouriteCompaniesStateUpdate(notificator: DataNotificator<AdaptiveCompany>) {
         viewModelScope.launch(mCoroutineContext.IO) {
             when (notificator) {
-                is DataNotificator.NewItem -> {
+                is DataNotificator.NewItemAdded -> {
                     val index = mRecyclerAdapter.companies.indexOf(notificator.data)
                     if (index != -1) {
                         mRecyclerAdapter.updateCompany(notificator.data, index)
                     }
                 }
-                is DataNotificator.Remove -> {
+                is DataNotificator.ItemRemoved -> {
                     val index = mRecyclerAdapter.companies.indexOf(notificator.data)
                     if (index != -1) {
                         mRecyclerAdapter.updateCompany(notificator.data, index)
@@ -124,9 +114,9 @@ class SearchViewModel(
                 else -> Unit
             }
         }
-    }
+    }*//*
 
     private fun switchSectionsVisibility(showHintsHideResults: Boolean) {
         mActionShowHintsHideResults.value = showHintsHideResults
-    }
+    }*/
 }

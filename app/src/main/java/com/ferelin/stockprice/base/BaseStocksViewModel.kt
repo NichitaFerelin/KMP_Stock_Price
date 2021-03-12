@@ -1,15 +1,19 @@
 package com.ferelin.stockprice.base
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyQuote
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.common.StocksRecyclerAdapter
-import com.ferelin.stockprice.utils.CoroutineContextProvider
+import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.NULL_INDEX
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 abstract class BaseStocksViewModel(
     protected val mCoroutineContext: CoroutineContextProvider,
@@ -24,8 +28,17 @@ abstract class BaseStocksViewModel(
     val recyclerAdapter: StocksRecyclerAdapter
         get() = mRecyclerAdapter
 
-    open fun initObservers() {}
+    private val mActionMoveToInfoPagerFragment = MutableSharedFlow<Bundle?>()
+    val actionMoveToInfo: SharedFlow<Bundle?>
+        get() = mActionMoveToInfoPagerFragment
 
+    open fun initObservers() {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.companiesUpdatesShared
+                .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
+                .collect { updateRecyclerItem(it) }
+        }
+    }
 
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
         viewModelScope.launch(mCoroutineContext.IO) {
@@ -36,27 +49,31 @@ abstract class BaseStocksViewModel(
     }
 
     fun onStockClicked(company: AdaptiveCompany) {
+        /*val arguments = bundleOf(
+            InfoPagerFragment.KEY_COMPANY_NAME to company.name,
+            InfoPagerFragment.KEY_COMPANY_SYMBOL to company.symbol,
+            InfoPagerFragment.KEY_CURRENT_PRICE to company.dayCurrentPrice,
+            InfoPagerFragment.KEY_FAVOURITE_ICON_RESOURCE to company.favouriteIconResource,
+            InfoPagerFragment.KEY_DAY_DELTA to company.dayProfit
+        )
+        mActionMoveToInfo.value = arguments*/
+    }
 
+    protected fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
+        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
+        if (index != NULL_INDEX) {
+            val previousCompany = mRecyclerAdapter.companies[index]
+            //if (notificator.data!! != previousCompany) {
+                viewModelScope.launch(mCoroutineContext.Main) {
+                    mRecyclerAdapter.updateCompany(notificator.data!!, index)
+                }
+            //} // TODO
+        }
     }
 
     private fun onBindCallback(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.loadCompanyQuote(company.symbol, position).collect { response ->
-                onCompanyQuoteResponse(response)
-            }
-        }
-    }
-
-    private fun onCompanyQuoteResponse(response: AdaptiveCompanyQuote) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            response.company?.let { company ->
-                val companyIndex = mRecyclerAdapter.companies.indexOf(company)
-                if (companyIndex != -1) {
-                    withContext(mCoroutineContext.Main) {
-                        mRecyclerAdapter.updateCompany(company, companyIndex)
-                    }
-                }
-            }
+            mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position).collect()
         }
     }
 }

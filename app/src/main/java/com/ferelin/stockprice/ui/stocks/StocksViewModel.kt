@@ -2,62 +2,46 @@ package com.ferelin.stockprice.ui.stocks
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseStocksViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.utils.CoroutineContextProvider
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class StocksViewModel(
     contextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(contextProvider, dataInteractor) {
 
+    init {
+        initObservers()
+    }
+
     override fun initObservers() {
         super.initObservers()
 
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
-                mDataInteractor.companiesState.collect {
-                    withContext(mCoroutineContext.Main) {
-                        onCompaniesStateUpdate(it)
-                    }
-                }
+                mDataInteractor.companiesState
+                    .filter { it is DataNotificator.DataPrepared }
+                    .take(1)
+                    .collect { onCompaniesPrepared(it as DataNotificator.DataPrepared<List<AdaptiveCompany>>) }
             }
+
             launch {
-                mDataInteractor.favouriteCompaniesUpdateState.collect {
-                    withContext(mCoroutineContext.Main) {
-                        onFavouriteCompaniesStateUpdate(it)
-                    }
-                }
+                mDataInteractor.companiesUpdatesShared
+                    .filter { it is DataNotificator.ItemUpdatedDefault }
+                    .collect { updateRecyclerItem(it) }
             }
         }
-
     }
 
-    private fun onCompaniesStateUpdate(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        if (notificator is DataNotificator.Success) {
+    private fun onCompaniesPrepared(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
+        viewModelScope.launch(mCoroutineContext.Main) {
             mRecyclerAdapter.setCompanies(ArrayList(notificator.data))
-        }
-    }
-
-    private fun onFavouriteCompaniesStateUpdate(notificator: DataNotificator<AdaptiveCompany>) {
-        when (notificator) {
-            is DataNotificator.NewItem -> {
-                val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-                if (index != -1) {
-                    mRecyclerAdapter.updateCompany(notificator.data, index)
-                }
-            }
-            is DataNotificator.Remove -> {
-                val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-                if (index != -1) {
-                    mRecyclerAdapter.updateCompany(notificator.data, index)
-                }
-            }
-            else -> Unit
         }
     }
 }

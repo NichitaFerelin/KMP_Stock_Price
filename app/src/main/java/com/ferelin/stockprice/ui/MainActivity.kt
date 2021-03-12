@@ -1,30 +1,35 @@
 package com.ferelin.stockprice.ui
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.CoroutineContextProvider
-import kotlinx.coroutines.launch
+import com.ferelin.stockprice.utils.AndroidViewModelFactory
+import kotlinx.coroutines.FlowPreview
 
-class MainActivity : AppCompatActivity() {
+class MainActivity(
+    private val mContextProvider: CoroutineContextProvider = CoroutineContextProvider()
+) : AppCompatActivity() {
 
-    private val mCoroutineContext = CoroutineContextProvider()
+    @FlowPreview
+    private val mViewModel: MainViewModel by viewModels {
+        AndroidViewModelFactory(mContextProvider, dataInteractor, application)
+    }
 
     val dataInteractor: DataInteractor
         get() = (application as App).dataInteractor
 
+    @FlowPreview
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        lifecycleScope.launch(mCoroutineContext.IO) {
-            dataInteractor.prepareData(this@MainActivity)
-        }
+        mViewModel
 
         with(supportFragmentManager) {
             findFragmentByTag("StocksFragment") ?: commit {

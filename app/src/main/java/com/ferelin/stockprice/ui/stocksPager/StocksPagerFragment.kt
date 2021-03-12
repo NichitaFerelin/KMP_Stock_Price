@@ -41,7 +41,7 @@ class StocksPagerFragment : BaseFragment() {
         }
 
         mBinding.cardViewSearch.setOnClickListener {
-            requireActivity().supportFragmentManager.commit {
+            parentFragmentManager.commit {
                 replace(R.id.fragmentContainer, SearchFragment())
                 addToBackStack(null)
             }

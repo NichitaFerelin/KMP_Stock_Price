@@ -2,85 +2,62 @@ package com.ferelin.stockprice.ui.favourite
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveLastPrice
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseStocksViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.utils.CoroutineContextProvider
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.NULL_INDEX
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@FlowPreview
 class FavouriteViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
 
-    @FlowPreview
+    init {
+        initObservers()
+    }
+
     override fun initObservers() {
         super.initObservers()
 
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
-                mDataInteractor.favouriteCompaniesState.collect {
-                    onFavouriteCompaniesStateChanged(it)
-                }
+                mDataInteractor.favouriteCompaniesState
+                    .filter { it is DataNotificator.DataPrepared }
+                    .take(1)
+                    .collect { onFavouriteCompaniesPrepared(it) }
             }
+
             launch {
-                mDataInteractor.favouriteCompaniesUpdateState.collect {
-                    onFavouriteCompaniesStateUpdate(it)
-                }
-            }
-            launch {
-                mDataInteractor.openConnection().collect {
-                    onCompanyWebSocketResponse(it)
-                }
+                mDataInteractor.favouriteCompaniesUpdateShared
+                    .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
+                    .collect { onFavouriteCompanyUpdateShared(it) }
             }
         }
     }
 
-    private fun onFavouriteCompaniesStateChanged(notificator: DataNotificator<List<AdaptiveCompany>>) {
+    private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
+        mRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
+    }
+
+    private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            if (notificator is DataNotificator.Success) {
+            if (notificator is DataNotificator.NewItemAdded) {
                 withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.setCompanies(ArrayList(notificator.data))
+                    mRecyclerAdapter.addCompany(notificator.data!!)
                 }
-                notificator.data.forEach { mDataInteractor.subscribeItem(it.symbol) }
-            }
-        }
-    }
-
-    private fun onFavouriteCompaniesStateUpdate(notificator: DataNotificator<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            when (notificator) {
-                is DataNotificator.NewItem -> {
+            } else if (notificator is DataNotificator.ItemRemoved) {
+                val index = mRecyclerAdapter.companies.indexOf(notificator.data)
+                if (index != NULL_INDEX) {
                     withContext(mCoroutineContext.Main) {
-                        mRecyclerAdapter.addCompany(notificator.data)
-                    }
-                    mDataInteractor.subscribeItem(notificator.data.symbol)
-                }
-                // TODO try to unsubscribe
-                is DataNotificator.Remove -> {
-                    val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-                    if (index != -1) {
-                        withContext(mCoroutineContext.Main) {
-                            mRecyclerAdapter.removeCompany(index)
-                        }
-                    }
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    private fun onCompanyWebSocketResponse(lastData: AdaptiveLastPrice) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            lastData.company?.let {
-                val index = mRecyclerAdapter.companies.indexOf(it)
-                if (index != -1) {
-                    withContext(mCoroutineContext.Main) {
-                        mRecyclerAdapter.updateCompany(it, index)
+                        mRecyclerAdapter.removeCompany(index)
                     }
                 }
             }
