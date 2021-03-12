@@ -2,7 +2,7 @@ package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utilits.Api
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +29,11 @@ class WebSocketConnector : WebSocketConnectorHelper {
         } ?: mMessagesQueue.offer(symbol)
     }
 
+    override fun unsubscribeItem(symbol: String) {
+        mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
+    }
+
+    @FlowPreview
     override fun openConnection(token: String): Flow<BaseResponse> = callbackFlow {
         val request = Request.Builder().url("$mBase$token").build()
         val okHttp = OkHttpClient()
@@ -39,7 +44,7 @@ class WebSocketConnector : WebSocketConnectorHelper {
         okHttp.dispatcher.executorService.shutdown()
 
         awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }
-    }.flowOn(Dispatchers.IO).buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    }.debounce(100).buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override fun closeConnection() {
         mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)

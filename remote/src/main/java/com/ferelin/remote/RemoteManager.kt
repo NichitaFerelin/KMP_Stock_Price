@@ -22,6 +22,10 @@ class RemoteManager(
         mWebSocketConnector.subscribeItem(symbol, openPrice)
     }
 
+    override fun unsubscribeItem(symbol: String) {
+        mWebSocketConnector.unsubscribeItem(symbol)
+    }
+
     override fun loadStockCandles(
         symbol: String,
         from: Long,

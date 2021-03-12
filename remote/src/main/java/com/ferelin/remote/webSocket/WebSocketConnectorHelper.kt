@@ -11,4 +11,6 @@ interface WebSocketConnectorHelper {
     fun closeConnection()
 
     fun subscribeItem(symbol: String, openPrice: Double)
+
+    fun unsubscribeItem(symbol: String)
 }

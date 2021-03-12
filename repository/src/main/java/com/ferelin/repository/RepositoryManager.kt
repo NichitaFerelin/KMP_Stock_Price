@@ -37,11 +37,11 @@ class RepositoryManager private constructor(
         }
     }
 
-    override fun subscribeItem(symbol: String, openPrice: Double) {
+    override fun subscribeItemToLiveTimeUpdates(symbol: String, openPrice: Double) {
         mRemoteManagerHelper.subscribeItem(symbol, openPrice)
     }
 
-    override fun unsubscribeItem(symbol: String) {
+    override fun unsubscribeItemFromLiveTimeUpdates(symbol: String) {
         mRemoteManagerHelper.unsubscribeItem(symbol)
     }
 

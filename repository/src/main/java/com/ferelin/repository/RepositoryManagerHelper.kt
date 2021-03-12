@@ -35,9 +35,9 @@ interface RepositoryManagerHelper {
 
     fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>>
 
-    fun subscribeItem(symbol: String, openPrice: Double)
+    fun subscribeItemToLiveTimeUpdates(symbol: String, openPrice: Double)
 
-    fun unsubscribeItem(symbol: String)
+    fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
 
     fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
 
