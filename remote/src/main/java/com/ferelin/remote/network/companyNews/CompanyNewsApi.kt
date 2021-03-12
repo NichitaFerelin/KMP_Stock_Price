@@ -5,7 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface CompanyNewsApi {
-    // from=2020-04-30&to=2020-05-01
     @GET("company-news")
     fun getCompanyNews(
         @Query("symbol") symbol: String,

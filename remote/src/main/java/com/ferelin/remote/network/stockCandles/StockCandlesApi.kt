@@ -5,7 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface StockCandlesApi {
-
     @GET("stock/candle")
     fun getStockCandles(
         @Query("symbol") symbol: String,

@@ -37,6 +37,8 @@ interface RepositoryManagerHelper {
 
     fun subscribeItem(symbol: String, openPrice: Double)
 
+    fun unsubscribeItem(symbol: String)
+
     fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
 
     suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>)

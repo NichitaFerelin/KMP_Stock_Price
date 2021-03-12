@@ -41,6 +41,10 @@ class RepositoryManager private constructor(
         mRemoteManagerHelper.subscribeItem(symbol, openPrice)
     }
 
+    override fun unsubscribeItem(symbol: String) {
+        mRemoteManagerHelper.unsubscribeItem(symbol)
+    }
+
     override fun loadStockCandles(
         symbol: String,
         from: Long,

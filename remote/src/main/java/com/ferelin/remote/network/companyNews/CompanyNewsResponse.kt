@@ -3,7 +3,7 @@ package com.ferelin.remote.network.companyNews
 import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
-data class CompanyNewsResponse(
+class CompanyNewsResponse(
     @Json(name = "datetime") val dateTime: List<Double>,
     @Json(name = "headline") val headline: List<String>,
     @Json(name = "id") val newsId: List<Double>,

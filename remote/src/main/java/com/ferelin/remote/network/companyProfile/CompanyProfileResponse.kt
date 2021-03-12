@@ -3,7 +3,7 @@ package com.ferelin.remote.network.companyProfile
 import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
-data class CompanyProfileResponse(
+class CompanyProfileResponse(
     @Json(name = "name") val name: String,
     @Json(name = "logo") val logoUrl: String,
     @Json(name = "country") val country: String,

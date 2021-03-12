@@ -16,11 +16,9 @@ import com.ferelin.remote.network.throttleManager.ThrottleManager
 import com.ferelin.remote.network.throttleManager.ThrottleManagerHelper
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.utilits.RetrofitDelegate
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
 import retrofit2.Retrofit
 
 class NetworkManager : NetworkManagerHelper {
@@ -42,7 +40,7 @@ class NetworkManager : NetworkManagerHelper {
                 offer(it)
             })
         awaitClose()
-    }.flowOn(Dispatchers.IO)
+    }
 
     override fun loadCompanyProfile(symbol: String): Flow<BaseResponse> = callbackFlow {
         mCompanyProfileService
@@ -51,7 +49,7 @@ class NetworkManager : NetworkManagerHelper {
                 offer(it)
             })
         awaitClose()
-    }.flowOn(Dispatchers.IO)
+    }
 
     override fun loadStockCandles(
         symbol: String,
@@ -65,7 +63,7 @@ class NetworkManager : NetworkManagerHelper {
                 offer(it)
             })
         awaitClose()
-    }.flowOn(Dispatchers.IO)
+    }
 
     override fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse> =
         callbackFlow {
@@ -75,7 +73,7 @@ class NetworkManager : NetworkManagerHelper {
                     offer(it)
                 })
             awaitClose()
-        }.flowOn(Dispatchers.IO)
+        }
 
     override fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse> =
         callbackFlow {
@@ -89,5 +87,5 @@ class NetworkManager : NetworkManagerHelper {
                     })
             }
             awaitClose { mThrottleManager.invalidate() }
-        }.flowOn(Dispatchers.IO)
+        }
 }
