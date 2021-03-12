@@ -5,7 +5,7 @@ import androidx.core.content.ContextCompat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 
-class DataStylesManager(private val mContext: Context) {
+class StylesProvider(private val mContext: Context) {
 
     private val mDrawableFavouriteIcon = R.drawable.ic_favourite
     private val mDrawableFavouriteIconActive = R.drawable.ic_favourite_active
@@ -13,7 +13,6 @@ class DataStylesManager(private val mContext: Context) {
     private val mColorProfitMinus = R.color.red
     private val mColorHolderFirst = R.color.white
     private val mColorHolderSecond = R.color.whiteDark
-
 
     fun applyStyles(adaptiveCompany: AdaptiveCompany, index: Int) {
         adaptiveCompany.companyStyle.apply {
@@ -27,7 +26,7 @@ class DataStylesManager(private val mContext: Context) {
         return if (isFavourite) mDrawableFavouriteIconActive else mDrawableFavouriteIcon
     }
 
-    fun getHolderBackground(index: Int): Int {
+    private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
             getColor(mColorHolderFirst)
         } else getColor(mColorHolderSecond)

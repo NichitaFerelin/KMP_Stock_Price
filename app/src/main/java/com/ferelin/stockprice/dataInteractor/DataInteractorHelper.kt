@@ -8,24 +8,13 @@ interface DataInteractorHelper {
 
     suspend fun prepareData(context: Context)
 
-    suspend fun loadStockCandles(
-        symbol: String,
-        from: Long,
-        to: Long,
-        resolution: String
-    ): Flow<AdaptiveCompany>
+    suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany>
 
-    suspend fun loadCompanyNews(
-        symbol: String,
-        from: String,
-        to: String
-    ): Flow<AdaptiveCompany>
+    suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany>
 
     suspend fun loadCompanyQuote(symbol: String, position: Int): Flow<AdaptiveCompany>
 
     suspend fun openConnection(): Flow<AdaptiveCompany>
-
-    suspend fun subscribeItem(symbol: String, openPrice: Double)
 
     suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany)
 
