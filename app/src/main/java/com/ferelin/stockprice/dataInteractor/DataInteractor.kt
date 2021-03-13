@@ -61,7 +61,9 @@ class DataInteractor private constructor(
                     mDataManager.onStockCandlesLoaded(it)
                 } else mErrorState.value =
                     DataNotificator.Error(R.string.errorLoadingData.toString())
-            }.map { mDataManager.getCompany(symbol)!! }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { mDataManager.getCompany(symbol)!! }
     }
 
     override suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany> {
@@ -70,7 +72,9 @@ class DataInteractor private constructor(
                 if (it is RepositoryResponse.Success) {
                     mDataManager.onCompanyNewsLoaded(it)
                 } else mErrorState.value = DataNotificator.Error("todo Loadnews error")
-            }.map { mDataManager.getCompany(symbol)!! }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { mDataManager.getCompany(symbol)!! }
     }
 
     override suspend fun loadCompanyQuote(symbol: String, position: Int): Flow<AdaptiveCompany> {
