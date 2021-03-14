@@ -53,12 +53,25 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="10dp"
         android:elevation="1dp"
+        android:lines="1"
         android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
-        app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
+        app:layout_constraintEnd_toStartOf="@id/imageViewIconClose"
         app:layout_constraintStart_toEndOf="@id/imageViewBack"
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
+
+    <ImageView
+        android:id="@+id/imageViewIconClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:elevation="1dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_close"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+        app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
 
     <TextView

@@ -2,4 +2,6 @@
     <string name="app_name">Stock Price</string>
 
     <string name="errorLoadingData">Error loading data</string>
+    <string name="errorWebSocket">Error live-time data loading. Market could be closed. Try later.</string>
+    <string name="buy_for">Buy for</string>
 </resources>

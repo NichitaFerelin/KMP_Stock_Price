@@ -14,7 +14,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_scrollFlags="scroll">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardViewSearch"
@@ -57,7 +57,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tabLayout"
+                android:id="@+id/textViewHintStocks"
                 style="@style/textViewH1"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="20dp"
@@ -65,13 +65,13 @@
                 android:text="Stocks" />
 
             <TextView
+                android:id="@+id/textViewHintFavourite"
                 style="@style/textViewH2"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:text="Favourite"
                 android:textColor="@color/grey" />
-
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -83,5 +83,16 @@
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:visibility="invisible"
+        android:backgroundTint="@color/whiteDark"
+        android:src="@drawable/ic_arrow_up"
+        app:layout_behavior=".custom.fab.ScrollableFabBehaviour"
+        app:tint="@color/black" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

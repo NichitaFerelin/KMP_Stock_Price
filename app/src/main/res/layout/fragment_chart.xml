@@ -18,7 +18,7 @@
         tools:text="$131.93" />
 
     <TextView
-        android:id="@+id/textViewPercents"
+        android:id="@+id/textViewDayProfit"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:layout_marginTop="8dp"
@@ -35,47 +35,7 @@
         android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewPercents" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="cardView, textViewPrice, textViewDate" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="99dp"
-        android:layout_height="64dp"
-        android:background="@color/black"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center_horizontal"
-        android:text="$124.53"
-        app:layout_constraintBottom_toTopOf="@id/textViewDate"
-        app:layout_constraintEnd_toEndOf="@id/cardView"
-        app:layout_constraintStart_toStartOf="@id/cardView"
-        app:layout_constraintTop_toTopOf="@id/cardView" />
-
-    <TextView
-        android:id="@+id/textViewDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center_horizontal"
-        android:text="3 nov 2020"
-        app:layout_constraintBottom_toBottomOf="@id/cardView"
-        app:layout_constraintEnd_toEndOf="@id/cardView"
-        app:layout_constraintStart_toStartOf="@id/cardView"
-        app:layout_constraintTop_toBottomOf="@id/textViewPrice" />
+        app:layout_constraintTop_toBottomOf="@id/textViewDayProfit" />
 
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/flowButtons"
@@ -215,10 +175,11 @@
         app:layout_constraintVertical_bias="0" />
 
     <TextView
-        android:id="@+id/textViewBuy"
+        android:id="@+id/textViewBuyPrice"
         style="@style/textViewH3"
         android:layout_width="wrap_content"
         android:textColor="@color/white"
+        android:text="@string/buy_for"
         app:layout_constraintBottom_toBottomOf="@id/cardViewBuy"
         app:layout_constraintEnd_toEndOf="@id/cardViewBuy"
         app:layout_constraintStart_toStartOf="@id/cardViewBuy"

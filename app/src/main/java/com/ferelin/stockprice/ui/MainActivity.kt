@@ -8,8 +8,8 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.AndroidViewModelFactory
+import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import com.ferelin.stockprice.viewModelFactories.AndroidViewModelFactory
 import kotlinx.coroutines.FlowPreview
 
 class MainActivity(
