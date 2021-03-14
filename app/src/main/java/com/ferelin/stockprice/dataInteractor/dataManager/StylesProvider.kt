@@ -7,8 +7,10 @@ import com.ferelin.stockprice.R
 
 class StylesProvider(private val mContext: Context) {
 
-    private val mDrawableFavouriteIcon = R.drawable.ic_favourite
-    private val mDrawableFavouriteIconActive = R.drawable.ic_favourite_active
+    private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite
+    private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active
+    private val mDrawableFavouriteSingleIcon = R.drawable.ic_star_default
+    private val mDrawableFavouriteSingleIconActive = R.drawable.ic_star_active
     private val mColorProfitPlus = R.color.green
     private val mColorProfitMinus = R.color.red
     private val mColorHolderFirst = R.color.white
@@ -17,13 +19,18 @@ class StylesProvider(private val mContext: Context) {
     fun applyStyles(adaptiveCompany: AdaptiveCompany, index: Int) {
         adaptiveCompany.companyStyle.apply {
             holderBackground = getHolderBackground(index)
-            favouriteIconResource = getIconDrawable(adaptiveCompany.isFavourite)
+            favouriteDefaultIconResource = getDefaultIconDrawable(adaptiveCompany.isFavourite)
+            favouriteSingleIconResource = getSingleIconDrawable(adaptiveCompany.isFavourite)
             dayProfitBackground = getProfitBackground(adaptiveCompany.companyDayData.profit)
         }
     }
 
-    fun getIconDrawable(isFavourite: Boolean): Int {
-        return if (isFavourite) mDrawableFavouriteIconActive else mDrawableFavouriteIcon
+    fun getDefaultIconDrawable(isFavourite: Boolean): Int {
+        return if (isFavourite) mDrawableFavouriteDefaultIconActive else mDrawableFavouriteDefaultIcon
+    }
+
+    fun getSingleIconDrawable(isFavourite: Boolean): Int {
+        return if (isFavourite) mDrawableFavouriteSingleIconActive else mDrawableFavouriteSingleIcon
     }
 
     private fun getHolderBackground(index: Int): Int {

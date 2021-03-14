@@ -5,7 +5,6 @@ import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.NULL_INDEX
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -35,25 +34,13 @@ class CompaniesStateWorker(
     }
 
     suspend fun onCompanyChanged(notification: DataNotificator<AdaptiveCompany>) {
-        val companyIndex = mCompanies.indexOf(notification.data)
-        if (companyIndex != NULL_INDEX) {
-            mCompanies[companyIndex] = notification.data!!
-            mCompaniesState.value = DataNotificator.DataPrepared(mCompanies)
-            mCompaniesUpdatesShared.emit(notification)
-        }
+        mCompaniesUpdatesShared.emit(notification)
     }
 
     suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>): AdaptiveCompany? {
-        val responseData = response.data
         val companyToUpdate = findCompany(response.owner)
         companyToUpdate?.let {
-            it.companyHistory.apply {
-                openPrices = responseData.openPrices
-                highPrices = responseData.highPrices
-                lowPrices = responseData.lowPrices
-                closePrices = responseData.closePrices
-                datePrices = responseData.datePrices
-            }
+            it.companyHistory = response.data
             mLocalInteractorHelper.updateCompany(it)
         }
         return companyToUpdate
@@ -63,15 +50,7 @@ class CompaniesStateWorker(
         val responseData = response.data
         val companyToUpdate = findCompany(response.owner)
         companyToUpdate?.let {
-            it.companyNews.apply {
-                dates = responseData.dates
-                headlines = responseData.headlines
-                ids = responseData.ids
-                previewImagesUrls = responseData.previewImagesUrls
-                sources = responseData.sources
-                summaries = responseData.summaries
-                urls = responseData.urls
-            }
+            it.companyNews = responseData
             mLocalInteractorHelper.updateCompany(it)
         }
         return companyToUpdate
@@ -80,20 +59,15 @@ class CompaniesStateWorker(
     suspend fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyDayData>): AdaptiveCompany? {
         val responseData = response.data
         val companyToUpdate = findCompany(response.owner)
-        companyToUpdate?.let {
-            it.companyDayData.apply {
-                openPrice = responseData.openPrice
-                highPrice = responseData.highPrice
-                lowPrice = responseData.lowPrice
-                currentPrice = responseData.currentPrice
-                previousClosePrice = responseData.previousClosePrice
-                profit = responseData.profit
+        return if (companyToUpdate != null && companyToUpdate.companyDayData != responseData) {
+            companyToUpdate.apply {
+                companyDayData = responseData
+                companyStyle.dayProfitBackground =
+                    mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
             }
-            it.companyStyle.dayProfitBackground =
-                mStylesProvider.getProfitBackground(it.companyDayData.profit)
-            mLocalInteractorHelper.updateCompany(it)
-        }
-        return companyToUpdate
+            mLocalInteractorHelper.updateCompany(companyToUpdate)
+            companyToUpdate
+        } else null
     }
 
     suspend fun onWebSocketResponse(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>): AdaptiveCompany? {

@@ -108,6 +108,18 @@ class DataInteractor private constructor(
         mDataManager.onRemoveFavouriteCompany(adaptiveCompany)
     }
 
+    override suspend fun addCompanyToFavourite(symbol: String) {
+        mDataManager.getCompany(symbol)?.let {
+            addCompanyToFavourite(it)
+        }
+    }
+
+    override suspend fun removeCompanyFromFavourite(symbol: String) {
+        mDataManager.getCompany(symbol)?.let {
+            removeCompanyFromFavourite(it)
+        }
+    }
+
     private suspend fun prepareCompaniesData(context: Context) {
         val responseCompanies = mLocalInteractorHelper.getCompaniesData(context)
         if (responseCompanies is LocalInteractorResponse.Success) {
@@ -120,6 +132,10 @@ class DataInteractor private constructor(
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
             mDataManager.onSearchesDataPrepared(responseSearchesHistory.searchesHistory)
         } else mErrorState.value = DataNotificator.Error(R.string.errorLoadingData.toString())
+    }
+
+    override fun getCompany(symbol: String): AdaptiveCompany? {
+        return mDataManager.getCompany(symbol)
     }
 
     companion object : SingletonHolder<DataInteractor, Context>({

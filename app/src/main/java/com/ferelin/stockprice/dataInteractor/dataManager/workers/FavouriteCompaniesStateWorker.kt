@@ -51,7 +51,8 @@ class FavouriteCompaniesStateWorker(
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany {
         company.apply {
             isFavourite = true
-            companyStyle.favouriteIconResource = mStylesProvider.getIconDrawable(true)
+            companyStyle.favouriteDefaultIconResource = mStylesProvider.getDefaultIconDrawable(true)
+            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(true)
         }
         mFavouriteCompanies.add(company)
 
@@ -70,7 +71,8 @@ class FavouriteCompaniesStateWorker(
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany {
         company.apply {
             isFavourite = false
-            companyStyle.favouriteIconResource = mStylesProvider.getIconDrawable(false)
+            companyStyle.favouriteDefaultIconResource = mStylesProvider.getDefaultIconDrawable(false)
+            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(false)
         }
         mFavouriteCompanies.remove(company)
 
