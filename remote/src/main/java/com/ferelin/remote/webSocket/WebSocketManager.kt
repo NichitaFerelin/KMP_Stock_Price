@@ -1,6 +1,5 @@
 package com.ferelin.remote.webSocket
 
-import android.util.Log
 import com.ferelin.remote.utilits.Api
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -10,13 +9,11 @@ class WebSocketManager(private val mOnResponse: (response: String) -> Unit) : We
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
-        Log.d("Test", "message: $text")
         mOnResponse(text)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
-        Log.d("Test","failure: $t, $response")
         mOnResponse("")
     }
 

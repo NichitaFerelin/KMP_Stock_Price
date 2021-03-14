@@ -1,6 +1,5 @@
 package com.ferelin.remote.network.companyProfile
 
-import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
 class CompanyProfileResponse(
@@ -12,4 +11,4 @@ class CompanyProfileResponse(
     @Json(name = "finnhubIndustry") val industry: String,
     @Json(name = "currency") val currency: String,
     @Json(name = "marketCapitalization") val capitalization: Double
-) : BaseResponse()
+)

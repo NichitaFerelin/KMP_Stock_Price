@@ -19,10 +19,13 @@ data class AdaptiveCompany(
     }
 
     override fun hashCode(): Int {
-        return (companyProfile.name +
-                companyDayData.currentPrice +
-                companyDayData.lowPrice +
-                "${companyHistory.closePrices}"
-                ).hashCode()
+        var result = id
+        result = 31 * result + companyProfile.hashCode()
+        result = 31 * result + companyDayData.hashCode()
+        result = 31 * result + companyHistory.hashCode()
+        result = 31 * result + companyNews.hashCode()
+        result = 31 * result + companyStyle.hashCode()
+        result = 31 * result + isFavourite.hashCode()
+        return result
     }
 }

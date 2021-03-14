@@ -33,7 +33,7 @@ class NetworkManager : NetworkManagerHelper {
 
     private val mThrottleManager: ThrottleManagerHelper = ThrottleManager()
 
-    override fun loadStockSymbols(): Flow<BaseResponse> = callbackFlow {
+    override fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>> = callbackFlow {
         mStockSymbolsService
             .getStockSymbolList(Api.FINNHUB_TOKEN)
             .enqueue(BaseManager<StockSymbolResponse> {
@@ -42,21 +42,22 @@ class NetworkManager : NetworkManagerHelper {
         awaitClose()
     }
 
-    override fun loadCompanyProfile(symbol: String): Flow<BaseResponse> = callbackFlow {
-        mCompanyProfileService
-            .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
-            .enqueue(BaseManager<CompanyProfileResponse> {
-                offer(it)
-            })
-        awaitClose()
-    }
+    override fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>> =
+        callbackFlow {
+            mCompanyProfileService
+                .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
+                .enqueue(BaseManager<CompanyProfileResponse> {
+                    offer(it)
+                })
+            awaitClose()
+        }
 
     override fun loadStockCandles(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<BaseResponse> = callbackFlow {
+    ): Flow<BaseResponse<StockCandlesResponse>> = callbackFlow {
         mStockCandlesService
             .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
             .enqueue(BaseManager<StockCandlesResponse> {
@@ -65,27 +66,32 @@ class NetworkManager : NetworkManagerHelper {
         awaitClose()
     }
 
-    override fun loadCompanyNews(symbol: String, from: String, to: String): Flow<BaseResponse> =
-        callbackFlow {
-            mCompanyNewsService
-                .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
-                .enqueue(BaseManager<CompanyNewsResponse> {
+    override fun loadCompanyNews(
+        symbol: String,
+        from: String,
+        to: String
+    ): Flow<BaseResponse<List<CompanyNewsResponse>>> = callbackFlow {
+        mCompanyNewsService
+            .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
+            .enqueue(BaseManager<List<CompanyNewsResponse>> {
+                offer(it)
+            })
+        awaitClose()
+    }
+
+    override fun loadCompanyQuote(
+        symbol: String,
+        position: Int
+    ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
+        mThrottleManager.addMessage(symbol, Api.COMPANY_QUOTE, position)
+        mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
+            mCompanyQuoteService
+                .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
+                .enqueue(BaseManager<CompanyQuoteResponse> {
+                    it.additionalMessage = symbolToRequest
                     offer(it)
                 })
-            awaitClose()
         }
-
-    override fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse> =
-        callbackFlow {
-            mThrottleManager.addMessage(symbol, Api.COMPANY_QUOTE, position)
-            mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
-                mCompanyQuoteService
-                    .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
-                    .enqueue(BaseManager<CompanyQuoteResponse> {
-                        it.message = symbolToRequest
-                        offer(it)
-                    })
-            }
-            awaitClose { mThrottleManager.invalidate() }
-        }
+        awaitClose { mThrottleManager.invalidate() }
+    }
 }

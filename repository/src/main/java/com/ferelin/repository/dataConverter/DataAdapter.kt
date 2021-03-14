@@ -67,7 +67,7 @@ class DataAdapter {
             newsPreviewImagesUrls = adaptiveCompany.companyNews.previewImagesUrls,
             newsSources = adaptiveCompany.companyNews.sources,
             newsSummaries = adaptiveCompany.companyNews.summaries,
-            newsUrls = adaptiveCompany.companyNews.urls,
+            newsUrls = adaptiveCompany.companyNews.browserUrls,
 
             isFavourite = adaptiveCompany.isFavourite
         )
@@ -109,7 +109,7 @@ class DataAdapter {
                 previewImagesUrls = company.newsPreviewImagesUrls,
                 sources = company.newsSources,
                 summaries = company.newsSummaries,
-                urls = company.newsUrls
+                browserUrls = company.newsUrls
             ),
             companyStyle = AdaptiveCompanyStyle(),
             isFavourite = company.isFavourite

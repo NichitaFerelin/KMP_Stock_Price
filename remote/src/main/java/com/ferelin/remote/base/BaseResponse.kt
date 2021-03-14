@@ -1,3 +1,7 @@
 package com.ferelin.remote.base
 
-open class BaseResponse(var responseCode: Int? = null, var message: String? = null)
+class BaseResponse<T>(
+    var responseCode: Int? = null,
+    var additionalMessage: String? = null,
+    var responseData: T? = null
+)

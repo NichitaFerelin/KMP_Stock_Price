@@ -5,8 +5,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class BaseManager<T : BaseResponse>(
-    private val mOnResponse: (response: BaseResponse) -> Unit
+class BaseManager<T>(
+    private val mOnResponse: (response: BaseResponse<T>) -> Unit
 ) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -17,8 +17,13 @@ class BaseManager<T : BaseResponse>(
             responseCode == 429 -> mOnResponse(BaseResponse(Api.RESPONSE_LIMIT))
             responseBody == null -> mOnResponse(BaseResponse(Api.RESPONSE_NO_DATA))
             responseCode == 200 -> {
-                responseBody.responseCode = Api.RESPONSE_OK
-                mOnResponse(responseBody)
+                mOnResponse(
+                    BaseResponse(
+                        responseCode = Api.RESPONSE_OK,
+                        additionalMessage = null,
+                        responseData = responseBody
+                    )
+                )
             }
         }
     }

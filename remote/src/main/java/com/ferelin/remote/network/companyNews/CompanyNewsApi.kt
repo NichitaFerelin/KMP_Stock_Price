@@ -11,5 +11,5 @@ interface CompanyNewsApi {
         @Query("token") token: String,
         @Query("from") from: String,
         @Query("to") to: String
-    ): Call<CompanyNewsResponse>
+    ): Call<List<CompanyNewsResponse>>
 }

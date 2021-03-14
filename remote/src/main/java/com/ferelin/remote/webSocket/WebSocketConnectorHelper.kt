@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface WebSocketConnectorHelper {
 
-    fun openConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse>
+    fun openConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse<WebSocketResponse>>
 
     fun closeConnection()
 

@@ -35,17 +35,17 @@ class DataConverter : DataConverterHelper {
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertWebSocketResponse(response: BaseResponse): RepositoryResponse<AdaptiveWebSocketPrice> {
+    override fun convertWebSocketResponse(response: BaseResponse<WebSocketResponse>): RepositoryResponse<AdaptiveWebSocketPrice> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as WebSocketResponse
+            val itemResponse = response.responseData as WebSocketResponse
             val formattedPrice = mAdapter.formatPrice(itemResponse.lastPrice)
             RepositoryResponse.Success(
                 owner = itemResponse.symbol,
                 data = AdaptiveWebSocketPrice(
                     formattedPrice,
                     mAdapter.calculateProfit(
-                        itemResponse.lastPrice,
-                        itemResponse.message?.toDouble() ?: 0.0
+                        currentPrice = itemResponse.lastPrice,
+                        previousPrice = response.additionalMessage?.toDouble() ?: 0.0
                     )
                 )
             )
@@ -53,11 +53,11 @@ class DataConverter : DataConverterHelper {
     }
 
     override fun convertStockCandlesResponse(
-        response: BaseResponse,
+        response: BaseResponse<StockCandlesResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as StockCandlesResponse
+            val itemResponse = response.responseData as StockCandlesResponse
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyHistory(
@@ -74,11 +74,11 @@ class DataConverter : DataConverterHelper {
     }
 
     override fun convertCompanyProfileResponse(
-        response: BaseResponse,
+        response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
     ): RepositoryResponse<AdaptiveCompanyProfile> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as CompanyProfileResponse
+            val itemResponse = response.responseData as CompanyProfileResponse
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyProfile(
@@ -96,41 +96,62 @@ class DataConverter : DataConverterHelper {
         } else RepositoryResponse.Failed(response.responseCode)
     }
 
-    override fun convertStockSymbolsResponse(response: BaseResponse): RepositoryResponse<AdaptiveStocksSymbols> {
+    override fun convertStockSymbolsResponse(response: BaseResponse<StockSymbolResponse>): RepositoryResponse<AdaptiveStocksSymbols> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as StockSymbolResponse
+            val itemResponse = response.responseData as StockSymbolResponse
             RepositoryResponse.Success(data = AdaptiveStocksSymbols(itemResponse.stockSymbols))
         } else RepositoryResponse.Failed(response.responseCode)
     }
 
     override fun convertCompanyNewsResponse(
-        response: BaseResponse,
+        response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as CompanyNewsResponse
+            val itemResponse = response.responseData as List<CompanyNewsResponse>
+
+            val ids = mutableListOf<Double>()
+            val headlines = mutableListOf<String>()
+            val summaries = mutableListOf<String>()
+            val sources = mutableListOf<String>()
+            val dateTimes = mutableListOf<Double>()
+            val previewImageUrls = mutableListOf<String>()
+            val browserUrls = mutableListOf<String>()
+
+            itemResponse.forEach {
+                ids.add(it.newsId)
+                headlines.add(it.headline)
+                summaries.add(it.newsSummary)
+                sources.add(it.newsSource)
+                dateTimes.add(it.dateTime)
+                previewImageUrls.add(it.previewImageUrl)
+                browserUrls.add(it.newsBrowserUrl)
+            }
+
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyNews(
-                    itemResponse.dateTime.map {
+                    ids.map {
+                        it.toString().substringBefore(".")
+                    }.toList(),
+                    headlines.toList(),
+                    summaries.toList(),
+                    sources.toList(),
+                    dateTimes.map {
                         mAdapter.fromLongToDateStr(mAdapter.convertMillisFromResponse(it.toLong()))
-                    },
-                    itemResponse.headline,
-                    itemResponse.newsId.map { toString().substringBefore(".") },
-                    itemResponse.previewImageUrl,
-                    itemResponse.newsSource,
-                    itemResponse.newsSummary,
-                    itemResponse.newsUrl
+                    }.toList(),
+                    browserUrls.toList(),
+                    previewImageUrls.toList()
                 )
             )
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertCompanyQuoteResponse(response: BaseResponse): RepositoryResponse<AdaptiveCompanyDayData> {
+    override fun convertCompanyQuoteResponse(response: BaseResponse<CompanyQuoteResponse>): RepositoryResponse<AdaptiveCompanyDayData> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response as CompanyQuoteResponse
+            val itemResponse = response.responseData as CompanyQuoteResponse
             RepositoryResponse.Success(
-                owner = itemResponse.message,
+                owner = response.additionalMessage,
                 data = AdaptiveCompanyDayData(
                     mAdapter.formatPrice(itemResponse.currentPrice),
                     mAdapter.formatPrice(itemResponse.previousClosePrice),

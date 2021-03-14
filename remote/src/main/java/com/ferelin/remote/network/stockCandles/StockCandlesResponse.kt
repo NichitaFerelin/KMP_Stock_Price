@@ -1,6 +1,5 @@
 package com.ferelin.remote.network.stockCandles
 
-import com.ferelin.remote.base.BaseResponse
 import com.squareup.moshi.Json
 
 class StockCandlesResponse(
@@ -11,4 +10,4 @@ class StockCandlesResponse(
     @Json(name = "v") val volumeData: List<Double>,
     @Json(name = "t") val timestamps: List<Long>,
     @Json(name = "s") val responseStatus: String
-) : BaseResponse()
+)

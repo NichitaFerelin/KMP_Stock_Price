@@ -34,7 +34,7 @@ class WebSocketConnector : WebSocketConnectorHelper {
     }
 
     @FlowPreview
-    override fun openConnection(token: String): Flow<BaseResponse> = callbackFlow {
+    override fun openConnection(token: String): Flow<BaseResponse<WebSocketResponse>> = callbackFlow {
         val request = Request.Builder().url("$mBase$token").build()
         val okHttp = OkHttpClient()
         mWebSocket = okHttp.newWebSocket(request, WebSocketManager {
