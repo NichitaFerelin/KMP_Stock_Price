@@ -16,6 +16,7 @@ import com.ferelin.remote.network.throttleManager.ThrottleManager
 import com.ferelin.remote.network.throttleManager.ThrottleManagerHelper
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.utilits.RetrofitDelegate
+import com.ferelin.remote.utilits.offerSafe
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -47,7 +48,7 @@ class NetworkManager : NetworkManagerHelper {
             mCompanyProfileService
                 .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
                 .enqueue(BaseManager<CompanyProfileResponse> {
-                    offer(it)
+                    offerSafe(it)
                 })
             awaitClose()
         }
@@ -61,7 +62,7 @@ class NetworkManager : NetworkManagerHelper {
         mStockCandlesService
             .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
             .enqueue(BaseManager<StockCandlesResponse> {
-                offer(it)
+                offerSafe(it)
             })
         awaitClose()
     }
@@ -74,7 +75,7 @@ class NetworkManager : NetworkManagerHelper {
         mCompanyNewsService
             .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
             .enqueue(BaseManager<List<CompanyNewsResponse>> {
-                offer(it)
+                offerSafe(it)
             })
         awaitClose()
     }
@@ -89,7 +90,7 @@ class NetworkManager : NetworkManagerHelper {
                 .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
                 .enqueue(BaseManager<CompanyQuoteResponse> {
                     it.additionalMessage = symbolToRequest
-                    offer(it)
+                    offerSafe(it)
                 })
         }
         awaitClose { mThrottleManager.invalidate() }
