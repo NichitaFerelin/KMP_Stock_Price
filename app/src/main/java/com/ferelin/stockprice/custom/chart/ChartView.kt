@@ -3,15 +3,14 @@ package com.ferelin.stockprice.custom.chart
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.LayoutInflater
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.custom.utils.BezierPoint
 import com.ferelin.stockprice.custom.utils.Marker
-import com.ferelin.stockprice.custom.utils.Point
 import com.ferelin.stockprice.utils.px
 import kotlin.math.abs
 
@@ -22,23 +21,21 @@ class ChartView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private var mMarkers: List<Marker> = emptyList()
+
     private var mBezierMarkers: HashMap<Marker, BezierPoint> = hashMapOf()
 
     private var mCharHeight: Int = 0
     private var mChartWidth: Int = 0
 
-    private var mMaxValue: Float = 0F
-    private var mMinValue: Float = 0F
+    private var mMaxValue: Double = 0.0
+    private var mMinValue: Double = 0.0
 
-    private var mSuggestionView: View = LayoutInflater.from(context).inflate(
-        R.layout.activity_main,
-        this.parent as ViewGroup?,
-        true
-    )
+    private var mTooManyPoints = false
+    private var mTooManyPointsMargin = 0F
 
     private val mGradientColors = intArrayOf(
-        ContextCompat.getColor(context, R.color.colorEnd),
-        ContextCompat.getColor(context, R.color.colorStart)
+        ContextCompat.getColor(context, R.color.gradientEnd),
+        ContextCompat.getColor(context, R.color.gradientStart)
     )
 
     private val mLinePaint = Paint().apply {
@@ -52,7 +49,6 @@ class ChartView @JvmOverloads constructor(
     private var mGradient: LinearGradient? = null
     private val mGradientPath: Path = Path()
     private lateinit var mGradientPaint: Paint
-
     private val mLinePath: Path = Path()
 
     private var mZeroY: Float = 0F
@@ -61,9 +57,25 @@ class ChartView @JvmOverloads constructor(
     private var mOnTouchListener: ((marker: Marker) -> Unit)? = null
     private var mLastNearestPoint: Marker? = null
 
+    private val mTouchEventDetector =
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent?): Boolean {
+                return true
+            }
+
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                return if (e != null) {
+                    onSingleTapListener(e)
+                    true
+                } else false
+            }
+        })
+
     override fun onDraw(canvas: Canvas) {
-        drawGradient(canvas)
-        drawLine(canvas)
+        if (mMarkers.isNotEmpty()) {
+            drawGradient(canvas)
+            drawLine(canvas)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -72,43 +84,55 @@ class ChartView @JvmOverloads constructor(
 
         mChartWidth = widthSize
         mCharHeight = heightSize
-        calcAndInvalidate()
 
+        calcAndInvalidate()
         setMeasuredDimension(mChartWidth, mCharHeight)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        var nearestPoint = Marker(Point(0F, 0F))
-        for (index in 1 until mMarkers.size - 1) {
-            val item = mMarkers[index]
-            val itemPosition = item.position
-            if (abs(event.x - itemPosition.x) < abs(event.x - nearestPoint.position.x)) {
-                nearestPoint = item
-            }
+        return mTouchEventDetector.onTouchEvent(event).also { wasHandled ->
+            if (wasHandled) performClick()
         }
-        mLastNearestPoint = nearestPoint
-        performClick()
-        return true
     }
 
     override fun performClick(): Boolean {
         super.performClick()
-
-        mOnTouchListener!!.invoke(mLastNearestPoint!!)
-
+        mLastNearestPoint?.let { mOnTouchListener?.invoke(it) }
         return true
     }
 
-    fun setMarkers(markers: List<Marker>) {
-        mMaxValue = markers.maxByOrNull { it.value }!!.value
-        mMinValue = markers.minByOrNull { it.value }!!.value
+    fun setData(markers: AdaptiveCompanyHistoryForChart) {
+        val newList = mutableListOf<Marker>()
+        for (index in markers.price.indices) {
+            newList.add(
+                Marker(
+                    price = markers.price[index],
+                    priceStr = markers.priceStr[index],
+                    date = markers.dates[index]
+                )
+            )
+        }
 
-        mMarkers = markers.toMutableList().apply {
-            // Add start/end points
-            val controlPoint = mMinValue + (mMinValue * 5 / 100)
-            add(0, Marker(value = controlPoint))
-            add(Marker(value = controlPoint))
-        }.toList()
+        mTooManyPoints = newList.size > 100
+        mTooManyPointsMargin =
+            if (mTooManyPoints) resources.getDimension(R.dimen.frame_padding) else 0F
+        mMaxValue = newList.maxByOrNull { it.price }!!.price
+        mMinValue = newList.minByOrNull { it.price }!!.price
+
+        val startFakePoint = newList.first().price
+        val endFakePoint = newList.last().price
+        // Fake points
+        newList.add(0, Marker(price = startFakePoint, priceStr = "", date = ""))
+        newList.add(Marker(price = endFakePoint, priceStr = "", date = ""))
+
+        if (mTooManyPoints) {
+            newList.add(0, Marker(price = startFakePoint, priceStr = "", date = ""))
+            newList.add(Marker(price = endFakePoint, priceStr = "", date = ""))
+        }
+
+        mMarkers = newList
+
+        calcAndInvalidate()
     }
 
     fun setOnTouchListener(func: (marker: Marker) -> Unit) {
@@ -116,9 +140,9 @@ class ChartView @JvmOverloads constructor(
     }
 
     private fun calcAndInvalidate() {
+        buildGradient()
         if (mMarkers.isNotEmpty()) {
             calculatePositions()
-            buildGradient()
             invalidate()
         }
     }
@@ -129,11 +153,12 @@ class ChartView @JvmOverloads constructor(
             this.shader = mGradient
             this.isAntiAlias = true
         }
+
         mGradient = LinearGradient(
             0F,
-            paddingTop.toFloat(),
+            mCharHeight - resources.getDimension(R.dimen.ttt) - paddingTop.toFloat(),
             0F,
-            mGradientZeroY,
+            mCharHeight - paddingTop.toFloat(),
             mGradientColors,
             null,
             Shader.TileMode.CLAMP
@@ -142,6 +167,7 @@ class ChartView @JvmOverloads constructor(
 
     private fun drawGradient(canvas: Canvas) {
         if (mMarkers.isNotEmpty()) {
+            mGradientPath.reset()
             mGradientPath.apply {
                 val firstItem = mMarkers.first().position
                 moveTo(firstItem.x, mZeroY)
@@ -149,15 +175,16 @@ class ChartView @JvmOverloads constructor(
 
                 for (index in 1 until mMarkers.size) {
                     val marker = mMarkers[index]
-                    val code = mBezierMarkers[mMarkers[index]]!!
-                    mGradientPath.cubicTo(
-                        code.x1,
-                        code.y1,
-                        code.x2,
-                        code.y2,
-                        marker.position.x,
-                        marker.position.y
-                    )
+                    mBezierMarkers[mMarkers[index]]?.let { code ->
+                        mGradientPath.cubicTo(
+                            code.x1,
+                            code.y1,
+                            code.x2,
+                            code.y2,
+                            marker.position.x,
+                            marker.position.y
+                        )
+                    }
                 }
 
                 val lastItem = mMarkers.last().position
@@ -172,6 +199,7 @@ class ChartView @JvmOverloads constructor(
 
     private fun drawLine(canvas: Canvas) {
         val firstItem = mMarkers.first()
+        mLinePath.reset()
         mLinePath.moveTo(firstItem.position.x, firstItem.position.y)
 
         for (index in 1 until mMarkers.size) {
@@ -186,26 +214,49 @@ class ChartView @JvmOverloads constructor(
                 marker.position.y
             )
         }
-
         canvas.drawPath(mLinePath, mLinePaint)
     }
 
     private fun calculatePositions() {
-        mPxPerUnit = (mCharHeight - paddingTop - paddingBottom) / (mMaxValue - mMinValue)
-        mZeroY = mMaxValue * mPxPerUnit + paddingTop
-        mGradientZeroY = mZeroY - (mMinValue - (mMinValue * 5 / 100)) * mPxPerUnit
+        mPxPerUnit =
+            ((mCharHeight - paddingTop - paddingBottom) / (mMaxValue - mMinValue)).toFloat()
+        mZeroY = mMaxValue.toFloat() * mPxPerUnit + paddingTop
+        mGradientZeroY = (mZeroY - (mMinValue - (mMinValue * 5 / 100)) * mPxPerUnit).toFloat()
 
-        val step = (mChartWidth) / (mMarkers.size - 1)
-        mMarkers.first().apply {
-            position.x = (step * 0).toFloat()
-            position.y = mZeroY - value * mPxPerUnit
+        val fakePoints = if (mTooManyPoints) 4 else 1
+        val step = (mChartWidth) / (mMarkers.size - fakePoints)
+
+        // First fake point
+        mMarkers[0].apply {
+            position.x = 0F
+            position.y = (mZeroY - price * mPxPerUnit).toFloat()
         }
 
-        for (index in 1 until mMarkers.size) {
-            val marker = mMarkers[index].apply {
-                position.x = (step * index).toFloat()
-                position.y = mZeroY - value * mPxPerUnit
+        if (mTooManyPoints) {
+            // Second fake point
+            mMarkers[1].apply {
+                position.x = mTooManyPointsMargin
+                position.y = (mZeroY - price * mPxPerUnit).toFloat()
+
+                mBezierMarkers[this] = BezierPoint(
+                    x1 = (position.x + mMarkers[0].position.x) / 2,
+                    y1 = mMarkers[0].position.y,
+                    x2 = (position.x + mMarkers[0].position.x) / 2,
+                    y2 = position.y
+                )
             }
+        }
+
+        val (startIndex, endIndex) = if (mTooManyPoints) {
+            intArrayOf(2, mMarkers.size - 2)
+        } else intArrayOf(1, mMarkers.size - 1)
+
+        for (index in startIndex until endIndex) {
+            val marker = mMarkers[index].apply {
+                position.x = (step * index + mTooManyPointsMargin)
+                position.y = (mZeroY - price * mPxPerUnit).toFloat()
+            }
+
             mBezierMarkers[mMarkers[index]] = BezierPoint(
                 x1 = (marker.position.x + mMarkers[index - 1].position.x) / 2,
                 y1 = mMarkers[index - 1].position.y,
@@ -213,5 +264,50 @@ class ChartView @JvmOverloads constructor(
                 y2 = marker.position.y
             )
         }
+
+        if (mTooManyPoints) {
+            // last - 1 fake point
+            mMarkers[mMarkers.lastIndex - 1].apply {
+                position.x = mChartWidth - mTooManyPointsMargin
+                position.y = (mZeroY - price * mPxPerUnit).toFloat()
+
+                mBezierMarkers[this] = BezierPoint(
+                    x1 = (position.x + mMarkers[mMarkers.lastIndex - 2].position.x) / 2,
+                    y1 = mMarkers[mMarkers.lastIndex - 2].position.y,
+                    x2 = (position.x + mMarkers[mMarkers.lastIndex - 2].position.x) / 2,
+                    y2 = position.y
+                )
+            }
+        }
+
+        // Last fake point
+        mMarkers[mMarkers.lastIndex].apply {
+            position.x = mChartWidth.toFloat()
+            position.y = (mZeroY - price * mPxPerUnit).toFloat()
+
+            mBezierMarkers[this] = BezierPoint(
+                x1 = (position.x + mMarkers[mMarkers.lastIndex - 1].position.x) / 2,
+                y1 = mMarkers[mMarkers.lastIndex - 1].position.y,
+                x2 = (position.x + mMarkers[mMarkers.lastIndex - 1].position.x) / 2,
+                y2 = position.y
+            )
+        }
+    }
+
+    private fun onSingleTapListener(event: MotionEvent) {
+        var nearestPoint: Marker? = null
+        val (startIndex, endIndex) = if (mTooManyPoints) {
+            intArrayOf(2, mMarkers.size - 2)
+        } else intArrayOf(1, mMarkers.size - 1)
+
+        for (index in startIndex until endIndex) {
+            val item = mMarkers[index]
+            val itemPosition = item.position
+            if (nearestPoint == null || abs(event.x - itemPosition.x) < abs(event.x - nearestPoint.position.x)) {
+                nearestPoint = item
+            }
+        }
+        event.setLocation(nearestPoint!!.position.x, nearestPoint.position.y)
+        mLastNearestPoint = nearestPoint
     }
 }
