@@ -2,16 +2,19 @@ package com.ferelin.repository.dataConverter
 
 import com.ferelin.local.models.Company
 import com.ferelin.repository.adaptiveModels.*
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DataAdapter {
 
     fun fromLongToDateStr(time: Long): String {
-        val convertedTime = convertMillisFromResponse(time)
-        val locale = Locale("en", "EN")
-        val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
-        return dateFormat.format(Date(convertedTime)).filter { it != ',' }
+        val datePattern = "dd MMM yyyy"
+        val dateFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
+        return dateFormat.format(Date(time)).filter { it != ',' }
+    }
+
+    fun getMonthFromDate(date: String): String {
+        return date.filter { it.isLetter() }
     }
 
     fun adaptName(name: String): String {
