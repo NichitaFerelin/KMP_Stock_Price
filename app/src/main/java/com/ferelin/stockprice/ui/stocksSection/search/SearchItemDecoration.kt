@@ -25,40 +25,14 @@ class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
         when {
             parent.getChildAdapterPosition(view) == 0 -> {
                 outRect.left = mFirstItemStartMargin
-
             }
-            parent.getChildAdapterPosition(view) == 1 -> outRect.left = mFirstItemStartMargin
-            (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex == 0 -> {
+            parent.getChildAdapterPosition(view) == 1 -> {
+                outRect.left = mFirstItemStartMargin
+            }
+            (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex == 1 -> {
                 outRect.left = mDefaultStartMargin
             }
             else -> outRect.left = mDefaultStartMargin
         }
-
-
-        /*  if (parent.getChildAdapterPosition(view) == 0 || parent.getChildAdapterPosition(view) == 1) {
-              outRect.left = mFirstItemStartMargin
-              //outRect.top = mSecondRowTopMargin
-          } else {
-              outRect.bottom = mSecondRowTopMargin
-              outRect.left = mFirstItemStartMargin
-          }*/
-
-        /*val column = (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex
-        when {
-            parent.getChildAdapterPosition(view) == 0 ||  -> {
-                outRect.left = mFirstItemStartMargin
-                mNextRow = false
-            }
-            column == 0 -> outRect.left = mDefaultStartMargin
-            mNextRow -> {
-                outRect.left = mDefaultStartMargin
-                outRect.top = mSecondRowTopMargin
-            }
-            else -> {
-                mNextRow = true
-                outRect.left = mFirstItemStartMargin
-                outRect.top = mSecondRowTopMargin
-            }
-        }*/
     }
 }

@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.base
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
@@ -38,7 +39,9 @@ abstract class BaseStocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.companiesUpdatesShared
                 .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
-                .collect { updateNotifyRecyclerItem(it) }
+                .collect {
+                    Log.d("Test", "Changed state")
+                    updateNotifyRecyclerItem(it) }
         }
     }
 
@@ -58,13 +61,10 @@ abstract class BaseStocksViewModel(
 
     protected fun setRecyclerItems(items: List<AdaptiveCompany>) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            val newItems = ArrayList(items).onEach {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addCompanyToEnd(it)
-                }
-                delay(55)
-            }
-            mRecyclerAdapter.setCompanies(newItems)
+            val newItems = ArrayList(items)
+            if (newItems.size > 10) {
+                setItemsToRecyclerWithRangeAnim(newItems)
+            } else setItemsToRecyclerWithDefaultAnim(newItems)
         }
     }
 
@@ -74,6 +74,32 @@ abstract class BaseStocksViewModel(
             viewModelScope.launch(mCoroutineContext.Main) {
                 mRecyclerAdapter.updateCompany(notificator.data!!, index)
             }
+        }
+    }
+
+    private fun setItemsToRecyclerWithRangeAnim(newItems: ArrayList<AdaptiveCompany>) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            for (index in 0 until 10) {
+                withContext(mCoroutineContext.Main) {
+                    mRecyclerAdapter.addCompanyToEnd(newItems[index])
+                }
+                delay(35)
+            }
+            withContext(mCoroutineContext.Main) {
+                mRecyclerAdapter.addInRange(newItems, 10, newItems.size - 1)
+            }
+        }
+    }
+
+    private fun setItemsToRecyclerWithDefaultAnim(newItems: ArrayList<AdaptiveCompany>) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            newItems.forEach {
+                withContext(mCoroutineContext.Main) {
+                    mRecyclerAdapter.addCompanyToEnd(it)
+                }
+                delay(35)
+            }
+            mRecyclerAdapter.setCompanies(newItems)
         }
     }
 

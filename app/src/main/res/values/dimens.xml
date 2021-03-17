@@ -11,4 +11,35 @@
     <dimen name="line_width">3dp</dimen>
     <dimen name="radius">6dp</dimen>
     <dimen name="iner_radius">5dp</dimen>
+
+    <dimen name="specialMargin">100dp</dimen>
+
+    <dimen name="fiveDP">5dp</dimen>
+
+    <dimen name="thriDp">13dp</dimen>
+
+    <dimen name="test">55.5dp</dimen>
+
+    <dimen name="ttt">260dp</dimen>
+
+    <dimen name="eee">50dp</dimen>
+
+
+    <dimen name="suggestionArrowHeight">6dp</dimen>
+
+    <dimen name="a1">76dp</dimen>
+    <dimen name="a2">55.5dp</dimen>
+
+    <dimen name="newsItemOffset">8dp</dimen>
+
+    <dimen name="suggestionLayoutWidth">111dp</dimen>
+    <dimen name="suggestionLayoutHeight">76dp</dimen>
+    <dimen name="suggestionWidth">99dp</dimen>
+    <dimen name="suggestionHeight">64dp</dimen>
+    <dimen name="suggestionOffsetFromPoint">25dp</dimen>
+
+    <dimen name="pointWidth">8dp</dimen>
+    <dimen name="pointHeight">8dp</dimen>
+
+
 </resources>

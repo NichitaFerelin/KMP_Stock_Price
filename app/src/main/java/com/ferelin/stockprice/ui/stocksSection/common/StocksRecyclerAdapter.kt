@@ -82,6 +82,11 @@ class StocksRecyclerAdapter(
         notifyItemInserted(mCompanies.lastIndex)
     }
 
+    fun addInRange(companies: ArrayList<AdaptiveCompany>, start: Int, end: Int) {
+        mCompanies = companies
+        notifyItemRangeInserted(start, end)
+    }
+
     fun removeCompany(index: Int) {
         mCompanies.removeAt(index)
         notifyItemRemoved(index)

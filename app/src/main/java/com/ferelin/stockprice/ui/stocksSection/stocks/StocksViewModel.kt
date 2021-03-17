@@ -36,6 +36,9 @@ class StocksViewModel(
     }
 
     private fun onCompaniesPrepared(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
-        setRecyclerItems(notificator.data!!)
+        viewModelScope.launch(mCoroutineContext.IO) {
+            val newList = ArrayList(notificator.data!!)
+            setRecyclerItems(newList)
+        }
     }
 }

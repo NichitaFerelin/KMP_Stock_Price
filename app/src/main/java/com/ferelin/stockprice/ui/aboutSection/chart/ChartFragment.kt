@@ -1,7 +1,6 @@
 package com.ferelin.stockprice.ui.aboutSection.chart
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +38,10 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
         mBinding = FragmentChartBinding.inflate(inflater, container, false)
         return mBinding.root
     }
+
+    /*
+    * TODO обнулить mLasNearestMarker после клика по кнопке смены графика
+    * */
 
     override fun setUpViewComponents() {
         switchSelectedType()
@@ -169,7 +172,6 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
             (suggestionX + suggestionLayoutWidth) > chartViewRightBorder
                     && suggestionY < chartViewTopBorder -> {
                 // move to left-bottom
-                Log.d("Test", "Left bottom")
                 val newX = suggestionX - outOfBorderOffset
                 val newY =
                     suggestionY + offsetFromPoint + pointHeight + suggestionLayoutHeight + offsetFromPoint

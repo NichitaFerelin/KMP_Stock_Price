@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -9,6 +10,7 @@
         android:id="@+id/sectionHints"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:constraint_referenced_ids="textViewRequests, recyclerViewPopularRequests, textViewSearched, recyclerViewSearchedHistory" />
 
     <androidx.constraintlayout.widget.Group
@@ -16,7 +18,17 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:constraint_referenced_ids="textViewStocks, textViewShowMore, recyclerViewSearchResults" />
+        app:constraint_referenced_ids="appBar, textViewStocks, recyclerViewSearchResults" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@color/white"
+        android:elevation="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardViewSearch"
@@ -27,8 +39,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="14dp"
+        android:outlineProvider="none"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="40dp"
+        app:cardElevation="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:elevation="1dp"
+        android:elevation="7dp"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintStart_toStartOf="@id/cardViewSearch"
@@ -50,26 +64,26 @@
         android:id="@+id/editTextSearch"
         style="@style/textViewH3"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:elevation="1dp"
+        android:elevation="7dp"
         android:lines="1"
         android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toStartOf="@id/imageViewIconClose"
         app:layout_constraintStart_toEndOf="@id/imageViewBack"
-        app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch"
+        tools:hint="Test" />
 
     <ImageView
         android:id="@+id/imageViewIconClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:elevation="1dp"
-        android:visibility="gone"
         android:src="@drawable/ic_close"
+        android:elevation="7dp"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
@@ -79,7 +93,7 @@
         style="@style/textViewH2"
         android:layout_width="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:text="Popular requests"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewSearch"
@@ -88,10 +102,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPopularRequests"
         android:layout_width="wrap_content"
-        android:layout_height="88dp"
+        android:layout_height="96dp"
         android:layout_marginTop="11dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/textViewSearched"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewRequests"
         app:spanCount="2" />
@@ -108,8 +123,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchedHistory"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
+        android:layout_width="wrap_content"
+        android:layout_height="96dp"
         android:layout_marginTop="11dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
@@ -124,16 +139,7 @@
         android:layout_marginTop="16dp"
         android:text="Stocks"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
-
-    <TextView
-        android:id="@+id/textViewShowMore"
-        style="@style/textViewBody"
-        android:layout_marginEnd="20dp"
-        android:text="Show more"
-        app:layout_constraintBottom_toBottomOf="@id/textViewStocks"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textViewStocks" />
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchResults"

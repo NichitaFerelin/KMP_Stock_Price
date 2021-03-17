@@ -1,7 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
 import android.text.Editable
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -41,8 +40,6 @@ class SearchViewModel(
     override fun initObserversBlock() {
         super.initObserversBlock()
 
-        Log.d("Test", "init")
-
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
                 mDataInteractor.companiesState
@@ -50,7 +47,6 @@ class SearchViewModel(
                     .take(1)
                     .collect { mCompanies = it.data!! }
             }
-
             launch {
                 mDataInteractor.searchRequestsState
                     .filter { it is DataNotificator.DataPrepared }
@@ -61,7 +57,6 @@ class SearchViewModel(
                         }
                     }
             }
-
             launch {
                 mDataInteractor.searchRequestsUpdateShared.collect {
                     withContext(mCoroutineContext.Main) {
@@ -79,7 +74,6 @@ class SearchViewModel(
 
                 if(mLastTextSearch != searchText) {
                     mLastTextSearch = searchText
-
                     if (searchText.isNotEmpty()) {
                         mActionHideCloseIcon.value = false
                         val results = mutableListOf<AdaptiveCompany>()
@@ -108,8 +102,6 @@ class SearchViewModel(
                         mActionHideCloseIcon.value = true
                     }
                 }
-
-
             }
         }
     }

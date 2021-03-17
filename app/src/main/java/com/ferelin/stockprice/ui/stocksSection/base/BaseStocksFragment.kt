@@ -27,16 +27,7 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel>
             mViewModel.actionMoveToInfo
                 .collect {
                     mFragmentManager.commit {
-                        replace(
-                            R.id.fragmentContainer, AboutPagerFragment.newInstance(
-                                it.companyProfile.symbol,
-                                it.companyProfile.name,
-                                it.companyStyle.favouriteSingleIconResource,
-                                it.companyDayData.currentPrice,
-                                it.companyDayData.profit,
-                                it.isFavourite
-                            )
-                        )
+                        replace(R.id.fragmentContainer, AboutPagerFragment(it))
                         addToBackStack(null)
                     }
                 }

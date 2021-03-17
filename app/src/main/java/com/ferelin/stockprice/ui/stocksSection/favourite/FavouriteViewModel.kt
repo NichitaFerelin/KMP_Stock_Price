@@ -8,9 +8,7 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -19,6 +17,10 @@ class FavouriteViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
+
+    private val mActionScrollToTop = MutableSharedFlow<Unit>(1)
+    val actionScrollToTop: SharedFlow<Unit>
+        get() = mActionScrollToTop
 
     override fun initObserversBlock() {
         super.initObserversBlock()
@@ -29,13 +31,11 @@ class FavouriteViewModel(
                     .filter { it is DataNotificator.DataPrepared }
                     .take(1)
                     .collect { onFavouriteCompaniesPrepared(it) }
-            }
+            }.join()
 
-            launch {
-                mDataInteractor.favouriteCompaniesUpdateShared
-                    .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
-                    .collect { onFavouriteCompanyUpdateShared(it) }
-            }
+            mDataInteractor.favouriteCompaniesUpdateShared
+                .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
+                .collect { onFavouriteCompanyUpdateShared(it) }
         }
     }
 
@@ -45,17 +45,24 @@ class FavouriteViewModel(
 
     private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            if (notificator is DataNotificator.NewItemAdded) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addCompany(notificator.data!!)
-                }
-            } else if (notificator is DataNotificator.ItemRemoved) {
-                val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-                if (index != NULL_INDEX) {
-                    withContext(mCoroutineContext.Main) {
-                        mRecyclerAdapter.removeCompany(index)
+            notificator.data?.let {
+                when (notificator) {
+                    is DataNotificator.NewItemAdded -> {
+                        withContext(mCoroutineContext.Main) {
+                            mRecyclerAdapter.addCompany(notificator.data)
+                        }
                     }
+                    is DataNotificator.ItemRemoved -> {
+                        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
+                        if (index != NULL_INDEX) {
+                            withContext(mCoroutineContext.Main) {
+                                mRecyclerAdapter.removeCompany(index)
+                            }
+                        }
+                    }
+                    else -> Unit
                 }
+                mActionScrollToTop.emit(Unit)
             }
         }
     }

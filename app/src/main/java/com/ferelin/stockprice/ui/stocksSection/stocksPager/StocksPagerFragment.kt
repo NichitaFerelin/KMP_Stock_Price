@@ -7,14 +7,25 @@ import android.view.ViewGroup
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
+import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
-class StocksPagerFragment : Fragment() {
+class StocksPagerFragment(
+    private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
+) : Fragment() {
 
     private lateinit var mBinding: FragmentStocksPagerBinding
+
+    private val mEventOnFabClicked = MutableSharedFlow<Unit>()
+    val eventOnFabClicked: SharedFlow<Unit>
+        get() = mEventOnFabClicked
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,12 +47,24 @@ class StocksPagerFragment : Fragment() {
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    if(position == 0) {
-                        TextViewCompat.setTextAppearance(mBinding.textViewHintStocks, R.style.textViewH1)
-                        TextViewCompat.setTextAppearance(mBinding.textViewHintFavourite, R.style.textViewH2)
+                    if (position == 0) {
+                        TextViewCompat.setTextAppearance(
+                            mBinding.textViewHintStocks,
+                            R.style.textViewH1
+                        )
+                        TextViewCompat.setTextAppearance(
+                            mBinding.textViewHintFavourite,
+                            R.style.textViewH2
+                        )
                     } else {
-                        TextViewCompat.setTextAppearance(mBinding.textViewHintStocks, R.style.textViewH2)
-                        TextViewCompat.setTextAppearance(mBinding.textViewHintFavourite, R.style.textViewH1)
+                        TextViewCompat.setTextAppearance(
+                            mBinding.textViewHintStocks,
+                            R.style.textViewH2
+                        )
+                        TextViewCompat.setTextAppearance(
+                            mBinding.textViewHintFavourite,
+                            R.style.textViewH1
+                        )
                     }
                 }
             })
@@ -51,6 +74,12 @@ class StocksPagerFragment : Fragment() {
             parentFragmentManager.commit {
                 replace(R.id.fragmentContainer, SearchFragment())
                 addToBackStack(null)
+            }
+        }
+
+        mBinding.fab.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                mEventOnFabClicked.emit(Unit)
             }
         }
     }

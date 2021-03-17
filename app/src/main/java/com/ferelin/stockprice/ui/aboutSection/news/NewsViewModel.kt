@@ -8,7 +8,8 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
+import com.ferelin.stockprice.ui.aboutSection.newsDetails.NewsDetailsFragment
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -18,11 +19,10 @@ import kotlinx.coroutines.withContext
 class NewsViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
-    arguments: Bundle?
+    ownerCompany: AdaptiveCompany? = null
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    private var mCompanySymbol = arguments?.get(AboutPagerFragment.KEY_COMPANY_SYMBOL).toString()
-    private lateinit var mCompany: AdaptiveCompany
+    private val mOwnerCompany: AdaptiveCompany? = ownerCompany
 
     private val mRecyclerAdapter = NewsRecyclerAdapter().apply {
         setOnNewsClickListener { position ->
@@ -38,62 +38,51 @@ class NewsViewModel(
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-
-            launch {
-                mCompany = mDataInteractor.getCompany(mCompanySymbol)!!
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.setData(mCompany.companyNews)
-                }
+            if (mOwnerCompany?.companyNews?.ids?.isNotEmpty() == true) {
+                onNewsChanged(mOwnerCompany.companyNews)
             }
 
-            launch {
-                mDataInteractor.loadCompanyNews(mCompanySymbol).collect {
-                    onNewsLoaded(it.companyNews)
-                }
-            }
+            mDataInteractor.loadCompanyNews(mOwnerCompany?.companyProfile?.symbol ?: "")
+                .collect { onNewsChanged(it.companyNews) }
         }
     }
 
     private fun onNewsClicked(position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            val args = bundleOf(
-                NewsFragment.KEY_HEADLINE to mCompany.companyNews.headlines[position],
-                NewsFragment.KEY_SUMMARY to mCompany.companyNews.summaries[position],
-                NewsFragment.KEY_DATE to mCompany.companyNews.dates[position],
-                NewsFragment.KEY_BROWSER_URL to mCompany.companyNews.browserUrls[position],
-                NewsFragment.KEY_IMAGE_URL to mCompany.companyNews.previewImagesUrls[position]
-            )
-            mEventOpenNewsDetails.emit(args)
-        }
-    }
-
-    private fun onNewsLoaded(news: AdaptiveCompanyNews) {
-        viewModelScope.launch(mCoroutineContext.Main) {
-            mRecyclerAdapter.setData(news)
-        }
-
-        /*viewModelScope.launch(mCoroutineContext.IO) {
-            if (mCompany.companyNews.ids.isEmpty()) {
-                withContext(mCoroutineContext.Main) {
-
-                }
-            } else applyNewsUpdates(news)
-        }*/ // TODO обновляет по ссылке изза этого никогда не пустой
-    }
-
-    private fun applyNewsUpdates(news: AdaptiveCompanyNews) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            var newNewsCursor = 0
-            while (news.ids[newNewsCursor] != mCompany.companyNews.ids[0]) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addItem(
-                        news.headlines[newNewsCursor],
-                        news.dates[newNewsCursor]
-                    )
-                }
-                newNewsCursor++
+            mOwnerCompany?.companyNews?.let {
+                val arguments = bundleOf(
+                    NewsDetailsFragment.HEADLINE_STR_KEY to it.headlines[position],
+                    NewsDetailsFragment.SUMMARY_STR_KEY to it.summaries[position],
+                    NewsDetailsFragment.DATE_STR_KEY to it.dates[position],
+                    NewsDetailsFragment.BROWSER_URL_STR_KEY to it.browserUrls[position],
+                    NewsDetailsFragment.IMAGE_URL_STR_KEY to it.previewImagesUrls[position]
+                )
+                mEventOpenNewsDetails.emit(arguments)
             }
-            mCompany.companyNews = news
+        }
+    }
+
+    private fun onNewsChanged(news: AdaptiveCompanyNews) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            if (mRecyclerAdapter.dataSize == 0 && news.ids.size > 10) {
+                for (index in 0 until 10) {
+                    withContext(mCoroutineContext.Main) {
+                        mRecyclerAdapter.addItemToEnd(news, index)
+                    }
+                    delay(30)
+                }
+                withContext(mCoroutineContext.Main) {
+                    mRecyclerAdapter.setDataInRange(news, 10, news.ids.lastIndex)
+                }
+            } else if (mRecyclerAdapter.ids != news.ids) {
+                /*val cursor = 0
+                while (mRecyclerAdapter.ids[cursor] != news.ids.first()
+                    && cursor < mRecyclerAdapter.ids.size
+                    && cursor < news.ids.size
+                ) { // TODO
+
+                }*/
+            }
         }
     }
 }
