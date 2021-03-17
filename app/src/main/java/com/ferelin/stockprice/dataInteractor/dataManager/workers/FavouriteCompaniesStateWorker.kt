@@ -29,9 +29,21 @@ class FavouriteCompaniesStateWorker(
     val favouriteCompaniesUpdateShared: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mFavouriteCompaniesUpdateShared
 
+
+    /*
+    * Subscribing over 50 items to live-time updates exceeds the limit of
+    * web socket => over-limit-companies will not receive updates (or all companies depending
+    * the api mood)
+    * */
+    private val mCompaniesLimit = 50
+    private val mErrorFavouriteCompaniesLimitReached = MutableSharedFlow<Unit>()
+    val errorFavouriteCompaniesLimitReached: SharedFlow<Unit>
+        get() = mErrorFavouriteCompaniesLimitReached
+
+
     fun onDataPrepared(companies: List<AdaptiveCompany>) {
         companies.forEach {
-            if (it.isFavourite) {
+            if (it.isFavourite && !mFavouriteCompanies.contains(it)) {
                 mFavouriteCompanies.add(it)
                 subscribeCompanyOnLiveTimeUpdates(it)
             }
@@ -40,6 +52,7 @@ class FavouriteCompaniesStateWorker(
     }
 
     suspend fun onCompanyChanged(company: AdaptiveCompany) {
+
         val companyIndex = mFavouriteCompanies.indexOf(company)
         if (companyIndex != NULL_INDEX) {
             mFavouriteCompanies[companyIndex] = company
@@ -48,30 +61,36 @@ class FavouriteCompaniesStateWorker(
         }
     }
 
-    suspend fun onAddFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany {
-        company.apply {
-            isFavourite = true
-            companyStyle.favouriteDefaultIconResource = mStylesProvider.getDefaultIconDrawable(true)
-            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(true)
-        }
-        mFavouriteCompanies.add(company)
+    suspend fun onAddFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany? {
+        return when {
+            mFavouriteCompanies.size >= mCompaniesLimit -> {
+                mErrorFavouriteCompaniesLimitReached.emit(Unit)
+                null
+            }
+            mFavouriteCompanies.contains(company) -> null
+            else -> {
+                company.apply {
+                    isFavourite = true
+                    companyStyle.favouriteDefaultIconResource =
+                        mStylesProvider.getDefaultIconDrawable(true)
+                    companyStyle.favouriteSingleIconResource =
+                        mStylesProvider.getSingleIconDrawable(true)
+                }
+                mFavouriteCompanies.add(company)
 
-        with(mFavouriteCompaniesState.value) {
-            if (this is DataNotificator.DataPrepared) {
-                data?.add(company)
+                subscribeCompanyOnLiveTimeUpdates(company)
+                mFavouriteCompaniesUpdateShared.emit(DataNotificator.NewItemAdded(company))
+                mLocalInteractorHelper.updateCompany(company)
+                company
             }
         }
-
-        subscribeCompanyOnLiveTimeUpdates(company)
-        mFavouriteCompaniesUpdateShared.emit(DataNotificator.NewItemAdded(company))
-        mLocalInteractorHelper.updateCompany(company)
-        return company
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany {
         company.apply {
             isFavourite = false
-            companyStyle.favouriteDefaultIconResource = mStylesProvider.getDefaultIconDrawable(false)
+            companyStyle.favouriteDefaultIconResource =
+                mStylesProvider.getDefaultIconDrawable(false)
             companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(false)
         }
         mFavouriteCompanies.remove(company)

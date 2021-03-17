@@ -7,6 +7,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyDayData
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.repository.utils.StockHistoryConverter
 import com.ferelin.shared.SingletonHolder
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.dataManager.DataManager
@@ -26,6 +27,9 @@ class DataInteractor private constructor(
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mDataManager: DataManager
 ) : DataInteractorHelper {
+
+    val stockHistoryConverter: StockHistoryConverter
+        get() = StockHistoryConverter
 
     val companiesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mDataManager.companiesState

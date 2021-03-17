@@ -70,8 +70,9 @@ class DataManager(
     }
 
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany) {
-        val updatedCompany = mCompaniesFavouriteStateWorker.onAddFavouriteCompany(company)
-        mCompaniesStateWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(updatedCompany))
+        mCompaniesFavouriteStateWorker.onAddFavouriteCompany(company)?.let { addedCompany ->
+            mCompaniesStateWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(addedCompany))
+        }
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
