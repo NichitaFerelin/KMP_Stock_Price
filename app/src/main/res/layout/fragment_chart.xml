@@ -5,7 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clipToPadding="false"
     tools:ignore="MissingConstraints">
+
+    <View
+        android:id="@+id/point"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/point"
+        android:elevation="7dp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textViewCurrentPrice"
@@ -58,11 +67,12 @@
         android:id="@+id/cardViewDay"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/whiteDark"
+        app:cardBackgroundColor="@color/whiteDark"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewDays"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="D"
@@ -75,11 +85,12 @@
         android:id="@+id/cardViewWeek"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/whiteDark"
+        app:cardBackgroundColor="@color/whiteDark"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewWeeks"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="W"
@@ -92,11 +103,12 @@
         android:id="@+id/cardViewMonth"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/whiteDark"
+        app:cardBackgroundColor="@color/whiteDark"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewMonths"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="M"
@@ -109,11 +121,12 @@
         android:id="@+id/cardViewHalfYear"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/whiteDark"
+        app:cardBackgroundColor="@color/whiteDark"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewSixMonths"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="6M"
@@ -126,11 +139,12 @@
         android:id="@+id/cardViewYear"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/whiteDark"
+        app:cardBackgroundColor="@color/whiteDark"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewYear"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="1Y"
@@ -143,11 +157,12 @@
         android:id="@+id/cardViewAll"
         android:layout_width="42dp"
         android:layout_height="44dp"
-        android:backgroundTint="@color/black"
+        app:cardBackgroundColor="@color/black"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp" />
 
     <TextView
+        android:id="@+id/textViewAll"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
         android:text="All"
@@ -178,12 +193,17 @@
         android:id="@+id/textViewBuyPrice"
         style="@style/textViewH3"
         android:layout_width="wrap_content"
-        android:textColor="@color/white"
         android:text="@string/buy_for"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/cardViewBuy"
         app:layout_constraintEnd_toEndOf="@id/cardViewBuy"
         app:layout_constraintStart_toStartOf="@id/cardViewBuy"
         app:layout_constraintTop_toTopOf="@id/cardViewBuy"
         tools:text="Buy for $132.04" />
+
+    <include
+        android:id="@+id/includeSuggestion"
+        layout="@layout/item_suggestion"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
