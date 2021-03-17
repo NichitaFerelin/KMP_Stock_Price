@@ -12,6 +12,7 @@ class SearchRequestsStateWorker(
     private val mLocalInteractorHelper: LocalInteractorHelper
 ) {
     private var mSearchRequests: MutableList<AdaptiveSearchRequest> = mutableListOf()
+    private val mSearchRequestsSaveLimit = 25
 
     private val mSearchRequestsState =
         MutableStateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
@@ -35,9 +36,20 @@ class SearchRequestsStateWorker(
                 mSearchRequests.remove(oldSearch)
             }
         }
-        mSearchRequests.add(newSearchRequest)
+        mSearchRequests.add(0, newSearchRequest)
+
+        if (mSearchRequests.size >= mSearchRequestsSaveLimit) {
+            reduceRequestsToLimit()
+        }
+
         mSearchRequestsState.value = DataNotificator.DataPrepared(mSearchRequests)
         mSearchRequestsUpdateShared.emit(mSearchRequests)
         mLocalInteractorHelper.setSearchesData(mSearchRequests)
+    }
+
+    private fun reduceRequestsToLimit() {
+        while(mSearchRequests.size >= 30) {
+            mSearchRequests.removeLast()
+        }
     }
 }
