@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.utils
+package com.ferelin.stockprice.ui.stocksSection.common
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 

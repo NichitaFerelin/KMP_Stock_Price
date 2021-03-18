@@ -7,7 +7,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
-import com.ferelin.stockprice.utils.StockClickListener
+import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

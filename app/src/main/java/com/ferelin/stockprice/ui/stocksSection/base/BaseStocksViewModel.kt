@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.base
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
@@ -40,7 +39,6 @@ abstract class BaseStocksViewModel(
             mDataInteractor.companiesUpdatesShared
                 .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
                 .collect {
-                    Log.d("Test", "Changed state")
                     updateNotifyRecyclerItem(it) }
         }
     }
@@ -83,7 +81,7 @@ abstract class BaseStocksViewModel(
                 withContext(mCoroutineContext.Main) {
                     mRecyclerAdapter.addCompanyToEnd(newItems[index])
                 }
-                delay(35)
+                delay(30)
             }
             withContext(mCoroutineContext.Main) {
                 mRecyclerAdapter.addInRange(newItems, 10, newItems.size - 1)
@@ -97,7 +95,7 @@ abstract class BaseStocksViewModel(
                 withContext(mCoroutineContext.Main) {
                     mRecyclerAdapter.addCompanyToEnd(it)
                 }
-                delay(35)
+                delay(30)
             }
             mRecyclerAdapter.setCompanies(newItems)
         }

@@ -54,12 +54,12 @@ class StocksPagerFragment(
                         )
                         TextViewCompat.setTextAppearance(
                             mBinding.textViewHintFavourite,
-                            R.style.textViewH2
+                            R.style.textViewH2Shadowed
                         )
                     } else {
                         TextViewCompat.setTextAppearance(
                             mBinding.textViewHintStocks,
-                            R.style.textViewH2
+                            R.style.textViewH2Shadowed
                         )
                         TextViewCompat.setTextAppearance(
                             mBinding.textViewHintFavourite,

@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="120dp"
         android:background="@color/white"
-        app:elevation="0dp"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,6 +21,7 @@
         style="@style/textViewH2"
         android:layout_width="wrap_content"
         android:layout_marginTop="18dp"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +31,13 @@
         android:id="@+id/textViewCompanyName"
         style="@style/textViewBody"
         android:layout_width="wrap_content"
+        android:layout_marginStart="26dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="26dp"
+        android:elevation="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewCompanySymbol"
@@ -41,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
+        android:elevation="10dp"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,53 +59,120 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="17dp"
+        android:elevation="10dp"
         android:src="@drawable/ic_star_default"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewCompanySymbol" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTabsTopBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="84dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewCompanyName" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTabsBottomBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/appBar" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginBottom="12dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/viewPager"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/guidelineTabsBottomBorder"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewCompanyName"
-        app:tabContentStart="20dp"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/black"
-        app:tabTextAppearance="@style/textViewBody"
-        app:tabTextColor="@color/grey">
+        app:layout_constraintTop_toBottomOf="@id/guidelineTabsTopBorder">
 
-        <com.google.android.material.tabs.TabItem
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chart" />
+            android:layout_height="match_parent">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Summary" />
+            <TextView
+                android:id="@+id/textViewChart"
+                style="@style/textViewH3"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Chart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="News" />
+            <TextView
+                android:id="@+id/textViewSummary"
+                style="@style/textViewBodyShadowed"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Summary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewChart"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Forecasts" />
+            <TextView
+                android:id="@+id/textViewNews"
+                style="@style/textViewBodyShadowed"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="News"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewSummary"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ideas" />
+            <TextView
+                android:id="@+id/textViewForecasts"
+                style="@style/textViewBodyShadowed"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Forecasts"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewNews"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </com.google.android.material.tabs.TabLayout>
+            <TextView
+                android:id="@+id/textViewIdeas"
+                style="@style/textViewBodyShadowed"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Ideas"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewForecasts"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/textViewBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineTabsTopBorder" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

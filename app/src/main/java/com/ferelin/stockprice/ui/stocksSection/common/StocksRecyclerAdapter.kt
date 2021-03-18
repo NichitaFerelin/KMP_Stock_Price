@@ -7,7 +7,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.databinding.ItemStockBinding
-import com.ferelin.stockprice.utils.StockClickListener
 
 class StocksRecyclerAdapter(
     private var mStockClickListener: StockClickListener? = null

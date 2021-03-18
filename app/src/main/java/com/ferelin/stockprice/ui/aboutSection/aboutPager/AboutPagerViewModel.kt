@@ -24,6 +24,10 @@ class AboutPagerViewModel(
     val eventDataChanged: SharedFlow<Unit>
         get() = mEventDataChanged
 
+    private var mLastSelectedPage: Int = 0
+    val lastSelectedPage: Int
+        get() = mLastSelectedPage
+
     val companySymbol: String
         get() = mOwnerCompany?.companyProfile?.symbol ?: ""
 
@@ -53,6 +57,10 @@ class AboutPagerViewModel(
                 } else mDataInteractor.addCompanyToFavourite(it)
             }
         }
+    }
+
+    fun setSelectedTab(position: Int) {
+        mLastSelectedPage = position
     }
 
     private suspend fun onDataChanged(company: AdaptiveCompany) {
