@@ -131,6 +131,7 @@ class ChartView @JvmOverloads constructor(
         }
 
         mMarkers = newList
+        mLastNearestPoint = null
 
         calcAndInvalidate()
     }
