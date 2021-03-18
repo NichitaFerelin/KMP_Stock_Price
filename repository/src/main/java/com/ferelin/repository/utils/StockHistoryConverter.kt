@@ -50,8 +50,8 @@ object StockHistoryConverter {
             amount += price
             if (index == history.price.size / 2) {
                 val average = amount / index
-                val from = mAdapter.getMonthFromDate(history.dates[0])
-                val to = mAdapter.getMonthFromDate(history.dates[index])
+                val from = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
+                val to = mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")
                 resultsDouble.add(average)
                 resultsStr.add(mAdapter.formatPrice(average))
                 resultsDates.add("$from - $to")
@@ -60,8 +60,9 @@ object StockHistoryConverter {
         }
 
         val average = amount / history.price.size / 2
-        val from = mAdapter.getMonthFromDate(history.dates[history.price.size / 2 + 1])
-        val to = mAdapter.getMonthFromDate(history.dates.last())
+        val from =
+            mAdapter.getMonthFromDate(history.dates.getOrNull(history.price.size / 2 + 1) ?: "")
+        val to = mAdapter.getMonthFromDate(history.dates.lastOrNull() ?: "")
         resultsDouble.add(average)
         resultsStr.add(mAdapter.formatPrice(average))
         resultsDates.add("$from - $to")
@@ -77,20 +78,20 @@ object StockHistoryConverter {
         val resultsDouble = mutableListOf<Double>()
         val resultsStr = mutableListOf<String>()
         val resultsDates = mutableListOf<String>()
-        var currentMonth = mAdapter.getMonthFromDate(history.dates.first())
+        var currentMonth = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
         var cursor = 0
 
         var amount = 0.0
         history.price.forEachIndexed { index, price ->
             amount += price
             cursor++
-            if (currentMonth != mAdapter.getMonthFromDate(history.dates[index])) {
+            if (currentMonth != mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")) {
                 val average = amount / cursor
                 resultsDouble.add(average)
                 resultsStr.add(mAdapter.formatPrice(average))
                 resultsDates.add(currentMonth)
 
-                currentMonth = mAdapter.getMonthFromDate(history.dates[index])
+                currentMonth = mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")
                 cursor = 0
                 amount = 0.0
             }
@@ -120,8 +121,8 @@ object StockHistoryConverter {
 
             if (counter == 7) {
                 resultsDouble.add(closePrice)
-                resultsStr.add(history.priceStr[cursor])
-                resultsDates.add(history.dates[cursor])
+                resultsStr.add(history.priceStr.getOrNull(cursor) ?: "")
+                resultsDates.add(history.dates.getOrNull(cursor) ?: "")
                 counter = 0
             }
         }
