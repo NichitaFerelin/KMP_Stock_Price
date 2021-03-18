@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -38,10 +39,6 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
         mBinding = FragmentChartBinding.inflate(inflater, container, false)
         return mBinding.root
     }
-
-    /*
-    * TODO обнулить mLasNearestMarker после клика по кнопке смены графика
-    * */
 
     override fun setUpViewComponents() {
         switchSelectedType()
@@ -90,7 +87,10 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                     withContext(mCoroutineContext.Main) {
                         mBinding.apply {
                             textViewCurrentPrice.text = mViewModel.currentPrice
-                            textViewBuyPrice.text = mViewModel.currentPrice
+                            textViewBuyPrice.text = String.format(
+                                resources.getString(R.string.buy_for),
+                                mViewModel.currentPrice
+                            )
                             textViewDayProfit.text = mViewModel.dayProfit
                             textViewDayProfit.setTextColor(mViewModel.profitBackground)
                         }
@@ -109,13 +109,13 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
     }
 
     private fun onChartClicked(marker: Marker) {
-        val (suggestionX, suggestionY) = calculateAbsoluteCoordinates(marker)
+        val (suggestionX, suggestionY) = calculateMarkerAbsoluteCoordinates(marker)
         detectAndFixOutOfBorderOffsets(suggestionX, suggestionY)
         updateSuggestionText(marker)
         showSuggestion()
     }
 
-    private fun calculateAbsoluteCoordinates(marker: Marker): FloatArray {
+    private fun calculateMarkerAbsoluteCoordinates(marker: Marker): FloatArray {
         val markerPointX = marker.position.x
         val markerPointY = marker.position.y
 
@@ -158,6 +158,7 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                     && (suggestionX + suggestionLayoutWidth) < chartViewRightBorder
                     && suggestionY > chartViewTopBorder
                     && (suggestionY + suggestionLayoutHeight) < chartViewBottomBorder -> {
+                changeSuggestionArrowConstrainsToBottom()
                 floatArrayOf(suggestionX, suggestionY)
             }
 
@@ -167,6 +168,7 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                 val newX = suggestionX + outOfBorderOffset
                 val newY =
                     suggestionY + offsetFromPoint + pointHeight + suggestionLayoutHeight + offsetFromPoint
+                hideSuggestionAttributes()
                 floatArrayOf(newX, newY)
             }
             (suggestionX + suggestionLayoutWidth) > chartViewRightBorder
@@ -175,6 +177,7 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                 val newX = suggestionX - outOfBorderOffset
                 val newY =
                     suggestionY + offsetFromPoint + pointHeight + suggestionLayoutHeight + offsetFromPoint
+                hideSuggestionAttributes()
                 floatArrayOf(newX, newY)
             }
             suggestionX < chartViewLeftBorder
@@ -182,6 +185,7 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                 // move to right-top
                 val newX = suggestionX + outOfBorderOffset
                 val newY = suggestionY - outOfBorderOffset
+                hideSuggestionAttributes()
                 floatArrayOf(newX, newY)
             }
             (suggestionX + suggestionLayoutWidth) > chartViewRightBorder
@@ -189,27 +193,32 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                 // move to left-top
                 val newX = suggestionX - outOfBorderOffset
                 val newY = suggestionY - outOfBorderOffset
+                hideSuggestionAttributes()
                 floatArrayOf(newX, newY)
             }
             suggestionY < chartViewTopBorder -> {
                 // move to bottom
                 val newY =
                     suggestionY + offsetFromPoint + pointHeight + suggestionLayoutHeight + offsetFromPoint
+                changeSuggestionArrowConstraintsToTop()
                 floatArrayOf(suggestionX, newY)
             }
             (suggestionY + suggestionLayoutHeight) > chartViewBottomBorder -> {
                 // move to top
                 val newY = suggestionY - outOfBorderOffset
+                changeSuggestionArrowConstrainsToBottom()
                 floatArrayOf(suggestionX, newY)
             }
             suggestionX < chartViewLeftBorder -> {
                 // move to rigth
                 val newX = suggestionX + outOfBorderOffset
+                hideSuggestionAttributes()
                 floatArrayOf(newX, suggestionY)
             }
             (suggestionX + suggestionLayoutWidth) > chartViewRightBorder -> {
                 // move to left
                 val newX = suggestionX - outOfBorderOffset
+                hideSuggestionAttributes()
                 floatArrayOf(newX, suggestionY)
             }
             else -> throw IllegalStateException(
@@ -278,5 +287,61 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
     private fun hideSuggestion() {
         mBinding.includeSuggestion.root.visibility = View.GONE
         mBinding.point.visibility = View.GONE
+    }
+
+    private fun hideSuggestionAttributes() {
+        mBinding.includeSuggestion.viewArrow.visibility = View.GONE
+        mBinding.includeSuggestion.viewPlug.visibility = View.GONE
+    }
+
+    private fun showSuggestionAttributes() {
+        mBinding.includeSuggestion.viewArrow.visibility = View.VISIBLE
+        mBinding.includeSuggestion.viewPlug.visibility = View.VISIBLE
+    }
+
+    private fun changeSuggestionArrowConstraintsToTop() {
+        showSuggestionAttributes()
+        mBinding.includeSuggestion.viewArrow.rotationX = 180F
+        ConstraintSet().apply {
+            clone(mBinding.includeSuggestion.root)
+            clear(R.id.viewArrow, ConstraintSet.TOP)
+            clear(R.id.viewPlug, ConstraintSet.TOP)
+            connect(
+                R.id.viewArrow,
+                ConstraintSet.BOTTOM,
+                R.id.cardViewSuggestion,
+                ConstraintSet.TOP
+            )
+            connect(
+                R.id.viewPlug,
+                ConstraintSet.BOTTOM,
+                R.id.cardViewSuggestion,
+                ConstraintSet.TOP
+            )
+            applyTo(mBinding.includeSuggestion.root)
+        }
+    }
+
+    private fun changeSuggestionArrowConstrainsToBottom() {
+        showSuggestionAttributes()
+        mBinding.includeSuggestion.viewArrow.rotationX = 0F
+        ConstraintSet().apply {
+            clone(mBinding.includeSuggestion.root)
+            clear(R.id.viewArrow, ConstraintSet.BOTTOM)
+            clear(R.id.viewPlug, ConstraintSet.BOTTOM)
+            connect(
+                R.id.viewArrow,
+                ConstraintSet.TOP,
+                R.id.cardViewSuggestion,
+                ConstraintSet.BOTTOM
+            )
+            connect(
+                R.id.viewPlug,
+                ConstraintSet.TOP,
+                R.id.cardViewSuggestion,
+                ConstraintSet.BOTTOM
+            )
+            applyTo(mBinding.includeSuggestion.root)
+        }
     }
 }
