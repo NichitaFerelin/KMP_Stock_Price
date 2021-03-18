@@ -17,6 +17,10 @@ class DataAdapter {
         return date.filter { it.isLetter() }
     }
 
+    fun getYearFromDate(date: String): String {
+        return date.split(" ").getOrNull(2) ?: ""
+    }
+
     fun adaptName(name: String): String {
         val postfix = name.split(" ").last()
         return if (postfix == "Inc") name.substringBefore("Inc") else name

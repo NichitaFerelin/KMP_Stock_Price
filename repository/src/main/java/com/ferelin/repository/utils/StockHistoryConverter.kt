@@ -21,19 +21,22 @@ object StockHistoryConverter {
     }
 
     fun toOneYear(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
-        var amount = 0.0
-        history.price.forEach { amount += it }
+        val startMonth = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
+        val startYear = mAdapter.getYearFromDate(history.dates.firstOrNull() ?: "")
+        val startPrice = history.price.firstOrNull() ?: 0.0
+        val startPriceStr = mAdapter.formatPrice(startPrice)
+        val startDate = "$startMonth $startYear"
 
-        val from = mAdapter.getMonthFromDate(history.dates[0])
-        val to = mAdapter.getMonthFromDate(history.dates.last())
-        val dateStr = "$from - $to"
-        val average = amount / history.price.size
-        val averageStr = mAdapter.formatPrice(average)
+        val endMonth = mAdapter.getMonthFromDate(history.dates.lastOrNull() ?: "")
+        val endYear = mAdapter.getYearFromDate(history.dates.lastOrNull() ?: "")
+        val endPrice = history.price.lastOrNull() ?: 0.0
+        val endPriceStr = mAdapter.formatPrice(endPrice)
+        val endDate = "$endMonth $endYear"
 
         return AdaptiveCompanyHistoryForChart(
-            listOf(average),
-            listOf(averageStr),
-            listOf(dateStr)
+            listOf(startPrice, endPrice),
+            listOf(startPriceStr, endPriceStr),
+            listOf(startDate, endDate)
         )
     }
 
@@ -64,8 +67,8 @@ object StockHistoryConverter {
         resultsDates.add("$from - $to")
 
         return AdaptiveCompanyHistoryForChart(
-            resultsDouble,
-            resultsStr,
+            resultsDouble.reversed(),
+            resultsStr.reversed(),
             resultsDates
         )
     }
@@ -128,9 +131,5 @@ object StockHistoryConverter {
             resultsStr,
             resultsDates
         )
-    }
-
-    fun toDay(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
-        return toOneYear(history)
     }
 }
