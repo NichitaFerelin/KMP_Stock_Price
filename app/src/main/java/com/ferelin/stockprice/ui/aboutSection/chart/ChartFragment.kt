@@ -15,6 +15,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.databinding.FragmentChartBinding
+import com.ferelin.stockprice.utils.showSnackbar
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -102,6 +103,13 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
                 mViewModel.eventStockHistoryChanged.collect {
                     withContext(mCoroutineContext.Main) {
                         mBinding.chartView.setData(it)
+                    }
+                }
+            }
+            launch {
+                mViewModel.actionShowError.collect {
+                    withContext(mCoroutineContext.Main) {
+                        showSnackbar(mBinding.root, it)
                     }
                 }
             }

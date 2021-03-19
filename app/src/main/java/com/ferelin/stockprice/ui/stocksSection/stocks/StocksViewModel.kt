@@ -6,15 +6,17 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class StocksViewModel(
     contextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(contextProvider, dataInteractor) {
+
+    private val mActionShowError = MutableSharedFlow<String>()
+    val actionShowError: SharedFlow<String>
+        get() = mActionShowError
 
     override fun initObserversBlock() {
         super.initObserversBlock()
@@ -30,7 +32,18 @@ class StocksViewModel(
             launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { it is DataNotificator.ItemUpdatedDefault }
-                    .collect { updateNotifyRecyclerItem(it) }
+                    .collect { updateRecyclerItem(it) }
+            }
+
+            launch {
+                mDataInteractor.openConnectionErrorState
+                    .filter { it.isNotEmpty() }
+                    .collect { mActionShowError.emit(it) }
+            }
+            launch {
+                mDataInteractor.favouriteCompaniesLimitReachedState
+                    .filter { it.isNotEmpty() }
+                    .collect { mActionShowError.emit(it) }
             }
         }
     }

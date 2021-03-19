@@ -15,6 +15,9 @@ class NewsItemDecoration(private val mContext: Context) : RecyclerView.ItemDecor
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
+        if (parent.getChildAdapterPosition(view) == 0) {
+            outRect.top = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
+        }
         outRect.bottom = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
         outRect.right = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
         outRect.left = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()

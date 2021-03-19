@@ -57,7 +57,7 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel>() {
                     }
                 }
             }
-            viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            launch {
                 (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {
                     withContext(mCoroutineContext.Main) {
                         scrollToTop()

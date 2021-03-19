@@ -38,8 +38,7 @@ abstract class BaseStocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.companiesUpdatesShared
                 .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
-                .collect {
-                    updateNotifyRecyclerItem(it) }
+                .collect { updateRecyclerItem(it) }
         }
     }
 
@@ -62,11 +61,15 @@ abstract class BaseStocksViewModel(
             val newItems = ArrayList(items)
             if (newItems.size > 10) {
                 setItemsToRecyclerWithRangeAnim(newItems)
-            } else setItemsToRecyclerWithDefaultAnim(newItems)
+            } else {
+                withContext(mCoroutineContext.Main) {
+                    mRecyclerAdapter.setCompaniesWithNotify(newItems)
+                }
+            }
         }
     }
 
-    protected fun updateNotifyRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
+    protected open fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
         val index = mRecyclerAdapter.companies.indexOf(notificator.data)
         if (index != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {
@@ -86,18 +89,6 @@ abstract class BaseStocksViewModel(
             withContext(mCoroutineContext.Main) {
                 mRecyclerAdapter.addInRange(newItems, 10, newItems.size - 1)
             }
-        }
-    }
-
-    private fun setItemsToRecyclerWithDefaultAnim(newItems: ArrayList<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            newItems.forEach {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addCompanyToEnd(it)
-                }
-                delay(30)
-            }
-            mRecyclerAdapter.setCompanies(newItems)
         }
     }
 

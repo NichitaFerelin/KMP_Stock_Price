@@ -52,6 +52,10 @@ class ChartViewModel(
     val profitBackground: Int
         get() = mProfitBackground
 
+    private val mActionShowError = MutableSharedFlow<String>()
+    val actionShowError: SharedFlow<String>
+        get() = mActionShowError
+
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
@@ -85,6 +89,12 @@ class ChartViewModel(
                             )
                         )
                     }
+            }
+
+            launch {
+                mDataInteractor.loadStockCandlesErrorState.collect {
+                    mActionShowError.emit(it)
+                }
             }
         }
     }

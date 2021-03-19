@@ -57,10 +57,6 @@ class StocksRecyclerAdapter(
         mOnBindCallback = func
     }
 
-    fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
-        mCompanies = companies
-    }
-
     fun setCompaniesWithNotify(companies: ArrayList<AdaptiveCompany>) {
         mCompanies = companies
         notifyDataSetChanged()

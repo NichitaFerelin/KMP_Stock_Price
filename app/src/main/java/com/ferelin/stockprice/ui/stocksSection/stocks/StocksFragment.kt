@@ -11,6 +11,7 @@ import com.ferelin.stockprice.databinding.FragmentStocksBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import com.ferelin.stockprice.utils.showSnackbar
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -49,9 +50,18 @@ class StocksFragment : BaseStocksFragment<StocksViewModel>() {
         super.initObservers()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {
-                withContext(mCoroutineContext.Main) {
-                    mBinding.recyclerViewStocks.scrollToPosition(0)
+            launch {
+                (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {
+                    withContext(mCoroutineContext.Main) {
+                        mBinding.recyclerViewStocks.scrollToPosition(0)
+                    }
+                }
+            }
+            launch {
+                mViewModel.actionShowError.collect {
+                    withContext(mCoroutineContext.Main) {
+                        showSnackbar(mBinding.root, it)
+                    }
                 }
             }
         }

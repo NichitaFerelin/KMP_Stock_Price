@@ -7,7 +7,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.stockprice.databinding.ItemNewsBinding
 
 class NewsRecyclerAdapter(
-    private var mNewsClickListener: ((position: Int) -> Unit)? = null
+    private var mNewsClickListener: NewsClickListener? = null
 ) : RecyclerView.Adapter<NewsRecyclerAdapter.NewsViewHolder>() {
 
     private var mNewsIds: ArrayList<String> = arrayListOf()
@@ -36,7 +36,10 @@ class NewsRecyclerAdapter(
             mNewsUrls[position]
         )
         holder.itemView.setOnClickListener {
-            mNewsClickListener?.invoke(position)
+            mNewsClickListener?.onNewsClicked(position)
+        }
+        holder.binding.textViewUrl.setOnClickListener {
+            mNewsClickListener?.onNewsUrlClicked(position)
         }
     }
 
@@ -46,6 +49,16 @@ class NewsRecyclerAdapter(
 
     override fun getItemId(position: Int): Long {
         return mNewsIds[position].toLong()
+    }
+
+    fun addItemToStart(news: AdaptiveCompanyNews, position: Int) {
+        mNewsIds.add(0, news.ids[position])
+        mNewsHeadlines.add(0, news.headlines[position])
+        mNewsSummaries.add(0, news.summaries[position])
+        mNewsDates.add(0, news.dates[position])
+        mNewsSources.add(0, news.sources[position])
+        mNewsUrls.add(0, news.browserUrls[position])
+        notifyItemInserted(0)
     }
 
     fun addItemToEnd(news: AdaptiveCompanyNews, position: Int) {
@@ -78,16 +91,16 @@ class NewsRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun setOnNewsClickListener(func: (position: Int) -> Unit) {
-        mNewsClickListener = func
+    fun setOnNewsClickListener(clickListener: NewsClickListener) {
+        mNewsClickListener = clickListener
     }
 
     class NewsViewHolder(
-        private val mBinding: ItemNewsBinding
-    ) : RecyclerView.ViewHolder(mBinding.root) {
+        val binding: ItemNewsBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(source: String, date: String, headline: String, summary: String, url: String) {
-            mBinding.apply {
+            binding.apply {
                 textViewSource.text = source
                 textViewDate.text = date
                 textViewHeadline.text = headline
