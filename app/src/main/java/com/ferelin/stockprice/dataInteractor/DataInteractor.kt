@@ -9,10 +9,10 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.StockHistoryConverter
 import com.ferelin.shared.SingletonHolder
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.dataManager.DataManager
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.CompaniesStateWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorHandlerWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.FavouriteCompaniesStateWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsStateWorker
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
@@ -25,33 +25,48 @@ import kotlinx.coroutines.flow.*
 class DataInteractor private constructor(
     private val mRepositoryHelper: RepositoryManagerHelper,
     private val mLocalInteractorHelper: LocalInteractorHelper,
-    private val mDataManager: DataManager
+    private val mDataManager: DataManager,
+    private val mErrorHandlerWorker: ErrorHandlerWorker
 ) : DataInteractorHelper {
+
+    val companiesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
+        get() = mDataManager.companiesWorker.companiesState
+
+    val companiesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mDataManager.companiesWorker.companiesUpdatesShared
+
+    val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
+        get() = mDataManager.favouriteCompaniesWorker.favouriteCompaniesState
+
+    val favouriteCompaniesUpdateShared: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mDataManager.favouriteCompaniesWorker.favouriteCompaniesUpdateShared
+
+    val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
+        get() = mDataManager.searchRequestsWorker.searchRequestsState
+
+    val searchRequestsUpdateShared: SharedFlow<List<AdaptiveSearchRequest>>
+        get() = mDataManager.searchRequestsWorker.searchRequestsUpdateShared
+
+    val prepareCompaniesErrorState: StateFlow<String>
+        get() = mErrorHandlerWorker.prepareCompaniesErrorState
+
+    val loadStockCandlesErrorState: SharedFlow<String>
+        get() = mErrorHandlerWorker.loadStockCandlesErrorState
+
+    val loadCompanyNewsErrorState: SharedFlow<String>
+        get() = mErrorHandlerWorker.loadCompanyNewsErrorState
+
+    val openConnectionErrorState: StateFlow<String>
+        get() = mErrorHandlerWorker.openConnectionErrorState
+
+    val loadSearchRequestsErrorState: SharedFlow<String>
+        get() = mErrorHandlerWorker.loadSearchRequestsErrorState
+
+    val favouriteCompaniesLimitReachedState: SharedFlow<String>
+        get() = mErrorHandlerWorker.favouriteCompaniesLimitReachedState
 
     val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
-
-    val companiesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mDataManager.companiesState
-
-    val companiesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataManager.companiesUpdateShared
-
-    val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mDataManager.favouriteCompaniesState
-
-    val favouriteCompaniesUpdateShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataManager.favouriteCompaniesUpdateShared
-
-    val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
-        get() = mDataManager.searchRequestsState
-
-    val searchRequestsUpdateShared: SharedFlow<List<AdaptiveSearchRequest>>
-        get() = mDataManager.searchRequestsUpdateShared
-
-    private val mErrorState = MutableStateFlow<DataNotificator<String>>(DataNotificator.Loading())
-    val errorState: StateFlow<DataNotificator<String>>
-        get() = mErrorState
 
     override suspend fun prepareData(context: Context) {
         prepareCompaniesData(context)
@@ -63,8 +78,7 @@ class DataInteractor private constructor(
             .onEach {
                 if (it is RepositoryResponse.Success) {
                     mDataManager.onStockCandlesLoaded(it)
-                } else mErrorState.value =
-                    DataNotificator.Error(R.string.errorLoadingData.toString())
+                } else mErrorHandlerWorker.onLoadStockCandlesError()
             }
             .filter { it is RepositoryResponse.Success }
             .map { mDataManager.getCompany(symbol)!! }
@@ -75,7 +89,7 @@ class DataInteractor private constructor(
             .onEach {
                 if (it is RepositoryResponse.Success) {
                     mDataManager.onCompanyNewsLoaded(it)
-                } else mErrorState.value = DataNotificator.Error("todo Loadnews error")
+                } else mErrorHandlerWorker.onLoadCompanyNewsError()
             }
             .filter { it is RepositoryResponse.Success }
             .map { mDataManager.getCompany(symbol)!! }
@@ -94,7 +108,7 @@ class DataInteractor private constructor(
             .onEach {
                 if (it is RepositoryResponse.Success) {
                     mDataManager.onWebSocketResponse(it)
-                } else mErrorState.value = DataNotificator.Error(R.string.errorWebSocket.toString())
+                } else mErrorHandlerWorker.onOpenConnectionError()
             }
             .filter { it is RepositoryResponse.Success }
             .map { mDataManager.getCompany((it as RepositoryResponse.Success).owner!!)!! }
@@ -128,14 +142,14 @@ class DataInteractor private constructor(
         val responseCompanies = mLocalInteractorHelper.getCompaniesData(context)
         if (responseCompanies is LocalInteractorResponse.Success) {
             mDataManager.onCompaniesDataPrepared(responseCompanies.companies)
-        } else mErrorState.value = DataNotificator.Error(R.string.errorLoadingData.toString())
+        } else mErrorHandlerWorker.onPrepareCompaniesError()
     }
 
     private suspend fun prepareSearchesHistory(context: Context) {
         val responseSearchesHistory = mLocalInteractorHelper.getSearchesData(context)
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
             mDataManager.onSearchesDataPrepared(responseSearchesHistory.searchesHistory)
-        } else mErrorState.value = DataNotificator.Error(R.string.errorLoadingData.toString())
+        } else mErrorHandlerWorker.onLoadSearchRequestsError()
     }
 
     override fun getCompany(symbol: String): AdaptiveCompany? {
@@ -146,11 +160,17 @@ class DataInteractor private constructor(
         val repositoryHelper = RepositoryManager.getInstance(it)
         val localInteractorHelper = LocalInteractor(repositoryHelper)
         val stylesProvider = StylesProvider(it)
+        val errorHandlerWorker = ErrorHandlerWorker(it)
         val dataManager = DataManager(
             CompaniesStateWorker(stylesProvider, localInteractorHelper),
-            FavouriteCompaniesStateWorker(stylesProvider, localInteractorHelper, repositoryHelper),
-            SearchRequestsStateWorker(localInteractorHelper)
+            FavouriteCompaniesStateWorker(
+                stylesProvider,
+                localInteractorHelper,
+                repositoryHelper,
+                errorHandlerWorker
+            ),
+            SearchRequestsStateWorker(localInteractorHelper),
         )
-        DataInteractor(repositoryHelper, localInteractorHelper, dataManager)
+        DataInteractor(repositoryHelper, localInteractorHelper, dataManager, errorHandlerWorker)
     })
 }

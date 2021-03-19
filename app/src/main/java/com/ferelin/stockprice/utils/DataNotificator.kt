@@ -15,7 +15,5 @@ sealed class DataNotificator<out T>(val data: T? = null) {
 
     class ItemUpdatedLiveTime<out T>(data: T) : DataNotificator<T>(data)
 
-    class Error<out T>(val message: String) : DataNotificator<T>()
-
     class Loading<out T> : DataNotificator<T>()
 }

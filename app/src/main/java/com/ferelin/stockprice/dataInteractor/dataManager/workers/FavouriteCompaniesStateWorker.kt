@@ -16,6 +16,7 @@ class FavouriteCompaniesStateWorker(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mRepositoryHelper: RepositoryManagerHelper,
+    private val mErrorHandlerWorker: ErrorHandlerWorker
 ) {
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
 
@@ -29,17 +30,12 @@ class FavouriteCompaniesStateWorker(
     val favouriteCompaniesUpdateShared: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mFavouriteCompaniesUpdateShared
 
-
     /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
     * web socket => over-limit-companies will not receive updates (or all companies depending
     * the api mood)
     * */
     private val mCompaniesLimit = 50
-    private val mErrorFavouriteCompaniesLimitReached = MutableSharedFlow<Unit>()
-    val errorFavouriteCompaniesLimitReached: SharedFlow<Unit>
-        get() = mErrorFavouriteCompaniesLimitReached
-
 
     fun onDataPrepared(companies: List<AdaptiveCompany>) {
         val favouriteCompanies = arrayListOf<AdaptiveCompany>()
@@ -66,7 +62,7 @@ class FavouriteCompaniesStateWorker(
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany? {
         return when {
             mFavouriteCompanies.size >= mCompaniesLimit -> {
-                mErrorFavouriteCompaniesLimitReached.emit(Unit)
+                mErrorHandlerWorker.onFavouriteCompaniesLimitReached()
                 null
             }
             mFavouriteCompanies.contains(company) -> null
