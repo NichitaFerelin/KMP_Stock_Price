@@ -30,11 +30,15 @@ class SearchRequestsStateWorker(
 
     suspend fun onNewSearch(searchText: String) {
         val newSearchRequest = AdaptiveSearchRequest(searchText)
-        for (index in 0 until mSearchRequests.size - 1) {
-            val oldSearch = mSearchRequests[index]
+        var endBorder = mSearchRequests.size
+        var cursor = 0
+        while(cursor < endBorder) {
+            val oldSearch = mSearchRequests[cursor]
             if (newSearchRequest.searchText.contains(oldSearch.searchText)) {
                 mSearchRequests.remove(oldSearch)
+                endBorder--
             }
+            cursor++
         }
         mSearchRequests.add(0, newSearchRequest)
 
