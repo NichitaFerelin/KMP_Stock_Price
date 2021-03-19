@@ -41,5 +41,6 @@ class Company(
     var newsSummaries: List<String> = emptyList(),
     var newsUrls: List<String> = emptyList(),
 
-    var isFavourite: Boolean = false
+    var isFavourite: Boolean = false,
+    var favouriteOrderIndex: Int = 0
 )

@@ -76,7 +76,8 @@ class DataAdapter {
             newsSummaries = adaptiveCompany.companyNews.summaries,
             newsUrls = adaptiveCompany.companyNews.browserUrls,
 
-            isFavourite = adaptiveCompany.isFavourite
+            isFavourite = adaptiveCompany.isFavourite,
+            favouriteOrderIndex = adaptiveCompany.favouriteOrderIndex
         )
     }
 
@@ -119,7 +120,8 @@ class DataAdapter {
                 browserUrls = company.newsUrls
             ),
             companyStyle = AdaptiveCompanyStyle(),
-            isFavourite = company.isFavourite
+            isFavourite = company.isFavourite,
+            favouriteOrderIndex = company.favouriteOrderIndex
         )
     }
 

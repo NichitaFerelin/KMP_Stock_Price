@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.ferelin.local.database.CompaniesDatabase.Companion.DB_NAME
 import com.ferelin.local.models.Company
 import com.ferelin.shared.SingletonHolder
 
@@ -18,7 +19,7 @@ abstract class CompaniesDatabase : RoomDatabase() {
         Room.databaseBuilder(
             it.applicationContext,
             CompaniesDatabase::class.java,
-            Companion.DB_NAME
+            DB_NAME
         ).fallbackToDestructiveMigration().build()
     }) {
         const val DB_NAME = "stockprice.companies.db"

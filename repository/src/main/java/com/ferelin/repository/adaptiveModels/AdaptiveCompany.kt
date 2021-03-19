@@ -9,6 +9,7 @@ data class AdaptiveCompany(
     var companyNews: AdaptiveCompanyNews,
     var companyStyle: AdaptiveCompanyStyle,
     var isFavourite: Boolean = false,
+    var favouriteOrderIndex: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is AdaptiveCompany) {

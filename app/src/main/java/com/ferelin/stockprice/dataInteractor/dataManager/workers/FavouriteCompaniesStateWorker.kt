@@ -42,17 +42,19 @@ class FavouriteCompaniesStateWorker(
 
 
     fun onDataPrepared(companies: List<AdaptiveCompany>) {
+        val favouriteCompanies = arrayListOf<AdaptiveCompany>()
         companies.forEach {
-            if (it.isFavourite && !mFavouriteCompanies.contains(it)) {
-                mFavouriteCompanies.add(it)
+            if (it.isFavourite/* && !mFavouriteCompanies.contains(it)*/) {
+                favouriteCompanies.add(it)
                 subscribeCompanyOnLiveTimeUpdates(it)
             }
         }
-        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
+        favouriteCompanies.sortByDescending { it.favouriteOrderIndex }
+        mFavouriteCompanies.addAll(favouriteCompanies)
+        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(favouriteCompanies)
     }
 
     suspend fun onCompanyChanged(company: AdaptiveCompany) {
-
         val companyIndex = mFavouriteCompanies.indexOf(company)
         if (companyIndex != NULL_INDEX) {
             mFavouriteCompanies[companyIndex] = company
@@ -75,6 +77,11 @@ class FavouriteCompaniesStateWorker(
                         mStylesProvider.getDefaultIconDrawable(true)
                     companyStyle.favouriteSingleIconResource =
                         mStylesProvider.getSingleIconDrawable(true)
+
+                    val orderIndex = mFavouriteCompanies
+                        .lastOrNull()
+                        ?.favouriteOrderIndex?.plus(1) ?: 0
+                    favouriteOrderIndex = orderIndex
                 }
                 mFavouriteCompanies.add(company)
 

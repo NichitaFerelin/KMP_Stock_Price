@@ -43,7 +43,6 @@ class LocalManager(
                 }
                 if (localJsonCompanies.isNotEmpty()) {
                     insertAllCompanies(localJsonCompanies)
-
                     CompaniesResponse.Success(
                         code = Responses.LOADED_FROM_JSON,
                         companies = localJsonCompanies
