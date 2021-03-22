@@ -24,6 +24,9 @@
 
     <dimen name="eee">50dp</dimen>
 
+    <dimen name="itemTextDectorationStartMArgin">20dp</dimen>
+    <dimen name="itemTextDecorationTopMargin">16dp</dimen>
+
 
     <dimen name="suggestionArrowHeight">6dp</dimen>
 

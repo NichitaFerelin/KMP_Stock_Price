@@ -1,10 +1,13 @@
 package com.ferelin.stockprice.ui.aboutSection.aboutPager
 
+import android.animation.AnimatorInflater
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.doOnPreDraw
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +17,8 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
+import com.google.android.material.transition.Hold
+import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,12 +36,33 @@ class AboutPagerFragment(
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, ownerCompany)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            scrimColor = Color.TRANSPARENT
+        }
+        exitTransition = Hold()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentAboutPagerBinding.inflate(inflater, container, false)
+
+        /*mBinding.root.transitionName = rootId
+        mBinding.textViewCompanyName.transitionName = nameTransition
+        mBinding.textViewCompanySymbol.transitionName = symbolTransition*/
+
         return mBinding.root
     }
 
@@ -61,6 +87,10 @@ class AboutPagerFragment(
                 }
             }
 
+            imageViewBack.setOnClickListener {
+                activity?.onBackPressed()
+            }
+
             textViewChart.setOnClickListener { onTabClicked(it as TextView, 0) }
             textViewSummary.setOnClickListener { onTabClicked(it as TextView, 1) }
             textViewNews.setOnClickListener { onTabClicked(it as TextView, 2) }
@@ -69,6 +99,10 @@ class AboutPagerFragment(
 
             imageViewStar.setOnClickListener {
                 mViewModel.onFavouriteIconClicked()
+                val animation =
+                    AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
+                animation.setTarget(mBinding.imageViewStar)
+                animation.start()
             }
         }
     }
@@ -101,6 +135,9 @@ class AboutPagerFragment(
     private fun changeTabStyle(lastTab: TextView, new: TextView) {
         TextViewCompat.setTextAppearance(lastTab, R.style.textViewBodyShadowed)
         TextViewCompat.setTextAppearance(new, R.style.textViewH3)
+        val animation = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
+        animation.setTarget(new)
+        animation.start()
     }
 
     private fun moveViewPager(position: Int) {

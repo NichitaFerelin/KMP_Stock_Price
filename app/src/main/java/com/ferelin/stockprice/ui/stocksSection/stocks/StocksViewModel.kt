@@ -8,6 +8,7 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class StocksViewModel(
     contextProvider: CoroutineContextProvider,
@@ -51,7 +52,9 @@ class StocksViewModel(
     private fun onCompaniesPrepared(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val newList = ArrayList(notificator.data!!)
-            setRecyclerItems(newList)
+            withContext(mCoroutineContext.Main) {
+                mRecyclerAdapter.setCompaniesWithNotify(newList)
+            }
         }
     }
 }

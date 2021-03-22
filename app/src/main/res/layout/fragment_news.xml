@@ -10,12 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:visibility="invisible"
         android:indeterminate="true"
         app:trackColor="@color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNews"
         android:layout_width="match_parent"
+        android:transitionGroup="true"
         android:layout_height="match_parent"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

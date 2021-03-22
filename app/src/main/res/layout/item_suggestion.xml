@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/suggestionLayoutWidth"
     android:layout_height="@dimen/suggestionLayoutHeight"
-    android:background="@color/whiteTransparent">
+    android:alpha="0.0"
+    android:background="@color/whiteTransparent"
+    tools:alpha="1">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewSuggestion"
@@ -39,10 +41,13 @@
     <TextView
         android:id="@+id/textViewPrice"
         style="@style/textViewBody"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="6dp"
         android:elevation="2dp"
         android:ellipsize="end"
+        android:gravity="center"
         android:lines="1"
         android:textColor="@color/white"
         app:layout_constrainedWidth="true"
@@ -54,11 +59,12 @@
     <TextView
         android:id="@+id/textViewDate"
         style="@style/textViewBody"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:elevation="2dp"
         android:ellipsize="end"
+        android:gravity="center"
         android:lines="1"
         android:textColor="@color/grey"
         app:layout_constrainedWidth="true"

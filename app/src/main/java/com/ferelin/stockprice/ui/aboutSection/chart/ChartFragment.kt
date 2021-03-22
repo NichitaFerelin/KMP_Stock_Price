@@ -1,6 +1,9 @@
 package com.ferelin.stockprice.ui.aboutSection.chart
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
@@ -17,6 +21,7 @@ import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.databinding.FragmentChartBinding
 import com.ferelin.stockprice.utils.showSnackbar
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -83,17 +88,59 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+
+            launch {
+                mViewModel.hasDataForChartState.collect { hasData ->
+                    Log.d("Test", "Collect: $hasData")
+                    withContext(mCoroutineContext.Main) {
+                        if (hasData && mBinding.groupChartWidgets.visibility == View.GONE) {
+                            Log.d("Test", "Set visible")
+                            TransitionManager.beginDelayedTransition(mBinding.root)
+                            mBinding.groupChartWidgets.visibility = View.VISIBLE
+                        } else if (!hasData && mBinding.groupChartWidgets.visibility == View.VISIBLE) {
+                            Log.d("Test", "set hide")
+                            mBinding.groupChartWidgets.visibility = View.GONE
+                        }
+
+                        if (hasData) {
+                            mBinding.progressBar.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+
             launch {
                 mViewModel.eventDataChanged.collect {
                     withContext(mCoroutineContext.Main) {
                         mBinding.apply {
-                            textViewCurrentPrice.text = mViewModel.currentPrice
-                            textViewBuyPrice.text = String.format(
-                                resources.getString(R.string.buy_for),
-                                mViewModel.currentPrice
+                            val animation = AnimatorInflater.loadAnimator(
+                                requireContext(),
+                                R.animator.scale_in_out
                             )
-                            textViewDayProfit.text = mViewModel.dayProfit
-                            textViewDayProfit.setTextColor(mViewModel.profitBackground)
+                            animation.setTarget(mBinding.textViewCurrentPrice)
+                            animation.addListener(object : Animator.AnimatorListener {
+                                override fun onAnimationStart(animation: Animator?) {
+                                    textViewCurrentPrice.text = mViewModel.currentPrice
+                                    textViewBuyPrice.text = String.format(
+                                        resources.getString(R.string.buy_for),
+                                        mViewModel.currentPrice
+                                    )
+                                    textViewDayProfit.text = mViewModel.dayProfit
+                                    textViewDayProfit.setTextColor(mViewModel.profitBackground)
+                                }
+
+                                override fun onAnimationEnd(animation: Animator?) {
+                                }
+
+                                override fun onAnimationCancel(animation: Animator?) {
+                                }
+
+                                override fun onAnimationRepeat(animation: Animator?) {
+                                }
+
+                            })
+                            animation.start()
                         }
                     }
                 }
@@ -117,11 +164,31 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
     }
 
     private fun onChartClicked(marker: Marker) {
-        val (suggestionX, suggestionY) = calculateMarkerAbsoluteCoordinates(marker)
-        detectAndFixOutOfBorderOffsets(suggestionX, suggestionY)
-        updateSuggestionText(marker)
-        showSuggestion()
+        if (mBinding.includeSuggestion.root.alpha == 0.0F) {
+            val (suggestionX, suggestionY) = calculateMarkerAbsoluteCoordinates(marker)
+            detectAndFixOutOfBorderOffsets(suggestionX, suggestionY)
+            updateSuggestionText(marker)
+            showSuggestion()
+        } else {
+            viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                val (suggestionX, suggestionY) = calculateMarkerAbsoluteCoordinates(marker)
+                withContext(mCoroutineContext.Main) {
+                    hideSuggestion()
+                }
+                delay(150)
+                withContext(mCoroutineContext.Main) {
+                    detectAndFixOutOfBorderOffsets(suggestionX, suggestionY)
+                    updateSuggestionText(marker)
+                    showSuggestion()
+                }
+            }
+        }
+
     }
+
+    // TODO
+    private var newPointX = 0F
+    private var newPointY = 0F
 
     private fun calculateMarkerAbsoluteCoordinates(marker: Marker): FloatArray {
         val markerPointX = marker.position.x
@@ -133,8 +200,8 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
         val pointRadius = resources.getDimension(R.dimen.pointWidth) / 2
         val pointX = markerPointX - chartViewLeftBorder - pointRadius
         val pointY = markerPointY + chartViewTopBorder - pointRadius
-        mBinding.point.x = pointX
-        mBinding.point.y = pointY
+        newPointX = pointX
+        newPointY = pointY
 
         val suggestionLayoutWidth = resources.getDimension(R.dimen.suggestionLayoutWidth)
         val suggestionLayoutHalfWidth = suggestionLayoutWidth / 2
@@ -235,6 +302,8 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
             )
         }
 
+        mBinding.point.x = newPointX
+        mBinding.point.y = newPointY
         mBinding.includeSuggestion.root.x = finalSuggestionX
         mBinding.includeSuggestion.root.y = finalSuggestionY
     }
@@ -246,8 +315,37 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
 
     private fun onCardClicked(card: CardView, attachedTextView: TextView) {
         if (card != mPreviousActiveCard) {
+
             hideSuggestion()
-            switchCardViewStyles(card, attachedTextView)
+
+            val animation = AnimatorInflater.loadAnimator(
+                requireContext(),
+                R.animator.scale_in_out
+            )
+            animation.setTarget(card)
+            animation.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                    switchCardViewStyles(card, attachedTextView)
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                }
+
+            })
+            animation.start()
+        } else {
+            val animation = AnimatorInflater.loadAnimator(
+                requireContext(),
+                R.animator.scale_in_out
+            )
+            animation.setTarget(card)
+            animation.start()
         }
     }
 
@@ -288,13 +386,13 @@ class ChartFragment(owner: AdaptiveCompany? = null) : BaseFragment<ChartViewMode
     }
 
     private fun showSuggestion() {
-        mBinding.includeSuggestion.root.visibility = View.VISIBLE
-        mBinding.point.visibility = View.VISIBLE
+        mBinding.includeSuggestion.root.animate().alpha(1F).duration = 150L
+        mBinding.point.animate().alpha(1F).duration = 150L
     }
 
     private fun hideSuggestion() {
-        mBinding.includeSuggestion.root.visibility = View.GONE
-        mBinding.point.visibility = View.GONE
+        mBinding.includeSuggestion.root.animate().alpha(0.0F).duration = 150L
+        mBinding.point.animate().alpha(0.0F).duration = 150L
     }
 
     private fun hideSuggestionAttributes() {

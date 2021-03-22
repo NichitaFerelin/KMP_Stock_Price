@@ -8,10 +8,7 @@ import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ChartViewModel(
@@ -55,6 +52,11 @@ class ChartViewModel(
     private val mActionShowError = MutableSharedFlow<String>()
     val actionShowError: SharedFlow<String>
         get() = mActionShowError
+
+    private val mHasDataForChart =
+        MutableStateFlow(mOwnerCompany?.companyHistory?.closePrices?.isNotEmpty() ?: false)
+    val hasDataForChartState: StateFlow<Boolean>
+        get() = mHasDataForChart
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
@@ -107,6 +109,7 @@ class ChartViewModel(
     }
 
     fun onChartControlButtonClicked(selectedType: ChartSelectedType) {
+        mLastClickedMarker = null
         mChartSelectedType = selectedType
         mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedType) }
     }
@@ -146,6 +149,7 @@ class ChartViewModel(
     private suspend fun onStockHistoryLoaded(history: AdaptiveCompanyHistoryForChart) {
         if (history.dates.first() != mOriginalStockHistory?.dates?.firstOrNull()) {
             mOriginalStockHistory = history
+            mHasDataForChart.value = true
             mEventStockHistoryChanged.emit(history)
         }
     }

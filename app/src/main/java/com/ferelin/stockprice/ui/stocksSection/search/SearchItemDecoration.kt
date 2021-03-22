@@ -9,10 +9,9 @@ import com.ferelin.stockprice.R
 
 class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
-    private var mNextRow = false
-    private val mFirstItemStartMargin = context.resources.getDimension(R.dimen.defaultMargin).toInt()
+    private val mFirstItemStartMargin =
+        context.resources.getDimension(R.dimen.defaultMargin).toInt()
     private val mDefaultStartMargin = context.resources.getDimension(R.dimen.small).toInt()
-    private val mSecondRowTopMargin = context.resources.getDimension(R.dimen.smallMargin).toInt()
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -23,12 +22,8 @@ class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
         super.getItemOffsets(outRect, view, parent, state)
 
         when {
-            parent.getChildAdapterPosition(view) == 0 -> {
-                outRect.left = mFirstItemStartMargin
-            }
-            parent.getChildAdapterPosition(view) == 1 -> {
-                outRect.left = mFirstItemStartMargin
-            }
+            parent.getChildAdapterPosition(view) == 0 -> outRect.left = mFirstItemStartMargin
+            parent.getChildAdapterPosition(view) == 1 -> outRect.left = mFirstItemStartMargin
             (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex == 1 -> {
                 outRect.left = mDefaultStartMargin
             }

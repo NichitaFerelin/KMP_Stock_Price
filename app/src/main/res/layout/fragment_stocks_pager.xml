@@ -12,8 +12,11 @@
         app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionGroup="true"
+            android:transitionName="transitionCardContainer"
             app:layout_scrollFlags="scroll">
 
             <com.google.android.material.card.MaterialCardView
@@ -25,6 +28,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="14dp"
+                android:transitionName="card"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="40dp"
                 app:strokeColor="@color/black"
@@ -52,8 +56,9 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <TextView
@@ -61,17 +66,21 @@
                 style="@style/textViewH1"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Stocks" />
+                android:text="Stocks"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewHintFavourite"
                 style="@style/textViewH2"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
                 android:text="Favourite"
-                android:textColor="@color/grey" />
+                android:textColor="@color/grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewHintStocks"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -90,9 +99,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:visibility="invisible"
         android:backgroundTint="@color/whiteDark"
         android:src="@drawable/ic_arrow_up"
+        android:visibility="invisible"
         app:layout_behavior=".custom.fab.ScrollableFabBehaviour"
         app:tint="@color/black" />
 

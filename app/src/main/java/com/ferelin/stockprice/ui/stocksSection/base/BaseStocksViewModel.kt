@@ -9,8 +9,6 @@ import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -30,10 +28,6 @@ abstract class BaseStocksViewModel(
     val recyclerAdapter: StocksRecyclerAdapter
         get() = mRecyclerAdapter
 
-    private val mActionMoveToInfoPagerFragment = MutableSharedFlow<AdaptiveCompany>()
-    val actionMoveToInfo: SharedFlow<AdaptiveCompany>
-        get() = mActionMoveToInfoPagerFragment
-
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.companiesUpdatesShared
@@ -47,12 +41,6 @@ abstract class BaseStocksViewModel(
             if (company.isFavourite) {
                 mDataInteractor.removeCompanyFromFavourite(company)
             } else mDataInteractor.addCompanyToFavourite(company)
-        }
-    }
-
-    fun onStockClicked(company: AdaptiveCompany) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            mActionMoveToInfoPagerFragment.emit(company)
         }
     }
 

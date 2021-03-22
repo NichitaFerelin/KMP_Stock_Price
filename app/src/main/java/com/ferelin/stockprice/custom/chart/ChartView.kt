@@ -3,6 +3,7 @@ package com.ferelin.stockprice.custom.chart
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -132,6 +133,7 @@ class ChartView @JvmOverloads constructor(
 
         mMarkers = newList
         mLastNearestPoint = null
+        Log.d("Test", "Set data: ${mLastNearestPoint?.price}")
 
         calcAndInvalidate()
     }
@@ -310,5 +312,6 @@ class ChartView @JvmOverloads constructor(
         }
         event.setLocation(nearestPoint!!.position.x, nearestPoint.position.y)
         mLastNearestPoint = nearestPoint
+        Log.d("Test", "Setted point: ${mLastNearestPoint?.price}")
     }
 }

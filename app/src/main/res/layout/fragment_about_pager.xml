@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:transitionName="containerAboutPager">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -47,8 +48,9 @@
         android:id="@+id/imageViewBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="18dp"
+        android:layout_marginStart="9dp"
         android:elevation="10dp"
+        android:padding="8dp"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,8 +60,10 @@
         android:id="@+id/imageViewStar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="17dp"
+        android:layout_marginEnd="9dp"
         android:elevation="10dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
         android:src="@drawable/ic_star_default"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintEnd_toEndOf="parent"

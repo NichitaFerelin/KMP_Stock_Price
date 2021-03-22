@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootChart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -16,9 +17,10 @@
             android:id="@+id/point"
             android:layout_width="8dp"
             android:layout_height="8dp"
+            android:alpha="0.0"
             android:background="@drawable/point"
             android:elevation="7dp"
-            android:visibility="gone" />
+            tools:alpha="1" />
 
         <TextView
             android:id="@+id/textViewCurrentPrice"
@@ -40,6 +42,24 @@
             app:layout_constraintTop_toBottomOf="@id/textViewCurrentPrice"
             tools:text="+$0.12(1,15%)"
             tools:textColor="@color/green" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewDayProfit"
+            app:trackColor="@color/black" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupChartWidgets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="chartView, flowButtons,textViewAll,textViewDays,textViewMonths,textViewSixMonths,textViewWeeks,textViewYear" />
 
         <com.ferelin.stockprice.custom.chart.ChartView
             android:id="@+id/chartView"
@@ -191,7 +211,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/flowButtons"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0"
+            app:layout_goneMarginTop="70dp" />
 
         <TextView
             android:id="@+id/textViewBuyPrice"
@@ -201,16 +222,15 @@
             android:lines="1"
             android:textColor="@color/white"
             app:layout_constrainedWidth="true"
-            app:layout_constraintStart_toStartOf="@id/cardViewBuy"
             app:layout_constraintBottom_toBottomOf="@id/cardViewBuy"
             app:layout_constraintEnd_toEndOf="@id/cardViewBuy"
+            app:layout_constraintStart_toStartOf="@id/cardViewBuy"
             app:layout_constraintTop_toTopOf="@id/cardViewBuy"
             tools:text="Buy for $132.04" />
 
         <include
             android:id="@+id/includeSuggestion"
-            layout="@layout/item_suggestion"
-            android:visibility="gone" />
+            layout="@layout/item_suggestion" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

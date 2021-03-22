@@ -3,14 +3,12 @@ package com.ferelin.stockprice.ui.aboutSection.news
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.aboutSection.newsDetails.NewsDetailsFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,6 +25,11 @@ class NewsViewModel(
     private val mRecyclerAdapter = NewsRecyclerAdapter().apply { setHasStableIds(true) }
     val recyclerAdapter: NewsRecyclerAdapter
         get() = mRecyclerAdapter
+
+    private val mHasDataForRecycler =
+        MutableStateFlow(mOwnerCompany?.companyNews?.summaries?.isNotEmpty() ?: false)
+    val hasDataForRecycler: StateFlow<Boolean>
+        get() = mHasDataForRecycler
 
     private val mActionOpenNewsDetails = MutableSharedFlow<Bundle>()
     val actionOpenNewsDetails: SharedFlow<Bundle>
@@ -55,7 +58,10 @@ class NewsViewModel(
             }
             launch {
                 mDataInteractor.loadCompanyNews(mOwnerCompany?.companyProfile?.symbol ?: "")
-                    .collect { onNewsChanged(it.companyNews) }
+                    .collect {
+                        onNewsChanged(it.companyNews)
+                        mHasDataForRecycler.value = true
+                    }
             }
             launch {
                 mDataInteractor.loadCompanyNewsErrorState.collect {
@@ -76,7 +82,7 @@ class NewsViewModel(
     }
 
     fun onNewsClicked(position: Int) {
-        viewModelScope.launch(mCoroutineContext.IO) {
+        /*viewModelScope.launch(mCoroutineContext.IO) {
             mOwnerCompany?.companyNews?.let {
                 val arguments = bundleOf(
                     NewsDetailsFragment.HEADLINE_STR_KEY to it.headlines[position],
@@ -87,7 +93,7 @@ class NewsViewModel(
                 )
                 mActionOpenNewsDetails.emit(arguments)
             }
-        }
+        }*/
     }
 
     private fun onNewsChanged(news: AdaptiveCompanyNews) {

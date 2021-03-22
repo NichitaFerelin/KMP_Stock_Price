@@ -4,32 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:transitionName="rootTransition">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootConstraint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewImageHolder"
+        <ImageView
+            android:id="@+id/imageViewIconClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
+            android:layout_marginStart="14dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="@id/textViewSource"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textViewSource" />
+
+        <TextView
+            android:id="@+id/textViewSource"
+            style="@style/textViewH3"
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageViewNews"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:src="@mipmap/test" />
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Source title" />
 
         <TextView
             android:id="@+id/textViewHeadline"
@@ -37,14 +40,11 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
-            android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:maxLines="3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardViewImageHolder"
+            app:layout_constraintTop_toBottomOf="@id/textViewSource"
             tools:text="More sops needed to boost electronic manufacturing:Top govt official More sops needed to boost electronicmanufacturing: Top govt official. More sops needed toboost electronic manufacturing: Top govt official More sopsneeded to boost electronic manufacturing: Top govt official" />
-
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewSummaryHolder"
@@ -104,6 +104,7 @@
             android:layout_marginEnd="12dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textColor="@color/blue"
             app:layout_constraintEnd_toStartOf="@id/textViewDate"
             app:layout_constraintStart_toEndOf="@id/textViewBrowserHint"
             app:layout_constraintTop_toBottomOf="@id/cardViewSummaryHolder"

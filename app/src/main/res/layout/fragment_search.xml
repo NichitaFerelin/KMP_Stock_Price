@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/sectionHints"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:constraint_referenced_ids="textViewRequests, recyclerViewPopularRequests, textViewSearched, recyclerViewSearchedHistory"
-        tools:visibility="visible" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/sectionResults"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:constraint_referenced_ids="appBar, textViewStocks, recyclerViewSearchResults" />
+    android:background="@color/white"
+    android:transitionGroup="true"
+    android:transitionName="searchContainer"
+    app:layoutDescription="@xml/fragment_search_scene">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -27,8 +15,7 @@
         android:layout_height="80dp"
         android:background="@color/white"
         android:elevation="7dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
@@ -41,6 +28,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="14dp"
         android:outlineProvider="none"
+        android:transitionName="card"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="40dp"
         app:cardElevation="7dp"
@@ -72,8 +60,8 @@
         android:layout_height="0dp"
         android:layout_gravity="center_vertical"
         android:elevation="7dp"
-        android:inputType="text"
         android:imeOptions="flagNoFullscreen"
+        android:inputType="text"
         android:lines="1"
         android:textColorHint="@color/black"
         android:textCursorDrawable="@drawable/edit_text_cursor"
@@ -93,7 +81,7 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
         android:src="@drawable/ic_close"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
@@ -142,26 +130,17 @@
         app:layout_constraintTop_toBottomOf="@id/textViewSearched"
         app:spanCount="2" />
 
-    <TextView
-        android:id="@+id/textViewStocks"
-        style="@style/textViewH2"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:text="Stocks"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBar" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchResults"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:transitionGroup="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewStocks" />
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

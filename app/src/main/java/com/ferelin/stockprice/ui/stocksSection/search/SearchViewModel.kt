@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.text.Editable
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -21,7 +20,10 @@ class SearchViewModel(
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
 
     private var mCompanies: ArrayList<AdaptiveCompany>? = null
+
     private var mLastTextSearch = ""
+    val lastSearchText: String
+        get() = mLastTextSearch
 
     private val mPopularRequestsAdapter = SearchRecyclerAdapter().apply { setPopularSearches() }
     val popularRequestsAdapter: SearchRecyclerAdapter
@@ -31,12 +33,12 @@ class SearchViewModel(
     val searchesAdapter: SearchRecyclerAdapter
         get() = mSearchesAdapter
 
-    private val mStateActionHideCloseIcon = MutableStateFlow(true)
-    val actionHideCloseIcon: StateFlow<Boolean>
+    private val mStateActionHideCloseIcon = MutableSharedFlow<Boolean>()
+    val actionHideCloseIcon: SharedFlow<Boolean>
         get() = mStateActionHideCloseIcon
 
-    private var mStateActionShowHintsHideResults = MutableStateFlow(true)
-    val actionShowHintsHideResults: StateFlow<Boolean>
+    private var mStateActionShowHintsHideResults = MutableSharedFlow<Boolean>()
+    val actionShowHintsHideResults: SharedFlow<Boolean>
         get() = mStateActionShowHintsHideResults
 
     private val mActionShowError = MutableSharedFlow<String>()
@@ -97,48 +99,44 @@ class SearchViewModel(
         }
     }
 
-    fun onSearchTextChanged(editable: Editable?) {
+    fun onSearchTextChanged(searchText: String) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            editable?.let {
-                val searchText = it.toString()
-                when {
-                    mLastTextSearch == searchText -> {
-                        Log.d("Test", "eqal")
-                        Unit
+            when {
+                mLastTextSearch == searchText -> {
+                    Log.d("Test", "eqal")
+                    Unit
+                }
+                searchText.isEmpty() -> {
+                    mLastTextSearch = searchText
+                    switchSectionsVisibility(true)
+                    mStateActionHideCloseIcon.emit(true)
+                }
+                else -> {
+                    mStateActionHideCloseIcon.emit(false)
+                    mLastTextSearch = searchText
+                    val itemsToSearchIn = if (searchText.length > mLastTextSearch.length) {
+                        mRecyclerAdapter.companies
+                    } else mCompanies
+
+                    val results = mutableListOf<AdaptiveCompany>()
+                    itemsToSearchIn?.forEach { company ->
+                        if (filterCompanies(company, searchText)) {
+                            results.add(company)
+                        }
                     }
-                    searchText.isEmpty() -> {
-                        mLastTextSearch = searchText
+
+                    if (results.isNotEmpty()) {
+                        val resultArr = ArrayList(results)
+                        switchSectionsVisibility(false)
+                        if (results.size <= 5) {
+                            addToSearched(searchText)
+                        }
+                        withContext(mCoroutineContext.Main) {
+                            mRecyclerAdapter.invalidate()
+                            mRecyclerAdapter.setCompaniesWithNotify(resultArr)
+                        }
+                    } else {
                         switchSectionsVisibility(true)
-                        mStateActionHideCloseIcon.value = true
-                    }
-                    else -> {
-                        mLastTextSearch = searchText
-                        Log.d("Test", "Else")
-                        val itemsToSearchIn = if (searchText.length > mLastTextSearch.length) {
-                            mRecyclerAdapter.companies
-                        } else mCompanies
-
-                        val results = mutableListOf<AdaptiveCompany>()
-                        itemsToSearchIn?.forEach { company ->
-                            if (filterCompanies(company, searchText)) {
-                                results.add(company)
-                            }
-                        }
-
-                        if (results.isNotEmpty()) {
-                            val resultArr = ArrayList(results)
-                            switchSectionsVisibility(false)
-                            if (results.size <= 5) {
-                                addToSearched(searchText)
-                            }
-                            withContext(mCoroutineContext.Main) {
-                                mRecyclerAdapter.invalidate()
-                                mRecyclerAdapter.setCompaniesWithNotify(resultArr)
-                            }
-                        } else {
-                            switchSectionsVisibility(true)
-                            mStateActionHideCloseIcon.value = true
-                        }
                     }
                 }
                 /*if (mLastTextSearch != searchText) {
@@ -185,7 +183,7 @@ class SearchViewModel(
         mSearchesAdapter.setData(ArrayList(data))
     }
 
-    private fun switchSectionsVisibility(showHintsHideResults: Boolean) {
-        mStateActionShowHintsHideResults.value = showHintsHideResults
+    private suspend fun switchSectionsVisibility(showHintsHideResults: Boolean) {
+        mStateActionShowHintsHideResults.emit(showHintsHideResults)
     }
 }

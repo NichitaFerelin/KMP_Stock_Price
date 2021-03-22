@@ -11,6 +11,8 @@ class StylesProvider(private val mContext: Context) {
     private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active
     private val mDrawableFavouriteSingleIcon = R.drawable.ic_star_default
     private val mDrawableFavouriteSingleIconActive = R.drawable.ic_star_active
+    private val mDrawableRippleLight = R.drawable.ripple_light
+    private val mDrawableRippleDark = R.drawable.ripple_dark
     private val mColorProfitPlus = R.color.green
     private val mColorProfitMinus = R.color.red
     private val mColorHolderFirst = R.color.white
@@ -19,6 +21,7 @@ class StylesProvider(private val mContext: Context) {
     fun applyStyles(adaptiveCompany: AdaptiveCompany, index: Int) {
         adaptiveCompany.companyStyle.apply {
             holderBackground = getHolderBackground(index)
+            rippleForeground = getRippleForeground(index)
             favouriteDefaultIconResource = getDefaultIconDrawable(adaptiveCompany.isFavourite)
             favouriteSingleIconResource = getSingleIconDrawable(adaptiveCompany.isFavourite)
             dayProfitBackground = getProfitBackground(adaptiveCompany.companyDayData.profit)
@@ -37,6 +40,10 @@ class StylesProvider(private val mContext: Context) {
         return if (index % 2 == 0) {
             getColor(mColorHolderFirst)
         } else getColor(mColorHolderSecond)
+    }
+
+    private fun getRippleForeground(index: Int): Int {
+        return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
     }
 
     fun getProfitBackground(profit: String): Int {

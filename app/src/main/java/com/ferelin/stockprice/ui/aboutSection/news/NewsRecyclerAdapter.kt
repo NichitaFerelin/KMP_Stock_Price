@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -33,10 +34,18 @@ class NewsRecyclerAdapter(
             mNewsDates[position],
             mNewsHeadlines[position],
             mNewsSummaries[position],
-            mNewsUrls[position]
+            mNewsUrls[position],
+            mNewsIds[position]
         )
         holder.itemView.setOnClickListener {
-            mNewsClickListener?.onNewsClicked(position)
+            mNewsClickListener?.onNewsClicked(
+                holder,
+                mNewsSources[position],
+                mNewsHeadlines[position],
+                mNewsSummaries[position],
+                mNewsDates[position],
+                mNewsUrls[position]
+            )
         }
         holder.binding.textViewUrl.setOnClickListener {
             mNewsClickListener?.onNewsUrlClicked(position)
@@ -99,13 +108,23 @@ class NewsRecyclerAdapter(
         val binding: ItemNewsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(source: String, date: String, headline: String, summary: String, url: String) {
+        fun bind(
+            source: String,
+            date: String,
+            headline: String,
+            summary: String,
+            url: String,
+            id: String
+        ) {
             binding.apply {
                 textViewSource.text = source
                 textViewDate.text = date
                 textViewHeadline.text = headline
                 textViewSummary.text = summary
                 textViewUrl.text = url
+
+                Log.d("Test", "id: $url")
+                root.transitionName = "root_$url"
             }
         }
 

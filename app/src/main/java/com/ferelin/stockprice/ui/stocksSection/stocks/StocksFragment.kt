@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentStocksBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
@@ -53,7 +57,58 @@ class StocksFragment : BaseStocksFragment<StocksViewModel>() {
             launch {
                 (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {
                     withContext(mCoroutineContext.Main) {
-                        mBinding.recyclerViewStocks.scrollToPosition(0)
+
+                        if((mBinding.recyclerViewStocks.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
+                            val anim = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
+                            val animEnd =
+                                AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
+                            animEnd.setAnimationListener(object : Animation.AnimationListener {
+                                override fun onAnimationStart(animation: Animation?) {
+                                    mBinding.recyclerViewStocks.visibility = View.VISIBLE
+                                    mBinding.recyclerViewStocks.smoothScrollToPosition(0)
+                                }
+
+                                override fun onAnimationEnd(animation: Animation?) {
+                                }
+
+                                override fun onAnimationRepeat(animation: Animation?) {
+                                }
+
+                            })
+
+
+                            mBinding.recyclerViewStocks.startAnimation(anim)
+                            anim.setAnimationListener(object : Animation.AnimationListener {
+                                override fun onAnimationEnd(animation: Animation?) {
+                                    mBinding.recyclerViewStocks.visibility = View.GONE
+                                    mBinding.recyclerViewStocks.scrollToPosition(20)
+                                    mBinding.recyclerViewStocks.startAnimation(animEnd)
+                                    //mBinding.recyclerViewStocks.y += mBinding.recyclerViewStocks.height
+                                    //mBinding.recyclerViewStocks.startAnimation(animEnd)
+                                }
+
+                                override fun onAnimationRepeat(animation: Animation?) {
+                                }
+
+                                override fun onAnimationStart(animation: Animation?) {
+                                    mBinding.recyclerViewStocks.smoothScrollBy(
+                                        0,
+                                        (-mBinding.recyclerViewStocks.height).toInt()
+                                    )
+                                }
+                            })
+                            /*mBinding.recyclerViewStocks.smoothScrollBy(
+                                0,
+                                (-mBinding.recyclerViewStocks.height / 1.2).toInt()
+                            )*/
+
+                            //
+                        } else {
+                            mBinding.recyclerViewStocks.smoothScrollToPosition(0)
+                        }
+
+
+
                     }
                 }
             }
