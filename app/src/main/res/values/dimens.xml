@@ -1,39 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="frame_padding">8dp</dimen>
-    <dimen name="frame_line_width">1dp</dimen>
-    <dimen name="frame_text_size">14sp</dimen>
+    <dimen name="fakePointPadding">8dp</dimen>
 
-    <dimen name="defaultMargin">16dp</dimen>
-    <dimen name="smallMargin">8dp</dimen>
-    <dimen name="small">4dp</dimen>
-
-    <dimen name="line_width">3dp</dimen>
-    <dimen name="radius">6dp</dimen>
-    <dimen name="iner_radius">5dp</dimen>
-
-    <dimen name="specialMargin">100dp</dimen>
-
-    <dimen name="fiveDP">5dp</dimen>
-
-    <dimen name="thriDp">13dp</dimen>
-
-    <dimen name="test">55.5dp</dimen>
-
-    <dimen name="ttt">260dp</dimen>
-
-    <dimen name="eee">50dp</dimen>
-
-    <dimen name="itemTextDectorationStartMArgin">20dp</dimen>
-    <dimen name="itemTextDecorationTopMargin">16dp</dimen>
-
-
-    <dimen name="suggestionArrowHeight">6dp</dimen>
-
-    <dimen name="a1">76dp</dimen>
-    <dimen name="a2">55.5dp</dimen>
-
+    <dimen name="searchItemStartMargin">16dp</dimen>
+    <dimen name="searchItemMargin">4dp</dimen>
+    <dimen name="stockItemBottomMargin">8dp</dimen>
     <dimen name="newsItemOffset">8dp</dimen>
+
+    <dimen name="textDividerStartMargin">20dp</dimen>
+    <dimen name="textDividerTopMargin">16dp</dimen>
+
+    <dimen name="stockIconHeight">52dp</dimen>
+    <dimen name="stockIconWidth">52dp</dimen>
 
     <dimen name="suggestionLayoutWidth">111dp</dimen>
     <dimen name="suggestionLayoutHeight">76dp</dimen>
@@ -44,5 +22,12 @@
     <dimen name="pointWidth">8dp</dimen>
     <dimen name="pointHeight">8dp</dimen>
 
+    <dimen name="aboutPagerAppBarHeight">120dp</dimen>
+    <dimen name="aboutPagerElevation">10dp</dimen>
 
+    <dimen name="chartHeight">260dp</dimen>
+    <dimen name="chartDrawPadding">15dp</dimen>
+
+    <dimen name="searchFragmentElevation">7dp</dimen>
+    <dimen name="recyclerSearchesHeight">96dp</dimen>
 </resources>

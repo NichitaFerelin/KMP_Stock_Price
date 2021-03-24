@@ -14,20 +14,20 @@ import kotlinx.coroutines.FlowPreview
 open class CompanyViewModelFactory(
     private val mCoroutineContext: CoroutineContextProvider,
     private val mDataInteractor: DataInteractor,
-    private val mOwnerCompany: AdaptiveCompany?
+    private val mSelectedCompany: AdaptiveCompany?
 ) : ViewModelProvider.Factory {
 
     @FlowPreview
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(ChartViewModel::class.java) -> {
-                ChartViewModel(mCoroutineContext, mDataInteractor, mOwnerCompany) as T
+                ChartViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
             }
             modelClass.isAssignableFrom(AboutPagerViewModel::class.java) -> {
-                AboutPagerViewModel(mCoroutineContext, mDataInteractor, mOwnerCompany) as T
+                AboutPagerViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
             }
             modelClass.isAssignableFrom(NewsViewModel::class.java) -> {
-                NewsViewModel(mCoroutineContext, mDataInteractor, mOwnerCompany) as T
+                NewsViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
             }
             else -> throw IllegalStateException("Unknown view model class: $modelClass")
         }

@@ -20,14 +20,14 @@ class StocksItemDecoration(private val mContext: Context) : RecyclerView.ItemDec
 
         when (parent.adapter?.getItemViewType(position)) {
             StocksRecyclerAdapter.ITEM_STOCK_TYPE -> {
-                outRect.bottom = mContext.resources.getDimension(R.dimen.smallMargin).toInt()
+                outRect.bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
             }
             StocksRecyclerAdapter.ITEM_TEXT_TYPE -> {
                 outRect.left =
-                    mContext.resources.getDimension(R.dimen.itemTextDectorationStartMArgin).toInt()
+                    mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
                 outRect.top =
-                    mContext.resources.getDimension(R.dimen.itemTextDecorationTopMargin).toInt()
-                outRect.bottom = mContext.resources.getDimension(R.dimen.smallMargin).toInt()
+                    mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
+                outRect.bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
             }
         }
 

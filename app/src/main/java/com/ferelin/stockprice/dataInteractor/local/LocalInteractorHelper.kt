@@ -8,9 +8,9 @@ interface LocalInteractorHelper {
 
     suspend fun getCompaniesData(context: Context): LocalInteractorResponse
 
-    suspend fun getSearchesData(context: Context): LocalInteractorResponse
+    suspend fun getSearchRequestsHistory(context: Context): LocalInteractorResponse
 
-    suspend fun setSearchesData(requests: List<AdaptiveSearchRequest>)
+    suspend fun setSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
 
     suspend fun updateCompany(adaptiveCompany: AdaptiveCompany)
 }

@@ -2,7 +2,6 @@ package com.ferelin.stockprice.ui.aboutSection.news
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
@@ -17,31 +16,23 @@ import kotlinx.coroutines.withContext
 class NewsViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
-    ownerCompany: AdaptiveCompany? = null
+    selectedCompany: AdaptiveCompany? = null
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mOwnerCompany: AdaptiveCompany? = ownerCompany
+    private val mSelectedCompany: AdaptiveCompany? = selectedCompany
 
-    private val mRecyclerAdapter = NewsRecyclerAdapter().apply { setHasStableIds(true) }
+    private val mRecyclerAdapter = NewsRecyclerAdapter()
     val recyclerAdapter: NewsRecyclerAdapter
         get() = mRecyclerAdapter
 
     private val mHasDataForRecycler =
-        MutableStateFlow(mOwnerCompany?.companyNews?.summaries?.isNotEmpty() ?: false)
+        MutableStateFlow(mSelectedCompany?.companyNews?.summaries?.isNotEmpty() ?: false)
     val hasDataForRecycler: StateFlow<Boolean>
         get() = mHasDataForRecycler
-
-    private val mActionOpenNewsDetails = MutableSharedFlow<Bundle>()
-    val actionOpenNewsDetails: SharedFlow<Bundle>
-        get() = mActionOpenNewsDetails
 
     private val mActionOpenUrl = MutableSharedFlow<Intent>()
     val actionOpenUrl: SharedFlow<Intent>
         get() = mActionOpenUrl
-
-    private val mNotificationDataLoaded = MutableStateFlow(false)
-    val notificationDataLoaded: StateFlow<Boolean>
-        get() = mNotificationDataLoaded
 
     private val mNotificationNewItems = MutableSharedFlow<Unit>()
     val notificationNewItems: SharedFlow<Unit>
@@ -53,18 +44,16 @@ class NewsViewModel(
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            if (mOwnerCompany?.companyNews?.ids?.isNotEmpty() == true) {
-                onNewsChanged(mOwnerCompany.companyNews)
-            }
             launch {
-                mDataInteractor.loadCompanyNews(mOwnerCompany?.companyProfile?.symbol ?: "")
+                mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
+                    .take(1)
                     .collect {
                         onNewsChanged(it.companyNews)
                         mHasDataForRecycler.value = true
                     }
             }
             launch {
-                mDataInteractor.loadCompanyNewsErrorState.collect {
+                mDataInteractor.loadCompanyNewsErrorShared.collect {
                     mActionShowError.emit(it)
                 }
             }
@@ -73,40 +62,23 @@ class NewsViewModel(
 
     fun onNewsUrlClicked(position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            val url = mOwnerCompany?.companyNews?.browserUrls?.get(position)
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(url)
-            }
+            val url = mSelectedCompany?.companyNews?.browserUrls?.get(position)
+            val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
             mActionOpenUrl.emit(intent)
         }
-    }
-
-    fun onNewsClicked(position: Int) {
-        /*viewModelScope.launch(mCoroutineContext.IO) {
-            mOwnerCompany?.companyNews?.let {
-                val arguments = bundleOf(
-                    NewsDetailsFragment.HEADLINE_STR_KEY to it.headlines[position],
-                    NewsDetailsFragment.SUMMARY_STR_KEY to it.summaries[position],
-                    NewsDetailsFragment.DATE_STR_KEY to it.dates[position],
-                    NewsDetailsFragment.BROWSER_URL_STR_KEY to it.browserUrls[position],
-                    NewsDetailsFragment.IMAGE_URL_STR_KEY to it.previewImagesUrls[position]
-                )
-                mActionOpenNewsDetails.emit(arguments)
-            }
-        }*/
     }
 
     private fun onNewsChanged(news: AdaptiveCompanyNews) {
         viewModelScope.launch(mCoroutineContext.IO) {
             if (mRecyclerAdapter.dataSize == 0 && news.ids.size > 10) {
-                setNewsDataInRange(news)
-            } else if (mRecyclerAdapter.ids != news.ids) {
-                addNewItems(news)
+                setNewsDataWithAnim(news)
+            } else if (mRecyclerAdapter.ids.firstOrNull() != news.ids.firstOrNull()) {
+                addNewsByOne(news)
             }
         }
     }
 
-    private fun setNewsDataInRange(news: AdaptiveCompanyNews) {
+    private fun setNewsDataWithAnim(news: AdaptiveCompanyNews) {
         viewModelScope.launch(mCoroutineContext.IO) {
             for (index in 0 until 5) {
                 withContext(mCoroutineContext.Main) {
@@ -114,14 +86,13 @@ class NewsViewModel(
                 }
                 delay(45)
             }
-            mNotificationDataLoaded.value = true
             withContext(mCoroutineContext.Main) {
                 mRecyclerAdapter.setDataInRange(news, 5, news.ids.lastIndex)
             }
         }
     }
 
-    private fun addNewItems(news: AdaptiveCompanyNews) {
+    private fun addNewsByOne(news: AdaptiveCompanyNews) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val stopId = news.ids.first()
             val newsCursor = 0
@@ -129,6 +100,7 @@ class NewsViewModel(
                 withContext(mCoroutineContext.Main) {
                     mRecyclerAdapter.addItemToStart(news, newsCursor)
                 }
+                delay(50)
             }
             mNotificationNewItems.emit(Unit)
         }

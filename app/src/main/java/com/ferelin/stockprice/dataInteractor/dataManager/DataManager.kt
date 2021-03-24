@@ -17,14 +17,6 @@ class DataManager(
         favouriteCompaniesWorker.onDataPrepared(companies)
     }
 
-    fun onSearchesDataPrepared(searches: List<AdaptiveSearchRequest>) {
-        searchRequestsWorker.onDataPrepared(searches)
-    }
-
-    fun getCompany(symbol: String): AdaptiveCompany? {
-        return companiesWorker.findCompany(symbol)
-    }
-
     suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>) {
         companiesWorker.onStockCandlesLoaded(response)?.let { updatedCompany ->
             onDataChanged(updatedCompany)
@@ -58,6 +50,10 @@ class DataManager(
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
         val updateCompany = favouriteCompaniesWorker.onRemoveFavouriteCompany(company)
         companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(updateCompany))
+    }
+
+    fun onSearchRequestsHistoryPrepared(searches: List<AdaptiveSearchRequest>) {
+        searchRequestsWorker.onDataPrepared(searches)
     }
 
     suspend fun onNewSearch(searchText: String) {

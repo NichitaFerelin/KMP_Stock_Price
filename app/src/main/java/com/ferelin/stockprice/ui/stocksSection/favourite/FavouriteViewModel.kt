@@ -33,9 +33,10 @@ class FavouriteViewModel(
                     .collect { onFavouriteCompaniesPrepared(it) }
             }.join()
 
-            mDataInteractor.favouriteCompaniesUpdateShared
+            mDataInteractor.favouriteCompaniesUpdatesShared
                 .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
                 .collect { onFavouriteCompanyUpdateShared(it) }
+
         }
     }
 

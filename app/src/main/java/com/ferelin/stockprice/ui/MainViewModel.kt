@@ -35,7 +35,7 @@ class MainViewModel(
                 mDataInteractor.openConnection().collect()
             }
             launch {
-                mDataInteractor.prepareCompaniesErrorState
+                mDataInteractor.prepareCompaniesErrorShared
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowDialogError.emit(it) }
             }

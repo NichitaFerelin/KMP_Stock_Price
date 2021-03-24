@@ -3,7 +3,6 @@ package com.ferelin.stockprice.custom.chart
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -116,7 +115,8 @@ class ChartView @JvmOverloads constructor(
 
         mTooManyPoints = newList.size > 100
         mTooManyPointsMargin =
-            if (mTooManyPoints) resources.getDimension(R.dimen.frame_padding) else 0F
+            if (mTooManyPoints) resources.getDimension(R.dimen.fakePointPadding) else 0F
+
         mMaxValue = newList.maxByOrNull { it.price }!!.price
         mMinValue = newList.minByOrNull { it.price }!!.price
 
@@ -127,13 +127,13 @@ class ChartView @JvmOverloads constructor(
         newList.add(Marker(price = endFakePoint, priceStr = "", date = ""))
 
         if (mTooManyPoints) {
+            // two more fake points
             newList.add(0, Marker(price = startFakePoint, priceStr = "", date = ""))
             newList.add(Marker(price = endFakePoint, priceStr = "", date = ""))
         }
 
         mMarkers = newList
         mLastNearestPoint = null
-        Log.d("Test", "Set data: ${mLastNearestPoint?.price}")
 
         calcAndInvalidate()
     }
@@ -159,7 +159,7 @@ class ChartView @JvmOverloads constructor(
 
         mGradient = LinearGradient(
             0F,
-            mCharHeight - resources.getDimension(R.dimen.ttt) - paddingTop.toFloat(),
+            mCharHeight - resources.getDimension(R.dimen.chartHeight) - paddingTop.toFloat(),
             0F,
             mCharHeight - paddingTop.toFloat(),
             mGradientColors,
@@ -195,7 +195,6 @@ class ChartView @JvmOverloads constructor(
 
                 close()
             }
-
             canvas.drawPath(mGradientPath, mGradientPaint)
         }
     }
@@ -312,6 +311,5 @@ class ChartView @JvmOverloads constructor(
         }
         event.setLocation(nearestPoint!!.position.x, nearestPoint.position.y)
         mLastNearestPoint = nearestPoint
-        Log.d("Test", "Setted point: ${mLastNearestPoint?.price}")
     }
 }

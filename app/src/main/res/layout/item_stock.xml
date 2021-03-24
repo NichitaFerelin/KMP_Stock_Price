@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="68dp"
-    android:clickable="true"
-    android:focusable="true"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     tools:backgroundTint="@color/white">
@@ -31,6 +29,7 @@
                 android:id="@+id/imageViewIcon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/descriptionCompanyIcon"
                 tools:src="@mipmap/msft" />
 
         </androidx.cardview.widget.CardView>
@@ -51,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
+            android:contentDescription="@string/descriptionAddToFavourite"
             android:src="@drawable/ic_favourite"
             app:layout_constraintBottom_toBottomOf="@id/textViewCompanySymbol"
             app:layout_constraintStart_toEndOf="@id/textViewCompanySymbol"
@@ -58,12 +58,9 @@
 
         <TextView
             android:id="@+id/textViewCompanyName"
-            style="@style/textViewBodySemiBold"
+            style="@style/textViewBodySemiBoldConstrainedWidth"
             android:layout_width="0dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:ellipsize="end"
-            android:lines="1"
+            android:layout_marginHorizontal="12dp"
             app:layout_constraintEnd_toStartOf="@id/textViewDayProfit"
             app:layout_constraintStart_toEndOf="@id/cardViewIcon"
             app:layout_constraintTop_toBottomOf="@id/textViewCompanySymbol"

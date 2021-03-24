@@ -16,18 +16,18 @@ class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalI
         } else LocalInteractorResponse.Failed()
     }
 
-    override suspend fun getSearchesData(context: Context): LocalInteractorResponse {
+    override suspend fun getSearchRequestsHistory(context: Context): LocalInteractorResponse {
         val responseSearches = mRepository.getSearchesHistory().first()
         return if (responseSearches is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(searchesHistory = responseSearches.data)
         } else LocalInteractorResponse.Failed()
     }
 
-    override suspend fun setSearchesData(requests: List<AdaptiveSearchRequest>) {
-        mRepository.setSearchesHistory(requests)
-    }
-
     override suspend fun updateCompany(adaptiveCompany: AdaptiveCompany) {
         mRepository.saveCompanyData(adaptiveCompany)
+    }
+
+    override suspend fun setSearchRequestsHistory(requests: List<AdaptiveSearchRequest>) {
+        mRepository.setSearchesHistory(requests)
     }
 }

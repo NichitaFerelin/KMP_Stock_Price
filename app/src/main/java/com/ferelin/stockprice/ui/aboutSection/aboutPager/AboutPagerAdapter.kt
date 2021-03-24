@@ -14,10 +14,10 @@ import com.ferelin.stockprice.ui.aboutSection.summary.SummaryFragment
 class AboutPagerAdapter(
     fm: FragmentManager,
     lifecycle: Lifecycle,
-    ownerCompany: AdaptiveCompany?
+    selectedCompany: AdaptiveCompany?
 ) : FragmentStateAdapter(fm, lifecycle) {
 
-    private val mOwnerCompany: AdaptiveCompany? = ownerCompany
+    private val mSelectedCompany: AdaptiveCompany? = selectedCompany
 
     override fun getItemCount(): Int {
         return 5
@@ -25,9 +25,9 @@ class AboutPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ChartFragment(mOwnerCompany)
+            0 -> ChartFragment(mSelectedCompany)
             1 -> SummaryFragment()
-            2 -> NewsFragment(mOwnerCompany)
+            2 -> NewsFragment(mSelectedCompany)
             3 -> ForecastsFragment()
             4 -> IdeasFragment()
             else -> throw IllegalStateException("No fragment for position: $position")

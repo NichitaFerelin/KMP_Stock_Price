@@ -14,76 +14,57 @@ import kotlinx.coroutines.launch
 class ChartViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
-    company: AdaptiveCompany?
+    selectedCompany: AdaptiveCompany?
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mOwnerCompany: AdaptiveCompany? = company
-
+    private val mSelectedCompany: AdaptiveCompany? = selectedCompany
     private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null
-
     private var mLastClickedMarker: Marker? = null
-    val lastClickedMarker: Marker?
-        get() = mLastClickedMarker
 
-    private var mChartSelectedType: ChartSelectedType = ChartSelectedType.All
-    val chartSelectedType: ChartSelectedType
-        get() = mChartSelectedType
+    private val mHasDataForChart =
+        MutableStateFlow(mSelectedCompany?.companyHistory?.closePrices?.isNotEmpty() ?: false)
+    val hasDataForChartState: StateFlow<Boolean>
+        get() = mHasDataForChart
+
+    private val mEventDayDataChanged = MutableSharedFlow<Unit>(1)
+    val eventDataChanged: SharedFlow<Unit>
+        get() = mEventDayDataChanged
 
     private val mEventStockHistoryChanged = MutableSharedFlow<AdaptiveCompanyHistoryForChart>(1)
     val eventStockHistoryChanged: SharedFlow<AdaptiveCompanyHistoryForChart>
         get() = mEventStockHistoryChanged
 
-    private val mEventDataChanged = MutableSharedFlow<Unit>(1)
-    val eventDataChanged: SharedFlow<Unit>
-        get() = mEventDataChanged
-
-    private var mCurrentPrice = company?.companyDayData?.currentPrice ?: ""
-    val currentPrice: String
-        get() = mCurrentPrice
-
-    private var mDayProfit = company?.companyDayData?.profit ?: ""
-    val dayProfit: String
-        get() = mDayProfit
-
-    private var mProfitBackground = company?.companyStyle?.dayProfitBackground ?: 0
-    val profitBackground: Int
-        get() = mProfitBackground
-
     private val mActionShowError = MutableSharedFlow<String>()
     val actionShowError: SharedFlow<String>
         get() = mActionShowError
 
-    private val mHasDataForChart =
-        MutableStateFlow(mOwnerCompany?.companyHistory?.closePrices?.isNotEmpty() ?: false)
-    val hasDataForChartState: StateFlow<Boolean>
-        get() = mHasDataForChart
+    private var mCurrentPrice = selectedCompany?.companyDayData?.currentPrice ?: ""
+    val currentPrice: String
+        get() = mCurrentPrice
+
+    private var mDayProfit = selectedCompany?.companyDayData?.profit ?: ""
+    val dayProfit: String
+        get() = mDayProfit
+
+    private var mProfitBackground = selectedCompany?.companyStyle?.dayProfitBackground ?: 0
+    val profitBackground: Int
+        get() = mProfitBackground
+
+    private var mChartSelectedType: ChartSelectedType = ChartSelectedType.All
+    val chartSelectedType: ChartSelectedType
+        get() = mChartSelectedType
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mOwnerCompany?.let {
-                    if (it.companyHistory.datePrices.isNotEmpty()) {
-                        mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(it.companyHistory)
-                            .also { historyForChart ->
-                                mOriginalStockHistory = historyForChart
-                                mEventStockHistoryChanged.emit(historyForChart)
-                            }
-                    }
-                    onDataChanged(it)
-                }
-            }.join()
+            prepareData()
 
             launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { filterSharedUpdate(it) }
-                    .collect { notificator ->
-                        notificator.data?.let { onDataChanged(it) }
-                    }
+                    .collect { onDataChanged(it.data!!) }
             }
-
-
             launch {
-                mDataInteractor.loadStockCandles(mOwnerCompany?.companyProfile?.symbol ?: "")
+                mDataInteractor.loadStockCandles(mSelectedCompany?.companyProfile?.symbol ?: "")
                     .collect {
                         onStockHistoryLoaded(
                             mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(
@@ -92,9 +73,8 @@ class ChartViewModel(
                         )
                     }
             }
-
             launch {
-                mDataInteractor.loadStockCandlesErrorState.collect {
+                mDataInteractor.loadStockCandlesErrorShared.collect {
                     mActionShowError.emit(it)
                 }
             }
@@ -114,7 +94,6 @@ class ChartViewModel(
         mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedType) }
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun convertHistoryToSelectedType(selectedType: ChartSelectedType) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val response = when (selectedType) {
@@ -137,12 +116,27 @@ class ChartViewModel(
         }
     }
 
+    private fun prepareData() {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            mSelectedCompany?.let {
+                if (it.companyHistory.datePrices.isNotEmpty()) {
+                    mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(it.companyHistory)
+                        .also { historyForChart ->
+                            mOriginalStockHistory = historyForChart
+                            mEventStockHistoryChanged.emit(historyForChart)
+                        }
+                }
+                onDataChanged(it)
+            }
+        }
+    }
+
     private suspend fun onDataChanged(company: AdaptiveCompany) {
         company.apply {
             mCurrentPrice = companyDayData.currentPrice
             mDayProfit = companyDayData.profit
             mProfitBackground = companyStyle.dayProfitBackground
-            mEventDataChanged.emit(Unit)
+            mEventDayDataChanged.emit(Unit)
         }
     }
 
@@ -157,6 +151,7 @@ class ChartViewModel(
     private fun filterSharedUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {
         return (notificator is DataNotificator.ItemUpdatedLiveTime
                 || notificator is DataNotificator.ItemUpdatedQuote)
-                && notificator.data?.companyProfile?.symbol == mOwnerCompany?.companyProfile?.symbol
+                && notificator.data != null
+                && notificator.data.companyProfile.symbol == mSelectedCompany?.companyProfile?.symbol
     }
 }

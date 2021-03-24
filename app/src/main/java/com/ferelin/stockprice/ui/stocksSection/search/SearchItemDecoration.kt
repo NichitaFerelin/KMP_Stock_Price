@@ -10,8 +10,8 @@ import com.ferelin.stockprice.R
 class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
     private val mFirstItemStartMargin =
-        context.resources.getDimension(R.dimen.defaultMargin).toInt()
-    private val mDefaultStartMargin = context.resources.getDimension(R.dimen.small).toInt()
+        context.resources.getDimension(R.dimen.searchItemStartMargin).toInt()
+    private val mDefaultStartMargin = context.resources.getDimension(R.dimen.searchItemMargin).toInt()
 
     override fun getItemOffsets(
         outRect: Rect,

@@ -9,17 +9,20 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
+import com.ferelin.stockprice.base.BaseViewHelper
 import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.google.android.material.transition.Hold
 import kotlinx.coroutines.launch
 
-abstract class BaseStocksFragment<out T : BaseStocksViewModel>
-    : BaseFragment<T>(), StockClickListener {
+abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseViewHelper>
+    : BaseFragment<T, V>(), StockClickListener {
 
     protected lateinit var mFragmentManager: FragmentManager
-    override fun setUpViewComponents() {
+
+    override fun setUpViewComponents(savedInstanceState: Bundle?) {
+        super.setUpViewComponents(savedInstanceState)
         mViewModel.recyclerAdapter.setOnStockCLickListener(this)
     }
 
@@ -41,9 +44,7 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
+        postponeTransition(view)
     }
 
     private fun moveToAboutFragment(
@@ -53,34 +54,18 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel>
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mFragmentManager.commit {
                 setReorderingAllowed(true)
-                /*setCustomAnimations(
-                    R.anim.scale_in,
-                    R.anim.scale_out,
-                    R.anim.scale_in,
-                    R.anim.scale_out
-                )*/
-                replace(
-                    R.id.fragmentContainer,
-                    AboutPagerFragment(
-                        company
-                    )
-                )
+                replace(R.id.fragmentContainer, AboutPagerFragment(company))
                 addToBackStack(null)
-
                 addSharedElement(
                     holder.binding.root,
-                    "containerAboutPager"
+                    resources.getString(R.string.transitionAboutPager)
                 )
-               /* addSharedElement(
-                    holder.binding.textViewCompanySymbol,
-                    "transitionCompanySymbol"
-                )
-                addSharedElement(
-                    holder.binding.textViewCompanyName,
-                    "transitionCompanyName"
-                )*/
-
             }
         }
+    }
+
+    private fun postponeTransition(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
     }
 }

@@ -9,7 +9,7 @@ class StylesProvider(private val mContext: Context) {
 
     private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite
     private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active
-    private val mDrawableFavouriteSingleIcon = R.drawable.ic_star_default
+    private val mDrawableFavouriteSingleIcon = R.drawable.ic_star
     private val mDrawableFavouriteSingleIconActive = R.drawable.ic_star_active
     private val mDrawableRippleLight = R.drawable.ripple_light
     private val mDrawableRippleDark = R.drawable.ripple_dark
@@ -36,6 +36,13 @@ class StylesProvider(private val mContext: Context) {
         return if (isFavourite) mDrawableFavouriteSingleIconActive else mDrawableFavouriteSingleIcon
     }
 
+    fun getProfitBackground(profit: String): Int {
+        val prefix = profit.getOrNull(0)
+        return if (prefix == '+') {
+            getColor(mColorProfitPlus)
+        } else getColor(mColorProfitMinus)
+    }
+
     private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
             getColor(mColorHolderFirst)
@@ -44,13 +51,6 @@ class StylesProvider(private val mContext: Context) {
 
     private fun getRippleForeground(index: Int): Int {
         return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
-    }
-
-    fun getProfitBackground(profit: String): Int {
-        val prefix = profit.getOrNull(0)
-        return if (prefix == '+') {
-            getColor(mColorProfitPlus)
-        } else getColor(mColorProfitMinus)
     }
 
     private fun getColor(color: Int): Int {

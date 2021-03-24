@@ -3,19 +3,19 @@ package com.ferelin.stockprice.base
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
 
-abstract class BaseFragment<out T : BaseViewModel>(
+abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
     protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : Fragment() {
 
     protected abstract val mViewModel: T
+    protected abstract val mViewHelper: V
     protected lateinit var mDataInteractor: DataInteractor
-
-    protected abstract fun setUpViewComponents()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -24,11 +24,24 @@ abstract class BaseFragment<out T : BaseViewModel>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpViewComponents()
+        setUpViewComponents(savedInstanceState)
         initObservers()
+    }
+
+    override fun onDestroyView() {
+        mViewHelper.invalidate()
+        super.onDestroyView()
+    }
+
+    protected open fun setUpViewComponents(savedInstanceState: Bundle?) {
+        mViewHelper.prepare(requireContext())
     }
 
     protected open fun initObservers() {
         mViewModel.initObservers()
+    }
+
+    protected fun showToast(text: String) {
+        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
     }
 }

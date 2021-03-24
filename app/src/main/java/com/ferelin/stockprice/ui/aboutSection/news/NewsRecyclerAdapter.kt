@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,19 +33,8 @@ class NewsRecyclerAdapter(
             mNewsDates[position],
             mNewsHeadlines[position],
             mNewsSummaries[position],
-            mNewsUrls[position],
-            mNewsIds[position]
+            mNewsUrls[position]
         )
-        holder.itemView.setOnClickListener {
-            mNewsClickListener?.onNewsClicked(
-                holder,
-                mNewsSources[position],
-                mNewsHeadlines[position],
-                mNewsSummaries[position],
-                mNewsDates[position],
-                mNewsUrls[position]
-            )
-        }
         holder.binding.textViewUrl.setOnClickListener {
             mNewsClickListener?.onNewsUrlClicked(position)
         }
@@ -54,10 +42,6 @@ class NewsRecyclerAdapter(
 
     override fun getItemCount(): Int {
         return mNewsHeadlines.size
-    }
-
-    override fun getItemId(position: Int): Long {
-        return mNewsIds[position].toLong()
     }
 
     fun addItemToStart(news: AdaptiveCompanyNews, position: Int) {
@@ -90,16 +74,6 @@ class NewsRecyclerAdapter(
         notifyItemRangeInserted(start, end)
     }
 
-    fun setData(news: AdaptiveCompanyNews) {
-        mNewsIds = ArrayList(news.ids)
-        mNewsHeadlines = ArrayList(news.headlines)
-        mNewsSummaries = ArrayList(news.summaries)
-        mNewsDates = ArrayList(news.dates)
-        mNewsSources = ArrayList(news.sources)
-        mNewsUrls = ArrayList(news.browserUrls)
-        notifyDataSetChanged()
-    }
-
     fun setOnNewsClickListener(clickListener: NewsClickListener) {
         mNewsClickListener = clickListener
     }
@@ -113,8 +87,7 @@ class NewsRecyclerAdapter(
             date: String,
             headline: String,
             summary: String,
-            url: String,
-            id: String
+            url: String
         ) {
             binding.apply {
                 textViewSource.text = source
@@ -122,9 +95,6 @@ class NewsRecyclerAdapter(
                 textViewHeadline.text = headline
                 textViewSummary.text = summary
                 textViewUrl.text = url
-
-                Log.d("Test", "id: $url")
-                root.transitionName = "root_$url"
             }
         }
 

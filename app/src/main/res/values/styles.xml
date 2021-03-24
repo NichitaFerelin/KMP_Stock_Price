@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- Base text views-->
     <style name="textView">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="fontFamily">@font/w_600</item>
+    </style>
+
+    <style name="textViewBody" parent="textView">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="textViewBodySemiBold" parent="textView">
+        <item name="android:textSize">11sp</item>
     </style>
 
     <style name="textViewH1" parent="textView">
@@ -22,14 +30,42 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="textViewBody" parent="textView">
-        <item name="android:textSize">12sp</item>
+    <!-- Tab text views -->
+    <style name="textViewH3Tab" parent="textViewH3">
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">10dp</item>
     </style>
 
-    <style name="textViewBodySemiBold" parent="textView">
-        <item name="android:textSize">11sp</item>
+    <!-- Constrained width text views -->
+    <style name="textViewH3ConstrainedWidth" parent="textViewH3">
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_width">wrap_content</item>
     </style>
 
+    <style name="textViewH2ConstrainedWidth" parent="textViewH2">
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">2</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="textViewBodySemiBoldConstrainedWidth" parent="textViewBodySemiBold">
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="textViewBodyConstrainedWidth" parent="textViewBody">
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <!-- Shadowed text views -->
     <style name="textViewH1Shadowed" parent="textView">
         <item name="android:textSize">28sp</item>
         <item name="fontFamily">@font/w_700</item>
@@ -52,9 +88,118 @@
         <item name="android:textColor">@color/grey</item>
     </style>
 
+    <style name="textViewBodyShadowedTab" parent="textViewBodyShadowed">
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">10dp</item>
+    </style>
+
     <style name="textViewBodySemiBoldShadowed" parent="textView">
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/grey</item>
     </style>
 
+    <!-- Other -->
+
+    <style name="clickableImage">
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="progressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:indeterminate">true</item>
+        <item name="trackColor">@color/black</item>
+    </style>
+
+    <style name="chartCardView">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="cardBackgroundColor">@color/whiteDark</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">12dp</item>
+    </style>
+
+    <style name="chartCardViewActive" parent="chartCardView">
+        <item name="cardBackgroundColor">@color/black</item>
+    </style>
+
+    <style name="fab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:backgroundTint">@color/whiteDark</item>
+        <item name="android:visibility">invisible</item>
+        <item name="android:src">@drawable/ic_arrow_up</item>
+        <item name="layout_behavior">.custom.fab.ScrollableFabBehaviour</item>
+        <item name="tint">@color/black</item>
+    </style>
+
+    <style name="editText" parent="textViewH3">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:imeOptions">flagNoFullscreen</item>
+        <item name="android:inputType">text</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
+    </style>
+
+    <style name="recyclerSearches">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/recyclerSearchesHeight</item>
+        <item name="android:layout_marginTop">11dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
+        <item name="spanCount">2</item>
+    </style>
+
+    <style name="recyclerStocks">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:transitionGroup">true</item>
+        <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
+    </style>
+
+    <style name="cardSearch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:transitionName">card</item>
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">40dp</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="cardSearchActive" parent="cardSearch">
+        <item name="strokeWidth">2dp</item>
+        <item name="android:outlineProvider">none</item>
+    </style>
+
+    <style name="stockIcon">
+        <item name="android:layout_width">@dimen/stockIconHeight</item>
+        <item name="android:layout_height">@dimen/stockIconWidth</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="cardCornerRadius">13dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
 </resources>

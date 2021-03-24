@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -21,9 +20,21 @@ class SearchViewModel(
 
     private var mCompanies: ArrayList<AdaptiveCompany>? = null
 
-    private var mLastTextSearch = ""
-    val lastSearchText: String
-        get() = mLastTextSearch
+    private val mActionHideCloseIcon = MutableSharedFlow<Boolean>()
+    val actionHideCloseIcon: SharedFlow<Boolean>
+        get() = mActionHideCloseIcon
+
+    private var mActionShowHintsHideResults = MutableSharedFlow<Boolean>()
+    val actionShowHintsHideResults: SharedFlow<Boolean>
+        get() = mActionShowHintsHideResults
+
+    private val mActionShowError = MutableSharedFlow<String>()
+    val actionShowError: SharedFlow<String>
+        get() = mActionShowError
+
+    private val mActionShowKeyboard = MutableStateFlow(true)
+    val actionShowKeyboard: StateFlow<Boolean>
+        get() = mActionShowKeyboard
 
     private val mPopularRequestsAdapter = SearchRecyclerAdapter().apply { setPopularSearches() }
     val popularRequestsAdapter: SearchRecyclerAdapter
@@ -33,17 +44,13 @@ class SearchViewModel(
     val searchesAdapter: SearchRecyclerAdapter
         get() = mSearchesAdapter
 
-    private val mStateActionHideCloseIcon = MutableSharedFlow<Boolean>()
-    val actionHideCloseIcon: SharedFlow<Boolean>
-        get() = mStateActionHideCloseIcon
+    private var mTransitionState: Int = 0
+    val transitionState: Int
+        get() = mTransitionState
 
-    private var mStateActionShowHintsHideResults = MutableSharedFlow<Boolean>()
-    val actionShowHintsHideResults: SharedFlow<Boolean>
-        get() = mStateActionShowHintsHideResults
-
-    private val mActionShowError = MutableSharedFlow<String>()
-    val actionShowError: SharedFlow<String>
-        get() = mActionShowError
+    private var mLastTextSearch = ""
+    val lastSearchText: String
+        get() = mLastTextSearch
 
     override fun initObserversBlock() {
         super.initObserversBlock()
@@ -66,20 +73,12 @@ class SearchViewModel(
                     }
             }
             launch {
-                mDataInteractor.searchRequestsUpdateShared
-                    .collect {
-                        withContext(mCoroutineContext.Main) {
-                            onSearchesChanged(it)
-                        }
-                    }
-            }
-            launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { it is DataNotificator.ItemUpdatedDefault }
                     .collect { updateRecyclerItem(it) }
             }
             launch {
-                mDataInteractor.loadSearchRequestsErrorState
+                mDataInteractor.loadSearchRequestsErrorShared
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowError.emit(it) }
             }
@@ -88,43 +87,36 @@ class SearchViewModel(
 
     override fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
         val indexInResults = mRecyclerAdapter.companies.indexOf(notificator.data)
-        val indexOriginalList = mCompanies?.indexOf(notificator.data) ?: -1
         if (indexInResults != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {
                 mRecyclerAdapter.updateCompany(notificator.data!!, indexInResults)
             }
         }
+
+        val indexOriginalList = mCompanies?.indexOf(notificator.data) ?: -1
         if (indexOriginalList != NULL_INDEX) {
             mCompanies!![indexOriginalList] = notificator.data!!
         }
     }
 
+    fun onTransition() {
+        mTransitionState = 1
+    }
+
     fun onSearchTextChanged(searchText: String) {
         viewModelScope.launch(mCoroutineContext.IO) {
             when {
-                mLastTextSearch == searchText -> {
-                    Log.d("Test", "eqal")
-                    Unit
-                }
+                mLastTextSearch == searchText -> Unit
                 searchText.isEmpty() -> {
                     mLastTextSearch = searchText
                     switchSectionsVisibility(true)
-                    mStateActionHideCloseIcon.emit(true)
+                    mActionHideCloseIcon.emit(true)
                 }
                 else -> {
-                    mStateActionHideCloseIcon.emit(false)
+                    mActionHideCloseIcon.emit(false)
                     mLastTextSearch = searchText
-                    val itemsToSearchIn = if (searchText.length > mLastTextSearch.length) {
-                        mRecyclerAdapter.companies
-                    } else mCompanies
 
-                    val results = mutableListOf<AdaptiveCompany>()
-                    itemsToSearchIn?.forEach { company ->
-                        if (filterCompanies(company, searchText)) {
-                            results.add(company)
-                        }
-                    }
-
+                    val results = search(searchText)
                     if (results.isNotEmpty()) {
                         val resultArr = ArrayList(results)
                         switchSectionsVisibility(false)
@@ -133,44 +125,30 @@ class SearchViewModel(
                         }
                         withContext(mCoroutineContext.Main) {
                             mRecyclerAdapter.invalidate()
-                            mRecyclerAdapter.setCompaniesWithNotify(resultArr)
+                            mRecyclerAdapter.setCompanies(resultArr)
                         }
-                    } else {
-                        switchSectionsVisibility(true)
-                    }
+                    } else switchSectionsVisibility(true)
                 }
-                /*if (mLastTextSearch != searchText) {
-                    mLastTextSearch = searchText
-                    if (searchText.isNotEmpty()) {
-                        mStateActionHideCloseIcon.value = false
-                        val results = mutableListOf<AdaptiveCompany>()
-                        mCompanies?.forEach { company ->
-                            if (search(company, searchText)) {
-                                results.add(company)
-                            }
-                        }
-
-                        withContext(mCoroutineContext.Main) {
-                            mRecyclerAdapter.invalidate()
-                        }
-
-                        if (results.isNotEmpty()) {
-                            val resultArray = ArrayList(results)
-                            withContext(mCoroutineContext.Main) {
-                                mRecyclerAdapter.setCompaniesWithNotify(resultArray)
-                            }
-                            switchSectionsVisibility(false)
-                            if (results.size <= 10) {
-                                addToSearched(searchText)
-                            }
-                        } else switchSectionsVisibility(true)
-                    } else {
-                        switchSectionsVisibility(true)
-                        mStateActionHideCloseIcon.value = true
-                    }
-                }*/
             }
         }
+    }
+
+    fun onOpenKeyboard() {
+        mActionShowKeyboard.value = false
+    }
+
+    private fun search(searchText: String): MutableList<AdaptiveCompany> {
+        val itemsToSearchIn = if (searchText.length > mLastTextSearch.length) {
+            mRecyclerAdapter.companies
+        } else mCompanies
+
+        val results = mutableListOf<AdaptiveCompany>()
+        itemsToSearchIn?.forEach { company ->
+            if (filterCompanies(company, searchText)) {
+                results.add(company)
+            }
+        }
+        return results
     }
 
     private fun addToSearched(searchText: String) {
@@ -184,6 +162,6 @@ class SearchViewModel(
     }
 
     private suspend fun switchSectionsVisibility(showHintsHideResults: Boolean) {
-        mStateActionShowHintsHideResults.emit(showHintsHideResults)
+        mActionShowHintsHideResults.emit(showHintsHideResults)
     }
 }

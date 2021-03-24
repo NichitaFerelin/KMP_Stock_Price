@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import com.ferelin.stockprice.utils.AnimationManager
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -22,13 +21,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @FlowPreview
-class FavouriteFragment : BaseStocksFragment<FavouriteViewModel>() {
+class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHelper>() {
 
-    private lateinit var mBinding: FragmentFavouriteBinding
-
+    override val mViewHelper: FavouriteViewHelper = FavouriteViewHelper()
     override val mViewModel: FavouriteViewModel by viewModels {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
+
+    private lateinit var mBinding: FragmentFavouriteBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,11 +39,10 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel>() {
         return mBinding.root
     }
 
-    override fun setUpViewComponents() {
-        super.setUpViewComponents()
+    override fun setUpViewComponents(savedInstanceState: Bundle?) {
+        super.setUpViewComponents(savedInstanceState)
 
         mFragmentManager = requireParentFragment().parentFragmentManager
-
         mBinding.recyclerViewFavourites.apply {
             adapter = mViewModel.recyclerAdapter
             addItemDecoration(StocksItemDecoration(requireContext()))
@@ -57,64 +56,14 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel>() {
             launch {
                 mViewModel.actionScrollToTop.collect {
                     withContext(mCoroutineContext.Main) {
-                        scrollToTop()
+                        hardScrollToTop()
                     }
-
                 }
             }
             launch {
                 (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {
                     withContext(mCoroutineContext.Main) {
-
-                            if ((mBinding.recyclerViewFavourites.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
-                                val anim =
-                                    AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
-                                val animEnd =
-                                    AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
-                                animEnd.setAnimationListener(object : Animation.AnimationListener {
-                                    override fun onAnimationStart(animation: Animation?) {
-                                        mBinding.recyclerViewFavourites.visibility = View.VISIBLE
-                                        mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
-                                    }
-
-                                    override fun onAnimationEnd(animation: Animation?) {
-                                    }
-
-                                    override fun onAnimationRepeat(animation: Animation?) {
-                                    }
-
-                                })
-
-
-                                mBinding.recyclerViewFavourites.startAnimation(anim)
-                                anim.setAnimationListener(object : Animation.AnimationListener {
-                                    override fun onAnimationEnd(animation: Animation?) {
-                                        mBinding.recyclerViewFavourites.visibility = View.GONE
-                                        mBinding.recyclerViewFavourites.scrollToPosition(20)
-                                        mBinding.recyclerViewFavourites.startAnimation(animEnd)
-                                        //mBinding.recyclerViewFavourites.y += mBinding.recyclerViewFavourites.height
-                                        //mBinding.recyclerViewFavourites.startAnimation(animEnd)
-                                    }
-
-                                    override fun onAnimationRepeat(animation: Animation?) {
-                                    }
-
-                                    override fun onAnimationStart(animation: Animation?) {
-                                        mBinding.recyclerViewFavourites.smoothScrollBy(
-                                            0,
-                                            (-mBinding.recyclerViewFavourites.height).toInt()
-                                        )
-                                    }
-                                })
-                                /*mBinding.recyclerViewFavourites.smoothScrollBy(
-                                    0,
-                                    (-mBinding.recyclerViewFavourites.height / 1.2).toInt()
-                                )*/
-
-                                //
-                            } else {
-                                mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
-                            }
+                        scrollToTop()
                     }
                 }
             }
@@ -122,6 +71,32 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel>() {
     }
 
     private fun scrollToTop() {
+        if ((mBinding.recyclerViewFavourites.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
+            val fadeInCallback = object : AnimationManager() {
+                override fun onAnimationStart(animation: Animation?) {
+                    mBinding.recyclerViewFavourites.visibility = View.VISIBLE
+                    mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
+                }
+            }
+            val fadeOutCallback = object : AnimationManager() {
+                override fun onAnimationStart(animation: Animation?) {
+                    mBinding.recyclerViewFavourites.smoothScrollBy(
+                        0,
+                        -mBinding.recyclerViewFavourites.height
+                    )
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    mBinding.recyclerViewFavourites.visibility = View.GONE
+                    mBinding.recyclerViewFavourites.scrollToPosition(20)
+                    mViewHelper.runFadeIn(mBinding.recyclerViewFavourites, fadeInCallback)
+                }
+            }
+            mViewHelper.runFadeOut(mBinding.recyclerViewFavourites, fadeOutCallback)
+        } else mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
+    }
+
+    private fun hardScrollToTop() {
         mBinding.recyclerViewFavourites.scrollToPosition(0)
     }
 }

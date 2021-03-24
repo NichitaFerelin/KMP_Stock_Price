@@ -93,9 +93,14 @@ class StocksRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun setCompaniesWithNotify(companies: ArrayList<AdaptiveCompany>) {
+    fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
         mCompanies = companies
         notifyDataSetChanged()
+    }
+
+    fun setCompaniesInRange(companies: ArrayList<AdaptiveCompany>, start: Int, end: Int) {
+        mCompanies = companies
+        notifyItemRangeInserted(start, end)
     }
 
     fun updateCompany(company: AdaptiveCompany, index: Int) {
@@ -111,11 +116,6 @@ class StocksRecyclerAdapter(
     fun addCompanyToEnd(company: AdaptiveCompany) {
         mCompanies.add(company)
         notifyItemInserted(mCompanies.lastIndex)
-    }
-
-    fun addInRange(companies: ArrayList<AdaptiveCompany>, start: Int, end: Int) {
-        mCompanies = companies
-        notifyItemRangeInserted(start, end)
     }
 
     fun removeCompany(index: Int) {
@@ -161,8 +161,6 @@ class StocksRecyclerAdapter(
                 root.foreground =
                     ContextCompat.getDrawable(root.context, item.companyStyle.rippleForeground)
                 root.transitionName = "root_${item.id}"
-                /*textViewCompanySymbol.transitionName = "symbol_${item.companyProfile.symbol}"
-                textViewCompanyName.transitionName = "name_${item.companyProfile.name}"*/
 
                 Glide
                     .with(root)

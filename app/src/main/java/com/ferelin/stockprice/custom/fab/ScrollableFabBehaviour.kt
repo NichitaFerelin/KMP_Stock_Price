@@ -7,6 +7,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 
+// Used in styles.xml
 class ScrollableFabBehaviour(
     context: Context,
     attributeSet: AttributeSet
@@ -47,6 +48,7 @@ class ScrollableFabBehaviour(
         )
         if (dyConsumed <= 0 && child.visibility == View.VISIBLE) {
             child.hide(object : OnVisibilityChangedListener() {
+
                 override fun onShown(fab: FloatingActionButton) {
                     super.onShown(fab)
                 }

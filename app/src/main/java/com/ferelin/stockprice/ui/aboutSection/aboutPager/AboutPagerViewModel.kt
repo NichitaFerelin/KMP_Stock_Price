@@ -15,43 +15,52 @@ import kotlinx.coroutines.launch
 class AboutPagerViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
-    ownerCompany: AdaptiveCompany?
+    selectedCompany: AdaptiveCompany?
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    private var mOwnerCompany: AdaptiveCompany? = ownerCompany
+    private var mSelectedCompany: AdaptiveCompany? = selectedCompany
 
     private val mEventDataChanged = MutableSharedFlow<Unit>(1)
     val eventDataChanged: SharedFlow<Unit>
         get() = mEventDataChanged
+
+    private val mActionShowError = MutableSharedFlow<String>()
+    val actionShowError: SharedFlow<String>
+        get() = mActionShowError
 
     private var mLastSelectedPage: Int = 0
     val lastSelectedPage: Int
         get() = mLastSelectedPage
 
     val companySymbol: String
-        get() = mOwnerCompany?.companyProfile?.symbol ?: ""
+        get() = mSelectedCompany?.companyProfile?.symbol ?: ""
 
     val companyName: String
-        get() = mOwnerCompany?.companyProfile?.name ?: ""
+        get() = mSelectedCompany?.companyProfile?.name ?: ""
 
     val companyFavouriteIconResource: Int
-        get() = mOwnerCompany?.companyStyle?.favouriteSingleIconResource ?: 0
+        get() = mSelectedCompany?.companyStyle?.favouriteSingleIconResource ?: 0
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mOwnerCompany?.let { onDataChanged(it) }
+            mSelectedCompany?.let { onDataChanged(it) }
 
-            mDataInteractor.companiesUpdatesShared
-                .filter { filterSharedUpdate(it) }
-                .collect { notificator ->
-                    notificator.data?.let { onDataChanged(it) }
+            launch {
+                mDataInteractor.companiesUpdatesShared
+                    .filter { filterSharedUpdate(it) }
+                    .collect { onDataChanged(it.data!!) }
+            }
+            launch {
+                mDataInteractor.favouriteCompaniesLimitReachedShared.collect {
+                    mActionShowError.emit(it)
                 }
+            }
         }
     }
 
     fun onFavouriteIconClicked() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mOwnerCompany?.let {
+            mSelectedCompany?.let {
                 if (it.isFavourite) {
                     mDataInteractor.removeCompanyFromFavourite(it)
                 } else mDataInteractor.addCompanyToFavourite(it)
@@ -64,12 +73,13 @@ class AboutPagerViewModel(
     }
 
     private suspend fun onDataChanged(company: AdaptiveCompany) {
-        mOwnerCompany = company
+        mSelectedCompany = company
         mEventDataChanged.emit(Unit)
     }
 
     private fun filterSharedUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {
         return notificator is DataNotificator.ItemUpdatedDefault &&
-                mOwnerCompany?.companyProfile?.symbol == notificator.data?.companyProfile?.symbol
+                notificator.data != null &&
+                mSelectedCompany?.companyProfile?.symbol == notificator.data.companyProfile.symbol
     }
 }

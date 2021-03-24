@@ -29,20 +29,18 @@ class StocksViewModel(
                     .take(1)
                     .collect { onCompaniesPrepared(it as DataNotificator.DataPrepared<List<AdaptiveCompany>>) }
             }
-
             launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { it is DataNotificator.ItemUpdatedDefault }
                     .collect { updateRecyclerItem(it) }
             }
-
             launch {
                 mDataInteractor.openConnectionErrorState
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowError.emit(it) }
             }
             launch {
-                mDataInteractor.favouriteCompaniesLimitReachedState
+                mDataInteractor.favouriteCompaniesLimitReachedShared
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowError.emit(it) }
             }
@@ -53,7 +51,7 @@ class StocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             val newList = ArrayList(notificator.data!!)
             withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.setCompaniesWithNotify(newList)
+                mRecyclerAdapter.setCompanies(newList)
             }
         }
     }

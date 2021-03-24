@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:transitionGroup="true"
-    android:transitionName="searchContainer"
+    android:transitionName="@string/transitionSearchFragment"
     app:layoutDescription="@xml/fragment_search_scene">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -14,40 +13,24 @@
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:background="@color/white"
-        android:elevation="7dp"
+        android:elevation="@dimen/searchFragmentElevation"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardViewSearch"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="14dp"
-        android:outlineProvider="none"
-        android:transitionName="card"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="40dp"
-        app:cardElevation="7dp"
+        style="@style/cardSearchActive"
+        app:cardElevation="@dimen/searchFragmentElevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="@color/black"
-        app:strokeWidth="2dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/clickableImage"
         android:layout_marginStart="10dp"
-        android:elevation="7dp"
-        android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
+        android:contentDescription="@string/descriptionBack"
+        android:elevation="@dimen/searchFragmentElevation"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintStart_toStartOf="@id/cardViewSearch"
@@ -55,36 +38,27 @@
 
     <EditText
         android:id="@+id/editTextSearch"
-        style="@style/textViewH3"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="center_vertical"
-        android:elevation="7dp"
-        android:imeOptions="flagNoFullscreen"
-        android:inputType="text"
-        android:lines="1"
-        android:textColorHint="@color/black"
-        android:textCursorDrawable="@drawable/edit_text_cursor"
+        style="@style/editText"
+        android:elevation="@dimen/searchFragmentElevation"
+        android:importantForAutofill="no"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toStartOf="@id/imageViewIconClose"
         app:layout_constraintStart_toEndOf="@id/imageViewBack"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch"
-        app:layout_goneMarginEnd="36dp"
-        tools:hint="Test" />
+        tools:hint="Test"
+        tools:ignore="LabelFor" />
 
     <ImageView
         android:id="@+id/imageViewIconClose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:elevation="7dp"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="10dp"
+        style="@style/clickableImage"
+        android:contentDescription="@string/descriptionIconClose"
+        android:elevation="@dimen/searchFragmentElevation"
         android:src="@drawable/ic_close"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
-        app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textViewRequests"
@@ -92,22 +66,16 @@
         android:layout_width="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="32dp"
-        android:text="Popular requests"
+        android:text="@string/titlePopularRequests"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardViewSearch"
-        app:layout_goneMarginStart="20dp" />
+        app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPopularRequests"
-        android:layout_width="wrap_content"
-        android:layout_height="96dp"
-        android:layout_marginTop="11dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+        style="@style/recyclerSearches"
         app:layout_constraintBottom_toTopOf="@id/textViewSearched"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewRequests"
-        app:spanCount="2" />
+        app:layout_constraintTop_toBottomOf="@id/textViewRequests" />
 
     <TextView
         android:id="@+id/textViewSearched"
@@ -115,29 +83,19 @@
         android:layout_width="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
-        android:text="You've searched for this"
+        android:text="@string/titleYourSearches"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recyclerViewPopularRequests" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchedHistory"
-        android:layout_width="wrap_content"
-        android:layout_height="96dp"
-        android:layout_marginTop="11dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+        style="@style/recyclerSearches"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewSearched"
-        app:spanCount="2" />
+        app:layout_constraintTop_toBottomOf="@id/textViewSearched" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchResults"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:transitionGroup="true"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        style="@style/recyclerStocks"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

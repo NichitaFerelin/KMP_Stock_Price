@@ -25,10 +25,10 @@ class FavouriteCompaniesStateWorker(
     val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mFavouriteCompaniesState
 
-    private val mFavouriteCompaniesUpdateShared =
+    private val mFavouriteCompaniesUpdatesShared =
         MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
-    val favouriteCompaniesUpdateShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mFavouriteCompaniesUpdateShared
+    val favouriteCompaniesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mFavouriteCompaniesUpdatesShared
 
     /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
@@ -40,7 +40,7 @@ class FavouriteCompaniesStateWorker(
     fun onDataPrepared(companies: List<AdaptiveCompany>) {
         val favouriteCompanies = arrayListOf<AdaptiveCompany>()
         companies.forEach {
-            if (it.isFavourite/* && !mFavouriteCompanies.contains(it)*/) {
+            if (it.isFavourite) {
                 favouriteCompanies.add(it)
                 subscribeCompanyOnLiveTimeUpdates(it)
             }
@@ -55,7 +55,7 @@ class FavouriteCompaniesStateWorker(
         if (companyIndex != NULL_INDEX) {
             mFavouriteCompanies[companyIndex] = company
             mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
-            mFavouriteCompaniesUpdateShared.emit(DataNotificator.ItemUpdatedDefault(company))
+            mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemUpdatedDefault(company))
         }
     }
 
@@ -67,22 +67,10 @@ class FavouriteCompaniesStateWorker(
             }
             mFavouriteCompanies.contains(company) -> null
             else -> {
-                company.apply {
-                    isFavourite = true
-                    companyStyle.favouriteDefaultIconResource =
-                        mStylesProvider.getDefaultIconDrawable(true)
-                    companyStyle.favouriteSingleIconResource =
-                        mStylesProvider.getSingleIconDrawable(true)
-
-                    val orderIndex = mFavouriteCompanies
-                        .lastOrNull()
-                        ?.favouriteOrderIndex?.plus(1) ?: 0
-                    favouriteOrderIndex = orderIndex
-                }
-                mFavouriteCompanies.add(company)
-
+                applyChangesToAddedFavouriteCompany(company)
                 subscribeCompanyOnLiveTimeUpdates(company)
-                mFavouriteCompaniesUpdateShared.emit(DataNotificator.NewItemAdded(company))
+                mFavouriteCompanies.add(company)
+                mFavouriteCompaniesUpdatesShared.emit(DataNotificator.NewItemAdded(company))
                 mLocalInteractorHelper.updateCompany(company)
                 company
             }
@@ -90,22 +78,10 @@ class FavouriteCompaniesStateWorker(
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany): AdaptiveCompany {
-        company.apply {
-            isFavourite = false
-            companyStyle.favouriteDefaultIconResource =
-                mStylesProvider.getDefaultIconDrawable(false)
-            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(false)
-        }
-        mFavouriteCompanies.remove(company)
-
-        with(mFavouriteCompaniesState.value) {
-            if (this is DataNotificator.DataPrepared) {
-                data?.remove(company)
-            }
-        }
-
+        applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
-        mFavouriteCompaniesUpdateShared.emit(DataNotificator.ItemRemoved(company))
+        mFavouriteCompanies.remove(company)
+        mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemRemoved(company))
         mLocalInteractorHelper.updateCompany(company)
         return company
     }
@@ -115,5 +91,29 @@ class FavouriteCompaniesStateWorker(
             company.companyProfile.symbol,
             parseDoubleFromStr(company.companyDayData.openPrice)
         )
+    }
+
+    private fun applyChangesToRemovedFavouriteCompany(company: AdaptiveCompany) {
+        company.apply {
+            isFavourite = false
+            companyStyle.favouriteDefaultIconResource =
+                mStylesProvider.getDefaultIconDrawable(false)
+            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(false)
+        }
+    }
+
+    private fun applyChangesToAddedFavouriteCompany(company: AdaptiveCompany) {
+        company.apply {
+            isFavourite = true
+            companyStyle.favouriteDefaultIconResource =
+                mStylesProvider.getDefaultIconDrawable(true)
+            companyStyle.favouriteSingleIconResource =
+                mStylesProvider.getSingleIconDrawable(true)
+
+            val orderIndex = mFavouriteCompanies
+                .lastOrNull()
+                ?.favouriteOrderIndex?.plus(1) ?: 0
+            favouriteOrderIndex = orderIndex
+        }
     }
 }

@@ -48,10 +48,10 @@ abstract class BaseStocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             val newItems = ArrayList(items)
             if (newItems.size > 10) {
-                setItemsToRecyclerWithRangeAnim(newItems)
+                setItemsToRecyclerWithAnim(newItems)
             } else {
                 withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.setCompaniesWithNotify(newItems)
+                    mRecyclerAdapter.setCompanies(newItems)
                 }
             }
         }
@@ -66,7 +66,7 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    private fun setItemsToRecyclerWithRangeAnim(newItems: ArrayList<AdaptiveCompany>) {
+    private fun setItemsToRecyclerWithAnim(newItems: ArrayList<AdaptiveCompany>) {
         viewModelScope.launch(mCoroutineContext.IO) {
             for (index in 0 until 10) {
                 withContext(mCoroutineContext.Main) {
@@ -75,7 +75,7 @@ abstract class BaseStocksViewModel(
                 delay(30)
             }
             withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.addInRange(newItems, 10, newItems.size - 1)
+                mRecyclerAdapter.setCompaniesInRange(newItems, 10, newItems.size - 1)
             }
         }
     }

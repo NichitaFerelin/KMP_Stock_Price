@@ -1,12 +1,13 @@
 package com.ferelin.stockprice.ui.aboutSection.aboutPager
 
-import android.animation.AnimatorInflater
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.viewModels
@@ -24,32 +25,39 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AboutPagerFragment(
-    ownerCompany: AdaptiveCompany? = null
-) : BaseFragment<AboutPagerViewModel>() {
+    selectedCompany: AdaptiveCompany? = null
+) : BaseFragment<AboutPagerViewModel, AboutPagerViewHelper>() {
+
+    override val mViewHelper: AboutPagerViewHelper = AboutPagerViewHelper()
+    override val mViewModel: AboutPagerViewModel by viewModels {
+        CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
+    }
+
+    private val mSelectedCompany = selectedCompany
 
     private lateinit var mBinding: FragmentAboutPagerBinding
-    private val mOwnerCompany = ownerCompany
-
     private lateinit var mLastSelectedTab: TextView
 
-    override val mViewModel: AboutPagerViewModel by viewModels {
-        CompanyViewModelFactory(mCoroutineContext, mDataInteractor, ownerCompany)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (this@AboutPagerFragment::mBinding.isInitialized && mBinding.viewPager.currentItem != 0) {
+                    mBinding.viewPager.setCurrentItem(0, true)
+                } else {
+                    this.remove()
+                    activity?.onBackPressed()
+                }
+            }
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             scrimColor = Color.TRANSPARENT
         }
         exitTransition = Hold()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
     }
 
     override fun onCreateView(
@@ -58,21 +66,21 @@ class AboutPagerFragment(
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentAboutPagerBinding.inflate(inflater, container, false)
-
-        /*mBinding.root.transitionName = rootId
-        mBinding.textViewCompanyName.transitionName = nameTransition
-        mBinding.textViewCompanySymbol.transitionName = symbolTransition*/
-
         return mBinding.root
     }
 
-    override fun setUpViewComponents() {
-        initSelectedTab()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        postponeTransition(view)
+    }
 
+    override fun setUpViewComponents(savedInstanceState: Bundle?) {
+        super.setUpViewComponents(savedInstanceState)
+
+        restoreSelectedTab()
         mBinding.apply {
-
             viewPager.apply {
-                adapter = AboutPagerAdapter(childFragmentManager, lifecycle, mOwnerCompany)
+                adapter = AboutPagerAdapter(childFragmentManager, lifecycle, mSelectedCompany)
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
@@ -80,17 +88,10 @@ class AboutPagerFragment(
                         onTabClicked(newTextView, position)
                     }
                 })
-
-                // Tab state restore
-                if (currentItem == 0 && mLastSelectedTab != textViewChart) {
-                    changeTabStyle(textViewChart, mLastSelectedTab)
-                }
             }
-
             imageViewBack.setOnClickListener {
                 activity?.onBackPressed()
             }
-
             textViewChart.setOnClickListener { onTabClicked(it as TextView, 0) }
             textViewSummary.setOnClickListener { onTabClicked(it as TextView, 1) }
             textViewNews.setOnClickListener { onTabClicked(it as TextView, 2) }
@@ -99,10 +100,7 @@ class AboutPagerFragment(
 
             imageViewStar.setOnClickListener {
                 mViewModel.onFavouriteIconClicked()
-                val animation =
-                    AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
-                animation.setTarget(mBinding.imageViewStar)
-                animation.start()
+                mViewHelper.runScaleInOut(it)
             }
         }
     }
@@ -111,41 +109,51 @@ class AboutPagerFragment(
         super.initObservers()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.eventDataChanged.collect {
-                withContext(mCoroutineContext.Main) {
-                    applyDataChanges()
+            launch {
+                mViewModel.eventDataChanged.collect {
+                    withContext(mCoroutineContext.Main) {
+                        onDataChanged()
+                    }
+                }
+            }
+            launch {
+                mViewModel.actionShowError.collect {
+                    withContext(mCoroutineContext.Main) {
+                        showToast(it)
+                    }
                 }
             }
         }
     }
 
-    private fun onTabClicked(new: TextView, position: Int) {
-        if (new != mLastSelectedTab) {
-            changeTabStyle(mLastSelectedTab, new)
-            changeTabVariables(new, position)
+    private fun onTabClicked(newTab: TextView, position: Int) {
+        if (newTab != mLastSelectedTab) {
+            changeTabStyle(mLastSelectedTab, newTab)
+            changeTabVariables(newTab, position)
             moveViewPager(position)
         }
     }
 
-    private fun changeTabVariables(new: TextView, position: Int) {
-        mLastSelectedTab = new
+    private fun changeTabVariables(newTab: TextView, position: Int) {
+        mLastSelectedTab = newTab
         mViewModel.setSelectedTab(position)
     }
 
-    private fun changeTabStyle(lastTab: TextView, new: TextView) {
-        TextViewCompat.setTextAppearance(lastTab, R.style.textViewBodyShadowed)
-        TextViewCompat.setTextAppearance(new, R.style.textViewH3)
-        val animation = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
-        animation.setTarget(new)
-        animation.start()
+    private fun changeTabStyle(previousTab: TextView, newTab: TextView) {
+        TextViewCompat.setTextAppearance(previousTab, R.style.textViewBodyShadowedTab)
+        TextViewCompat.setTextAppearance(newTab, R.style.textViewH3Tab)
+        mViewHelper.runScaleInOut(newTab)
     }
 
     private fun moveViewPager(position: Int) {
         mBinding.viewPager.setCurrentItem(position, true)
     }
 
-    private fun initSelectedTab() {
+    private fun restoreSelectedTab() {
         mLastSelectedTab = getTextViewTabByPosition(mViewModel.lastSelectedPage)
+        if (mBinding.viewPager.currentItem == 0 && mLastSelectedTab != mBinding.textViewChart) {
+            changeTabStyle(mBinding.textViewChart, mLastSelectedTab)
+        }
     }
 
     private fun getTextViewTabByPosition(position: Int): TextView {
@@ -159,11 +167,16 @@ class AboutPagerFragment(
         }
     }
 
-    private fun applyDataChanges() {
+    private fun onDataChanged() {
         mBinding.apply {
             textViewCompanyName.text = mViewModel.companyName
             textViewCompanySymbol.text = mViewModel.companySymbol
             mBinding.imageViewStar.setImageResource(mViewModel.companyFavouriteIconResource)
         }
+    }
+
+    private fun postponeTransition(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
     }
 }

@@ -13,6 +13,7 @@ import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.utilits.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 
@@ -24,7 +25,6 @@ class DataConverter : DataConverterHelper {
         response: CompaniesResponse
     ): RepositoryResponse<List<AdaptiveCompany>> {
         return if (response is CompaniesResponse.Success) {
-
             val preparedData = when (response.code) {
                 Responses.LOADED_FROM_JSON -> response.companies.map {
                     mAdapter.toAdaptiveCompanyFromJson(it)
@@ -49,7 +49,7 @@ class DataConverter : DataConverterHelper {
                     )
                 )
             )
-        } else RepositoryResponse.Failed(response.responseCode)
+        } else RepositoryResponse.Failed()
     }
 
     override fun convertStockCandlesResponse(
@@ -70,7 +70,12 @@ class DataConverter : DataConverterHelper {
                     }
                 )
             )
-        } else RepositoryResponse.Failed(response.responseCode)
+        } else {
+            when (response.responseCode) {
+                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                else -> RepositoryResponse.Failed()
+            }
+        }
     }
 
     override fun convertCompanyProfileResponse(
@@ -93,14 +98,14 @@ class DataConverter : DataConverterHelper {
                     mAdapter.formatPrice(itemResponse.capitalization)
                 )
             )
-        } else RepositoryResponse.Failed(response.responseCode)
+        } else RepositoryResponse.Failed()
     }
 
     override fun convertStockSymbolsResponse(response: BaseResponse<StockSymbolResponse>): RepositoryResponse<AdaptiveStocksSymbols> {
         return if (response.responseCode == Api.RESPONSE_OK) {
             val itemResponse = response.responseData as StockSymbolResponse
             RepositoryResponse.Success(data = AdaptiveStocksSymbols(itemResponse.stockSymbols))
-        } else RepositoryResponse.Failed(response.responseCode)
+        } else RepositoryResponse.Failed()
     }
 
     override fun convertCompanyNewsResponse(
@@ -144,7 +149,12 @@ class DataConverter : DataConverterHelper {
                     previewImageUrls.toList()
                 )
             )
-        } else RepositoryResponse.Failed()
+        } else {
+            when (response.responseCode) {
+                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                else -> RepositoryResponse.Failed()
+            }
+        }
     }
 
     override fun convertCompanyQuoteResponse(response: BaseResponse<CompanyQuoteResponse>): RepositoryResponse<AdaptiveCompanyDayData> {
@@ -161,7 +171,12 @@ class DataConverter : DataConverterHelper {
                     mAdapter.calculateProfit(itemResponse.currentPrice, itemResponse.openPrice)
                 )
             )
-        } else RepositoryResponse.Failed()
+        } else {
+            when (response.responseCode) {
+                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                else -> RepositoryResponse.Failed(owner = response.additionalMessage)
+            }
+        }
     }
 
     override fun convertSearchesForResponse(response: SearchesResponse): RepositoryResponse<List<AdaptiveSearchRequest>> {

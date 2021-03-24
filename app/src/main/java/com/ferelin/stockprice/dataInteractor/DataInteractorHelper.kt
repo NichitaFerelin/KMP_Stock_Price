@@ -25,6 +25,4 @@ interface DataInteractorHelper {
     suspend fun removeCompanyFromFavourite(symbol: String)
 
     suspend fun onNewSearch(searchText: String)
-
-    fun getCompany(symbol: String) : AdaptiveCompany?
 }

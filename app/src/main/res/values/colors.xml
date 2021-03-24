@@ -5,24 +5,10 @@
     <color name="red">#FFB22424</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="whiteTransparent">#00FFFFFF</color>
     <color name="whiteDark">#F0F4F7</color>
     <color name="grey">#BABABA</color>
     <color name="blue">#187BCD</color>
-
-    <color name="whiteTransparent">#00FFFFFF</color>
-
     <color name="gradientEnd">#DCDCDC</color>
     <color name="gradientStart">#00EBEBEB</color>
-
-
-
-    <color name="other">#aab4ba</color>
-    <color name="bg">#F9FAFB</color>
-    <color name="greyOutline">#E3E8EC</color>
-    <color name="colorStart">#EBEBEB</color>
-    <color name="lineColor">#30D6AF</color>
-    <color name="dottedLineColor">#E3E3E3</color>
-
-    <color name="colorEnd">#DCDCDC</color>
-    <color name="textColor">#94A2B4</color>
 </resources>

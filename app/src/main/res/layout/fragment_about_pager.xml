@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:transitionName="containerAboutPager">
+    android:transitionName="@string/transitionAboutPager">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="0dp"
         android:layout_height="120dp"
         android:background="@color/white"
-        android:elevation="10dp"
+        android:elevation="@dimen/aboutPagerElevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +22,7 @@
         style="@style/textViewH2"
         android:layout_width="wrap_content"
         android:layout_marginTop="18dp"
-        android:elevation="10dp"
+        android:elevation="@dimen/aboutPagerElevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,14 +30,10 @@
 
     <TextView
         android:id="@+id/textViewCompanyName"
-        style="@style/textViewBody"
-        android:layout_width="wrap_content"
-        android:layout_marginStart="26dp"
+        style="@style/textViewBodyConstrainedWidth"
+        android:layout_marginHorizontal="26dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="26dp"
-        android:elevation="10dp"
-        android:ellipsize="end"
-        android:lines="1"
+        android:elevation="@dimen/aboutPagerElevation"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,11 +42,10 @@
 
     <ImageView
         android:id="@+id/imageViewBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/clickableImage"
         android:layout_marginStart="9dp"
-        android:elevation="10dp"
-        android:padding="8dp"
+        android:contentDescription="@string/descriptionBack"
+        android:elevation="@dimen/aboutPagerElevation"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,13 +53,11 @@
 
     <ImageView
         android:id="@+id/imageViewStar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/clickableImage"
         android:layout_marginEnd="9dp"
-        android:elevation="10dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="8dp"
-        android:src="@drawable/ic_star_default"
+        android:contentDescription="@string/descriptionAddToFavourite"
+        android:elevation="@dimen/aboutPagerElevation"
+        android:src="@drawable/ic_star"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewCompanySymbol" />
@@ -85,9 +78,10 @@
         app:layout_constraintBottom_toBottomOf="@id/appBar" />
 
     <HorizontalScrollView
+        android:id="@+id/horizontalTabsContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:elevation="10dp"
+        android:elevation="@dimen/aboutPagerElevation"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/guidelineTabsBottomBorder"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,70 +93,40 @@
 
             <TextView
                 android:id="@+id/textViewChart"
-                style="@style/textViewH3"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="Chart"
+                style="@style/textViewH3Tab"
+                android:text="@string/titleChart"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewSummary"
-                style="@style/textViewBodyShadowed"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="Summary"
+                style="@style/textViewBodyShadowedTab"
+                android:text="@string/titleSummary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewChart"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewNews"
-                style="@style/textViewBodyShadowed"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="News"
+                style="@style/textViewBodyShadowedTab"
+                android:text="@string/titleNews"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewSummary"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewForecasts"
-                style="@style/textViewBodyShadowed"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="Forecasts"
+                style="@style/textViewBodyShadowedTab"
+                android:text="@string/titleForecasts"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewNews"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewIdeas"
-                style="@style/textViewBodyShadowed"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="Ideas"
+                style="@style/textViewBodyShadowedTab"
+                android:text="@string/titleIdeas"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewForecasts"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -170,13 +134,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </HorizontalScrollView>
-
-    <TextView
-        style="@style/textViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guidelineTabsTopBorder" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

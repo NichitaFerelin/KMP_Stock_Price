@@ -39,8 +39,9 @@ class MainActivity(
         setStatusBarColor()
 
         with(supportFragmentManager) {
-            findFragmentByTag("StocksFragment") ?: commit {
-                replace(R.id.fragmentContainer, StocksPagerFragment(), "StocksFragment")
+            val tag = "StocksFragment"
+            findFragmentByTag(tag) ?: commit {
+                add(R.id.fragmentContainer, StocksPagerFragment(), tag)
             }
         }
     }

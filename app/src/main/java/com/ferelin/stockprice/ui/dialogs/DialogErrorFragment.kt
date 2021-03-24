@@ -11,18 +11,18 @@ class DialogErrorFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return arguments?.let {
             AlertDialog.Builder(requireActivity())
-                .setMessage(it[sMessageStr].toString())
+                .setMessage(it[sMessageKeyStr].toString())
                 .setPositiveButton("OK") { _, _ -> this@DialogErrorFragment.dismiss() }
                 .create()
         } ?: throw IllegalStateException("No arguments was passed for DialogErrorFragment.")
     }
 
     companion object {
-        private const val sMessageStr = "messagestr"
+        private const val sMessageKeyStr = "message"
 
         fun newInstance(message: String): DialogErrorFragment {
             return DialogErrorFragment().apply {
-                arguments = bundleOf(sMessageStr to message)
+                arguments = bundleOf(sMessageKeyStr to message)
             }
         }
     }
