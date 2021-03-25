@@ -2,10 +2,11 @@ package com.ferelin.provider
 
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.local.responses.Responses
 
 object FakeLocalResponses {
     val companiesResponseSuccessFromJson = CompaniesResponse.Success(
+        code = Responses.LOADED_FROM_JSON,
         companies = listOf(
             Company(
                 id = 1,
@@ -22,6 +23,7 @@ object FakeLocalResponses {
         )
     )
     val companiesResponseSuccessFromDatabase = CompaniesResponse.Success(
+        code = Responses.LOADED_FROM_DB,
         companies = listOf(
             Company(
                 id = 1,
@@ -63,7 +65,4 @@ object FakeLocalResponses {
             )
         )
     )
-    val companiesResponseFailed = CompaniesResponse.Failed
-    val searchesResponseSuccess = SearchesResponse.Success(setOf("Microsoft", "Apple"))
-    val searchesResponseFailed = SearchesResponse.Failed
 }
