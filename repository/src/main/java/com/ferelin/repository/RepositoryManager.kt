@@ -12,6 +12,7 @@ import com.ferelin.remote.RemoteManagerHelper
 import com.ferelin.remote.network.NetworkManager
 import com.ferelin.remote.webSocket.WebSocketConnector
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.dataConverter.DataAdapter
 import com.ferelin.repository.dataConverter.DataConverter
 import com.ferelin.repository.dataConverter.DataConverterHelper
 import com.ferelin.repository.utils.RepositoryResponse
@@ -19,7 +20,7 @@ import com.ferelin.shared.SingletonHolder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RepositoryManager private constructor(
+class RepositoryManager constructor(
     private val mRemoteManagerHelper: RemoteManagerHelper,
     private val mLocalManagerHelper: LocalManagerHelper,
     private val mDataConverterHelper: DataConverterHelper
@@ -108,7 +109,7 @@ class RepositoryManager private constructor(
         val dataBase = CompaniesDatabase.getInstance(it)
         val preferences = StorePreferences(it)
         val localHelper = LocalManager(JsonManager(it), CompaniesManager(dataBase), preferences)
-        val dataConverter = DataConverter()
+        val dataConverter = DataConverter(DataAdapter())
         RepositoryManager(remoteHelper, localHelper, dataConverter)
     })
 }

@@ -17,9 +17,7 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 
-class DataConverter : DataConverterHelper {
-
-    private val mAdapter = DataAdapter()
+class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
 
     override fun convertCompaniesResponse(
         response: CompaniesResponse

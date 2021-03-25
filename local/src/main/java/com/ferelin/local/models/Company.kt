@@ -6,7 +6,7 @@ import com.ferelin.local.database.CompaniesDatabase
 import com.squareup.moshi.Json
 
 @Entity(tableName = CompaniesDatabase.DB_NAME)
-class Company(
+data class Company(
     @PrimaryKey
     var id: Int = 0,
 

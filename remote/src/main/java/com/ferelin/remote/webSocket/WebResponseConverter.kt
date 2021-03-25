@@ -1,5 +1,6 @@
 package com.ferelin.remote.webSocket
 
+import android.util.Log
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utilits.Api
 import com.squareup.moshi.Moshi
@@ -24,9 +25,8 @@ class WebResponseConverter {
             additionalMessage = openPricesHolder[responseBody.symbol].toString()
         )
 
-        when {
-            responseBody.symbol.isEmpty() -> BaseResponse(Api.RESPONSE_NO_DATA)
-            responseBody.volume == 0.0 -> BaseResponse(Api.RESPONSE_TRADE_NOT_AVAILABLE)
+        when (responseBody.volume) {
+            0.0 -> BaseResponse(Api.RESPONSE_TRADE_NOT_AVAILABLE)
             else -> webSocketResponse.apply { responseCode = Api.RESPONSE_OK }
         }
     } catch (e: Exception) {
