@@ -5,10 +5,12 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.ferelin.stockprice.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object SuggestionControlHelper {
 
-    fun applyCoordinatesChanges(
+    suspend fun applyCoordinatesChanges(
         context: Context,
         rootSuggestionView: ConstraintLayout,
         pointView: View,
@@ -28,23 +30,27 @@ object SuggestionControlHelper {
             pointX,
             pointY
         )
-        val (finalSuggestionX, finalSuggestionY) = detectAndFixOutOfBorderOffsets(
-            context,
-            rootSuggestionView,
-            plugView,
-            arrowView,
-            relativeView,
-            suggestionX,
-            suggestionY
-        )
-        applyCoordinates(
-            pointView,
-            rootSuggestionView,
-            pointX,
-            pointY,
-            finalSuggestionX,
-            finalSuggestionY
-        )
+
+        withContext(Dispatchers.Main) {
+            val (finalSuggestionX, finalSuggestionY) = detectAndFixOutOfBorderOffsets(
+                context,
+                rootSuggestionView,
+                plugView,
+                arrowView,
+                relativeView,
+                suggestionX,
+                suggestionY
+            )
+
+            applyCoordinates(
+                pointView,
+                rootSuggestionView,
+                pointX,
+                pointY,
+                finalSuggestionX,
+                finalSuggestionY
+            )
+        }
     }
 
     private fun applyCoordinates(

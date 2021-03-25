@@ -40,11 +40,13 @@ class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        mFragmentManager = requireParentFragment().parentFragmentManager
-        mBinding.recyclerViewStocks.apply {
-            adapter = mViewModel.recyclerAdapter
-            addItemDecoration(StocksItemDecoration(requireContext()))
-            setHasFixedSize(true)
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mFragmentManager = requireParentFragment().parentFragmentManager
+            mBinding.recyclerViewStocks.apply {
+                adapter = mViewModel.recyclerAdapter
+                addItemDecoration(StocksItemDecoration(requireContext()))
+                setHasFixedSize(true)
+            }
         }
     }
 

@@ -16,16 +16,17 @@ class AboutPagerViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mScaleInOut?.let {
-            it.setTarget(null)
-            it.removeAllListeners()
+        mScaleInOut?.apply {
+            cancel()
+            setTarget(null)
+            removeAllListeners()
         }
     }
 
     fun runScaleInOut(target: View) {
-        mScaleInOut?.let {
-            it.setTarget(target)
-            it.start()
+        mScaleInOut?.apply {
+            setTarget(target)
+            start()
         }
     }
 }

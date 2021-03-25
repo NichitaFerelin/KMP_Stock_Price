@@ -19,9 +19,18 @@ abstract class BaseScrollsViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mFadeOut?.setAnimationListener(null)
-        mFadeIn?.setAnimationListener(null)
-        mScaleOut?.setAnimationListener(null)
+        mFadeOut?.apply {
+            cancel()
+            setAnimationListener(null)
+        }
+        mFadeIn?.apply {
+            cancel()
+            setAnimationListener(null)
+        }
+        mScaleOut?.apply {
+            setAnimationListener(null)
+            cancel()
+        }
     }
 
     fun runFadeIn(target: View, callback: Animation.AnimationListener? = null) {

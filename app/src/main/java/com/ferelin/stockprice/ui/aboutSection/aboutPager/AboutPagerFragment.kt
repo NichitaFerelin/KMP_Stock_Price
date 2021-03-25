@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.aboutSection.aboutPager
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,20 +37,6 @@ class AboutPagerFragment(
     private lateinit var mBinding: FragmentAboutPagerBinding
     private lateinit var mLastSelectedTab: TextView
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (this@AboutPagerFragment::mBinding.isInitialized && mBinding.viewPager.currentItem != 0) {
-                    mBinding.viewPager.setCurrentItem(0, true)
-                } else {
-                    this.remove()
-                    activity?.onBackPressed()
-                }
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform().apply {
@@ -78,27 +63,14 @@ class AboutPagerFragment(
         super.setUpViewComponents(savedInstanceState)
 
         restoreSelectedTab()
-        mBinding.apply {
-            viewPager.apply {
-                adapter = AboutPagerAdapter(childFragmentManager, lifecycle, mSelectedCompany)
-                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
-                        val newTextView = getTextViewTabByPosition(position)
-                        onTabClicked(newTextView, position)
-                    }
-                })
-            }
-            imageViewBack.setOnClickListener {
-                activity?.onBackPressed()
-            }
-            textViewChart.setOnClickListener { onTabClicked(it as TextView, 0) }
-            textViewSummary.setOnClickListener { onTabClicked(it as TextView, 1) }
-            textViewNews.setOnClickListener { onTabClicked(it as TextView, 2) }
-            textViewForecasts.setOnClickListener { onTabClicked(it as TextView, 3) }
-            textViewIdeas.setOnClickListener { onTabClicked(it as TextView, 4) }
+        setUpViewPager()
+        setUpBackPressedCallback()
 
-            imageViewStar.setOnClickListener {
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            setUpTabListeners()
+
+            mBinding.imageViewBack.setOnClickListener { activity?.onBackPressed() }
+            mBinding.imageViewStar.setOnClickListener {
                 mViewModel.onFavouriteIconClicked()
                 mViewHelper.runScaleInOut(it)
             }
@@ -178,5 +150,42 @@ class AboutPagerFragment(
     private fun postponeTransition(view: View) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
+    }
+
+    private fun setUpTabListeners() {
+        mBinding.apply {
+            textViewChart.setOnClickListener { onTabClicked(it as TextView, 0) }
+            textViewSummary.setOnClickListener { onTabClicked(it as TextView, 1) }
+            textViewNews.setOnClickListener { onTabClicked(it as TextView, 2) }
+            textViewForecasts.setOnClickListener { onTabClicked(it as TextView, 3) }
+            textViewIdeas.setOnClickListener { onTabClicked(it as TextView, 4) }
+        }
+    }
+
+    private fun setUpViewPager() {
+        mBinding.viewPager.adapter =
+            AboutPagerAdapter(childFragmentManager, lifecycle, mSelectedCompany)
+        mBinding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val newTextView = getTextViewTabByPosition(position)
+                onTabClicked(newTextView, position)
+            }
+        })
+    }
+
+    private fun setUpBackPressedCallback() {
+        activity?.onBackPressedDispatcher?.addCallback(
+            this@AboutPagerFragment,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (this@AboutPagerFragment::mBinding.isInitialized && mBinding.viewPager.currentItem != 0) {
+                        mBinding.viewPager.setCurrentItem(0, true)
+                    } else {
+                        this.remove()
+                        activity?.onBackPressed()
+                    }
+                }
+            })
     }
 }

@@ -28,6 +28,7 @@
     <string name="errorLoadStockCandles">Error loading %s data</string>
     <string name="errorLoadCompanyNews">Error loading %s news</string>
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
+    <string name="errorNetwork">Network is not available</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>

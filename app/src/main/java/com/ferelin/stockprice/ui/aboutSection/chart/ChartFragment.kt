@@ -50,32 +50,11 @@ class ChartFragment(
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        setSelectedViews(mBinding.cardViewAll, mBinding.textViewAll)
-        restoreSelectedType()
-
-        mBinding.apply {
-            cardViewDay.setOnClickListener {
-                onCardClicked(it as CardView, textViewDays, ChartSelectedType.Days)
-            }
-            cardViewWeek.setOnClickListener {
-                onCardClicked(it as CardView, textViewWeeks, ChartSelectedType.Weeks)
-            }
-            cardViewMonth.setOnClickListener {
-                onCardClicked(it as CardView, textViewMonths, ChartSelectedType.Months)
-            }
-            cardViewHalfYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewSixMonths, ChartSelectedType.SixMonths)
-            }
-            cardViewYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewYear, ChartSelectedType.Year)
-            }
-            cardViewAll.setOnClickListener {
-                onCardClicked(it as CardView, textViewAll, ChartSelectedType.All)
-            }
-            chartView.setOnTouchListener {
-                mViewModel.onChartClicked(it).also { isNewMarker ->
-                    if (isNewMarker) onChartClicked(it)
-                }
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            setSelectedViews(mBinding.cardViewAll, mBinding.textViewAll)
+            setUpChartWidgetsListeners()
+            withContext(mCoroutineContext.Main) {
+                restoreSelectedType()
             }
         }
     }
@@ -119,7 +98,7 @@ class ChartFragment(
     private fun onChartClicked(marker: Marker) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             prepareToChartDataChanges()
-            withContext(mCoroutineContext.Main) {
+            withContext(mCoroutineContext.IO) {
                 SuggestionControlHelper.applyCoordinatesChanges(
                     requireContext(),
                     mBinding.includeSuggestion.root,
@@ -129,8 +108,10 @@ class ChartFragment(
                     mBinding.chartView,
                     marker
                 )
-                updateSuggestionText(marker)
-                showSuggestion()
+                withContext(mCoroutineContext.Main) {
+                    updateSuggestionText(marker)
+                    showSuggestion()
+                }
             }
         }
     }
@@ -240,5 +221,33 @@ class ChartFragment(
                 delay(150)
             }
         }.join()
+    }
+
+    private fun setUpChartWidgetsListeners() {
+        mBinding.apply {
+            cardViewDay.setOnClickListener {
+                onCardClicked(it as CardView, textViewDays, ChartSelectedType.Days)
+            }
+            cardViewWeek.setOnClickListener {
+                onCardClicked(it as CardView, textViewWeeks, ChartSelectedType.Weeks)
+            }
+            cardViewMonth.setOnClickListener {
+                onCardClicked(it as CardView, textViewMonths, ChartSelectedType.Months)
+            }
+            cardViewHalfYear.setOnClickListener {
+                onCardClicked(it as CardView, textViewSixMonths, ChartSelectedType.SixMonths)
+            }
+            cardViewYear.setOnClickListener {
+                onCardClicked(it as CardView, textViewYear, ChartSelectedType.Year)
+            }
+            cardViewAll.setOnClickListener {
+                onCardClicked(it as CardView, textViewAll, ChartSelectedType.All)
+            }
+            chartView.setOnTouchListener {
+                mViewModel.onChartClicked(it).also { isNewMarker ->
+                    if (isNewMarker) onChartClicked(it)
+                }
+            }
+        }
     }
 }

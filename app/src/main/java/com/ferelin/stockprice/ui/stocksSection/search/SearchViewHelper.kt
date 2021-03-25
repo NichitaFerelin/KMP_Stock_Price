@@ -9,8 +9,8 @@ import com.ferelin.stockprice.base.BaseViewHelper
 
 class SearchViewHelper : BaseViewHelper() {
 
-    private lateinit var mScaleOut: Animation
-    private lateinit var mScaleIn: Animation
+    private var mScaleOut: Animation? = null
+    private var mScaleIn: Animation? = null
 
     override fun prepare(context: Context) {
         mScaleOut = AnimationUtils.loadAnimation(context, R.anim.scale_out)
@@ -18,17 +18,23 @@ class SearchViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mScaleOut.setAnimationListener(null)
-        mScaleIn.setAnimationListener(null)
+        mScaleOut?.apply {
+            cancel()
+            setAnimationListener(null)
+        }
+        mScaleIn?.apply {
+            cancel()
+            setAnimationListener(null)
+        }
     }
 
     fun runScaleOut(target: View, callback: Animation.AnimationListener? = null) {
-        mScaleOut.setAnimationListener(callback)
+        mScaleOut?.setAnimationListener(callback)
         target.startAnimation(mScaleOut)
     }
 
     fun runScaleIn(target: View, callback: Animation.AnimationListener? = null) {
-        mScaleIn.setAnimationListener(callback)
+        mScaleIn?.setAnimationListener(callback)
         target.startAnimation(mScaleIn)
     }
 }

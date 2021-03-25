@@ -100,7 +100,7 @@ class StocksRecyclerAdapter(
 
     fun setCompaniesInRange(companies: ArrayList<AdaptiveCompany>, start: Int, end: Int) {
         mCompanies = companies
-        notifyItemRangeInserted(start, end)
+        notifyItemRangeInserted(start - mTextDividers.size, end - mTextDividers.size)
     }
 
     fun updateCompany(company: AdaptiveCompany, index: Int) {
@@ -110,17 +110,17 @@ class StocksRecyclerAdapter(
 
     fun addCompany(company: AdaptiveCompany) {
         mCompanies.add(0, company)
-        notifyItemInserted(0)
+        notifyItemInserted(0 + mTextDividers.size)
     }
 
     fun addCompanyToEnd(company: AdaptiveCompany) {
         mCompanies.add(company)
-        notifyItemInserted(mCompanies.lastIndex)
+        notifyItemInserted(mCompanies.lastIndex - mTextDividers.size)
     }
 
     fun removeCompany(index: Int) {
         mCompanies.removeAt(index)
-        notifyItemRemoved(index)
+        notifyItemRemoved(index - mTextDividers.size)
     }
 
     fun invalidate() {

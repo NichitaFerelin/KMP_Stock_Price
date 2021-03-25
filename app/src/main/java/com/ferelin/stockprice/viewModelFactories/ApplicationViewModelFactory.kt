@@ -8,7 +8,7 @@ import com.ferelin.stockprice.ui.MainViewModel
 import kotlinx.coroutines.FlowPreview
 
 @Suppress("UNCHECKED_CAST")
-class AndroidViewModelFactory(
+class ApplicationViewModelFactory(
     private val mCoroutineContext: CoroutineContextProvider,
     private val mDataInteractor: DataInteractor,
     private val mApplication: Application

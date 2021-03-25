@@ -66,12 +66,12 @@ class StocksPagerFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewHelper.prepare(requireContext())
+
         postponeTransition(view)
         setUpComponents()
     }
 
-    private fun setUpComponents() {
+    private fun setUpViewPager() {
         mBinding.viewPager.apply {
             adapter = StocksPagerAdapter(childFragmentManager, lifecycle)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -81,33 +81,44 @@ class StocksPagerFragment(
                 }
             })
         }
-        mBinding.cardViewSearch.setOnClickListener {
-            parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, SearchFragment())
-                addToBackStack(null)
-                addSharedElement(
-                    mBinding.toolbar,
-                    resources.getString(R.string.transitionSearchFragment)
-                )
-            }
-        }
-        mBinding.textViewHintStocks.setOnClickListener {
-            if (mBinding.viewPager.currentItem != 0) {
-                mBinding.viewPager.setCurrentItem(0, true)
-            }
-        }
+    }
 
-        mBinding.textViewHintFavourite.setOnClickListener {
-            if (mBinding.viewPager.currentItem != 1) {
-                mBinding.viewPager.setCurrentItem(1, true)
+    private fun setUpComponents() {
+        setUpViewPager()
+
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewHelper.prepare(requireContext())
+
+            mBinding.cardViewSearch.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                    parentFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace(R.id.fragmentContainer, SearchFragment())
+                        addToBackStack(null)
+                        addSharedElement(
+                            mBinding.toolbar,
+                            resources.getString(R.string.transitionSearchFragment)
+                        )
+                    }
+                }
             }
-        }
-        mBinding.fab.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-                mEventOnFabClicked.emit(Unit)
-                withContext(mCoroutineContext.Main) {
-                    hideFab()
+            mBinding.textViewHintStocks.setOnClickListener {
+                if (mBinding.viewPager.currentItem != 0) {
+                    mBinding.viewPager.setCurrentItem(0, true)
+                }
+            }
+
+            mBinding.textViewHintFavourite.setOnClickListener {
+                if (mBinding.viewPager.currentItem != 1) {
+                    mBinding.viewPager.setCurrentItem(1, true)
+                }
+            }
+            mBinding.fab.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                    mEventOnFabClicked.emit(Unit)
+                    withContext(mCoroutineContext.Main) {
+                        hideFab()
+                    }
                 }
             }
         }

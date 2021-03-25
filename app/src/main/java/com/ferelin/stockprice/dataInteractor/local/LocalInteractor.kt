@@ -5,19 +5,19 @@ import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
 
     override suspend fun getCompaniesData(context: Context): LocalInteractorResponse {
-        val responseCompanies = mRepository.getAllCompanies().first()
+        val responseCompanies = mRepository.getAllCompanies().firstOrNull()
         return if (responseCompanies is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(responseCompanies.data)
         } else LocalInteractorResponse.Failed()
     }
 
     override suspend fun getSearchRequestsHistory(context: Context): LocalInteractorResponse {
-        val responseSearches = mRepository.getSearchesHistory().first()
+        val responseSearches = mRepository.getSearchesHistory().firstOrNull()
         return if (responseSearches is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(searchesHistory = responseSearches.data)
         } else LocalInteractorResponse.Failed()

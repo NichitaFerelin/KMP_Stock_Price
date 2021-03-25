@@ -16,9 +16,10 @@ class ChartViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mScaleInOut?.let {
-            it.setTarget(null)
-            it.removeAllListeners()
+        mScaleInOut?.apply {
+            cancel()
+            setTarget(null)
+            removeAllListeners()
         }
     }
 

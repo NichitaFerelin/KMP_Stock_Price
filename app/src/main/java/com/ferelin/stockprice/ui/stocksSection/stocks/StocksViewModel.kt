@@ -44,6 +44,11 @@ class StocksViewModel(
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowError.emit(it) }
             }
+            launch {
+                mDataInteractor.loadCompanyQuoteErrorShared.collect {
+                    mActionShowError.emit(it)
+                }
+            }
         }
     }
 

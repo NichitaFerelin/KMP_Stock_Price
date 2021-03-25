@@ -58,14 +58,13 @@ class SearchViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
                 mDataInteractor.companiesState
-                    .filter { it is DataNotificator.DataPrepared }
+                    .filter { it is DataNotificator.DataPrepared && it.data != null }
                     .take(1)
                     .collect { mCompanies = ArrayList(it.data!!) }
             }
             launch {
                 mDataInteractor.searchRequestsState
-                    .filter { it is DataNotificator.DataPrepared }
-                    .take(1)
+                    .filter { it is DataNotificator.DataPrepared && it.data != null }
                     .collect {
                         withContext(mCoroutineContext.Main) {
                             onSearchesChanged(it.data!!)

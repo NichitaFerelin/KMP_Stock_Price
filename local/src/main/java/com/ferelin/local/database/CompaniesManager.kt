@@ -22,7 +22,7 @@ open class CompaniesManager(
     }
 
     override fun getAllCompanies(): Flow<List<Company>> {
-        return mCompaniesDao.getAll()
+        return mCompaniesDao.getAllCompanies()
     }
 
     override fun deleteCompany(company: Company) {

@@ -1,6 +1,5 @@
 package com.ferelin.remote.webSocket
 
-import android.util.Log
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utilits.Api
 import com.squareup.moshi.Moshi
@@ -20,15 +19,11 @@ class WebResponseConverter {
         val parsedJsonListStr = webSocketListResponse.data.first().toString()
         val responseBody = mResponseAdapter.fromJson(parsedJsonListStr)!!
 
-        val webSocketResponse = BaseResponse(
+        BaseResponse(
+            responseCode = Api.RESPONSE_OK,
             responseData = responseBody,
             additionalMessage = openPricesHolder[responseBody.symbol].toString()
         )
-
-        when (responseBody.volume) {
-            0.0 -> BaseResponse(Api.RESPONSE_TRADE_NOT_AVAILABLE)
-            else -> webSocketResponse.apply { responseCode = Api.RESPONSE_OK }
-        }
     } catch (e: Exception) {
         BaseResponse(Api.RESPONSE_UNDEFINED)
     }

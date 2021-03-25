@@ -309,7 +309,7 @@ class ChartView @JvmOverloads constructor(
                 nearestPoint = item
             }
         }
-        event.setLocation(nearestPoint!!.position.x, nearestPoint.position.y)
+        event.setLocation(nearestPoint?.position?.x ?: 0F, nearestPoint?.position?.y ?: 0F)
         mLastNearestPoint = nearestPoint
     }
 }

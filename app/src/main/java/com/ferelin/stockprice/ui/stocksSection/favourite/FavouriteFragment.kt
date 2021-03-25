@@ -42,10 +42,12 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        mFragmentManager = requireParentFragment().parentFragmentManager
-        mBinding.recyclerViewFavourites.apply {
-            adapter = mViewModel.recyclerAdapter
-            addItemDecoration(StocksItemDecoration(requireContext()))
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mFragmentManager = requireParentFragment().parentFragmentManager
+            mBinding.recyclerViewFavourites.apply {
+                adapter = mViewModel.recyclerAdapter
+                addItemDecoration(StocksItemDecoration(requireContext()))
+            }
         }
     }
 

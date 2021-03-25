@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,24 +37,6 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
 
     private lateinit var mBinding: FragmentSearchBinding
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                when {
-                    this@SearchFragment::mBinding.isInitialized && mViewModel.lastSearchText.isNotEmpty() -> {
-                        mBinding.editTextSearch.setText("")
-                    }
-                    else -> {
-                        this.remove()
-                        hideKeyboard(requireContext(), mBinding.root)
-                        activity?.onBackPressed()
-                    }
-                }
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform().apply {
@@ -76,44 +57,26 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         super.setUpViewComponents(savedInstanceState)
 
         mViewModel.recyclerAdapter.setTextDividers(hashMapOf(0 to resources.getString(R.string.hintStocks)))
-        mFragmentManager = parentFragmentManager
+        restoreTransitionState()
+        setUpBackPressedCallback()
 
-        mBinding.apply {
-            imageViewBack.setOnClickListener {
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mFragmentManager = parentFragmentManager
+            setUpRecyclerViews()
+
+            mBinding.imageViewBack.setOnClickListener {
                 activity?.onBackPressed()
             }
-            recyclerViewSearchResults.apply {
-                addItemDecoration(StocksItemDecoration(requireContext()))
-                adapter = mViewModel.recyclerAdapter
-            }
-            recyclerViewSearchedHistory.apply {
-                addItemDecoration(SearchItemDecoration(requireContext()))
-                adapter = mViewModel.searchesAdapter.also {
-                    it.setOnTickerClickListener { item, _ ->
-                        onSearchTickerClicked(item)
-                    }
-                }
-            }
-            recyclerViewPopularRequests.apply {
-                addItemDecoration(SearchItemDecoration(requireContext()))
-                adapter = mViewModel.popularRequestsAdapter.also {
-                    it.setPopularSearches()
-                    it.setOnTickerClickListener { item, _ ->
-                        onSearchTickerClicked(item)
-                    }
-                }
-            }
-            editTextSearch.doAfterTextChanged {
+            mBinding.editTextSearch.doAfterTextChanged {
                 Timer().apply {
                     schedule(timerTask {
                         mViewModel.onSearchTextChanged(it?.toString() ?: "")
                     }, 200)
                 }
             }
-            imageViewIconClose.setOnClickListener {
+            mBinding.imageViewIconClose.setOnClickListener {
                 mBinding.editTextSearch.setText("")
             }
-            restoreTransitionState()
         }
     }
 
@@ -186,5 +149,46 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     private fun onSearchTickerClicked(item: AdaptiveSearchRequest) {
         mBinding.editTextSearch.setText(item.searchText)
         mBinding.editTextSearch.setSelection(item.searchText.length)
+    }
+
+    private fun setUpBackPressedCallback() {
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    this@SearchFragment::mBinding.isInitialized && mViewModel.lastSearchText.isNotEmpty() -> {
+                        mBinding.editTextSearch.setText("")
+                    }
+                    else -> {
+                        this.remove()
+                        hideKeyboard(requireContext(), mBinding.root)
+                        activity?.onBackPressed()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun setUpRecyclerViews() {
+        mBinding.recyclerViewSearchResults.apply {
+            addItemDecoration(StocksItemDecoration(requireContext()))
+            adapter = mViewModel.recyclerAdapter
+        }
+        mBinding.recyclerViewSearchedHistory.apply {
+            addItemDecoration(SearchItemDecoration(requireContext()))
+            adapter = mViewModel.searchesAdapter.also {
+                it.setOnTickerClickListener { item, _ ->
+                    onSearchTickerClicked(item)
+                }
+            }
+        }
+        mBinding.recyclerViewPopularRequests.apply {
+            addItemDecoration(SearchItemDecoration(requireContext()))
+            adapter = mViewModel.popularRequestsAdapter.also {
+                it.setPopularSearches()
+                it.setOnTickerClickListener { item, _ ->
+                    onSearchTickerClicked(item)
+                }
+            }
+        }
     }
 }

@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
     protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
@@ -34,7 +36,9 @@ abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
     }
 
     protected open fun setUpViewComponents(savedInstanceState: Bundle?) {
-        mViewHelper.prepare(requireContext())
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewHelper.prepare(requireContext())
+        }
     }
 
     protected open fun initObservers() {

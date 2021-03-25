@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -27,17 +28,27 @@ class MainViewModel(
     val actionShowDialogError: SharedFlow<String>
         get() = mActionShowDialogError
 
+    private val mActionShowNetworkError = MutableSharedFlow<Unit>()
+    val actionNetworkError: SharedFlow<Unit>
+        get() = mActionShowNetworkError
+
     @FlowPreview
     fun initObservers() {
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
-                mDataInteractor.prepareData(mApplication)
-                mDataInteractor.openConnection().collect()
-            }
-            launch {
                 mDataInteractor.prepareCompaniesErrorShared
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowDialogError.emit(it) }
+            }
+            launch {
+                mDataInteractor.isNetworkAvailableState
+                    .filter { !it }
+                    .collect { mActionShowNetworkError.emit(Unit) }
+            }
+            launch {
+                mDataInteractor.prepareData(mApplication)
+                delay(10_000L)
+                mDataInteractor.openConnection().collect()
             }
         }
     }

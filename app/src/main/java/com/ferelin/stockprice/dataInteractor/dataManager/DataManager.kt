@@ -10,7 +10,7 @@ import com.ferelin.stockprice.utils.DataNotificator
 class DataManager(
     val companiesWorker: CompaniesStateWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesStateWorker,
-    val searchRequestsWorker: SearchRequestsStateWorker
+    val searchRequestsWorker: SearchRequestsStateWorker,
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)
