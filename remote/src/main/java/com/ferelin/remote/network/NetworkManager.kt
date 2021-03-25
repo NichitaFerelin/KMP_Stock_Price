@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Retrofit
 
-class NetworkManager : NetworkManagerHelper {
+open class NetworkManager : NetworkManagerHelper {
 
     private val mRetrofit: Retrofit by RetrofitDelegate(Api.FINNHUB_BASE_URL)
 
