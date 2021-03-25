@@ -8,7 +8,7 @@ import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.local.responses.SearchesResponse
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class LocalManager(
@@ -36,18 +36,16 @@ class LocalManager(
     override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {
-                val localJsonCompanies = getCompaniesFromJson().first().also {
+                getCompaniesFromJson().firstOrNull()?.let {
                     it.forEachIndexed { index, company ->
                         company.id = index
                     }
-                }
-                if (localJsonCompanies.isNotEmpty()) {
-                    insertAllCompanies(localJsonCompanies)
+                    insertAllCompanies(it)
                     CompaniesResponse.Success(
                         code = Responses.LOADED_FROM_JSON,
-                        companies = localJsonCompanies
+                        companies = it
                     )
-                } else CompaniesResponse.Failed
+                } ?: CompaniesResponse.Failed
             } else CompaniesResponse.Success(companies = databaseCompanies)
         }
     }

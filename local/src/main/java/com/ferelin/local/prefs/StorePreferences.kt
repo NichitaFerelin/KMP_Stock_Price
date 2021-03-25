@@ -7,7 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class StorePreferences(private val mContext: Context) : StorePreferencesHelper {
+open class StorePreferences(private val mContext: Context) : StorePreferencesHelper {
 
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")

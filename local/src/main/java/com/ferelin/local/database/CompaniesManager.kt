@@ -3,9 +3,7 @@ package com.ferelin.local.database
 import com.ferelin.local.models.Company
 import kotlinx.coroutines.flow.Flow
 
-class CompaniesManager(companiesDatabase: CompaniesDatabase) : CompaniesManagerHelper {
-
-    private val mCompaniesDao = companiesDatabase.companiesDao()
+open class CompaniesManager(private val mCompaniesDao: CompaniesDao) : CompaniesManagerHelper {
 
     override fun insertCompany(company: Company) {
         mCompaniesDao.insert(company)
