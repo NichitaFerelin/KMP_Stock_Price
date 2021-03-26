@@ -20,9 +20,9 @@ abstract class BaseStocksViewModel(
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
     protected val mRecyclerAdapter = StocksRecyclerAdapter().apply {
-        /*setOnBindCallback { _, company, position ->
+        setOnBindCallback { _, company, position ->
             onBindCallback(company, position)
-        }*/
+        }
         setHasStableIds(true)
     }
     val recyclerAdapter: StocksRecyclerAdapter
@@ -41,6 +41,18 @@ abstract class BaseStocksViewModel(
             if (company.isFavourite) {
                 mDataInteractor.removeCompanyFromFavourite(company)
             } else mDataInteractor.addCompanyToFavourite(company)
+        }
+    }
+
+    /*
+    * To avoid breaks of shared transition anim
+    *  */
+    fun postponeReferenceRemoving(finally: () -> Unit) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            delay(300)
+            withContext(mCoroutineContext.Main) {
+                finally.invoke()
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.stocks
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
@@ -50,6 +51,11 @@ class StocksViewModel(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("Test", "onClear")
     }
 
     private fun onCompaniesPrepared(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {

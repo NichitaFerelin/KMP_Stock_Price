@@ -19,4 +19,6 @@ abstract class BaseViewModel(
             mWasInitialized = true
         }
     }
+
+    fun triggerCreate() {}
 }

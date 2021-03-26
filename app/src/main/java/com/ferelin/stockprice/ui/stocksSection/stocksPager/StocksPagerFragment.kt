@@ -57,15 +57,14 @@ class StocksPagerFragment(
     }
 
     override fun onDestroyView() {
-        mBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
-        mBinding!!.viewPager.adapter = null
-        mBinding = null
         super.onDestroyView()
+        mBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
+        mBinding = null
     }
 
     private fun setUpViewPager() {
         mBinding!!.viewPager.apply {
-            adapter = StocksPagerAdapter(childFragmentManager, viewLifecycleOwner)
+            adapter = StocksPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
             mViewPagerChangeCallback = object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -86,7 +85,7 @@ class StocksPagerFragment(
             mBinding!!.apply {
                 cardViewSearch.setOnClickListener {
                     viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-                            parentFragmentManager.commit {
+                        parentFragmentManager.commit {
                             setReorderingAllowed(true)
                             replace(R.id.fragmentContainer, SearchFragment())
                             addToBackStack(null)
@@ -159,15 +158,17 @@ class StocksPagerFragment(
     }
 
     private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (mBinding?.viewPager?.currentItem == 1) {
-                    mBinding?.viewPager?.setCurrentItem(0, true)
-                } else {
-                    this.remove()
-                    activity?.onBackPressed()
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (mBinding?.viewPager?.currentItem == 1) {
+                        mBinding?.viewPager?.setCurrentItem(0, true)
+                    } else {
+                        this.remove()
+                        activity?.onBackPressed()
+                    }
                 }
-            }
-        })
+            })
     }
 }

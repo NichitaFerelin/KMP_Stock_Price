@@ -49,12 +49,16 @@ class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
     }
 
     override fun onDestroyView() {
-        mBinding!!.recyclerViewStocks.adapter = null
-        mBinding = null
         super.onDestroyView()
+        mViewModel.postponeReferenceRemoving {
+            mBinding?.recyclerViewStocks?.adapter = null
+            mBinding = null
+        }
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 (requireParentFragment() as StocksPagerFragment).eventOnFabClicked.collect {

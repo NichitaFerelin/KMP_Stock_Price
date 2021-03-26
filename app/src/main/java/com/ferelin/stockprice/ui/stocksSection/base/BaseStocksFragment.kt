@@ -48,9 +48,9 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseViewH
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         mFragmentManager = null
         mViewModel.recyclerAdapter.removeListeners()
-        super.onDestroyView()
     }
 
     private fun moveToAboutFragment(

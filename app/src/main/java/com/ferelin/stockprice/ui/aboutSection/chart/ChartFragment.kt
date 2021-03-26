@@ -60,6 +60,8 @@ class ChartFragment(
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.hasDataForChartState.collect { hasData ->
@@ -94,10 +96,10 @@ class ChartFragment(
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         mBinding = null
         mCurrentActiveText = null
         mCurrentActiveCard = null
-        super.onDestroyView()
     }
 
     private fun onChartClicked(marker: Marker) {

@@ -50,6 +50,8 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.actionScrollToTop.collect {
@@ -69,9 +71,11 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
     }
 
     override fun onDestroyView() {
-        mBinding!!.recyclerViewFavourites.adapter = null
-        mBinding = null
         super.onDestroyView()
+        mViewModel.postponeReferenceRemoving {
+            mBinding?.recyclerViewFavourites?.adapter = null
+            mBinding = null
+        }
     }
 
     private fun scrollToTop() {

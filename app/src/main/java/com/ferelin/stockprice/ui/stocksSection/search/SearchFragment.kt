@@ -80,6 +80,8 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.actionShowHintsHideResults.collect {
@@ -121,11 +123,13 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     }
 
     override fun onDestroyView() {
-        mBinding!!.recyclerViewSearchedHistory.adapter = null
-        mBinding!!.recyclerViewSearchResults.adapter = null
-        mBinding!!.recyclerViewPopularRequests.adapter = null
-        mBinding = null
         super.onDestroyView()
+        mViewModel.postponeReferenceRemoving {
+            mBinding?.recyclerViewSearchedHistory?.adapter = null
+            mBinding?.recyclerViewPopularRequests?.adapter = null
+            mBinding?.recyclerViewSearchResults?.adapter = null
+            mBinding = null
+        }
     }
 
     private fun restoreTransitionState() {

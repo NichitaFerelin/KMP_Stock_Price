@@ -68,7 +68,6 @@ class AboutPagerFragment(
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             setUpTabListeners()
-
             mBinding!!.imageViewBack.setOnClickListener { activity?.onBackPressed() }
             mBinding!!.imageViewStar.setOnClickListener {
                 mViewModel.onFavouriteIconClicked()
@@ -78,6 +77,8 @@ class AboutPagerFragment(
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.eventDataChanged.collect {
@@ -97,11 +98,10 @@ class AboutPagerFragment(
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         mLastSelectedTab = null
         mBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerCallback)
-        mBinding!!.viewPager.adapter = null
         mBinding = null
-        super.onDestroyView()
     }
 
     private fun onTabClicked(newTab: TextView, position: Int) {

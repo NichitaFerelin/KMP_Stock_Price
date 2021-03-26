@@ -55,6 +55,8 @@ class NewsFragment(
     }
 
     override fun initObservers() {
+        super.initObservers()
+
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.notificationNewItems.collect {
@@ -90,9 +92,9 @@ class NewsFragment(
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         mBinding!!.recyclerViewNews.adapter = null
         mBinding = null
-        super.onDestroyView()
     }
 
     override fun onNewsUrlClicked(position: Int) {
