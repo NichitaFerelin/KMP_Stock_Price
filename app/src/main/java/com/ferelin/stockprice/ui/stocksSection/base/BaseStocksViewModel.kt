@@ -20,9 +20,9 @@ abstract class BaseStocksViewModel(
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
     protected val mRecyclerAdapter = StocksRecyclerAdapter().apply {
-        setOnBindCallback { _, company, position ->
+        /*setOnBindCallback { _, company, position ->
             onBindCallback(company, position)
-        }
+        }*/
         setHasStableIds(true)
     }
     val recyclerAdapter: StocksRecyclerAdapter

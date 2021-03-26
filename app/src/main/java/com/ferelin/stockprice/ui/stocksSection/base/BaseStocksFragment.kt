@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseViewHelper>
     : BaseFragment<T, V>(), StockClickListener {
 
-    protected lateinit var mFragmentManager: FragmentManager
+    protected var mFragmentManager: FragmentManager? = null
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
@@ -47,12 +47,18 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseViewH
         postponeTransition(view)
     }
 
+    override fun onDestroyView() {
+        mFragmentManager = null
+        mViewModel.recyclerAdapter.removeListeners()
+        super.onDestroyView()
+    }
+
     private fun moveToAboutFragment(
         holder: StocksRecyclerAdapter.StockViewHolder,
         company: AdaptiveCompany
     ) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mFragmentManager.commit {
+            mFragmentManager?.commit {
                 setReorderingAllowed(true)
                 replace(R.id.fragmentContainer, AboutPagerFragment(company))
                 addToBackStack(null)

@@ -57,7 +57,7 @@ class ChartView @JvmOverloads constructor(
     private var mOnTouchListener: ((marker: Marker) -> Unit)? = null
     private var mLastNearestPoint: Marker? = null
 
-    private val mTouchEventDetector =
+    private var mTouchEventDetector: GestureDetector? =
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(e: MotionEvent?): Boolean {
                 return true
@@ -90,9 +90,9 @@ class ChartView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return mTouchEventDetector.onTouchEvent(event).also { wasHandled ->
-            if (wasHandled) performClick()
-        }
+        return mTouchEventDetector?.onTouchEvent(event).also { wasHandled ->
+            if (wasHandled == true) performClick()
+        } ?: false
     }
 
     override fun performClick(): Boolean {
@@ -138,8 +138,14 @@ class ChartView @JvmOverloads constructor(
         calcAndInvalidate()
     }
 
+
     fun setOnTouchListener(func: (marker: Marker) -> Unit) {
         mOnTouchListener = func
+    }
+
+    fun invalidateVariables() {
+        mOnTouchListener = null
+        mTouchEventDetector = null
     }
 
     private fun calcAndInvalidate() {

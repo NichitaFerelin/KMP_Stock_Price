@@ -28,7 +28,7 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
-    private lateinit var mBinding: FragmentFavouriteBinding
+    private var mBinding: FragmentFavouriteBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,18 +36,16 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentFavouriteBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mFragmentManager = requireParentFragment().parentFragmentManager
-            mBinding.recyclerViewFavourites.apply {
-                adapter = mViewModel.recyclerAdapter
-                addItemDecoration(StocksItemDecoration(requireContext()))
-            }
+        mFragmentManager = requireParentFragment().parentFragmentManager
+        mBinding!!.recyclerViewFavourites.apply {
+            adapter = mViewModel.recyclerAdapter
+            addItemDecoration(StocksItemDecoration(requireContext()))
         }
     }
 
@@ -70,33 +68,41 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
         }
     }
 
-    private fun scrollToTop() {
-        if ((mBinding.recyclerViewFavourites.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
-            val fadeInCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding.recyclerViewFavourites.visibility = View.VISIBLE
-                    mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
-                }
-            }
-            val fadeOutCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding.recyclerViewFavourites.smoothScrollBy(
-                        0,
-                        -mBinding.recyclerViewFavourites.height
-                    )
-                }
+    override fun onDestroyView() {
+        mBinding!!.recyclerViewFavourites.adapter = null
+        mBinding = null
+        super.onDestroyView()
+    }
 
-                override fun onAnimationEnd(animation: Animation?) {
-                    mBinding.recyclerViewFavourites.visibility = View.GONE
-                    mBinding.recyclerViewFavourites.scrollToPosition(20)
-                    mViewHelper.runFadeIn(mBinding.recyclerViewFavourites, fadeInCallback)
+    private fun scrollToTop() {
+        mBinding!!.apply {
+            if ((recyclerViewFavourites.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
+                val fadeInCallback = object : AnimationManager() {
+                    override fun onAnimationStart(animation: Animation?) {
+                        recyclerViewFavourites.visibility = View.VISIBLE
+                        recyclerViewFavourites.smoothScrollToPosition(0)
+                    }
                 }
-            }
-            mViewHelper.runFadeOut(mBinding.recyclerViewFavourites, fadeOutCallback)
-        } else mBinding.recyclerViewFavourites.smoothScrollToPosition(0)
+                val fadeOutCallback = object : AnimationManager() {
+                    override fun onAnimationStart(animation: Animation?) {
+                        recyclerViewFavourites.smoothScrollBy(
+                            0,
+                            -recyclerViewFavourites.height
+                        )
+                    }
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        recyclerViewFavourites.visibility = View.GONE
+                        recyclerViewFavourites.scrollToPosition(20)
+                        mViewHelper.runFadeIn(recyclerViewFavourites, fadeInCallback)
+                    }
+                }
+                mViewHelper.runFadeOut(recyclerViewFavourites, fadeOutCallback)
+            } else recyclerViewFavourites.smoothScrollToPosition(0)
+        }
     }
 
     private fun hardScrollToTop() {
-        mBinding.recyclerViewFavourites.scrollToPosition(0)
+        mBinding!!.recyclerViewFavourites.scrollToPosition(0)
     }
 }

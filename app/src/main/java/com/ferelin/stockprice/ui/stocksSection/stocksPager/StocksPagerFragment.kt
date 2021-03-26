@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.stocksPager
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,27 +27,14 @@ class StocksPagerFragment(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : Fragment() {
 
-    private lateinit var mBinding: FragmentStocksPagerBinding
-
+    private var mBinding: FragmentStocksPagerBinding? = null
     private val mViewHelper = StocksPagerViewHelper()
+
+    private lateinit var mViewPagerChangeCallback: ViewPager2.OnPageChangeCallback
 
     private val mEventOnFabClicked = MutableSharedFlow<Unit>()
     val eventOnFabClicked: SharedFlow<Unit>
         get() = mEventOnFabClicked
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (mBinding.viewPager.currentItem == 1) {
-                    mBinding.viewPager.setCurrentItem(0, true)
-                } else {
-                    this.remove()
-                    activity?.onBackPressed()
-                }
-            }
-        })
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,63 +47,72 @@ class StocksPagerFragment(
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentStocksPagerBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         postponeTransition(view)
         setUpComponents()
     }
 
+    override fun onDestroyView() {
+        mBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
+        mBinding!!.viewPager.adapter = null
+        mBinding = null
+        super.onDestroyView()
+    }
+
     private fun setUpViewPager() {
-        mBinding.viewPager.apply {
-            adapter = StocksPagerAdapter(childFragmentManager, lifecycle)
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        mBinding!!.viewPager.apply {
+            adapter = StocksPagerAdapter(childFragmentManager, viewLifecycleOwner)
+            mViewPagerChangeCallback = object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     switchTextViewsStyle(position)
                 }
-            })
+            }
+            registerOnPageChangeCallback(mViewPagerChangeCallback)
         }
     }
 
     private fun setUpComponents() {
         setUpViewPager()
+        setUpBackPressedCallback()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mViewHelper.prepare(requireContext())
 
-            mBinding.cardViewSearch.setOnClickListener {
-                viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-                    parentFragmentManager.commit {
-                        setReorderingAllowed(true)
-                        replace(R.id.fragmentContainer, SearchFragment())
-                        addToBackStack(null)
-                        addSharedElement(
-                            mBinding.toolbar,
-                            resources.getString(R.string.transitionSearchFragment)
-                        )
+            mBinding!!.apply {
+                cardViewSearch.setOnClickListener {
+                    viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                            parentFragmentManager.commit {
+                            setReorderingAllowed(true)
+                            replace(R.id.fragmentContainer, SearchFragment())
+                            addToBackStack(null)
+                            addSharedElement(
+                                mBinding!!.toolbar,
+                                resources.getString(R.string.transitionSearchFragment)
+                            )
+                        }
                     }
                 }
-            }
-            mBinding.textViewHintStocks.setOnClickListener {
-                if (mBinding.viewPager.currentItem != 0) {
-                    mBinding.viewPager.setCurrentItem(0, true)
+                textViewHintStocks.setOnClickListener {
+                    if (viewPager.currentItem != 0) {
+                        viewPager.setCurrentItem(0, true)
+                    }
                 }
-            }
-
-            mBinding.textViewHintFavourite.setOnClickListener {
-                if (mBinding.viewPager.currentItem != 1) {
-                    mBinding.viewPager.setCurrentItem(1, true)
+                textViewHintFavourite.setOnClickListener {
+                    if (viewPager.currentItem != 1) {
+                        viewPager.setCurrentItem(1, true)
+                    }
                 }
-            }
-            mBinding.fab.setOnClickListener {
-                viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-                    mEventOnFabClicked.emit(Unit)
-                    withContext(mCoroutineContext.Main) {
-                        hideFab()
+                fab.setOnClickListener {
+                    viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+                        mEventOnFabClicked.emit(Unit)
+                        withContext(mCoroutineContext.Main) {
+                            hideFab()
+                        }
                     }
                 }
             }
@@ -127,33 +122,33 @@ class StocksPagerFragment(
     private fun switchTextViewsStyle(position: Int) {
         if (position == 0) {
             TextViewCompat.setTextAppearance(
-                mBinding.textViewHintStocks,
+                mBinding!!.textViewHintStocks,
                 R.style.textViewH1
             )
             TextViewCompat.setTextAppearance(
-                mBinding.textViewHintFavourite,
+                mBinding!!.textViewHintFavourite,
                 R.style.textViewH2Shadowed
             )
-            mViewHelper.runScaleInOut(mBinding.textViewHintStocks)
+            mViewHelper.runScaleInOut(mBinding!!.textViewHintStocks)
         } else {
             TextViewCompat.setTextAppearance(
-                mBinding.textViewHintStocks,
+                mBinding!!.textViewHintStocks,
                 R.style.textViewH2Shadowed
             )
             TextViewCompat.setTextAppearance(
-                mBinding.textViewHintFavourite,
+                mBinding!!.textViewHintFavourite,
                 R.style.textViewH1
             )
-            mViewHelper.runScaleInOut(mBinding.textViewHintFavourite)
+            mViewHelper.runScaleInOut(mBinding!!.textViewHintFavourite)
         }
     }
 
     private fun hideFab() {
-        mViewHelper.runScaleOut(mBinding.fab, object : AnimationManager() {
+        mViewHelper.runScaleOut(mBinding!!.fab, object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
-                mBinding.fab.visibility = View.INVISIBLE
-                mBinding.fab.scaleX = 1.0F
-                mBinding.fab.scaleY = 1.0F
+                mBinding!!.fab.visibility = View.INVISIBLE
+                mBinding!!.fab.scaleX = 1.0F
+                mBinding!!.fab.scaleY = 1.0F
             }
         })
     }
@@ -161,5 +156,18 @@ class StocksPagerFragment(
     private fun postponeTransition(view: View) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
+    }
+
+    private fun setUpBackPressedCallback() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mBinding?.viewPager?.currentItem == 1) {
+                    mBinding?.viewPager?.setCurrentItem(0, true)
+                } else {
+                    this.remove()
+                    activity?.onBackPressed()
+                }
+            }
+        })
     }
 }

@@ -128,6 +128,11 @@ class StocksRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun removeListeners() {
+        mStockClickListener = null
+        mOnBindCallback = null
+    }
+
     class TextViewHolder private constructor(
         val binding: ItemTextBinding
     ) : RecyclerView.ViewHolder(binding.root) {

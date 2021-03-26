@@ -31,9 +31,11 @@ class AboutPagerFragment(
     override val mViewModel: AboutPagerViewModel by viewModels {
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
-    
-    private lateinit var mBinding: FragmentAboutPagerBinding
-    private lateinit var mLastSelectedTab: TextView
+
+    private var mBinding: FragmentAboutPagerBinding? = null
+    private var mLastSelectedTab: TextView? = null
+
+    private lateinit var mViewPagerCallback: ViewPager2.OnPageChangeCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +51,7 @@ class AboutPagerFragment(
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentAboutPagerBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,8 +69,8 @@ class AboutPagerFragment(
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             setUpTabListeners()
 
-            mBinding.imageViewBack.setOnClickListener { activity?.onBackPressed() }
-            mBinding.imageViewStar.setOnClickListener {
+            mBinding!!.imageViewBack.setOnClickListener { activity?.onBackPressed() }
+            mBinding!!.imageViewStar.setOnClickListener {
                 mViewModel.onFavouriteIconClicked()
                 mViewHelper.runScaleInOut(it)
             }
@@ -94,9 +96,17 @@ class AboutPagerFragment(
         }
     }
 
+    override fun onDestroyView() {
+        mLastSelectedTab = null
+        mBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerCallback)
+        mBinding!!.viewPager.adapter = null
+        mBinding = null
+        super.onDestroyView()
+    }
+
     private fun onTabClicked(newTab: TextView, position: Int) {
         if (newTab != mLastSelectedTab) {
-            changeTabStyle(mLastSelectedTab, newTab)
+            changeTabStyle(mLastSelectedTab!!, newTab)
             changeTabVariables(newTab, position)
             moveViewPager(position)
         }
@@ -114,32 +124,32 @@ class AboutPagerFragment(
     }
 
     private fun moveViewPager(position: Int) {
-        mBinding.viewPager.setCurrentItem(position, true)
+        mBinding!!.viewPager.setCurrentItem(position, true)
     }
 
     private fun restoreSelectedTab() {
         mLastSelectedTab = getTextViewTabByPosition(mViewModel.lastSelectedPage)
-        if (mBinding.viewPager.currentItem == 0 && mLastSelectedTab != mBinding.textViewChart) {
-            changeTabStyle(mBinding.textViewChart, mLastSelectedTab)
+        if (mBinding!!.viewPager.currentItem == 0 && mLastSelectedTab != mBinding!!.textViewChart) {
+            changeTabStyle(mBinding!!.textViewChart, mLastSelectedTab!!)
         }
     }
 
     private fun getTextViewTabByPosition(position: Int): TextView {
         return when (position) {
-            0 -> mBinding.textViewChart
-            1 -> mBinding.textViewSummary
-            2 -> mBinding.textViewNews
-            3 -> mBinding.textViewForecasts
-            4 -> mBinding.textViewIdeas
+            0 -> mBinding!!.textViewChart
+            1 -> mBinding!!.textViewSummary
+            2 -> mBinding!!.textViewNews
+            3 -> mBinding!!.textViewForecasts
+            4 -> mBinding!!.textViewIdeas
             else -> throw IllegalStateException("Unchecked tab position: ${mViewModel.lastSelectedPage}")
         }
     }
 
     private fun onDataChanged() {
-        mBinding.apply {
+        mBinding!!.apply {
             textViewCompanyName.text = mViewModel.companyName
             textViewCompanySymbol.text = mViewModel.companySymbol
-            mBinding.imageViewStar.setImageResource(mViewModel.companyFavouriteIconResource)
+            imageViewStar.setImageResource(mViewModel.companyFavouriteIconResource)
         }
     }
 
@@ -149,7 +159,7 @@ class AboutPagerFragment(
     }
 
     private fun setUpTabListeners() {
-        mBinding.apply {
+        mBinding!!.apply {
             textViewChart.setOnClickListener { onTabClicked(it as TextView, 0) }
             textViewSummary.setOnClickListener { onTabClicked(it as TextView, 1) }
             textViewNews.setOnClickListener { onTabClicked(it as TextView, 2) }
@@ -159,24 +169,29 @@ class AboutPagerFragment(
     }
 
     private fun setUpViewPager() {
-        mBinding.viewPager.adapter =
-            AboutPagerAdapter(childFragmentManager, lifecycle, mViewModel.selectedCompany)
-        mBinding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        mBinding!!.viewPager.adapter =
+            AboutPagerAdapter(
+                childFragmentManager,
+                viewLifecycleOwner.lifecycle,
+                mViewModel.selectedCompany
+            )
+        mViewPagerCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val newTextView = getTextViewTabByPosition(position)
                 onTabClicked(newTextView, position)
             }
-        })
+        }
+        mBinding!!.viewPager.registerOnPageChangeCallback(mViewPagerCallback)
     }
 
     private fun setUpBackPressedCallback() {
         activity?.onBackPressedDispatcher?.addCallback(
-            this@AboutPagerFragment,
+            viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (this@AboutPagerFragment::mBinding.isInitialized && mBinding.viewPager.currentItem != 0) {
-                        mBinding.viewPager.setCurrentItem(0, true)
+                    if (mBinding != null && mBinding!!.viewPager.currentItem != 0) {
+                        mBinding!!.viewPager.setCurrentItem(0, true)
                     } else {
                         this.remove()
                         activity?.onBackPressed()

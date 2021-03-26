@@ -33,10 +33,10 @@ class ChartFragment(
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
 
-    private lateinit var mBinding: FragmentChartBinding
+    private var mBinding: FragmentChartBinding? = null
 
-    private lateinit var mCurrentActiveCard: CardView
-    private lateinit var mCurrentActiveText: TextView
+    private var mCurrentActiveCard: CardView? = null
+    private var mCurrentActiveText: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,14 +44,14 @@ class ChartFragment(
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentChartBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            setSelectedViews(mBinding.cardViewAll, mBinding.textViewAll)
+            setSelectedViews(mBinding!!.cardViewAll, mBinding!!.textViewAll)
             setUpChartWidgetsListeners()
             withContext(mCoroutineContext.Main) {
                 restoreSelectedType()
@@ -78,7 +78,7 @@ class ChartFragment(
             launch {
                 mViewModel.eventStockHistoryChanged.collect {
                     withContext(mCoroutineContext.Main) {
-                        mBinding.chartView.setData(it)
+                        mBinding!!.chartView.setData(it)
                     }
                 }
             }
@@ -86,26 +86,35 @@ class ChartFragment(
                 mViewModel.actionShowError.collect {
                     withContext(mCoroutineContext.Main) {
                         showToast(it)
-                        mBinding.progressBar.visibility = View.INVISIBLE
+                        mBinding!!.progressBar.visibility = View.INVISIBLE
                     }
                 }
             }
         }
     }
 
+    override fun onDestroyView() {
+        mBinding = null
+        mCurrentActiveText = null
+        mCurrentActiveCard = null
+        super.onDestroyView()
+    }
+
     private fun onChartClicked(marker: Marker) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             prepareToChartDataChanges()
             withContext(mCoroutineContext.IO) {
-                SuggestionControlHelper.applyCoordinatesChanges(
-                    requireContext(),
-                    mBinding.includeSuggestion.root,
-                    mBinding.point,
-                    mBinding.includeSuggestion.viewPlug,
-                    mBinding.includeSuggestion.viewArrow,
-                    mBinding.chartView,
-                    marker
-                )
+                mBinding!!.apply {
+                    SuggestionControlHelper.applyCoordinatesChanges(
+                        requireContext(),
+                        includeSuggestion.root,
+                        point,
+                        includeSuggestion.viewPlug,
+                        includeSuggestion.viewArrow,
+                        chartView,
+                        marker
+                    )
+                }
                 withContext(mCoroutineContext.Main) {
                     updateSuggestionText(marker)
                     showSuggestion()
@@ -133,9 +142,9 @@ class ChartFragment(
     }
 
     private fun onDayDataChanged() {
-        mViewHelper.runScaleInOut(mBinding.textViewCurrentPrice, object : AnimatorManager() {
+        mViewHelper.runScaleInOut(mBinding!!.textViewCurrentPrice, object : AnimatorManager() {
             override fun onAnimationStart(animation: Animator?) {
-                mBinding.apply {
+                mBinding!!.apply {
                     textViewCurrentPrice.text = mViewModel.currentPrice
                     textViewBuyPrice.text = String.format(
                         resources.getString(R.string.hintBuyFor),
@@ -149,8 +158,8 @@ class ChartFragment(
     }
 
     private fun updateSuggestionText(marker: Marker) {
-        mBinding.includeSuggestion.textViewDate.text = marker.date
-        mBinding.includeSuggestion.textViewPrice.text = marker.priceStr
+        mBinding!!.includeSuggestion.textViewDate.text = marker.date
+        mBinding!!.includeSuggestion.textViewPrice.text = marker.priceStr
     }
 
     private fun switchCardsViewStyle(card: CardView, attachedTextView: TextView) {
@@ -158,16 +167,16 @@ class ChartFragment(
         attachedTextView.setTextColor(
             ContextCompat.getColor(requireContext(), R.color.whiteDark)
         )
-        mCurrentActiveCard.setCardBackgroundColor(
+        mCurrentActiveCard!!.setCardBackgroundColor(
             ContextCompat.getColor(requireContext(), R.color.whiteDark)
         )
-        mCurrentActiveText.setTextColor(
+        mCurrentActiveText!!.setTextColor(
             ContextCompat.getColor(requireContext(), R.color.black)
         )
     }
 
     private fun restoreSelectedType() {
-        mBinding.apply {
+        mBinding!!.apply {
             val (restoredCardView, restoredTextView) = when (mViewModel.chartSelectedType) {
                 is ChartSelectedType.Year -> arrayOf(cardViewYear, textViewYear)
                 is ChartSelectedType.Months -> arrayOf(cardViewMonth, textViewMonths)
@@ -187,32 +196,32 @@ class ChartFragment(
     }
 
     private fun showSuggestion() {
-        mViewHelper.runAlphaIn(mBinding.includeSuggestion.root, mBinding.point)
+        mViewHelper.runAlphaIn(mBinding!!.includeSuggestion.root, mBinding!!.point)
     }
 
     private fun hideSuggestion() {
-        mViewHelper.runAlphaOut(mBinding.includeSuggestion.root, mBinding.point)
+        mViewHelper.runAlphaOut(mBinding!!.includeSuggestion.root, mBinding!!.point)
     }
 
     private fun switchChartWidgetsVisibility(hasData: Boolean) {
         when {
-            hasData && mBinding.groupChartWidgets.visibility == View.GONE -> {
-                TransitionManager.beginDelayedTransition(mBinding.root)
-                mBinding.groupChartWidgets.visibility = View.VISIBLE
+            hasData && mBinding!!.groupChartWidgets.visibility == View.GONE -> {
+                TransitionManager.beginDelayedTransition(mBinding!!.root)
+                mBinding!!.groupChartWidgets.visibility = View.VISIBLE
             }
-            !hasData && mBinding.groupChartWidgets.visibility == View.VISIBLE -> {
-                mBinding.groupChartWidgets.visibility = View.GONE
+            !hasData && mBinding!!.groupChartWidgets.visibility == View.VISIBLE -> {
+                mBinding!!.groupChartWidgets.visibility = View.GONE
             }
         }
 
         if (hasData) {
-            mBinding.progressBar.visibility = View.GONE
+            mBinding!!.progressBar.visibility = View.GONE
         }
     }
 
     private suspend fun prepareToChartDataChanges() {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            if (mBinding.includeSuggestion.root.alpha == 1F) {
+            if (mBinding!!.includeSuggestion.root.alpha == 1F) {
                 withContext(mCoroutineContext.Main) {
                     hideSuggestion()
                 }
@@ -222,7 +231,7 @@ class ChartFragment(
     }
 
     private fun setUpChartWidgetsListeners() {
-        mBinding.apply {
+        mBinding!!.apply {
             cardViewDay.setOnClickListener {
                 onCardClicked(it as CardView, textViewDays, ChartSelectedType.Days)
             }

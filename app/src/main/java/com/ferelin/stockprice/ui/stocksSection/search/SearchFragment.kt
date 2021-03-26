@@ -35,7 +35,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
-    private lateinit var mBinding: FragmentSearchBinding
+    private var mBinding: FragmentSearchBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentSearchBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
@@ -63,19 +63,18 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mFragmentManager = parentFragmentManager
-
-            mBinding.imageViewBack.setOnClickListener {
+            mBinding!!.imageViewBack.setOnClickListener {
                 activity?.onBackPressed()
             }
-            mBinding.editTextSearch.doAfterTextChanged {
+            mBinding!!.editTextSearch.doAfterTextChanged {
                 Timer().apply {
                     schedule(timerTask {
                         mViewModel.onSearchTextChanged(it?.toString() ?: "")
                     }, 200)
                 }
             }
-            mBinding.imageViewIconClose.setOnClickListener {
-                mBinding.editTextSearch.setText("")
+            mBinding!!.imageViewIconClose.setOnClickListener {
+                mBinding!!.editTextSearch.setText("")
             }
         }
     }
@@ -86,8 +85,8 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
                 mViewModel.actionShowHintsHideResults.collect {
                     withContext(mCoroutineContext.Main) {
                         if (it) {
-                            mBinding.root.transitionToStart()
-                        } else mBinding.root.transitionToEnd()
+                            mBinding!!.root.transitionToStart()
+                        } else mBinding!!.root.transitionToEnd()
                         mViewModel.onTransition()
                     }
                 }
@@ -112,8 +111,8 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
                         delay(300)
                         mViewModel.onOpenKeyboard()
                         withContext(mCoroutineContext.Main) {
-                            mBinding.editTextSearch.requestFocus()
-                            openKeyboard(requireContext(), mBinding.editTextSearch)
+                            mBinding!!.editTextSearch.requestFocus()
+                            openKeyboard(requireContext(), mBinding!!.editTextSearch)
                         }
                     }
                 }
@@ -121,57 +120,69 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         }
     }
 
+    override fun onDestroyView() {
+        mBinding!!.recyclerViewSearchedHistory.adapter = null
+        mBinding!!.recyclerViewSearchResults.adapter = null
+        mBinding!!.recyclerViewPopularRequests.adapter = null
+        mBinding = null
+        super.onDestroyView()
+    }
+
     private fun restoreTransitionState() {
         if (mViewModel.transitionState == 1) {
-            mBinding.root.progress = 1F
-            mBinding.imageViewIconClose.visibility = View.VISIBLE
+            mBinding!!.root.progress = 1F
+            mBinding!!.imageViewIconClose.visibility = View.VISIBLE
         }
     }
 
     private fun switchCloseIconVisibility(hideIcon: Boolean) {
-        if (hideIcon && mBinding.imageViewIconClose.visibility != View.GONE) {
-            mViewHelper.runScaleOut(mBinding.imageViewIconClose, object : AnimationManager() {
-                override fun onAnimationEnd(animation: Animation?) {
-                    mBinding.imageViewIconClose.visibility = View.INVISIBLE
-                }
-            })
-        } else if (!hideIcon && mBinding.imageViewIconClose.visibility != View.VISIBLE) {
-            mViewHelper.runScaleIn(mBinding.imageViewIconClose, object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding.imageViewIconClose.visibility = View.VISIBLE
-                }
-            })
+        mBinding!!.apply {
+            if (hideIcon && imageViewIconClose.visibility != View.GONE) {
+                mViewHelper.runScaleOut(imageViewIconClose, object : AnimationManager() {
+                    override fun onAnimationEnd(animation: Animation?) {
+                        imageViewIconClose.visibility = View.INVISIBLE
+                    }
+                })
+            } else if (!hideIcon && imageViewIconClose.visibility != View.VISIBLE) {
+                mViewHelper.runScaleIn(imageViewIconClose, object : AnimationManager() {
+                    override fun onAnimationStart(animation: Animation?) {
+                        imageViewIconClose.visibility = View.VISIBLE
+                    }
+                })
+            }
         }
     }
 
     private fun onSearchTickerClicked(item: AdaptiveSearchRequest) {
-        mBinding.editTextSearch.setText(item.searchText)
-        mBinding.editTextSearch.setSelection(item.searchText.length)
+        mBinding!!.editTextSearch.setText(item.searchText)
+        mBinding!!.editTextSearch.setSelection(item.searchText.length)
     }
 
     private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                when {
-                    this@SearchFragment::mBinding.isInitialized && mViewModel.lastSearchText.isNotEmpty() -> {
-                        mBinding.editTextSearch.setText("")
-                    }
-                    else -> {
-                        this.remove()
-                        hideKeyboard(requireContext(), mBinding.root)
-                        activity?.onBackPressed()
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    when {
+                        mBinding != null && mViewModel.lastSearchText.isNotEmpty() -> {
+                            mBinding!!.editTextSearch.setText("")
+                        }
+                        else -> {
+                            this.remove()
+                            hideKeyboard(requireContext(), mBinding!!.root)
+                            activity?.onBackPressed()
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
     private fun setUpRecyclerViews() {
-        mBinding.recyclerViewSearchResults.apply {
+        mBinding!!.recyclerViewSearchResults.apply {
             addItemDecoration(StocksItemDecoration(requireContext()))
             adapter = mViewModel.recyclerAdapter
         }
-        mBinding.recyclerViewSearchedHistory.apply {
+        mBinding!!.recyclerViewSearchedHistory.apply {
             addItemDecoration(SearchItemDecoration(requireContext()))
             adapter = mViewModel.searchesAdapter.also {
                 it.setOnTickerClickListener { item, _ ->
@@ -179,7 +190,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
                 }
             }
         }
-        mBinding.recyclerViewPopularRequests.apply {
+        mBinding!!.recyclerViewPopularRequests.apply {
             addItemDecoration(SearchItemDecoration(requireContext()))
             adapter = mViewModel.popularRequestsAdapter.also {
                 it.setPopularSearches()

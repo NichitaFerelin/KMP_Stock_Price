@@ -26,7 +26,7 @@ class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
-    private lateinit var mBinding: FragmentStocksBinding
+    private var mBinding: FragmentStocksBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,18 +34,24 @@ class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
         savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentStocksBinding.inflate(inflater, container, false)
-        return mBinding.root
+        return mBinding!!.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
         mFragmentManager = requireParentFragment().parentFragmentManager
-        mBinding.recyclerViewStocks.apply {
+        mBinding!!.recyclerViewStocks.apply {
             adapter = mViewModel.recyclerAdapter
             addItemDecoration(StocksItemDecoration(requireContext()))
             setHasFixedSize(true)
         }
+    }
+
+    override fun onDestroyView() {
+        mBinding!!.recyclerViewStocks.adapter = null
+        mBinding = null
+        super.onDestroyView()
     }
 
     override fun initObservers() {
@@ -68,28 +74,30 @@ class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
     }
 
     private fun scrollToTop() {
-        if ((mBinding.recyclerViewStocks.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
-            val fadeInCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding.recyclerViewStocks.visibility = View.VISIBLE
-                    mBinding.recyclerViewStocks.smoothScrollToPosition(0)
+        mBinding!!.apply {
+            if ((recyclerViewStocks.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
+                val fadeInCallback = object : AnimationManager() {
+                    override fun onAnimationStart(animation: Animation?) {
+                        recyclerViewStocks.visibility = View.VISIBLE
+                        recyclerViewStocks.smoothScrollToPosition(0)
+                    }
                 }
-            }
-            val fadeOutCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding.recyclerViewStocks.smoothScrollBy(
-                        0,
-                        -mBinding.recyclerViewStocks.height
-                    )
-                }
+                val fadeOutCallback = object : AnimationManager() {
+                    override fun onAnimationStart(animation: Animation?) {
+                        recyclerViewStocks.smoothScrollBy(
+                            0,
+                            -recyclerViewStocks.height
+                        )
+                    }
 
-                override fun onAnimationEnd(animation: Animation?) {
-                    mBinding.recyclerViewStocks.visibility = View.GONE
-                    mBinding.recyclerViewStocks.scrollToPosition(20)
-                    mViewHelper.runFadeIn(mBinding.recyclerViewStocks, fadeInCallback)
+                    override fun onAnimationEnd(animation: Animation?) {
+                        recyclerViewStocks.visibility = View.GONE
+                        recyclerViewStocks.scrollToPosition(20)
+                        mViewHelper.runFadeIn(recyclerViewStocks, fadeInCallback)
+                    }
                 }
-            }
-            mViewHelper.runFadeOut(mBinding.recyclerViewStocks, fadeOutCallback)
-        } else mBinding.recyclerViewStocks.smoothScrollToPosition(0)
+                mViewHelper.runFadeOut(recyclerViewStocks, fadeOutCallback)
+            } else recyclerViewStocks.smoothScrollToPosition(0)
+        }
     }
 }

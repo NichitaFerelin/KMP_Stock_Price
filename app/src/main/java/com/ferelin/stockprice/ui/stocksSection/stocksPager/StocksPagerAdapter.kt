@@ -2,7 +2,7 @@ package com.ferelin.stockprice.ui.stocksSection.stocksPager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteFragment
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksFragment
@@ -10,8 +10,8 @@ import kotlinx.coroutines.FlowPreview
 
 class StocksPagerAdapter(
     fm: FragmentManager,
-    lifecycle: Lifecycle
-) : FragmentStateAdapter(fm, lifecycle) {
+    lifecycle: LifecycleOwner
+) : FragmentStateAdapter(fm, lifecycle.lifecycle) {
 
     override fun getItemCount(): Int {
         return 2
