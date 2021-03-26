@@ -30,6 +30,9 @@ class DataInteractor private constructor(
     private val mNetworkConnectivityWorker: NetworkConnectivityWorker
 ) : DataInteractorHelper {
 
+    val apiLimitError: StateFlow<Boolean>
+        get() = mErrorHandlerWorker.apiLimitError
+
     val companiesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mDataManager.companiesWorker.companiesState
 
@@ -81,7 +84,10 @@ class DataInteractor private constructor(
         return mRepositoryHelper.loadStockCandles(symbol)
             .onEach {
                 when (it) {
-                    is RepositoryResponse.Success -> mDataManager.onStockCandlesLoaded(it)
+                    is RepositoryResponse.Success -> {
+                        mDataManager.onStockCandlesLoaded(it)
+                        mErrorHandlerWorker.onSuccessResponse()
+                    }
                     is RepositoryResponse.Failed -> {
                         if (isNetworkAvailableState.value) {
                             mErrorHandlerWorker.onLoadStockCandlesErrorGot(
@@ -100,7 +106,10 @@ class DataInteractor private constructor(
         return mRepositoryHelper.loadCompanyNews(symbol)
             .onEach {
                 when (it) {
-                    is RepositoryResponse.Success -> mDataManager.onCompanyNewsLoaded(it)
+                    is RepositoryResponse.Success -> {
+                        mDataManager.onCompanyNewsLoaded(it)
+                        mErrorHandlerWorker.onSuccessResponse()
+                    }
                     is RepositoryResponse.Failed -> {
                         if (isNetworkAvailableState.value) {
                             mErrorHandlerWorker.onLoadCompanyNewsErrorGot(
@@ -119,7 +128,10 @@ class DataInteractor private constructor(
         return mRepositoryHelper.loadCompanyQuote(symbol, position)
             .onEach {
                 when (it) {
-                    is RepositoryResponse.Success -> mDataManager.onCompanyQuoteLoaded(it)
+                    is RepositoryResponse.Success -> {
+                        mDataManager.onCompanyQuoteLoaded(it)
+                        mErrorHandlerWorker.onSuccessResponse()
+                    }
                     is RepositoryResponse.Failed -> {
                         if (isNetworkAvailableState.value) {
                             mErrorHandlerWorker.onLoadCompanyQuoteErrorGot(

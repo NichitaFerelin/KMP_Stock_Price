@@ -11,6 +11,14 @@ import kotlinx.coroutines.flow.StateFlow
 
 class ErrorHandlerWorker(private val mContext: Context) {
 
+    private val mApiLimitError = MutableStateFlow(false)
+    val apiLimitError: StateFlow<Boolean>
+        get() = mApiLimitError
+
+    fun onSuccessResponse() {
+        mApiLimitError.value = false
+    }
+
     private val mPrepareCompaniesErrorShared = MutableSharedFlow<String>()
     val prepareCompaniesErrorShared: SharedFlow<String>
         get() = mPrepareCompaniesErrorShared
@@ -81,10 +89,10 @@ class ErrorHandlerWorker(private val mContext: Context) {
         companySymbol: String
     ): String {
         return when (message) {
-            RepositoryMessages.Limit -> getString(
-                mContext,
-                R.string.errorApiLimit
-            )
+            RepositoryMessages.Limit -> {
+                mApiLimitError.value = true
+                ""
+            }
             else -> String.format(
                 getString(mContext, errorResource),
                 companySymbol

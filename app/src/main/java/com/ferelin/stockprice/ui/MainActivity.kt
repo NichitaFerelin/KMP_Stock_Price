@@ -66,9 +66,17 @@ class MainActivity(
                 }
             }
             launch {
-                mViewModel.actionNetworkError.collect {
+                mViewModel.actionShowNetworkError.collect {
                     withContext(mCoroutineContext.Main) {
                         Toast.makeText(this@MainActivity, R.string.errorNetwork, Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+            launch {
+                mViewModel.actionShowApiLimitError.collect {
+                    withContext(mCoroutineContext.Main) {
+                        Toast.makeText(this@MainActivity, R.string.errorApiLimit, Toast.LENGTH_LONG)
                             .show()
                     }
                 }

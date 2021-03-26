@@ -64,9 +64,9 @@ class NewsViewModel(
                     }
             }
             launch {
-                mDataInteractor.loadCompanyNewsErrorShared.collect {
-                    mActionShowError.value = it
-                }
+                mDataInteractor.loadCompanyNewsErrorShared
+                    .filter { it.isNotEmpty() }
+                    .collect { mActionShowError.value = it }
             }
         }
     }

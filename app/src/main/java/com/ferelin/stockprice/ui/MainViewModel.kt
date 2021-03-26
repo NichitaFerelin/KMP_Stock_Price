@@ -29,8 +29,12 @@ class MainViewModel(
         get() = mActionShowDialogError
 
     private val mActionShowNetworkError = MutableSharedFlow<Unit>()
-    val actionNetworkError: SharedFlow<Unit>
+    val actionShowNetworkError: SharedFlow<Unit>
         get() = mActionShowNetworkError
+
+    private val mActionShowApiLimitError = MutableSharedFlow<Unit>()
+    val actionShowApiLimitError: SharedFlow<Unit>
+        get() = mActionShowApiLimitError
 
     @FlowPreview
     fun initObservers() {
@@ -44,6 +48,11 @@ class MainViewModel(
                 mDataInteractor.isNetworkAvailableState
                     .filter { !it }
                     .collect { mActionShowNetworkError.emit(Unit) }
+            }
+            launch {
+                mDataInteractor.apiLimitError
+                    .filter { it }
+                    .collect { mActionShowApiLimitError.emit(Unit) }
             }
             launch {
                 mDataInteractor.prepareData(mApplication)

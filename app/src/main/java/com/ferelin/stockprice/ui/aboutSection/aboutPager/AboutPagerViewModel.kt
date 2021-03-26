@@ -53,9 +53,9 @@ class AboutPagerViewModel(
                     .collect { onDataChanged(it.data!!) }
             }
             launch {
-                mDataInteractor.favouriteCompaniesLimitReachedShared.collect {
-                    mActionShowError.emit(it)
-                }
+                mDataInteractor.favouriteCompaniesLimitReachedShared
+                    .filter { it.isNotEmpty() }
+                    .collect { mActionShowError.emit(it) }
             }
         }
     }

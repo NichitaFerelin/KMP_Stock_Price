@@ -80,9 +80,9 @@ class ChartViewModel(
                     }
             }
             launch {
-                mDataInteractor.loadStockCandlesErrorShared.collect {
-                    mActionShowError.emit(it)
-                }
+                mDataInteractor.loadStockCandlesErrorShared
+                    .filter { it.isNotEmpty() }
+                    .collect { mActionShowError.emit(it) }
             }
         }
     }
