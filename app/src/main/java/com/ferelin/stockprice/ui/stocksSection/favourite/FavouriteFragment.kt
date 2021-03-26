@@ -52,8 +52,6 @@ class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHe
     }
 
     override fun initObservers() {
-        super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.actionScrollToTop.collect {

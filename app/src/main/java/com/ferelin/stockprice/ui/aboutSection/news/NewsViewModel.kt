@@ -38,12 +38,23 @@ class NewsViewModel(
     val notificationNewItems: SharedFlow<Unit>
         get() = mNotificationNewItems
 
-    private val mActionShowError = MutableSharedFlow<String>()
-    val actionShowError: SharedFlow<String>
+    private val mActionShowError = MutableStateFlow("")
+    val actionShowError: StateFlow<String>
         get() = mActionShowError
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
+
+            if (mHasDataForRecycler.value) {
+                onNewsChanged(mSelectedCompany!!.companyNews)
+            }
+
+            launch {
+                mDataInteractor.isNetworkAvailableState
+                    .filter { it }
+                    .take(1)
+                    .collect()
+            }.join()
             launch {
                 mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
                     .take(1)
@@ -54,7 +65,7 @@ class NewsViewModel(
             }
             launch {
                 mDataInteractor.loadCompanyNewsErrorShared.collect {
-                    mActionShowError.emit(it)
+                    mActionShowError.value = it
                 }
             }
         }

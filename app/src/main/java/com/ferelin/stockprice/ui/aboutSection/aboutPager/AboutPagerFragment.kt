@@ -31,9 +31,7 @@ class AboutPagerFragment(
     override val mViewModel: AboutPagerViewModel by viewModels {
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
-
-    private val mSelectedCompany = selectedCompany
-
+    
     private lateinit var mBinding: FragmentAboutPagerBinding
     private lateinit var mLastSelectedTab: TextView
 
@@ -78,8 +76,6 @@ class AboutPagerFragment(
     }
 
     override fun initObservers() {
-        super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.eventDataChanged.collect {
@@ -164,7 +160,7 @@ class AboutPagerFragment(
 
     private fun setUpViewPager() {
         mBinding.viewPager.adapter =
-            AboutPagerAdapter(childFragmentManager, lifecycle, mSelectedCompany)
+            AboutPagerAdapter(childFragmentManager, lifecycle, mViewModel.selectedCompany)
         mBinding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)

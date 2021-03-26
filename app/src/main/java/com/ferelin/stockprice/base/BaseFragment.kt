@@ -19,6 +19,8 @@ abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
     protected abstract val mViewHelper: V
     protected lateinit var mDataInteractor: DataInteractor
 
+    protected abstract fun initObservers()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDataInteractor = (activity as MainActivity).dataInteractor
@@ -36,13 +38,10 @@ abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
     }
 
     protected open fun setUpViewComponents(savedInstanceState: Bundle?) {
+        mViewModel.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mViewHelper.prepare(requireContext())
         }
-    }
-
-    protected open fun initObservers() {
-        mViewModel.initObservers()
     }
 
     protected fun showToast(text: String) {

@@ -59,10 +59,10 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         mViewModel.recyclerAdapter.setTextDividers(hashMapOf(0 to resources.getString(R.string.hintStocks)))
         restoreTransitionState()
         setUpBackPressedCallback()
+        setUpRecyclerViews()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mFragmentManager = parentFragmentManager
-            setUpRecyclerViews()
 
             mBinding.imageViewBack.setOnClickListener {
                 activity?.onBackPressed()
@@ -81,8 +81,6 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     }
 
     override fun initObservers() {
-        super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.actionShowHintsHideResults.collect {

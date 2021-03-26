@@ -60,8 +60,6 @@ class ChartFragment(
     }
 
     override fun initObservers() {
-        super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.hasDataForChartState.collect { hasData ->

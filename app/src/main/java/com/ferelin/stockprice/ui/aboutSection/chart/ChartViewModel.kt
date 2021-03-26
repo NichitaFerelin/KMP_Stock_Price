@@ -64,6 +64,12 @@ class ChartViewModel(
                     .collect { onDataChanged(it.data!!) }
             }
             launch {
+                mDataInteractor.isNetworkAvailableState
+                    .filter { it }
+                    .take(1)
+                    .collect()
+            }.join()
+            launch {
                 mDataInteractor.loadStockCandles(mSelectedCompany?.companyProfile?.symbol ?: "")
                     .collect {
                         onStockHistoryLoaded(

@@ -16,6 +16,7 @@ import com.ferelin.stockprice.databinding.FragmentNewsBinding
 import com.ferelin.stockprice.utils.AnimationManager
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -23,12 +24,12 @@ class NewsFragment(
     selectedCompany: AdaptiveCompany? = null
 ) : BaseFragment<NewsViewModel, NewsViewHelper>(), NewsClickListener {
 
-    private lateinit var mBinding: FragmentNewsBinding
-
     override val mViewHelper: NewsViewHelper = NewsViewHelper()
     override val mViewModel: NewsViewModel by viewModels {
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
+
+    private lateinit var mBinding: FragmentNewsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,8 +55,6 @@ class NewsFragment(
     }
 
     override fun initObservers() {
-        super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch {
                 mViewModel.notificationNewItems.collect {
@@ -78,12 +77,14 @@ class NewsFragment(
                 }
             }
             launch {
-                mViewModel.actionShowError.collect {
-                    withContext(mCoroutineContext.Main) {
-                        showToast(it)
-                        mBinding.progressBar.visibility = View.INVISIBLE
+                mViewModel.actionShowError
+                    .filter { it.isNotEmpty() }
+                    .collect {
+                        withContext(mCoroutineContext.Main) {
+                            showToast(it)
+                            mBinding.progressBar.visibility = View.INVISIBLE
+                        }
                     }
-                }
             }
         }
     }

@@ -19,6 +19,8 @@ class AboutPagerViewModel(
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
     private var mSelectedCompany: AdaptiveCompany? = selectedCompany
+    val selectedCompany: AdaptiveCompany?
+        get() = mSelectedCompany
 
     private val mEventDataChanged = MutableSharedFlow<Unit>(1)
     val eventDataChanged: SharedFlow<Unit>
