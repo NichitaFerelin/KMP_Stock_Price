@@ -43,15 +43,6 @@ class WebResponseConverterTest {
     }
 
     @Test
-    fun tradeNotAvailableResponse() {
-        val response = mWebResponseConverter.fromJson(
-            FakeRemoteResponses.webSocketNoVolumeStr,
-            FakeRemoteResponses.wabSocketOpenPriceHolder
-        )
-        Assert.assertTrue(response.responseCode == Api.RESPONSE_TRADE_NOT_AVAILABLE)
-    }
-
-    @Test
     fun undefinedResponse() {
         val response = mWebResponseConverter.fromJson(
             FakeRemoteResponses.webSocketUndefinedStr,

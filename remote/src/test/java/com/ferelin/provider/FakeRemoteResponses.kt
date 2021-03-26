@@ -10,8 +10,7 @@ object FakeRemoteResponses {
     )
     const val webSocketSuccessStr =
         "{\"data\":[{\"c\":[\"1\",\"8\",\"24\",\"12\"],\"p\":639.47,\"s\":\"AAPL\",\"t\":1616659809881,\"v\":1}],\"type\":\"trade\"}"
-    const val webSocketNoVolumeStr =
-        "{\"data\":[{\"c\":[\"1\",\"8\",\"24\",\"12\"],\"p\":639.47,\"s\":\"AAPL\",\"t\":1616659809881,\"v\":0.0}],\"type\":\"trade\"}"
     const val webSocketUndefinedStr = "{\"data\":1}],\"type\":\"trade\"}"
-    val wabSocketOpenPriceHolder = hashMapOf(webSocketResponse.symbol to webSocketResponse.lastPrice)
+    val wabSocketOpenPriceHolder =
+        hashMapOf(webSocketResponse.symbol to webSocketResponse.lastPrice)
 }
