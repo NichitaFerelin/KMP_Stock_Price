@@ -4,13 +4,16 @@ import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.CompaniesStateWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.FavouriteCompaniesStateWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.FirstTimeLaunchStateWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsStateWorker
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 
 class DataManager(
     val companiesWorker: CompaniesStateWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesStateWorker,
     val searchRequestsWorker: SearchRequestsStateWorker,
+    val firstTimeLaunchStateWorker: FirstTimeLaunchStateWorker
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)
@@ -54,6 +57,10 @@ class DataManager(
 
     fun onSearchRequestsHistoryPrepared(searches: List<AdaptiveSearchRequest>) {
         searchRequestsWorker.onDataPrepared(searches)
+    }
+
+    fun onFirstTimeLaunchStateResponse(response: LocalInteractorResponse) {
+        firstTimeLaunchStateWorker.onResponse(response)
     }
 
     suspend fun onNewSearch(searchText: String) {

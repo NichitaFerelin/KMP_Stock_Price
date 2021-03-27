@@ -55,7 +55,7 @@ class MainViewModel(
                     .collect { mActionShowApiLimitError.emit(Unit) }
             }
             launch {
-                mDataInteractor.prepareData(mApplication)
+                mDataInteractor.prepareData()
                 delay(10_000L)
                 mDataInteractor.openConnection().collect()
             }

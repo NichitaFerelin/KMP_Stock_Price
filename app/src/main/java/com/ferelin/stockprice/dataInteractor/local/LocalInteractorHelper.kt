@@ -1,16 +1,19 @@
 package com.ferelin.stockprice.dataInteractor.local
 
-import android.content.Context
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 
 interface LocalInteractorHelper {
 
-    suspend fun getCompaniesData(context: Context): LocalInteractorResponse
+    suspend fun getCompaniesData(): LocalInteractorResponse
 
-    suspend fun getSearchRequestsHistory(context: Context): LocalInteractorResponse
+    suspend fun getSearchRequestsHistory(): LocalInteractorResponse
 
     suspend fun setSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
+
+    suspend fun setFirstTimeLaunchState(state: Boolean)
+
+    suspend fun getFirstTimeLaunchState(): LocalInteractorResponse
 
     suspend fun updateCompany(adaptiveCompany: AdaptiveCompany)
 }

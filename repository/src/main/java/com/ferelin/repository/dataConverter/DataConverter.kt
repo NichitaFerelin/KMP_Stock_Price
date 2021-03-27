@@ -197,4 +197,10 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
         search.forEach { dataSet.add(it.searchText) }
         return dataSet
     }
+
+    override fun convertFirstTimeLaunchStateToResponse(state: Boolean?): RepositoryResponse<Boolean> {
+        return state?.let {
+            RepositoryResponse.Success(data = state)
+        } ?: RepositoryResponse.Failed()
+    }
 }

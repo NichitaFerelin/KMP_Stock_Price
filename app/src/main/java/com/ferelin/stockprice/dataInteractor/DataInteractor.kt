@@ -54,6 +54,9 @@ class DataInteractor private constructor(
     val prepareCompaniesErrorShared: SharedFlow<String>
         get() = mErrorHandlerWorker.prepareCompaniesErrorShared
 
+    val firstTimeLaunchState: StateFlow<Boolean?>
+        get() = mDataManager.firstTimeLaunchStateWorker.firstTimeLaunchState
+
     val loadCompanyQuoteErrorShared: SharedFlow<String>
         get() = mErrorHandlerWorker.loadCompanyQuoteErrorShared
 
@@ -75,9 +78,10 @@ class DataInteractor private constructor(
     val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
-    override suspend fun prepareData(context: Context) {
-        prepareCompaniesData(context)
-        prepareSearchesHistory(context)
+    override suspend fun prepareData() {
+        prepareCompaniesData()
+        prepareSearchesHistory()
+        prepareFirstTimeLaunchState()
     }
 
     override suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany> {
@@ -183,22 +187,28 @@ class DataInteractor private constructor(
         getCompany(symbol)?.let { removeCompanyFromFavourite(it) }
     }
 
-    private suspend fun prepareCompaniesData(context: Context) {
-        val responseCompanies = mLocalInteractorHelper.getCompaniesData(context)
-        if (responseCompanies is LocalInteractorResponse.Success) {
-            mDataManager.onCompaniesDataPrepared(responseCompanies.companies)
-        } else if (isNetworkAvailableState.value) {
-            mErrorHandlerWorker.onPrepareCompaniesErrorGot()
-        }
+    override suspend fun setFirstTimeLaunchState(state: Boolean) {
+        mLocalInteractorHelper.setFirstTimeLaunchState(state)
     }
 
-    private suspend fun prepareSearchesHistory(context: Context) {
-        val responseSearchesHistory = mLocalInteractorHelper.getSearchRequestsHistory(context)
+    private suspend fun prepareCompaniesData() {
+        val responseCompanies = mLocalInteractorHelper.getCompaniesData()
+        if (responseCompanies is LocalInteractorResponse.Success) {
+            mDataManager.onCompaniesDataPrepared(responseCompanies.companies)
+        } else mErrorHandlerWorker.onPrepareCompaniesErrorGot()
+    }
+
+    private suspend fun prepareSearchesHistory() {
+        val responseSearchesHistory = mLocalInteractorHelper.getSearchRequestsHistory()
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
             mDataManager.onSearchRequestsHistoryPrepared(responseSearchesHistory.searchesHistory)
-        } else if (isNetworkAvailableState.value) {
-            mErrorHandlerWorker.onLoadSearchRequestsErrorGot()
-        }
+        } else mErrorHandlerWorker.onLoadSearchRequestsErrorGot()
+
+    }
+
+    private suspend fun prepareFirstTimeLaunchState() {
+        val firstTimeLaunchResponse = mLocalInteractorHelper.getFirstTimeLaunchState()
+        mDataManager.onFirstTimeLaunchStateResponse(firstTimeLaunchResponse)
     }
 
     private fun getCompany(symbol: String): AdaptiveCompany? {
@@ -210,6 +220,7 @@ class DataInteractor private constructor(
         val localInteractorHelper = LocalInteractor(repositoryHelper)
         val stylesProvider = StylesProvider(it)
         val errorHandlerWorker = ErrorHandlerWorker(it)
+        val firstTimeLaunchWorker = FirstTimeLaunchStateWorker()
         val dataManager = DataManager(
             CompaniesStateWorker(stylesProvider, localInteractorHelper),
             FavouriteCompaniesStateWorker(
@@ -219,6 +230,7 @@ class DataInteractor private constructor(
                 errorHandlerWorker
             ),
             SearchRequestsStateWorker(localInteractorHelper),
+            firstTimeLaunchWorker
         )
         val networkConnectivityWorker = NetworkConnectivityWorker(
             it.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,

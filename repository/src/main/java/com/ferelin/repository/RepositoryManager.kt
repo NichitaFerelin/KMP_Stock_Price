@@ -104,6 +104,16 @@ class RepositoryManager constructor(
         mLocalManagerHelper.setSearchesHistory(preparedForInsert)
     }
 
+    override fun getFirstTimeLaunchState(): Flow<RepositoryResponse<Boolean>> {
+        return mLocalManagerHelper.getFirstTimeLaunchState().map {
+            mDataConverterHelper.convertFirstTimeLaunchStateToResponse(it)
+        }
+    }
+
+    override suspend fun setFirstTimeLaunchState(state: Boolean) {
+        mLocalManagerHelper.setFirstTimeLaunchState(state)
+    }
+
     companion object : SingletonHolder<RepositoryManager, Context>({
         val remoteHelper = RemoteManager(NetworkManager(), WebSocketConnector())
         val dataBase = CompaniesDatabase.getInstance(it)

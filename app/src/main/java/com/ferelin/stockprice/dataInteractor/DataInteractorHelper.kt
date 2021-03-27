@@ -1,12 +1,11 @@
 package com.ferelin.stockprice.dataInteractor
 
-import android.content.Context
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import kotlinx.coroutines.flow.Flow
 
 interface DataInteractorHelper {
 
-    suspend fun prepareData(context: Context)
+    suspend fun prepareData()
 
     suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany>
 
@@ -25,4 +24,6 @@ interface DataInteractorHelper {
     suspend fun removeCompanyFromFavourite(symbol: String)
 
     suspend fun onNewSearch(searchText: String)
+
+    suspend fun setFirstTimeLaunchState(state: Boolean)
 }

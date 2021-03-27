@@ -73,4 +73,12 @@ class LocalManager(
     override suspend fun setSearchesHistory(requests: Set<String>) {
         mStorePreferencesHelper.setSearchesHistory(requests)
     }
+
+    override fun getFirstTimeLaunchState(): Flow<Boolean?> {
+        return mStorePreferencesHelper.getFirstTimeLaunchState()
+    }
+
+    override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
+        mStorePreferencesHelper.setFirstTimeLaunchState(boolean)
+    }
 }

@@ -45,4 +45,6 @@ interface DataConverterHelper {
     fun convertCompanyForInsert(company: AdaptiveCompany): Company
 
     fun convertSearchesForInsert(search: List<AdaptiveSearchRequest>): Set<String>
+
+    fun convertFirstTimeLaunchStateToResponse(state: Boolean?) : RepositoryResponse<Boolean>
 }

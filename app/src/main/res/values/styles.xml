@@ -202,4 +202,11 @@
         <item name="cardCornerRadius">13dp</item>
         <item name="cardElevation">0dp</item>
     </style>
+
+    <style name="loadingCard">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="cardCornerRadius">8dp</item>
+    </style>
+
 </resources>

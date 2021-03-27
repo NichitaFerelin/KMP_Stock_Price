@@ -12,7 +12,7 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
 import kotlinx.coroutines.FlowPreview
@@ -42,10 +42,12 @@ class MainActivity(
         setStatusBarColor()
 
         lifecycleScope.launch(mCoroutineContext.IO) {
-            with(supportFragmentManager) {
-                val tag = "StocksFragment"
-                findFragmentByTag(tag) ?: commit {
-                    add(R.id.fragmentContainer, StocksPagerFragment(), tag)
+            if (supportFragmentManager.fragments.isEmpty()) {
+                supportFragmentManager.commit {
+                    add(
+                        R.id.fragmentContainer,
+                        LoadingFragment()
+                    )
                 }
             }
         }

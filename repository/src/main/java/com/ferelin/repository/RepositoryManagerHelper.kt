@@ -42,4 +42,8 @@ interface RepositoryManagerHelper {
     fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
 
     suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>)
+
+    fun getFirstTimeLaunchState() : Flow<RepositoryResponse<Boolean>>
+
+    suspend fun setFirstTimeLaunchState(state: Boolean)
 }

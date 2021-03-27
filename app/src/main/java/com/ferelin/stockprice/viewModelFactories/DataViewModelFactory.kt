@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.ui.previewSection.loading.LoadingViewModel
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteViewModel
 import com.ferelin.stockprice.ui.stocksSection.search.SearchViewModel
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksViewModel
@@ -26,6 +27,9 @@ open class DataViewModelFactory(
             }
             modelClass.isAssignableFrom(SearchViewModel::class.java) -> {
                 SearchViewModel(mCoroutineContext, mDataInteractor) as T
+            }
+            modelClass.isAssignableFrom(LoadingViewModel::class.java) -> {
+                LoadingViewModel(mCoroutineContext, mDataInteractor) as T
             }
 
             else -> throw IllegalStateException("Unknown view model class: $modelClass")

@@ -11,6 +11,7 @@ import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.Fade
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
@@ -39,6 +40,7 @@ class StocksPagerFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exitTransition = Hold()
+        enterTransition = Fade(Fade.IN)
     }
 
     override fun onCreateView(
