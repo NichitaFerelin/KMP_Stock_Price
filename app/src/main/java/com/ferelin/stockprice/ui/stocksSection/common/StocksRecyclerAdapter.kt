@@ -105,7 +105,7 @@ class StocksRecyclerAdapter(
 
     fun updateCompany(company: AdaptiveCompany, index: Int) {
         mCompanies[index] = company
-        notifyItemChanged(index)
+        notifyItemChanged(index + mTextDividers.size)
     }
 
     fun addCompany(company: AdaptiveCompany) {
