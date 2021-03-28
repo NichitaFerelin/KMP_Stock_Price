@@ -70,6 +70,7 @@ class FavouriteCompaniesStateWorker(
                 applyChangesToAddedFavouriteCompany(company)
                 subscribeCompanyOnLiveTimeUpdates(company)
                 mFavouriteCompanies.add(company)
+                mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
                 mFavouriteCompaniesUpdatesShared.emit(DataNotificator.NewItemAdded(company))
                 mLocalInteractorHelper.updateCompany(company)
                 company
@@ -81,6 +82,7 @@ class FavouriteCompaniesStateWorker(
         applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
         mFavouriteCompanies.remove(company)
+        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
         mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemRemoved(company))
         mLocalInteractorHelper.updateCompany(company)
         return company
