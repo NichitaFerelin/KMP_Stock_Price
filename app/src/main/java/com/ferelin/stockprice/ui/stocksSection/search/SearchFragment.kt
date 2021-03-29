@@ -88,8 +88,12 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
                     withContext(mCoroutineContext.Main) {
                         if (it) {
                             mBinding!!.root.transitionToStart()
-                        } else mBinding!!.root.transitionToEnd()
-                        mViewModel.onTransition()
+                            mViewModel.onTransition(0)
+                        } else{
+                            mBinding!!.root.transitionToEnd()
+                            mViewModel.onTransition(1)
+                        }
+
                     }
                 }
             }
