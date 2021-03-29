@@ -98,8 +98,8 @@ class SearchViewModel(
         }
     }
 
-    fun onTransition() {
-        mTransitionState = 1
+    fun onTransition(state: Int) {
+        mTransitionState = state
     }
 
     fun onSearchTextChanged(searchText: String) {
