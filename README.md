@@ -12,7 +12,7 @@ Requests limit: 1/sec [ThrottleManager.kt at Remote module]
 - Data Store Preferences
 - Moshi
 - Retrofit + okHttp
-- Simple screen with JetpackCompose
+- Simple screen with JetpackCompose [WelcomeFragment.kt at JetpackCompose branch]
 - Some Unit tests with Robolectric and Mockito
 ## Visual architecture guide
 ![Alt Text](https://user-images.githubusercontent.com/68856530/112752494-0be3fd00-8fdc-11eb-8c54-d0c3412e44e7.png)
