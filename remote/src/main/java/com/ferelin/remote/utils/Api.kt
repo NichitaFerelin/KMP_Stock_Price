@@ -1,4 +1,4 @@
-package com.ferelin.remote.utilits
+package com.ferelin.remote.utils
 
 object Api {
     // https://finnhub.io/docs/api/introduction

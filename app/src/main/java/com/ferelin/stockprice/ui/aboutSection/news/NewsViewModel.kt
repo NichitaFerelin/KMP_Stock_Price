@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.base.BaseDataViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -17,7 +17,7 @@ class NewsViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
     selectedCompany: AdaptiveCompany? = null
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
 
     private val mSelectedCompany: AdaptiveCompany? = selectedCompany
 

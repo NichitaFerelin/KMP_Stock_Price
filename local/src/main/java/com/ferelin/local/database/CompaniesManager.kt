@@ -8,7 +8,6 @@ open class CompaniesManager(
     private val mCompaniesDao: CompaniesDao = mCompaniesDatabase.companiesDao()
 ) : CompaniesManagerHelper {
 
-
     override fun insertCompany(company: Company) {
         mCompaniesDao.insert(company)
     }

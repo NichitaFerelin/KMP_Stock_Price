@@ -1,6 +1,6 @@
 package com.ferelin.remote.network.throttleManager
 
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import com.ferelin.shared.CoroutineContextProvider
 import kotlinx.coroutines.*
 import java.util.*
@@ -8,6 +8,16 @@ import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashSet
 import kotlin.math.abs
 
+/*
+* Class designed to:
+*   - Avoid API limit (App using free API with limit).
+*   - Optimize requests to network [Before sending to the network -> request will be
+*                                   checked by condition @isNotActual() ->
+*                                   if method will return true -> request will be deleted]
+*
+* Requests are inserted into a queue, which are retrieved
+* from there once per @mPerSecondRequestLimit
+* */
 class ThrottleManager(
     coroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : ThrottleManagerHelper {

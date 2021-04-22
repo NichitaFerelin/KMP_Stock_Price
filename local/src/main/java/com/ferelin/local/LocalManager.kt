@@ -3,7 +3,7 @@ package com.ferelin.local
 import com.ferelin.local.database.CompaniesManagerHelper
 import com.ferelin.local.json.JsonManagerHelper
 import com.ferelin.local.models.Company
-import com.ferelin.local.prefs.StorePreferencesHelper
+import com.ferelin.local.preferences.StorePreferencesHelper
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.local.responses.SearchesResponse
@@ -33,6 +33,10 @@ class LocalManager(
         return mCompaniesManagerHelper.getAllCompanies()
     }
 
+    /*
+    * Empty room -> parsing from json
+    * else -> return data from room
+    * */
     override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
             if (databaseCompanies.isEmpty()) {

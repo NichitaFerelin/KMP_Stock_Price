@@ -6,7 +6,7 @@ import com.ferelin.local.LocalManagerHelper
 import com.ferelin.local.database.CompaniesDatabase
 import com.ferelin.local.database.CompaniesManager
 import com.ferelin.local.json.JsonManager
-import com.ferelin.local.prefs.StorePreferences
+import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.remote.RemoteManager
 import com.ferelin.remote.RemoteManagerHelper
 import com.ferelin.remote.network.NetworkManager
@@ -20,7 +20,7 @@ import com.ferelin.shared.SingletonHolder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RepositoryManager constructor(
+class RepositoryManager (
     private val mRemoteManagerHelper: RemoteManagerHelper,
     private val mLocalManagerHelper: LocalManagerHelper,
     private val mDataConverterHelper: DataConverterHelper

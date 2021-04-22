@@ -1,14 +1,12 @@
 package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.debounce
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -47,7 +45,9 @@ open class WebSocketConnector : WebSocketConnectorHelper {
             okHttp.dispatcher.executorService.shutdown()
 
             awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }
-        }.debounce(100).buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        }
+            .debounce(100)
+            .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override fun closeConnection() {
         mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)

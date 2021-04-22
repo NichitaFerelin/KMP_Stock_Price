@@ -18,14 +18,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.utils.StockPriceColors
-import com.ferelin.stockprice.utils.StockPriceShapes
-import com.ferelin.stockprice.utils.StockPriceTypography
+import com.ferelin.stockprice.utils.compose.*
 
 @Composable
+@Preview
 fun Welcome(viewModel: WelcomeViewModel = WelcomeViewModel()) {
 
     val mainTitleVisible by viewModel.mainTitleVisible.observeAsState(initial = false)
@@ -34,66 +34,47 @@ fun Welcome(viewModel: WelcomeViewModel = WelcomeViewModel()) {
     val hintApiLimitVisible by viewModel.hintApiLimitVisible.observeAsState(initial = false)
     val btnDoneVisible by viewModel.btnDoneVisible.observeAsState(initial = false)
 
-
     LazyColumn(
         content = {
             item {
-                AnimatedVisibility(
-                    visible = mainTitleVisible,
-                    exit = slideOut(targetOffset = {
-                        IntOffset(0, -it.height)
-                    }) + fadeOut()
-                ) {
+                Card(visible = mainTitleVisible) {
                     Text(
                         textAlign = TextAlign.Center,
-                        text = "Short Stock Price app guide",
+                        text = hintAppTitle,
                         style = StockPriceTypography.h1,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth()
                     )
                 }
             }
             item {
-                AnimatedVisibility(
-                    visible = hintFavouriteVisible,
-                    exit = slideOut(targetOffset = {
-                        IntOffset(0, -it.height)
-                    }) + fadeOut()
-                ) {
+                Card(visible = hintFavouriteVisible) {
                     Hint(
-                        title = "For stock price observing add it to favourite",
-                        content = "Note that global market could be closed, so live-time price updates will not available. Also is a limit in 50 favourite companies",
+                        title = hintFavouriteTitle,
+                        content = hintFavouriteContent,
                         imageSource = painterResource(id = R.mipmap.error),
-                        contentDescription = "test"
+                        contentDescription = hintFavouriteContentDescription
                     )
                 }
             }
             item {
-                AnimatedVisibility(
-                    visible = hintChartSectionVisible,
-                    exit = slideOut(targetOffset = {
-                        IntOffset(0, -it.height)
-                    }) + fadeOut()
-                ) {
+                Card(visible = hintChartSectionVisible) {
                     Hint(
-                        title = "Analyze price statistics with a chart",
+                        title = hintChartTitle,
                         content = "",
                         imageSource = painterResource(id = R.mipmap.chart),
-                        contentDescription = "test"
+                        contentDescription = hintChartContentDescription
                     )
                 }
             }
             item {
-                AnimatedVisibility(
-                    visible = hintApiLimitVisible,
-                    exit = slideOut(targetOffset = {
-                        IntOffset(0, -it.height)
-                    }) + fadeOut()
-                ) {
+                Card(visible = hintApiLimitVisible) {
                     Hint(
-                        title = "App has an api limit",
-                        content = "App uses a free API. Requests for basic information(stock quote update) are limited to one per second",
+                        title = hintApiTitle,
+                        content = hintApiContent,
                         imageSource = painterResource(id = R.drawable.ic_favourite),
-                        contentDescription = "test"
+                        contentDescription = hintApiContentDescription
                     )
                 }
             }
@@ -156,5 +137,17 @@ fun Hint(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun Card(visible: Boolean, content: @Composable () -> Unit) {
+    AnimatedVisibility(
+        visible = visible,
+        exit = slideOut(targetOffset = {
+            IntOffset(0, -it.height)
+        }) + fadeOut()
+    ) {
+        content.invoke()
     }
 }

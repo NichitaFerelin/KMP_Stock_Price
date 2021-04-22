@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutPager
+package com.ferelin.stockprice.ui.aboutSection.aboutSection
 
 import android.graphics.Color
 import android.os.Bundle
@@ -68,11 +68,7 @@ class AboutPagerFragment(
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             setUpTabListeners()
-            mBinding!!.imageViewBack.setOnClickListener { activity?.onBackPressed() }
-            mBinding!!.imageViewStar.setOnClickListener {
-                mViewModel.onFavouriteIconClicked()
-                mViewHelper.runScaleInOut(it)
-            }
+            setUpImageListeners()
         }
     }
 
@@ -183,6 +179,14 @@ class AboutPagerFragment(
             }
         }
         mBinding!!.viewPager.registerOnPageChangeCallback(mViewPagerCallback)
+    }
+
+    private fun setUpImageListeners() {
+        mBinding!!.imageViewBack.setOnClickListener { activity?.onBackPressed() }
+        mBinding!!.imageViewStar.setOnClickListener {
+            mViewModel.onFavouriteIconClicked()
+            mViewHelper.runScaleInOut(it)
+        }
     }
 
     private fun setUpBackPressedCallback() {

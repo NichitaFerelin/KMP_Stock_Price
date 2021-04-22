@@ -8,6 +8,9 @@ import com.ferelin.stockprice.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/*
+* Logic of suggestion location depending on screen size.
+* */
 object SuggestionControlHelper {
 
     suspend fun applyCoordinatesChanges(

@@ -1,8 +1,8 @@
-package com.ferelin.stockprice.utils
+package com.ferelin.stockprice.utils.anim
 
 import androidx.constraintlayout.motion.widget.MotionLayout
 
-abstract class MotionListenerAdapter : MotionLayout.TransitionListener {
+abstract class MotionManager : MotionLayout.TransitionListener {
     override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
     }
 

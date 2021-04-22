@@ -9,6 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/*
+* Worker that is responsible for:
+*   - Notification when error has occurred
+* */
 class ErrorHandlerWorker(private val mContext: Context) {
 
     private val mApiLimitError = MutableStateFlow(false)

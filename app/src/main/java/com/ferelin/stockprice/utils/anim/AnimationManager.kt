@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.utils
+package com.ferelin.stockprice.utils.anim
 
 import android.view.animation.Animation
 

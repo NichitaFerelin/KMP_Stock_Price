@@ -20,8 +20,10 @@ class ChartView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    /*
+    * Base markers to build Bezier curve.
+    * */
     private var mMarkers: List<Marker> = emptyList()
-
     private var mBezierMarkers: HashMap<Marker, BezierPoint> = hashMapOf()
 
     private var mCharHeight: Int = 0
@@ -30,6 +32,9 @@ class ChartView @JvmOverloads constructor(
     private var mMaxValue: Double = 0.0
     private var mMinValue: Double = 0.0
 
+    /*
+    * To avoid some graphic bugs when points is too many.
+    * */
     private var mTooManyPoints = false
     private var mTooManyPointsMargin = 0F
 
@@ -137,7 +142,6 @@ class ChartView @JvmOverloads constructor(
 
         calcAndInvalidate()
     }
-
 
     fun setOnTouchListener(func: (marker: Marker) -> Unit) {
         mOnTouchListener = func
@@ -303,6 +307,12 @@ class ChartView @JvmOverloads constructor(
     }
 
     private fun onSingleTapListener(event: MotionEvent) {
+        val nearestPoint = findNearestPoint(event)
+        event.setLocation(nearestPoint?.position?.x ?: 0F, nearestPoint?.position?.y ?: 0F)
+        mLastNearestPoint = nearestPoint
+    }
+
+    private fun findNearestPoint(event: MotionEvent) : Marker? {
         var nearestPoint: Marker? = null
         val (startIndex, endIndex) = if (mTooManyPoints) {
             intArrayOf(2, mMarkers.size - 2)
@@ -315,7 +325,7 @@ class ChartView @JvmOverloads constructor(
                 nearestPoint = item
             }
         }
-        event.setLocation(nearestPoint?.position?.x ?: 0F, nearestPoint?.position?.y ?: 0F)
-        mLastNearestPoint = nearestPoint
+
+        return nearestPoint
     }
 }

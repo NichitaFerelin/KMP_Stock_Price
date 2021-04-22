@@ -1,9 +1,9 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutPager
+package com.ferelin.stockprice.ui.aboutSection.aboutSection
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.base.BaseDataViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +16,7 @@ class AboutPagerViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
     selectedCompany: AdaptiveCompany?
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
 
     private var mSelectedCompany: AdaptiveCompany? = selectedCompany
     val selectedCompany: AdaptiveCompany?

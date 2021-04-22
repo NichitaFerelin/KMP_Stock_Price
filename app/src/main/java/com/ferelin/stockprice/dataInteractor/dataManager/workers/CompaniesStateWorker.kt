@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/*
+* Worker that is responsible for:
+*   - Providing companies(items) for display.
+*   - Providing company news(items) for display.
+*   - Notification when company data is updated(Quote changes / LiveTimePrice / StockCandles updates).
+*   - Companies data caching.
+* */
 class CompaniesStateWorker(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper

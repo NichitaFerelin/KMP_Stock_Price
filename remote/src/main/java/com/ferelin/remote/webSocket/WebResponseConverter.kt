@@ -1,7 +1,7 @@
 package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 

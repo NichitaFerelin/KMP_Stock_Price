@@ -14,9 +14,9 @@ import com.ferelin.remote.network.stockSymbols.StockSymbolApi
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.network.throttleManager.ThrottleManager
 import com.ferelin.remote.network.throttleManager.ThrottleManagerHelper
-import com.ferelin.remote.utilits.Api
-import com.ferelin.remote.utilits.RetrofitDelegate
-import com.ferelin.remote.utilits.offerSafe
+import com.ferelin.remote.utils.Api
+import com.ferelin.remote.utils.RetrofitDelegate
+import com.ferelin.remote.utils.offerSafe
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

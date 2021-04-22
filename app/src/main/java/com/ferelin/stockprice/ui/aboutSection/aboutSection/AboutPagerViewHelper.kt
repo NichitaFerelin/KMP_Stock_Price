@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutPager
+package com.ferelin.stockprice.ui.aboutSection.aboutSection
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
@@ -16,17 +16,13 @@ class AboutPagerViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mScaleInOut?.apply {
-            cancel()
-            setTarget(null)
-            removeAllListeners()
-        }
+        mScaleInOut?.cancel()
+        mScaleInOut?.setTarget(null)
+        mScaleInOut?.removeAllListeners()
     }
 
     fun runScaleInOut(target: View) {
-        mScaleInOut?.apply {
-            setTarget(target)
-            start()
-        }
+        mScaleInOut?.setTarget(target)
+        mScaleInOut?.start()
     }
 }

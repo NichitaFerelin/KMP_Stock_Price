@@ -1,4 +1,4 @@
-package com.ferelin.local.prefs
+package com.ferelin.local.preferences
 
 import kotlinx.coroutines.flow.Flow
 

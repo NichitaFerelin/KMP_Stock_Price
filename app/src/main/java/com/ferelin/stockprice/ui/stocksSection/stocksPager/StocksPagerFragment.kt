@@ -17,7 +17,7 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
-import com.ferelin.stockprice.utils.AnimationManager
+import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.google.android.material.transition.Hold
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

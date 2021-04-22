@@ -1,6 +1,6 @@
 package com.ferelin.remote.webSocket
 
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener

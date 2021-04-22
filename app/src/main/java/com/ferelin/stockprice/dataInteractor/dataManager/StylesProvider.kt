@@ -5,6 +5,11 @@ import androidx.core.content.ContextCompat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 
+/*
+* Item colors/images/icons can be changed dynamically.
+* This class is responsible for providing right color/image/icon depending
+*  on some fields like: is company favourite or not, company price profit, etc.
+* */
 class StylesProvider(private val mContext: Context) {
 
     private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite

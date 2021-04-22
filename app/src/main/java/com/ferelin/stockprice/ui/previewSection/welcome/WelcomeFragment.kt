@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.StockPriceTheme
+import com.ferelin.stockprice.utils.compose.StockPriceTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -41,7 +41,9 @@ class WelcomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             mViewModel.actionMoveToNextScreen.collect {
                 if (it) {
+
                     (activity as MainActivity).dataInteractor.setFirstTimeLaunchState(false)
+
                     parentFragmentManager.commit {
                         replace(R.id.fragmentContainer, StocksPagerFragment())
                     }

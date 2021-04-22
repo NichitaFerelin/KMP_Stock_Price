@@ -13,7 +13,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
-import com.ferelin.stockprice.utils.AnimationManager
+import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -43,12 +43,7 @@ class NewsFragment(
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        mBinding!!.recyclerViewNews.apply {
-            addItemDecoration(NewsItemDecoration(requireContext()))
-            adapter = mViewModel.recyclerAdapter.also {
-                it.setOnNewsClickListener(this@NewsFragment)
-            }
-        }
+        setUpRecyclerView()
         mBinding!!.fab.setOnClickListener {
             scrollToTop()
         }
@@ -113,6 +108,15 @@ class NewsFragment(
                     recyclerViewNews.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
+            }
+        }
+    }
+
+    private fun setUpRecyclerView() {
+        mBinding!!.recyclerViewNews.apply {
+            addItemDecoration(NewsItemDecoration(requireContext()))
+            adapter = mViewModel.recyclerAdapter.also {
+                it.setOnNewsClickListener(this@NewsFragment)
             }
         }
     }

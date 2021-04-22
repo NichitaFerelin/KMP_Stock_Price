@@ -1,4 +1,4 @@
-package com.ferelin.local.prefs
+package com.ferelin.local.preferences
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey

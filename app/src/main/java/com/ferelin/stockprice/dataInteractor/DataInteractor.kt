@@ -1,20 +1,15 @@
 package com.ferelin.stockprice.dataInteractor
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import com.ferelin.repository.RepositoryManager
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.StockHistoryConverter
 import com.ferelin.shared.SingletonHolder
-import com.ferelin.stockprice.dataInteractor.dataManager.DataManager
-import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.*
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorHandlerWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.NetworkConnectivityWorker
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
@@ -22,10 +17,16 @@ import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 
-class DataInteractor private constructor(
+/*
+* The MAIN and SINGLE entity for the UI layer interaction with data.
+*   - Providing multi states of data and errors.
+*   - Sending requests for data.
+*   - Sending notification about data loading.
+* */
+class DataInteractor(
     private val mRepositoryHelper: RepositoryManagerHelper,
     private val mLocalInteractorHelper: LocalInteractorHelper,
-    private val mDataManager: DataManager,
+    private val mDataMediator: DataMediator,
     private val mErrorHandlerWorker: ErrorHandlerWorker,
     private val mNetworkConnectivityWorker: NetworkConnectivityWorker
 ) : DataInteractorHelper {
@@ -34,19 +35,19 @@ class DataInteractor private constructor(
         get() = mErrorHandlerWorker.apiLimitError
 
     val companiesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mDataManager.companiesWorker.companiesState
+        get() = mDataMediator.companiesWorker.companiesState
 
     val companiesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataManager.companiesWorker.companiesUpdatesShared
+        get() = mDataMediator.companiesWorker.companiesUpdatesShared
 
     val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mDataManager.favouriteCompaniesWorker.favouriteCompaniesState
+        get() = mDataMediator.favouriteCompaniesWorker.favouriteCompaniesState
 
     val favouriteCompaniesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataManager.favouriteCompaniesWorker.favouriteCompaniesUpdatesShared
+        get() = mDataMediator.favouriteCompaniesWorker.favouriteCompaniesUpdatesShared
 
     val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
-        get() = mDataManager.searchRequestsWorker.searchRequestsState
+        get() = mDataMediator.searchRequestsWorker.searchRequestsState
 
     val isNetworkAvailableState: StateFlow<Boolean>
         get() = mNetworkConnectivityWorker.isNetworkAvailableState
@@ -55,7 +56,7 @@ class DataInteractor private constructor(
         get() = mErrorHandlerWorker.prepareCompaniesErrorShared
 
     val firstTimeLaunchState: StateFlow<Boolean?>
-        get() = mDataManager.firstTimeLaunchStateWorker.firstTimeLaunchState
+        get() = mDataMediator.firstTimeLaunchStateWorker.firstTimeLaunchState
 
     val loadCompanyQuoteErrorShared: SharedFlow<String>
         get() = mErrorHandlerWorker.loadCompanyQuoteErrorShared
@@ -89,7 +90,7 @@ class DataInteractor private constructor(
             .onEach {
                 when (it) {
                     is RepositoryResponse.Success -> {
-                        mDataManager.onStockCandlesLoaded(it)
+                        mDataMediator.onStockCandlesLoaded(it)
                         mErrorHandlerWorker.onSuccessResponse()
                     }
                     is RepositoryResponse.Failed -> {
@@ -111,7 +112,7 @@ class DataInteractor private constructor(
             .onEach {
                 when (it) {
                     is RepositoryResponse.Success -> {
-                        mDataManager.onCompanyNewsLoaded(it)
+                        mDataMediator.onCompanyNewsLoaded(it)
                         mErrorHandlerWorker.onSuccessResponse()
                     }
                     is RepositoryResponse.Failed -> {
@@ -133,7 +134,7 @@ class DataInteractor private constructor(
             .onEach {
                 when (it) {
                     is RepositoryResponse.Success -> {
-                        mDataManager.onCompanyQuoteLoaded(it)
+                        mDataMediator.onCompanyQuoteLoaded(it)
                         mErrorHandlerWorker.onSuccessResponse()
                     }
                     is RepositoryResponse.Failed -> {
@@ -155,7 +156,7 @@ class DataInteractor private constructor(
         return mRepositoryHelper.openConnection()
             .onEach {
                 when (it) {
-                    is RepositoryResponse.Success -> mDataManager.onWebSocketResponse(it)
+                    is RepositoryResponse.Success -> mDataMediator.onWebSocketResponse(it)
                     is RepositoryResponse.Failed -> {
                         if (!companiesState.value.data.isNullOrEmpty() && isNetworkAvailableState.value) {
                             mErrorHandlerWorker.onOpenConnectionErrorGot()
@@ -168,15 +169,15 @@ class DataInteractor private constructor(
     }
 
     override suspend fun onNewSearch(searchText: String) {
-        mDataManager.onNewSearch(searchText)
+        mDataMediator.onNewSearch(searchText)
     }
 
     override suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany) {
-        mDataManager.onAddFavouriteCompany(adaptiveCompany)
+        mDataMediator.onAddFavouriteCompany(adaptiveCompany)
     }
 
     override suspend fun removeCompanyFromFavourite(adaptiveCompany: AdaptiveCompany) {
-        mDataManager.onRemoveFavouriteCompany(adaptiveCompany)
+        mDataMediator.onRemoveFavouriteCompany(adaptiveCompany)
     }
 
     override suspend fun addCompanyToFavourite(symbol: String) {
@@ -194,57 +195,29 @@ class DataInteractor private constructor(
     private suspend fun prepareCompaniesData() {
         val responseCompanies = mLocalInteractorHelper.getCompaniesData()
         if (responseCompanies is LocalInteractorResponse.Success) {
-            mDataManager.onCompaniesDataPrepared(responseCompanies.companies)
+            mDataMediator.onCompaniesDataPrepared(responseCompanies.companies)
         } else mErrorHandlerWorker.onPrepareCompaniesErrorGot()
     }
 
     private suspend fun prepareSearchesHistory() {
         val responseSearchesHistory = mLocalInteractorHelper.getSearchRequestsHistory()
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
-            mDataManager.onSearchRequestsHistoryPrepared(responseSearchesHistory.searchesHistory)
+            mDataMediator.onSearchRequestsHistoryPrepared(responseSearchesHistory.searchesHistory)
         } else mErrorHandlerWorker.onLoadSearchRequestsErrorGot()
 
     }
 
     private suspend fun prepareFirstTimeLaunchState() {
         val firstTimeLaunchResponse = mLocalInteractorHelper.getFirstTimeLaunchState()
-        mDataManager.onFirstTimeLaunchStateResponse(firstTimeLaunchResponse)
+        mDataMediator.onFirstTimeLaunchStateResponse(firstTimeLaunchResponse)
     }
 
     private fun getCompany(symbol: String): AdaptiveCompany? {
-        return findCompany(mDataManager.companiesWorker.companies, symbol)
+        return findCompany(mDataMediator.companiesWorker.companies, symbol)
     }
 
     companion object : SingletonHolder<DataInteractor, Context>({
-        val repositoryHelper = RepositoryManager.getInstance(it)
-        val localInteractorHelper = LocalInteractor(repositoryHelper)
-        val stylesProvider = StylesProvider(it)
-        val errorHandlerWorker = ErrorHandlerWorker(it)
-        val firstTimeLaunchWorker = FirstTimeLaunchStateWorker()
-        val dataManager = DataManager(
-            CompaniesStateWorker(stylesProvider, localInteractorHelper),
-            FavouriteCompaniesStateWorker(
-                stylesProvider,
-                localInteractorHelper,
-                repositoryHelper,
-                errorHandlerWorker
-            ),
-            SearchRequestsStateWorker(localInteractorHelper),
-            firstTimeLaunchWorker
-        )
-        val networkConnectivityWorker = NetworkConnectivityWorker(
-            it.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,
-            NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build()
-        )
-        DataInteractor(
-            repositoryHelper,
-            localInteractorHelper,
-            dataManager,
-            errorHandlerWorker,
-            networkConnectivityWorker
-        )
+        val dataInteractor by DataInteractorDelegate(it)
+        dataInteractor
     })
 }

@@ -6,6 +6,11 @@ import android.net.NetworkRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+
+/*
+* Worker that is responsible for:
+*   - Notifications about network state.
+* */
 class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: NetworkRequest) {
 
     private val mIsNetworkAvailableState = MutableStateFlow(true)

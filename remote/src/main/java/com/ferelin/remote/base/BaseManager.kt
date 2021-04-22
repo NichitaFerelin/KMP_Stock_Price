@@ -1,10 +1,13 @@
 package com.ferelin.remote.base
 
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+* Common onResponse() logic for all network responses.
+* */
 class BaseManager<T>(
     private val mOnResponse: (response: BaseResponse<T>) -> Unit
 ) : Callback<T> {

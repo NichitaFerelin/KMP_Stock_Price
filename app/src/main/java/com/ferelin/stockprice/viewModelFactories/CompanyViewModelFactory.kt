@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerViewModel
+import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
 import kotlinx.coroutines.FlowPreview

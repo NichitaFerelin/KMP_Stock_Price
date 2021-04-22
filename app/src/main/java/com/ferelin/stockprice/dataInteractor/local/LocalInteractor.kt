@@ -6,6 +6,9 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.firstOrNull
 
+/*
+* Interactor that is responsible for local requests.
+* */
 class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
 
     override suspend fun getCompaniesData(): LocalInteractorResponse {

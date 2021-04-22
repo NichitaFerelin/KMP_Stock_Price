@@ -9,7 +9,11 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsS
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 
-class DataManager(
+/*
+* Class DataMediator is an implementation of the pattern Mediator.
+* Is designed to send the requests to the appropriate objects.
+* */
+class DataMediator(
     val companiesWorker: CompaniesStateWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesStateWorker,
     val searchRequestsWorker: SearchRequestsStateWorker,

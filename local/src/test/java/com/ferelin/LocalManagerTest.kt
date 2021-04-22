@@ -6,8 +6,8 @@ import com.ferelin.local.database.CompaniesManager
 import com.ferelin.local.database.CompaniesManagerHelper
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.json.JsonManagerHelper
-import com.ferelin.local.prefs.StorePreferences
-import com.ferelin.local.prefs.StorePreferencesHelper
+import com.ferelin.local.preferences.StorePreferences
+import com.ferelin.local.preferences.StorePreferencesHelper
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull

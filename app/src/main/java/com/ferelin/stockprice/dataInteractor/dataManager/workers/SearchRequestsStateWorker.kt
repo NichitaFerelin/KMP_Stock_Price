@@ -6,6 +6,12 @@ import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/*
+* Worker that is responsible for:
+*   - Providing search requests history
+*   - Caching search requests
+*   - Optimizing search requests size
+* */
 class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInteractorHelper) {
 
     private var mSearchRequests: MutableList<AdaptiveSearchRequest> = mutableListOf()
@@ -34,6 +40,9 @@ class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInterac
         mLocalInteractorHelper.setSearchRequestsHistory(mSearchRequests)
     }
 
+    /*
+    * If new search-text-request is contains in history -> item in history will be removed.
+    * */
     private fun optimizeSearchRequests(newSearchRequest: AdaptiveSearchRequest) {
         var endBorder = mSearchRequests.size
         var cursor = 0

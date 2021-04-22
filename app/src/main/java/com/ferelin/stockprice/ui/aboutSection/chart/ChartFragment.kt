@@ -17,7 +17,7 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.custom.utils.SuggestionControlHelper
 import com.ferelin.stockprice.databinding.FragmentChartBinding
-import com.ferelin.stockprice.utils.AnimatorManager
+import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -97,6 +97,7 @@ class ChartFragment(
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mBinding?.chartView?.invalidateVariables()
         mBinding = null
         mCurrentActiveText = null
         mCurrentActiveCard = null
@@ -105,22 +106,20 @@ class ChartFragment(
     private fun onChartClicked(marker: Marker) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             prepareToChartDataChanges()
-            withContext(mCoroutineContext.IO) {
-                mBinding!!.apply {
-                    SuggestionControlHelper.applyCoordinatesChanges(
-                        requireContext(),
-                        includeSuggestion.root,
-                        point,
-                        includeSuggestion.viewPlug,
-                        includeSuggestion.viewArrow,
-                        chartView,
-                        marker
-                    )
-                }
-                withContext(mCoroutineContext.Main) {
-                    updateSuggestionText(marker)
-                    showSuggestion()
-                }
+            mBinding!!.apply {
+                SuggestionControlHelper.applyCoordinatesChanges(
+                    requireContext(),
+                    includeSuggestion.root,
+                    point,
+                    includeSuggestion.viewPlug,
+                    includeSuggestion.viewArrow,
+                    chartView,
+                    marker
+                )
+            }
+            withContext(mCoroutineContext.Main) {
+                updateSuggestionText(marker)
+                showSuggestion()
             }
         }
     }

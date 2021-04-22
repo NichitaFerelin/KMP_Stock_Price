@@ -10,7 +10,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.base.BaseViewHelper
-import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
+import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.google.android.material.transition.Hold

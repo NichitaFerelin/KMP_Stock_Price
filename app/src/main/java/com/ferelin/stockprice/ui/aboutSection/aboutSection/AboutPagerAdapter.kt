@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutPager
+package com.ferelin.stockprice.ui.aboutSection.aboutSection
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

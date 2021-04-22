@@ -1,5 +1,8 @@
 package com.ferelin.stockprice.ui.aboutSection.chart
 
+/*
+* Charts Tabs
+* */
 sealed class ChartSelectedType {
     object All : ChartSelectedType()
     object Year : ChartSelectedType()

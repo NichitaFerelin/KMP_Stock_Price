@@ -14,7 +14,7 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoadingBinding
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.MotionListenerAdapter
+import com.ferelin.stockprice.utils.anim.MotionManager
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -41,16 +41,8 @@ class LoadingFragment : BaseFragment<LoadingViewModel, LoadingViewHelper>() {
         super.initObservers()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.moveToNextScreen.collect {
-                it?.let {
-                    mBinding!!.root.setTransitionListener(object : MotionListenerAdapter() {
-                        override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                            super.onTransitionCompleted(p0, p1)
-                            removeAutoTransition()
-                            replaceFragment(it)
-                        }
-                    })
-                }
+            mViewModel.moveToNextScreen.collect { isFirstTimeLaunch ->
+                isFirstTimeLaunch?.let { setUpTransitionListener(it) }
             }
         }
     }
@@ -58,6 +50,16 @@ class LoadingFragment : BaseFragment<LoadingViewModel, LoadingViewHelper>() {
     override fun onDestroyView() {
         super.onDestroyView()
         mBinding = null
+    }
+
+    private fun setUpTransitionListener(isFirstTimeLaunch: Boolean) {
+        mBinding!!.root.setTransitionListener(object : MotionManager() {
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                super.onTransitionCompleted(p0, p1)
+                removeAutoTransition()
+                replaceFragment(isFirstTimeLaunch)
+            }
+        })
     }
 
     private fun replaceFragment(isFirstTimeLaunch: Boolean) {

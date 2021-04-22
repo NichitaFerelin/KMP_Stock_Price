@@ -4,6 +4,10 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/*
+* Worker that is responsible for:
+*   - Notification about "first time launch" state.
+* */
 class FirstTimeLaunchStateWorker {
 
     private val mFirstTimeLaunchState = MutableStateFlow<Boolean?>(null)

@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.utils
+package com.ferelin.stockprice.utils.compose
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -14,19 +14,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ferelin.stockprice.R
 
+@Composable
+fun StockPriceTheme(
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colors = StockPriceColors,
+        typography = StockPriceTypography,
+        shapes = StockPriceShapes,
+        content = content
+    )
+}
+
 val StockPriceTypography = Typography(
     h1 = TextStyle(
-        color = Color(0xFF000000),
+        color = Color.Black,
         fontSize = 28.sp,
         fontFamily = FontFamily(Font(R.font.w_700))
     ),
     h2 = TextStyle(
-        color = Color(0xFF000000),
+        color = Color.Black,
         fontSize = 18.sp,
         fontFamily = FontFamily(Font(R.font.w_700))
     ),
     h3 = TextStyle(
-        color = Color(0xFF000000),
+        color = Color.Black,
         fontSize = 16.sp,
         fontFamily = FontFamily(Font(R.font.w_600))
     )
@@ -44,15 +56,3 @@ val StockPriceColors = lightColors(
     background = Color.White,
     surface = Color.White,
 )
-
-@Composable
-fun StockPriceTheme(
-    content: @Composable () -> Unit
-) {
-    MaterialTheme(
-        colors = StockPriceColors,
-        typography = StockPriceTypography,
-        shapes = StockPriceShapes,
-        content = content
-    )
-}

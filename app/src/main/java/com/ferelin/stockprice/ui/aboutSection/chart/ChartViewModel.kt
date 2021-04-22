@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.base.BaseDataViewModel
 import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
@@ -15,7 +15,7 @@ class ChartViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
     selectedCompany: AdaptiveCompany?
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
 
     private val mSelectedCompany: AdaptiveCompany? = selectedCompany
     private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null

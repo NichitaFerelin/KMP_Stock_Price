@@ -1,4 +1,4 @@
-package com.ferelin.remote.utilits
+package com.ferelin.remote.utils
 
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.isActive

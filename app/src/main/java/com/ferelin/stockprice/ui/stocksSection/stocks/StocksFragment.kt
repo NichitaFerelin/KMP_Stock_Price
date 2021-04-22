@@ -13,7 +13,7 @@ import com.ferelin.stockprice.databinding.FragmentStocksBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.AnimationManager
+import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

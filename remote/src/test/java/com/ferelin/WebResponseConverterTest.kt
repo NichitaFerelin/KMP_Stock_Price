@@ -1,7 +1,7 @@
 package com.ferelin
 
 import com.ferelin.provider.FakeRemoteResponses
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import com.ferelin.remote.webSocket.WebResponseConverter
 import org.junit.Assert
 import org.junit.Before

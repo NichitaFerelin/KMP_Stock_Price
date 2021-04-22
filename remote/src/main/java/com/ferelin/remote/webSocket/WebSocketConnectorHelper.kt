@@ -1,7 +1,7 @@
 package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
 interface WebSocketConnectorHelper {

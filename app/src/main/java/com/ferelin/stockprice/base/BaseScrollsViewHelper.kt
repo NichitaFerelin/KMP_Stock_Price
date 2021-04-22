@@ -6,6 +6,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
 
+/*
+* BaseViewHelper with provided default anim for FAB.
+* Can be applied to fragments where need to hide/show FAB.
+* */
 abstract class BaseScrollsViewHelper : BaseViewHelper() {
 
     private var mFadeOut: Animation? = null
@@ -19,38 +23,28 @@ abstract class BaseScrollsViewHelper : BaseViewHelper() {
     }
 
     override fun invalidate() {
-        mFadeOut?.apply {
-            cancel()
-            setAnimationListener(null)
-        }
-        mFadeIn?.apply {
-            cancel()
-            setAnimationListener(null)
-        }
-        mScaleOut?.apply {
-            setAnimationListener(null)
-            cancel()
-        }
+        mFadeOut?.cancel()
+        mFadeOut?.setAnimationListener(null)
+
+        mFadeIn?.cancel()
+        mFadeIn?.setAnimationListener(null)
+
+        mScaleOut?.cancel()
+        mScaleOut?.setAnimationListener(null)
     }
 
     fun runFadeIn(target: View, callback: Animation.AnimationListener? = null) {
-        mFadeIn?.let {
-            it.setAnimationListener(callback)
-            target.startAnimation(it)
-        }
+        mFadeIn?.setAnimationListener(callback)
+        target.startAnimation(mFadeIn)
     }
 
     fun runFadeOut(target: View, callback: Animation.AnimationListener? = null) {
-        mFadeOut?.let {
-            it.setAnimationListener(callback)
-            target.startAnimation(mFadeOut)
-        }
+        mFadeOut?.setAnimationListener(callback)
+        target.startAnimation(mFadeOut)
     }
 
     fun runScaleOut(target: View, callback: Animation.AnimationListener? = null) {
-        mScaleOut?.let {
-            it.setAnimationListener(callback)
-            target.startAnimation(mScaleOut)
-        }
+        mScaleOut?.setAnimationListener(callback)
+        target.startAnimation(mScaleOut)
     }
 }

@@ -12,6 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/*
+* Worker that is responsible for:
+*   - Providing favourite companies(items) for display.
+*   - Notification when company was added/removed to favourites.
+*   - Subscribing favourite companies for live-time updates
+*   - Unsubscribing companies from live-time updates when it was removed from favourite.
+*   - Control the limit of favourite companies(look at mCompaniesLimit variable).
+*   - Caching data.
+* */
 class FavouriteCompaniesStateWorker(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper,

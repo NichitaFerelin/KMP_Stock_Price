@@ -3,7 +3,7 @@ package com.ferelin.stockprice.ui.stocksSection.base
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.base.BaseDataViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 abstract class BaseStocksViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
 
     protected val mRecyclerAdapter = StocksRecyclerAdapter().apply {
         setOnBindCallback { _, company, position ->

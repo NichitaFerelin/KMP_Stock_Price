@@ -10,7 +10,7 @@ import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages

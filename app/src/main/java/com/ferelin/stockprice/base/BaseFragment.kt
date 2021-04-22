@@ -11,7 +11,13 @@ import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
 import kotlinx.coroutines.launch
 
-abstract class BaseFragment<out T : BaseViewModel, out V : BaseViewHelper>(
+/*
+* BaseFragment is the fundament for fragment where is needed:
+*   - Data source
+*   - View Model
+*   - View Helper
+* */
+abstract class BaseFragment<out T : BaseDataViewModel, out V : BaseViewHelper>(
     protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : Fragment() {
 
