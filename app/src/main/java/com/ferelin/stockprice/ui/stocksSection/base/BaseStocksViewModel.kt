@@ -32,7 +32,7 @@ abstract class BaseStocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.companiesUpdatesShared
                 .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
-                .collect { updateRecyclerItem(it) }
+                .collect { updateRecyclerViewItem(it) }
         }
     }
 
@@ -47,7 +47,7 @@ abstract class BaseStocksViewModel(
     /*
     * To avoid breaks of shared transition anim
     *  */
-    fun postponeReferenceRemoving(finally: () -> Unit) {
+    fun postponeReferencesRemove(finally: () -> Unit) {
         viewModelScope.launch(mCoroutineContext.IO) {
             delay(300)
             withContext(mCoroutineContext.Main) {
@@ -56,38 +56,15 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    protected fun setRecyclerItems(items: List<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            val newItems = ArrayList(items)
-            if (newItems.size > 10) {
-                setItemsToRecyclerWithAnim(newItems)
-            } else {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.setCompanies(newItems)
-                }
-            }
-        }
+    protected fun setRecyclerViewItems(items: List<AdaptiveCompany>) {
+        mRecyclerAdapter.setCompanies(ArrayList(items))
     }
 
-    protected open fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
+    protected open fun updateRecyclerViewItem(notificator: DataNotificator<AdaptiveCompany>) {
         val index = mRecyclerAdapter.companies.indexOf(notificator.data)
         if (index != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {
                 mRecyclerAdapter.updateCompany(notificator.data!!, index)
-            }
-        }
-    }
-
-    private fun setItemsToRecyclerWithAnim(newItems: ArrayList<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            for (index in 0 until 10) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addCompanyToEnd(newItems[index])
-                }
-                delay(30)
-            }
-            withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.setCompaniesInRange(newItems, 10, newItems.size - 1)
             }
         }
     }

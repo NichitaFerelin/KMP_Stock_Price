@@ -74,7 +74,7 @@ class SearchViewModel(
             launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { it is DataNotificator.ItemUpdatedDefault }
-                    .collect { updateRecyclerItem(it) }
+                    .collect { updateRecyclerViewItem(it) }
             }
             launch {
                 mDataInteractor.loadSearchRequestsErrorShared
@@ -84,7 +84,7 @@ class SearchViewModel(
         }
     }
 
-    override fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
+    override fun updateRecyclerViewItem(notificator: DataNotificator<AdaptiveCompany>) {
         val indexInResults = mRecyclerAdapter.companies.indexOf(notificator.data)
         if (indexInResults != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {

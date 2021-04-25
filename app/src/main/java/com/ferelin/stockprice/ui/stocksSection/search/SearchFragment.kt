@@ -10,12 +10,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
-import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.openKeyboard
@@ -35,6 +35,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
+    override var mStocksRecyclerView: RecyclerView? = null
     private var mBinding: FragmentSearchBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,14 +50,17 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentSearchBinding.inflate(inflater, container, false)
+        mBinding = FragmentSearchBinding.inflate(inflater, container, false).also {
+            mStocksRecyclerView = it.recyclerViewSearchResults
+        }
         return mBinding!!.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
 
-        mViewModel.recyclerAdapter.setTextDividers(hashMapOf(0 to resources.getString(R.string.hintStocks)))
+        mViewModel.recyclerAdapter.setHeader(resources.getString(R.string.hintStocks))
+
         restoreTransitionState()
         setUpBackPressedCallback()
         setUpRecyclerViews()
@@ -127,7 +131,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mViewModel.postponeReferenceRemoving {
+        mViewModel.postponeReferencesRemove {
             mBinding?.recyclerViewSearchedHistory?.adapter = null
             mBinding?.recyclerViewPopularRequests?.adapter = null
             mBinding?.recyclerViewSearchResults?.adapter = null
@@ -185,10 +189,6 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     }
 
     private fun setUpRecyclerViews() {
-        mBinding!!.recyclerViewSearchResults.apply {
-            addItemDecoration(StocksItemDecoration(requireContext()))
-            adapter = mViewModel.recyclerAdapter
-        }
         mBinding!!.recyclerViewSearchedHistory.apply {
             addItemDecoration(SearchItemDecoration(requireContext()))
             adapter = mViewModel.searchesAdapter.also {

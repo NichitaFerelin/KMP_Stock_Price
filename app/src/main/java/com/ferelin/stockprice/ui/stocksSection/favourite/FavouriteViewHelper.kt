@@ -1,5 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.favourite
 
-import com.ferelin.stockprice.base.BaseScrollsViewHelper
+import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewHelper
 
-class FavouriteViewHelper : BaseScrollsViewHelper()
+class FavouriteViewHelper : BaseStocksViewHelper()

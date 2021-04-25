@@ -7,7 +7,7 @@ import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
 
 /*
-* BaseViewHelper with provided default anim for FAB.
+* ViewHelper with provided default anim for FAB.
 * Can be applied to fragments where need to hide/show FAB.
 * */
 abstract class BaseScrollsViewHelper : BaseViewHelper() {

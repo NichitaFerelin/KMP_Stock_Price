@@ -32,7 +32,7 @@ class StocksViewModel(
             launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { it is DataNotificator.ItemUpdatedDefault }
-                    .collect { updateRecyclerItem(it) }
+                    .collect { updateRecyclerViewItem(it) }
             }
             launch {
                 mDataInteractor.openConnectionErrorState

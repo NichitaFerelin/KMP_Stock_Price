@@ -26,22 +26,19 @@ class FavouriteViewModel(
         super.initObserversBlock()
 
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mDataInteractor.favouriteCompaniesState
-                    .filter { it is DataNotificator.DataPrepared }
-                    .take(1)
-                    .collect { onFavouriteCompaniesPrepared(it) }
-            }.join()
+            mDataInteractor.favouriteCompaniesState
+                .filter { it is DataNotificator.DataPrepared }
+                .take(1)
+                .collect { onFavouriteCompaniesPrepared(it) }
 
             mDataInteractor.favouriteCompaniesUpdatesShared
                 .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
                 .collect { onFavouriteCompanyUpdateShared(it) }
-
         }
     }
 
     private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        setRecyclerItems(notificator.data!!)
+        setRecyclerViewItems(notificator.data!!)
     }
 
     private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
