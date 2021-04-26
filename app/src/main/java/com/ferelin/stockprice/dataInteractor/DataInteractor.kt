@@ -153,7 +153,7 @@ class DataInteractor(
 
     @FlowPreview
     override suspend fun openConnection(): Flow<AdaptiveCompany> {
-        return mRepositoryHelper.openConnection()
+        return mRepositoryHelper.openWebSocketConnection()
             .onEach {
                 when (it) {
                     is RepositoryResponse.Success -> mDataMediator.onWebSocketResponse(it)
@@ -190,6 +190,11 @@ class DataInteractor(
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
         mLocalInteractorHelper.setFirstTimeLaunchState(state)
+    }
+
+    override fun prepareToWebSocketReconnection() {
+        mRepositoryHelper.invalidateWebSocketConnection()
+        mDataMediator.resubscribeItemsOnLiveTimeUpdates()
     }
 
     private suspend fun prepareCompaniesData() {

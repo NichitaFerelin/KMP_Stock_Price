@@ -14,34 +14,47 @@ import java.util.*
 
 open class WebSocketConnector : WebSocketConnectorHelper {
 
-    private val mBase = "wss://ws.finnhub.io?token="
-    private val mConverter = WebResponseConverter()
+    private val mBaseApiUrl = "wss://ws.finnhub.io?token="
+    private val mResponseConverter = WebResponseConverter()
 
     private var mWebSocket: WebSocket? = null
+
+    /*
+    * If the web socket has not yet been initialized, then incoming tasks are inserted into this queue.
+    * */
     private var mMessagesQueue: Queue<String> = LinkedList()
 
+    /*
+    * Holding open price "owner" symbol with previous price for response
+    * */
     private var mOpenPricesHolder = hashMapOf<String, Double>()
 
-    override fun subscribeItem(symbol: String, openPrice: Double) {
-        mOpenPricesHolder[symbol] = openPrice
+    override fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double) {
+        mOpenPricesHolder[symbol] = previousPrice
         mWebSocket?.let {
             subscribe(it, symbol)
         } ?: mMessagesQueue.offer(symbol)
     }
 
-    override fun unsubscribeItem(symbol: String) {
+    override fun unsubscribeItemFromLiveTimeUpdates(symbol: String) {
         mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
     }
 
     @FlowPreview
-    override fun openConnection(token: String): Flow<BaseResponse<WebSocketResponse>> =
+    override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> =
         callbackFlow {
-            val request = Request.Builder().url("$mBase$token").build()
+            val request = Request.Builder().url("$mBaseApiUrl$token").build()
             val okHttp = OkHttpClient()
+
             mWebSocket = okHttp.newWebSocket(request, WebSocketManager {
-                val converted = mConverter.fromJson(it, mOpenPricesHolder)
+                val converted = mResponseConverter.fromJson(it, mOpenPricesHolder)
                 offer(converted)
-            }).also { while (mMessagesQueue.isNotEmpty()) subscribe(it, mMessagesQueue.poll()!!) }
+            }).also {
+                while (mMessagesQueue.isNotEmpty()) {
+                    subscribe(it, mMessagesQueue.poll()!!)
+                }
+            }
+
             okHttp.dispatcher.executorService.shutdown()
 
             awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }
@@ -49,8 +62,9 @@ open class WebSocketConnector : WebSocketConnectorHelper {
             .debounce(100)
             .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override fun closeConnection() {
+    override fun closeWebSocketConnection() {
         mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)
+        mWebSocket = null
     }
 
     private fun subscribe(webSocket: WebSocket, symbol: String) {

@@ -58,6 +58,10 @@ class FavouriteCompaniesStateWorker(
         mFavouriteCompaniesState.value = DataNotificator.DataPrepared(favouriteCompanies)
     }
 
+    fun resubscribeItemsOnLiveTimeUpdates() {
+        mFavouriteCompanies.forEach { subscribeCompanyOnLiveTimeUpdates(it) }
+    }
+
     suspend fun onCompanyChanged(company: AdaptiveCompany) {
         mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemUpdatedDefault(company))
     }

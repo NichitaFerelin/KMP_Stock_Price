@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface WebSocketConnectorHelper {
 
-    fun openConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse<WebSocketResponse>>
+    fun openWebSocketConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse<WebSocketResponse>>
 
-    fun closeConnection()
+    fun closeWebSocketConnection()
 
-    fun subscribeItem(symbol: String, openPrice: Double)
+    fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double)
 
-    fun unsubscribeItem(symbol: String)
+    fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
 }

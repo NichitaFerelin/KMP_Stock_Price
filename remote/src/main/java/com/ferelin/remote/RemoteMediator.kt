@@ -11,25 +11,28 @@ import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import com.ferelin.remote.webSocket.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 
-class RemoteManager(
+/*
+* Providing requests to right entity
+* */
+class RemoteMediator(
     private val mNetworkManager: NetworkManagerHelper,
     private val mWebSocketConnector: WebSocketConnectorHelper
-) : RemoteManagerHelper {
+) : RemoteMediatorHelper {
 
-    override fun openConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
-        return mWebSocketConnector.openConnection(token)
+    override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
+        return mWebSocketConnector.openWebSocketConnection(token)
     }
 
-    override fun closeConnection() {
-        mWebSocketConnector.closeConnection()
+    override fun closeWebSocketConnection() {
+        mWebSocketConnector.closeWebSocketConnection()
     }
 
-    override fun subscribeItem(symbol: String, openPrice: Double) {
-        mWebSocketConnector.subscribeItem(symbol, openPrice)
+    override fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double) {
+        mWebSocketConnector.subscribeItemOnLiveTimeUpdates(symbol, previousPrice)
     }
 
-    override fun unsubscribeItem(symbol: String) {
-        mWebSocketConnector.unsubscribeItem(symbol)
+    override fun unsubscribeItemFromLiveTimeUpdates(symbol: String) {
+        mWebSocketConnector.unsubscribeItemFromLiveTimeUpdates(symbol)
     }
 
     override fun loadStockCandles(

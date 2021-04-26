@@ -9,8 +9,12 @@ interface RepositoryManagerHelper {
 
     fun loadStockCandles(
         symbol: String,
+        /*
+        * Api has a limit on receiving data a maximum of year ago
+        * */
         from: Long = Time.convertMillisForRequest(System.currentTimeMillis() - Time.ONE_YEAR),
         to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
+        // Days format
         resolution: String = "D"
     ): Flow<RepositoryResponse<AdaptiveCompanyHistory>>
 
@@ -20,11 +24,16 @@ interface RepositoryManagerHelper {
 
     fun loadCompanyNews(
         symbol: String,
+        /*
+        * Api has a limit on receiving data a maximum of year ago
+        * */
         from: String = Time.getYearAgoDateForRequest(),
         to: String = Time.getCurrentDateForRequest()
     ): Flow<RepositoryResponse<AdaptiveCompanyNews>>
 
-    fun openConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+    fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+
+    fun invalidateWebSocketConnection()
 
     fun loadCompanyQuote(
         symbol: String,

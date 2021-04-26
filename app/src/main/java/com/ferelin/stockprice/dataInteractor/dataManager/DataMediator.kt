@@ -63,6 +63,10 @@ class DataMediator(
         searchRequestsWorker.onDataPrepared(searches)
     }
 
+    fun resubscribeItemsOnLiveTimeUpdates() {
+        favouriteCompaniesWorker.resubscribeItemsOnLiveTimeUpdates()
+    }
+
     fun onFirstTimeLaunchStateResponse(response: LocalInteractorResponse) {
         firstTimeLaunchStateWorker.onResponse(response)
     }

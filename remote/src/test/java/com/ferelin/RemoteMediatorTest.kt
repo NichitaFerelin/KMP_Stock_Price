@@ -1,7 +1,7 @@
 package com.ferelin
 
-import com.ferelin.remote.RemoteManager
-import com.ferelin.remote.RemoteManagerHelper
+import com.ferelin.remote.RemoteMediator
+import com.ferelin.remote.RemoteMediatorHelper
 import com.ferelin.remote.network.NetworkManager
 import com.ferelin.remote.network.NetworkManagerHelper
 import com.ferelin.remote.webSocket.WebSocketConnector
@@ -16,9 +16,9 @@ import org.robolectric.annotation.Config
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class RemoteManagerTest {
+class RemoteMediatorTest {
 
-    private lateinit var mRemoteManager: RemoteManagerHelper
+    private lateinit var mRemoteMediator: RemoteMediatorHelper
 
     @Spy
     private lateinit var mNetworkManager: NetworkManagerHelper
@@ -30,35 +30,35 @@ class RemoteManagerTest {
     fun setUp() {
         mNetworkManager = mock(NetworkManager::class.java)
         mWebSocketConnector = mock(WebSocketConnector::class.java)
-        mRemoteManager = RemoteManager(mNetworkManager, mWebSocketConnector)
+        mRemoteMediator = RemoteMediator(mNetworkManager, mWebSocketConnector)
     }
 
     @Test
     fun openConnection() {
         val token = "token"
-        mRemoteManager.openConnection(token)
-        verify(mWebSocketConnector, times(1)).openConnection(token)
+        mRemoteMediator.openWebSocketConnection(token)
+        verify(mWebSocketConnector, times(1)).openWebSocketConnection(token)
     }
 
     @Test
     fun closeConnection() {
-        mRemoteManager.closeConnection()
-        verify(mWebSocketConnector, times(1)).closeConnection()
+        mRemoteMediator.closeWebSocketConnection()
+        verify(mWebSocketConnector, times(1)).closeWebSocketConnection()
     }
 
     @Test
     fun subscribeItem() {
         val symbol = "symbol"
         val price = 100.0
-        mRemoteManager.subscribeItem(symbol, price)
-        verify(mWebSocketConnector, times(1)).subscribeItem(symbol, price)
+        mRemoteMediator.subscribeItemOnLiveTimeUpdates(symbol, price)
+        verify(mWebSocketConnector, times(1)).subscribeItemOnLiveTimeUpdates(symbol, price)
     }
 
     @Test
     fun unsubscribeItem() {
         val symbol = "symbol"
-        mRemoteManager.unsubscribeItem(symbol)
-        verify(mWebSocketConnector, times(1)).unsubscribeItem(symbol)
+        mRemoteMediator.unsubscribeItemFromLiveTimeUpdates(symbol)
+        verify(mWebSocketConnector, times(1)).unsubscribeItemFromLiveTimeUpdates(symbol)
     }
 
     @Test
@@ -67,14 +67,14 @@ class RemoteManagerTest {
         val from = 100L
         val to = 200L
         val resolution = "D"
-        mRemoteManager.loadStockCandles(symbol, from, to, resolution)
+        mRemoteMediator.loadStockCandles(symbol, from, to, resolution)
         verify(mNetworkManager, times(1)).loadStockCandles(symbol, from, to, resolution)
     }
 
     @Test
     fun loadCompanyProfile() {
         val symbol = "symbol"
-        mRemoteManager.loadCompanyProfile(symbol)
+        mRemoteMediator.loadCompanyProfile(symbol)
         verify(mNetworkManager, times(1)).loadCompanyProfile(symbol)
     }
 
@@ -83,7 +83,7 @@ class RemoteManagerTest {
         val symbol = "symbol"
         val from = "from"
         val to = "to"
-        mRemoteManager.loadCompanyNews(symbol, from, to)
+        mRemoteMediator.loadCompanyNews(symbol, from, to)
         verify(mNetworkManager, times(1)).loadCompanyNews(symbol, from, to)
     }
 
@@ -91,7 +91,7 @@ class RemoteManagerTest {
     fun loadCompanyQuote() {
         val symbol = "symbol"
         val position = 1
-        mRemoteManager.loadCompanyQuote(symbol, position)
+        mRemoteMediator.loadCompanyQuote(symbol, position)
         verify(mNetworkManager, times(1)).loadCompanyQuote(symbol, position)
     }
 }

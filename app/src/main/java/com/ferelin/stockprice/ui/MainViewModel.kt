@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -36,6 +35,8 @@ class MainViewModel(
     val actionShowApiLimitError: SharedFlow<Unit>
         get() = mActionShowApiLimitError
 
+    private var mNetworkWasLost: Boolean = false
+
     @FlowPreview
     fun initObservers() {
         viewModelScope.launch(mCoroutineContext.IO) {
@@ -46,19 +47,36 @@ class MainViewModel(
             }
             launch {
                 mDataInteractor.isNetworkAvailableState
-                    .filter { !it }
-                    .collect { mActionShowNetworkError.emit(Unit) }
+                    .collect { onNetworkStateChanged(it) }
             }
             launch {
                 mDataInteractor.apiLimitError
                     .filter { it }
                     .collect { mActionShowApiLimitError.emit(Unit) }
             }
-            launch {
-                mDataInteractor.prepareData()
-                delay(10_000L)
+            launch { mDataInteractor.prepareData() }
+        }
+    }
+
+    private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            if (isAvailable) {
+                /*
+                * When the network is lost -> web socket breaks.
+                * */
+                if (mNetworkWasLost) {
+                    restartWebSocket()
+                }
                 mDataInteractor.openConnection().collect()
+            } else {
+                mNetworkWasLost = true
+                mActionShowNetworkError.emit(Unit)
             }
         }
+    }
+
+    private fun restartWebSocket() {
+        mDataInteractor.prepareToWebSocketReconnection()
+        mNetworkWasLost = false
     }
 }

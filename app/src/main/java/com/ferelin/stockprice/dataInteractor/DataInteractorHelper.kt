@@ -26,4 +26,6 @@ interface DataInteractorHelper {
     suspend fun onNewSearch(searchText: String)
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
+
+    fun prepareToWebSocketReconnection()
 }

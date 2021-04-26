@@ -23,17 +23,14 @@ class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: Ne
             object : ConnectivityManager.NetworkCallback() {
 
                 override fun onAvailable(network: Network) {
-                    super.onAvailable(network)
                     mIsNetworkAvailableState.value = true
                 }
 
                 override fun onLost(network: Network) {
-                    super.onLost(network)
                     mIsNetworkAvailableState.value = false
                 }
 
                 override fun onUnavailable() {
-                    super.onUnavailable()
                     mIsNetworkAvailableState.value = false
                 }
             })
