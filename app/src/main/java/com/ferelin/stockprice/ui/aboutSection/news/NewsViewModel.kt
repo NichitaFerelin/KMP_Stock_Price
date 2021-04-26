@@ -50,12 +50,6 @@ class NewsViewModel(
             }
 
             launch {
-                mDataInteractor.isNetworkAvailableState
-                    .filter { it }
-                    .take(1)
-                    .collect()
-            }.join()
-            launch {
                 mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
                     .take(1)
                     .collect {

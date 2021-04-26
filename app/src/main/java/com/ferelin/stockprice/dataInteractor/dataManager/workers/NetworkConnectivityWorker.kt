@@ -3,6 +3,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.os.Build
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 * */
 class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: NetworkRequest) {
 
-    private val mIsNetworkAvailableState = MutableStateFlow(true)
+    private val mIsNetworkAvailableState = MutableStateFlow(isNetworkAvailable(service))
     val isNetworkAvailableState: StateFlow<Boolean>
         get() = mIsNetworkAvailableState
 
@@ -34,5 +35,11 @@ class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: Ne
                     mIsNetworkAvailableState.value = false
                 }
             })
+    }
+
+    private fun isNetworkAvailable(service: ConnectivityManager): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            service.activeNetwork != null
+        } else service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
     }
 }

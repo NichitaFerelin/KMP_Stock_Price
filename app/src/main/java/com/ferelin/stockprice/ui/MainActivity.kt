@@ -17,6 +17,7 @@ import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -68,7 +69,9 @@ class MainActivity(
                 }
             }
             launch {
-                mViewModel.actionShowNetworkError.collect {
+                mViewModel.actionShowNetworkError
+                    .filter { it }
+                    .collect {
                     withContext(mCoroutineContext.Main) {
                         Toast.makeText(this@MainActivity, R.string.errorNetwork, Toast.LENGTH_LONG)
                             .show()

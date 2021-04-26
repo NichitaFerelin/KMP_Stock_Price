@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @FlowPreview
@@ -27,8 +24,8 @@ class MainViewModel(
     val actionShowDialogError: SharedFlow<String>
         get() = mActionShowDialogError
 
-    private val mActionShowNetworkError = MutableSharedFlow<Unit>()
-    val actionShowNetworkError: SharedFlow<Unit>
+    private val mActionShowNetworkError = MutableStateFlow(false)
+    val actionShowNetworkError: StateFlow<Boolean>
         get() = mActionShowNetworkError
 
     private val mActionShowApiLimitError = MutableSharedFlow<Unit>()
@@ -67,10 +64,11 @@ class MainViewModel(
                 if (mNetworkWasLost) {
                     restartWebSocket()
                 }
+                mActionShowNetworkError.value = false
                 mDataInteractor.openConnection().collect()
             } else {
                 mNetworkWasLost = true
-                mActionShowNetworkError.emit(Unit)
+                mActionShowNetworkError.value = true
             }
         }
     }
