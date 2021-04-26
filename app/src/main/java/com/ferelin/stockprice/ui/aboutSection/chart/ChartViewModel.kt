@@ -19,7 +19,10 @@ class ChartViewModel(
 
     private val mSelectedCompany: AdaptiveCompany? = selectedCompany
     private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null
+
     private var mLastClickedMarker: Marker? = null
+    val lastClickedMarker: Marker?
+        get() = mLastClickedMarker
 
     private val mHasDataForChart =
         MutableStateFlow(mSelectedCompany?.companyHistory?.closePrices?.isNotEmpty() ?: false)
@@ -50,9 +53,9 @@ class ChartViewModel(
     val profitBackground: Int
         get() = mProfitBackground
 
-    private var mChartSelectedType: ChartSelectedType = ChartSelectedType.All
-    val chartSelectedType: ChartSelectedType
-        get() = mChartSelectedType
+    private var mChartSelectedViewMode: ChartSelectedViewMode = ChartSelectedViewMode.All
+    val chartSelectedViewMode: ChartSelectedViewMode
+        get() = mChartSelectedViewMode
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
@@ -94,29 +97,29 @@ class ChartViewModel(
         } else false
     }
 
-    fun onChartControlButtonClicked(selectedType: ChartSelectedType) {
+    fun onChartControlButtonClicked(selectedViewMode: ChartSelectedViewMode) {
         mLastClickedMarker = null
-        mChartSelectedType = selectedType
-        mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedType) }
+        mChartSelectedViewMode = selectedViewMode
+        mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedViewMode) }
     }
 
-    private fun convertHistoryToSelectedType(selectedType: ChartSelectedType) {
+    private fun convertHistoryToSelectedType(selectedViewMode: ChartSelectedViewMode) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            val response = when (selectedType) {
-                is ChartSelectedType.SixMonths -> {
+            val response = when (selectedViewMode) {
+                is ChartSelectedViewMode.SixMonths -> {
                     mDataInteractor.stockHistoryConverter.toSixMonths(mOriginalStockHistory!!)
                 }
-                is ChartSelectedType.Months -> {
+                is ChartSelectedViewMode.Months -> {
                     mDataInteractor.stockHistoryConverter.toMonths(mOriginalStockHistory!!)
                 }
-                is ChartSelectedType.Weeks -> {
+                is ChartSelectedViewMode.Weeks -> {
                     mDataInteractor.stockHistoryConverter.toWeeks(mOriginalStockHistory!!)
                 }
-                is ChartSelectedType.Year -> {
+                is ChartSelectedViewMode.Year -> {
                     mDataInteractor.stockHistoryConverter.toOneYear(mOriginalStockHistory!!)
                 }
-                is ChartSelectedType.All -> mOriginalStockHistory
-                is ChartSelectedType.Days -> mOriginalStockHistory
+                is ChartSelectedViewMode.All -> mOriginalStockHistory
+                is ChartSelectedViewMode.Days -> mOriginalStockHistory
             }
             mEventStockHistoryChanged.emit(response!!)
         }

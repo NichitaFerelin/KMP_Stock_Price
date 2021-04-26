@@ -53,6 +53,7 @@ class ChartFragment(
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             setSelectedViews(mBinding!!.cardViewAll, mBinding!!.textViewAll)
             setUpChartWidgetsListeners()
+            restoreChartState()
             withContext(mCoroutineContext.Main) {
                 restoreSelectedType()
             }
@@ -127,11 +128,11 @@ class ChartFragment(
     private fun onCardClicked(
         card: CardView,
         attachedTextView: TextView,
-        selectedType: ChartSelectedType
+        selectedViewMode: ChartSelectedViewMode
     ) {
         val animationCallback: Animator.AnimatorListener? = if (card != mCurrentActiveCard) {
             hideSuggestion()
-            mViewModel.onChartControlButtonClicked(selectedType)
+            mViewModel.onChartControlButtonClicked(selectedViewMode)
             object : AnimatorManager() {
                 override fun onAnimationStart(animation: Animator?) {
                     switchCardsViewStyle(card, attachedTextView)
@@ -140,6 +141,13 @@ class ChartFragment(
             }
         } else null
         mViewHelper.runScaleInOut(card, animationCallback)
+    }
+
+    private fun restoreChartState() {
+        mBinding!!.chartView.addCallbackListener {
+            val restoredMarker = mBinding!!.chartView.restoreMarker(mViewModel.lastClickedMarker)
+            restoredMarker?.let { onChartClicked(it) }
+        }
     }
 
     private fun onDayDataChanged() {
@@ -178,13 +186,13 @@ class ChartFragment(
 
     private fun restoreSelectedType() {
         mBinding!!.apply {
-            val (restoredCardView, restoredTextView) = when (mViewModel.chartSelectedType) {
-                is ChartSelectedType.Year -> arrayOf(cardViewYear, textViewYear)
-                is ChartSelectedType.Months -> arrayOf(cardViewMonth, textViewMonths)
-                is ChartSelectedType.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
-                is ChartSelectedType.Days -> arrayOf(cardViewDay, textViewDays)
-                is ChartSelectedType.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
-                is ChartSelectedType.All -> return // ChartSelectedType.All is set by default
+            val (restoredCardView, restoredTextView) = when (mViewModel.chartSelectedViewMode) {
+                is ChartSelectedViewMode.Year -> arrayOf(cardViewYear, textViewYear)
+                is ChartSelectedViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
+                is ChartSelectedViewMode.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
+                is ChartSelectedViewMode.Days -> arrayOf(cardViewDay, textViewDays)
+                is ChartSelectedViewMode.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
+                is ChartSelectedViewMode.All -> return // ChartSelectedType.All is set by default
             }
             switchCardsViewStyle(restoredCardView as CardView, restoredTextView as TextView)
             setSelectedViews(restoredCardView, restoredTextView)
@@ -234,22 +242,22 @@ class ChartFragment(
     private fun setUpChartWidgetsListeners() {
         mBinding!!.apply {
             cardViewDay.setOnClickListener {
-                onCardClicked(it as CardView, textViewDays, ChartSelectedType.Days)
+                onCardClicked(it as CardView, textViewDays, ChartSelectedViewMode.Days)
             }
             cardViewWeek.setOnClickListener {
-                onCardClicked(it as CardView, textViewWeeks, ChartSelectedType.Weeks)
+                onCardClicked(it as CardView, textViewWeeks, ChartSelectedViewMode.Weeks)
             }
             cardViewMonth.setOnClickListener {
-                onCardClicked(it as CardView, textViewMonths, ChartSelectedType.Months)
+                onCardClicked(it as CardView, textViewMonths, ChartSelectedViewMode.Months)
             }
             cardViewHalfYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewSixMonths, ChartSelectedType.SixMonths)
+                onCardClicked(it as CardView, textViewSixMonths, ChartSelectedViewMode.SixMonths)
             }
             cardViewYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewYear, ChartSelectedType.Year)
+                onCardClicked(it as CardView, textViewYear, ChartSelectedViewMode.Year)
             }
             cardViewAll.setOnClickListener {
-                onCardClicked(it as CardView, textViewAll, ChartSelectedType.All)
+                onCardClicked(it as CardView, textViewAll, ChartSelectedViewMode.All)
             }
             chartView.setOnTouchListener {
                 mViewModel.onChartClicked(it).also { isNewMarker ->

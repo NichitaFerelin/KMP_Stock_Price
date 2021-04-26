@@ -76,6 +76,8 @@ class ChartView @JvmOverloads constructor(
             }
         })
 
+    private var mOnDataPreparedCallback: (() -> Unit)? = null
+
     override fun onDraw(canvas: Canvas) {
         if (mMarkers.isNotEmpty()) {
             drawGradient(canvas)
@@ -143,8 +145,22 @@ class ChartView @JvmOverloads constructor(
         calcAndInvalidate()
     }
 
+    fun addCallbackListener(onDataPrepared: () -> Unit) {
+        mOnDataPreparedCallback = onDataPrepared
+    }
+
     fun setOnTouchListener(func: (marker: Marker) -> Unit) {
         mOnTouchListener = func
+    }
+
+    fun restoreMarker(previousMarker: Marker?) : Marker? {
+        for(marker in mMarkers) {
+            if(marker == previousMarker) {
+                return marker
+            }
+        }
+
+        return null
     }
 
     fun invalidateVariables() {
@@ -157,6 +173,7 @@ class ChartView @JvmOverloads constructor(
         if (mMarkers.isNotEmpty()) {
             calculatePositions()
             invalidate()
+            mOnDataPreparedCallback?.invoke()
         }
     }
 
