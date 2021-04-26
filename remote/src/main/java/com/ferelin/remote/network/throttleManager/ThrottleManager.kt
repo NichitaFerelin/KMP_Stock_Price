@@ -30,9 +30,9 @@ class ThrottleManager(
 
     private val mMessagesQueue =
         Collections.synchronizedSet(LinkedHashSet<HashMap<String, Any>>(100))
-    private var mMessagesHistory = Collections.synchronizedMap(HashMap<String, Any?>(300, 1F))
+    private var mMessagesHistory = Collections.synchronizedMap(HashMap<String, Any?>(300, 0.5F))
 
-    private val mPerSecondRequestLimit = 1000L
+    private val mPerSecondRequestLimit = 1050L
     private var mIsRunning = true
 
     private var mJob: Job? = null
@@ -65,15 +65,10 @@ class ThrottleManager(
     }
 
     override fun invalidate() {
-        mCompanyProfileApi = null
-        mCompanyNewsApi = null
-        mCompanyQuoteApi = null
-        mStockCandlesApi = null
-        mStockSymbolsApi = null
         mJob?.cancel()
         mJob = null
         mMessagesQueue.clear()
-        mIsRunning = true
+        mIsRunning = false
     }
 
     private suspend fun start() {
@@ -100,8 +95,9 @@ class ThrottleManager(
                     }
                     mMessagesHistory[symbol] = null
                     delay(mPerSecondRequestLimit)
-                } ?: delay(200)
+                }
             } catch (exception: ConcurrentModificationException) {
+                // Do nothing. Message will not be removed
             }
         }
     }
