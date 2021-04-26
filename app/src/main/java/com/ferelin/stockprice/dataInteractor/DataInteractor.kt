@@ -193,7 +193,7 @@ class DataInteractor(
     }
 
     private suspend fun prepareCompaniesData() {
-        val responseCompanies = mLocalInteractorHelper.getCompaniesData()
+        val responseCompanies = mLocalInteractorHelper.getCompanies()
         if (responseCompanies is LocalInteractorResponse.Success) {
             mDataMediator.onCompaniesDataPrepared(responseCompanies.companies)
         } else mErrorHandlerWorker.onPrepareCompaniesErrorGot()

@@ -17,23 +17,25 @@ class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: Ne
     val isNetworkAvailableState: StateFlow<Boolean>
         get() = mIsNetworkAvailableState
 
-    val networkCallback = service.registerNetworkCallback(
-        networkRequest,
-        object : ConnectivityManager.NetworkCallback() {
+    init {
+        service.registerNetworkCallback(
+            networkRequest,
+            object : ConnectivityManager.NetworkCallback() {
 
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                mIsNetworkAvailableState.value = true
-            }
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    mIsNetworkAvailableState.value = true
+                }
 
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                mIsNetworkAvailableState.value = false
-            }
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    mIsNetworkAvailableState.value = false
+                }
 
-            override fun onUnavailable() {
-                super.onUnavailable()
-                mIsNetworkAvailableState.value = false
-            }
-        })
+                override fun onUnavailable() {
+                    super.onUnavailable()
+                    mIsNetworkAvailableState.value = false
+                }
+            })
+    }
 }

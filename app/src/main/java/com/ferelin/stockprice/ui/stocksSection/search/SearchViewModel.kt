@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -9,6 +10,7 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.filterCompanies
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -36,13 +38,13 @@ class SearchViewModel(
     val actionShowKeyboard: StateFlow<Boolean>
         get() = mActionShowKeyboard
 
-    private val mPopularRequestsAdapter = SearchRecyclerAdapter().apply { setPopularSearches() }
-    val popularRequestsAdapter: SearchRecyclerAdapter
+    private val mPopularRequestsAdapter = SearchRequestsAdapter().apply { setPopularSearches() }
+    val popularRequestsAdapter: SearchRequestsAdapter
         get() = mPopularRequestsAdapter
 
-    private val mSearchesAdapter = SearchRecyclerAdapter()
-    val searchesAdapter: SearchRecyclerAdapter
-        get() = mSearchesAdapter
+    private val mSearchRequestsAdapter = SearchRequestsAdapter()
+    val searchRequestAdapter: SearchRequestsAdapter
+        get() = mSearchRequestsAdapter
 
     private var mTransitionState: Int = 0
     val transitionState: Int
@@ -63,13 +65,7 @@ class SearchViewModel(
                     .collect { mCompanies = ArrayList(it.data!!) }
             }
             launch {
-                mDataInteractor.searchRequestsState
-                    .filter { it is DataNotificator.DataPrepared && it.data != null }
-                    .collect {
-                        withContext(mCoroutineContext.Main) {
-                            onSearchesChanged(it.data!!)
-                        }
-                    }
+                mDataInteractor.searchRequestsState.collect { onSearchesChanged(it) }
             }
             launch {
                 mDataInteractor.companiesUpdatesShared
@@ -85,10 +81,10 @@ class SearchViewModel(
     }
 
     override fun updateRecyclerViewItem(notificator: DataNotificator<AdaptiveCompany>) {
-        val indexInResults = mRecyclerAdapter.companies.indexOf(notificator.data)
-        if (indexInResults != NULL_INDEX) {
+        val itemPosition = mRecyclerAdapter.companies.indexOf(notificator.data)
+        if (itemPosition != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {
-                mRecyclerAdapter.updateCompany(notificator.data!!, indexInResults)
+                mRecyclerAdapter.notifyUpdate(itemPosition)
             }
         }
 
@@ -156,8 +152,18 @@ class SearchViewModel(
         }
     }
 
-    private fun onSearchesChanged(data: List<AdaptiveSearchRequest>) {
-        mSearchesAdapter.setData(ArrayList(data))
+    private fun onSearchesChanged(dataNotificator: DataNotificator<List<AdaptiveSearchRequest>>) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            val searchRequests = ArrayList(dataNotificator.data!!)
+            if (dataNotificator is DataNotificator.DataUpdated) {
+                // delay until transition will hide search requests history
+                delay(250)
+            }
+            Log.d("Test", "set data: ${searchRequests.size}")
+            withContext(mCoroutineContext.Main) {
+                mSearchRequestsAdapter.setData(searchRequests)
+            }
+        }
     }
 
     private suspend fun switchSectionsVisibility(showHintsHideResults: Boolean) {

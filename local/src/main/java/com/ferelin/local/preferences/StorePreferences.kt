@@ -15,9 +15,9 @@ open class StorePreferences(private val mContext: Context) : StorePreferencesHel
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
     private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
 
-    override fun getSearchesHistory(): Flow<Set<String>?> {
+    override fun getSearchesHistory(): Flow<Set<String>> {
         return mContext.dataStorePreferences.data.map {
-            it[mSearchRequestsHistoryKey]
+            it[mSearchRequestsHistoryKey] ?: emptySet()
         }
     }
 

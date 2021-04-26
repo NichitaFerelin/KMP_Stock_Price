@@ -61,7 +61,7 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseStock
             if (parentFragment is StocksPagerFragment) {
                 (parentFragment as StocksPagerFragment).eventOnFabClicked.collect {
                     withContext(mCoroutineContext.Main) {
-                        scrollToTop()
+                        scrollToTopWithAnimation()
                     }
                 }
             }
@@ -79,11 +79,11 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseStock
         moveToAboutFragment(stockViewHolder, company)
     }
 
-    override fun onRebound(stockViewHolder: StockViewHolder) {
+    override fun onHolderRebound(stockViewHolder: StockViewHolder) {
         startStarAnimation(stockViewHolder)
     }
 
-    override fun onUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean) {
+    override fun onHolderUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean) {
         if (rebounded) {
             viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
                 val company = findCompanyByHolder(stockViewHolder)
@@ -136,7 +136,7 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseStock
         }
     }
 
-    private fun scrollToTop() {
+    private fun scrollToTopWithAnimation() {
         mStocksRecyclerView?.let { recyclerView ->
             if ((recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
                 val fadeInCallback = object : AnimationManager() {

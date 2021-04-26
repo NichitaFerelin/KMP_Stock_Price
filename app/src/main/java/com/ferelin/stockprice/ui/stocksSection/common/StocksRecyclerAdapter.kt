@@ -76,8 +76,7 @@ class StocksRecyclerAdapter(
         notifyItemRangeInserted(mOffsetWithHeader, mCompanies.size)
     }
 
-    fun updateCompany(company: AdaptiveCompany, index: Int) {
-        mCompanies[index] = company
+    fun notifyUpdate(index: Int) {
         notifyItemChanged(index + mOffsetWithHeader)
     }
 
@@ -107,11 +106,11 @@ class StocksRecyclerAdapter(
     }
 
     fun onRebound(view: StockViewHolder) {
-        mStockClickListener?.onRebound(view)
+        mStockClickListener?.onHolderRebound(view)
     }
 
     fun onUntouched(stockViewHolder: StockViewHolder,rebounded: Boolean) {
-        mStockClickListener?.onUntouched(stockViewHolder, rebounded)
+        mStockClickListener?.onHolderUntouched(stockViewHolder, rebounded)
     }
 
     private fun bindTextViewHolder(holder: TextViewHolder) {

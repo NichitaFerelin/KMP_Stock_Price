@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.stockprice.databinding.ItemTickerBinding
 
-class SearchRecyclerAdapter(
+class SearchRequestsAdapter(
     private var mTickerClickListener: ((item: AdaptiveSearchRequest, position: Int) -> Unit)? = null
-) : RecyclerView.Adapter<SearchRecyclerAdapter.TickerViewHolder>() {
+) : RecyclerView.Adapter<SearchRequestsAdapter.TickerViewHolder>() {
 
     private var mSearches = arrayListOf<AdaptiveSearchRequest>()
 

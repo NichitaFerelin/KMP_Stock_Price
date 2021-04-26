@@ -64,7 +64,7 @@ abstract class BaseStocksViewModel(
         val index = mRecyclerAdapter.companies.indexOf(notificator.data)
         if (index != NULL_INDEX) {
             viewModelScope.launch(mCoroutineContext.Main) {
-                mRecyclerAdapter.updateCompany(notificator.data!!, index)
+                mRecyclerAdapter.notifyUpdate(index)
             }
         }
     }

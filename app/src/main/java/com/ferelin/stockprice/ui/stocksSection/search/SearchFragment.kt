@@ -191,7 +191,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
     private fun setUpRecyclerViews() {
         mBinding!!.recyclerViewSearchedHistory.apply {
             addItemDecoration(SearchItemDecoration(requireContext()))
-            adapter = mViewModel.searchesAdapter.also {
+            adapter = mViewModel.searchRequestAdapter.also {
                 it.setOnTickerClickListener { item, _ ->
                     onSearchTickerClicked(item)
                 }

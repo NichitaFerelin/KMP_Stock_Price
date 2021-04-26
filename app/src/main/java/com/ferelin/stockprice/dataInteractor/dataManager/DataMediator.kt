@@ -49,13 +49,13 @@ class DataMediator(
     }
 
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany) {
-        favouriteCompaniesWorker.onAddFavouriteCompany(company)?.let { addedCompany ->
+        favouriteCompaniesWorker.addCompanyToFavourites(company)?.let { addedCompany ->
             companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(addedCompany))
         }
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
-        val updateCompany = favouriteCompaniesWorker.onRemoveFavouriteCompany(company)
+        val updateCompany = favouriteCompaniesWorker.removeCompanyFromFavourites(company)
         companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(updateCompany))
     }
 

@@ -5,6 +5,7 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.*
 
 /*
 * Worker that is responsible for:
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInteractorHelper) {
 
     private var mSearchRequests: MutableList<AdaptiveSearchRequest> = mutableListOf()
-    private val mSearchRequestsSaveLimit = 25
+    private val mSearchRequestsSaveLimit = 30
 
     private val mSearchRequestsState =
         MutableStateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
@@ -29,36 +30,38 @@ class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInterac
 
     suspend fun onNewSearch(searchText: String) {
         val newSearchRequest = AdaptiveSearchRequest(searchText)
-        optimizeSearchRequests(newSearchRequest)
+        removeSearchRequestsDuplicates(newSearchRequest)
         mSearchRequests.add(0, newSearchRequest)
 
-        if (mSearchRequests.size >= mSearchRequestsSaveLimit) {
+        if (isSearchRequestsLimitExceeded()) {
             reduceRequestsToLimit()
         }
-
-        mSearchRequestsState.value = DataNotificator.DataPrepared(mSearchRequests)
-        mLocalInteractorHelper.setSearchRequestsHistory(mSearchRequests)
+        mSearchRequestsState.value = DataNotificator.DataUpdated(mSearchRequests)
+        mLocalInteractorHelper.updateSearchRequestsHistory(mSearchRequests)
     }
 
     /*
     * If new search-text-request is contains in history -> item in history will be removed.
     * */
-    private fun optimizeSearchRequests(newSearchRequest: AdaptiveSearchRequest) {
+    private fun removeSearchRequestsDuplicates(newSearchRequest: AdaptiveSearchRequest) {
         var endBorder = mSearchRequests.size
-        var cursor = 0
-        while (cursor < endBorder) {
-            val oldSearch = mSearchRequests[cursor]
-            if (newSearchRequest.searchText.contains(oldSearch.searchText)) {
-                mSearchRequests.remove(oldSearch)
+        var listCursor = 0
+        val newSearchRequestStr = newSearchRequest.searchText.toLowerCase(Locale.ROOT)
+        while (listCursor < endBorder) {
+            val searchRequestStr = mSearchRequests[listCursor].searchText.toLowerCase(Locale.ROOT)
+            if (newSearchRequestStr.contains(searchRequestStr)) {
+                mSearchRequests.removeAt(listCursor)
                 endBorder--
             }
-            cursor++
+            listCursor++
         }
     }
 
     private fun reduceRequestsToLimit() {
-        while (mSearchRequests.size >= 30) {
-            mSearchRequests.removeLast()
-        }
+        mSearchRequests.removeLast()
+    }
+
+    private fun isSearchRequestsLimitExceeded(): Boolean {
+        return mSearchRequests.size > mSearchRequestsSaveLimit
     }
 }

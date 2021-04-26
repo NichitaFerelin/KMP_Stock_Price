@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 * */
 class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
 
-    override suspend fun getCompaniesData(): LocalInteractorResponse {
+    override suspend fun getCompanies(): LocalInteractorResponse {
         val responseCompanies = mRepository.getAllCompanies().firstOrNull()
         return if (responseCompanies is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(responseCompanies.data)
@@ -29,7 +29,7 @@ class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalI
         mRepository.saveCompanyData(adaptiveCompany)
     }
 
-    override suspend fun setSearchRequestsHistory(requests: List<AdaptiveSearchRequest>) {
+    override suspend fun updateSearchRequestsHistory(requests: List<AdaptiveSearchRequest>) {
         mRepository.setSearchesHistory(requests)
     }
 

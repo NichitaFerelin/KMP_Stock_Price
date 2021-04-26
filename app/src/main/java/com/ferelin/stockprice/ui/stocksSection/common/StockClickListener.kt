@@ -6,9 +6,9 @@ interface StockClickListener {
 
     fun onFavouriteIconClicked(company: AdaptiveCompany)
 
-    fun onRebound(stockViewHolder: StockViewHolder)
+    fun onHolderRebound(stockViewHolder: StockViewHolder)
 
-    fun onUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean)
+    fun onHolderUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean)
 
     fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany)
 }

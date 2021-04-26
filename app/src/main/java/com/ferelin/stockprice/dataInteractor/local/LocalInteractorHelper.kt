@@ -5,11 +5,11 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 
 interface LocalInteractorHelper {
 
-    suspend fun getCompaniesData(): LocalInteractorResponse
+    suspend fun getCompanies(): LocalInteractorResponse
 
     suspend fun getSearchRequestsHistory(): LocalInteractorResponse
 
-    suspend fun setSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
+    suspend fun updateSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 

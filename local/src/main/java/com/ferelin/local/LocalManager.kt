@@ -70,7 +70,7 @@ class LocalManager(
         return mJsonManagerHelper.getCompaniesFromJson()
     }
 
-    override fun getSearchesHistory(): Flow<Set<String>?> {
+    override fun getSearchesHistory(): Flow<Set<String>> {
         return mStorePreferencesHelper.getSearchesHistory()
     }
 
