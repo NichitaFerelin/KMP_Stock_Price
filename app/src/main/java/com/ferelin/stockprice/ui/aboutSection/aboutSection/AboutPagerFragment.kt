@@ -179,6 +179,7 @@ class AboutPagerFragment(
             }
         }
         mBinding!!.viewPager.registerOnPageChangeCallback(mViewPagerCallback)
+        mBinding!!.viewPager.offscreenPageLimit = 5
     }
 
     private fun setUpImageListeners() {
