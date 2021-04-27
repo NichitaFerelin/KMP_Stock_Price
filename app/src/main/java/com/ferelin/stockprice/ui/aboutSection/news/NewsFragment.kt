@@ -1,10 +1,12 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
+import android.content.ActivityNotFoundException
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,7 +72,15 @@ class NewsFragment(
             }
             launch {
                 mViewModel.actionOpenUrl.collect {
-                    startActivity(it)
+                    try {
+                        startActivity(it)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.errorNoAppToOpenUrl,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
             launch {
@@ -88,6 +98,9 @@ class NewsFragment(
 
     override fun onDestroyView() {
         super.onDestroyView()
+        /*
+        * TODO Postpone
+        * */
         mBinding!!.recyclerViewNews.adapter = null
         mBinding = null
     }

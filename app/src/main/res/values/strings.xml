@@ -29,6 +29,7 @@
     <string name="errorLoadCompanyNews">Error loading %s news</string>
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
     <string name="errorNetwork">Network is not available</string>
+    <string name="errorNoAppToOpenUrl">App that can open URL do not found</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
