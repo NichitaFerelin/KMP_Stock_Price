@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -38,7 +37,7 @@ class SearchViewModel(
     val actionShowKeyboard: StateFlow<Boolean>
         get() = mActionShowKeyboard
 
-    private val mPopularRequestsAdapter = SearchRequestsAdapter().apply { setPopularSearches() }
+    private val mPopularRequestsAdapter = SearchRequestsAdapter()
     val popularRequestsAdapter: SearchRequestsAdapter
         get() = mPopularRequestsAdapter
 
@@ -65,7 +64,14 @@ class SearchViewModel(
                     .collect { mCompanies = ArrayList(it.data!!) }
             }
             launch {
-                mDataInteractor.searchRequestsState.collect { onSearchesChanged(it) }
+                mDataInteractor.popularSearchRequestsState.collect {
+                    onPopularSearchRequestsLoaded(
+                        it
+                    )
+                }
+            }
+            launch {
+                mDataInteractor.searchRequestsState.collect { onSearchRequestsHistoryChanged(it) }
             }
             launch {
                 mDataInteractor.companiesUpdatesShared
@@ -152,18 +158,21 @@ class SearchViewModel(
         }
     }
 
-    private fun onSearchesChanged(dataNotificator: DataNotificator<List<AdaptiveSearchRequest>>) {
+    private fun onSearchRequestsHistoryChanged(dataNotificator: DataNotificator<List<AdaptiveSearchRequest>>) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val searchRequests = ArrayList(dataNotificator.data!!)
             if (dataNotificator is DataNotificator.DataUpdated) {
                 // delay until transition will hide search requests history
                 delay(250)
             }
-            Log.d("Test", "set data: ${searchRequests.size}")
             withContext(mCoroutineContext.Main) {
                 mSearchRequestsAdapter.setData(searchRequests)
             }
         }
+    }
+
+    private fun onPopularSearchRequestsLoaded(dataNotificator: DataNotificator<ArrayList<AdaptiveSearchRequest>>) {
+        mPopularRequestsAdapter.setData(dataNotificator.data!!)
     }
 
     private suspend fun switchSectionsVisibility(showHintsHideResults: Boolean) {

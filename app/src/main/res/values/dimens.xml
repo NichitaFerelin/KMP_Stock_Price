@@ -30,4 +30,5 @@
 
     <dimen name="searchFragmentElevation">7dp</dimen>
     <dimen name="recyclerSearchesHeight">96dp</dimen>
+    <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
 </resources>

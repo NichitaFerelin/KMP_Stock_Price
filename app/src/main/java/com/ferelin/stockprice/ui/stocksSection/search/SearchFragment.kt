@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,8 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
+import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
+import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.openKeyboard
@@ -60,7 +63,6 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         super.setUpViewComponents(savedInstanceState)
 
         mViewModel.recyclerAdapter.setHeader(resources.getString(R.string.hintStocks))
-
         restoreTransitionState()
         setUpBackPressedCallback()
         setUpRecyclerViews()
@@ -190,7 +192,7 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
 
     private fun setUpRecyclerViews() {
         mBinding!!.recyclerViewSearchedHistory.apply {
-            addItemDecoration(SearchItemDecoration(requireContext()))
+            addItemDecoration(getItemDecoration())
             adapter = mViewModel.searchRequestAdapter.also {
                 it.setOnTickerClickListener { item, _ ->
                     onSearchTickerClicked(item)
@@ -198,13 +200,20 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
             }
         }
         mBinding!!.recyclerViewPopularRequests.apply {
-            addItemDecoration(SearchItemDecoration(requireContext()))
+            addItemDecoration(getItemDecoration())
             adapter = mViewModel.popularRequestsAdapter.also {
-                it.setPopularSearches()
                 it.setOnTickerClickListener { item, _ ->
                     onSearchTickerClicked(item)
                 }
             }
+        }
+    }
+
+    private fun getItemDecoration(): SearchItemDecoration {
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            SearchItemDecorationLandscape(requireContext())
+        } else {
+            SearchItemDecoration(requireContext())
         }
     }
 }

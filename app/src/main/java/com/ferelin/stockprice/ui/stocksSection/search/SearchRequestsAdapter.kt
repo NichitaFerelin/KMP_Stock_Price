@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,30 +12,6 @@ class SearchRequestsAdapter(
 ) : RecyclerView.Adapter<SearchRequestsAdapter.TickerViewHolder>() {
 
     private var mSearches = arrayListOf<AdaptiveSearchRequest>()
-
-    private var mPopularSearches = arrayListOf(
-        AdaptiveSearchRequest("Apple"),
-        AdaptiveSearchRequest("Microsoft Corp"),
-        AdaptiveSearchRequest("Amazon.com"),
-        AdaptiveSearchRequest("Alphabet"),
-        AdaptiveSearchRequest("JD.com"),
-        AdaptiveSearchRequest("Tesla"),
-        AdaptiveSearchRequest("Facebook"),
-        AdaptiveSearchRequest("Telefonaktiebolaget"),
-        AdaptiveSearchRequest("NVIDIA"),
-        AdaptiveSearchRequest("Beigene"),
-        AdaptiveSearchRequest("Intel"),
-        AdaptiveSearchRequest("Netflix"),
-        AdaptiveSearchRequest("Adobe"),
-        AdaptiveSearchRequest("Cisco"),
-        AdaptiveSearchRequest("Yandex"),
-        AdaptiveSearchRequest("Zoom"),
-        AdaptiveSearchRequest("Starbucks"),
-        AdaptiveSearchRequest("Charter"),
-        AdaptiveSearchRequest("Sanofi"),
-        AdaptiveSearchRequest("Amgen"),
-        AdaptiveSearchRequest("Pepsi")
-    )
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -50,28 +27,18 @@ class SearchRequestsAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return mSearches.size
-    }
+    override fun getItemCount(): Int = mSearches.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(items: ArrayList<AdaptiveSearchRequest>) {
         mSearches = items
         notifyDataSetChanged()
-    }
-
-    fun addItem(item: AdaptiveSearchRequest) {
-        mSearches.add(0, item)
-        notifyItemInserted(0)
     }
 
     fun setOnTickerClickListener(func: (item: AdaptiveSearchRequest, position: Int) -> Unit) {
         mTickerClickListener = func
     }
 
-    fun setPopularSearches() {
-        mSearches = mPopularSearches
-        notifyDataSetChanged()
-    }
 
     class TickerViewHolder private constructor(
         private val binding: ItemTickerBinding

@@ -49,6 +49,9 @@ class DataInteractor(
     val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
         get() = mDataMediator.searchRequestsWorker.searchRequestsState
 
+    val popularSearchRequestsState: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+        get() = mDataMediator.searchRequestsWorker.popularSearchRequestsState
+
     val isNetworkAvailableState: StateFlow<Boolean>
         get() = mNetworkConnectivityWorker.isNetworkAvailableState
 

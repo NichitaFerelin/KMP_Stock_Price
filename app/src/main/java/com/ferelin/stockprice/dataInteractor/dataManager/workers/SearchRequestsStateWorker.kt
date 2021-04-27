@@ -23,6 +23,38 @@ class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInterac
     val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
         get() = mSearchRequestsState
 
+    /*
+    * Mocked data
+    * */
+    private var mPopularSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf(
+        AdaptiveSearchRequest("Apple"),
+        AdaptiveSearchRequest("Microsoft Corp"),
+        AdaptiveSearchRequest("Amazon.com"),
+        AdaptiveSearchRequest("Alphabet"),
+        AdaptiveSearchRequest("JD.com"),
+        AdaptiveSearchRequest("Tesla"),
+        AdaptiveSearchRequest("Facebook"),
+        AdaptiveSearchRequest("Telefonaktiebolaget"),
+        AdaptiveSearchRequest("NVIDIA"),
+        AdaptiveSearchRequest("Beigene"),
+        AdaptiveSearchRequest("Intel"),
+        AdaptiveSearchRequest("Netflix"),
+        AdaptiveSearchRequest("Adobe"),
+        AdaptiveSearchRequest("Cisco"),
+        AdaptiveSearchRequest("Yandex"),
+        AdaptiveSearchRequest("Zoom"),
+        AdaptiveSearchRequest("Starbucks"),
+        AdaptiveSearchRequest("Charter"),
+        AdaptiveSearchRequest("Sanofi"),
+        AdaptiveSearchRequest("Amgen"),
+        AdaptiveSearchRequest("Pepsi")
+    )
+
+    private val mPopularSearchRequestsState =
+        MutableStateFlow(DataNotificator.DataPrepared(mPopularSearchRequests))
+    val popularSearchRequestsState: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+        get() = mPopularSearchRequestsState
+
     fun onDataPrepared(searches: List<AdaptiveSearchRequest>) {
         mSearchRequests = searches.toMutableList()
         mSearchRequestsState.value = DataNotificator.DataPrepared(mSearchRequests)
