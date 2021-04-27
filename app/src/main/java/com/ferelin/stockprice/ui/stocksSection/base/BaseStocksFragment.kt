@@ -74,8 +74,12 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseStock
 
     override fun onStockClicked(
         stockViewHolder: StockViewHolder,
-        company: AdaptiveCompany
+        company: AdaptiveCompany,
+        position: Int
     ) {
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position, true).collect()
+        }
         moveToAboutFragment(stockViewHolder, company)
     }
 

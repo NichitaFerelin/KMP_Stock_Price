@@ -62,8 +62,9 @@ class RemoteMediator(
 
     override fun loadCompanyQuote(
         symbol: String,
-        position: Int
+        position: Int,
+        isImportant: Boolean
     ): Flow<BaseResponse<CompanyQuoteResponse>> {
-        return mNetworkManager.loadCompanyQuote(symbol, position)
+        return mNetworkManager.loadCompanyQuote(symbol, position, isImportant)
     }
 }

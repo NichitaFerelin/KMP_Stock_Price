@@ -132,8 +132,12 @@ class DataInteractor(
             .map { getCompany(symbol)!! }
     }
 
-    override suspend fun loadCompanyQuote(symbol: String, position: Int): Flow<AdaptiveCompany> {
-        return mRepositoryHelper.loadCompanyQuote(symbol, position)
+    override suspend fun loadCompanyQuote(
+        symbol: String,
+        position: Int,
+        isImportant: Boolean
+    ): Flow<AdaptiveCompany> {
+        return mRepositoryHelper.loadCompanyQuote(symbol, position, isImportant)
             .onEach {
                 when (it) {
                     is RepositoryResponse.Success -> {

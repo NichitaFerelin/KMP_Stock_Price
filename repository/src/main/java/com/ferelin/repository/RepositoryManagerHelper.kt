@@ -37,7 +37,8 @@ interface RepositoryManagerHelper {
 
     fun loadCompanyQuote(
         symbol: String,
-        position: Int
+        position: Int,
+        isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 
     fun saveCompanyData(adaptiveCompany: AdaptiveCompany)

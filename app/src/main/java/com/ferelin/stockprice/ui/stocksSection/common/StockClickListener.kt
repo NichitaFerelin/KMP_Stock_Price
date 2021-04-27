@@ -10,5 +10,5 @@ interface StockClickListener {
 
     fun onHolderUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean)
 
-    fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany)
+    fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany, position: Int)
 }

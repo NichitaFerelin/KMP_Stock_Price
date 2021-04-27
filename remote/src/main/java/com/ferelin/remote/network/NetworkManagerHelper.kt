@@ -27,5 +27,9 @@ interface NetworkManagerHelper {
         to: String
     ): Flow<BaseResponse<List<CompanyNewsResponse>>>
 
-    fun loadCompanyQuote(symbol: String, position: Int): Flow<BaseResponse<CompanyQuoteResponse>>
+    fun loadCompanyQuote(
+        symbol: String,
+        position: Int,
+        isImportant: Boolean
+    ): Flow<BaseResponse<CompanyQuoteResponse>>
 }

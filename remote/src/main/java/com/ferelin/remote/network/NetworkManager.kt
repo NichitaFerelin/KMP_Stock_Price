@@ -82,9 +82,16 @@ open class NetworkManager : NetworkManagerHelper {
 
     override fun loadCompanyQuote(
         symbol: String,
-        position: Int
+        position: Int,
+        isImportant: Boolean
     ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
-        mThrottleManager.addMessage(symbol, Api.COMPANY_QUOTE, position)
+        mThrottleManager.addMessage(
+            symbol = symbol,
+            api = Api.COMPANY_QUOTE,
+            position = position,
+            eraseIfNotActual = !isImportant,
+            ignoreDuplicate = isImportant
+        )
         mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
             mCompanyQuoteService
                 .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)

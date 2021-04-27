@@ -109,7 +109,7 @@ class StocksRecyclerAdapter(
         mStockClickListener?.onHolderRebound(view)
     }
 
-    fun onUntouched(stockViewHolder: StockViewHolder,rebounded: Boolean) {
+    fun onUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean) {
         mStockClickListener?.onHolderUntouched(stockViewHolder, rebounded)
     }
 
@@ -123,7 +123,8 @@ class StocksRecyclerAdapter(
             itemView.setOnClickListener {
                 mStockClickListener?.onStockClicked(
                     holder,
-                    mCompanies[holder.adapterPosition - mOffsetWithHeader]
+                    mCompanies[holder.adapterPosition - mOffsetWithHeader],
+                    position
                 )
             }
             binding.imageViewFavourite.setOnClickListener {

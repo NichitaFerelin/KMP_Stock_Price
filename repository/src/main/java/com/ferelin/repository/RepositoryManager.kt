@@ -85,9 +85,10 @@ class RepositoryManager(
 
     override fun loadCompanyQuote(
         symbol: String,
-        position: Int
+        position: Int,
+        isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRemoteMediatorHelper.loadCompanyQuote(symbol, position).map {
+        return mRemoteMediatorHelper.loadCompanyQuote(symbol, position, isImportant).map {
             mDataConverterHelper.convertCompanyQuoteResponse(it)
         }
     }

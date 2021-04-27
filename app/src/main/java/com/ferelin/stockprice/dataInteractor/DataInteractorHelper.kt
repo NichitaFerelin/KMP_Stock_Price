@@ -11,7 +11,11 @@ interface DataInteractorHelper {
 
     suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany>
 
-    suspend fun loadCompanyQuote(symbol: String, position: Int): Flow<AdaptiveCompany>
+    suspend fun loadCompanyQuote(
+        symbol: String,
+        position: Int,
+        isImportant: Boolean = false
+    ): Flow<AdaptiveCompany>
 
     suspend fun openConnection(): Flow<AdaptiveCompany>
 
