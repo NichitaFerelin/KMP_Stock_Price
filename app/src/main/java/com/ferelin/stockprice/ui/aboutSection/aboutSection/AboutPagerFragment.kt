@@ -182,25 +182,31 @@ class AboutPagerFragment(
     }
 
     private fun setUpImageListeners() {
-        mBinding!!.imageViewBack.setOnClickListener { activity?.onBackPressed() }
+        mBinding!!.imageViewBack.setOnClickListener {
+            mOnBackPressedCallback.remove()
+            activity?.onBackPressed()
+        }
         mBinding!!.imageViewStar.setOnClickListener {
             mViewModel.onFavouriteIconClicked()
             mViewHelper.runScaleInOut(it)
         }
     }
 
+    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (mBinding != null && mBinding!!.viewPager.currentItem != 0) {
+                mBinding!!.viewPager.setCurrentItem(0, true)
+            } else {
+                this.remove()
+                activity?.onBackPressed()
+            }
+        }
+    }
+
     private fun setUpBackPressedCallback() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (mBinding != null && mBinding!!.viewPager.currentItem != 0) {
-                        mBinding!!.viewPager.setCurrentItem(0, true)
-                    } else {
-                        this.remove()
-                        activity?.onBackPressed()
-                    }
-                }
-            })
+            mOnBackPressedCallback
+        )
     }
 }

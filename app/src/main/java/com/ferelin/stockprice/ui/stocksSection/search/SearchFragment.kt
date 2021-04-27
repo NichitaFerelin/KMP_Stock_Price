@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -69,9 +70,40 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             mFragmentManager = parentFragmentManager
+
             mBinding!!.imageViewBack.setOnClickListener {
-                activity?.onBackPressed()
+                mOnBackPressedCallback.remove()
+                if(mBinding!!.root.progress == 0F) {
+                    activity?.onBackPressed()
+                } else {
+                    mBinding!!.root.addTransitionListener(object : MotionLayout.TransitionListener {
+                        override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                        }
+
+                        override fun onTransitionChange(
+                            p0: MotionLayout?,
+                            p1: Int,
+                            p2: Int,
+                            p3: Float
+                        ) {
+                        }
+
+                        override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                            activity?.onBackPressed()
+                        }
+
+                        override fun onTransitionTrigger(
+                            p0: MotionLayout?,
+                            p1: Int,
+                            p2: Boolean,
+                            p3: Float
+                        ) {
+                        }
+                    })
+                    mBinding!!.root.transitionToStart()
+                }
             }
+
             mBinding!!.editTextSearch.doAfterTextChanged {
                 Timer().apply {
                     schedule(timerTask {
@@ -131,6 +163,11 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        hideKeyboard(requireContext(), mBinding!!.editTextSearch)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         mViewModel.postponeReferencesRemove {
@@ -171,23 +208,26 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         mBinding!!.editTextSearch.setSelection(item.searchText.length)
     }
 
+    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            when {
+                mBinding != null && mViewModel.lastSearchText.isNotEmpty() -> {
+                    mBinding!!.editTextSearch.setText("")
+                }
+                else -> {
+                    this.remove()
+                    hideKeyboard(requireContext(), mBinding!!.root)
+                    activity?.onBackPressed()
+                }
+            }
+        }
+    }
+
     private fun setUpBackPressedCallback() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    when {
-                        mBinding != null && mViewModel.lastSearchText.isNotEmpty() -> {
-                            mBinding!!.editTextSearch.setText("")
-                        }
-                        else -> {
-                            this.remove()
-                            hideKeyboard(requireContext(), mBinding!!.root)
-                            activity?.onBackPressed()
-                        }
-                    }
-                }
-            })
+            mOnBackPressedCallback
+        )
     }
 
     private fun setUpRecyclerViews() {

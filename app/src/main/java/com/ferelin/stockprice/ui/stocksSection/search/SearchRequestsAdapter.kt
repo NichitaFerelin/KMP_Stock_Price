@@ -1,6 +1,5 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,10 +28,10 @@ class SearchRequestsAdapter(
 
     override fun getItemCount(): Int = mSearches.size
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(items: ArrayList<AdaptiveSearchRequest>) {
+        notifyItemRangeRemoved(0, mSearches.size)
         mSearches = items
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, mSearches.size)
     }
 
     fun setOnTickerClickListener(func: (item: AdaptiveSearchRequest, position: Int) -> Unit) {

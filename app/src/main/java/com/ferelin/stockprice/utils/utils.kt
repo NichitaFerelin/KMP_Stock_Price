@@ -38,9 +38,9 @@ fun getString(context: Context, resource: Int): String {
     return context.resources.getString(resource)
 }
 
-fun openKeyboard(context: Context, holder: View) {
+fun openKeyboard(context: Context, view: View) {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.showSoftInput(holder, InputMethodManager.SHOW_IMPLICIT)
+    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun hideKeyboard(context: Context, view: View) {
