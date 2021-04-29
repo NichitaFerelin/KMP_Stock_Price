@@ -74,7 +74,14 @@ class FavouriteCompaniesStateWorker(
 
         applyChangesToAddedFavouriteCompany(company)
         subscribeCompanyOnLiveTimeUpdates(company)
-        mFavouriteCompanies.add(company)
+        mFavouriteCompanies.add(0, company)
+
+        /*
+        * mFavouriteCompaniesState do not use reference of the original list.
+        * So need to update that manually every time.
+        * */
+        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
+
         mFavouriteCompaniesUpdatesShared.emit(DataNotificator.NewItemAdded(company))
         mLocalInteractorHelper.updateCompany(company)
         return company
@@ -84,6 +91,13 @@ class FavouriteCompaniesStateWorker(
         applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
         mFavouriteCompanies.remove(company)
+
+        /*
+        * mFavouriteCompaniesState do not use reference of the original list.
+        * So need to update that manually every time.
+        * */
+        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
+
         mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemRemoved(company))
         mLocalInteractorHelper.updateCompany(company)
         return company
@@ -117,7 +131,7 @@ class FavouriteCompaniesStateWorker(
             companyStyle.favouriteSingleIconResource =
                 mStylesProvider.getSingleIconDrawable(true)
 
-            val orderIndex = mFavouriteCompanies.lastOrNull()?.favouriteOrderIndex?.plus(1) ?: 0
+            val orderIndex = mFavouriteCompanies.firstOrNull()?.favouriteOrderIndex?.plus(1) ?: 0
             favouriteOrderIndex = orderIndex
         }
     }
