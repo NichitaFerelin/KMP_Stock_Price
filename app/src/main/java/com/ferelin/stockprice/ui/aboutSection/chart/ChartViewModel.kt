@@ -24,6 +24,12 @@ class ChartViewModel(
     val lastClickedMarker: Marker?
         get() = mLastClickedMarker
 
+    private var mIsDataSet = false
+
+    private var mIsDataLoading = MutableStateFlow(true)
+    val isDataLoading: StateFlow<Boolean>
+        get() = mIsDataLoading
+
     private val mHasDataForChart =
         MutableStateFlow(mSelectedCompany?.companyHistory?.closePrices?.isNotEmpty() ?: false)
     val hasDataForChartState: StateFlow<Boolean>
@@ -53,28 +59,44 @@ class ChartViewModel(
     val profitBackground: Int
         get() = mProfitBackground
 
-    private var mChartSelectedViewMode: ChartSelectedViewMode = ChartSelectedViewMode.All
-    val chartSelectedViewMode: ChartSelectedViewMode
-        get() = mChartSelectedViewMode
+    private var mChartViewMode: ChartViewMode = ChartViewMode.All
+    val chartViewMode: ChartViewMode
+        get() = mChartViewMode
+
+    private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
+        if (isAvailable && !mIsDataSet) {
+            mIsDataLoading.value = true
+            collectStockCandles()
+        } else mIsDataLoading.value = false
+    }
+
+    private suspend fun collectStockCandles() {
+        mDataInteractor.loadStockCandles(mSelectedCompany?.companyProfile?.symbol ?: "")
+            .collect {
+                onStockHistoryLoaded(
+                    mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(
+                        it.companyHistory
+                    )
+                )
+            }
+    }
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             prepareData()
 
             launch {
+                mDataInteractor.isNetworkAvailableState.collect {
+                    onNetworkStateChanged(it)
+                }
+            }
+            launch {
                 mDataInteractor.companiesUpdatesShared
                     .filter { filterSharedUpdate(it) }
                     .collect { onDataChanged(it.data!!) }
             }
             launch {
-                mDataInteractor.loadStockCandles(mSelectedCompany?.companyProfile?.symbol ?: "")
-                    .collect {
-                        onStockHistoryLoaded(
-                            mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(
-                                it.companyHistory
-                            )
-                        )
-                    }
+                collectStockCandles()
             }
             launch {
                 mDataInteractor.loadStockCandlesErrorShared
@@ -91,29 +113,29 @@ class ChartViewModel(
         } else false
     }
 
-    fun onChartControlButtonClicked(selectedViewMode: ChartSelectedViewMode) {
+    fun onChartControlButtonClicked(selectedViewMode: ChartViewMode) {
         mLastClickedMarker = null
-        mChartSelectedViewMode = selectedViewMode
+        mChartViewMode = selectedViewMode
         mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedViewMode) }
     }
 
-    private fun convertHistoryToSelectedType(selectedViewMode: ChartSelectedViewMode) {
+    private fun convertHistoryToSelectedType(selectedViewMode: ChartViewMode) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val response = when (selectedViewMode) {
-                is ChartSelectedViewMode.SixMonths -> {
+                is ChartViewMode.SixMonths -> {
                     mDataInteractor.stockHistoryConverter.toSixMonths(mOriginalStockHistory!!)
                 }
-                is ChartSelectedViewMode.Months -> {
+                is ChartViewMode.Months -> {
                     mDataInteractor.stockHistoryConverter.toMonths(mOriginalStockHistory!!)
                 }
-                is ChartSelectedViewMode.Weeks -> {
+                is ChartViewMode.Weeks -> {
                     mDataInteractor.stockHistoryConverter.toWeeks(mOriginalStockHistory!!)
                 }
-                is ChartSelectedViewMode.Year -> {
+                is ChartViewMode.Year -> {
                     mDataInteractor.stockHistoryConverter.toOneYear(mOriginalStockHistory!!)
                 }
-                is ChartSelectedViewMode.All -> mOriginalStockHistory
-                is ChartSelectedViewMode.Days -> mOriginalStockHistory
+                is ChartViewMode.All -> mOriginalStockHistory
+                is ChartViewMode.Days -> mOriginalStockHistory
             }
             mEventStockHistoryChanged.emit(response!!)
         }
@@ -123,6 +145,7 @@ class ChartViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             mSelectedCompany?.let {
                 if (it.companyHistory.datePrices.isNotEmpty()) {
+                    mIsDataSet = true
                     mDataInteractor.stockHistoryConverter.toCompanyHistoryForChart(it.companyHistory)
                         .also { historyForChart ->
                             mOriginalStockHistory = historyForChart
@@ -144,6 +167,12 @@ class ChartViewModel(
     }
 
     private suspend fun onStockHistoryLoaded(history: AdaptiveCompanyHistoryForChart) {
+        mIsDataSet = true
+        mIsDataLoading.value = false
+
+        /*
+        * Check if history from cache is equals to loaded history from network.
+        * */
         if (history.dates.first() != mOriginalStockHistory?.dates?.firstOrNull()) {
             mOriginalStockHistory = history
             mHasDataForChart.value = true
