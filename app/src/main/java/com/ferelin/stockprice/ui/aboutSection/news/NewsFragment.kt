@@ -64,6 +64,15 @@ class NewsFragment(
                 }
             }
             launch {
+                mViewModel.isDataLoading.collect {
+                    withContext(mCoroutineContext.Main) {
+                        if (it) {
+                            mBinding!!.progressBar.visibility = View.VISIBLE
+                        } else mBinding!!.progressBar.visibility = View.GONE
+                    }
+                }
+            }
+            launch {
                 mViewModel.hasDataForRecycler.collect { hasData ->
                     withContext(mCoroutineContext.Main) {
                         switchWidgetsVisibility(hasData)
@@ -112,12 +121,12 @@ class NewsFragment(
     private fun switchWidgetsVisibility(hasData: Boolean) {
         mBinding!!.apply {
             when {
-                hasData && recyclerViewNews.visibility == View.GONE || progressBar.visibility == View.VISIBLE -> {
+                hasData && recyclerViewNews.visibility == View.GONE  -> {
                     TransitionManager.beginDelayedTransition(root)
                     recyclerViewNews.visibility = View.VISIBLE
                     progressBar.visibility = View.INVISIBLE
                 }
-                !hasData && recyclerViewNews.visibility == View.VISIBLE || progressBar.visibility == View.INVISIBLE -> {
+                !hasData && recyclerViewNews.visibility == View.VISIBLE  -> {
                     recyclerViewNews.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }

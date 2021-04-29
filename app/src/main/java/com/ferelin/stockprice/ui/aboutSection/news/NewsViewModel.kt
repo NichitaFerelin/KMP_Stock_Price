@@ -42,6 +42,12 @@ class NewsViewModel(
     val actionShowError: StateFlow<String>
         get() = mActionShowError
 
+    private val mIsDataLoading = MutableStateFlow(true)
+    val isDataLoading: StateFlow<Boolean>
+        get() = mIsDataLoading
+
+    private var isDataSet = false
+
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
 
@@ -50,19 +56,28 @@ class NewsViewModel(
             }
 
             launch {
-                mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
-                    .take(1)
-                    .collect {
-                        onNewsChanged(it.companyNews)
-                        mHasDataForRecycler.value = true
-                    }
+                mDataInteractor.isNetworkAvailableState.collect { isAvailable ->
+                    if(isAvailable && !isDataSet) {
+                        mIsDataLoading.value = true
+                        collectCompanyNews()
+                    } else mIsDataLoading.value = false
+                }
             }
+            launch { collectCompanyNews() }
             launch {
                 mDataInteractor.loadCompanyNewsErrorShared
                     .filter { it.isNotEmpty() }
                     .collect { mActionShowError.value = it }
             }
         }
+    }
+
+    private suspend fun collectCompanyNews() {
+        mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
+            .collect {
+                onNewsChanged(it.companyNews)
+                mHasDataForRecycler.value = true
+            }
     }
 
     fun onNewsUrlClicked(position: Int) {
@@ -75,6 +90,8 @@ class NewsViewModel(
 
     private fun onNewsChanged(news: AdaptiveCompanyNews) {
         viewModelScope.launch(mCoroutineContext.IO) {
+            isDataSet = true
+            mIsDataLoading.value = false
             if (mRecyclerAdapter.dataSize == 0 && news.ids.size > 10) {
                 setNewsDataWithAnim(news)
             } else if (mRecyclerAdapter.ids.firstOrNull() != news.ids.firstOrNull()) {
