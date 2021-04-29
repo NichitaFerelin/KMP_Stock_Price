@@ -100,7 +100,6 @@ abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseStock
         super.onDestroyView()
         mStocksRecyclerView = null
         mFragmentManager = null
-        mViewModel.recyclerAdapter.removeListeners()
     }
 
     private fun startStarAnimation(holder: StockViewHolder) {
