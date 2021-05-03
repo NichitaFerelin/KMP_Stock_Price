@@ -5,20 +5,18 @@ import android.animation.AnimatorInflater
 import android.content.Context
 import android.view.View
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.base.BaseViewHelper
+import com.ferelin.stockprice.base.BaseViewAnimator
 
-class AboutPagerViewHelper : BaseViewHelper() {
+class AboutPagerViewAnimator : BaseViewAnimator() {
 
     private var mScaleInOut: Animator? = null
 
-    override fun prepare(context: Context) {
+    override fun loadAnimations(context: Context) {
         mScaleInOut = AnimatorInflater.loadAnimator(context, R.animator.scale_in_out)
     }
 
-    override fun invalidate() {
+    override fun invalidateAnimations() {
         mScaleInOut?.cancel()
-        mScaleInOut?.setTarget(null)
-        mScaleInOut?.removeAllListeners()
     }
 
     fun runScaleInOut(target: View) {

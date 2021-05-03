@@ -18,27 +18,33 @@ class FavouriteViewModel(
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mActionScrollToTop = MutableSharedFlow<Unit>(1)
-    val actionScrollToTop: SharedFlow<Unit>
-        get() = mActionScrollToTop
+    private val mEventOnNewItem = MutableSharedFlow<Unit>(1)
+    val eventOnNewItem: SharedFlow<Unit>
+        get() = mEventOnNewItem
 
     override fun initObserversBlock() {
         super.initObserversBlock()
-
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.favouriteCompaniesState
-                .filter { it is DataNotificator.DataPrepared }
-                .take(1)
-                .collect { onFavouriteCompaniesPrepared(it) }
-
-            mDataInteractor.favouriteCompaniesUpdatesShared
-                .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
-                .collect { onFavouriteCompanyUpdateShared(it) }
+            launch { collectStateFavouriteCompanies() }
+            launch { collectSharedFavouriteCompaniesUpdates() }
         }
     }
 
+    private suspend fun collectStateFavouriteCompanies() {
+        mDataInteractor.stateFavouriteCompanies
+            .filter { it is DataNotificator.DataPrepared }
+            .take(1)
+            .collect { onFavouriteCompaniesPrepared(it) }
+    }
+
+    private suspend fun collectSharedFavouriteCompaniesUpdates() {
+        mDataInteractor.sharedFavouriteCompaniesUpdates
+            .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
+            .collect { onFavouriteCompanyUpdateShared(it) }
+    }
+
     private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        setRecyclerViewItems(notificator.data!!)
+        mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
     }
 
     private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
@@ -47,20 +53,20 @@ class FavouriteViewModel(
                 when (notificator) {
                     is DataNotificator.NewItemAdded -> {
                         withContext(mCoroutineContext.Main) {
-                            mRecyclerAdapter.addCompany(notificator.data)
+                            mStocksRecyclerAdapter.addCompany(notificator.data)
+                            mEventOnNewItem.emit(Unit)
                         }
                     }
                     is DataNotificator.ItemRemoved -> {
-                        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
+                        val index = mStocksRecyclerAdapter.companies.indexOf(notificator.data)
                         if (index != NULL_INDEX) {
                             withContext(mCoroutineContext.Main) {
-                                mRecyclerAdapter.removeCompany(index)
+                                mStocksRecyclerAdapter.removeCompany(index)
                             }
                         }
                     }
                     else -> Unit
                 }
-                mActionScrollToTop.emit(Unit)
             }
         }
     }

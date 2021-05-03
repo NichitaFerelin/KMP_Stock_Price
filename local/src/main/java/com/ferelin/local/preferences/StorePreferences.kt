@@ -8,6 +8,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * [StorePreferences] providing:
+ *  - Access to search requests history. @property [mSearchRequestsHistoryKey]
+ *  - Access to first time launch state. @property [mFirstTimeLaunchKey]
+ */
 open class StorePreferences(private val mContext: Context) : StorePreferencesHelper {
 
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")

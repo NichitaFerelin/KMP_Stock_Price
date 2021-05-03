@@ -6,22 +6,27 @@ import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
+import kotlin.collections.ArrayList
 
-/*
-* Worker that is responsible for:
-*   - Providing search requests history
-*   - Caching search requests
-*   - Optimizing search requests size
-* */
-class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInteractorHelper) {
+/**
+ *  [SearchRequestsWorker] ab ability to:
+ *   - Observing [mStateSearchRequests] to display a history of searches.
+ *   - Observing [mStatePopularSearchRequests] to display populars search requests.
+ *
+ *  Also [SearchRequestsWorker] do manually:
+ *   - Using [mLocalInteractorHelper] to data caching.
+ *   - Using [mSearchRequestsLimit] to control limit of search requests.
+ *   - Optimizing search requests size. @see [removeSearchRequestsDuplicates]
+ */
+class SearchRequestsWorker(private val mLocalInteractorHelper: LocalInteractorHelper) {
 
-    private var mSearchRequests: MutableList<AdaptiveSearchRequest> = mutableListOf()
-    private val mSearchRequestsSaveLimit = 30
+    private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
+    private val mSearchRequestsLimit = 30
 
-    private val mSearchRequestsState =
-        MutableStateFlow<DataNotificator<MutableList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
-    val searchRequestsState: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
-        get() = mSearchRequestsState
+    private val mStateSearchRequests =
+        MutableStateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
+    val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+        get() = mStateSearchRequests
 
     /*
     * Mocked data
@@ -50,30 +55,35 @@ class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInterac
         AdaptiveSearchRequest("Pepsi")
     )
 
-    private val mPopularSearchRequestsState =
+    private val mStatePopularSearchRequests =
         MutableStateFlow(DataNotificator.DataPrepared(mPopularSearchRequests))
-    val popularSearchRequestsState: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
-        get() = mPopularSearchRequestsState
+    val statePopularSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+        get() = mStatePopularSearchRequests
 
     fun onDataPrepared(searches: List<AdaptiveSearchRequest>) {
-        mSearchRequests = searches.toMutableList()
-        mSearchRequestsState.value = DataNotificator.DataPrepared(mSearchRequests)
+        mSearchRequests = ArrayList(searches)
+        mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
     }
 
-    suspend fun onNewSearch(searchText: String) {
+    suspend fun cacheNewSearchRequest(searchText: String) {
         val newSearchRequest = AdaptiveSearchRequest(searchText)
+
         removeSearchRequestsDuplicates(newSearchRequest)
         mSearchRequests.add(0, newSearchRequest)
 
         if (isSearchRequestsLimitExceeded()) {
             reduceRequestsToLimit()
         }
-        mSearchRequestsState.value = DataNotificator.DataUpdated(mSearchRequests)
-        mLocalInteractorHelper.updateSearchRequestsHistory(mSearchRequests)
+
+        mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
+        mLocalInteractorHelper.cacheSearchRequestsHistory(mSearchRequests)
     }
 
     /*
-    * If new search-text-request is contains in history -> item in history will be removed.
+    * Example:
+    *   Source: [App, Appl, Ap, Facebook, Apple]
+    *   Input:  Apple
+    *   Output: [Apple, Facebook]
     * */
     private fun removeSearchRequestsDuplicates(newSearchRequest: AdaptiveSearchRequest) {
         var endBorder = mSearchRequests.size
@@ -94,6 +104,6 @@ class SearchRequestsStateWorker(private val mLocalInteractorHelper: LocalInterac
     }
 
     private fun isSearchRequestsLimitExceeded(): Boolean {
-        return mSearchRequests.size > mSearchRequestsSaveLimit
+        return mSearchRequests.size > mSearchRequestsLimit
     }
 }

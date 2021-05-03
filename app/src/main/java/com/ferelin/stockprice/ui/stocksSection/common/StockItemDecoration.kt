@@ -6,7 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
 
-class StocksItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,

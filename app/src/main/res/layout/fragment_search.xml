@@ -51,14 +51,19 @@
     <ImageView
         android:id="@+id/imageViewIconClose"
         style="@style/clickableImage"
+        android:layout_marginEnd="10dp"
         android:contentDescription="@string/descriptionIconClose"
         android:elevation="@dimen/searchFragmentElevation"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        android:scaleX="0"
+        android:scaleY="0"
         android:src="@drawable/ic_close"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch"
-        tools:visibility="visible" />
+        tools:scaleX="1"
+        tools:scaleY="1" />
 
     <TextView
         android:id="@+id/textViewRequests"

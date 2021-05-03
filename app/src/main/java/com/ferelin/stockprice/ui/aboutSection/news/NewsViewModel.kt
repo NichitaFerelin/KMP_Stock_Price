@@ -1,130 +1,72 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseDataViewModel
+import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NewsViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
     selectedCompany: AdaptiveCompany? = null
-) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
     private val mSelectedCompany: AdaptiveCompany? = selectedCompany
+    val selectedCompany: AdaptiveCompany
+        get() = mSelectedCompany!!
 
-    private val mRecyclerAdapter = NewsRecyclerAdapter()
-    val recyclerAdapter: NewsRecyclerAdapter
-        get() = mRecyclerAdapter
+    private val mNewsRecyclerAdapter = NewsRecyclerAdapter()
+    val newsRecyclerAdapter: NewsRecyclerAdapter
+        get() = mNewsRecyclerAdapter
 
-    private val mHasDataForRecycler =
-        MutableStateFlow(mSelectedCompany?.companyNews?.summaries?.isNotEmpty() ?: false)
-    val hasDataForRecycler: StateFlow<Boolean>
-        get() = mHasDataForRecycler
+    private val mStateIsNetworkResponded = MutableStateFlow(false)
 
-    private val mActionOpenUrl = MutableSharedFlow<Intent>()
-    val actionOpenUrl: SharedFlow<Intent>
-        get() = mActionOpenUrl
+    private val mStateNews = MutableStateFlow<AdaptiveCompanyNews?>(null)
+    val stateNews: StateFlow<AdaptiveCompanyNews?>
+        get() = mStateNews
 
-    private val mNotificationNewItems = MutableSharedFlow<Unit>()
-    val notificationNewItems: SharedFlow<Unit>
-        get() = mNotificationNewItems
+    private val mStateIsDataLoading = MutableStateFlow(false)
+    val stateIsDataLoading: StateFlow<Boolean>
+        get() = mStateIsDataLoading
 
-    private val mActionShowError = MutableStateFlow("")
-    val actionShowError: StateFlow<String>
-        get() = mActionShowError
-
-    private val mIsDataLoading = MutableStateFlow(true)
-    val isDataLoading: StateFlow<Boolean>
-        get() = mIsDataLoading
-
-    private var isDataSet = false
+    private val mEventOnError = MutableSharedFlow<String>()
+    val eventOnError: SharedFlow<String>
+        get() = mEventOnError
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-
-            if (mHasDataForRecycler.value) {
-                onNewsChanged(mSelectedCompany!!.companyNews)
-            }
-
-            launch {
-                mDataInteractor.isNetworkAvailableState.collect { isAvailable ->
-                    if(isAvailable && !isDataSet) {
-                        mIsDataLoading.value = true
-                        collectCompanyNews()
-                    } else mIsDataLoading.value = false
-                }
-            }
-            launch { collectCompanyNews() }
-            launch {
-                mDataInteractor.loadCompanyNewsErrorShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.value = it }
-            }
+            launch { collectStateIsNetworkAvailable() }
+            launch { collectEventOnError() }
         }
+    }
+
+    private suspend fun collectStateIsNetworkAvailable() {
+        mDataInteractor.stateIsNetworkAvailable.collect { isAvailable ->
+            if (isAvailable && !mStateIsNetworkResponded.value) {
+                mStateIsDataLoading.value = true
+                collectCompanyNews()
+            } else mStateIsDataLoading.value = false
+        }
+    }
+
+    private suspend fun collectEventOnError() {
+        mDataInteractor.sharedLoadCompanyNewsError.collect { mEventOnError.emit(it) }
     }
 
     private suspend fun collectCompanyNews() {
-        mDataInteractor.loadCompanyNews(mSelectedCompany?.companyProfile?.symbol ?: "")
-            .collect {
-                onNewsChanged(it.companyNews)
-                mHasDataForRecycler.value = true
-            }
-    }
-
-    fun onNewsUrlClicked(position: Int) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            val url = mSelectedCompany?.companyNews?.browserUrls?.get(position)
-            val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
-            mActionOpenUrl.emit(intent)
+        val selectedCompanySymbol = mSelectedCompany!!.companyProfile.symbol
+        mDataInteractor.loadCompanyNews(selectedCompanySymbol).collect { company ->
+            onNewsLoaded(company)
         }
     }
 
-    private fun onNewsChanged(news: AdaptiveCompanyNews) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            isDataSet = true
-            mIsDataLoading.value = false
-            if (mRecyclerAdapter.dataSize == 0 && news.ids.size > 10) {
-                setNewsDataWithAnim(news)
-            } else if (mRecyclerAdapter.ids.firstOrNull() != news.ids.firstOrNull()) {
-                addNewsByOne(news)
-            }
-        }
-    }
-
-    private fun setNewsDataWithAnim(news: AdaptiveCompanyNews) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            for (index in 0 until 5) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addItemToEnd(news, index)
-                }
-                delay(45)
-            }
-            withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.setDataInRange(news, 5, news.ids.lastIndex)
-            }
-        }
-    }
-
-    private fun addNewsByOne(news: AdaptiveCompanyNews) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            val stopId = news.ids.first()
-            val newsCursor = 0
-            while (newsCursor < news.ids.size && news.ids[newsCursor] != stopId) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addItemToStart(news, newsCursor)
-                }
-                delay(50)
-            }
-            mNotificationNewItems.emit(Unit)
-        }
+    private fun onNewsLoaded(company: AdaptiveCompany) {
+        mStateIsDataLoading.value = false
+        mStateIsNetworkResponded.value = true
+        mStateNews.value = company.companyNews
     }
 }

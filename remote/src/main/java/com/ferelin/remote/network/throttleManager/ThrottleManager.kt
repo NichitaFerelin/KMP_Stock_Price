@@ -8,16 +8,17 @@ import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashSet
 import kotlin.math.abs
 
-/*
-* Class designed to:
-*   - Avoid API limit (App using free API with limit).
-*   - Optimize requests to network [Before sending to the network -> request will be
-*                                   checked by condition @isNotActual() ->
-*                                   if method will return true -> request will be deleted]
-*
-* Requests are inserted into a queue, which are retrieved
-* from there once per @mPerSecondRequestLimit
-* */
+/**
+ * [ThrottleManager] designed to:
+ *  - Avoid API limit error.
+ *  - Optimize requests to network. Before sending to the network -> request will be
+ * checked by condition [isNotActual] -> if method will return true -> request will be deleted
+ *
+ *   Requests are inserted into a [mMessagesQueue], which are retrieved from there once per/[mPerSecondRequestLimit].
+ *   Request will be saved into a [mMessagesHistory] to check future requests.
+ *
+ *   Is used only to load company quotes, but can be used for any requests type.
+ */
 class ThrottleManager(
     coroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : ThrottleManagerHelper {

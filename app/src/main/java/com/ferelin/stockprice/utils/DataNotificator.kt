@@ -13,7 +13,7 @@ sealed class DataNotificator<out T>(val data: T? = null) {
 
     class ItemRemoved<out T>(data: T) : DataNotificator<T>(data)
 
-    class ItemUpdatedDefault<out T>(data: T) : DataNotificator<T>(data)
+    class ItemUpdatedCommon<out T>(data: T) : DataNotificator<T>(data)
 
     class ItemUpdatedQuote<out T>(data: T) : DataNotificator<T>(data)
 

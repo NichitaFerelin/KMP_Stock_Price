@@ -9,11 +9,11 @@ interface LocalInteractorHelper {
 
     suspend fun getSearchRequestsHistory(): LocalInteractorResponse
 
-    suspend fun updateSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
+    suspend fun cacheSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
     suspend fun getFirstTimeLaunchState(): LocalInteractorResponse
 
-    suspend fun updateCompany(adaptiveCompany: AdaptiveCompany)
+    suspend fun cacheCompany(adaptiveCompany: AdaptiveCompany)
 }

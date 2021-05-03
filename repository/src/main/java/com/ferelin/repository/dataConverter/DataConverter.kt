@@ -17,6 +17,9 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 
+/**
+ * [DataConverter] is used to convert responses for UI from local/remote modules.
+ */
 class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
 
     override fun convertCompaniesResponse(
@@ -41,7 +44,7 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
                 owner = itemResponse.symbol,
                 data = AdaptiveWebSocketPrice(
                     formattedPrice,
-                    mAdapter.calculateProfit(
+                    mAdapter.buildProfitString(
                         currentPrice = itemResponse.lastPrice,
                         previousPrice = response.additionalMessage?.toDouble() ?: 0.0
                     )
@@ -166,7 +169,7 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
                     mAdapter.formatPrice(itemResponse.openPrice),
                     mAdapter.formatPrice(itemResponse.highPrice),
                     mAdapter.formatPrice(itemResponse.lowPrice),
-                    mAdapter.calculateProfit(itemResponse.currentPrice, itemResponse.openPrice)
+                    mAdapter.buildProfitString(itemResponse.currentPrice, itemResponse.openPrice)
                 )
             )
         } else {

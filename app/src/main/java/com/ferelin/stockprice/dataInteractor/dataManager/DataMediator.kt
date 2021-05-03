@@ -2,22 +2,21 @@ package com.ferelin.stockprice.dataInteractor.dataManager
 
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.CompaniesStateWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.FavouriteCompaniesStateWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.FirstTimeLaunchStateWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsStateWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.CompaniesWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.FavouriteCompaniesWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.FirstTimeLaunchWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 
-/*
-* Class DataMediator is an implementation of the pattern Mediator.
-* Is designed to send the requests to the appropriate objects.
-* */
+/**
+ * [DataMediator] is an implementation of the pattern Mediator, that helps to work with data.
+ */
 class DataMediator(
-    val companiesWorker: CompaniesStateWorker,
-    val favouriteCompaniesWorker: FavouriteCompaniesStateWorker,
-    val searchRequestsWorker: SearchRequestsStateWorker,
-    val firstTimeLaunchStateWorker: FirstTimeLaunchStateWorker
+    val companiesWorker: CompaniesWorker,
+    val favouriteCompaniesWorker: FavouriteCompaniesWorker,
+    val searchRequestsWorker: SearchRequestsWorker,
+    val firstTimeLaunchWorker: FirstTimeLaunchWorker
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)
@@ -43,41 +42,41 @@ class DataMediator(
     }
 
     suspend fun onWebSocketResponse(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>) {
-        companiesWorker.onWebSocketResponse(response)?.let { updatedCompany ->
+        companiesWorker.onLiveTimePriceChanged(response)?.let { updatedCompany ->
             onDataChanged(updatedCompany, DataNotificator.ItemUpdatedLiveTime(updatedCompany))
         }
     }
 
     suspend fun onAddFavouriteCompany(company: AdaptiveCompany) {
         favouriteCompaniesWorker.addCompanyToFavourites(company)?.let { addedCompany ->
-            companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(addedCompany))
+            companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))
         }
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
         val updateCompany = favouriteCompaniesWorker.removeCompanyFromFavourites(company)
-        companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedDefault(updateCompany))
+        companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updateCompany))
     }
 
     fun onSearchRequestsHistoryPrepared(searches: List<AdaptiveSearchRequest>) {
         searchRequestsWorker.onDataPrepared(searches)
     }
 
-    fun resubscribeItemsOnLiveTimeUpdates() {
-        favouriteCompaniesWorker.resubscribeItemsOnLiveTimeUpdates()
+    fun subscribeItemsOnLiveTimeUpdates() {
+        favouriteCompaniesWorker.subscribeCompaniesOnLiveTimeUpdates()
     }
 
     fun onFirstTimeLaunchStateResponse(response: LocalInteractorResponse) {
-        firstTimeLaunchStateWorker.onResponse(response)
+        firstTimeLaunchWorker.onResponse(response)
     }
 
-    suspend fun onNewSearch(searchText: String) {
-        searchRequestsWorker.onNewSearch(searchText)
+    suspend fun cacheNewSearchRequest(searchText: String) {
+        searchRequestsWorker.cacheNewSearchRequest(searchText)
     }
 
     private suspend fun onDataChanged(
         company: AdaptiveCompany,
-        notification: DataNotificator<AdaptiveCompany> = DataNotificator.ItemUpdatedDefault(company)
+        notification: DataNotificator<AdaptiveCompany> = DataNotificator.ItemUpdatedCommon(company)
     ) {
         companiesWorker.onCompanyChanged(notification)
         favouriteCompaniesWorker.onCompanyChanged(company)

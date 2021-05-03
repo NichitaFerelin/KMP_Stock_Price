@@ -4,6 +4,9 @@ import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 
+/*
+* Mocked data for unit tests
+* */
 object FakeLocalResponses {
     val companiesResponseSuccessFromJson = CompaniesResponse.Success(
         code = Responses.LOADED_FROM_JSON,

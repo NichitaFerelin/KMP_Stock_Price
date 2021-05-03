@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,17 +12,11 @@ class NewsRecyclerAdapter(
 ) : RecyclerView.Adapter<NewsRecyclerAdapter.NewsViewHolder>() {
 
     private var mNewsIds: ArrayList<String> = arrayListOf()
-    val ids: ArrayList<String>
-        get() = mNewsIds
-
     private var mNewsHeadlines: ArrayList<String> = arrayListOf()
     private var mNewsSummaries: ArrayList<String> = arrayListOf()
     private var mNewsDates: ArrayList<String> = arrayListOf()
     private var mNewsSources: ArrayList<String> = arrayListOf()
     private var mNewsUrls: ArrayList<String> = arrayListOf()
-
-    val dataSize: Int
-        get() = mNewsIds.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         return NewsViewHolder.from(parent)
@@ -44,34 +39,15 @@ class NewsRecyclerAdapter(
         return mNewsHeadlines.size
     }
 
-    fun addItemToStart(news: AdaptiveCompanyNews, position: Int) {
-        mNewsIds.add(0, news.ids[position])
-        mNewsHeadlines.add(0, news.headlines[position])
-        mNewsSummaries.add(0, news.summaries[position])
-        mNewsDates.add(0, news.dates[position])
-        mNewsSources.add(0, news.sources[position])
-        mNewsUrls.add(0, news.browserUrls[position])
-        notifyItemInserted(0)
-    }
-
-    fun addItemToEnd(news: AdaptiveCompanyNews, position: Int) {
-        mNewsIds.add(news.ids[position])
-        mNewsHeadlines.add(news.headlines[position])
-        mNewsSummaries.add(news.summaries[position])
-        mNewsDates.add(news.dates[position])
-        mNewsSources.add(news.sources[position])
-        mNewsUrls.add(news.browserUrls[position])
-        notifyItemInserted(mNewsIds.lastIndex)
-    }
-
-    fun setDataInRange(news: AdaptiveCompanyNews, start: Int, end: Int) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(news: AdaptiveCompanyNews) {
         mNewsIds = ArrayList(news.ids)
         mNewsHeadlines = ArrayList(news.headlines)
         mNewsSummaries = ArrayList(news.summaries)
         mNewsDates = ArrayList(news.dates)
         mNewsSources = ArrayList(news.sources)
         mNewsUrls = ArrayList(news.browserUrls)
-        notifyItemRangeInserted(start, end)
+        notifyDataSetChanged()
     }
 
     fun setOnNewsClickListener(clickListener: NewsClickListener) {

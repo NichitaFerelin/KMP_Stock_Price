@@ -4,21 +4,21 @@ import androidx.lifecycle.ViewModel
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 
-/*
-* BaseDataViewModel is the fundament for view models where is needed data source.
-* */
-abstract class BaseDataViewModel(
+/**
+ * [BaseViewModel] holds the logic of data loading using [mDataInteractor].
+ */
+abstract class BaseViewModel(
     protected val mCoroutineContext: CoroutineContextProvider,
     protected val mDataInteractor: DataInteractor
 ) : ViewModel() {
 
     /*
-    * Will be called at Add your observers here.
+    * Add your observers here.
     * */
     protected abstract fun initObserversBlock()
 
     /*
-    * To avoid multiple call of initObserversBlock().
+    * To avoid calling non-final function in init-block.
     * */
     private var mWasInitialized = false
 

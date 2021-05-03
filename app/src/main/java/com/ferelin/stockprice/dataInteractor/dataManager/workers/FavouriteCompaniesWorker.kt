@@ -11,32 +11,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-/*
-* Worker that is responsible for:
-*   - Providing favourite companies(items) for display.
-*   - Notification when company was added/removed to favourites.
-*   - Subscribing favourite companies for live-time updates
-*   - Unsubscribing companies from live-time updates when it was removed from favourite.
-*   - Control the limit of favourite companies(look at mCompaniesLimit variable).
-*   - Caching data.
-* */
-class FavouriteCompaniesStateWorker(
+/**
+ * [FavouriteCompaniesWorker] providing an ability to:
+ *   - Observing [mStateFavouriteCompanies] to display a list of favourite companies.
+ *   - Observing [mSharedFavouriteCompaniesUpdates] to add/remove item from list of favourite companies.
+ *
+ * Also [FavouriteCompaniesWorker] manually doing:
+ *   - Subscribing favourite companies for live-time updates using [mRepositoryHelper].
+ *   - Unsubscribing companies from live-time updates when it was removed from favourites using [mRepositoryHelper].
+ *   - Control the limit of favourite companies @see [mCompaniesLimit] notifying with [mErrorsWorker].
+ *   - Using [mLocalInteractorHelper] to data caching.
+ *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
+ */
+class FavouriteCompaniesWorker(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mRepositoryHelper: RepositoryManagerHelper,
-    private val mErrorHandlerWorker: ErrorHandlerWorker
+    private val mErrorsWorker: ErrorsWorker
 ) {
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
 
-    private val mFavouriteCompaniesState =
-        MutableStateFlow<DataNotificator<MutableList<AdaptiveCompany>>>(DataNotificator.Loading())
-    val favouriteCompaniesState: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mFavouriteCompaniesState
+    private val mStateFavouriteCompanies =
+        MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(DataNotificator.Loading())
+    val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
+        get() = mStateFavouriteCompanies
 
-    private val mFavouriteCompaniesUpdatesShared =
+    private val mSharedFavouriteCompaniesUpdates =
         MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
-    val favouriteCompaniesUpdatesShared: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mFavouriteCompaniesUpdatesShared
+    val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mSharedFavouriteCompaniesUpdates
 
     /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
@@ -46,44 +49,29 @@ class FavouriteCompaniesStateWorker(
     private val mCompaniesLimit = 50
 
     fun onDataPrepared(companies: List<AdaptiveCompany>) {
-        val favouriteCompanies = arrayListOf<AdaptiveCompany>()
-        companies.forEach {
-            if (it.isFavourite) {
-                favouriteCompanies.add(it)
-                subscribeCompanyOnLiveTimeUpdates(it)
-            }
-        }
-        favouriteCompanies.sortByDescending { it.favouriteOrderIndex }
-        mFavouriteCompanies.addAll(favouriteCompanies)
-        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(favouriteCompanies)
-    }
-
-    fun resubscribeItemsOnLiveTimeUpdates() {
-        mFavouriteCompanies.forEach { subscribeCompanyOnLiveTimeUpdates(it) }
+        mFavouriteCompanies = ArrayList(companies
+            .filter { it.isFavourite }
+            .sortedByDescending { it.favouriteOrderIndex }
+        )
+        subscribeCompaniesOnLiveTimeUpdates()
+        mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
     }
 
     suspend fun onCompanyChanged(company: AdaptiveCompany) {
-        mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemUpdatedDefault(company))
+        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemUpdatedCommon(company))
     }
 
     suspend fun addCompanyToFavourites(company: AdaptiveCompany): AdaptiveCompany? {
         if (isFavouritesCompaniesLimitExceeded()) {
-            mErrorHandlerWorker.onFavouriteCompaniesLimitReached()
+            mErrorsWorker.onFavouriteCompaniesLimitReached()
             return null
         }
 
         applyChangesToAddedFavouriteCompany(company)
         subscribeCompanyOnLiveTimeUpdates(company)
         mFavouriteCompanies.add(0, company)
-
-        /*
-        * mFavouriteCompaniesState do not use reference of the original list.
-        * So need to update that manually every time.
-        * */
-        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
-
-        mFavouriteCompaniesUpdatesShared.emit(DataNotificator.NewItemAdded(company))
-        mLocalInteractorHelper.updateCompany(company)
+        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.NewItemAdded(company))
+        mLocalInteractorHelper.cacheCompany(company)
         return company
     }
 
@@ -91,16 +79,13 @@ class FavouriteCompaniesStateWorker(
         applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
         mFavouriteCompanies.remove(company)
-
-        /*
-        * mFavouriteCompaniesState do not use reference of the original list.
-        * So need to update that manually every time.
-        * */
-        mFavouriteCompaniesState.value = DataNotificator.DataPrepared(mFavouriteCompanies)
-
-        mFavouriteCompaniesUpdatesShared.emit(DataNotificator.ItemRemoved(company))
-        mLocalInteractorHelper.updateCompany(company)
+        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
+        mLocalInteractorHelper.cacheCompany(company)
         return company
+    }
+
+    fun subscribeCompaniesOnLiveTimeUpdates() {
+        mFavouriteCompanies.forEach { subscribeCompanyOnLiveTimeUpdates(it) }
     }
 
     private fun isFavouritesCompaniesLimitExceeded(): Boolean {
@@ -118,8 +103,9 @@ class FavouriteCompaniesStateWorker(
         company.apply {
             isFavourite = false
             companyStyle.favouriteDefaultIconResource =
-                mStylesProvider.getDefaultIconDrawable(false)
-            companyStyle.favouriteSingleIconResource = mStylesProvider.getSingleIconDrawable(false)
+                mStylesProvider.getDefaultIconDrawable(isFavourite)
+            companyStyle.favouriteSingleIconResource =
+                mStylesProvider.getSingleIconDrawable(isFavourite)
         }
     }
 
@@ -127,9 +113,9 @@ class FavouriteCompaniesStateWorker(
         company.apply {
             isFavourite = true
             companyStyle.favouriteDefaultIconResource =
-                mStylesProvider.getDefaultIconDrawable(true)
+                mStylesProvider.getDefaultIconDrawable(isFavourite)
             companyStyle.favouriteSingleIconResource =
-                mStylesProvider.getSingleIconDrawable(true)
+                mStylesProvider.getSingleIconDrawable(isFavourite)
 
             val orderIndex = mFavouriteCompanies.firstOrNull()?.favouriteOrderIndex?.plus(1) ?: 0
             favouriteOrderIndex = orderIndex

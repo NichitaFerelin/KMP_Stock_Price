@@ -15,48 +15,44 @@ class StocksViewModel(
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(contextProvider, dataInteractor) {
 
-    private val mActionShowError = MutableSharedFlow<String>()
-    val actionShowError: SharedFlow<String>
-        get() = mActionShowError
+    private val mEventError = MutableSharedFlow<String>()
+    val eventError: SharedFlow<String>
+        get() = mEventError
 
     override fun initObserversBlock() {
         super.initObserversBlock()
-
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mDataInteractor.companiesState
-                    .filter { it is DataNotificator.DataPrepared }
-                    .take(1)
-                    .collect { onCompaniesPrepared(it as DataNotificator.DataPrepared<List<AdaptiveCompany>>) }
-            }
-            launch {
-                mDataInteractor.companiesUpdatesShared
-                    .filter { it is DataNotificator.ItemUpdatedDefault }
-                    .collect { updateRecyclerViewItem(it) }
-            }
-            launch {
-                mDataInteractor.openConnectionErrorState
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.emit(it) }
-            }
-            launch {
-                mDataInteractor.favouriteCompaniesLimitReachedShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.emit(it) }
-            }
-            launch {
-                mDataInteractor.loadCompanyQuoteErrorShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.emit(it) }
-            }
+            launch { collectStateCompanies() }
+            launch { collectSharedOpenConnectionError() }
+            launch { collectSharedFavouritesLimitReached() }
+            launch { collectSharedCompanyQuoteError() }
         }
+    }
+
+    private suspend fun collectStateCompanies() {
+        mDataInteractor.stateCompanies
+            .filter { it is DataNotificator.DataPrepared }
+            .take(1)
+            .collect { onCompaniesPrepared(it as DataNotificator.DataPrepared<List<AdaptiveCompany>>) }
+    }
+
+    private suspend fun collectSharedOpenConnectionError() {
+        mDataInteractor.sharedOpenConnectionError.collect { mEventError.emit(it) }
+    }
+
+    private suspend fun collectSharedFavouritesLimitReached() {
+        mDataInteractor.sharedFavouriteCompaniesLimitReached.collect { mEventError.emit(it) }
+    }
+
+    private suspend fun collectSharedCompanyQuoteError() {
+        mDataInteractor.sharedLoadCompanyQuoteError.collect { mEventError.emit(it) }
     }
 
     private fun onCompaniesPrepared(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
         viewModelScope.launch(mCoroutineContext.IO) {
             val newList = ArrayList(notificator.data!!)
             withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.setCompanies(newList)
+                mStocksRecyclerAdapter.setCompanies(newList)
             }
         }
     }

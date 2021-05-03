@@ -1,7 +1,9 @@
 package com.ferelin.stockprice.ui.stocksSection.common
 
+import android.animation.Animator
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.Animation
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -10,7 +12,11 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.databinding.ItemStockBinding
 
 class StockViewHolder private constructor(
-    val binding: ItemStockBinding
+    val binding: ItemStockBinding,
+    var attachedPriceAnimator: Animator? = null,
+    var attachedProfitAnimator: Animator? = null,
+    var attachedPriceFadeAnimation: Animation? = null,
+    var attachedStartAnimator: Animator? = null
 ) : RecyclerView.ViewHolder(binding.root) {
 
     var company: AdaptiveCompany? = null

@@ -1,8 +1,13 @@
 package com.ferelin.stockprice.ui.stocksSection.common
 
 import android.animation.Animator
+import android.animation.AnimatorInflater
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
+import com.ferelin.stockprice.R
+import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.AnimatorManager
 
 class StockItemAnimator : DefaultItemAnimator() {
@@ -22,13 +27,15 @@ class StockItemAnimator : DefaultItemAnimator() {
         }
 
         when {
-            isFirstTimePriceLoad(preInfo, newHolder) -> animatePriceFade(newHolder)
+            isFirstTimePriceLoad(preInfo, newHolder) -> animatePriceFadeIn(newHolder)
             isPriceChanged(preInfo, newHolder) -> animatePriceChanges(newHolder)
             else -> animateStar(newHolder)
         }
 
         return true
     }
+
+    override fun isRunning(): Boolean = false
 
     override fun recordPreLayoutInformation(
         state: RecyclerView.State,
@@ -52,105 +59,90 @@ class StockItemAnimator : DefaultItemAnimator() {
 
     override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean = true
 
+    override fun endAnimation(item: RecyclerView.ViewHolder) {
+        super.endAnimation(item)
+        if (item is StockViewHolder) {
+            item.apply {
+                attachedPriceAnimator?.cancel()
+                attachedPriceAnimator = null
+
+                attachedProfitAnimator?.cancel()
+                attachedProfitAnimator = null
+
+                attachedStartAnimator?.cancel()
+                attachedProfitAnimator = null
+
+                attachedPriceFadeAnimation?.cancel()
+                attachedPriceFadeAnimation = null
+            }
+        }
+    }
+
     private fun isFirstTimePriceLoad(
         preInfo: StockHolderInfo,
-        newHolder:StockViewHolder
+        newHolder: StockViewHolder
     ): Boolean {
         return preInfo.price.isEmpty() && newHolder.binding.textViewCurrentPrice.text.isNotEmpty()
     }
 
     private fun isPriceChanged(
         preInfo: StockHolderInfo,
-        newHolder:StockViewHolder
+        newHolder: StockViewHolder
     ): Boolean {
         return preInfo.price != newHolder.binding.textViewCurrentPrice.text
     }
 
     private fun animateStar(holder: StockViewHolder) {
-        holder.binding.imageViewFavourite
-            .animate()
-            .scaleY(1.2F)
-            .scaleX(1.2F)
-            .setDuration(175L)
-            .setListener(object : AnimatorManager() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    dispatchAnimationFinished(holder)
-                    holder.binding.imageViewFavourite
-                        .animate()
-                        .scaleY(1F)
-                        .scaleX(1F)
-                        .setDuration(175L)
-                        .setListener(object : AnimatorManager() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                dispatchAnimationFinished(holder)
-                            }
-                        })
-                        .start()
-                }
-            })
-            .start()
+
+        val scaleInOut =
+            AnimatorInflater.loadAnimator(holder.itemView.context, R.animator.scale_in_out)
+        scaleInOut.setTarget(holder.binding.imageViewFavourite)
+        scaleInOut.addListener(object : AnimatorManager() {
+            override fun onAnimationEnd(animation: Animator?) {
+                dispatchAnimationFinished(holder)
+            }
+        })
+
+        holder.attachedStartAnimator = scaleInOut
+        scaleInOut.start()
     }
 
-    private fun animatePriceFade(holder: StockViewHolder) {
-        holder.binding.textViewCurrentPrice.alpha = 0F
-        holder.binding.textViewDayProfit.alpha = 0F
+    private fun animatePriceFadeIn(holder: StockViewHolder) {
 
-        holder.binding.textViewCurrentPrice
-            .animate()
-            .alpha(1F)
-            .setDuration(300L)
-            .start()
-        holder.binding.textViewDayProfit
-            .animate()
-            .alpha(1F)
-            .setDuration(300L)
-            .setListener(object : AnimatorManager() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    dispatchAnimationFinished(holder)
-                }
-            })
-            .start()
+        val fadeIn = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.fade_in)
+        fadeIn.setAnimationListener(object : AnimationManager() {
+            override fun onAnimationEnd(animation: Animation?) {
+                holder.binding.textViewCurrentPrice.alpha = 1F
+                holder.binding.textViewDayProfit.alpha = 1F
+                fadeIn.setAnimationListener(null)
+                dispatchAnimationFinished(holder)
+            }
+        })
+        holder.attachedPriceFadeAnimation = fadeIn
+        holder.binding.textViewCurrentPrice.startAnimation(fadeIn)
+        holder.binding.textViewDayProfit.startAnimation(fadeIn)
     }
 
     private fun animatePriceChanges(holder: StockViewHolder) {
-        holder.binding.textViewCurrentPrice
-            .animate()
-            .scaleY(1.2F)
-            .scaleX(1.2F)
-            .setDuration(175L)
-            .setListener(object : AnimatorManager() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    dispatchAnimationFinished(holder)
-                    holder.binding.textViewCurrentPrice
-                        .animate()
-                        .scaleY(1F)
-                        .scaleX(1F)
-                        .setDuration(175L)
-                        .start()
-                }
-            })
-            .start()
-        holder.binding.textViewDayProfit
-            .animate()
-            .scaleY(1.2F)
-            .scaleX(1.2F)
-            .setDuration(175L)
-            .setListener(object : AnimatorManager() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    dispatchAnimationFinished(holder)
-                    holder.binding.textViewDayProfit
-                        .animate()
-                        .scaleY(1F)
-                        .scaleX(1F)
-                        .setDuration(175L)
-                        .setListener(object : AnimatorManager() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                dispatchAnimationFinished(holder)
-                            }
-                        })
-                        .start()
-                }
-            })
-            .start()
+
+        val scaleInOutPrice =
+            AnimatorInflater.loadAnimator(holder.itemView.context, R.animator.scale_in_out)
+        val scaleInOutProfit =
+            AnimatorInflater.loadAnimator(holder.itemView.context, R.animator.scale_in_out)
+
+        scaleInOutPrice.addListener(object : AnimatorManager() {
+            override fun onAnimationEnd(animation: Animator?) {
+                dispatchAnimationFinished(holder)
+            }
+        })
+
+        holder.attachedPriceAnimator = scaleInOutPrice
+        holder.attachedProfitAnimator = scaleInOutProfit
+
+        scaleInOutPrice.setTarget(holder.binding.textViewCurrentPrice)
+        scaleInOutProfit.setTarget(holder.binding.textViewDayProfit)
+
+        scaleInOutPrice.start()
+        scaleInOutProfit.start()
     }
 }

@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.custom.chart
+package com.ferelin.stockprice.custom
 
 import android.content.Context
 import android.graphics.*
@@ -14,6 +14,18 @@ import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.utils.px
 import kotlin.math.abs
 
+/**
+ * [ChartView] provides the ability to display data that has fields like date and number.
+ * For example. class A, with fields:
+ *  - Price = 100$, Date = 12.04.18
+ *
+ * Height / Width(@see [calculatePositions]):
+ * - Chart is drawing by building Bezier Points.
+ * - The width of the chart is calculated by the number of points.
+ * - The height of the points is calculated from the average of all input data.
+ *
+ * [ChartView] providing a public method [findNearestPoint] that returns nearest point by touched coordinates.
+ */
 class ChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -108,14 +120,18 @@ class ChartView @JvmOverloads constructor(
         return true
     }
 
-    fun setData(markers: AdaptiveCompanyHistoryForChart) {
+    fun setData(history: AdaptiveCompanyHistoryForChart) {
+        if (history.isEmpty()) {
+            return
+        }
+        
         val newList = mutableListOf<Marker>()
-        for (index in markers.price.indices) {
+        for (index in history.price.indices) {
             newList.add(
                 Marker(
-                    price = markers.price[index],
-                    priceStr = markers.priceStr[index],
-                    date = markers.dates[index]
+                    price = history.price[index],
+                    priceStr = history.priceStr[index],
+                    date = history.dates[index]
                 )
             )
         }
@@ -145,7 +161,7 @@ class ChartView @JvmOverloads constructor(
         calcAndInvalidate()
     }
 
-    fun addCallbackListener(onDataPrepared: () -> Unit) {
+    fun addOnChartPreparedListener(onDataPrepared: () -> Unit) {
         mOnDataPreparedCallback = onDataPrepared
     }
 
@@ -153,19 +169,13 @@ class ChartView @JvmOverloads constructor(
         mOnTouchListener = func
     }
 
-    fun restoreMarker(previousMarker: Marker?) : Marker? {
-        for(marker in mMarkers) {
-            if(marker == previousMarker) {
+    fun restoreMarker(previousMarker: Marker?): Marker? {
+        for (marker in mMarkers) {
+            if (marker == previousMarker) {
                 return marker
             }
         }
-
         return null
-    }
-
-    fun invalidateVariables() {
-        mOnTouchListener = null
-        mTouchEventDetector = null
     }
 
     private fun calcAndInvalidate() {
@@ -329,7 +339,10 @@ class ChartView @JvmOverloads constructor(
         mLastNearestPoint = nearestPoint
     }
 
-    private fun findNearestPoint(event: MotionEvent) : Marker? {
+    /*
+    * The point is searched using only X coordinate.
+    * */
+    private fun findNearestPoint(event: MotionEvent): Marker? {
         var nearestPoint: Marker? = null
         val (startIndex, endIndex) = if (mTooManyPoints) {
             intArrayOf(2, mMarkers.size - 2)

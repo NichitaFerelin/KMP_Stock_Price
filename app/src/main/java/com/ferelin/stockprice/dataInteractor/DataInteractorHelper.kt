@@ -27,7 +27,7 @@ interface DataInteractorHelper {
 
     suspend fun removeCompanyFromFavourite(symbol: String)
 
-    suspend fun onNewSearch(searchText: String)
+    suspend fun cacheNewSearchRequest(searchText: String)
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 

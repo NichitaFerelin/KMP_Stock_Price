@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider(),
     private val mDataInteractor: DataInteractor,
-    private val mApplication: Application
+    mApplication: Application
 ) : AndroidViewModel(mApplication) {
 
     init {
@@ -38,17 +38,15 @@ class MainViewModel(
     fun initObservers() {
         viewModelScope.launch(mCoroutineContext.IO) {
             launch {
-                mDataInteractor.prepareCompaniesErrorShared
-                    .filter { it.isNotEmpty() }
+                mDataInteractor.sharedPrepareCompaniesError
                     .collect { mActionShowDialogError.emit(it) }
             }
             launch {
-                mDataInteractor.isNetworkAvailableState
+                mDataInteractor.stateIsNetworkAvailable
                     .collect { onNetworkStateChanged(it) }
             }
             launch {
-                mDataInteractor.apiLimitError
-                    .filter { it }
+                mDataInteractor.sharedApiLimitError
                     .collect { mActionShowApiLimitError.emit(Unit) }
             }
             launch { mDataInteractor.prepareData() }

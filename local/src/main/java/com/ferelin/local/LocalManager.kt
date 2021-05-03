@@ -39,11 +39,13 @@ class LocalManager(
     * */
     override fun getAllCompaniesAsResponse(): Flow<CompaniesResponse> {
         return mCompaniesManagerHelper.getAllCompanies().map { databaseCompanies ->
+            /*
+            * If data companies loaded from room is empty -> than load companies from json assets
+            * add cache it.
+            * */
             if (databaseCompanies.isEmpty()) {
                 getCompaniesFromJson().firstOrNull()?.let {
-                    it.forEachIndexed { index, company ->
-                        company.id = index
-                    }
+                    it.forEachIndexed { index, company -> company.id = index }
                     insertAllCompanies(it)
                     CompaniesResponse.Success(
                         code = Responses.LOADED_FROM_JSON,
@@ -56,9 +58,7 @@ class LocalManager(
 
     override fun getSearchesHistoryAsResponse(): Flow<SearchesResponse> {
         return getSearchesHistory().map {
-            if (it != null) {
-                SearchesResponse.Success(it)
-            } else SearchesResponse.Failed
+            SearchesResponse.Success(it)
         }
     }
 

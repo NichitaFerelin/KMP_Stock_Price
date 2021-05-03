@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.res.Resources
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
 import java.util.*
+import kotlin.concurrent.timerTask
 
 const val NULL_INDEX = -1
 
@@ -18,6 +20,10 @@ fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
     return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
             || item.companyProfile.symbol.toLowerCase(Locale.ROOT)
         .contains(text.toLowerCase(Locale.ROOT))
+}
+
+fun showToast(context: Context, text: String) {
+    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 }
 
 fun parseDoubleFromStr(str: String): Double {
@@ -46,4 +52,10 @@ fun openKeyboard(context: Context, view: View) {
 fun hideKeyboard(context: Context, view: View) {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun withTimer(body: () -> Unit) {
+    Timer().schedule(timerTask {
+        body.invoke()
+    }, 200)
 }

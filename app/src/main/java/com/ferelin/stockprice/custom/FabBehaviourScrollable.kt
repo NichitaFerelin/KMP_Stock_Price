@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.custom.fab
+package com.ferelin.stockprice.custom
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,8 +7,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 
-// Used in styles.xml
-class ScrollableFabBehaviour(
+/**
+ * [FabBehaviourScrollable] providing the behaviour for FAB that is localed at scrollable view.
+ * - FAB will hide on the Scroll UP.
+ * - FAB will show on the Scroll BOTTOM.
+ *
+ *  Used in xml. When changing the class name do not forget to change the XML file.
+ */
+class FabBehaviourScrollable(
     context: Context,
     attributeSet: AttributeSet
 ) : FloatingActionButton.Behavior() {

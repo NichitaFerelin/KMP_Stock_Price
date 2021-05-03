@@ -5,18 +5,6 @@
     <ConstraintSet android:id="@+id/start">
 
         <Constraint
-            android:id="@id/imageViewIconClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="10dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
-            app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
-            app:layout_constraintTop_toTopOf="@id/cardViewSearch"
-            app:visibilityMode="ignore" />
-
-        <Constraint
             android:id="@id/appBar"
             android:layout_width="0dp"
             android:layout_height="80dp"
@@ -78,18 +66,6 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
-
-        <Constraint
-            android:id="@id/imageViewIconClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="10dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
-            app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
-            app:layout_constraintTop_toTopOf="@id/cardViewSearch"
-            app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@id/appBar"

@@ -11,7 +11,7 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.*
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import kotlin.reflect.KProperty
 
-class DataInteractorDelegate(private val mContext: Context) {
+class DataInteractorBuilder(private val mContext: Context) {
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): DataInteractor {
         return buildDataInteractor(mContext)
@@ -21,17 +21,17 @@ class DataInteractorDelegate(private val mContext: Context) {
         val repositoryHelper = RepositoryManager.getInstance(context)
         val localInteractorHelper = LocalInteractor(repositoryHelper)
         val stylesProvider = StylesProvider(context)
-        val errorHandlerWorker = ErrorHandlerWorker(context)
-        val firstTimeLaunchWorker = FirstTimeLaunchStateWorker()
+        val errorHandlerWorker = ErrorsWorker(context)
+        val firstTimeLaunchWorker = FirstTimeLaunchWorker()
         val dataManager = DataMediator(
-            CompaniesStateWorker(stylesProvider, localInteractorHelper),
-            FavouriteCompaniesStateWorker(
+            CompaniesWorker(stylesProvider, localInteractorHelper),
+            FavouriteCompaniesWorker(
                 stylesProvider,
                 localInteractorHelper,
                 repositoryHelper,
                 errorHandlerWorker
             ),
-            SearchRequestsStateWorker(localInteractorHelper),
+            SearchRequestsWorker(localInteractorHelper),
             firstTimeLaunchWorker
         )
         val networkConnectivityWorker = buildConnectivityWorker(context)

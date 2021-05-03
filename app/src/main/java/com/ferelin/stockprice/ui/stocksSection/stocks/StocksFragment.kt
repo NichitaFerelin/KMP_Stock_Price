@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentStocksBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
@@ -15,49 +14,43 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class StocksFragment : BaseStocksFragment<StocksViewModel, StocksViewHelper>() {
+class StocksFragment :
+    BaseStocksFragment<FragmentStocksBinding, StocksViewModel, StockViewController>() {
 
-    override val mViewHelper: StocksViewHelper = StocksViewHelper()
+    override val mViewController: StockViewController = StockViewController()
     override val mViewModel: StocksViewModel by viewModels {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
-
-    override var mStocksRecyclerView: RecyclerView? = null
-    private var mBinding: FragmentStocksBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentStocksBinding.inflate(inflater, container, false).also {
-            mStocksRecyclerView = it.recyclerViewStocks
-        }
-        return mBinding!!.root
+        val viewBinding = FragmentStocksBinding.inflate(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-        mFragmentManager = requireParentFragment().parentFragmentManager
-        mBinding!!.recyclerViewStocks.setHasFixedSize(true)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mViewModel.postponeReferencesRemove {
-            mBinding?.recyclerViewStocks?.adapter = null
-            mBinding = null
-        }
+        mViewController.setArgumentsViewDependsOn(
+            stocksAdapter = mViewModel.stocksRecyclerAdapter,
+            fragmentManager = requireParentFragment().parentFragmentManager
+        )
     }
 
     override fun initObservers() {
         super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.actionShowError.collect {
-                withContext(mCoroutineContext.Main) {
-                    showToast(it)
-                }
+            collectEventOnError()
+        }
+    }
+
+    private suspend fun collectEventOnError() {
+        mViewModel.eventError.collect { message ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onError(message)
             }
         }
     }

@@ -3,7 +3,7 @@ package com.ferelin.stockprice.ui.aboutSection.aboutSection
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseDataViewModel
+import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,23 +16,23 @@ class AboutPagerViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor,
     selectedCompany: AdaptiveCompany?
-) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
     private var mSelectedCompany: AdaptiveCompany? = selectedCompany
     val selectedCompany: AdaptiveCompany?
         get() = mSelectedCompany
 
-    private val mEventDataChanged = MutableSharedFlow<Unit>(1)
-    val eventDataChanged: SharedFlow<Unit>
-        get() = mEventDataChanged
+    private val mEventOnDataChanged = MutableSharedFlow<Unit>(1)
+    val eventOnDataChanged: SharedFlow<Unit>
+        get() = mEventOnDataChanged
 
-    private val mActionShowError = MutableSharedFlow<String>()
-    val actionShowError: SharedFlow<String>
-        get() = mActionShowError
+    private val mEventOnError = MutableSharedFlow<String>()
+    val eventOnError: SharedFlow<String>
+        get() = mEventOnError
 
-    private var mLastSelectedPage: Int = 0
-    val lastSelectedPage: Int
-        get() = mLastSelectedPage
+    private var mSelectedTabPagePosition: Int = 0
+    val selectedTabPagePosition: Int
+        get() = mSelectedTabPagePosition
 
     val companySymbol: String
         get() = mSelectedCompany?.companyProfile?.symbol ?: ""
@@ -46,17 +46,8 @@ class AboutPagerViewModel(
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             mSelectedCompany?.let { onDataChanged(it) }
-
-            launch {
-                mDataInteractor.companiesUpdatesShared
-                    .filter { filterSharedUpdate(it) }
-                    .collect { onDataChanged(it.data!!) }
-            }
-            launch {
-                mDataInteractor.favouriteCompaniesLimitReachedShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.emit(it) }
-            }
+            launch { collectSharedCompaniesUpdates() }
+            launch { collectSharedCompaniesLimit() }
         }
     }
 
@@ -70,18 +61,30 @@ class AboutPagerViewModel(
         }
     }
 
-    fun setSelectedTab(position: Int) {
-        mLastSelectedPage = position
+    fun onTabClicked(position: Int) {
+        mSelectedTabPagePosition = position
+    }
+
+    private suspend fun collectSharedCompaniesUpdates() {
+        mDataInteractor.sharedCompaniesUpdates
+            .filter { filterUpdate(it) }
+            .collect { onDataChanged(it.data!!) }
+    }
+
+    private suspend fun collectSharedCompaniesLimit() {
+        mDataInteractor.sharedFavouriteCompaniesLimitReached.collect {
+            mEventOnError.emit(it)
+        }
     }
 
     private suspend fun onDataChanged(company: AdaptiveCompany) {
         mSelectedCompany = company
-        mEventDataChanged.emit(Unit)
+        mEventOnDataChanged.emit(Unit)
     }
 
-    private fun filterSharedUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {
-        return notificator is DataNotificator.ItemUpdatedDefault &&
-                notificator.data != null &&
-                mSelectedCompany?.companyProfile?.symbol == notificator.data.companyProfile.symbol
+    private fun filterUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {
+        return notificator is DataNotificator.ItemUpdatedCommon
+                && notificator.data != null
+                && mSelectedCompany?.companyProfile?.symbol == notificator.data.companyProfile.symbol
     }
 }

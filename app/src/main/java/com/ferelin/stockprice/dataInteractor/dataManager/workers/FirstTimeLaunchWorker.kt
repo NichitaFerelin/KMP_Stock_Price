@@ -4,18 +4,17 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-/*
-* Worker that is responsible for:
-*   - Notification about "first time launch" state.
-* */
-class FirstTimeLaunchStateWorker {
+/**
+ * [FirstTimeLaunchWorker] providing [mStateFirstTimeLaunch]
+ */
+class FirstTimeLaunchWorker {
 
-    private val mFirstTimeLaunchState = MutableStateFlow<Boolean?>(null)
-    val firstTimeLaunchState: StateFlow<Boolean?>
-        get() = mFirstTimeLaunchState
+    private val mStateFirstTimeLaunch = MutableStateFlow<Boolean?>(null)
+    val stateFirstTimeLaunch: StateFlow<Boolean?>
+        get() = mStateFirstTimeLaunch
 
     fun onResponse(response: LocalInteractorResponse) {
-        mFirstTimeLaunchState.value = when (response) {
+        mStateFirstTimeLaunch.value = when (response) {
             is LocalInteractorResponse.Success -> response.firstTimeLaunch
             else -> true
         }

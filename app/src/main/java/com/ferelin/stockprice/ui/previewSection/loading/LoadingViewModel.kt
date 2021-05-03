@@ -2,7 +2,7 @@ package com.ferelin.stockprice.ui.previewSection.loading
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseDataViewModel
+import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,17 +13,21 @@ import kotlinx.coroutines.launch
 class LoadingViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
-) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mMoveToNextScreen = MutableStateFlow<Boolean?>(null)
-    val moveToNextScreen: StateFlow<Boolean?>
-        get() = mMoveToNextScreen
+    private val mIsFirstTimeLaunchState = MutableStateFlow<Boolean?>(null)
+    val isFirstTimeLaunchState: StateFlow<Boolean?>
+        get() = mIsFirstTimeLaunchState
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.firstTimeLaunchState
-                .filter { it != null }
-                .collect { mMoveToNextScreen.value = it }
+            collectFirstTimeLaunchState()
         }
+    }
+
+    private suspend fun collectFirstTimeLaunchState() {
+        mDataInteractor.stateFirstTimeLaunch
+            .filter { it != null }
+            .collect { mIsFirstTimeLaunchState.value = it }
     }
 }

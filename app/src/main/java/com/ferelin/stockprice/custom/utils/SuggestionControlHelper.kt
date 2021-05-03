@@ -5,16 +5,13 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.ferelin.stockprice.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
-/*
-* Logic of suggestion location depending on screen size.
-* */
+/**
+ * [SuggestionControlHelper] providing a method to control and display the SuggestionView on Chart.
+ */
 object SuggestionControlHelper {
 
-    suspend fun applyCoordinatesChanges(
-        context: Context,
+    fun applyCoordinatesChanges(
         rootSuggestionView: ConstraintLayout,
         pointView: View,
         plugView: View,
@@ -23,37 +20,35 @@ object SuggestionControlHelper {
         marker: Marker
     ) {
         val (pointX, pointY) = calculatePointAbsoluteCoordinates(
-            context,
+            rootSuggestionView.context,
             marker,
             relativeView.left,
             relativeView.top
         )
         val (suggestionX, suggestionY) = calculateMarkerAbsoluteCoordinates(
-            context,
+            rootSuggestionView.context,
             pointX,
             pointY
         )
 
-        withContext(Dispatchers.Main) {
-            val (finalSuggestionX, finalSuggestionY) = detectAndFixOutOfBorderOffsets(
-                context,
-                rootSuggestionView,
-                plugView,
-                arrowView,
-                relativeView,
-                suggestionX,
-                suggestionY
-            )
+        val (finalSuggestionX, finalSuggestionY) = detectAndFixOutOfBorderOffsets(
+            rootSuggestionView.context,
+            rootSuggestionView,
+            plugView,
+            arrowView,
+            relativeView,
+            suggestionX,
+            suggestionY
+        )
 
-            applyCoordinates(
-                pointView,
-                rootSuggestionView,
-                pointX,
-                pointY,
-                finalSuggestionX,
-                finalSuggestionY
-            )
-        }
+        applyCoordinates(
+            pointView,
+            rootSuggestionView,
+            pointX,
+            pointY,
+            finalSuggestionX,
+            finalSuggestionY
+        )
     }
 
     private fun applyCoordinates(

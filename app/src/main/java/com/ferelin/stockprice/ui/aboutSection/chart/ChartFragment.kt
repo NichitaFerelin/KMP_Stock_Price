@@ -1,285 +1,129 @@
 package com.ferelin.stockprice.ui.aboutSection.chart
 
-import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.TransitionManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
-import com.ferelin.stockprice.custom.utils.Marker
-import com.ferelin.stockprice.custom.utils.SuggestionControlHelper
 import com.ferelin.stockprice.databinding.FragmentChartBinding
-import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ChartFragment(
     selectedCompany: AdaptiveCompany? = null
-) : BaseFragment<ChartViewModel, ChartViewHelper>() {
+) : BaseFragment<FragmentChartBinding, ChartViewModel, ChartViewController>() {
 
-    override val mViewHelper: ChartViewHelper = ChartViewHelper()
+    override val mViewController: ChartViewController = ChartViewController()
     override val mViewModel: ChartViewModel by viewModels {
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
-
-    private var mBinding: FragmentChartBinding? = null
-
-    private var mCurrentActiveCard: CardView? = null
-    private var mCurrentActiveText: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentChartBinding.inflate(inflater, container, false)
-        return mBinding!!.root
+        val viewBinding = FragmentChartBinding.inflate(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            setSelectedViews(mBinding!!.cardViewAll, mBinding!!.textViewAll)
-            setUpChartWidgetsListeners()
-            restoreChartState()
-            withContext(mCoroutineContext.Main) {
-                restoreSelectedType()
-            }
-        }
+        setUpChartWidgetsListeners()
+        setUpViewControllerArguments()
     }
 
     override fun initObservers() {
         super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch {
-                mViewModel.hasDataForChartState.collect { hasData ->
-                    withContext(mCoroutineContext.Main) {
-                        switchChartWidgetsVisibility(hasData)
-                    }
-                }
-            }
-            launch {
-                mViewModel.isDataLoading.collect {
-                    withContext(mCoroutineContext.Main) {
-                        if(it) showProgressBar() else hideProgressBar()
-                    }
-                }
-            }
-            launch {
-                mViewModel.eventDataChanged.collect {
-                    withContext(mCoroutineContext.Main) {
-                        onDayDataChanged()
-                    }
-                }
-            }
-            launch {
-                mViewModel.eventStockHistoryChanged.collect {
-                    withContext(mCoroutineContext.Main) {
-                        mBinding!!.chartView.setData(it)
-                    }
-                }
-            }
-            launch {
-                mViewModel.actionShowError.collect {
-                    withContext(mCoroutineContext.Main) {
-                        showToast(it)
-                        mBinding!!.progressBar.visibility = View.INVISIBLE
-                    }
-                }
+            launch { collectStateStockHistory() }
+            launch { collectStateIsDataLoading() }
+            launch { collectStateOnDayDataChanged() }
+            launch { collectEventOnError() }
+        }
+    }
+
+    private suspend fun collectStateIsDataLoading() {
+        mViewModel.stateIsDataLoading.collect { isDataLoading ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onDataLoadingStateChanged(isDataLoading)
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mBinding?.chartView?.invalidateVariables()
-        mBinding = null
-        mCurrentActiveText = null
-        mCurrentActiveCard = null
-    }
-
-    private fun onChartClicked(marker: Marker) {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            prepareToChartDataChanges()
-            mBinding!!.apply {
-                SuggestionControlHelper.applyCoordinatesChanges(
-                    requireContext(),
-                    includeSuggestion.root,
-                    point,
-                    includeSuggestion.viewPlug,
-                    includeSuggestion.viewArrow,
-                    chartView,
-                    marker
+    private suspend fun collectStateOnDayDataChanged() {
+        mViewModel.eventOnDayDataChanged.collect {
+            withContext(mCoroutineContext.Main) {
+                mViewController.onDayDataChanged(
+                    currentPrice = mViewModel.stockPrice,
+                    dayProfit = mViewModel.dayProfit,
+                    profitBackgroundResource = mViewModel.profitBackgroundResource,
+                    hintBuyFor = resources.getString(R.string.hintBuyFor)
                 )
             }
-            withContext(mCoroutineContext.Main) {
-                updateSuggestionText(marker)
-                showSuggestion()
-            }
         }
     }
 
-    private fun onCardClicked(
-        card: CardView,
-        attachedTextView: TextView,
-        selectedViewMode: ChartViewMode
-    ) {
-        val animationCallback: Animator.AnimatorListener? = if (card != mCurrentActiveCard) {
-            hideSuggestion()
-            mViewModel.onChartControlButtonClicked(selectedViewMode)
-            object : AnimatorManager() {
-                override fun onAnimationStart(animation: Animator?) {
-                    switchCardsViewStyle(card, attachedTextView)
-                    setSelectedViews(card, attachedTextView)
-                }
-            }
-        } else null
-        mViewHelper.runScaleInOut(card, animationCallback)
-    }
-
-    private fun restoreChartState() {
-        mBinding!!.chartView.addCallbackListener {
-            val restoredMarker = mBinding!!.chartView.restoreMarker(mViewModel.lastClickedMarker)
-            restoredMarker?.let { onChartClicked(it) }
-        }
-    }
-
-    private fun onDayDataChanged() {
-        mViewHelper.runScaleInOut(mBinding!!.textViewCurrentPrice, object : AnimatorManager() {
-            override fun onAnimationStart(animation: Animator?) {
-                mBinding!!.apply {
-                    textViewCurrentPrice.text = mViewModel.currentPrice
-                    textViewBuyPrice.text = String.format(
-                        resources.getString(R.string.hintBuyFor),
-                        mViewModel.currentPrice
-                    )
-                    textViewDayProfit.text = mViewModel.dayProfit
-                    textViewDayProfit.setTextColor(mViewModel.profitBackground)
-                }
-            }
-        })
-    }
-
-    private fun updateSuggestionText(marker: Marker) {
-        mBinding!!.includeSuggestion.textViewDate.text = marker.date
-        mBinding!!.includeSuggestion.textViewPrice.text = marker.priceStr
-    }
-
-    private fun switchCardsViewStyle(card: CardView, attachedTextView: TextView) {
-        card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
-        attachedTextView.setTextColor(
-            ContextCompat.getColor(requireContext(), R.color.whiteDark)
-        )
-        mCurrentActiveCard!!.setCardBackgroundColor(
-            ContextCompat.getColor(requireContext(), R.color.whiteDark)
-        )
-        mCurrentActiveText!!.setTextColor(
-            ContextCompat.getColor(requireContext(), R.color.black)
-        )
-    }
-
-    private fun restoreSelectedType() {
-        mBinding!!.apply {
-            val (restoredCardView, restoredTextView) = when (mViewModel.chartViewMode) {
-                is ChartViewMode.Year -> arrayOf(cardViewYear, textViewYear)
-                is ChartViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
-                is ChartViewMode.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
-                is ChartViewMode.Days -> arrayOf(cardViewDay, textViewDays)
-                is ChartViewMode.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
-                is ChartViewMode.All -> return // ChartSelectedType.All is set by default
-            }
-            switchCardsViewStyle(restoredCardView as CardView, restoredTextView as TextView)
-            setSelectedViews(restoredCardView, restoredTextView)
-        }
-    }
-
-    private fun setSelectedViews(newCard: CardView, newText: TextView) {
-        mCurrentActiveCard = newCard
-        mCurrentActiveText = newText
-    }
-
-    private fun showSuggestion() {
-        mViewHelper.runAlphaIn(mBinding!!.includeSuggestion.root, mBinding!!.point)
-    }
-
-    private fun hideSuggestion() {
-        mViewHelper.runAlphaOut(mBinding!!.includeSuggestion.root, mBinding!!.point)
-    }
-
-
-    private fun switchChartWidgetsVisibility(hasData: Boolean) {
-        when {
-            hasData && mBinding!!.groupChartWidgets.visibility == View.GONE -> {
-                TransitionManager.beginDelayedTransition(mBinding!!.root)
-                mBinding!!.groupChartWidgets.visibility = View.VISIBLE
-            }
-            !hasData && mBinding!!.groupChartWidgets.visibility == View.VISIBLE -> {
-                mBinding!!.groupChartWidgets.visibility = View.GONE
-            }
-        }
-
-        if (hasData) {
-            hideProgressBar()
-        }
-    }
-
-    private fun showProgressBar() {
-        mBinding!!.progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        mBinding!!.progressBar.visibility = View.GONE
-    }
-
-    private suspend fun prepareToChartDataChanges() {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            if (mBinding!!.includeSuggestion.root.alpha == 1F) {
+    private suspend fun collectStateStockHistory() {
+        mViewModel.stateStockHistory
+            .filter { it != null }
+            .collect { history ->
                 withContext(mCoroutineContext.Main) {
-                    hideSuggestion()
+                    mViewController.onStockHistoryChanged(history!!)
                 }
-                delay(150)
             }
-        }.join()
+    }
+
+    private suspend fun collectEventOnError() {
+        mViewModel.eventOnError.collect { message ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onError(requireContext(), message)
+            }
+        }
     }
 
     private fun setUpChartWidgetsListeners() {
-        mBinding!!.apply {
-            cardViewDay.setOnClickListener {
-                onCardClicked(it as CardView, textViewDays, ChartViewMode.Days)
-            }
-            cardViewWeek.setOnClickListener {
-                onCardClicked(it as CardView, textViewWeeks, ChartViewMode.Weeks)
-            }
-            cardViewMonth.setOnClickListener {
-                onCardClicked(it as CardView, textViewMonths, ChartViewMode.Months)
-            }
-            cardViewHalfYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewSixMonths, ChartViewMode.SixMonths)
-            }
-            cardViewYear.setOnClickListener {
-                onCardClicked(it as CardView, textViewYear, ChartViewMode.Year)
-            }
-            cardViewAll.setOnClickListener {
-                onCardClicked(it as CardView, textViewAll, ChartViewMode.All)
-            }
-            chartView.setOnTouchListener {
-                mViewModel.onChartClicked(it).also { isNewMarker ->
-                    if (isNewMarker) onChartClicked(it)
-                }
+        mViewController.viewBinding!!.apply {
+            cardViewDay.setOnClickListener { onCardClicked(it) }
+            cardViewWeek.setOnClickListener { onCardClicked(it) }
+            cardViewMonth.setOnClickListener { onCardClicked(it) }
+            cardViewHalfYear.setOnClickListener { onCardClicked(it) }
+            cardViewYear.setOnClickListener { onCardClicked(it) }
+            cardViewAll.setOnClickListener { onCardClicked(it) }
+
+            chartView.setOnTouchListener { clickedMarker ->
+                mViewController.onChartClicked(
+                    previousClickedMarker = mViewModel.clickedMarker,
+                    newClickedMarker = clickedMarker
+                )
+                mViewModel.onChartClicked(clickedMarker)
             }
         }
+    }
+
+    private fun setUpViewControllerArguments() {
+        mViewController.setArgumentsViewDependsOn(
+            isHistoryForChartEmpty = mViewModel.isHistoryEmpty,
+            lastChartViewMode = mViewModel.chartViewMode,
+            lastClickedMarker = mViewModel.clickedMarker
+        )
+    }
+
+    private fun onCardClicked(card: View) {
+        mViewController.onCardClicked(
+            card = card as CardView,
+            onNewCardClicked = { selectedChartViewMode ->
+                mViewModel.onChartControlButtonClicked(selectedChartViewMode)
+            }
+        )
     }
 }

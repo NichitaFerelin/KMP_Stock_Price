@@ -7,12 +7,10 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.filterCompanies
-import kotlinx.coroutines.delay
+import com.ferelin.stockprice.utils.withTimer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     coroutineContextProvider: CoroutineContextProvider,
@@ -21,126 +19,101 @@ class SearchViewModel(
 
     private var mCompanies: ArrayList<AdaptiveCompany>? = null
 
-    private val mActionHideCloseIcon = MutableSharedFlow<Boolean>()
-    val actionHideCloseIcon: SharedFlow<Boolean>
-        get() = mActionHideCloseIcon
-
-    private var mActionShowHintsHideResults = MutableSharedFlow<Boolean>()
-    val actionShowHintsHideResults: SharedFlow<Boolean>
-        get() = mActionShowHintsHideResults
-
-    private val mActionShowError = MutableSharedFlow<String>()
-    val actionShowError: SharedFlow<String>
-        get() = mActionShowError
-
-    private val mActionShowKeyboard = MutableStateFlow(true)
-    val actionShowKeyboard: StateFlow<Boolean>
-        get() = mActionShowKeyboard
+    private val mSearchRequestsAdapter = SearchRequestsAdapter()
+    val searchRequestAdapter: SearchRequestsAdapter
+        get() = mSearchRequestsAdapter
 
     private val mPopularRequestsAdapter = SearchRequestsAdapter()
     val popularRequestsAdapter: SearchRequestsAdapter
         get() = mPopularRequestsAdapter
 
-    private val mSearchRequestsAdapter = SearchRequestsAdapter()
-    val searchRequestAdapter: SearchRequestsAdapter
-        get() = mSearchRequestsAdapter
+    private val mStateSearchStockResults = MutableStateFlow<ArrayList<AdaptiveCompany>?>(null)
+    val stateSearchStockResults: StateFlow<ArrayList<AdaptiveCompany>?>
+        get() = mStateSearchStockResults
 
-    private var mTransitionState: Int = 0
-    val transitionState: Int
-        get() = mTransitionState
+    private val mStateSearchRequests =
+        MutableStateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>?>(null)
+    val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>?>
+        get() = mStateSearchRequests
 
-    private var mLastTextSearch = ""
-    val lastSearchText: String
-        get() = mLastTextSearch
+    private val mStatePopularSearchRequests =
+        MutableStateFlow<ArrayList<AdaptiveSearchRequest>?>(null)
+    val statePopularSearchRequests: StateFlow<ArrayList<AdaptiveSearchRequest>?>
+        get() = mStatePopularSearchRequests
+
+    private var mSearchRequest = ""
+    val searchRequest: String
+        get() = mSearchRequest
+
+    private val mEventOnError = MutableSharedFlow<String>()
+    val eventOnError: SharedFlow<String>
+        get() = mEventOnError
+
+    var savedViewTransitionState = 0
 
     override fun initObserversBlock() {
         super.initObserversBlock()
-
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mDataInteractor.companiesState
-                    .filter { it is DataNotificator.DataPrepared && it.data != null }
-                    .take(1)
-                    .collect { mCompanies = ArrayList(it.data!!) }
-            }
-            launch {
-                mDataInteractor.popularSearchRequestsState.collect {
-                    onPopularSearchRequestsLoaded(
-                        it
-                    )
-                }
-            }
-            launch {
-                mDataInteractor.searchRequestsState.collect { onSearchRequestsHistoryChanged(it) }
-            }
-            launch {
-                mDataInteractor.companiesUpdatesShared
-                    .filter { it is DataNotificator.ItemUpdatedDefault }
-                    .collect { updateRecyclerViewItem(it) }
-            }
-            launch {
-                mDataInteractor.loadSearchRequestsErrorShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowError.emit(it) }
-            }
+            launch { collectStateCompanies() }
+            launch { collectStateSearchRequests() }
+            launch { collectStatePopularSearchRequests() }
+            launch { collectSharedSearchRequestsError() }
         }
-    }
-
-    override fun updateRecyclerViewItem(notificator: DataNotificator<AdaptiveCompany>) {
-        val itemPosition = mRecyclerAdapter.companies.indexOf(notificator.data)
-        if (itemPosition != NULL_INDEX) {
-            viewModelScope.launch(mCoroutineContext.Main) {
-                mRecyclerAdapter.notifyUpdate(itemPosition)
-            }
-        }
-
-        val indexOriginalList = mCompanies?.indexOf(notificator.data) ?: -1
-        if (indexOriginalList != NULL_INDEX) {
-            mCompanies!![indexOriginalList] = notificator.data!!
-        }
-    }
-
-    fun onTransition(state: Int) {
-        mTransitionState = state
     }
 
     fun onSearchTextChanged(searchText: String) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            when {
-                mLastTextSearch == searchText -> Unit
-                searchText.isEmpty() -> {
-                    mLastTextSearch = searchText
-                    switchSectionsVisibility(true)
-                    mActionHideCloseIcon.emit(true)
-                }
-                else -> {
-                    mActionHideCloseIcon.emit(false)
-                    mLastTextSearch = searchText
+        if (searchText == mSearchRequest) {
+            return
+        }
 
-                    val results = search(searchText)
-                    if (results.isNotEmpty()) {
-                        val resultArr = ArrayList(results)
-                        switchSectionsVisibility(false)
-                        if (results.size <= 5) {
-                            addToSearched(searchText)
-                        }
-                        withContext(mCoroutineContext.Main) {
-                            mRecyclerAdapter.invalidate()
-                            mRecyclerAdapter.setCompanies(resultArr)
-                        }
-                    } else switchSectionsVisibility(true)
+        /*
+        * To avoid fast input
+        * */
+        withTimer {
+            viewModelScope.launch(mCoroutineContext.IO) {
+                mSearchRequest = searchText
+
+                if (mSearchRequest.isEmpty()) {
+                    mStateSearchStockResults.value = null
+                } else {
+                    val searchResults = search(searchText)
+                    onNewSearch(searchText, searchResults.size)
+                    mStateSearchStockResults.value = ArrayList(searchResults)
                 }
             }
         }
     }
 
-    fun onOpenKeyboard() {
-        mActionShowKeyboard.value = false
+    private suspend fun collectStateCompanies() {
+        mDataInteractor.stateCompanies
+            .filter { it is DataNotificator.DataPrepared && it.data != null }
+            .take(1)
+            .collect { mCompanies = ArrayList(it.data!!) }
+    }
+
+    private suspend fun collectStateSearchRequests() {
+        mDataInteractor.stateSearchRequests.collect { mStateSearchRequests.value = it }
+    }
+
+    private suspend fun collectStatePopularSearchRequests() {
+        mDataInteractor.statePopularSearchRequests
+            .take(1)
+            .collect { mStatePopularSearchRequests.value = it.data!! }
+    }
+
+    private suspend fun collectSharedSearchRequestsError() {
+        mDataInteractor.sharedLoadSearchRequestsError.collect { mEventOnError.emit(it) }
+    }
+
+    private suspend fun onNewSearch(searchText: String, resultsSize: Int) {
+        if (resultsSize in 1..5) {
+            mDataInteractor.cacheNewSearchRequest(searchText)
+        }
     }
 
     private fun search(searchText: String): MutableList<AdaptiveCompany> {
-        val itemsToSearchIn = if (searchText.length > mLastTextSearch.length) {
-            mRecyclerAdapter.companies
+        val itemsToSearchIn = if (searchText.length > mSearchRequest.length) {
+            mStocksRecyclerAdapter.companies
         } else mCompanies
 
         val results = mutableListOf<AdaptiveCompany>()
@@ -150,32 +123,5 @@ class SearchViewModel(
             }
         }
         return results
-    }
-
-    private fun addToSearched(searchText: String) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.onNewSearch(searchText)
-        }
-    }
-
-    private fun onSearchRequestsHistoryChanged(dataNotificator: DataNotificator<List<AdaptiveSearchRequest>>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            val searchRequests = ArrayList(dataNotificator.data!!)
-            if (dataNotificator is DataNotificator.DataUpdated) {
-                // delay until transition will hide search requests history
-                delay(250)
-            }
-            withContext(mCoroutineContext.Main) {
-                mSearchRequestsAdapter.setData(searchRequests)
-            }
-        }
-    }
-
-    private fun onPopularSearchRequestsLoaded(dataNotificator: DataNotificator<ArrayList<AdaptiveSearchRequest>>) {
-        mPopularRequestsAdapter.setData(dataNotificator.data!!)
-    }
-
-    private suspend fun switchSectionsVisibility(showHintsHideResults: Boolean) {
-        mActionShowHintsHideResults.emit(showHintsHideResults)
     }
 }

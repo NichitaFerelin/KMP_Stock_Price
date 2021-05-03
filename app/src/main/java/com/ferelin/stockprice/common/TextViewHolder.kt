@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.databinding.ItemTextBinding
 
 class TextViewHolder private constructor(
-    val binding: ItemTextBinding
-) : RecyclerView.ViewHolder(binding.root) {
+    private val mBinding: ItemTextBinding
+) : RecyclerView.ViewHolder(mBinding.root) {
 
     fun bind(text: String) {
-        binding.root.text = text
+        mBinding.root.text = text
     }
 
     companion object {

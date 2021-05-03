@@ -8,31 +8,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 
-/*
-* Worker that is responsible for:
-*   - Notifications about network state.
-* */
+/**
+ * [NetworkConnectivityWorker] providing a network state: [mStateIsNetworkAvailable]
+ */
 class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: NetworkRequest) {
 
-    private val mIsNetworkAvailableState = MutableStateFlow(isNetworkAvailable(service))
-    val isNetworkAvailableState: StateFlow<Boolean>
-        get() = mIsNetworkAvailableState
+    private val mStateIsNetworkAvailable = MutableStateFlow(isNetworkAvailable(service))
+    val stateIsNetworkAvailable: StateFlow<Boolean>
+        get() = mStateIsNetworkAvailable
 
     init {
         service.registerNetworkCallback(
             networkRequest,
             object : ConnectivityManager.NetworkCallback() {
-
                 override fun onAvailable(network: Network) {
-                    mIsNetworkAvailableState.value = true
+                    mStateIsNetworkAvailable.value = true
                 }
 
                 override fun onLost(network: Network) {
-                    mIsNetworkAvailableState.value = false
+                    mStateIsNetworkAvailable.value = false
                 }
 
                 override fun onUnavailable() {
-                    mIsNetworkAvailableState.value = false
+                    mStateIsNetworkAvailable.value = false
                 }
             })
     }

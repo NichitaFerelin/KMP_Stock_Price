@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
@@ -17,53 +16,44 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @FlowPreview
-class FavouriteFragment : BaseStocksFragment<FavouriteViewModel, FavouriteViewHelper>() {
+class FavouriteFragment :
+    BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel, FavouriteViewController>() {
 
-    override val mViewHelper: FavouriteViewHelper = FavouriteViewHelper()
+    override val mViewController: FavouriteViewController = FavouriteViewController()
     override val mViewModel: FavouriteViewModel by viewModels {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
-
-    override var mStocksRecyclerView: RecyclerView? = null
-    private var mBinding: FragmentFavouriteBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentFavouriteBinding.inflate(inflater, container, false).also {
-            mStocksRecyclerView = it.recyclerViewFavourites
-        }
-        return mBinding!!.root
+        val viewBinding = FragmentFavouriteBinding.inflate(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-        mFragmentManager = requireParentFragment().parentFragmentManager
+        mViewController.setArgumentsViewDependsOn(
+            stocksRecyclerAdapter = mViewModel.stocksRecyclerAdapter,
+            fragmentManager = requireParentFragment().parentFragmentManager
+        )
     }
 
     override fun initObservers() {
         super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.actionScrollToTop.collect {
-                withContext(mCoroutineContext.Main) {
-                    hardScrollToTop()
-                }
+            collectEventOnNewItem()
+        }
+    }
+
+    private suspend fun collectEventOnNewItem() {
+        mViewModel.eventOnNewItem.collect {
+            withContext(mCoroutineContext.Main) {
+                mViewController.onNewItem()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mViewModel.postponeReferencesRemove {
-            mBinding?.recyclerViewFavourites?.adapter = null
-            mBinding = null
-        }
-    }
-
-    private fun hardScrollToTop() {
-        mBinding!!.recyclerViewFavourites.scrollToPosition(0)
     }
 }

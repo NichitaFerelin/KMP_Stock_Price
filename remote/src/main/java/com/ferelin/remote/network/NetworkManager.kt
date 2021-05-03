@@ -38,7 +38,7 @@ open class NetworkManager : NetworkManagerHelper {
         mStockSymbolsService
             .getStockSymbolList(Api.FINNHUB_TOKEN)
             .enqueue(BaseManager<StockSymbolResponse> {
-                offer(it)
+                offerSafe(it)
             })
         awaitClose()
     }
@@ -80,11 +80,16 @@ open class NetworkManager : NetworkManagerHelper {
         awaitClose()
     }
 
+    /*
+    * Example of ThrottleManager usage
+    * */
     override fun loadCompanyQuote(
         symbol: String,
         position: Int,
         isImportant: Boolean
     ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
+
+        // Add message(request) to throttle manager.
         mThrottleManager.addMessage(
             symbol = symbol,
             api = Api.COMPANY_QUOTE,
@@ -92,6 +97,8 @@ open class NetworkManager : NetworkManagerHelper {
             eraseIfNotActual = !isImportant,
             ignoreDuplicate = isImportant
         )
+
+        // SetUp api to invoke request
         mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
             mCompanyQuoteService
                 .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)

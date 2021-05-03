@@ -3,36 +3,35 @@ package com.ferelin.stockprice.ui.stocksSection.base
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.base.BaseDataViewModel
+import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
-import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.NULL_INDEX
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 abstract class BaseStocksViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
-) : BaseDataViewModel(coroutineContextProvider, dataInteractor) {
+) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    protected val mRecyclerAdapter = StocksRecyclerAdapter().apply {
-        setOnBindCallback { _, company, position ->
-            onBindCallback(company, position)
-        }
+    protected val mStocksRecyclerAdapter = StocksRecyclerAdapter().apply {
         setHasStableIds(true)
+        setOnBindCallback { _, company, position ->
+            onItemBind(company, position)
+        }
     }
-    val recyclerAdapter: StocksRecyclerAdapter
-        get() = mRecyclerAdapter
+    val stocksRecyclerAdapter: StocksRecyclerAdapter
+        get() = mStocksRecyclerAdapter
+
+    private val mEventCompanyChanged = MutableSharedFlow<AdaptiveCompany>()
+    val eventCompanyChanged: SharedFlow<AdaptiveCompany>
+        get() = mEventCompanyChanged
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.companiesUpdatesShared
-                .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
-                .collect { updateRecyclerViewItem(it) }
+            collectSharedCompaniesUpdates()
         }
     }
 
@@ -44,34 +43,13 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    /*
-    * To avoid breaks of shared transition anim
-    *  */
-    fun postponeReferencesRemove(finally: () -> Unit) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            delay(300)
-            withContext(mCoroutineContext.Main) {
-                finally.invoke()
-            }
-        }
-    }
-
-    protected fun setRecyclerViewItems(items: List<AdaptiveCompany>) {
-        mRecyclerAdapter.setCompanies(ArrayList(items))
-    }
-
-    protected open fun updateRecyclerViewItem(notificator: DataNotificator<AdaptiveCompany>) {
-        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-        if (index != NULL_INDEX) {
-            viewModelScope.launch(mCoroutineContext.Main) {
-                mRecyclerAdapter.notifyUpdate(index)
-            }
-        }
-    }
-
-    private fun onBindCallback(company: AdaptiveCompany, position: Int) {
+    private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position).collect()
         }
+    }
+
+    private suspend fun collectSharedCompaniesUpdates() {
+        mDataInteractor.sharedCompaniesUpdates.collect { mEventCompanyChanged.emit(it.data!!) }
     }
 }

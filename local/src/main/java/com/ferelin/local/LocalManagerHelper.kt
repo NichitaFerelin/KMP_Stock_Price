@@ -10,6 +10,5 @@ import kotlinx.coroutines.flow.Flow
 interface LocalManagerHelper : StorePreferencesHelper, CompaniesManagerHelper, JsonManagerHelper {
 
     fun getAllCompaniesAsResponse(): Flow<CompaniesResponse>
-
     fun getSearchesHistoryAsResponse(): Flow<SearchesResponse>
 }

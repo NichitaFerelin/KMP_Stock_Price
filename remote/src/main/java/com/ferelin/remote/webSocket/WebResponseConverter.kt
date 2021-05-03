@@ -11,6 +11,10 @@ class WebResponseConverter {
     private val mListAdapter = mConverter.adapter(WebSocketSubResponse::class.java)
     private val mResponseAdapter = mConverter.adapter(WebSocketResponse::class.java).lenient()
 
+    /**
+     * WebSocket Response need to be converted from List to Object.
+     * @param [openPricesHolder] used to set owner-stock of price.
+     */
     fun fromJson(
         text: String,
         openPricesHolder: HashMap<String, Double>

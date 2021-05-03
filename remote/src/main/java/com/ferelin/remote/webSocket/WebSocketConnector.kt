@@ -54,7 +54,6 @@ open class WebSocketConnector : WebSocketConnectorHelper {
                     subscribe(it, mMessagesQueue.poll()!!)
                 }
             }
-
             okHttp.dispatcher.executorService.shutdown()
 
             awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }

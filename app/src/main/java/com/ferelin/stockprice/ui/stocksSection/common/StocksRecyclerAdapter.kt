@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.common
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -71,9 +72,10 @@ class StocksRecyclerAdapter(
         mHeader = header
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
         mCompanies = companies
-        notifyItemRangeInserted(mOffsetWithHeader, mCompanies.size)
+        notifyDataSetChanged()
     }
 
     fun notifyUpdate(index: Int) {
@@ -94,17 +96,6 @@ class StocksRecyclerAdapter(
         return mCompanies[position - mOffsetWithHeader]
     }
 
-    fun invalidate() {
-        val count = mCompanies.size
-        mCompanies.clear()
-        notifyItemRangeRemoved(mOffsetWithHeader, count)
-    }
-
-    fun removeListeners() {
-        mStockClickListener = null
-        mOnBindCallback = null
-    }
-
     fun onRebound(view: StockViewHolder) {
         mStockClickListener?.onHolderRebound(view)
     }
@@ -123,8 +114,7 @@ class StocksRecyclerAdapter(
             itemView.setOnClickListener {
                 mStockClickListener?.onStockClicked(
                     holder,
-                    mCompanies[holder.adapterPosition - mOffsetWithHeader],
-                    position
+                    mCompanies[holder.adapterPosition - mOffsetWithHeader]
                 )
             }
             binding.imageViewFavourite.setOnClickListener {

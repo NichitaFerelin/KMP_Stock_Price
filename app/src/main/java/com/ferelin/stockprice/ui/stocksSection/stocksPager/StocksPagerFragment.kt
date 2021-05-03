@@ -29,7 +29,7 @@ class StocksPagerFragment(
 ) : Fragment() {
 
     private var mBinding: FragmentStocksPagerBinding? = null
-    private val mViewHelper = StocksPagerViewHelper()
+    private val mViewHelper = StocksPagerViewAnimator()
 
     private lateinit var mViewPagerChangeCallback: ViewPager2.OnPageChangeCallback
 
@@ -82,7 +82,7 @@ class StocksPagerFragment(
         setUpBackPressedCallback()
 
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewHelper.prepare(requireContext())
+            mViewHelper.loadAnimations(requireContext())
 
             mBinding!!.apply {
                 cardViewSearch.setOnClickListener {

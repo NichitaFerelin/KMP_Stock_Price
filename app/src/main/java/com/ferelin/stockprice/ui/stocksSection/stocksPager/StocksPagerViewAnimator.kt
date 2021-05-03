@@ -7,19 +7,19 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.base.BaseViewHelper
+import com.ferelin.stockprice.base.BaseViewAnimator
 
-class StocksPagerViewHelper : BaseViewHelper() {
+class StocksPagerViewAnimator : BaseViewAnimator() {
 
     private lateinit var mScaleInOut: Animator
     private lateinit var mScaleOut: Animation
 
-    override fun prepare(context: Context) {
+    override fun loadAnimations(context: Context) {
         mScaleInOut = AnimatorInflater.loadAnimator(context, R.animator.scale_in_out)
         mScaleOut = AnimationUtils.loadAnimation(context, R.anim.scale_out)
     }
 
-    override fun invalidate() {
+    override fun invalidateAnimations() {
         mScaleInOut.setTarget(null)
         mScaleInOut.removeAllListeners()
         mScaleOut.setAnimationListener(null)

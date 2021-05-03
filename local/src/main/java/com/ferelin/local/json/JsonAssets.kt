@@ -1,8 +1,6 @@
 package com.ferelin.local.json
 
 object JsonAssets {
-    /*
-    * File name
-    * */
+    // Asset file name
     const val COMPANIES = "companies.json"
 }
