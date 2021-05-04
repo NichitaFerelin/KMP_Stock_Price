@@ -1,7 +1,6 @@
 package com.ferelin.stockprice.ui.stocksSection.base
 
 import android.os.Bundle
-import android.view.View
 import android.view.animation.Animation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -21,6 +20,7 @@ import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.swipe.SwipeActionCallback
 import com.google.android.material.transition.Hold
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 abstract class BaseStocksViewController<ViewBinding> :
@@ -134,28 +134,41 @@ abstract class BaseStocksViewController<ViewBinding> :
     }
 
     private fun scrollToTopWithAnimation() {
-        if ((mStocksRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 40) {
-            val fadeInCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mStocksRecyclerView.visibility = View.VISIBLE
-                    mStocksRecyclerView.smoothScrollToPosition(0)
-                }
-            }
-            val fadeOutCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mStocksRecyclerView.smoothScrollBy(
-                        0,
-                        -mStocksRecyclerView.height
-                    )
-                }
+        if ((mStocksRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() < 40) {
+            mStocksRecyclerView.smoothScrollToPosition(0)
+            return
+        }
 
-                override fun onAnimationEnd(animation: Animation?) {
-                    mStocksRecyclerView.visibility = View.GONE
-                    mStocksRecyclerView.scrollToPosition(20)
-                    mViewAnimator.runFadeInAnimation(mStocksRecyclerView, fadeInCallback)
+        val fadeInCallback = object : AnimationManager() {
+            override fun onAnimationStart(animation: Animation?) {
+                mStocksRecyclerView.alpha = 1F
+                mStocksRecyclerView.smoothScrollToPosition(0)
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                // To avoid graphic bug
+                mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
+                    delay(200)
+                    mStocksRecyclerView.itemAnimator = StockItemAnimator()
                 }
             }
-            mViewAnimator.runFadeOutAnimation(mStocksRecyclerView, fadeOutCallback)
-        } else mStocksRecyclerView.smoothScrollToPosition(0)
+        }
+
+        val fadeOutCallback = object : AnimationManager() {
+            override fun onAnimationStart(animation: Animation?) {
+                mStocksRecyclerView.itemAnimator = null
+                mStocksRecyclerView.smoothScrollBy(
+                    0,
+                    -mStocksRecyclerView.height
+                )
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                mStocksRecyclerView.alpha = 0F
+                mStocksRecyclerView.scrollToPosition(20)
+                mViewAnimator.runFadeInAnimation(mStocksRecyclerView, fadeInCallback)
+            }
+        }
+        mViewAnimator.runFadeOutAnimation(mStocksRecyclerView, fadeOutCallback)
     }
 }
