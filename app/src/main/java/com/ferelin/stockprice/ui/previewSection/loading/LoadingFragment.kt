@@ -39,7 +39,7 @@ class LoadingFragment :
 
     private suspend fun collectStateFirstTimeLaunch() {
         mViewModel.isFirstTimeLaunchState.collect { isFirstTimeLaunch ->
-            mViewController.onFirstTimeStateChanged(parentFragmentManager, isFirstTimeLaunch)
+            mViewController.onFirstTimeStateChanged(this, isFirstTimeLaunch)
         }
     }
 }

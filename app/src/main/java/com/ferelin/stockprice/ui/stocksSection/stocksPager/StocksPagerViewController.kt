@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.google.android.material.transition.Hold
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -72,6 +73,10 @@ class StocksPagerViewController :
         }
     }
 
+    fun onCardSearchClicked(fragment: Fragment) {
+        navigateToSearchFragment(fragment)
+    }
+
     fun handleOnBackPressed(): Boolean {
         if (viewBinding!!.viewPager.currentItem == 0) {
             return false
@@ -99,6 +104,15 @@ class StocksPagerViewController :
                 viewBinding!!.fab.scaleY = 1.0F
             }
         })
+    }
+
+    private fun navigateToSearchFragment(fragment: Fragment) {
+        Navigator.navigateToSearchFragment(fragment) {
+            it.addSharedElement(
+                viewBinding!!.toolbar,
+                mContext!!.resources.getString(R.string.transitionSearchFragment)
+            )
+        }
     }
 
     private fun applyDefaultStyle(target: TextView) {

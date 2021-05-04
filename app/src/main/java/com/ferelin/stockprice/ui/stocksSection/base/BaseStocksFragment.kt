@@ -31,7 +31,7 @@ abstract class BaseStocksFragment<
     }
 
     override fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
-        mViewController.onStockClicked(stockViewHolder, company)
+        mViewController.onStockClicked(this, stockViewHolder, company)
     }
 
     override fun onFavouriteIconClicked(company: AdaptiveCompany) {

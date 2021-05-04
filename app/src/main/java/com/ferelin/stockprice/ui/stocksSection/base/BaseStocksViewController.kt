@@ -5,7 +5,6 @@ import android.view.View
 import android.view.animation.Animation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemAnimator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
@@ -74,8 +73,12 @@ abstract class BaseStocksViewController<ViewBinding> :
         }
     }
 
-    fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
-        moveToAboutFragment(stockViewHolder, company)
+    fun onStockClicked(
+        fragment: Fragment,
+        stockViewHolder: StockViewHolder,
+        company: AdaptiveCompany
+    ) {
+        navigateToAboutFragment(fragment, stockViewHolder, company)
     }
 
     fun onFabClicked() {
@@ -117,20 +120,16 @@ abstract class BaseStocksViewController<ViewBinding> :
         return mStocksRecyclerAdapter.getCompanyByAdapterPosition(viewHolderPosition)
     }
 
-    private fun moveToAboutFragment(
+    private fun navigateToAboutFragment(
+        fragment: Fragment,
         holder: StockViewHolder,
         company: AdaptiveCompany
     ) {
-        mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
-            fragmentManager?.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, AboutPagerFragment(company))
-                addToBackStack(null)
-                addSharedElement(
-                    holder.binding.root,
-                    mContext?.resources?.getString(R.string.transitionAboutPager) ?: ""
-                )
-            }
+        Navigator.navigateToAboutPagerFragment(fragment, company, fragmentManager!!) {
+            it.addSharedElement(
+                holder.binding.root,
+                mContext?.resources?.getString(R.string.transitionAboutPager) ?: ""
+            )
         }
     }
 

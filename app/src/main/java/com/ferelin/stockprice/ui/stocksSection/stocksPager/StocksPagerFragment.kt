@@ -5,16 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 class StocksPagerFragment :
     BaseFragment<FragmentStocksPagerBinding, StocksPagerViewModel, StocksPagerViewController>() {
@@ -55,24 +50,10 @@ class StocksPagerFragment :
 
     private fun setUpClickListeners() {
         with(mViewController.viewBinding!!) {
-            cardViewSearch.setOnClickListener { openSearchFragment() }
+            cardViewSearch.setOnClickListener { mViewController.onCardSearchClicked(this@StocksPagerFragment) }
             textViewHintStocks.setOnClickListener { mViewController.onHintStocksClicked() }
             textViewHintFavourite.setOnClickListener { mViewController.onHintFavouriteClicked() }
             fab.setOnClickListener { mViewController.onFabClicked() }
-        }
-    }
-
-    private fun openSearchFragment() {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, SearchFragment())
-                addToBackStack(null)
-                addSharedElement(
-                    mViewController.viewBinding!!.toolbar,
-                    resources.getString(R.string.transitionSearchFragment)
-                )
-            }
         }
     }
 
@@ -81,7 +62,7 @@ class StocksPagerFragment :
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if(!mViewController.handleOnBackPressed()) {
+                    if (!mViewController.handleOnBackPressed()) {
                         this.remove()
                         activity?.onBackPressed()
                     }

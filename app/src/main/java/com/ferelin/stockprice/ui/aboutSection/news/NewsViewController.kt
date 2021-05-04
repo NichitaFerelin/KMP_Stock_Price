@@ -1,8 +1,5 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
@@ -16,6 +13,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.common.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.showToast
 
@@ -52,10 +50,8 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
     * */
     fun onNewsUrlClicked(company: AdaptiveCompany, position: Int) {
         val url = company.companyNews.browserUrls[position]
-        val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
-        try {
-            mContext!!.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
+        val isNavigated = Navigator.navigateToUrl(mContext!!, url)
+        if (!isNavigated) {
             Toast.makeText(
                 mContext!!,
                 R.string.errorNoAppToOpenUrl,

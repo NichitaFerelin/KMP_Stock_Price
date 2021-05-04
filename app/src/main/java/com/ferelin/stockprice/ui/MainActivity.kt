@@ -5,14 +5,13 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
 import kotlinx.coroutines.FlowPreview
@@ -34,24 +33,14 @@ class MainActivity(
     @FlowPreview
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
         val factory = ApplicationViewModelFactory(mCoroutineContext, dataInteractor, application)
         mViewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
-        setContentView(R.layout.activity_main)
         initObservers()
         setStatusBarColor()
-
-        lifecycleScope.launch(mCoroutineContext.IO) {
-            if (supportFragmentManager.fragments.isEmpty()) {
-                supportFragmentManager.commit {
-                    add(
-                        R.id.fragmentContainer,
-                        LoadingFragment()
-                    )
-                }
-            }
-        }
+        Navigator.navigateToLoadingFragment(this)
     }
 
     private fun setStatusBarColor() {
@@ -72,11 +61,15 @@ class MainActivity(
                 mViewModel.actionShowNetworkError
                     .filter { it }
                     .collect {
-                    withContext(mCoroutineContext.Main) {
-                        Toast.makeText(this@MainActivity, R.string.errorNetwork, Toast.LENGTH_LONG)
-                            .show()
+                        withContext(mCoroutineContext.Main) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                R.string.errorNetwork,
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                        }
                     }
-                }
             }
             launch {
                 mViewModel.actionShowApiLimitError.collect {
