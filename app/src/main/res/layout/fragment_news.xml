@@ -14,6 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionGroup="true"
+        app:fastScrollEnabled="true"
+        app:fastScrollHorizontalThumbDrawable="@drawable/scroller_drawable"
+        app:fastScrollHorizontalTrackDrawable="@drawable/scroller_line_drawable"
+        app:fastScrollVerticalThumbDrawable="@drawable/scroller_drawable"
+        app:fastScrollVerticalTrackDrawable="@drawable/scroller_line_drawable"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -21,6 +21,8 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
         when (parent.adapter?.getItemViewType(position)) {
             StocksRecyclerAdapter.ITEM_STOCK_TYPE -> {
                 outRect.bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
+                outRect.left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
+                outRect.right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
             }
             StocksRecyclerAdapter.ITEM_TEXT_TYPE -> {
                 outRect.left =

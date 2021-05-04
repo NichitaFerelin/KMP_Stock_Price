@@ -171,9 +171,12 @@
     <style name="recyclerStocks">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
         <item name="android:transitionGroup">true</item>
+        <item name="fastScrollEnabled">true</item>
+        <item name="fastScrollHorizontalThumbDrawable">@drawable/scroller_drawable</item>
+        <item name="fastScrollHorizontalTrackDrawable">@drawable/scroller_line_drawable</item>
+        <item name="fastScrollVerticalThumbDrawable">@drawable/scroller_drawable</item>
+        <item name="fastScrollVerticalTrackDrawable">@drawable/scroller_line_drawable</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
 

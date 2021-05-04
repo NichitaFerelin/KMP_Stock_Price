@@ -8,6 +8,7 @@
     <color name="whiteTransparent">#00FFFFFF</color>
     <color name="whiteDark">#F0F4F7</color>
     <color name="grey">#BABABA</color>
+    <color name="greyLight">#CACACA</color>
     <color name="blue">#187BCD</color>
     <color name="gradientEnd">#DCDCDC</color>
     <color name="gradientStart">#00EBEBEB</color>
