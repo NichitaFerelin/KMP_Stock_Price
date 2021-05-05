@@ -42,6 +42,13 @@ class FavouriteCompaniesWorker(
         get() = mSharedFavouriteCompaniesUpdates
 
     /*
+    * To observe company by foreground service
+    * */
+    private val mStateCompanyForObserver = MutableStateFlow<AdaptiveCompany?>(null)
+    val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
+        get() = mStateCompanyForObserver
+
+    /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
     * web socket => over-limit-companies will not receive updates (or all companies depending
     * the api mood)
@@ -54,6 +61,7 @@ class FavouriteCompaniesWorker(
             .sortedByDescending { it.favouriteOrderIndex }
         )
         subscribeCompaniesOnLiveTimeUpdates()
+        mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
         mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
     }
 
@@ -70,6 +78,7 @@ class FavouriteCompaniesWorker(
         applyChangesToAddedFavouriteCompany(company)
         subscribeCompanyOnLiveTimeUpdates(company)
         mFavouriteCompanies.add(0, company)
+        mStateCompanyForObserver.value = company
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.NewItemAdded(company))
         mLocalInteractorHelper.cacheCompany(company)
         return company
@@ -79,6 +88,11 @@ class FavouriteCompaniesWorker(
         applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
         mFavouriteCompanies.remove(company)
+
+        if (mStateCompanyForObserver.value == company) {
+            mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
+        }
+
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
         mLocalInteractorHelper.cacheCompany(company)
         return company

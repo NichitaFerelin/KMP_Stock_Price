@@ -17,6 +17,8 @@
     <string name="titleChartCardHalfYear">6M</string>
     <string name="titleChartCardYear">1Y</string>
     <string name="titleChartCardAll">All</string>
+    <string name="titleStockPriceObserver">Stock price live-time</string>
+    <string name="titleChannelStockPrice">Price live time updater</string>
 
     <!-- Errors -->
     <string name="errorLoadingData">Error loading data</string>

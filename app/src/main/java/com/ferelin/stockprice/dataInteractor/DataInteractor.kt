@@ -43,6 +43,9 @@ class DataInteractor(
     val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
         get() = mDataMediator.favouriteCompaniesWorker.stateFavouriteCompanies
 
+    val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
+        get() = mDataMediator.favouriteCompaniesWorker.stateCompanyForObserver
+
     val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mDataMediator.favouriteCompaniesWorker.sharedFavouriteCompaniesUpdates
 

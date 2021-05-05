@@ -3,11 +3,11 @@ package com.ferelin.stockprice.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 @FlowPreview
 class MainViewModel(
@@ -50,6 +50,38 @@ class MainViewModel(
                     .collect { mActionShowApiLimitError.emit(Unit) }
             }
             launch { mDataInteractor.prepareData() }
+
+            launch {
+                mDataInteractor.stateCompanyForObserver.collect { onCompanyForObserverChanged(it) }
+            }
+        }
+    }
+
+    private val mEventOnObserverCompanyMessage = MutableSharedFlow<AdaptiveCompany?>(1)
+    val eventOnObserverCompanyMessage: SharedFlow<AdaptiveCompany?>
+        get() = mEventOnObserverCompanyMessage
+
+    private var mObserverJob: Job? = null
+
+    private suspend fun onCompanyForObserverChanged(company: AdaptiveCompany?) {
+        if (company == null) {
+            mObserverJob?.cancel()
+            mEventOnObserverCompanyMessage.emit(null)
+            return
+        }
+
+        mEventOnObserverCompanyMessage.emit(company)
+        mObserverJob?.cancel()
+        mObserverJob = viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.sharedCompaniesUpdates
+                .filter { it.data == company }
+                .collect {
+                    if (!isActive) {
+                        cancel()
+                    } else {
+                        mEventOnObserverCompanyMessage.emit(company)
+                    }
+                }
         }
     }
 

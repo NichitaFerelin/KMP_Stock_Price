@@ -12,13 +12,13 @@ import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
@@ -47,6 +47,34 @@ class MainActivity(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             window.statusBarColor = Color.BLACK
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ObserverJob?.cancel()
+        StockObserverController.stopService(this@MainActivity)
+    }
+
+    private var ObserverJob: Job? = null
+
+    override fun onPause() {
+        super.onPause()
+        if (!isFinishing) {
+            ObserverJob = lifecycleScope.launch(mCoroutineContext.IO) {
+                mViewModel.eventOnObserverCompanyMessage.collect {
+                    when {
+                        !isActive -> cancel()
+                        it == null -> StockObserverController.stopService(this@MainActivity)
+                        else -> StockObserverController.updateService(this@MainActivity, it)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        StockObserverController.stopService(this@MainActivity)
+        super.onDestroy()
     }
 
     @FlowPreview
