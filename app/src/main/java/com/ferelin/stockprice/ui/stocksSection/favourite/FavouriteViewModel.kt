@@ -32,7 +32,7 @@ class FavouriteViewModel(
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mEventOnNewItem = MutableSharedFlow<Unit>(1)
+    private val mEventOnNewItem = MutableSharedFlow<Unit>()
     val eventOnNewItem: SharedFlow<Unit>
         get() = mEventOnNewItem
 
