@@ -16,6 +16,7 @@ import com.ferelin.stockprice.ui.stocksSection.common.StockItemAnimator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.swipe.SwipeActionCallback
@@ -85,7 +86,8 @@ abstract class BaseStocksViewController<ViewBinding> :
         scrollToTopWithAnimation()
     }
 
-    fun onCompanyChanged(company: AdaptiveCompany) {
+    fun onCompanyChanged(notificator: DataNotificator<AdaptiveCompany>) {
+        val company = notificator.data!!
         val actualCompanyIndex = mStocksRecyclerAdapter.companies.indexOf(company)
         if (actualCompanyIndex != NULL_INDEX) {
             mStocksRecyclerAdapter.notifyUpdate(actualCompanyIndex)

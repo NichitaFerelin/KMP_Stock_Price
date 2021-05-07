@@ -26,13 +26,12 @@ class AboutPagerViewModel(
     val eventOnDataChanged: SharedFlow<Unit>
         get() = mEventOnDataChanged
 
-    private val mEventOnError = MutableSharedFlow<String>()
-    val eventOnError: SharedFlow<String>
-        get() = mEventOnError
-
     private var mSelectedTabPagePosition: Int = 0
     val selectedTabPagePosition: Int
         get() = mSelectedTabPagePosition
+
+    val eventOnError: SharedFlow<String>
+        get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
 
     val companySymbol: String
         get() = mSelectedCompany?.companyProfile?.symbol ?: ""
@@ -46,8 +45,7 @@ class AboutPagerViewModel(
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             mSelectedCompany?.let { onDataChanged(it) }
-            launch { collectSharedCompaniesUpdates() }
-            launch { collectSharedCompaniesLimit() }
+            collectSharedCompaniesUpdates()
         }
     }
 
@@ -69,12 +67,6 @@ class AboutPagerViewModel(
         mDataInteractor.sharedCompaniesUpdates
             .filter { filterUpdate(it) }
             .collect { onDataChanged(it.data!!) }
-    }
-
-    private suspend fun collectSharedCompaniesLimit() {
-        mDataInteractor.sharedFavouriteCompaniesLimitReached.collect {
-            mEventOnError.emit(it)
-        }
     }
 
     private suspend fun onDataChanged(company: AdaptiveCompany) {

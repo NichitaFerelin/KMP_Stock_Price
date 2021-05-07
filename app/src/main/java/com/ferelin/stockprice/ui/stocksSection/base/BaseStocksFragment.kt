@@ -51,9 +51,9 @@ abstract class BaseStocksFragment<
     }
 
     private suspend fun collectEventCompanyChanged() {
-        mViewModel.eventCompanyChanged.collect { changedCompany ->
+        mViewModel.eventCompanyChanged.collect { notificator ->
             withContext(mCoroutineContext.Main) {
-                mViewController.onCompanyChanged(changedCompany)
+                mViewController.onCompanyChanged(notificator)
             }
         }
     }

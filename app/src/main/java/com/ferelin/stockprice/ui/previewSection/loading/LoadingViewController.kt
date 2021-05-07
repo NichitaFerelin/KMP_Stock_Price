@@ -13,10 +13,10 @@ class LoadingViewController : BaseViewController<LoadingViewAnimator, FragmentLo
     override val mViewAnimator: LoadingViewAnimator = LoadingViewAnimator()
 
     fun onFirstTimeStateChanged(fragment: LoadingFragment, isFirstTimeLaunch: Boolean?) {
-        isFirstTimeLaunch?.let { setUpTransitionListener(fragment, it) }
+        isFirstTimeLaunch?.let { initFragmentReplace(fragment, it) }
     }
 
-    private fun setUpTransitionListener(
+    private fun initFragmentReplace(
         fragment: LoadingFragment,
         isFirstTimeLaunch: Boolean
     ) {

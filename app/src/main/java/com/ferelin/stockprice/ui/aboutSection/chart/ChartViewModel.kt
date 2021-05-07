@@ -42,10 +42,6 @@ class ChartViewModel(
     val eventOnDayDataChanged: SharedFlow<Unit>
         get() = mEventOnDayDataChanged
 
-    private val mEventOnError = MutableSharedFlow<String>()
-    val eventOnError: SharedFlow<String>
-        get() = mEventOnError
-
     private var mChartViewMode: ChartViewMode = ChartViewMode.All
     val chartViewMode: ChartViewMode
         get() = mChartViewMode
@@ -53,6 +49,9 @@ class ChartViewModel(
     private var mClickedMarker: Marker? = null
     val clickedMarker: Marker?
         get() = mClickedMarker
+
+    val eventOnError: SharedFlow<String>
+        get() = mDataInteractor.sharedLoadStockCandlesError
 
     val stockPrice: String
         get() = mSelectedCompany?.companyDayData?.currentPrice ?: ""
@@ -68,7 +67,6 @@ class ChartViewModel(
             prepareData()
             launch { collectStateNetworkAvailable() }
             launch { collectSharedCompaniesUpdates() }
-            launch { collectSharedError() }
         }
     }
 
@@ -97,10 +95,6 @@ class ChartViewModel(
         mDataInteractor.sharedCompaniesUpdates
             .filter { filterSharedUpdate(it) }
             .collect { mEventOnDayDataChanged.emit(Unit) }
-    }
-
-    private suspend fun collectSharedError() {
-        mDataInteractor.sharedLoadStockCandlesError.collect { mEventOnError.emit(it) }
     }
 
     private fun prepareData() {

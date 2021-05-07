@@ -6,7 +6,10 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class NewsViewModel(
@@ -33,14 +36,12 @@ class NewsViewModel(
     val stateIsDataLoading: StateFlow<Boolean>
         get() = mStateIsDataLoading
 
-    private val mEventOnError = MutableSharedFlow<String>()
     val eventOnError: SharedFlow<String>
-        get() = mEventOnError
+        get() = mDataInteractor.sharedLoadCompanyNewsError
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectStateIsNetworkAvailable() }
-            launch { collectEventOnError() }
+            collectStateIsNetworkAvailable()
         }
     }
 
@@ -51,10 +52,6 @@ class NewsViewModel(
                 collectCompanyNews()
             } else mStateIsDataLoading.value = false
         }
-    }
-
-    private suspend fun collectEventOnError() {
-        mDataInteractor.sharedLoadCompanyNewsError.collect { mEventOnError.emit(it) }
     }
 
     private suspend fun collectCompanyNews() {

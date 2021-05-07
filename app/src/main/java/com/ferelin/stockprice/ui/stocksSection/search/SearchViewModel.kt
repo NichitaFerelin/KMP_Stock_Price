@@ -45,9 +45,8 @@ class SearchViewModel(
     val searchRequest: String
         get() = mSearchRequest
 
-    private val mEventOnError = MutableSharedFlow<String>()
     val eventOnError: SharedFlow<String>
-        get() = mEventOnError
+        get() = mDataInteractor.sharedLoadSearchRequestsError
 
     var savedViewTransitionState = 0
 
@@ -57,7 +56,6 @@ class SearchViewModel(
             launch { collectStateCompanies() }
             launch { collectStateSearchRequests() }
             launch { collectStatePopularSearchRequests() }
-            launch { collectSharedSearchRequestsError() }
         }
     }
 
@@ -99,10 +97,6 @@ class SearchViewModel(
         mDataInteractor.statePopularSearchRequests
             .take(1)
             .collect { mStatePopularSearchRequests.value = it.data!! }
-    }
-
-    private suspend fun collectSharedSearchRequestsError() {
-        mDataInteractor.sharedLoadSearchRequestsError.collect { mEventOnError.emit(it) }
     }
 
     private suspend fun onNewSearch(searchText: String, resultsSize: Int) {

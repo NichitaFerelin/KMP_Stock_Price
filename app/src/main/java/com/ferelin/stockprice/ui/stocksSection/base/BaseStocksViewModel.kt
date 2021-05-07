@@ -6,7 +6,7 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,14 +25,11 @@ abstract class BaseStocksViewModel(
     val stocksRecyclerAdapter: StocksRecyclerAdapter
         get() = mStocksRecyclerAdapter
 
-    private val mEventCompanyChanged = MutableSharedFlow<AdaptiveCompany>()
-    val eventCompanyChanged: SharedFlow<AdaptiveCompany>
-        get() = mEventCompanyChanged
+    val eventCompanyChanged: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mDataInteractor.sharedCompaniesUpdates
 
     override fun initObserversBlock() {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            collectSharedCompaniesUpdates()
-        }
+        // Do nothing.
     }
 
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
@@ -47,9 +44,5 @@ abstract class BaseStocksViewModel(
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position).collect()
         }
-    }
-
-    private suspend fun collectSharedCompaniesUpdates() {
-        mDataInteractor.sharedCompaniesUpdates.collect { mEventCompanyChanged.emit(it.data!!) }
     }
 }
