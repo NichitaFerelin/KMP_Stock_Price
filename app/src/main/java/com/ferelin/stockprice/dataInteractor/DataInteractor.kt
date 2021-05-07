@@ -14,7 +14,6 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 
 /**
@@ -155,7 +154,6 @@ class DataInteractor(
             .map { getCompany((it as RepositoryResponse.Success).owner!!)!! }
     }
 
-    @FlowPreview
     override suspend fun openConnection(): Flow<AdaptiveCompany> {
         return mRepositoryHelper.openWebSocketConnection()
             .onEach {
