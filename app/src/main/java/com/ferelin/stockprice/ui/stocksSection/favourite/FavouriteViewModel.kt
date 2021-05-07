@@ -48,7 +48,11 @@ class FavouriteViewModel(
         mDataInteractor.stateFavouriteCompanies
             .filter { it is DataNotificator.DataPrepared }
             .take(1)
-            .collect { onFavouriteCompaniesPrepared(it) }
+            .collect {
+                withContext(mCoroutineContext.Main) {
+                    onFavouriteCompaniesPrepared(it)
+                }
+            }
     }
 
     private suspend fun collectSharedFavouriteCompaniesUpdates() {
