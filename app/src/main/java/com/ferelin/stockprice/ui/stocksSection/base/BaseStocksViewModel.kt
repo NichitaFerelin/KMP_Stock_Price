@@ -1,5 +1,21 @@
 package com.ferelin.stockprice.ui.stocksSection.base
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
@@ -7,33 +23,29 @@ import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.NULL_INDEX
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 abstract class BaseStocksViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseViewModel(coroutineContextProvider, dataInteractor) {
 
-    protected val mRecyclerAdapter = StocksRecyclerAdapter().apply {
-        setOnBindCallback { _, company, position ->
-            onBindCallback(company, position)
-        }
+    protected val mStocksRecyclerAdapter = StocksRecyclerAdapter().apply {
         setHasStableIds(true)
+        setOnBindCallback { _, company, position ->
+            onItemBind(company, position)
+        }
     }
-    val recyclerAdapter: StocksRecyclerAdapter
-        get() = mRecyclerAdapter
+    val stocksRecyclerAdapter: StocksRecyclerAdapter
+        get() = mStocksRecyclerAdapter
+
+    val eventCompanyChanged: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mDataInteractor.sharedCompaniesUpdates
 
     override fun initObserversBlock() {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.companiesUpdatesShared
-                .filter { it is DataNotificator.ItemUpdatedLiveTime || it is DataNotificator.ItemUpdatedQuote }
-                .collect { updateRecyclerItem(it) }
-        }
+        // Do nothing.
     }
 
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
@@ -44,55 +56,7 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    /*
-    * To avoid breaks of shared transition anim
-    *  */
-    fun postponeReferenceRemoving(finally: () -> Unit) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            delay(300)
-            withContext(mCoroutineContext.Main) {
-                finally.invoke()
-            }
-        }
-    }
-
-    protected fun setRecyclerItems(items: List<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            val newItems = ArrayList(items)
-            if (newItems.size > 10) {
-                setItemsToRecyclerWithAnim(newItems)
-            } else {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.setCompanies(newItems)
-                }
-            }
-        }
-    }
-
-    protected open fun updateRecyclerItem(notificator: DataNotificator<AdaptiveCompany>) {
-        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
-        if (index != NULL_INDEX) {
-            viewModelScope.launch(mCoroutineContext.Main) {
-                mRecyclerAdapter.updateCompany(notificator.data!!, index)
-            }
-        }
-    }
-
-    private fun setItemsToRecyclerWithAnim(newItems: ArrayList<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            for (index in 0 until 10) {
-                withContext(mCoroutineContext.Main) {
-                    mRecyclerAdapter.addCompanyToEnd(newItems[index])
-                }
-                delay(30)
-            }
-            withContext(mCoroutineContext.Main) {
-                mRecyclerAdapter.setCompaniesInRange(newItems, 10, newItems.size - 1)
-            }
-        }
-    }
-
-    private fun onBindCallback(company: AdaptiveCompany, position: Int) {
+    private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position).collect()
         }

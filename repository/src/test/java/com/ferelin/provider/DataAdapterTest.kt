@@ -25,14 +25,14 @@ class DataAdapterTest {
     @Test
     fun getMonthFromDate() {
         val date = "25 Mar 2021"
-        val result = mAdapter.getMonthFromDate(date)
+        val result = mAdapter.parseMonthFromDate(date)
         Assert.assertEquals("Mar", result)
     }
 
     @Test
     fun getYearFromDate() {
         val date = "25 Mar 2021"
-        val result = mAdapter.getYearFromDate(date)
+        val result = mAdapter.parseYearFromDate(date)
         Assert.assertEquals("2021", result)
     }
 
@@ -142,7 +142,7 @@ class DataAdapterTest {
     fun calculateProfit() {
         val currentPrice = 100.0
         val previousPrice = 50.0
-        val result = mAdapter.calculateProfit(currentPrice, previousPrice)
+        val result = mAdapter.buildProfitString(currentPrice, previousPrice)
         Assert.assertEquals("+$50.0 (50,0%)" , result)
     }
 }

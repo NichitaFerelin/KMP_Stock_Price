@@ -91,45 +91,50 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <TextView
+            <com.ferelin.stockprice.custom.OrderedTextView
                 android:id="@+id/textViewChart"
                 style="@style/textViewH3Tab"
                 android:text="@string/titleChart"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderNumber="0" />
 
-            <TextView
+            <com.ferelin.stockprice.custom.OrderedTextView
                 android:id="@+id/textViewSummary"
                 style="@style/textViewBodyShadowedTab"
                 android:text="@string/titleSummary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewChart"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderNumber="1" />
 
-            <TextView
+            <com.ferelin.stockprice.custom.OrderedTextView
                 android:id="@+id/textViewNews"
                 style="@style/textViewBodyShadowedTab"
                 android:text="@string/titleNews"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewSummary"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderNumber="2" />
 
-            <TextView
+            <com.ferelin.stockprice.custom.OrderedTextView
                 android:id="@+id/textViewForecasts"
                 style="@style/textViewBodyShadowedTab"
                 android:text="@string/titleForecasts"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewNews"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderNumber="3" />
 
-            <TextView
+            <com.ferelin.stockprice.custom.OrderedTextView
                 android:id="@+id/textViewIdeas"
                 style="@style/textViewBodyShadowedTab"
                 android:text="@string/titleIdeas"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textViewForecasts"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderNumber="4" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

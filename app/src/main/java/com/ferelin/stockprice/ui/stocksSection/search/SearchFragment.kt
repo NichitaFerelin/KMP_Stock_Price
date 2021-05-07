@@ -1,47 +1,45 @@
 package com.ferelin.stockprice.ui.stocksSection.search
 
-import android.graphics.Color
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
-import com.ferelin.stockprice.ui.stocksSection.common.StocksItemDecoration
-import com.ferelin.stockprice.utils.AnimationManager
-import com.ferelin.stockprice.utils.hideKeyboard
-import com.ferelin.stockprice.utils.openKeyboard
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
-import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.concurrent.timerTask
 
-class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
+class SearchFragment :
+    BaseStocksFragment<FragmentSearchBinding, SearchViewModel, SearchViewController>() {
 
-    override val mViewHelper: SearchViewHelper = SearchViewHelper()
+    override val mViewController: SearchViewController = SearchViewController()
     override val mViewModel: SearchViewModel by viewModels {
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
-    }
-
-    private var mBinding: FragmentSearchBinding? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            scrimColor = Color.TRANSPARENT
-        }
     }
 
     override fun onCreateView(
@@ -49,163 +47,109 @@ class SearchFragment : BaseStocksFragment<SearchViewModel, SearchViewHelper>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentSearchBinding.inflate(inflater, container, false)
-        return mBinding!!.root
+        val viewBinding = FragmentSearchBinding.inflate(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
+        mViewController.setArgumentsViewDependsOn(
+            stocksRecyclerAdapter = mViewModel.stocksRecyclerAdapter,
+            searchesHistoryRecyclerAdapter = mViewModel.searchRequestAdapter,
+            popularSearchesRecyclerAdapter = mViewModel.popularRequestsAdapter,
+            savedViewTransitionState = mViewModel.savedViewTransitionState,
+            fragmentManager = parentFragmentManager
+        )
 
-        mViewModel.recyclerAdapter.setTextDividers(hashMapOf(0 to resources.getString(R.string.hintStocks)))
-        restoreTransitionState()
         setUpBackPressedCallback()
-        setUpRecyclerViews()
-
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mFragmentManager = parentFragmentManager
-            mBinding!!.imageViewBack.setOnClickListener {
-                activity?.onBackPressed()
-            }
-            mBinding!!.editTextSearch.doAfterTextChanged {
-                Timer().apply {
-                    schedule(timerTask {
-                        mViewModel.onSearchTextChanged(it?.toString() ?: "")
-                    }, 200)
-                }
-            }
-            mBinding!!.imageViewIconClose.setOnClickListener {
-                mBinding!!.editTextSearch.setText("")
-            }
-        }
+        setUpClickListeners()
     }
 
     override fun initObservers() {
         super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch {
-                mViewModel.actionShowHintsHideResults.collect {
-                    withContext(mCoroutineContext.Main) {
-                        if (it) {
-                            mBinding!!.root.transitionToStart()
-                            mViewModel.onTransition(0)
-                        } else{
-                            mBinding!!.root.transitionToEnd()
-                            mViewModel.onTransition(1)
-                        }
+            launch { collectStateSearchRequests() }
+            launch { collectStatePopularSearchRequests() }
+            launch { collectStateSearchResults() }
+            launch { collectEventOnError() }
+        }
+    }
 
-                    }
+    override fun onStop() {
+        super.onStop()
+        mViewController.onStop()
+    }
+
+    private fun setUpClickListeners() {
+        mViewController.viewBinding!!.imageViewBack.setOnClickListener {
+            mViewController.onBackButtonClicked(
+                ifNotHandled = {
+                    mOnBackPressedCallback.remove()
+                    activity?.onBackPressed()
                 }
-            }
-            launch {
-                mViewModel.actionHideCloseIcon.collect {
-                    withContext(mCoroutineContext.Main) {
-                        switchCloseIconVisibility(it)
-                    }
-                }
-            }
-            launch {
-                mViewModel.actionShowError.collect {
-                    withContext(mCoroutineContext.Main) {
-                        showToast(it)
-                    }
-                }
-            }
-            launch {
-                mViewModel.actionShowKeyboard.collect {
-                    if (it) {
-                        delay(300)
-                        mViewModel.onOpenKeyboard()
-                        withContext(mCoroutineContext.Main) {
-                            mBinding!!.editTextSearch.requestFocus()
-                            openKeyboard(requireContext(), mBinding!!.editTextSearch)
-                        }
-                    }
-                }
+            )
+        }
+        mViewController.viewBinding!!.editTextSearch.doAfterTextChanged {
+            mViewModel.onSearchTextChanged(it?.toString() ?: "")
+            mViewController.onSearchTextChanged(it?.toString() ?: "")
+        }
+        mViewController.viewBinding!!.imageViewIconClose.setOnClickListener {
+            mViewController.onCloseIconClicked()
+        }
+    }
+
+    private suspend fun collectStateSearchResults() {
+        mViewModel.stateSearchStockResults.collect { results ->
+            withContext(mCoroutineContext.Main) {
+                val transitionState = mViewController.onSearchStocksResultChanged(results)
+                mViewModel.savedViewTransitionState = transitionState
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mViewModel.postponeReferenceRemoving {
-            mBinding?.recyclerViewSearchedHistory?.adapter = null
-            mBinding?.recyclerViewPopularRequests?.adapter = null
-            mBinding?.recyclerViewSearchResults?.adapter = null
-            mBinding = null
-        }
+    private suspend fun collectStateSearchRequests() {
+        mViewModel.stateSearchRequests
+            .filter { it != null }
+            .collect { notificator ->
+                withContext(mCoroutineContext.Main) {
+                    mViewController.onSearchRequestsChanged(notificator!!)
+                }
+            }
     }
 
-    private fun restoreTransitionState() {
-        if (mViewModel.transitionState == 1) {
-            mBinding!!.root.progress = 1F
-            mBinding!!.imageViewIconClose.visibility = View.VISIBLE
-        }
+    private suspend fun collectStatePopularSearchRequests() {
+        mViewModel.statePopularSearchRequests
+            .filter { it != null }
+            .take(1)
+            .collect { results ->
+                withContext(mCoroutineContext.Main) {
+                    mViewController.onPopularSearchRequestsChanged(results!!)
+                }
+            }
     }
 
-    private fun switchCloseIconVisibility(hideIcon: Boolean) {
-        mBinding!!.apply {
-            if (hideIcon && imageViewIconClose.visibility != View.GONE) {
-                mViewHelper.runScaleOut(imageViewIconClose, object : AnimationManager() {
-                    override fun onAnimationEnd(animation: Animation?) {
-                        imageViewIconClose.visibility = View.INVISIBLE
-                    }
-                })
-            } else if (!hideIcon && imageViewIconClose.visibility != View.VISIBLE) {
-                mViewHelper.runScaleIn(imageViewIconClose, object : AnimationManager() {
-                    override fun onAnimationStart(animation: Animation?) {
-                        imageViewIconClose.visibility = View.VISIBLE
-                    }
-                })
+    private suspend fun collectEventOnError() {
+        mViewModel.eventOnError.collect {
+            withContext(mCoroutineContext.Main) {
+                mViewController.onError(it)
             }
         }
     }
 
-    private fun onSearchTickerClicked(item: AdaptiveSearchRequest) {
-        mBinding!!.editTextSearch.setText(item.searchText)
-        mBinding!!.editTextSearch.setSelection(item.searchText.length)
+    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (!mViewController.handleOnBackPressed(mViewModel.searchRequest)) {
+                this.remove()
+                activity?.onBackPressed()
+            }
+        }
     }
 
     private fun setUpBackPressedCallback() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    when {
-                        mBinding != null && mViewModel.lastSearchText.isNotEmpty() -> {
-                            mBinding!!.editTextSearch.setText("")
-                        }
-                        else -> {
-                            this.remove()
-                            hideKeyboard(requireContext(), mBinding!!.root)
-                            activity?.onBackPressed()
-                        }
-                    }
-                }
-            })
-    }
-
-    private fun setUpRecyclerViews() {
-        mBinding!!.recyclerViewSearchResults.apply {
-            addItemDecoration(StocksItemDecoration(requireContext()))
-            adapter = mViewModel.recyclerAdapter
-        }
-        mBinding!!.recyclerViewSearchedHistory.apply {
-            addItemDecoration(SearchItemDecoration(requireContext()))
-            adapter = mViewModel.searchesAdapter.also {
-                it.setOnTickerClickListener { item, _ ->
-                    onSearchTickerClicked(item)
-                }
-            }
-        }
-        mBinding!!.recyclerViewPopularRequests.apply {
-            addItemDecoration(SearchItemDecoration(requireContext()))
-            adapter = mViewModel.popularRequestsAdapter.also {
-                it.setPopularSearches()
-                it.setOnTickerClickListener { item, _ ->
-                    onSearchTickerClicked(item)
-                }
-            }
-        }
+            mOnBackPressedCallback
+        )
     }
 }

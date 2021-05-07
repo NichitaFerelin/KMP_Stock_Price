@@ -1,64 +1,123 @@
 package com.ferelin.stockprice.ui
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-@FlowPreview
 class MainViewModel(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider(),
     private val mDataInteractor: DataInteractor,
-    private val mApplication: Application
+    mApplication: Application
 ) : AndroidViewModel(mApplication) {
 
     init {
         initObservers()
     }
 
-    private val mActionShowDialogError = MutableSharedFlow<String>()
-    val actionShowDialogError: SharedFlow<String>
-        get() = mActionShowDialogError
+    private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
+    val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
+        get() = mEventObserverCompanyChanged
 
-    private val mActionShowNetworkError = MutableSharedFlow<Unit>()
-    val actionShowNetworkError: SharedFlow<Unit>
-        get() = mActionShowNetworkError
+    private val mStateIsNetworkAvailable = MutableStateFlow(true)
+    val stateIsNetworkAvailable: StateFlow<Boolean>
+        get() = mStateIsNetworkAvailable
 
-    private val mActionShowApiLimitError = MutableSharedFlow<Unit>()
-    val actionShowApiLimitError: SharedFlow<Unit>
-        get() = mActionShowApiLimitError
+    val eventCriticalError: SharedFlow<String>
+        get() = mDataInteractor.sharedPrepareCompaniesError
 
-    @FlowPreview
+    val eventApiLimitError: SharedFlow<String>
+        get() = mDataInteractor.sharedApiLimitError
+
+    private var mObserverCompanyCollectorJob: Job? = null
+
+    private var mNetworkWasLost: Boolean = false
+
     fun initObservers() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mDataInteractor.prepareCompaniesErrorShared
-                    .filter { it.isNotEmpty() }
-                    .collect { mActionShowDialogError.emit(it) }
-            }
-            launch {
-                mDataInteractor.isNetworkAvailableState
-                    .filter { !it }
-                    .collect { mActionShowNetworkError.emit(Unit) }
-            }
-            launch {
-                mDataInteractor.apiLimitError
-                    .filter { it }
-                    .collect { mActionShowApiLimitError.emit(Unit) }
-            }
-            launch {
-                mDataInteractor.prepareData(mApplication)
-                delay(10_000L)
+            launch { mDataInteractor.prepareData() }
+            launch { collectNetworkState() }
+            launch { collectCompanyUpdatesForObserver() }
+        }
+    }
+
+    private suspend fun collectNetworkState() {
+        mDataInteractor.stateIsNetworkAvailable.collect { onNetworkStateChanged(it) }
+    }
+
+    private suspend fun collectCompanyUpdatesForObserver() {
+        mDataInteractor.stateCompanyForObserver.collect { onCompanyForObserverChanged(it) }
+    }
+
+    private suspend fun onCompanyForObserverChanged(company: AdaptiveCompany?) {
+        if (company == null) {
+            mObserverCompanyCollectorJob?.cancel()
+            mEventObserverCompanyChanged.emit(null)
+            return
+        }
+
+        mEventObserverCompanyChanged.emit(company)
+        collectObserverCompanyUpdates(company)
+    }
+
+    private fun collectObserverCompanyUpdates(target: AdaptiveCompany) {
+        mObserverCompanyCollectorJob?.cancel()
+        mObserverCompanyCollectorJob = viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.sharedCompaniesUpdates
+                .filter { it.data == target }
+                .collect {
+                    if (!isActive) {
+                        cancel()
+                    } else mEventObserverCompanyChanged.emit(target)
+                }
+        }
+    }
+
+    private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            Log.d("Test", "$isAvailable")
+            if (isAvailable) {
+                /*
+                * When the network is lost -> web socket breaks.
+                * */
+                if (mNetworkWasLost) {
+                    restartWebSocket()
+                }
+                mStateIsNetworkAvailable.value = true
                 mDataInteractor.openConnection().collect()
+            } else {
+                mNetworkWasLost = true
+                mStateIsNetworkAvailable.value = false
             }
         }
+    }
+
+    private fun restartWebSocket() {
+        mDataInteractor.prepareToWebSocketReconnection()
+        mNetworkWasLost = false
     }
 }

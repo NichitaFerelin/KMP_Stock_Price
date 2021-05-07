@@ -1,10 +1,29 @@
 package com.ferelin.repository.dataConverter
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.ferelin.local.models.Company
 import com.ferelin.repository.adaptiveModels.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * [DataAdapter] is used to convert date/string/time/adaptive models for UI or network requests.
+ */
 class DataAdapter {
 
     fun fromLongToDateStr(time: Long): String {
@@ -13,27 +32,48 @@ class DataAdapter {
         return dateFormat.format(Date(time)).filter { it != ',' }
     }
 
-    fun getMonthFromDate(date: String): String {
+    fun parseMonthFromDate(date: String): String {
         return date.filter { it.isLetter() }
     }
 
-    fun getYearFromDate(date: String): String {
+    fun parseYearFromDate(date: String): String {
         return date.split(" ").getOrNull(2) ?: ""
     }
 
+    /*
+    * Adapt name example:
+    *   Before:   "Apple Inc"
+    *   After:    "Apple"
+    * */
     fun adaptName(name: String): String {
         val postfix = name.split(" ").last()
         return if (postfix == "Inc") name.substringBefore("Inc") else name
     }
 
+    /*
+    * Adapt phone example:
+    *   Before:   12345678.0
+    *   After:    12345678
+    * */
     fun adaptPhone(phone: String): String {
         return phone.substringBefore('.')
     }
 
+    /*
+    * Format price example:
+    *   Before:   123456.75
+    *   After:    $123456.75
+    * */
     fun formatPrice(price: Double): String {
         return "$${adaptPrice(price)}"
     }
 
+    /*
+    * API used not basic millis-time
+    * Example:
+    *   Before from response: 12345678
+    *   After:  12345678000
+    * */
     fun convertMillisFromResponse(time: Long): Long {
         val timeStr = time.toString()
         val resultStr = "${timeStr}000"
@@ -125,7 +165,12 @@ class DataAdapter {
         )
     }
 
-    fun calculateProfit(currentPrice: Double, previousPrice: Double): String {
+    /*
+    * Build profit string example:
+    *   Call:    buildProfitString (100.0, 50.0)
+    *   Result:  "+$50.0 (50,0%)"
+    * */
+    fun buildProfitString(currentPrice: Double, previousPrice: Double): String {
         val numberProfit = currentPrice - previousPrice
         val numberProfitStr = numberProfit.toString()
 
@@ -151,6 +196,10 @@ class DataAdapter {
         }
     }
 
+    /*
+    * Call:     adaptPrice(2253.14)
+    * Result:   2 253.14
+    * */
     private fun adaptPrice(price: Double): String {
         var resultStr = ""
         val priceStr = price.toString()

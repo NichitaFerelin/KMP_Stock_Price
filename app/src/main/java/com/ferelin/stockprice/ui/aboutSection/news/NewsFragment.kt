@@ -1,19 +1,30 @@
 package com.ferelin.stockprice.ui.aboutSection.news
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.TransitionManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
-import com.ferelin.stockprice.utils.AnimationManager
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -22,135 +33,78 @@ import kotlinx.coroutines.withContext
 
 class NewsFragment(
     selectedCompany: AdaptiveCompany? = null
-) : BaseFragment<NewsViewModel, NewsViewHelper>(), NewsClickListener {
+) : BaseFragment<FragmentNewsBinding, NewsViewModel, NewsViewController>(), NewsClickListener {
 
-    override val mViewHelper: NewsViewHelper = NewsViewHelper()
+    override val mViewController: NewsViewController = NewsViewController()
     override val mViewModel: NewsViewModel by viewModels {
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
-
-    private var mBinding: FragmentNewsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentNewsBinding.inflate(inflater, container, false)
-        return mBinding!!.root
+        val viewBinding = FragmentNewsBinding.inflate(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-
-        mBinding!!.recyclerViewNews.apply {
-            addItemDecoration(NewsItemDecoration(requireContext()))
-            adapter = mViewModel.recyclerAdapter.also {
-                it.setOnNewsClickListener(this@NewsFragment)
-            }
-        }
-        mBinding!!.fab.setOnClickListener {
-            scrollToTop()
-        }
+        setUpClickListeners()
+        setUpViewControllerArguments()
     }
 
     override fun initObservers() {
         super.initObservers()
-
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch {
-                mViewModel.notificationNewItems.collect {
-                    withContext(mCoroutineContext.Main) {
-                        showToast(resources.getString(R.string.notificationNewItems))
-                        scrollToTop()
-                    }
-                }
-            }
-            launch {
-                mViewModel.hasDataForRecycler.collect { hasData ->
-                    withContext(mCoroutineContext.Main) {
-                        switchWidgetsVisibility(hasData)
-                    }
-                }
-            }
-            launch {
-                mViewModel.actionOpenUrl.collect {
-                    startActivity(it)
-                }
-            }
-            launch {
-                mViewModel.actionShowError
-                    .filter { it.isNotEmpty() }
-                    .collect {
-                        withContext(mCoroutineContext.Main) {
-                            showToast(it)
-                            mBinding!!.progressBar.visibility = View.INVISIBLE
-                        }
-                    }
-            }
+            launch { collectStateNews() }
+            launch { collectStateIsDataLoading() }
+            launch { collectStateOnError() }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mBinding!!.recyclerViewNews.adapter = null
-        mBinding = null
     }
 
     override fun onNewsUrlClicked(position: Int) {
-        mViewModel.onNewsUrlClicked(position)
+        mViewController.onNewsUrlClicked(mViewModel.selectedCompany, position)
     }
 
-    private fun switchWidgetsVisibility(hasData: Boolean) {
-        mBinding!!.apply {
-            when {
-                hasData && recyclerViewNews.visibility == View.GONE || progressBar.visibility == View.VISIBLE -> {
-                    TransitionManager.beginDelayedTransition(root)
-                    recyclerViewNews.visibility = View.VISIBLE
-                    progressBar.visibility = View.INVISIBLE
-                }
-                !hasData && recyclerViewNews.visibility == View.VISIBLE || progressBar.visibility == View.INVISIBLE -> {
-                    recyclerViewNews.visibility = View.GONE
-                    progressBar.visibility = View.VISIBLE
-                }
-            }
+    private fun setUpClickListeners() {
+        mViewController.viewBinding!!.fab.setOnClickListener {
+            mViewController.onFabClicked()
         }
     }
 
-    private fun scrollToTop() {
-        val fabScaleOutCallback = object : AnimationManager() {
-            override fun onAnimationEnd(animation: Animation?) {
-                mBinding!!.fab.visibility = View.INVISIBLE
-                mBinding!!.fab.scaleX = 1.0F
-                mBinding!!.fab.scaleY = 1.0F
-            }
-        }
-        if ((mBinding!!.recyclerViewNews.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 12) {
-            val fadeInCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding!!.recyclerViewNews.visibility = View.VISIBLE
-                    mBinding!!.recyclerViewNews.smoothScrollToPosition(0)
-                    mViewHelper.runScaleOut(mBinding!!.fab, fabScaleOutCallback)
+    private suspend fun collectStateNews() {
+        mViewModel.stateNews
+            .filter { it != null }
+            .collect { news ->
+                withContext(mCoroutineContext.Main) {
+                    mViewController.onNewsChanged(news!!)
                 }
             }
-            val fadeOutCallback = object : AnimationManager() {
-                override fun onAnimationStart(animation: Animation?) {
-                    mBinding!!.recyclerViewNews.smoothScrollBy(
-                        0,
-                        -mBinding!!.recyclerViewNews.height
-                    )
-                }
+    }
 
-                override fun onAnimationEnd(animation: Animation?) {
-                    mBinding!!.recyclerViewNews.visibility = View.GONE
-                    mBinding!!.recyclerViewNews.scrollToPosition(7)
-                    mViewHelper.runFadeIn(mBinding!!.recyclerViewNews, fadeInCallback)
-                }
+    private suspend fun collectStateIsDataLoading() {
+        mViewModel.stateIsDataLoading.collect { isDataLoading ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onDataLoadingStateChanged(isDataLoading)
             }
-            mViewHelper.runFadeOut(mBinding!!.recyclerViewNews, fadeOutCallback)
-        } else {
-            mViewHelper.runScaleOut(mBinding!!.fab, fabScaleOutCallback)
-            mBinding!!.recyclerViewNews.smoothScrollToPosition(0)
         }
+    }
+
+    private suspend fun collectStateOnError() {
+        mViewModel.eventOnError.collect { message ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onError(message)
+            }
+        }
+    }
+
+    private fun setUpViewControllerArguments() {
+        mViewModel.newsRecyclerAdapter.setOnNewsClickListener(this)
+        mViewController.setArgumentsViewDependsOn(
+            newsAdapter = mViewModel.newsRecyclerAdapter
+        )
     }
 }

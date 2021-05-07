@@ -1,9 +1,29 @@
 package com.ferelin.repository.utils
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
 import com.ferelin.repository.dataConverter.DataAdapter
 
+/**
+ * [StockHistoryConverter] is used to convert history for UI with
+ *                                                  special view mode(OneYearMode,SixMonths, etc.)
+ */
 object StockHistoryConverter {
 
     private val mAdapter = DataAdapter()
@@ -21,14 +41,14 @@ object StockHistoryConverter {
     }
 
     fun toOneYear(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
-        val startMonth = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
-        val startYear = mAdapter.getYearFromDate(history.dates.firstOrNull() ?: "")
+        val startMonth = mAdapter.parseMonthFromDate(history.dates.firstOrNull() ?: "")
+        val startYear = mAdapter.parseYearFromDate(history.dates.firstOrNull() ?: "")
         val startPrice = history.price.firstOrNull() ?: 0.0
         val startPriceStr = mAdapter.formatPrice(startPrice)
         val startDate = "$startMonth $startYear"
 
-        val endMonth = mAdapter.getMonthFromDate(history.dates.lastOrNull() ?: "")
-        val endYear = mAdapter.getYearFromDate(history.dates.lastOrNull() ?: "")
+        val endMonth = mAdapter.parseMonthFromDate(history.dates.lastOrNull() ?: "")
+        val endYear = mAdapter.parseYearFromDate(history.dates.lastOrNull() ?: "")
         val endPrice = history.price.lastOrNull() ?: 0.0
         val endPriceStr = mAdapter.formatPrice(endPrice)
         val endDate = "$endMonth $endYear"
@@ -50,8 +70,8 @@ object StockHistoryConverter {
             amount += price
             if (index == history.price.size / 2) {
                 val average = amount / index
-                val from = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
-                val to = mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")
+                val from = mAdapter.parseMonthFromDate(history.dates.firstOrNull() ?: "")
+                val to = mAdapter.parseMonthFromDate(history.dates.getOrNull(index) ?: "")
                 resultsDouble.add(average)
                 resultsStr.add(mAdapter.formatPrice(average))
                 resultsDates.add("$from - $to")
@@ -61,8 +81,8 @@ object StockHistoryConverter {
 
         val average = amount / history.price.size / 2
         val from =
-            mAdapter.getMonthFromDate(history.dates.getOrNull(history.price.size / 2 + 1) ?: "")
-        val to = mAdapter.getMonthFromDate(history.dates.lastOrNull() ?: "")
+            mAdapter.parseMonthFromDate(history.dates.getOrNull(history.price.size / 2 + 1) ?: "")
+        val to = mAdapter.parseMonthFromDate(history.dates.lastOrNull() ?: "")
         resultsDouble.add(average)
         resultsStr.add(mAdapter.formatPrice(average))
         resultsDates.add("$from - $to")
@@ -78,20 +98,20 @@ object StockHistoryConverter {
         val resultsDouble = mutableListOf<Double>()
         val resultsStr = mutableListOf<String>()
         val resultsDates = mutableListOf<String>()
-        var currentMonth = mAdapter.getMonthFromDate(history.dates.firstOrNull() ?: "")
+        var currentMonth = mAdapter.parseMonthFromDate(history.dates.firstOrNull() ?: "")
         var cursor = 0
 
         var amount = 0.0
         history.price.forEachIndexed { index, price ->
             amount += price
             cursor++
-            if (currentMonth != mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")) {
+            if (currentMonth != mAdapter.parseMonthFromDate(history.dates.getOrNull(index) ?: "")) {
                 val average = amount / cursor
                 resultsDouble.add(average)
                 resultsStr.add(mAdapter.formatPrice(average))
                 resultsDates.add(currentMonth)
 
-                currentMonth = mAdapter.getMonthFromDate(history.dates.getOrNull(index) ?: "")
+                currentMonth = mAdapter.parseMonthFromDate(history.dates.getOrNull(index) ?: "")
                 cursor = 0
                 amount = 0.0
             }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:transitionName="@string/transitionSearchFragment"
+    app:layoutDescription="@xml/fragment_search_scene">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@color/white"
+        android:elevation="@dimen/searchFragmentElevation"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardViewSearch"
+        style="@style/cardSearchActive"
+        app:cardElevation="@dimen/searchFragmentElevation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewBack"
+        style="@style/clickableImage"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/descriptionBack"
+        android:elevation="@dimen/searchFragmentElevation"
+        android:src="@drawable/ic_back"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+        app:layout_constraintStart_toStartOf="@id/cardViewSearch"
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
+
+    <EditText
+        android:id="@+id/editTextSearch"
+        style="@style/editText"
+        android:elevation="@dimen/searchFragmentElevation"
+        android:importantForAutofill="no"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+        app:layout_constraintEnd_toStartOf="@id/imageViewIconClose"
+        app:layout_constraintStart_toEndOf="@id/imageViewBack"
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch"
+        tools:hint="Test"
+        tools:ignore="LabelFor" />
+
+    <ImageView
+        android:id="@+id/imageViewIconClose"
+        style="@style/clickableImage"
+        android:layout_marginEnd="10dp"
+        android:contentDescription="@string/descriptionIconClose"
+        android:elevation="@dimen/searchFragmentElevation"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:src="@drawable/ic_close"
+        app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+        app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
+        app:layout_constraintTop_toTopOf="@id/cardViewSearch"
+        tools:scaleX="1"
+        tools:scaleY="1" />
+
+    <TextView
+        android:id="@+id/textViewRequests"
+        style="@style/textViewH2"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/titlePopularRequests"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPopularRequests"
+        style="@style/recyclerSearchesLandscape"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewRequests" />
+
+    <TextView
+        android:id="@+id/textViewSearched"
+        style="@style/textViewH2"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/titleYourSearches"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewPopularRequests" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSearchedHistory"
+        style="@style/recyclerSearchesLandscape"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewSearched" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSearchResults"
+        style="@style/recyclerStocks"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

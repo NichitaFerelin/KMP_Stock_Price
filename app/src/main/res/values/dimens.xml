@@ -4,6 +4,9 @@
 
     <dimen name="searchItemStartMargin">16dp</dimen>
     <dimen name="searchItemMargin">4dp</dimen>
+
+    <dimen name="stockItemStartMargin">16dp</dimen>
+    <dimen name="stockItemEndMargin">16dp</dimen>
     <dimen name="stockItemBottomMargin">8dp</dimen>
     <dimen name="newsItemOffset">8dp</dimen>
 
@@ -30,4 +33,5 @@
 
     <dimen name="searchFragmentElevation">7dp</dimen>
     <dimen name="recyclerSearchesHeight">96dp</dimen>
+    <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
 </resources>

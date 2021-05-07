@@ -139,7 +139,7 @@
         <item name="android:backgroundTint">@color/whiteDark</item>
         <item name="android:visibility">invisible</item>
         <item name="android:src">@drawable/ic_arrow_up</item>
-        <item name="layout_behavior">.custom.fab.ScrollableFabBehaviour</item>
+        <item name="layout_behavior">.custom.FabBehaviourScrollable</item>
         <item name="tint">@color/black</item>
     </style>
 
@@ -163,12 +163,20 @@
         <item name="spanCount">2</item>
     </style>
 
+    <style name="recyclerSearchesLandscape" parent="recyclerSearches">
+        <item name="spanCount">1</item>
+        <item name="android:layout_height">@dimen/recyclerSearchesHeightLandscape</item>
+    </style>
+
     <style name="recyclerStocks">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
         <item name="android:transitionGroup">true</item>
+        <item name="fastScrollEnabled">true</item>
+        <item name="fastScrollHorizontalThumbDrawable">@drawable/scroller_drawable</item>
+        <item name="fastScrollHorizontalTrackDrawable">@drawable/scroller_line_drawable</item>
+        <item name="fastScrollVerticalThumbDrawable">@drawable/scroller_drawable</item>
+        <item name="fastScrollVerticalTrackDrawable">@drawable/scroller_line_drawable</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
 
@@ -202,4 +210,11 @@
         <item name="cardCornerRadius">13dp</item>
         <item name="cardElevation">0dp</item>
     </style>
+
+    <style name="loadingCard">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="cardCornerRadius">8dp</item>
+    </style>
+
 </resources>

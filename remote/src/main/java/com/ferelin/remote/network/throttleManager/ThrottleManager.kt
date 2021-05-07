@@ -1,6 +1,22 @@
 package com.ferelin.remote.network.throttleManager
 
-import com.ferelin.remote.utilits.Api
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import com.ferelin.remote.utils.Api
 import com.ferelin.shared.CoroutineContextProvider
 import kotlinx.coroutines.*
 import java.util.*
@@ -8,6 +24,17 @@ import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashSet
 import kotlin.math.abs
 
+/**
+ * [ThrottleManager] designed to:
+ *  - Avoid API limit error.
+ *  - Optimize requests to network. Before sending to the network -> request will be
+ * checked by condition [isNotActual] -> if method will return true -> request will be deleted
+ *
+ *   Requests are inserted into a [mMessagesQueue], which are retrieved from there once per/[mPerSecondRequestLimit].
+ *   Request will be saved into a [mMessagesHistory] to check future requests.
+ *
+ *   Is used only to load company quotes, but can be used for any requests type.
+ */
 class ThrottleManager(
     coroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : ThrottleManagerHelper {
@@ -20,9 +47,9 @@ class ThrottleManager(
 
     private val mMessagesQueue =
         Collections.synchronizedSet(LinkedHashSet<HashMap<String, Any>>(100))
-    private var mMessagesHistory = Collections.synchronizedMap(HashMap<String, Any?>(300, 1F))
+    private var mMessagesHistory = Collections.synchronizedMap(HashMap<String, Any?>(300, 0.5F))
 
-    private val mPerSecondRequestLimit = 1000L
+    private val mPerSecondRequestLimit = 1050L
     private var mIsRunning = true
 
     private var mJob: Job? = null
@@ -55,15 +82,10 @@ class ThrottleManager(
     }
 
     override fun invalidate() {
-        mCompanyProfileApi = null
-        mCompanyNewsApi = null
-        mCompanyQuoteApi = null
-        mStockCandlesApi = null
-        mStockSymbolsApi = null
         mJob?.cancel()
         mJob = null
         mMessagesQueue.clear()
-        mIsRunning = true
+        mIsRunning = false
     }
 
     private suspend fun start() {
@@ -90,8 +112,9 @@ class ThrottleManager(
                     }
                     mMessagesHistory[symbol] = null
                     delay(mPerSecondRequestLimit)
-                } ?: delay(200)
+                }
             } catch (exception: ConcurrentModificationException) {
+                // Do nothing. Message will not be removed
             }
         }
     }

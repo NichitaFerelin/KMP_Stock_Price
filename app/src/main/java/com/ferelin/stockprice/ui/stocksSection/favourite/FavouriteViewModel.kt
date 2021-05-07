@@ -1,5 +1,21 @@
 package com.ferelin.stockprice.ui.stocksSection.favourite
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.shared.CoroutineContextProvider
@@ -7,41 +23,42 @@ import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@FlowPreview
 class FavouriteViewModel(
     coroutineContextProvider: CoroutineContextProvider,
     dataInteractor: DataInteractor
 ) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
 
-    private val mActionScrollToTop = MutableSharedFlow<Unit>(1)
-    val actionScrollToTop: SharedFlow<Unit>
-        get() = mActionScrollToTop
+    private val mEventOnNewItem = MutableSharedFlow<Unit>(1)
+    val eventOnNewItem: SharedFlow<Unit>
+        get() = mEventOnNewItem
 
     override fun initObserversBlock() {
         super.initObserversBlock()
-
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch {
-                mDataInteractor.favouriteCompaniesState
-                    .filter { it is DataNotificator.DataPrepared }
-                    .take(1)
-                    .collect { onFavouriteCompaniesPrepared(it) }
-            }.join()
-
-            mDataInteractor.favouriteCompaniesUpdatesShared
-                .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
-                .collect { onFavouriteCompanyUpdateShared(it) }
-
+            launch { collectStateFavouriteCompanies() }
+            launch { collectSharedFavouriteCompaniesUpdates() }
         }
     }
 
+    private suspend fun collectStateFavouriteCompanies() {
+        mDataInteractor.stateFavouriteCompanies
+            .filter { it is DataNotificator.DataPrepared }
+            .take(1)
+            .collect { onFavouriteCompaniesPrepared(it) }
+    }
+
+    private suspend fun collectSharedFavouriteCompaniesUpdates() {
+        mDataInteractor.sharedFavouriteCompaniesUpdates
+            .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
+            .collect { onFavouriteCompanyUpdateShared(it) }
+    }
+
     private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        setRecyclerItems(notificator.data!!)
+        mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
     }
 
     private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
@@ -50,20 +67,20 @@ class FavouriteViewModel(
                 when (notificator) {
                     is DataNotificator.NewItemAdded -> {
                         withContext(mCoroutineContext.Main) {
-                            mRecyclerAdapter.addCompany(notificator.data)
+                            mStocksRecyclerAdapter.addCompany(notificator.data)
+                            mEventOnNewItem.emit(Unit)
                         }
                     }
                     is DataNotificator.ItemRemoved -> {
-                        val index = mRecyclerAdapter.companies.indexOf(notificator.data)
+                        val index = mStocksRecyclerAdapter.companies.indexOf(notificator.data)
                         if (index != NULL_INDEX) {
                             withContext(mCoroutineContext.Main) {
-                                mRecyclerAdapter.removeCompany(index)
+                                mStocksRecyclerAdapter.removeCompany(index)
                             }
                         }
                     }
                     else -> Unit
                 }
-                mActionScrollToTop.emit(Unit)
             }
         }
     }

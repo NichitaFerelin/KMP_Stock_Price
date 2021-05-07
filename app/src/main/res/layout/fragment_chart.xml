@@ -45,6 +45,7 @@
             android:id="@+id/progressBar"
             style="@style/progressBar"
             android:layout_marginTop="16dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewDayProfit" />
@@ -55,7 +56,7 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="chartView, flowButtons,textViewAll,textViewDays,textViewMonths,textViewSixMonths,textViewWeeks,textViewYear" />
 
-        <com.ferelin.stockprice.custom.chart.ChartView
+        <com.ferelin.stockprice.custom.ChartView
             android:id="@+id/chartView"
             android:layout_width="0dp"
             android:layout_height="@dimen/chartHeight"

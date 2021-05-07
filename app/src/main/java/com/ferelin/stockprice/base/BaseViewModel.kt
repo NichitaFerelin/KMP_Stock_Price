@@ -1,16 +1,41 @@
 package com.ferelin.stockprice.base
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import androidx.lifecycle.ViewModel
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 
+/**
+ * [BaseViewModel] holds the logic of data loading using [mDataInteractor].
+ */
 abstract class BaseViewModel(
     protected val mCoroutineContext: CoroutineContextProvider,
     protected val mDataInteractor: DataInteractor
 ) : ViewModel() {
 
+    /*
+    * Add your observers here.
+    * */
     protected abstract fun initObserversBlock()
 
+    /*
+    * To avoid calling non-final function in init-block.
+    * */
     private var mWasInitialized = false
 
     fun initObservers() {
@@ -20,5 +45,7 @@ abstract class BaseViewModel(
         }
     }
 
-    fun triggerCreate() {}
+    fun triggerCreate() {
+        // Do nothing. Used to trigger lazy initialization.
+    }
 }

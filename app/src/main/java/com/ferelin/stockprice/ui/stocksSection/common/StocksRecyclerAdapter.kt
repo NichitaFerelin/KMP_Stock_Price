@@ -1,14 +1,26 @@
 package com.ferelin.stockprice.ui.stocksSection.common
 
-import android.view.LayoutInflater
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import android.annotation.SuppressLint
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.databinding.ItemStockBinding
-import com.ferelin.stockprice.databinding.ItemTextBinding
+import com.ferelin.stockprice.common.TextViewHolder
 
 class StocksRecyclerAdapter(
     private var mStockClickListener: StockClickListener? = null
@@ -18,7 +30,9 @@ class StocksRecyclerAdapter(
     val companies: List<AdaptiveCompany>
         get() = mCompanies.toList()
 
-    private var mTextDividers = hashMapOf<Int, String>()
+    private var mHeader: String? = null
+    private val mOffsetWithHeader: Int
+        get() = if (mHeader == null) 0 else 1
 
     private var mOnBindCallback: ((
         holder: StockViewHolder,
@@ -36,45 +50,27 @@ class StocksRecyclerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is TextViewHolder -> holder.bind(mTextDividers[position] ?: "")
-            is StockViewHolder -> {
-                holder.apply {
-                    bind(mCompanies[position - mTextDividers.size])
-                    itemView.setOnClickListener {
-                        mStockClickListener?.onStockClicked(
-                            holder,
-                            mCompanies[holder.adapterPosition - mTextDividers.size]
-                        )
-                    }
-                    binding.imageViewFavourite.setOnClickListener {
-                        mStockClickListener?.onFavouriteIconClicked(mCompanies[holder.adapterPosition - mTextDividers.size])
-                    }
-                    mOnBindCallback?.invoke(
-                        holder,
-                        mCompanies[position - mTextDividers.size],
-                        position - mTextDividers.size
-                    )
-                }
-            }
+            is TextViewHolder -> bindTextViewHolder(holder)
+            is StockViewHolder -> bindStockViewHolder(holder, position)
             else -> Unit
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            mTextDividers[position] == null -> ITEM_STOCK_TYPE
-            else -> ITEM_TEXT_TYPE
+            position == 0 && mHeader != null -> ITEM_TEXT_TYPE
+            else -> ITEM_STOCK_TYPE
         }
     }
 
     override fun getItemCount(): Int {
-        return mCompanies.size + mTextDividers.size
+        return mCompanies.size + mOffsetWithHeader
     }
 
     override fun getItemId(position: Int): Long {
         return when {
-            mTextDividers[position] != null -> mTextDividers[position].hashCode().toLong()
-            else -> mCompanies[position - mTextDividers.size].id.toLong()
+            position == 0 && mHeader != null -> mHeader.hashCode().toLong()
+            else -> mCompanies[position - mOffsetWithHeader].id.toLong()
         }
     }
 
@@ -88,100 +84,65 @@ class StocksRecyclerAdapter(
         mOnBindCallback = func
     }
 
-    fun setTextDividers(map: HashMap<Int, String>) {
-        mTextDividers = map
-        notifyDataSetChanged()
+    fun setHeader(header: String) {
+        mHeader = header
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
         mCompanies = companies
         notifyDataSetChanged()
     }
 
-    fun setCompaniesInRange(companies: ArrayList<AdaptiveCompany>, start: Int, end: Int) {
-        mCompanies = companies
-        notifyItemRangeInserted(start - mTextDividers.size, end - mTextDividers.size)
-    }
-
-    fun updateCompany(company: AdaptiveCompany, index: Int) {
-        mCompanies[index] = company
-        notifyItemChanged(index + mTextDividers.size)
+    fun notifyUpdate(index: Int) {
+        notifyItemChanged(index + mOffsetWithHeader)
     }
 
     fun addCompany(company: AdaptiveCompany) {
         mCompanies.add(0, company)
-        notifyItemInserted(0 + mTextDividers.size)
-    }
-
-    fun addCompanyToEnd(company: AdaptiveCompany) {
-        mCompanies.add(company)
-        notifyItemInserted(mCompanies.lastIndex - mTextDividers.size)
+        notifyItemInserted(mOffsetWithHeader)
     }
 
     fun removeCompany(index: Int) {
         mCompanies.removeAt(index)
-        notifyItemRemoved(index - mTextDividers.size)
+        notifyItemRemoved(index + mOffsetWithHeader)
     }
 
-    fun invalidate() {
-        mCompanies.clear()
-        notifyDataSetChanged()
+    fun getCompanyByAdapterPosition(position: Int): AdaptiveCompany {
+        return mCompanies[position - mOffsetWithHeader]
     }
 
-    fun removeListeners() {
-        mStockClickListener = null
-        mOnBindCallback = null
+    fun onRebound(view: StockViewHolder) {
+        mStockClickListener?.onHolderRebound(view)
     }
 
-    class TextViewHolder private constructor(
-        val binding: ItemTextBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    fun onUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean) {
+        mStockClickListener?.onHolderUntouched(stockViewHolder, rebounded)
+    }
 
-        fun bind(text: String) {
-            binding.root.text = text
-        }
+    private fun bindTextViewHolder(holder: TextViewHolder) {
+        holder.bind(mHeader!!)
+    }
 
-        companion object {
-            fun from(parent: ViewGroup): TextViewHolder {
-                val inflater = LayoutInflater.from(parent.context)
-                val binding = ItemTextBinding.inflate(inflater, parent, false)
-                return TextViewHolder(binding)
+    private fun bindStockViewHolder(holder: StockViewHolder, position: Int) {
+        holder.apply {
+            bind(mCompanies[position - mOffsetWithHeader])
+            itemView.setOnClickListener {
+                mStockClickListener?.onStockClicked(
+                    holder,
+                    mCompanies[holder.adapterPosition - mOffsetWithHeader]
+                )
             }
-        }
-    }
-
-    class StockViewHolder private constructor(
-        val binding: ItemStockBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: AdaptiveCompany) {
-            binding.apply {
-                textViewCompanyName.text = item.companyProfile.name
-                textViewCompanySymbol.text = item.companyProfile.symbol
-                textViewCurrentPrice.text = item.companyDayData.currentPrice
-                textViewDayProfit.text = item.companyDayData.profit
-                textViewDayProfit.setTextColor(item.companyStyle.dayProfitBackground)
-                imageViewFavourite.setImageResource(item.companyStyle.favouriteDefaultIconResource)
-                root.setCardBackgroundColor(item.companyStyle.holderBackground)
-                root.foreground =
-                    ContextCompat.getDrawable(root.context, item.companyStyle.rippleForeground)
-                root.transitionName = "root_${item.id}"
-
-                Glide
-                    .with(root)
-                    .load(item.companyProfile.logoUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imageViewIcon)
+            binding.imageViewFavourite.setOnClickListener {
+                mStockClickListener?.onFavouriteIconClicked(mCompanies[holder.adapterPosition - mOffsetWithHeader])
             }
         }
 
-        companion object {
-            fun from(parent: ViewGroup): StockViewHolder {
-                val inflater = LayoutInflater.from(parent.context)
-                val binding = ItemStockBinding.inflate(inflater, parent, false)
-                return StockViewHolder(binding)
-            }
-        }
+        mOnBindCallback?.invoke(
+            holder,
+            mCompanies[position - mOffsetWithHeader],
+            position - mOffsetWithHeader
+        )
     }
 
     companion object {

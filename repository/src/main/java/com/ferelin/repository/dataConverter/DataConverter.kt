@@ -1,5 +1,21 @@
 package com.ferelin.repository.dataConverter
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
@@ -10,13 +26,16 @@ import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.network.stockCandles.StockCandlesResponse
 import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.utilits.Api
+import com.ferelin.remote.utils.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 
+/**
+ * [DataConverter] is used to convert responses for UI from local/remote modules.
+ */
 class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
 
     override fun convertCompaniesResponse(
@@ -41,7 +60,7 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
                 owner = itemResponse.symbol,
                 data = AdaptiveWebSocketPrice(
                     formattedPrice,
-                    mAdapter.calculateProfit(
+                    mAdapter.buildProfitString(
                         currentPrice = itemResponse.lastPrice,
                         previousPrice = response.additionalMessage?.toDouble() ?: 0.0
                     )
@@ -166,7 +185,7 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
                     mAdapter.formatPrice(itemResponse.openPrice),
                     mAdapter.formatPrice(itemResponse.highPrice),
                     mAdapter.formatPrice(itemResponse.lowPrice),
-                    mAdapter.calculateProfit(itemResponse.currentPrice, itemResponse.openPrice)
+                    mAdapter.buildProfitString(itemResponse.currentPrice, itemResponse.openPrice)
                 )
             )
         } else {
@@ -196,5 +215,11 @@ class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
         val dataSet = mutableSetOf<String>()
         search.forEach { dataSet.add(it.searchText) }
         return dataSet
+    }
+
+    override fun convertFirstTimeLaunchStateToResponse(state: Boolean?): RepositoryResponse<Boolean> {
+        return state?.let {
+            RepositoryResponse.Success(data = state)
+        } ?: RepositoryResponse.Failed()
     }
 }

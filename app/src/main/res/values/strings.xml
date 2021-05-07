@@ -17,6 +17,8 @@
     <string name="titleChartCardHalfYear">6M</string>
     <string name="titleChartCardYear">1Y</string>
     <string name="titleChartCardAll">All</string>
+    <string name="titleStockPriceObserver">Stock price live-time updater</string>
+    <string name="titleChannelStockPrice">Price live time updater</string>
 
     <!-- Errors -->
     <string name="errorLoadingData">Error loading data</string>
@@ -29,6 +31,7 @@
     <string name="errorLoadCompanyNews">Error loading %s news</string>
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
     <string name="errorNetwork">Network is not available</string>
+    <string name="errorNoAppToOpenUrl">App that can open URL do not found</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>

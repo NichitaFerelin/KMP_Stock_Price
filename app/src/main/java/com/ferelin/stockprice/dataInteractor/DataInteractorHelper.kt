@@ -1,18 +1,37 @@
 package com.ferelin.stockprice.dataInteractor
 
-import android.content.Context
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import kotlinx.coroutines.flow.Flow
 
 interface DataInteractorHelper {
 
-    suspend fun prepareData(context: Context)
+    suspend fun prepareData()
 
     suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany>
 
     suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany>
 
-    suspend fun loadCompanyQuote(symbol: String, position: Int): Flow<AdaptiveCompany>
+    suspend fun loadCompanyQuote(
+        symbol: String,
+        position: Int,
+        isImportant: Boolean = false
+    ): Flow<AdaptiveCompany>
 
     suspend fun openConnection(): Flow<AdaptiveCompany>
 
@@ -24,5 +43,9 @@ interface DataInteractorHelper {
 
     suspend fun removeCompanyFromFavourite(symbol: String)
 
-    suspend fun onNewSearch(searchText: String)
+    suspend fun cacheNewSearchRequest(searchText: String)
+
+    suspend fun setFirstTimeLaunchState(state: Boolean)
+
+    fun prepareToWebSocketReconnection()
 }

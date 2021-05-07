@@ -1,77 +1,89 @@
 package com.ferelin.stockprice.ui.stocksSection.base
 
+/*
+ * Copyright 2021 Leah Nichita
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.os.Bundle
-import android.view.View
-import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
-import com.ferelin.stockprice.base.BaseViewHelper
-import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
-import com.google.android.material.transition.Hold
+import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
+import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-abstract class BaseStocksFragment<out T : BaseStocksViewModel, out V : BaseViewHelper>
-    : BaseFragment<T, V>(), StockClickListener {
-
-    protected var mFragmentManager: FragmentManager? = null
+abstract class BaseStocksFragment<
+        ViewBinding,
+        out ViewModel : BaseStocksViewModel,
+        out ViewController : BaseStocksViewController<ViewBinding>>
+    : BaseFragment<ViewBinding, ViewModel, ViewController>(), StockClickListener {
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-        mViewModel.recyclerAdapter.setOnStockCLickListener(this)
+        mViewModel.stocksRecyclerAdapter.setOnStockCLickListener(this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = Hold()
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            launch { collectEventCompanyChanged() }
+            launch { collectEventOnFabClicked() }
+        }
+    }
+
+    override fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
+        mViewController.onStockClicked(this, stockViewHolder, company)
     }
 
     override fun onFavouriteIconClicked(company: AdaptiveCompany) {
         mViewModel.onFavouriteIconClicked(company)
     }
 
-    override fun onStockClicked(
-        stockViewHolder: StocksRecyclerAdapter.StockViewHolder,
-        company: AdaptiveCompany
-    ) {
-        moveToAboutFragment(stockViewHolder, company)
+    override fun onHolderRebound(stockViewHolder: StockViewHolder) {
+        mViewController.onStockHolderRebound(stockViewHolder)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        postponeTransition(view)
+    override fun onHolderUntouched(stockViewHolder: StockViewHolder, rebounded: Boolean) {
+        mViewController.onStockHolderUntouched(
+            stockViewHolder,
+            rebounded,
+            onAccepted = { mViewModel.onFavouriteIconClicked(it) }
+        )
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mFragmentManager = null
-        mViewModel.recyclerAdapter.removeListeners()
-    }
-
-    private fun moveToAboutFragment(
-        holder: StocksRecyclerAdapter.StockViewHolder,
-        company: AdaptiveCompany
-    ) {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mFragmentManager?.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, AboutPagerFragment(company))
-                addToBackStack(null)
-                addSharedElement(
-                    holder.binding.root,
-                    resources.getString(R.string.transitionAboutPager)
-                )
+    private suspend fun collectEventCompanyChanged() {
+        mViewModel.eventCompanyChanged.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onCompanyChanged(notificator)
             }
         }
     }
 
-    private fun postponeTransition(view: View) {
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
+    /*
+    * Is available only for stockPagerFragment child
+    * */
+    private suspend fun collectEventOnFabClicked() {
+        if (parentFragment is StocksPagerFragment) {
+            (parentFragment as StocksPagerFragment).eventOnFabClicked.collect {
+                withContext(mCoroutineContext.Main) {
+                    mViewController.onFabClicked()
+                }
+            }
+        }
     }
 }

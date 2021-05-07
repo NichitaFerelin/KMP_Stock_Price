@@ -2,6 +2,9 @@ package com.ferelin.provider
 
 import com.ferelin.remote.webSocket.WebSocketResponse
 
+/*
+* Mocked data
+* */
 object FakeRemoteResponses {
     val webSocketResponse = WebSocketResponse(
         symbol = "AAPL",

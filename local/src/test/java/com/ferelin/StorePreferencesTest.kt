@@ -2,8 +2,8 @@ package com.ferelin
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.ferelin.local.prefs.StorePreferences
-import com.ferelin.local.prefs.StorePreferencesHelper
+import com.ferelin.local.preferences.StorePreferences
+import com.ferelin.local.preferences.StorePreferencesHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
