@@ -24,11 +24,15 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.FirstTimeLaunch
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [DataMediator] is an implementation of the pattern Mediator, that helps to work with data.
  */
-class DataMediator(
+
+@Singleton
+class DataMediator @Inject constructor(
     val companiesWorker: CompaniesWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesWorker,
     val searchRequestsWorker: SearchRequestsWorker,

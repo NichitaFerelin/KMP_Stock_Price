@@ -20,13 +20,10 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import com.ferelin.stockprice.dataInteractor.DataInteractor
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App : Application() {
-
-    val dataInteractor: DataInteractor by lazy {
-        DataInteractor.getInstance(this)
-    }
 
     override fun onCreate() {
         super.onCreate()

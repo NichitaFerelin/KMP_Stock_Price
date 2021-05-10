@@ -22,6 +22,8 @@ import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.collections.ArrayList
 
 /**
@@ -34,7 +36,11 @@ import kotlin.collections.ArrayList
  *   - Using [mSearchRequestsLimit] to control limit of search requests.
  *   - Optimizing search requests size. @see [removeSearchRequestsDuplicates]
  */
-class SearchRequestsWorker(private val mLocalInteractorHelper: LocalInteractorHelper) {
+
+@Singleton
+class SearchRequestsWorker @Inject constructor(
+    private val mLocalInteractorHelper: LocalInteractorHelper
+) {
 
     private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
     private val mSearchRequestsLimit = 30

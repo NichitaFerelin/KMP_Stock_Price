@@ -21,15 +21,22 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [StorePreferences] providing:
  *  - Access to search requests history. @property [mSearchRequestsHistoryKey]
  *  - Access to first time launch state. @property [mFirstTimeLaunchKey]
  */
-open class StorePreferences(private val mContext: Context) : StorePreferencesHelper {
+
+@Singleton
+open class StorePreferences @Inject constructor(
+    @ApplicationContext private val mContext: Context
+) : StorePreferencesHelper {
 
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
 

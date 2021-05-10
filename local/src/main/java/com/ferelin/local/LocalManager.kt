@@ -26,8 +26,11 @@ import com.ferelin.local.responses.SearchesResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalManager(
+@Singleton
+class LocalManager @Inject constructor(
     private val mJsonManagerHelper: JsonManagerHelper,
     private val mCompaniesManagerHelper: CompaniesManagerHelper,
     private val mStorePreferencesHelper: StorePreferencesHelper

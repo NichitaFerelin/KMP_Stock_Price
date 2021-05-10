@@ -37,8 +37,11 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Retrofit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-open class NetworkManager : NetworkManagerHelper {
+@Singleton
+open class NetworkManager @Inject constructor() : NetworkManagerHelper {
 
     private val mRetrofit: Retrofit by RetrofitDelegate(Api.FINNHUB_BASE_URL)
 

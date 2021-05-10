@@ -20,11 +20,15 @@ import com.ferelin.local.models.Company
 import com.ferelin.repository.adaptiveModels.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [DataAdapter] is used to convert date/string/time/adaptive models for UI or network requests.
  */
-class DataAdapter {
+
+@Singleton
+class DataAdapter @Inject constructor() {
 
     fun fromLongToDateStr(time: Long): String {
         val datePattern = "dd MMM yyyy"

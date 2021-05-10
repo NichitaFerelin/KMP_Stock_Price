@@ -18,11 +18,15 @@ package com.ferelin.local.database
 
 import com.ferelin.local.models.Company
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-open class CompaniesManager(
-    private val mCompaniesDatabase: CompaniesDatabase,
-    private val mCompaniesDao: CompaniesDao = mCompaniesDatabase.companiesDao()
+@Singleton
+open class CompaniesManager @Inject constructor(
+    companiesDatabase: CompaniesDatabase
 ) : CompaniesManagerHelper {
+
+    private val mCompaniesDao = companiesDatabase.companiesDao()
 
     override fun insertCompany(company: Company) {
         mCompaniesDao.insert(company)

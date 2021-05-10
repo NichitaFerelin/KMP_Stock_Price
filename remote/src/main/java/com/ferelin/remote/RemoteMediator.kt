@@ -26,11 +26,15 @@ import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import com.ferelin.remote.webSocket.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /*
 * Providing requests to right entity
 * */
-class RemoteMediator(
+
+@Singleton
+class RemoteMediator @Inject constructor(
     private val mNetworkManager: NetworkManagerHelper,
     private val mWebSocketConnector: WebSocketConnectorHelper
 ) : RemoteMediatorHelper {

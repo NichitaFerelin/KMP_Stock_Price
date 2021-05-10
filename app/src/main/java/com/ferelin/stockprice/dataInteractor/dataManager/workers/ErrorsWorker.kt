@@ -20,13 +20,18 @@ import android.content.Context
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.utils.getString
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [ErrorsWorker] providing different type-states of errors.
  */
-class ErrorsWorker(private val mContext: Context) {
+
+@Singleton
+class ErrorsWorker @Inject constructor(@ApplicationContext private val mContext: Context) {
 
     private val mSharedApiLimitError = MutableSharedFlow<String>()
     val sharedApiLimitError: SharedFlow<String>

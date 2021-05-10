@@ -21,11 +21,17 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.firstOrNull
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
-* [LocalInteractor] is responsible for local requests.
-*/
-class LocalInteractor(private val mRepository: RepositoryManagerHelper) : LocalInteractorHelper {
+ * [LocalInteractor] is responsible for local requests.
+ */
+
+@Singleton
+class LocalInteractor @Inject constructor(
+    private val mRepository: RepositoryManagerHelper
+) : LocalInteractorHelper {
 
     override suspend fun getCompanies(): LocalInteractorResponse {
         val responseCompanies = mRepository.getAllCompanies().firstOrNull()

@@ -32,11 +32,15 @@ import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [DataConverter] is used to convert responses for UI from local/remote modules.
  */
-class DataConverter(private val mAdapter: DataAdapter) : DataConverterHelper {
+
+@Singleton
+class DataConverter @Inject constructor(private val mAdapter: DataAdapter) : DataConverterHelper {
 
     override fun convertCompaniesResponse(
         response: CompaniesResponse

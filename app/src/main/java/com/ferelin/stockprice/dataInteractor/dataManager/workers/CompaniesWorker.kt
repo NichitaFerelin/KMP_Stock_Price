@@ -26,6 +26,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [CompaniesWorker] providing an ability to:
@@ -36,7 +38,9 @@ import kotlinx.coroutines.flow.StateFlow
  *   - Using [mLocalInteractorHelper] to data caching.
  *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
  */
-class CompaniesWorker(
+
+@Singleton
+class CompaniesWorker @Inject constructor(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper
 ) {

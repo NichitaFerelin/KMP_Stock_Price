@@ -16,6 +16,8 @@ package com.ferelin.shared
  * limitations under the License.
  */
 
+// Saved for future example
+@Deprecated("Unused")
 open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
 
     private var mCreator: ((A) -> T)? = creator

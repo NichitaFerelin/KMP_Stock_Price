@@ -19,11 +19,15 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [FirstTimeLaunchWorker] providing [mStateFirstTimeLaunch]
  */
-class FirstTimeLaunchWorker {
+
+@Singleton
+class FirstTimeLaunchWorker @Inject constructor() {
 
     private val mStateFirstTimeLaunch = MutableStateFlow<Boolean?>(null)
     val stateFirstTimeLaunch: StateFlow<Boolean?>

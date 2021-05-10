@@ -29,8 +29,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-open class WebSocketConnector : WebSocketConnectorHelper {
+@Singleton
+open class WebSocketConnector @Inject constructor() : WebSocketConnectorHelper {
 
     private val mBaseApiUrl = "wss://ws.finnhub.io?token="
     private val mResponseConverter = WebResponseConverter()

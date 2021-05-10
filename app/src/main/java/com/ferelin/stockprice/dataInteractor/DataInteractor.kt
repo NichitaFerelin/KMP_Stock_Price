@@ -17,6 +17,7 @@ package com.ferelin.stockprice.dataInteractor
  */
 
 import android.content.Context
+import android.util.Log
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -31,6 +32,8 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [DataInteractor] is MAIN and SINGLE entity for the UI layer interaction with data.
@@ -41,7 +44,9 @@ import kotlinx.coroutines.flow.*
  *   - Providing network state using [mNetworkConnectivityWorker].
  *   - Providing states about data loading to [mDataMediator].
  */
-class DataInteractor(
+
+@Singleton
+class DataInteractor @Inject constructor(
     private val mRepositoryHelper: RepositoryManagerHelper,
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mDataMediator: DataMediator,
@@ -238,9 +243,4 @@ class DataInteractor(
     private fun getCompany(symbol: String): AdaptiveCompany? {
         return findCompany(mDataMediator.companiesWorker.companies, symbol)
     }
-
-    companion object : SingletonHolder<DataInteractor, Context>({
-        val dataInteractor by DataInteractorBuilder(it)
-        dataInteractor
-    })
 }

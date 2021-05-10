@@ -22,11 +22,17 @@ import android.net.NetworkRequest
 import android.os.Build
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [NetworkConnectivityWorker] providing a network state: [mStateIsNetworkAvailable]
  */
-class NetworkConnectivityWorker(service: ConnectivityManager, networkRequest: NetworkRequest) {
+
+@Singleton
+class NetworkConnectivityWorker @Inject constructor(
+    service: ConnectivityManager, networkRequest: NetworkRequest
+) {
 
     private val mStateIsNetworkAvailable = MutableStateFlow(isNetworkAvailable(service))
     val stateIsNetworkAvailable: StateFlow<Boolean>

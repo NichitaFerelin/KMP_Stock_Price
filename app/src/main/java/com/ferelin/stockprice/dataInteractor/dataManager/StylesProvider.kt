@@ -20,13 +20,18 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  *  [StylesProvider] is used to change colors/images/icons dynamically.
  *  This class is responsible for providing right color/image/icon depending
  *  on some fields like: is company favourite or not, company price profit, etc.
  */
-class StylesProvider(private val mContext: Context) {
+
+@Singleton
+class StylesProvider @Inject constructor(@ApplicationContext private val mContext: Context) {
 
     private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite
     private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active

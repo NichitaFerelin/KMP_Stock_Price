@@ -16,27 +16,18 @@ package com.ferelin.repository
  * limitations under the License.
  */
 
-import android.content.Context
-import com.ferelin.local.LocalManager
 import com.ferelin.local.LocalManagerHelper
-import com.ferelin.local.database.CompaniesDatabase
-import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.json.JsonManager
-import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.remote.RemoteMediator
 import com.ferelin.remote.RemoteMediatorHelper
-import com.ferelin.remote.network.NetworkManager
-import com.ferelin.remote.webSocket.WebSocketConnector
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.dataConverter.DataAdapter
-import com.ferelin.repository.dataConverter.DataConverter
 import com.ferelin.repository.dataConverter.DataConverterHelper
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.shared.SingletonHolder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RepositoryManager(
+@Singleton
+class RepositoryManager @Inject constructor(
     private val mRemoteMediatorHelper: RemoteMediatorHelper,
     private val mLocalManagerHelper: LocalManagerHelper,
     private val mDataConverterHelper: DataConverterHelper
@@ -134,13 +125,4 @@ class RepositoryManager(
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
         mLocalManagerHelper.setFirstTimeLaunchState(state)
     }
-
-    companion object : SingletonHolder<RepositoryManager, Context>({
-        val remoteHelper = RemoteMediator(NetworkManager(), WebSocketConnector())
-        val dataBase = CompaniesDatabase.getInstance(it)
-        val preferences = StorePreferences(it)
-        val localHelper = LocalManager(JsonManager(it), CompaniesManager(dataBase), preferences)
-        val dataConverter = DataConverter(DataAdapter())
-        RepositoryManager(remoteHelper, localHelper, dataConverter)
-    })
 }
