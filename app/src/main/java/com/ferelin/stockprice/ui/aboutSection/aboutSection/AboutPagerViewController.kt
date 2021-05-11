@@ -125,8 +125,8 @@ class AboutPagerViewController :
 
     private fun getTabByPosition(position: Int): OrderedTextView {
         return when (position) {
-            0 -> viewBinding!!.textViewChart
-            1 -> viewBinding!!.textViewSummary
+            0 -> viewBinding!!.textViewProfile
+            1 -> viewBinding!!.textViewChart
             2 -> viewBinding!!.textViewNews
             3 -> viewBinding!!.textViewForecasts
             4 -> viewBinding!!.textViewIdeas

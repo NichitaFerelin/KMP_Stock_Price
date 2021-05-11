@@ -25,7 +25,7 @@ import com.ferelin.stockprice.ui.aboutSection.chart.ChartFragment
 import com.ferelin.stockprice.ui.aboutSection.forecasts.ForecastsFragment
 import com.ferelin.stockprice.ui.aboutSection.ideas.IdeasFragment
 import com.ferelin.stockprice.ui.aboutSection.news.NewsFragment
-import com.ferelin.stockprice.ui.aboutSection.summary.SummaryFragment
+import com.ferelin.stockprice.ui.aboutSection.profile.ProfileFragment
 
 class AboutPagerAdapter(
     fm: FragmentManager,
@@ -41,8 +41,8 @@ class AboutPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ChartFragment(mSelectedCompany)
-            1 -> SummaryFragment()
+            0 -> ProfileFragment(mSelectedCompany = mSelectedCompany!!)
+            1 -> ChartFragment(mSelectedCompany)
             2 -> NewsFragment(mSelectedCompany)
             3 -> ForecastsFragment()
             4 -> IdeasFragment()

@@ -24,6 +24,7 @@ import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
+import com.ferelin.stockprice.ui.aboutSection.profile.ProfileViewModel
 import kotlinx.coroutines.FlowPreview
 
 @Suppress("UNCHECKED_CAST")
@@ -44,6 +45,9 @@ open class CompanyViewModelFactory(
             }
             modelClass.isAssignableFrom(NewsViewModel::class.java) -> {
                 NewsViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
+            }
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
+                ProfileViewModel(mSelectedCompany!!) as T
             }
             else -> throw IllegalStateException("Unknown view model class: $modelClass")
         }

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/motion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewIcon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="13dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/descriptionCompanyIcon"
+                tools:src="@mipmap/msft" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textViewHintName"
+            style="@style/textViewH3ConstrainedWidthShadowed"
+            android:layout_marginTop="16dp"
+            android:text="@string/hintName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardViewIcon" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintName"
+            tools:text="Microsoft Corp" />
+
+        <TextView
+            android:id="@+id/textViewHintWebUrl"
+            style="@style/textViewH3ConstrainedWidthShadowed"
+            android:layout_marginTop="30dp"
+            android:text="@string/hintWebsite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewName" />
+
+        <TextView
+            android:id="@+id/textViewWebUrl"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_width="0dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="100dp"
+            android:gravity="center"
+            android:textColor="@color/blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintWebUrl"
+            tools:text="https://www.microsoft.com/en-us" />
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewWebUrl" />
+
+        <TextView
+            android:id="@+id/textViewHintCountry"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/hintCountry"
+            android:textColor="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/viewLine" />
+
+        <TextView
+            android:id="@+id/textViewCountry"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/textViewHintCountry"
+            app:layout_constraintTop_toTopOf="@id/textViewHintCountry"
+            tools:text="US" />
+
+        <TextView
+            android:id="@+id/textViewHintIndustry"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/hintIndustry"
+            android:textColor="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintCountry" />
+
+        <TextView
+            android:id="@+id/textViewIndustry"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/textViewHintIndustry"
+            app:layout_constraintTop_toTopOf="@id/textViewHintIndustry"
+            tools:text="Technology" />
+
+        <TextView
+            android:id="@+id/textViewHintPhone"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/hintPhone"
+            android:textColor="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintIndustry" />
+
+        <TextView
+            android:id="@+id/textViewPhone"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="end"
+            android:textColor="@color/blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/textViewHintPhone"
+            app:layout_constraintTop_toTopOf="@id/textViewHintPhone"
+            tools:text="14258828080" />
+
+        <TextView
+            android:id="@+id/textViewHintCapitalization"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="30dp"
+            android:text="@string/hintCapitalization"
+            android:textColor="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintPhone" />
+
+        <TextView
+            android:id="@+id/textViewCapitalization"
+            style="@style/textViewH2ConstrainedWidth"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toEndOf="@id/textViewHintCapitalization"
+            app:layout_constraintTop_toTopOf="@id/textViewHintCapitalization"
+            tools:text="1 847 768 $" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

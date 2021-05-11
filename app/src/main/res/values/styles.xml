@@ -49,7 +49,7 @@
 
     <style name="textViewH2ConstrainedWidth" parent="textViewH2">
         <item name="android:ellipsize">end</item>
-        <item name="android:lines">2</item>
+        <item name="android:lines">1</item>
         <item name="android:layout_width">wrap_content</item>
     </style>
 
@@ -100,6 +100,14 @@
     <style name="textViewBodySemiBoldShadowed" parent="textView">
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/grey</item>
+    </style>
+
+    <style name="textViewH3ConstrainedWidthShadowed" parent="textViewH3ConstrainedWidth">
+        <item name="android:ellipsize">end</item>
+        <item name="android:lines">1</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:layout_width">wrap_content</item>
     </style>
 
     <!-- Other -->

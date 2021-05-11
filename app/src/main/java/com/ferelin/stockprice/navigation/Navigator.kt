@@ -102,6 +102,15 @@ object Navigator {
     fun navigateToUrl(context: Context, url: String): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
+        return launchIntent(intent, context)
+    }
+
+    fun navigateToContacts(context: Context, phone: String): Boolean {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null))
+        return launchIntent(intent, context)
+    }
+
+    private fun launchIntent(intent: Intent, context: Context): Boolean {
         return try {
             context.startActivity(intent)
             true

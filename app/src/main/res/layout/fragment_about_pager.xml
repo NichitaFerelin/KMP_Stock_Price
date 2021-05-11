@@ -92,20 +92,20 @@
             android:layout_height="match_parent">
 
             <com.ferelin.stockprice.custom.OrderedTextView
-                android:id="@+id/textViewChart"
+                android:id="@+id/textViewProfile"
                 style="@style/textViewH3Tab"
-                android:text="@string/titleChart"
+                android:text="@string/titleProfile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:orderNumber="0" />
 
             <com.ferelin.stockprice.custom.OrderedTextView
-                android:id="@+id/textViewSummary"
+                android:id="@+id/textViewChart"
                 style="@style/textViewBodyShadowedTab"
-                android:text="@string/titleSummary"
+                android:text="@string/titleChart"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textViewChart"
+                app:layout_constraintStart_toEndOf="@id/textViewProfile"
                 app:layout_constraintTop_toTopOf="parent"
                 app:orderNumber="1" />
 
@@ -114,7 +114,7 @@
                 style="@style/textViewBodyShadowedTab"
                 android:text="@string/titleNews"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textViewSummary"
+                app:layout_constraintStart_toEndOf="@id/textViewChart"
                 app:layout_constraintTop_toTopOf="parent"
                 app:orderNumber="2" />
 

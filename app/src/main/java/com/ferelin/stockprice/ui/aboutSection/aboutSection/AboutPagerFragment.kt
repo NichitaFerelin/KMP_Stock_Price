@@ -109,8 +109,8 @@ class AboutPagerFragment(
 
     private fun setUpTabClickListeners() {
         mViewController.viewBinding!!.apply {
+            textViewProfile.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewChart.setOnClickListener { onTabClicked(it as OrderedTextView) }
-            textViewSummary.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewNews.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewForecasts.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewIdeas.setOnClickListener { onTabClicked(it as OrderedTextView) }

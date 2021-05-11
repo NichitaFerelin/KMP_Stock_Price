@@ -31,7 +31,7 @@
     <string name="errorLoadCompanyNews">Error loading %s news</string>
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
     <string name="errorNetwork">Network is not available</string>
-    <string name="errorNoAppToOpenUrl">App that can open URL do not found</string>
+    <string name="errorNoAppToOpenUrl">App that can resolve it do not found</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
@@ -52,5 +52,12 @@
     <string name="transitionAboutPager">Transition container about fragment pager</string>
     <string name="transitionStocksPager">Transition container stock fragment pager</string>
     <string name="notificationNewItems">New items loaded</string>
+    <string name="hintName">Name</string>
+    <string name="hintWebsite">Website</string>
+    <string name="hintCountry">Country:</string>
+    <string name="hintIndustry">Industry: </string>
+    <string name="hintPhone">Phone:</string>
+    <string name="hintCapitalization">Capitalization:</string>
+    <string name="titleProfile">Profile</string>
 
 </resources>

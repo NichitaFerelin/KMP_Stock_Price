@@ -196,7 +196,7 @@ class DataAdapter @Inject constructor() {
     fun toAdaptiveCompanyFromJson(company: Company): AdaptiveCompany {
         return toAdaptiveCompany(company).also {
             it.companyProfile.capitalization =
-                adaptPrice(it.companyProfile.capitalization.toDouble())
+                formatPrice(it.companyProfile.capitalization.toDouble())
         }
     }
 
