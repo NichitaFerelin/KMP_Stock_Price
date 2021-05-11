@@ -1,9 +1,11 @@
 # Android Stock Price
 
 ## About
-Application allow you to monitor for stock price changes in real time. Also you can analyze the company stock history by chart.
+The application allows you to keep track of the stock prices of companies. You can analyze the history of these prices conveniently through the chart. By adding stocks to your favorites, you can track their price in real time.
 
 App API: [finnhub](https://finnhub.io/). 
+
+GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
 
 
 ## Stack
