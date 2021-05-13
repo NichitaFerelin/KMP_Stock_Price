@@ -7,15 +7,20 @@ App API: [finnhub](https://finnhub.io/).
 
 GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
 
+Techincal task: [PDF](https://drive.google.com/file/d/1QH8JdLSY5LkzjK7qbaxCr_XaVWeQrPS4/view?usp=sharing)
 
 ## Stack
 - Kotlin Coroutines/Flow
 - Room
+- Dagger Hilt
+- Glide
 - Data Store Preferences
 - Moshi
 - Retrofit + okHttp
 - Simple screen with JetpackCompose [WelcomeFragment.kt]
-- Some Unit tests with Robolectric and Mockito
+- Animations using: MotionLayout, SharedTransitions, PropertyAnimations
+- Unit tests using: Robolectric & Mockito
+- UI tests using: Espresso & UIAutomator 
 
 
 <p float="middle">
