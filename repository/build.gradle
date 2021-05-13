@@ -46,7 +46,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'androidx.test:core:1.3.0'
-    testImplementation "org.robolectric:robolectric:4.5.1"
+    testImplementation "androidx.test.ext:junit-ktx:$junit_version"
+    testImplementation "androidx.test:core:$test_core_version"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
 }
