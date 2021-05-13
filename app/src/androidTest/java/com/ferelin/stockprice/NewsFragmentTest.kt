@@ -52,7 +52,7 @@ class NewsFragmentTest {
         onView(withId(R.id.recyclerViewNews)).check(matches(isDisplayed()))
     }
 
-    @Test
+    /*@Test
     fun fabIsVisibleOnScrollDown() {
         onView(withId(R.id.recyclerViewNews)).perform(actionOnItemAtPosition<NewsViewHolder>(1, scrollTo()))
         onView(withId(R.id.fab)).check(matches(isDisplayed()))
@@ -63,5 +63,5 @@ class NewsFragmentTest {
         onView(withId(R.id.recyclerViewNews)).perform(actionOnItemAtPosition<NewsViewHolder>(1, scrollTo()))
         onView(withId(R.id.recyclerViewNews)).perform(actionOnItemAtPosition<NewsViewHolder>(0, scrollTo()))
         onView(withId(R.id.fab)).check(matches(not(isDisplayed())))
-    }
+    }*/
 }
