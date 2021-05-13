@@ -6,6 +6,7 @@
     android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -31,6 +32,7 @@
                     android:src="@drawable/ic_search" />
 
                 <TextView
+                    android:id="@+id/textViewSearchHint"
                     style="@style/textViewH3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,6 +47,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

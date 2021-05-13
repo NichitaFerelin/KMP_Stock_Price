@@ -88,6 +88,7 @@
         app:layout_constraintTop_toBottomOf="@id/guidelineTabsTopBorder">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintTabsRoot"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
