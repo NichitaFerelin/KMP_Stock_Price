@@ -30,7 +30,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalManager @Inject constructor(
+open class LocalManager @Inject constructor(
     private val mJsonManagerHelper: JsonManagerHelper,
     private val mCompaniesManagerHelper: CompaniesManagerHelper,
     private val mStorePreferencesHelper: StorePreferencesHelper

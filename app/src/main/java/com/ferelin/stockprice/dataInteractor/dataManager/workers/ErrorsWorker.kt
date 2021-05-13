@@ -31,7 +31,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class ErrorsWorker @Inject constructor(@ApplicationContext private val mContext: Context) {
+open class ErrorsWorker @Inject constructor(@ApplicationContext private val mContext: Context) {
 
     private val mSharedApiLimitError = MutableSharedFlow<String>()
     val sharedApiLimitError: SharedFlow<String>

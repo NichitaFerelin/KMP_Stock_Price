@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@FlowPreview
 class FavouriteFragment :
     BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel, FavouriteViewController>() {
 

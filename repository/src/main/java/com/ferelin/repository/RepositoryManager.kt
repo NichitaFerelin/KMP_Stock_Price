@@ -27,7 +27,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RepositoryManager @Inject constructor(
+open class RepositoryManager @Inject constructor(
     private val mRemoteMediatorHelper: RemoteMediatorHelper,
     private val mLocalManagerHelper: LocalManagerHelper,
     private val mDataConverterHelper: DataConverterHelper

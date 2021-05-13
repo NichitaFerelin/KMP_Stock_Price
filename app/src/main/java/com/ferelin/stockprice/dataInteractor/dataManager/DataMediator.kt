@@ -32,7 +32,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class DataMediator @Inject constructor(
+open class DataMediator @Inject constructor(
     val companiesWorker: CompaniesWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesWorker,
     val searchRequestsWorker: SearchRequestsWorker,

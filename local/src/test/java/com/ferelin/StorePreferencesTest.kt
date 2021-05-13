@@ -26,11 +26,19 @@ class StorePreferencesTest {
     }
 
     @Test
-    fun common(): Unit = runBlocking {
+    fun get_setSearchesHistory(): Unit = runBlocking {
         val requests = setOf("first", "second")
         mStorePreferences.setSearchesHistory(requests)
         mStorePreferences.getSearchesHistory().first().also {
             Assert.assertEquals(requests, it)
+        }
+    }
+
+    @Test
+    fun get_setFirstTimeLaunch() : Unit = runBlocking {
+        mStorePreferences.setFirstTimeLaunchState(true)
+        mStorePreferences.getFirstTimeLaunchState().first().also {
+            Assert.assertEquals(it, true)
         }
     }
 }

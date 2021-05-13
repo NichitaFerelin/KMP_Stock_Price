@@ -8,11 +8,14 @@ import com.ferelin.local.json.JsonManager
 import com.ferelin.local.json.JsonManagerHelper
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.preferences.StorePreferencesHelper
+import com.ferelin.local.responses.CompaniesResponse
+import com.ferelin.local.responses.Responses
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -70,12 +73,36 @@ class LocalManagerTest {
     }
 
     @Test
+    fun responseLoadedFromDatabase(): Unit = runBlocking {
+        `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(listOf(FakeLocalResponses.company)))
+
+        val response = mLocalManager.getAllCompaniesAsResponse().first()
+        Assert.assertEquals(true, response is CompaniesResponse.Success)
+        Assert.assertEquals(
+            Responses.LOADED_FROM_DB,
+            (response as CompaniesResponse.Success).code
+        )
+    }
+
+    @Test
+    fun responseLoadedFromJson(): Unit = runBlocking {
+        `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(emptyList()))
+        `when`(mLocalManager.getCompaniesFromJson()).thenReturn(flowOf(emptyList()))
+
+        val response = mLocalManager.getAllCompaniesAsResponse().first()
+        Assert.assertEquals(true, response is CompaniesResponse.Success)
+        Assert.assertEquals(
+            Responses.LOADED_FROM_JSON,
+            (response as CompaniesResponse.Success).code
+        )
+    }
+
+    @Test
     fun getAllCompaniesAsResponseFirstTime(): Unit = runBlocking {
         val item = listOf(FakeLocalResponses.companiesResponseSuccessFromJson.companies.first())
 
         `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(emptyList()))
-        `when`(mJsonManager.getCompaniesFromJson())
-            .thenReturn(flowOf(item))
+        `when`(mJsonManager.getCompaniesFromJson()).thenReturn(flowOf(item))
 
         mLocalManager.getAllCompaniesAsResponse().first()
         verify(mCompaniesManager, times(1)).getAllCompanies()

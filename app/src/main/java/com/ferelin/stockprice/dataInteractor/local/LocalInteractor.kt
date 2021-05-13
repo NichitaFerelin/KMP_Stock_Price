@@ -29,7 +29,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class LocalInteractor @Inject constructor(
+open class LocalInteractor @Inject constructor(
     private val mRepository: RepositoryManagerHelper
 ) : LocalInteractorHelper {
 

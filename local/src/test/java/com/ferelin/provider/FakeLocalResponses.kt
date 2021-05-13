@@ -8,6 +8,20 @@ import com.ferelin.local.responses.Responses
 * Mocked data for unit tests
 * */
 object FakeLocalResponses {
+
+    val company = Company(
+        id = 1,
+        name = "Apple",
+        symbol = "AAPL",
+        logoUrl = "https://finnhub.io/api/logo?symbol=AAPL",
+        country = "US",
+        phone = "14089961010",
+        webUrl = "https://www.apple.com/",
+        industry = "Technology",
+        currency = "USD",
+        capitalization = "2272605"
+    )
+
     val companiesResponseSuccessFromJson = CompaniesResponse.Success(
         code = Responses.LOADED_FROM_JSON,
         companies = listOf(

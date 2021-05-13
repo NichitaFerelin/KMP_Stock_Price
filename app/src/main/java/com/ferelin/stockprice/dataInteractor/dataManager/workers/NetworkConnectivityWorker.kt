@@ -30,7 +30,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class NetworkConnectivityWorker @Inject constructor(
+open class NetworkConnectivityWorker @Inject constructor(
     service: ConnectivityManager, networkRequest: NetworkRequest
 ) {
 

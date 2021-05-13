@@ -91,7 +91,7 @@ class RemoteMediatorTest {
     fun loadCompanyQuote() {
         val symbol = "symbol"
         val position = 1
-        mRemoteMediator.loadCompanyQuote(symbol, position)
-        verify(mNetworkManager, times(1)).loadCompanyQuote(symbol, position)
+        mRemoteMediator.loadCompanyQuote(symbol, position, false)
+        verify(mNetworkManager, times(1)).loadCompanyQuote(symbol, position, false)
     }
 }
