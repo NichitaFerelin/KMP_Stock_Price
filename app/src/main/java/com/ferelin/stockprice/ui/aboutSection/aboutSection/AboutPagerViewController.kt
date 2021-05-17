@@ -116,10 +116,11 @@ class AboutPagerViewController :
     }
 
     private fun restoreSelectedTab(lastSelectedTabPosition: Int) {
-        mSelectedTabPagePosition = lastSelectedTabPosition
-        if (isCorrectTabSelected(lastSelectedTabPosition, mSelectedTabPagePosition)) {
-            val newTab = getTabByPosition(mSelectedTabPagePosition)
-            changeTabStyle(viewBinding!!.textViewChart, newTab)
+        if (!isCorrectTabSelected(lastSelectedTabPosition, mSelectedTabPagePosition)) {
+            val newTab = getTabByPosition(lastSelectedTabPosition)
+            val selectedTab = getTabByPosition(mSelectedTabPagePosition)
+            changeTabStyle(selectedTab, newTab)
+            mSelectedTabPagePosition = lastSelectedTabPosition
         }
     }
 
