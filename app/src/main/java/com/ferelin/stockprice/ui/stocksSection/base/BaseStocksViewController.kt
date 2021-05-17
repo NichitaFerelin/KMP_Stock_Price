@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
@@ -40,8 +41,8 @@ import com.google.android.material.transition.Hold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-abstract class BaseStocksViewController<ViewBinding> :
-    BaseViewController<BaseStocksViewAnimator, ViewBinding>() {
+abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
+    BaseViewController<BaseStocksViewAnimator, ViewBindingType>() {
 
     protected abstract val mStocksRecyclerView: RecyclerView
 

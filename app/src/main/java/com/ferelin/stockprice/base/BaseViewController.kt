@@ -21,13 +21,14 @@ import android.os.Bundle
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
 import kotlinx.coroutines.*
 
 /**
  * [BaseViewController] holds the logic for displaying any data.
  */
-abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewBindingType>(
+abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewBindingType : ViewBinding>(
     protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) {
     var viewBinding: ViewBindingType? = null

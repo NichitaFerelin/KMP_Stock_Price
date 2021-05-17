@@ -18,9 +18,12 @@ package com.ferelin.stockprice.base
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
@@ -48,7 +51,7 @@ import com.ferelin.stockprice.ui.MainActivity
  *
  */
 abstract class BaseFragment<
-        ViewBindingType,
+        ViewBindingType : ViewBinding,
         out ViewModelType : BaseViewModel,
         out ViewControllerType : BaseViewController<BaseViewAnimator, ViewBindingType>>(
     protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
@@ -58,6 +61,8 @@ abstract class BaseFragment<
     protected abstract val mViewController: ViewControllerType
     protected lateinit var mDataInteractor: DataInteractor
 
+    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDataInteractor = (activity as MainActivity).dataInteractor
@@ -66,6 +71,16 @@ abstract class BaseFragment<
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewController.onCreateFragment(this)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val viewBinding = mBindingInflater.invoke(inflater, container, false)
+        mViewController.viewBinding = viewBinding
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

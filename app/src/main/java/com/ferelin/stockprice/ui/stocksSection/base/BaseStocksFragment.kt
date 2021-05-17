@@ -18,6 +18,7 @@ package com.ferelin.stockprice.ui.stocksSection.base
 
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
@@ -28,10 +29,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 abstract class BaseStocksFragment<
-        ViewBinding,
-        out ViewModel : BaseStocksViewModel,
-        out ViewController : BaseStocksViewController<ViewBinding>>
-    : BaseFragment<ViewBinding, ViewModel, ViewController>(), StockClickListener {
+        ViewBindingType : ViewBinding,
+        out ViewModelType : BaseStocksViewModel,
+        out ViewControllerType : BaseStocksViewController<ViewBindingType>>
+    : BaseFragment<ViewBindingType, ViewModelType, ViewControllerType>(), StockClickListener {
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

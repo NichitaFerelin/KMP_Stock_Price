@@ -42,15 +42,8 @@ class ChartFragment(
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentChartBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChartBinding
+        get() = FragmentChartBinding::inflate
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

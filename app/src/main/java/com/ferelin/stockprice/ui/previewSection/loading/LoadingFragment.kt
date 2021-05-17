@@ -16,9 +16,7 @@ package com.ferelin.stockprice.ui.previewSection.loading
  * limitations under the License.
  */
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,15 +34,8 @@ class LoadingFragment :
         DataViewModelFactory(mCoroutineContext, mDataInteractor)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentLoadingBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoadingBinding
+        get() = FragmentLoadingBinding::inflate
 
     override fun initObservers() {
         super.initObservers()

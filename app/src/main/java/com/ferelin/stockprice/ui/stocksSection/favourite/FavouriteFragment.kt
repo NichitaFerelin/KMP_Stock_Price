@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.stocksSection.favourite
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +25,6 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,15 +37,8 @@ class FavouriteFragment :
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentFavouriteBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
+        get() = FragmentFavouriteBinding::inflate
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

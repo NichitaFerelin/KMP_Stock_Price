@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.aboutSection.aboutSection
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
@@ -41,15 +40,8 @@ class AboutPagerFragment(
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val bindingView = FragmentAboutPagerBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = bindingView
-        return bindingView.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
+        get() = FragmentAboutPagerBinding::inflate
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

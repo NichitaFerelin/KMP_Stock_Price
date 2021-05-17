@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.stocksSection.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
@@ -42,15 +41,8 @@ class SearchFragment :
         DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentSearchBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
+        get() = FragmentSearchBinding::inflate
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

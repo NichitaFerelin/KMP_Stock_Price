@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.aboutSection.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -40,15 +39,8 @@ class NewsFragment(
         CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentNewsBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentNewsBinding
+        get() = FragmentNewsBinding::inflate
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

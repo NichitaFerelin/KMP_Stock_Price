@@ -35,22 +35,14 @@ class StocksPagerFragment :
         DataViewModelFactory(mCoroutineContext, mDataInteractor)
     }
 
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
+        get() = FragmentStocksPagerBinding::inflate
+
     /*
     * Used by child fragments to detect fab clicks.
     * */
     val eventOnFabClicked: SharedFlow<Unit>
         get() = mViewController.eventOnFabClicked
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val viewBinding = FragmentStocksPagerBinding.inflate(inflater, container, false)
-        mViewController.viewBinding = viewBinding
-        return viewBinding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
