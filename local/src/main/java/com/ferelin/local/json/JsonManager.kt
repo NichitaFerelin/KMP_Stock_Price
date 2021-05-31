@@ -18,14 +18,13 @@ package com.ferelin.local.json
 
 import android.content.Context
 import com.ferelin.local.models.Company
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 open class JsonManager @Inject constructor(
-    @ApplicationContext private val mContext: Context
+    private val mContext: Context
 ) : JsonManagerHelper {
 
     override fun getCompaniesFromJson(): Flow<List<Company>> {

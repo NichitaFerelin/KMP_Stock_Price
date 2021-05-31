@@ -27,17 +27,16 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.di.AppComponent
+import com.ferelin.stockprice.di.DaggerAppComponent
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
-import dagger.hilt.EntryPoint
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : AppCompatActivity() {
@@ -46,9 +45,11 @@ class MainActivity(
 
     private var mMessagesForServiceCollectorJob: Job? = null
 
-    @Inject lateinit var dataInteractor: DataInteractor
+    @Inject
+    lateinit var dataInteractor: DataInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as App).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setUpComponents()

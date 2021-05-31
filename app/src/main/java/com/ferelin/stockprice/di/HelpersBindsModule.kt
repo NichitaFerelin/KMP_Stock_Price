@@ -38,12 +38,9 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
-abstract class HelpersComponentsProvider {
+abstract class HelpersBindsModule {
 
     @Binds
     abstract fun provideRepositoryManagerHelper(repositoryManager: RepositoryManager): RepositoryManagerHelper

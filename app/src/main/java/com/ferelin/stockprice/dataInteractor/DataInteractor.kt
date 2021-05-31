@@ -16,14 +16,11 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
-import android.content.Context
-import android.util.Log
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.StockHistoryConverter
-import com.ferelin.shared.SingletonHolder
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.NetworkConnectivityWorker

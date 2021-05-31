@@ -45,18 +45,14 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-object DataInteractorModule {
+class DataInteractorModule {
 
     @Provides
     @Singleton
-    fun provideCompaniesDatabase(@ApplicationContext context: Context): CompaniesDatabase {
+    fun provideCompaniesDatabase(context: Context): CompaniesDatabase {
         return Room.databaseBuilder(
             context,
             CompaniesDatabase::class.java,
@@ -65,7 +61,7 @@ object DataInteractorModule {
     }
 
     @Provides
-    fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager {
+    fun provideConnectivityManager(context: Context): ConnectivityManager {
         return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 

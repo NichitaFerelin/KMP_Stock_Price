@@ -20,7 +20,6 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +30,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class StylesProvider @Inject constructor(@ApplicationContext private val mContext: Context) {
+class StylesProvider @Inject constructor(private val mContext: Context) {
 
     private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite
     private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active
