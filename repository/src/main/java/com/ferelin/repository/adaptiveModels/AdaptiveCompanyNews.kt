@@ -32,13 +32,6 @@ class AdaptiveCompanyNews(
     }
 
     override fun hashCode(): Int {
-        var result = ids.hashCode()
-        result = 31 * result + headlines.hashCode()
-        result = 31 * result + summaries.hashCode()
-        result = 31 * result + sources.hashCode()
-        result = 31 * result + dates.hashCode()
-        result = 31 * result + browserUrls.hashCode()
-        result = 31 * result + previewImagesUrls.hashCode()
-        return result
+        return ids.firstOrNull().hashCode()
     }
 }

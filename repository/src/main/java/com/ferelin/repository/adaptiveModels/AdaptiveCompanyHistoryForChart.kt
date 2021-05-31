@@ -28,17 +28,14 @@ class AdaptiveCompanyHistoryForChart(
     }
 
     override fun hashCode(): Int {
-        var result = price.hashCode()
-        result = 31 * result + priceStr.hashCode()
-        result = 31 * result + dates.hashCode()
-        return result
+        return dates.firstOrNull().hashCode()
     }
 
-    fun isNotEmpty() : Boolean {
+    fun isNotEmpty(): Boolean {
         return price.isNotEmpty()
     }
 
-    fun isEmpty() : Boolean {
+    fun isEmpty(): Boolean {
         return price.isEmpty()
     }
 }

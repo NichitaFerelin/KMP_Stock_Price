@@ -31,12 +31,6 @@ data class AdaptiveCompanyDayData(
     }
 
     override fun hashCode(): Int {
-        var result = currentPrice.hashCode()
-        result = 31 * result + previousClosePrice.hashCode()
-        result = 31 * result + openPrice.hashCode()
-        result = 31 * result + highPrice.hashCode()
-        result = 31 * result + lowPrice.hashCode()
-        result = 31 * result + profit.hashCode()
-        return result
+        return currentPrice.hashCode()
     }
 }

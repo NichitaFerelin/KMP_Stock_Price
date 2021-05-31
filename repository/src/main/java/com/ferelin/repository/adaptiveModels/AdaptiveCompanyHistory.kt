@@ -30,11 +30,6 @@ class AdaptiveCompanyHistory(
     }
 
     override fun hashCode(): Int {
-        var result = openPrices.hashCode()
-        result = 31 * result + highPrices.hashCode()
-        result = 31 * result + lowPrices.hashCode()
-        result = 31 * result + closePrices.hashCode()
-        result = 31 * result + datePrices.hashCode()
-        return result
+        return datePrices.firstOrNull().hashCode()
     }
 }
