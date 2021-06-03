@@ -17,6 +17,12 @@ package com.ferelin.repository.utils
  */
 
 sealed class RepositoryMessages {
+    object Ok: RepositoryMessages()
+    object End: RepositoryMessages()
+    object Empty: RepositoryMessages()
     object Error : RepositoryMessages()
     object Limit : RepositoryMessages()
+
+    // Represent a message that can notify that AuthenticationManager send code
+    object CodeSent: RepositoryMessages()
 }

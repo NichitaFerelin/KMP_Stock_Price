@@ -1,4 +1,4 @@
-package com.ferelin.repository.dataConverter
+package com.ferelin.repository.responseConverter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -21,11 +21,11 @@ import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.network.companyNews.CompanyNewsResponse
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.api.companyNews.CompanyNewsResponse
+import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
+import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.utils.Api
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
@@ -36,11 +36,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [DataConverter] is used to convert responses for UI from local/remote modules.
+ * [ResponseConverter] is used to convert responses for UI from local/remote modules.
  */
-
 @Singleton
-class DataConverter @Inject constructor(private val mAdapter: DataAdapter) : DataConverterHelper {
+class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
+    ResponseConverterHelper {
 
     override fun convertCompaniesResponse(
         response: CompaniesResponse
@@ -225,5 +225,23 @@ class DataConverter @Inject constructor(private val mAdapter: DataAdapter) : Dat
         return state?.let {
             RepositoryResponse.Success(data = state)
         } ?: RepositoryResponse.Failed()
+    }
+
+    override fun convertAuthenticationResponse(response: BaseResponse<Boolean>): RepositoryResponse<RepositoryMessages> {
+        return when (response.responseCode) {
+            Api.VERIFICATION_COMPLETED -> RepositoryResponse.Success(data = RepositoryMessages.Ok)
+            Api.VERIFICATION_CODE_SENT -> RepositoryResponse.Success(data = RepositoryMessages.CodeSent)
+            Api.VERIFICATION_TOO_MANY_REQUESTS -> RepositoryResponse.Failed(message = RepositoryMessages.Limit)
+            else -> RepositoryResponse.Failed()
+        }
+    }
+
+    override fun convertRealtimeDatabaseResponse(response: BaseResponse<String?>): RepositoryResponse<String> {
+        return when (response.responseCode) {
+            Api.RESPONSE_OK -> RepositoryResponse.Success(data = response.responseData!!)
+            Api.RESPONSE_END -> RepositoryResponse.Failed(message = RepositoryMessages.End)
+            Api.RESPONSE_NO_DATA -> RepositoryResponse.Failed(message = RepositoryMessages.Empty)
+            else -> RepositoryResponse.Failed()
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.ferelin.repository.dataConverter
+package com.ferelin.repository.responseConverter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -20,16 +20,17 @@ import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.network.companyNews.CompanyNewsResponse
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.api.companyNews.CompanyNewsResponse
+import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
+import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.webSocket.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface DataConverterHelper {
+interface ResponseConverterHelper {
 
     fun convertCompaniesResponse(response: CompaniesResponse): RepositoryResponse<List<AdaptiveCompany>>
 
@@ -62,5 +63,17 @@ interface DataConverterHelper {
 
     fun convertSearchesForInsert(search: List<AdaptiveSearchRequest>): Set<String>
 
-    fun convertFirstTimeLaunchStateToResponse(state: Boolean?) : RepositoryResponse<Boolean>
+    fun convertFirstTimeLaunchStateToResponse(state: Boolean?): RepositoryResponse<Boolean>
+
+    /**
+     * @param response is a response from remote module
+     * @return [RepositoryResponse] object with [RepositoryMessages]
+     */
+    fun convertAuthenticationResponse(response: BaseResponse<Boolean>): RepositoryResponse<RepositoryMessages>
+
+    /**
+     * @param response is a response from remote module
+     * @return [RepositoryResponse] object with string-data
+     */
+    fun convertRealtimeDatabaseResponse(response: BaseResponse<String?>): RepositoryResponse<String>
 }

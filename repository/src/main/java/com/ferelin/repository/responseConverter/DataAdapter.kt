@@ -1,4 +1,4 @@
-package com.ferelin.repository.dataConverter
+package com.ferelin.repository.responseConverter
 
 /*
  * Copyright 2021 Leah Nichita

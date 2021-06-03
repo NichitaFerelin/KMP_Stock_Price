@@ -18,7 +18,7 @@ package com.ferelin.repository.utils
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
-import com.ferelin.repository.dataConverter.DataAdapter
+import com.ferelin.repository.responseConverter.DataAdapter
 
 /**
  * [StockHistoryConverter] is used to convert history for UI with
