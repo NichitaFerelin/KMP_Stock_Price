@@ -1,4 +1,4 @@
-package com.ferelin.remote.network
+package com.ferelin.remote.api
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,18 +18,18 @@ package com.ferelin.remote.network
 
 import com.ferelin.remote.base.BaseManager
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.network.companyNews.CompanyNewsApi
-import com.ferelin.remote.network.companyNews.CompanyNewsResponse
-import com.ferelin.remote.network.companyProfile.CompanyProfileApi
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.companyQuote.CompanyQuoteApi
-import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesApi
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbols.StockSymbolApi
-import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.network.throttleManager.ThrottleManager
-import com.ferelin.remote.network.throttleManager.ThrottleManagerHelper
+import com.ferelin.remote.api.companyNews.CompanyNewsApi
+import com.ferelin.remote.api.companyNews.CompanyNewsResponse
+import com.ferelin.remote.api.companyProfile.CompanyProfileApi
+import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.api.companyQuote.CompanyQuoteApi
+import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
+import com.ferelin.remote.api.stockCandles.StockCandlesApi
+import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockSymbols.StockSymbolApi
+import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.api.throttleManager.ThrottleManager
+import com.ferelin.remote.api.throttleManager.ThrottleManagerHelper
 import com.ferelin.remote.utils.Api
 import com.ferelin.remote.utils.RetrofitDelegate
 import com.ferelin.remote.utils.offerSafe
@@ -41,7 +41,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class NetworkManager @Inject constructor() : NetworkManagerHelper {
+open class ApiManager @Inject constructor() : ApiManagerHelper {
 
     private val mRetrofit: Retrofit by RetrofitDelegate(Api.FINNHUB_BASE_URL)
 

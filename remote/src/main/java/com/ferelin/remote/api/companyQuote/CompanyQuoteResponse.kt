@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.companyNews
+package com.ferelin.remote.api.companyQuote
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,12 +18,10 @@ package com.ferelin.remote.network.companyNews
 
 import com.squareup.moshi.Json
 
-class CompanyNewsResponse(
-    @Json(name = "datetime") val dateTime: Double,
-    @Json(name = "headline") val headline: String,
-    @Json(name = "id") val newsId: Double,
-    @Json(name = "image") val previewImageUrl: String,
-    @Json(name = "source") val newsSource: String,
-    @Json(name = "summary") val newsSummary: String,
-    @Json(name = "url") val newsBrowserUrl: String
+class CompanyQuoteResponse(
+    @Json(name = "o") val openPrice: Double,
+    @Json(name = "h") val highPrice: Double,
+    @Json(name = "l") val lowPrice: Double,
+    @Json(name = "c") val currentPrice: Double,
+    @Json(name = "pc") val previousClosePrice: Double
 )

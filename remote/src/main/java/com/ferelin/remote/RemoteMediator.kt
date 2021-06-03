@@ -16,15 +16,20 @@ package com.ferelin.remote
  * limitations under the License.
  */
 
+import android.app.Activity
+import android.content.Context
+import com.ferelin.remote.api.ApiManagerHelper
+import com.ferelin.remote.api.companyNews.CompanyNewsResponse
+import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
+import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.auth.AuthenticationManagerHelper
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.network.NetworkManagerHelper
-import com.ferelin.remote.network.companyNews.CompanyNewsResponse
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.database.RealtimeDatabaseHelper
 import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import com.ferelin.remote.webSocket.WebSocketResponse
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,12 +37,19 @@ import javax.inject.Singleton
 /*
 * Providing requests to right entity
 * */
-
 @Singleton
 class RemoteMediator @Inject constructor(
-    private val mNetworkManager: NetworkManagerHelper,
-    private val mWebSocketConnector: WebSocketConnectorHelper
+    private val mApiManager: ApiManagerHelper,
+    private val mWebSocketConnector: WebSocketConnectorHelper,
+    private val mAuthenticationManager: AuthenticationManagerHelper,
+    private val mRealtimeDatabaseManager: RealtimeDatabaseHelper,
+    context: Context
 ) : RemoteMediatorHelper {
+
+    init {
+        // Firebase must be initialized before usage
+        FirebaseApp.initializeApp(context)
+    }
 
     override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
         return mWebSocketConnector.openWebSocketConnection(token)
@@ -61,15 +73,15 @@ class RemoteMediator @Inject constructor(
         to: Long,
         resolution: String
     ): Flow<BaseResponse<StockCandlesResponse>> {
-        return mNetworkManager.loadStockCandles(symbol, from, to, resolution)
+        return mApiManager.loadStockCandles(symbol, from, to, resolution)
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>> {
-        return mNetworkManager.loadCompanyProfile(symbol)
+        return mApiManager.loadCompanyProfile(symbol)
     }
 
     override fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>> {
-        return mNetworkManager.loadStockSymbols()
+        return mApiManager.loadStockSymbols()
     }
 
     override fun loadCompanyNews(
@@ -77,7 +89,7 @@ class RemoteMediator @Inject constructor(
         from: String,
         to: String
     ): Flow<BaseResponse<List<CompanyNewsResponse>>> {
-        return mNetworkManager.loadCompanyNews(symbol, from, to)
+        return mApiManager.loadCompanyNews(symbol, from, to)
     }
 
     override fun loadCompanyQuote(
@@ -85,6 +97,58 @@ class RemoteMediator @Inject constructor(
         position: Int,
         isImportant: Boolean
     ): Flow<BaseResponse<CompanyQuoteResponse>> {
-        return mNetworkManager.loadCompanyQuote(symbol, position, isImportant)
+        return mApiManager.loadCompanyQuote(symbol, position, isImportant)
+    }
+
+    override fun tryToLogIn(holderActivity: Activity, phone: String): Flow<BaseResponse<Boolean>> {
+        return mAuthenticationManager.tryToLogIn(holderActivity, phone)
+    }
+
+    override fun logInWithCode(code: String) {
+        mAuthenticationManager.logInWithCode(code)
+    }
+
+    override fun logOut() {
+        mAuthenticationManager.logOut()
+    }
+
+    override fun provideUserId(): String? {
+        return mAuthenticationManager.provideUserId()
+    }
+
+    override fun provideIsUserLogged(): Boolean {
+        return mAuthenticationManager.provideIsUserLogged()
+    }
+
+    override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
+        mRealtimeDatabaseManager.eraseCompanyIdFromRealtimeDb(userId, companyId)
+    }
+
+    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
+        mRealtimeDatabaseManager.writeCompanyIdToRealtimeDb(userId, companyId)
+    }
+
+    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
+        mRealtimeDatabaseManager.writeCompaniesIdsToDb(userId, companiesId)
+    }
+
+    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>> {
+        return mRealtimeDatabaseManager.readCompaniesIdsFromDb(userId)
+    }
+
+    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
+        mRealtimeDatabaseManager.writeSearchRequestToDb(userId, searchRequest)
+    }
+
+    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
+        mRealtimeDatabaseManager.writeSearchRequestsToDb(userId, searchRequests)
+    }
+
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>> {
+        return mRealtimeDatabaseManager.readSearchRequestsFromDb(userId)
+    }
+
+    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
+        mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequest)
     }
 }

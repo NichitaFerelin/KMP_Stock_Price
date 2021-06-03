@@ -1,4 +1,4 @@
-package com.ferelin.remote.network
+package com.ferelin.remote.api
 
 /*
  * Copyright 2021 Leah Nichita
@@ -17,14 +17,14 @@ package com.ferelin.remote.network
  */
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.network.companyNews.CompanyNewsResponse
-import com.ferelin.remote.network.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.network.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.network.stockCandles.StockCandlesResponse
-import com.ferelin.remote.network.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.api.companyNews.CompanyNewsResponse
+import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
+import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
+import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import kotlinx.coroutines.flow.Flow
 
-interface NetworkManagerHelper {
+interface ApiManagerHelper {
 
     fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>>
 

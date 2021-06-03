@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.throttleManager
+package com.ferelin.remote.api.throttleManager
 
 /*
  * Copyright 2021 Leah Nichita

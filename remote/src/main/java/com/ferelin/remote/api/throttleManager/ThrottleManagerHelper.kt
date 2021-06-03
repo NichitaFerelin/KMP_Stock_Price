@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.stockCandles
+package com.ferelin.remote.api.throttleManager
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,17 +16,17 @@ package com.ferelin.remote.network.stockCandles
  * limitations under the License.
  */
 
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+interface ThrottleManagerHelper {
 
-interface StockCandlesApi {
-    @GET("stock/candle")
-    fun getStockCandles(
-        @Query("symbol") symbol: String,
-        @Query("token") token: String,
-        @Query("from") from: Long,
-        @Query("to") to: Long,
-        @Query("resolution") resolution: String,
-    ): Call<StockCandlesResponse>
+    fun addMessage(
+        symbol: String,
+        api: String,
+        position: Int = 0,
+        eraseIfNotActual: Boolean = true,
+        ignoreDuplicate: Boolean = false
+    )
+
+    fun setUpApi(api: String, func: (String) -> Unit)
+
+    fun invalidate()
 }

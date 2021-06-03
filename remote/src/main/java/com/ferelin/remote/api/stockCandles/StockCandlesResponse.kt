@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.companyQuote
+package com.ferelin.remote.api.stockCandles
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,10 +18,12 @@ package com.ferelin.remote.network.companyQuote
 
 import com.squareup.moshi.Json
 
-class CompanyQuoteResponse(
-    @Json(name = "o") val openPrice: Double,
-    @Json(name = "h") val highPrice: Double,
-    @Json(name = "l") val lowPrice: Double,
-    @Json(name = "c") val currentPrice: Double,
-    @Json(name = "pc") val previousClosePrice: Double
+class StockCandlesResponse(
+    @Json(name = "o") val openPrices: List<Double>,
+    @Json(name = "h") val highPrices: List<Double>,
+    @Json(name = "l") val lowPrices: List<Double>,
+    @Json(name = "c") val closePrices: List<Double>,
+    @Json(name = "v") val volumeData: List<Double>,
+    @Json(name = "t") val timestamps: List<Long>,
+    @Json(name = "s") val responseStatus: String
 )

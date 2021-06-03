@@ -2,8 +2,8 @@ package com.ferelin
 
 import com.ferelin.remote.RemoteMediator
 import com.ferelin.remote.RemoteMediatorHelper
-import com.ferelin.remote.network.NetworkManager
-import com.ferelin.remote.network.NetworkManagerHelper
+import com.ferelin.remote.api.ApiManager
+import com.ferelin.remote.api.ApiManagerHelper
 import com.ferelin.remote.webSocket.WebSocketConnector
 import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import org.junit.Before
@@ -21,16 +21,16 @@ class RemoteMediatorTest {
     private lateinit var mRemoteMediator: RemoteMediatorHelper
 
     @Spy
-    private lateinit var mNetworkManager: NetworkManagerHelper
+    private lateinit var mApiManager: ApiManagerHelper
 
     @Spy
     private lateinit var mWebSocketConnector: WebSocketConnectorHelper
 
     @Before
     fun setUp() {
-        mNetworkManager = mock(NetworkManager::class.java)
+        mApiManager = mock(ApiManager::class.java)
         mWebSocketConnector = mock(WebSocketConnector::class.java)
-        mRemoteMediator = RemoteMediator(mNetworkManager, mWebSocketConnector)
+        mRemoteMediator = RemoteMediator(mApiManager, mWebSocketConnector)
     }
 
     @Test
@@ -68,14 +68,14 @@ class RemoteMediatorTest {
         val to = 200L
         val resolution = "D"
         mRemoteMediator.loadStockCandles(symbol, from, to, resolution)
-        verify(mNetworkManager, times(1)).loadStockCandles(symbol, from, to, resolution)
+        verify(mApiManager, times(1)).loadStockCandles(symbol, from, to, resolution)
     }
 
     @Test
     fun loadCompanyProfile() {
         val symbol = "symbol"
         mRemoteMediator.loadCompanyProfile(symbol)
-        verify(mNetworkManager, times(1)).loadCompanyProfile(symbol)
+        verify(mApiManager, times(1)).loadCompanyProfile(symbol)
     }
 
     @Test
@@ -84,7 +84,7 @@ class RemoteMediatorTest {
         val from = "from"
         val to = "to"
         mRemoteMediator.loadCompanyNews(symbol, from, to)
-        verify(mNetworkManager, times(1)).loadCompanyNews(symbol, from, to)
+        verify(mApiManager, times(1)).loadCompanyNews(symbol, from, to)
     }
 
     @Test
@@ -92,6 +92,6 @@ class RemoteMediatorTest {
         val symbol = "symbol"
         val position = 1
         mRemoteMediator.loadCompanyQuote(symbol, position, false)
-        verify(mNetworkManager, times(1)).loadCompanyQuote(symbol, position, false)
+        verify(mApiManager, times(1)).loadCompanyQuote(symbol, position, false)
     }
 }

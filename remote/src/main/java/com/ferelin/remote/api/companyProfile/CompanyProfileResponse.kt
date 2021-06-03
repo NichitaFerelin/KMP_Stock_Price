@@ -1,4 +1,4 @@
-package com.ferelin.remote
+package com.ferelin.remote.api.companyProfile
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,13 +16,15 @@ package com.ferelin.remote
  * limitations under the License.
  */
 
-import com.ferelin.remote.auth.AuthenticationManagerHelper
-import com.ferelin.remote.api.ApiManagerHelper
-import com.ferelin.remote.database.RealtimeDatabaseHelper
-import com.ferelin.remote.webSocket.WebSocketConnectorHelper
+import com.squareup.moshi.Json
 
-interface RemoteMediatorHelper :
-    ApiManagerHelper,
-    WebSocketConnectorHelper,
-    AuthenticationManagerHelper,
-    RealtimeDatabaseHelper
+class CompanyProfileResponse(
+    @Json(name = "name") val name: String,
+    @Json(name = "logo") val logoUrl: String,
+    @Json(name = "country") val country: String,
+    @Json(name = "phone") val phone: String,
+    @Json(name = "weburl") val webUrl: String,
+    @Json(name = "finnhubIndustry") val industry: String,
+    @Json(name = "currency") val currency: String,
+    @Json(name = "marketCapitalization") val capitalization: Double
+)

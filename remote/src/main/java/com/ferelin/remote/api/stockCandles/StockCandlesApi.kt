@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.companyProfile
+package com.ferelin.remote.api.stockCandles
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,15 +16,17 @@ package com.ferelin.remote.network.companyProfile
  * limitations under the License.
  */
 
-import com.squareup.moshi.Json
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-class CompanyProfileResponse(
-    @Json(name = "name") val name: String,
-    @Json(name = "logo") val logoUrl: String,
-    @Json(name = "country") val country: String,
-    @Json(name = "phone") val phone: String,
-    @Json(name = "weburl") val webUrl: String,
-    @Json(name = "finnhubIndustry") val industry: String,
-    @Json(name = "currency") val currency: String,
-    @Json(name = "marketCapitalization") val capitalization: Double
-)
+interface StockCandlesApi {
+    @GET("stock/candle")
+    fun getStockCandles(
+        @Query("symbol") symbol: String,
+        @Query("token") token: String,
+        @Query("from") from: Long,
+        @Query("to") to: Long,
+        @Query("resolution") resolution: String,
+    ): Call<StockCandlesResponse>
+}

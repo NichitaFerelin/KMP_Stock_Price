@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.stockCandles
+package com.ferelin.remote.api.stockSymbols
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,14 +16,12 @@ package com.ferelin.remote.network.stockCandles
  * limitations under the License.
  */
 
-import com.squareup.moshi.Json
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-class StockCandlesResponse(
-    @Json(name = "o") val openPrices: List<Double>,
-    @Json(name = "h") val highPrices: List<Double>,
-    @Json(name = "l") val lowPrices: List<Double>,
-    @Json(name = "c") val closePrices: List<Double>,
-    @Json(name = "v") val volumeData: List<Double>,
-    @Json(name = "t") val timestamps: List<Long>,
-    @Json(name = "s") val responseStatus: String
-)
+interface StockSymbolApi {
+
+    @GET("stock/symbol?exchange=US&mic=XNGS")
+    fun getStockSymbolList(@Query("token") token: String): Call<StockSymbolResponse>
+}

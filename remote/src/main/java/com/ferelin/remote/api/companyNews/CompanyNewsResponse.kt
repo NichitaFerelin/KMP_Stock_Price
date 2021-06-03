@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.stockSymbols
+package com.ferelin.remote.api.companyNews
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,12 +16,14 @@ package com.ferelin.remote.network.stockSymbols
  * limitations under the License.
  */
 
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.squareup.moshi.Json
 
-interface StockSymbolApi {
-
-    @GET("stock/symbol?exchange=US&mic=XNGS")
-    fun getStockSymbolList(@Query("token") token: String): Call<StockSymbolResponse>
-}
+class CompanyNewsResponse(
+    @Json(name = "datetime") val dateTime: Double,
+    @Json(name = "headline") val headline: String,
+    @Json(name = "id") val newsId: Double,
+    @Json(name = "image") val previewImageUrl: String,
+    @Json(name = "source") val newsSource: String,
+    @Json(name = "summary") val newsSummary: String,
+    @Json(name = "url") val newsBrowserUrl: String
+)

@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.throttleManager
+package com.ferelin.remote.api.stockSymbols
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,17 +16,8 @@ package com.ferelin.remote.network.throttleManager
  * limitations under the License.
  */
 
-interface ThrottleManagerHelper {
+import com.squareup.moshi.Json
 
-    fun addMessage(
-        symbol: String,
-        api: String,
-        position: Int = 0,
-        eraseIfNotActual: Boolean = true,
-        ignoreDuplicate: Boolean = false
-    )
-
-    fun setUpApi(api: String, func: (String) -> Unit)
-
-    fun invalidate()
-}
+class StockSymbolResponse(
+    @Json(name = "symbol") val stockSymbols: List<String>
+)

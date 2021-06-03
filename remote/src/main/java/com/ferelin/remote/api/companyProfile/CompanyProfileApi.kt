@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.companyProfile
+package com.ferelin.remote.api.companyProfile
 
 /*
  * Copyright 2021 Leah Nichita

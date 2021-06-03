@@ -1,4 +1,4 @@
-package com.ferelin.remote.network.companyNews
+package com.ferelin.remote.api.companyNews
 
 /*
  * Copyright 2021 Leah Nichita

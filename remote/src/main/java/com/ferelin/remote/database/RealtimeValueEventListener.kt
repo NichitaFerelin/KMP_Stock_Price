@@ -1,5 +1,3 @@
-package com.ferelin.remote.network.stockSymbols
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,8 +14,17 @@ package com.ferelin.remote.network.stockSymbols
  * limitations under the License.
  */
 
-import com.squareup.moshi.Json
+package com.ferelin.remote.database
 
-class StockSymbolResponse(
-    @Json(name = "symbol") val stockSymbols: List<String>
-)
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+
+abstract class RealtimeValueEventListener : ValueEventListener {
+
+    override fun onDataChange(snapshot: DataSnapshot) {
+    }
+
+    override fun onCancelled(error: DatabaseError) {
+    }
+}
