@@ -59,6 +59,10 @@ open class LocalInteractor @Inject constructor(
         mRepository.setFirstTimeLaunchState(state)
     }
 
+    override suspend fun clearSearchRequestsHistory() {
+        mRepository.clearSearchesHistory()
+    }
+
     override suspend fun getFirstTimeLaunchState(): LocalInteractorResponse {
         val firstTimeStateResponse = mRepository.getFirstTimeLaunchState().firstOrNull()
         return if (firstTimeStateResponse is RepositoryResponse.Success) {

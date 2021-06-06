@@ -16,16 +16,21 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
+import android.app.Activity
+import android.util.Log
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.StockHistoryConverter
+import com.ferelin.stockprice.common.drawer.DrawerMenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.NetworkConnectivityWorker
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
+import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.*
@@ -48,7 +53,8 @@ class DataInteractor @Inject constructor(
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mDataMediator: DataMediator,
     private val mErrorsWorker: ErrorsWorker,
-    private val mNetworkConnectivityWorker: NetworkConnectivityWorker
+    private val mNetworkConnectivityWorker: NetworkConnectivityWorker,
+    private val mSynchronizationManager: SynchronizationManager
 ) : DataInteractorHelper {
 
     val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
@@ -78,6 +84,9 @@ class DataInteractor @Inject constructor(
     val stateFirstTimeLaunch: StateFlow<Boolean?>
         get() = mDataMediator.firstTimeLaunchWorker.stateFirstTimeLaunch
 
+    val stateMenuItems: StateFlow<DataNotificator<List<DrawerMenuItem>>>
+        get() = mDataMediator.menuItemsWorker.stateMenuItems
+
     val sharedApiLimitError: SharedFlow<String>
         get() = mErrorsWorker.sharedApiLimitError
 
@@ -101,6 +110,9 @@ class DataInteractor @Inject constructor(
 
     val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
         get() = mErrorsWorker.sharedFavouriteCompaniesLimitReached
+
+    val sharedAuthenticationError: SharedFlow<String>
+        get() = mErrorsWorker.sharedAuthenticationError
 
     val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
@@ -188,16 +200,53 @@ class DataInteractor @Inject constructor(
             .map { getCompany((it as RepositoryResponse.Success).owner!!)!! }
     }
 
+    override suspend fun signIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages> {
+        return mRepositoryHelper.tryToSignIn(holderActivity, phone)
+            .onEach { response ->
+                when (response) {
+                    is RepositoryResponse.Success -> {
+                        if (response.data is RepositoryMessages.Ok) {
+                            mDataMediator.onLogStateChanged(mRepositoryHelper.provideIsUserLogged())
+                            mSynchronizationManager.onLogIn()
+                        }
+                    }
+                    is RepositoryResponse.Failed -> mErrorsWorker.onAuthenticationError(response.message)
+                }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { (it as RepositoryResponse.Success).data }
+    }
+
+    override fun logInWithCode(code: String) {
+        mRepositoryHelper.logInWithCode(code)
+    }
+
+    override suspend fun logOut() {
+        mRepositoryHelper.logOut()
+        mSynchronizationManager.onLogOut()
+        mDataMediator.onLogStateChanged(mRepositoryHelper.provideIsUserLogged())
+    }
+
     override suspend fun cacheNewSearchRequest(searchText: String) {
-        mDataMediator.cacheNewSearchRequest(searchText)
+        val changesActionsHistory = mDataMediator.cacheNewSearchRequest(searchText)
+        mSynchronizationManager.onSearchRequestsChanged(changesActionsHistory)
     }
 
     override suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany) {
-        mDataMediator.onAddFavouriteCompany(adaptiveCompany)
+        mDataMediator.onAddFavouriteCompany(adaptiveCompany).also { isAdded ->
+            /**
+             * The company may not be accepted to favourites @see .
+             * If accepted -> then notify to sync manager
+             */
+            if (isAdded) {
+                mSynchronizationManager.onCompanyAddedToLocal(adaptiveCompany)
+            }
+        }
     }
 
     override suspend fun removeCompanyFromFavourite(adaptiveCompany: AdaptiveCompany) {
         mDataMediator.onRemoveFavouriteCompany(adaptiveCompany)
+        mSynchronizationManager.onCompanyRemovedFromLocal(adaptiveCompany)
     }
 
     override suspend fun addCompanyToFavourite(symbol: String) {
@@ -217,6 +266,12 @@ class DataInteractor @Inject constructor(
         mDataMediator.subscribeItemsOnLiveTimeUpdates()
     }
 
+    override fun provideNetworkStateFlow(): Flow<Boolean> {
+        return stateIsNetworkAvailable.onEach {
+            mSynchronizationManager.onNetworkStateChanged(it)
+        }
+    }
+
     private suspend fun prepareCompaniesData() {
         val responseCompanies = mLocalInteractorHelper.getCompanies()
         if (responseCompanies is LocalInteractorResponse.Success) {
@@ -229,7 +284,6 @@ class DataInteractor @Inject constructor(
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
             mDataMediator.onSearchRequestsHistoryPrepared(responseSearchesHistory.searchesHistory)
         } else mErrorsWorker.onLoadSearchRequestsError()
-
     }
 
     private suspend fun prepareFirstTimeLaunchState() {
