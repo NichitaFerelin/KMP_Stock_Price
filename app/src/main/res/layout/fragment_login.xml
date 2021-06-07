@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="ContentDescription, MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/amazon"
+            style="@style/loadingCard">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/amazon" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/facebook"
+            style="@style/loadingCard">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/facebook" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tesla"
+            style="@style/loadingCard">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/tesla" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flowCardsTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:constraint_referenced_ids="facebook, tesla, amazon"
+            app:flow_horizontalGap="35dp"
+            app:flow_horizontalStyle="spread"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewHintEnterPhone"
+            style="@style/textViewH2"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/hintEnterPhone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flowCardsTop" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editTextPhoneLayout"
+            style="@style/materialEditTextInputLayout"
+            android:layout_width="200dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hintPhoneEdit"
+            app:layout_constraintEnd_toEndOf="@id/textViewHintEnterPhone"
+            app:layout_constraintStart_toStartOf="@id/textViewHintEnterPhone"
+            app:layout_constraintTop_toBottomOf="@id/textViewHintEnterPhone"
+            app:prefixText="+ "
+            app:prefixTextColor="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPhone"
+                style="@style/editText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:autofillHints="phone"
+                android:inputType="phone" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/imageViewIconCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="6dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_check_circle"
+            app:layout_constraintBottom_toBottomOf="@id/editTextPhoneLayout"
+            app:layout_constraintStart_toEndOf="@id/editTextPhoneLayout"
+            app:tint="@color/grey"
+            tools:ignore="UnusedAttribute" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editTextCodeLayout"
+            style="@style/materialEditTextInputLayout"
+            android:layout_width="150dp"
+            android:layout_marginTop="30dp"
+            android:alpha="0"
+            android:gravity="center_horizontal"
+            android:hint="@string/hintEnterCode"
+            app:layout_constraintEnd_toEndOf="@id/editTextPhoneLayout"
+            app:layout_constraintStart_toStartOf="@id/editTextPhoneLayout"
+            app:layout_constraintTop_toBottomOf="@id/editTextPhoneLayout"
+            tools:alpha="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextCode"
+                style="@style/editText"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:autofillHints="postalCode"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBar"
+            style="@style/progressBar"
+            android:scaleX="0"
+            android:scaleY="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextCodeLayout"
+            tools:scaleX="1"
+            tools:scaleY="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

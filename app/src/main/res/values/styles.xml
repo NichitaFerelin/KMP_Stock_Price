@@ -225,4 +225,16 @@
         <item name="cardCornerRadius">8dp</item>
     </style>
 
+    <style name="ShapeAppearance.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="materialEditTextInputLayout" parent="editText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <item name="hintTextColor">@color/grey</item>
+    </style>
+
 </resources>

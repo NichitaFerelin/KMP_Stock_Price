@@ -30,6 +30,8 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
+import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginFragment
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.MenuFragment
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
@@ -41,7 +43,10 @@ import kotlinx.coroutines.launch
 * */
 object Navigator {
 
-    var coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()
+    private val coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()
+
+    private val stackMain = "main-stack"
+    private val stackBottomDrawer = "bottom-stack"
 
     fun navigateToLoadingFragment(activity: MainActivity) {
         activity.lifecycleScope.launch(coroutineContextProvider.IO) {
@@ -77,7 +82,7 @@ object Navigator {
             fragment.parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 replace(R.id.fragmentContainer, SearchFragment())
-                addToBackStack(null)
+                addToBackStack(stackMain)
                 onCommit?.invoke(this)
             }
         }
@@ -93,8 +98,30 @@ object Navigator {
             fragmentManager.commit {
                 setReorderingAllowed(true)
                 replace(R.id.fragmentContainer, AboutPagerFragment(company))
-                addToBackStack(null)
+                addToBackStack(stackMain)
                 onCommit?.invoke(this)
+            }
+        }
+    }
+
+    fun navigateToMenuFragment(fragmentManager: FragmentManager) {
+        fragmentManager.commit {
+            replace(R.id.containerBottom, MenuFragment())
+            addToBackStack(stackBottomDrawer)
+        }
+    }
+
+    fun navigateToLoginFragment(fragment: Fragment, fragmentManager: FragmentManager) {
+        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
+            fragmentManager.commit {
+                setCustomAnimations(
+                    R.anim.slide_right,
+                    R.anim.slide_left,
+                    R.anim.slide_right,
+                    R.anim.slide_left
+                )
+                replace(R.id.containerBottom, LoginFragment())
+                addToBackStack(stackBottomDrawer)
             }
         }
     }

@@ -27,8 +27,6 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.di.AppComponent
-import com.ferelin.stockprice.di.DaggerAppComponent
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDialog
@@ -36,6 +34,7 @@ import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
+
 
 class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()

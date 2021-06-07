@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -102,7 +103,7 @@ class SearchFragment :
 
     private suspend fun collectStateSearchRequests() {
         mViewModel.stateSearchRequests
-            .filter { it != null }
+            .filter { it !is DataNotificator.Loading && it != null }
             .collect { notificator ->
                 withContext(mCoroutineContext.Main) {
                     mViewController.onSearchRequestsChanged(notificator!!)

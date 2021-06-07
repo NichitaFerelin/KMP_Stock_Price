@@ -17,14 +17,13 @@ package com.ferelin.stockprice.dataInteractor
  */
 
 import android.app.Activity
-import android.util.Log
 import com.ferelin.repository.RepositoryManagerHelper
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.StockHistoryConverter
-import com.ferelin.stockprice.common.drawer.DrawerMenuItem
+import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.NetworkConnectivityWorker
@@ -84,7 +83,7 @@ class DataInteractor @Inject constructor(
     val stateFirstTimeLaunch: StateFlow<Boolean?>
         get() = mDataMediator.firstTimeLaunchWorker.stateFirstTimeLaunch
 
-    val stateMenuItems: StateFlow<DataNotificator<List<DrawerMenuItem>>>
+    val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mDataMediator.menuItemsWorker.stateMenuItems
 
     val sharedApiLimitError: SharedFlow<String>
@@ -113,6 +112,9 @@ class DataInteractor @Inject constructor(
 
     val sharedAuthenticationError: SharedFlow<String>
         get() = mErrorsWorker.sharedAuthenticationError
+
+    val sharedLogOut: SharedFlow<Unit>
+        get() = mDataMediator.menuItemsWorker.sharedLogOut
 
     val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter

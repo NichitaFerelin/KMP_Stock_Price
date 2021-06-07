@@ -17,7 +17,6 @@ package com.ferelin.stockprice.ui
  */
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -43,9 +42,21 @@ class MainViewModel(
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged
 
-    private val mStateIsNetworkAvailable = MutableStateFlow(true)
-    val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mStateIsNetworkAvailable
+    // TODO
+    val stateIsNetworkAvailable: Flow<Boolean>
+        get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
+            viewModelScope.launch(mCoroutineContext.IO) {
+                if (isAvailable) {
+                    /*
+                    * When the network is lost -> web socket breaks.
+                    * */
+                    if (mNetworkWasLost) {
+                        restartWebSocket()
+                    }
+                    launch { mDataInteractor.openConnection().collect() } // TODO test double call
+                } else mNetworkWasLost = true
+            }
+        }
 
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
@@ -57,16 +68,13 @@ class MainViewModel(
 
     private var mNetworkWasLost: Boolean = false
 
+    private var mPrepareDataJob: Job? = null
+
     fun initObservers() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { mDataInteractor.prepareData() }
-            launch { collectNetworkState() }
+            mPrepareDataJob = launch { mDataInteractor.prepareData() }
             launch { collectCompanyUpdatesForObserver() }
         }
-    }
-
-    private suspend fun collectNetworkState() {
-        mDataInteractor.stateIsNetworkAvailable.collect { onNetworkStateChanged(it) }
     }
 
     private suspend fun collectCompanyUpdatesForObserver() {
@@ -94,25 +102,6 @@ class MainViewModel(
                         cancel()
                     } else mEventObserverCompanyChanged.emit(target)
                 }
-        }
-    }
-
-    private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            Log.d("Test", "$isAvailable")
-            if (isAvailable) {
-                /*
-                * When the network is lost -> web socket breaks.
-                * */
-                if (mNetworkWasLost) {
-                    restartWebSocket()
-                }
-                mStateIsNetworkAvailable.value = true
-                mDataInteractor.openConnection().collect()
-            } else {
-                mNetworkWasLost = true
-                mStateIsNetworkAvailable.value = false
-            }
         }
     }
 

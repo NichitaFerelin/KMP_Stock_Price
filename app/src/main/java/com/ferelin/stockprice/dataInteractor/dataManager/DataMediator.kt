@@ -18,12 +18,10 @@ package com.ferelin.stockprice.dataInteractor.dataManager
 
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.CompaniesWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.FavouriteCompaniesWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.FirstTimeLaunchWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.SearchRequestsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.*
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +34,8 @@ open class DataMediator @Inject constructor(
     val companiesWorker: CompaniesWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesWorker,
     val searchRequestsWorker: SearchRequestsWorker,
-    val firstTimeLaunchWorker: FirstTimeLaunchWorker
+    val firstTimeLaunchWorker: FirstTimeLaunchWorker,
+    val menuItemsWorker: MenuItemsWorker,
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)
@@ -67,15 +66,17 @@ open class DataMediator @Inject constructor(
         }
     }
 
-    suspend fun onAddFavouriteCompany(company: AdaptiveCompany) {
+    suspend fun onAddFavouriteCompany(company: AdaptiveCompany): Boolean {
         favouriteCompaniesWorker.addCompanyToFavourites(company)?.let { addedCompany ->
             companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))
+            return true
         }
+        return false
     }
 
     suspend fun onRemoveFavouriteCompany(company: AdaptiveCompany) {
-        val updateCompany = favouriteCompaniesWorker.removeCompanyFromFavourites(company)
-        companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updateCompany))
+        val updatedCompany = favouriteCompaniesWorker.removeCompanyFromFavourites(company)
+        companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updatedCompany))
     }
 
     fun onSearchRequestsHistoryPrepared(searches: List<AdaptiveSearchRequest>) {
@@ -90,8 +91,16 @@ open class DataMediator @Inject constructor(
         firstTimeLaunchWorker.onResponse(response)
     }
 
-    suspend fun cacheNewSearchRequest(searchText: String) {
-        searchRequestsWorker.cacheNewSearchRequest(searchText)
+    suspend fun onLogStateChanged(isLogged: Boolean) {
+        menuItemsWorker.onLogStateChanged(isLogged)
+    }
+
+    suspend fun cacheNewSearchRequest(searchText: String) : List<ActionHolder<String>> {
+        return searchRequestsWorker.cacheNewSearchRequest(searchText)
+    }
+
+    suspend fun clearSearchRequests() {
+        searchRequestsWorker.clearSearchRequests()
     }
 
     private suspend fun onDataChanged(
