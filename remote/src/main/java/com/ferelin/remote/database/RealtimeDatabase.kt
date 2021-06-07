@@ -103,11 +103,12 @@ class RealtimeDatabase @Inject constructor() : RealtimeDatabaseHelper {
     }
 
     override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
+        val fixedRequest = encrypt(searchRequest)
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
-            .child(searchRequest)
-            .setValue(searchRequest)
+            .child(fixedRequest)
+            .setValue(fixedRequest)
     }
 
     override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
@@ -122,24 +123,43 @@ class RealtimeDatabase @Inject constructor() : RealtimeDatabaseHelper {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (searchSnapshot in snapshot.children) {
+
+                            val fixedResponse = decrypt(searchSnapshot?.key)
                             val response = BaseResponse<String?>(
                                 responseCode = Api.RESPONSE_OK,
-                                responseData = searchSnapshot.key
+                                responseData = fixedResponse
                             )
-                            offer(response)
+                            offerSafe(response)
                         }
-                        offer(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else offer(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
+                        offerSafe(BaseResponse(responseCode = Api.RESPONSE_END))
+                    } else offerSafe(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
                 }
             })
         awaitClose()
     }
 
     override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
+        val fixedRequest = encrypt(searchRequest)
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
-            .child(searchRequest)
+            .child(fixedRequest)
             .removeValue()
+    }
+
+    /*
+    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
+    * Encrypts to avoid exceptions
+    * */
+    private fun encrypt(str: String): String {
+        return str.replace(Regex("[.#$\\[\\]]"), "%")
+    }
+
+    /*
+    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
+    * Decrypts for repository
+    * */
+    private fun decrypt(str: String?): String? {
+        return str?.replace('%', '.')
     }
 }
