@@ -42,7 +42,6 @@ class MainViewModel(
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged
 
-    // TODO
     val stateIsNetworkAvailable: Flow<Boolean>
         get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
             viewModelScope.launch(mCoroutineContext.IO) {
@@ -53,7 +52,7 @@ class MainViewModel(
                     if (mNetworkWasLost) {
                         restartWebSocket()
                     }
-                    launch { mDataInteractor.openConnection().collect() } // TODO test double call
+                    launch { mDataInteractor.openConnection().collect() }
                 } else mNetworkWasLost = true
             }
         }
