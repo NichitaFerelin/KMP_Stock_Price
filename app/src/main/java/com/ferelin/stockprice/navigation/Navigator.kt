@@ -45,8 +45,8 @@ object Navigator {
 
     private val coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()
 
-    private val stackMain = "main-stack"
-    private val stackBottomDrawer = "bottom-stack"
+    private const val stackMain = "main-stack"
+    private const val stackBottomDrawer = "bottom-stack"
 
     fun navigateToLoadingFragment(activity: MainActivity) {
         activity.lifecycleScope.launch(coroutineContextProvider.IO) {

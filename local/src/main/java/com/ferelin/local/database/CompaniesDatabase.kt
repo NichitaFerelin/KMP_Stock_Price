@@ -16,9 +16,7 @@ package com.ferelin.local.database
  * limitations under the License.
  */
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ferelin.local.models.Company

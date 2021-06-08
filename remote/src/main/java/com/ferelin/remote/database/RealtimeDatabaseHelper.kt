@@ -16,7 +16,6 @@
 
 package com.ferelin.remote.database
 
-import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow

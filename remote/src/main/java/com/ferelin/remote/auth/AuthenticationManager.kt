@@ -17,16 +17,12 @@
 package com.ferelin.remote.auth
 
 import android.app.Activity
-import android.content.Context
-import android.util.Log
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
