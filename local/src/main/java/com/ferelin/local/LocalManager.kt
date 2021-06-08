@@ -97,6 +97,10 @@ open class LocalManager @Inject constructor(
         mStorePreferencesHelper.setSearchesHistory(requests)
     }
 
+    override suspend fun clearSearchesHistory() {
+        mStorePreferencesHelper.clearSearchesHistory()
+    }
+
     override fun getFirstTimeLaunchState(): Flow<Boolean?> {
         return mStorePreferencesHelper.getFirstTimeLaunchState()
     }

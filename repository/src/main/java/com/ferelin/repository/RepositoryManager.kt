@@ -16,10 +16,12 @@ package com.ferelin.repository
  * limitations under the License.
  */
 
+import android.app.Activity
 import com.ferelin.local.LocalManagerHelper
 import com.ferelin.remote.RemoteMediatorHelper
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.dataConverter.DataConverterHelper
+import com.ferelin.repository.responseConverter.ResponseConverterHelper
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -30,18 +32,18 @@ import javax.inject.Singleton
 open class RepositoryManager @Inject constructor(
     private val mRemoteMediatorHelper: RemoteMediatorHelper,
     private val mLocalManagerHelper: LocalManagerHelper,
-    private val mDataConverterHelper: DataConverterHelper
+    private val mResponseConverterHelper: ResponseConverterHelper
 ) : RepositoryManagerHelper {
 
     override fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>> {
         return mLocalManagerHelper.getAllCompaniesAsResponse().map {
-            mDataConverterHelper.convertCompaniesResponse(it)
+            mResponseConverterHelper.convertCompaniesResponse(it)
         }
     }
 
     override fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
         return mRemoteMediatorHelper.openWebSocketConnection().map {
-            mDataConverterHelper.convertWebSocketResponse(it)
+            mResponseConverterHelper.convertWebSocketResponse(it)
         }
     }
 
@@ -64,19 +66,19 @@ open class RepositoryManager @Inject constructor(
         resolution: String
     ): Flow<RepositoryResponse<AdaptiveCompanyHistory>> {
         return mRemoteMediatorHelper.loadStockCandles(symbol, from, to, resolution).map {
-            mDataConverterHelper.convertStockCandlesResponse(it, symbol)
+            mResponseConverterHelper.convertStockCandlesResponse(it, symbol)
         }
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>> {
         return mRemoteMediatorHelper.loadCompanyProfile(symbol).map {
-            mDataConverterHelper.convertCompanyProfileResponse(it, symbol)
+            mResponseConverterHelper.convertCompanyProfileResponse(it, symbol)
         }
     }
 
     override fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStocksSymbols>> {
         return mRemoteMediatorHelper.loadStockSymbols().map {
-            mDataConverterHelper.convertStockSymbolsResponse(it)
+            mResponseConverterHelper.convertStockSymbolsResponse(it)
         }
     }
 
@@ -86,7 +88,7 @@ open class RepositoryManager @Inject constructor(
         to: String
     ): Flow<RepositoryResponse<AdaptiveCompanyNews>> {
         return mRemoteMediatorHelper.loadCompanyNews(symbol, from, to).map {
-            mDataConverterHelper.convertCompanyNewsResponse(it, symbol)
+            mResponseConverterHelper.convertCompanyNewsResponse(it, symbol)
         }
     }
 
@@ -96,33 +98,98 @@ open class RepositoryManager @Inject constructor(
         isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
         return mRemoteMediatorHelper.loadCompanyQuote(symbol, position, isImportant).map {
-            mDataConverterHelper.convertCompanyQuoteResponse(it)
+            mResponseConverterHelper.convertCompanyQuoteResponse(it)
         }
     }
 
     override fun saveCompanyData(adaptiveCompany: AdaptiveCompany) {
-        val preparedForInsert = mDataConverterHelper.convertCompanyForInsert(adaptiveCompany)
+        val preparedForInsert = mResponseConverterHelper.convertCompanyForInsert(adaptiveCompany)
         mLocalManagerHelper.updateCompany(preparedForInsert)
     }
 
     override fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>> {
         return mLocalManagerHelper.getSearchesHistoryAsResponse().map {
-            mDataConverterHelper.convertSearchesForResponse(it)
+            mResponseConverterHelper.convertSearchesForResponse(it)
         }
     }
 
     override suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>) {
-        val preparedForInsert = mDataConverterHelper.convertSearchesForInsert(requests)
+        val preparedForInsert = mResponseConverterHelper.convertSearchesForInsert(requests)
         mLocalManagerHelper.setSearchesHistory(preparedForInsert)
     }
 
     override fun getFirstTimeLaunchState(): Flow<RepositoryResponse<Boolean>> {
         return mLocalManagerHelper.getFirstTimeLaunchState().map {
-            mDataConverterHelper.convertFirstTimeLaunchStateToResponse(it)
+            mResponseConverterHelper.convertFirstTimeLaunchStateToResponse(it)
         }
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
         mLocalManagerHelper.setFirstTimeLaunchState(state)
+    }
+
+    override suspend fun clearSearchesHistory() {
+        mLocalManagerHelper.clearSearchesHistory()
+    }
+
+    override fun tryToSignIn(
+        holderActivity: Activity,
+        phone: String
+    ): Flow<RepositoryResponse<RepositoryMessages>> {
+        return mRemoteMediatorHelper.tryToLogIn(holderActivity, phone).map {
+            mResponseConverterHelper.convertAuthenticationResponse(it)
+        }
+    }
+
+    override fun logInWithCode(code: String) {
+        mRemoteMediatorHelper.logInWithCode(code)
+    }
+
+    override fun provideUserId(): String? {
+        return mRemoteMediatorHelper.provideUserId()
+    }
+
+    override fun provideIsUserLogged(): Boolean {
+        return mRemoteMediatorHelper.provideIsUserLogged()
+    }
+
+    override fun logOut() {
+        mRemoteMediatorHelper.logOut()
+    }
+
+    override fun eraseCompanyFromRealtimeDb(userId: String, companyId: String) {
+        mRemoteMediatorHelper.eraseCompanyIdFromRealtimeDb(userId, companyId)
+    }
+
+    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
+        mRemoteMediatorHelper.writeCompanyIdToRealtimeDb(userId, companyId)
+    }
+
+    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
+        mRemoteMediatorHelper.writeCompaniesIdsToDb(userId, companiesId)
+    }
+
+    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
+        mRemoteMediatorHelper.writeSearchRequestToDb(userId, searchRequest)
+    }
+
+    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
+        mRemoteMediatorHelper.writeSearchRequestsToDb(userId, searchRequests)
+    }
+
+    override fun readSearchRequestsFromDb(userId: String): Flow<RepositoryResponse<String?>> {
+        return mRemoteMediatorHelper.readSearchRequestsFromDb(userId).map { response ->
+            mResponseConverterHelper.convertRealtimeDatabaseResponse(response)
+        }
+    }
+
+    override fun readCompaniesIdsFromDb(userId: String): Flow<RepositoryResponse<String?>> {
+        return mRemoteMediatorHelper.readCompaniesIdsFromDb(userId).map { response ->
+            mResponseConverterHelper.convertRealtimeDatabaseResponse(response)
+        }
+    }
+
+    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
+        mRemoteMediatorHelper.eraseSearchRequestFromDb(userId, searchRequest)
     }
 }

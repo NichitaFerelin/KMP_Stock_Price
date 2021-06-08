@@ -16,9 +16,9 @@ package com.ferelin.stockprice.utils
  * limitations under the License.
  */
 
-/*
+/**
 * Default class to set data to State/Shared Flow
-* */
+*/
 sealed class DataNotificator<out T>(val data: T? = null) {
 
     class DataPrepared<out T>(data: T) : DataNotificator<T>(data)

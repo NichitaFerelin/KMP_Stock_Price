@@ -16,7 +16,13 @@ package com.ferelin.remote
  * limitations under the License.
  */
 
-import com.ferelin.remote.network.NetworkManagerHelper
+import com.ferelin.remote.auth.AuthenticationManagerHelper
+import com.ferelin.remote.api.ApiManagerHelper
+import com.ferelin.remote.database.RealtimeDatabaseHelper
 import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 
-interface RemoteMediatorHelper : NetworkManagerHelper, WebSocketConnectorHelper
+interface RemoteMediatorHelper :
+    ApiManagerHelper,
+    WebSocketConnectorHelper,
+    AuthenticationManagerHelper,
+    RealtimeDatabaseHelper

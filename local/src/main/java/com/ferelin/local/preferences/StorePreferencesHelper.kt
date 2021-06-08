@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface StorePreferencesHelper {
 
+    suspend fun clearSearchesHistory()
+
     fun getSearchesHistory(): Flow<Set<String>>
 
     suspend fun setSearchesHistory(requests: Set<String>)

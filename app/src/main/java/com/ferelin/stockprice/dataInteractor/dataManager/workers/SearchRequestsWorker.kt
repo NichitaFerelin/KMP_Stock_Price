@@ -19,6 +19,8 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.actionHolder.ActionHolder
+import com.ferelin.stockprice.utils.actionHolder.ActionType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
@@ -41,8 +43,10 @@ import kotlin.collections.ArrayList
 class SearchRequestsWorker @Inject constructor(
     private val mLocalInteractorHelper: LocalInteractorHelper
 ) {
-
     private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
+    val searchRequests: List<AdaptiveSearchRequest>
+        get() = mSearchRequests
+
     private val mSearchRequestsLimit = 30
 
     private val mStateSearchRequests =
@@ -87,18 +91,28 @@ class SearchRequestsWorker @Inject constructor(
         mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
     }
 
-    suspend fun cacheNewSearchRequest(searchText: String) {
+    suspend fun cacheNewSearchRequest(searchText: String): List<ActionHolder<String>> {
         val newSearchRequest = AdaptiveSearchRequest(searchText)
+        val actionsContainer = mutableListOf<ActionHolder<String>>()
 
-        removeSearchRequestsDuplicates(newSearchRequest)
+        removeSearchRequestsDuplicates(newSearchRequest, actionsContainer)
         mSearchRequests.add(0, newSearchRequest)
+        actionsContainer.add(ActionHolder(ActionType.Added, searchText))
 
         if (isSearchRequestsLimitExceeded()) {
-            reduceRequestsToLimit()
+            reduceRequestsToLimit(actionsContainer)
         }
 
         mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
         mLocalInteractorHelper.cacheSearchRequestsHistory(mSearchRequests)
+
+        return actionsContainer
+    }
+
+    suspend fun clearSearchRequests() {
+        mSearchRequests.clear()
+        mStateSearchRequests.value = DataNotificator.Loading()
+        mLocalInteractorHelper.clearSearchRequestsHistory()
     }
 
     /*
@@ -107,13 +121,19 @@ class SearchRequestsWorker @Inject constructor(
     *   Input:  Apple
     *   Output: [Apple, Facebook]
     * */
-    private fun removeSearchRequestsDuplicates(newSearchRequest: AdaptiveSearchRequest) {
+    private fun removeSearchRequestsDuplicates(
+        newSearchRequest: AdaptiveSearchRequest,
+        actionsContainer: MutableList<ActionHolder<String>>
+    ) {
         var endBorder = mSearchRequests.size
         var listCursor = 0
         val newSearchRequestStr = newSearchRequest.searchText.toLowerCase(Locale.ROOT)
         while (listCursor < endBorder) {
             val searchRequestStr = mSearchRequests[listCursor].searchText.toLowerCase(Locale.ROOT)
             if (newSearchRequestStr.contains(searchRequestStr)) {
+                val action =
+                    ActionHolder(ActionType.Removed, mSearchRequests[listCursor].searchText)
+                actionsContainer.add(action)
                 mSearchRequests.removeAt(listCursor)
                 endBorder--
             }
@@ -121,7 +141,10 @@ class SearchRequestsWorker @Inject constructor(
         }
     }
 
-    private fun reduceRequestsToLimit() {
+    private fun reduceRequestsToLimit(actionsContainer: MutableList<ActionHolder<String>>) {
+        val lastItemText = mSearchRequests.last().searchText
+        val action = ActionHolder(ActionType.Removed, lastItemText)
+        actionsContainer.add(action)
         mSearchRequests.removeLast()
     }
 

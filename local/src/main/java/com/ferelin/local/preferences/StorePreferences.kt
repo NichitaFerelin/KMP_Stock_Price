@@ -54,6 +54,12 @@ open class StorePreferences @Inject constructor(
         }
     }
 
+    override suspend fun clearSearchesHistory() {
+        mContext.dataStorePreferences.edit {
+            it[mSearchRequestsHistoryKey] = emptySet()
+        }
+    }
+
     override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
         mContext.dataStorePreferences.edit {
             it[mFirstTimeLaunchKey] = boolean

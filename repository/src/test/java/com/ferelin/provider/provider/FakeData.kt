@@ -3,7 +3,7 @@ package com.ferelin.provider.provider
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
-import com.ferelin.repository.dataConverter.DataAdapter
+import com.ferelin.repository.responseConverter.DataAdapter
 
 object FakeData {
 

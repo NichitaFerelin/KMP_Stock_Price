@@ -32,5 +32,13 @@ object Api {
     const val RESPONSE_LIMIT = 429
     const val RESPONSE_NO_DATA = 490
     const val RESPONSE_UNDEFINED = 491
+    const val RESPONSE_END = 492
     const val RESPONSE_WEB_SOCKET_CLOSED = 1001
+
+    /*
+    * AuthenticationManager response codes.
+    * */
+    const val VERIFICATION_CODE_SENT = 201
+    const val VERIFICATION_COMPLETED = 202
+    const val VERIFICATION_TOO_MANY_REQUESTS = 492
 }

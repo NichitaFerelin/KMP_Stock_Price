@@ -27,6 +27,8 @@ interface LocalInteractorHelper {
 
     suspend fun cacheSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
 
+    suspend fun clearSearchRequestsHistory()
+
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
     suspend fun getFirstTimeLaunchState(): LocalInteractorResponse

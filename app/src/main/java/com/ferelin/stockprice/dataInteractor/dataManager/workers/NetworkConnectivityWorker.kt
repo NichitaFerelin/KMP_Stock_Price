@@ -33,7 +33,6 @@ import javax.inject.Singleton
 open class NetworkConnectivityWorker @Inject constructor(
     service: ConnectivityManager, networkRequest: NetworkRequest
 ) {
-
     private val mStateIsNetworkAvailable = MutableStateFlow(isNetworkAvailable(service))
     val stateIsNetworkAvailable: StateFlow<Boolean>
         get() = mStateIsNetworkAvailable

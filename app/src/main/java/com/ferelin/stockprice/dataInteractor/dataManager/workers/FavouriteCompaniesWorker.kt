@@ -50,6 +50,8 @@ class FavouriteCompaniesWorker @Inject constructor(
     private val mErrorsWorker: ErrorsWorker
 ) {
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
+    val favouriteCompanies: List<AdaptiveCompany>
+        get() = mFavouriteCompanies.toList()
 
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(DataNotificator.Loading())

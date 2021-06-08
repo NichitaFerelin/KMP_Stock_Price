@@ -95,6 +95,11 @@ abstract class BaseFragment<
         initObservers()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mViewController.onSaveInstanceState(outState)
+    }
+
     protected open fun setUpViewComponents(savedInstanceState: Bundle?) {
         mViewController.onViewCreated(
             savedInstanceState,

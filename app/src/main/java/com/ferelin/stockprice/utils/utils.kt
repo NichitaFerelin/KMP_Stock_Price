@@ -16,11 +16,15 @@ package com.ferelin.stockprice.utils
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.AttrRes
+import androidx.core.content.res.use
 import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
@@ -31,6 +35,9 @@ const val NULL_INDEX = -1
 
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+val View.isOut
+    get() = scaleX == 0F
 
 fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
     return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
@@ -70,8 +77,35 @@ fun hideKeyboard(context: Context, view: View) {
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun withTimer(body: () -> Unit) {
+fun withTimer(time: Long = 200L, body: () -> Unit) {
     Timer().schedule(timerTask {
         body.invoke()
-    }, 200)
+    }, time)
+}
+
+@SuppressLint("Recycle")
+fun Context.themeColor(
+    @AttrRes themeAttrId: Int
+): Int {
+    return obtainStyledAttributes(
+        intArrayOf(themeAttrId)
+    ).use {
+        it.getColor(0, Color.MAGENTA)
+    }
+}
+
+fun Float.normalize(
+    inputMin: Float,
+    inputMax: Float,
+    outputMin: Float,
+    outputMax: Float
+): Float {
+    if (this < inputMin) {
+        return outputMin
+    } else if (this > inputMax) {
+        return outputMax
+    }
+
+    return outputMin * (1 - (this - inputMin) / (inputMax - inputMin)) +
+            outputMax * ((this - inputMin) / (inputMax - inputMin))
 }

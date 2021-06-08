@@ -16,7 +16,10 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
+import android.app.Activity
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.remote.auth.AuthenticationManagerHelper
 import kotlinx.coroutines.flow.Flow
 
 interface DataInteractorHelper {
@@ -43,9 +46,26 @@ interface DataInteractorHelper {
 
     suspend fun removeCompanyFromFavourite(symbol: String)
 
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    suspend fun signIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages>
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun logInWithCode(code: String)
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    suspend fun logOut()
+
     suspend fun cacheNewSearchRequest(searchText: String)
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
     fun prepareToWebSocketReconnection()
+
+    fun provideNetworkStateFlow(): Flow<Boolean>
 }

@@ -100,6 +100,18 @@ open class ErrorsWorker @Inject constructor(private val mContext: Context) {
         )
     }
 
+    private val mSharedAuthenticationError = MutableSharedFlow<String>()
+    val sharedAuthenticationError: SharedFlow<String>
+        get() = mSharedAuthenticationError
+
+    suspend fun onAuthenticationError(message: RepositoryMessages) {
+        val errorMessage = when (message) {
+            is RepositoryMessages.Limit -> getString(mContext, R.string.errorTooManyRequests)
+            else -> getString(mContext, R.string.errorSmthWentWrong)
+        }
+        mSharedAuthenticationError.emit(errorMessage)
+    }
+
     private fun handleErrorWithLimit(
         message: RepositoryMessages,
         errorResource: Int,

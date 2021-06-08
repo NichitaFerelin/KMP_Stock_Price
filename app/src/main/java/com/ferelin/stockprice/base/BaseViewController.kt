@@ -57,6 +57,10 @@ abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewB
         mContext = null
     }
 
+    open fun onSaveInstanceState(outState: Bundle) {
+        // Do nothing
+    }
+
     /*
     * To avoid breaks of shared transition anim
     *  */

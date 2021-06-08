@@ -19,6 +19,7 @@
     <string name="titleChartCardAll">All</string>
     <string name="titleStockPriceObserver">Stock price live-time updater</string>
     <string name="titleChannelStockPrice">Price live time updater</string>
+    <string name="titleProfile">Profile</string>
 
     <!-- Errors -->
     <string name="errorLoadingData">Error loading data</string>
@@ -32,6 +33,8 @@
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
     <string name="errorNetwork">Network is not available</string>
     <string name="errorNoAppToOpenUrl">App that can resolve it do not found</string>
+    <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
+    <string name="errorSmthWentWrong">Something went wrong</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
@@ -40,24 +43,39 @@
     <string name="descriptionScrollToTop">Scroll to top</string>
     <string name="descriptionIconClose">Clear search request</string>
     <string name="descriptionImageSearch">Search company or ticker</string>
+    <string name="descriptionUserPhoto">User photo</string>
 
     <!-- Hints -->
     <string name="hintBuyFor">Buy for %s</string>
     <string name="hintFindCompany">Find company or ticker</string>
     <string name="hintOpenInBrowser">Open in browser:</string>
     <string name="hintStocks">Stocks</string>
-
-
-    <string name="transitionSearchFragment">searchContainer</string>
-    <string name="transitionAboutPager">Transition container about fragment pager</string>
-    <string name="transitionStocksPager">Transition container stock fragment pager</string>
-    <string name="notificationNewItems">New items loaded</string>
     <string name="hintName">Name</string>
     <string name="hintWebsite">Website</string>
     <string name="hintCountry">Country:</string>
     <string name="hintIndustry">Industry: </string>
     <string name="hintPhone">Phone:</string>
     <string name="hintCapitalization">Capitalization:</string>
-    <string name="titleProfile">Profile</string>
+    <string name="hintPhoneEdit">Phone</string>
+    <string name="hintEnterPhone">Enter phone number</string>
+    <string name="hintEnterCode">Enter code</string>
+    <string name="hintAreYouSure">Are you sure?</string>
+    <string name="hintYes">Yes</string>
+    <string name="hintSuccess">Success</string>
+    <string name="hintNo">No</string>
+    <string name="hintMenu">Menu</string>
+
+    <!-- Menu -->
+    <string name="menuLogIn">Log In</string>
+    <string name="menuLogOut">Log Out</string>
+    <string name="menuNotes">Notes</string>
+    <string name="menuMessages">Messages</string>
+    <string name="menuSettings">Settings</string>
+
+    <string name="transitionSearchFragment">searchContainer</string>
+    <string name="transitionAboutPager">Transition container about fragment pager</string>
+    <string name="transitionStocksPager">Transition container stock fragment pager</string>
+
+    <string name="notificationNewItems">New items loaded</string>
 
 </resources>

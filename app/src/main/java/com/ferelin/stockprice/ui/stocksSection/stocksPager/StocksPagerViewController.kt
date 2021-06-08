@@ -66,8 +66,9 @@ class StocksPagerViewController :
         super.onDestroyView()
     }
 
-    fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter) {
+    fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter, arrowState: Float) {
         viewBinding!!.viewPager.adapter = viewPagerAdapter
+        viewBinding!!.bottomAppBarImageViewArrowUp.rotation = arrowState
     }
 
     fun onFabClicked() {

@@ -21,30 +21,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import androidx.room.Room
-import com.ferelin.local.LocalManager
-import com.ferelin.local.LocalManagerHelper
 import com.ferelin.local.database.CompaniesDatabase
-import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.database.CompaniesManagerHelper
-import com.ferelin.local.json.JsonManager
-import com.ferelin.local.json.JsonManagerHelper
-import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.local.preferences.StorePreferencesHelper
-import com.ferelin.remote.RemoteMediator
-import com.ferelin.remote.RemoteMediatorHelper
-import com.ferelin.remote.network.NetworkManager
-import com.ferelin.remote.network.NetworkManagerHelper
-import com.ferelin.remote.webSocket.WebSocketConnector
-import com.ferelin.remote.webSocket.WebSocketConnectorHelper
-import com.ferelin.repository.RepositoryManager
 import com.ferelin.repository.RepositoryManagerHelper
-import com.ferelin.repository.dataConverter.DataConverter
-import com.ferelin.repository.dataConverter.DataConverterHelper
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
-import dagger.Binds
+import com.ferelin.shared.CoroutineContextProvider
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -71,5 +53,17 @@ class DataInteractorModule {
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoroutineContext(): CoroutineContextProvider {
+        return CoroutineContextProvider()
+    }
+
+    @Provides
+    @Named("isUserLogged")
+    fun provideUserLogState(repositoryManagerHelper: RepositoryManagerHelper): Boolean {
+        return repositoryManagerHelper.provideIsUserLogged()
     }
 }

@@ -25,6 +25,8 @@ class StocksPagerViewModel(
     dataInteractor: DataInteractor
 ) : BaseViewModel(contextProvider, dataInteractor) {
 
+    var arrowState: Float = 0F
+
     override fun initObserversBlock() {
         // Do nothing.
     }

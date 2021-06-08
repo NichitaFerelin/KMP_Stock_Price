@@ -20,12 +20,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginViewModel
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.MenuViewModel
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingViewModel
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteViewModel
 import com.ferelin.stockprice.ui.stocksSection.search.SearchViewModel
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksViewModel
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerViewModel
-import kotlinx.coroutines.FlowPreview
 
 @Suppress("UNCHECKED_CAST")
 open class DataViewModelFactory(
@@ -49,6 +50,12 @@ open class DataViewModelFactory(
             }
             modelClass.isAssignableFrom(StocksPagerViewModel::class.java) -> {
                 StocksPagerViewModel(mCoroutineContext, mDataInteractor) as T
+            }
+            modelClass.isAssignableFrom(MenuViewModel::class.java) -> {
+                MenuViewModel(mCoroutineContext, mDataInteractor) as T
+            }
+            modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
+                LoginViewModel(mCoroutineContext, mDataInteractor) as T
             }
 
             else -> throw IllegalStateException("Unknown view model class: $modelClass")

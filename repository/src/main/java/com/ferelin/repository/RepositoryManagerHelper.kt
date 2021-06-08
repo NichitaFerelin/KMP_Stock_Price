@@ -16,10 +16,14 @@ package com.ferelin.repository
  * limitations under the License.
  */
 
+import android.app.Activity
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 import kotlinx.coroutines.flow.Flow
+import com.ferelin.remote.auth.AuthenticationManagerHelper
+import com.ferelin.remote.database.RealtimeDatabaseHelper
 
 interface RepositoryManagerHelper {
 
@@ -69,7 +73,77 @@ interface RepositoryManagerHelper {
 
     suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>)
 
-    fun getFirstTimeLaunchState() : Flow<RepositoryResponse<Boolean>>
+    fun getFirstTimeLaunchState(): Flow<RepositoryResponse<Boolean>>
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
+
+    suspend fun clearSearchesHistory()
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun tryToSignIn(
+        holderActivity: Activity,
+        phone: String
+    ): Flow<RepositoryResponse<RepositoryMessages>>
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun logInWithCode(code: String)
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun provideUserId(): String?
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun provideIsUserLogged(): Boolean
+
+    /**
+     * @see [AuthenticationManagerHelper]
+     */
+    fun logOut()
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun eraseCompanyFromRealtimeDb(userId: String, companyId: String)
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun readCompaniesIdsFromDb(userId: String): Flow<RepositoryResponse<String?>>
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun writeSearchRequestToDb(userId: String, searchRequest: String)
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun readSearchRequestsFromDb(userId: String): Flow<RepositoryResponse<String?>>
+
+    /**
+     * @see [RealtimeDatabaseHelper]
+     */
+    fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
 }

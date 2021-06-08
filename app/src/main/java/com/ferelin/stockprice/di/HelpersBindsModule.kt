@@ -26,14 +26,18 @@ import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.preferences.StorePreferencesHelper
 import com.ferelin.remote.RemoteMediator
 import com.ferelin.remote.RemoteMediatorHelper
-import com.ferelin.remote.network.NetworkManager
-import com.ferelin.remote.network.NetworkManagerHelper
+import com.ferelin.remote.api.ApiManager
+import com.ferelin.remote.api.ApiManagerHelper
+import com.ferelin.remote.auth.AuthenticationManager
+import com.ferelin.remote.auth.AuthenticationManagerHelper
+import com.ferelin.remote.database.RealtimeDatabase
+import com.ferelin.remote.database.RealtimeDatabaseHelper
 import com.ferelin.remote.webSocket.WebSocketConnector
 import com.ferelin.remote.webSocket.WebSocketConnectorHelper
 import com.ferelin.repository.RepositoryManager
 import com.ferelin.repository.RepositoryManagerHelper
-import com.ferelin.repository.dataConverter.DataConverter
-import com.ferelin.repository.dataConverter.DataConverterHelper
+import com.ferelin.repository.responseConverter.ResponseConverter
+import com.ferelin.repository.responseConverter.ResponseConverterHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import dagger.Binds
@@ -52,7 +56,7 @@ abstract class HelpersBindsModule {
     abstract fun provideRemoteMediatorHelper(remote: RemoteMediator): RemoteMediatorHelper
 
     @Binds
-    abstract fun provideNetworkManagerHelper(network: NetworkManager): NetworkManagerHelper
+    abstract fun provideNetworkManagerHelper(network: ApiManager): ApiManagerHelper
 
     @Binds
     abstract fun provideWebSocketConnectorHelper(web: WebSocketConnector): WebSocketConnectorHelper
@@ -70,5 +74,11 @@ abstract class HelpersBindsModule {
     abstract fun provideStorePreferencesHelper(store: StorePreferences): StorePreferencesHelper
 
     @Binds
-    abstract fun provideDataConverterHelper(dataConverter: DataConverter): DataConverterHelper
+    abstract fun provideDataConverterHelper(responseConverter: ResponseConverter): ResponseConverterHelper
+
+    @Binds
+    abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManager): AuthenticationManagerHelper
+
+    @Binds
+    abstract fun provideRealtimeDatabaseManager(database: RealtimeDatabase): RealtimeDatabaseHelper
 }
