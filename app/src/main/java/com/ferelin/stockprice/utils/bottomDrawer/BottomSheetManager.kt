@@ -25,31 +25,32 @@ import kotlin.math.max
 
 class BottomSheetManager : BottomSheetBehavior.BottomSheetCallback() {
 
-    private val onSlideActions: MutableList<OnSlideAction> = mutableListOf()
+    private val mOnSlideActions: MutableList<OnSlideAction> = mutableListOf()
 
-    private var lastSlideOffset = -1.0F
-    private var halfExpandedSlideOffset = Float.MAX_VALUE
+    private var mLastSlideOffset = -1.0F
+    private var mHalfExpandedSlideOffset = Float.MAX_VALUE
 
     override fun onStateChanged(bottomSheet: View, newState: Int) {
     }
 
     override fun onSlide(bottomSheet: View, slideOffset: Float) {
-        if (halfExpandedSlideOffset == Float.MAX_VALUE)
+        if (mHalfExpandedSlideOffset == Float.MAX_VALUE)
             calculateInitialHalfExpandedSlideOffset(bottomSheet)
 
-        lastSlideOffset = slideOffset
+        mLastSlideOffset = slideOffset
+
         // Correct for the fact that the slideOffset is not zero when half expanded
-        val trueOffset = if (slideOffset <= halfExpandedSlideOffset) {
-            slideOffset.normalize(-1F, halfExpandedSlideOffset, -1F, 0F)
+        val trueOffset = if (slideOffset <= mHalfExpandedSlideOffset) {
+            slideOffset.normalize(-1F, mHalfExpandedSlideOffset, -1F, 0F)
         } else {
-            slideOffset.normalize(halfExpandedSlideOffset, 1F, 0F, 1F)
+            slideOffset.normalize(mHalfExpandedSlideOffset, 1F, 0F, 1F)
         }
 
-        onSlideActions.forEach { it.onSlide(bottomSheet, trueOffset) }
+        mOnSlideActions.forEach { it.onSlide(bottomSheet, trueOffset) }
     }
 
     fun addOnSlideAction(action: OnSlideAction): Boolean {
-        return onSlideActions.add(action)
+        return mOnSlideActions.add(action)
     }
 
     private fun calculateInitialHalfExpandedSlideOffset(sheet: View) {
@@ -65,7 +66,7 @@ class BottomSheetManager : BottomSheetBehavior.BottomSheetCallback() {
             parent.height - peek,
             max(0, parent.height - sheet.height)
         )
-        halfExpandedSlideOffset =
+        mHalfExpandedSlideOffset =
             (collapsedOffset - halfExpandedOffset) / (parent.height - collapsedOffset)
     }
 }

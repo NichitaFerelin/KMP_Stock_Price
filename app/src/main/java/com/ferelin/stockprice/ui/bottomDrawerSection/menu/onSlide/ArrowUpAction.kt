@@ -18,12 +18,13 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide
 
 import android.view.View
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
+import com.ferelin.stockprice.utils.normalize
 
 /**
  * A slide action which rotates a view counterclockwise by 180 degrees between the hidden state
  * and the half expanded state.
  */
-class HalfClockwiseRotateSlideAction(
+class ArrowUpAction(
     private val view: View
 ) : OnSlideAction {
 

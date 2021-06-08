@@ -126,12 +126,12 @@ class BottomDrawerFragment : Fragment() {
     fun openDrawer() {
         mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
     }
-
-    fun openHalfDrawer() {
-        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-    }
-
+    
     fun closeDrawer() {
         mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun openHalfDrawer() {
+        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 }

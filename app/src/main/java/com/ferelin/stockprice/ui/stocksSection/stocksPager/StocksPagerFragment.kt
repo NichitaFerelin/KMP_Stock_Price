@@ -26,7 +26,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.HalfClockwiseRotateSlideAction
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.ArrowUpAction
 import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.SharedFlow
@@ -101,6 +101,6 @@ class StocksPagerFragment :
     }
 
     private fun configureBottomSheet() {
-        mBottomNavDrawer.addOnSlideAction(HalfClockwiseRotateSlideAction(mViewController.viewBinding!!.bottomAppBarImageViewArrowUp))
+        mBottomNavDrawer.addOnSlideAction(ArrowUpAction(mViewController.viewBinding!!.bottomAppBarImageViewArrowUp))
     }
 }

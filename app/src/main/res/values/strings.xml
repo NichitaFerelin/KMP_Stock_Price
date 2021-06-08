@@ -43,6 +43,7 @@
     <string name="descriptionScrollToTop">Scroll to top</string>
     <string name="descriptionIconClose">Clear search request</string>
     <string name="descriptionImageSearch">Search company or ticker</string>
+    <string name="descriptionUserPhoto">User photo</string>
 
     <!-- Hints -->
     <string name="hintBuyFor">Buy for %s</string>
@@ -62,6 +63,7 @@
     <string name="hintYes">Yes</string>
     <string name="hintSuccess">Success</string>
     <string name="hintNo">No</string>
+    <string name="hintMenu">Menu</string>
 
     <!-- Menu -->
     <string name="menuLogIn">Log In</string>
@@ -73,8 +75,7 @@
     <string name="transitionSearchFragment">searchContainer</string>
     <string name="transitionAboutPager">Transition container about fragment pager</string>
     <string name="transitionStocksPager">Transition container stock fragment pager</string>
+
     <string name="notificationNewItems">New items loaded</string>
-    <string name="descriptionUserPhoto">User photo</string>
-    <string name="hintMenu">Menu</string>
 
 </resources>

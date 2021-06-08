@@ -18,13 +18,10 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide
 
 import android.view.View
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
+import com.ferelin.stockprice.utils.normalize
 
 /**
- * Change the alpha of [view] when a bottom sheet is slid.
- *
- * @param reverse Setting reverse to true will cause the view's alpha to approach 0.0 as the sheet
- *  slides up. The default behavior, false, causes the view's alpha to approach 1.0 as the sheet
- *  slides up.
+ * Changes the alpha of [view] when a bottom sheet is slid.
  */
 class AlphaSlideAction(
     private val view: View,
@@ -40,20 +37,4 @@ class AlphaSlideAction(
             view.visibility = View.VISIBLE
         }
     }
-}
-
-fun Float.normalize(
-    inputMin: Float,
-    inputMax: Float,
-    outputMin: Float,
-    outputMax: Float
-): Float {
-    if (this < inputMin) {
-        return outputMin
-    } else if (this > inputMax) {
-        return outputMax
-    }
-
-    return outputMin * (1 - (this - inputMin) / (inputMax - inputMin)) +
-            outputMax * ((this - inputMin) / (inputMax - inputMin))
 }

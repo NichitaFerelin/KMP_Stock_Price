@@ -30,8 +30,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MenuFragment :
-    BaseFragment<FragmentMenuBinding, MenuViewModel, MenuViewController>(),
+class MenuFragment : BaseFragment<FragmentMenuBinding, MenuViewModel, MenuViewController>(),
     MenuItemClickListener {
 
     override val mViewController: MenuViewController = MenuViewController()

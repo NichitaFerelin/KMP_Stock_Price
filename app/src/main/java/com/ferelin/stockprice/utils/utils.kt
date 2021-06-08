@@ -39,9 +39,6 @@ val Int.px: Int
 val View.isOut
     get() = scaleX == 0F
 
-val View.isVisible
-    get() = visibility == View.VISIBLE
-
 fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
     return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
             || item.companyProfile.symbol.toLowerCase(Locale.ROOT)

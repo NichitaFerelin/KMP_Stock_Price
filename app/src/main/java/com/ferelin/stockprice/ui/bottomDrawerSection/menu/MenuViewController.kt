@@ -16,6 +16,7 @@
 
 package com.ferelin.stockprice.ui.bottomDrawerSection.menu
 
+import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
@@ -54,12 +55,7 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
                 )
             }
             is MenuItemType.LogOut -> { /*Log Out */
-                AlertDialog.Builder(currentFragment.requireContext())
-                    .setMessage(R.string.hintAreYouSure)
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.hintYes) { _, _ -> onLogOut.invoke() }
-                    .setNegativeButton(R.string.hintNo) { dialog, _ -> dialog.cancel() }
-                    .show()
+                showExitDialog(currentFragment.requireContext(), onLogOut)
             }
             is MenuItemType.Messages -> { /*Messages */
             }
@@ -75,6 +71,17 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
     }
 
     fun onLogOut() {
-        (viewBinding!!.recyclerViewMenu.adapter as MenuItemsAdapter).onLogOutNotify()
+        viewBinding?.let {
+            (it.recyclerViewMenu.adapter as MenuItemsAdapter).onLogOutNotify()
+        }
+    }
+
+    private fun showExitDialog(context: Context, onLogOut: () -> Unit) {
+        AlertDialog.Builder(context)
+            .setMessage(R.string.hintAreYouSure)
+            .setCancelable(true)
+            .setPositiveButton(R.string.hintYes) { _, _ -> onLogOut.invoke() }
+            .setNegativeButton(R.string.hintNo) { dialog, _ -> dialog.cancel() }
+            .show()
     }
 }
