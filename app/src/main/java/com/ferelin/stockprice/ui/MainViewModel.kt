@@ -47,6 +47,8 @@ class MainViewModel(
     val stateIsNetworkAvailable: StateFlow<Boolean>
         get() = mStateIsNetworkAvailable
 
+    var isServiceRunning = false
+
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
 

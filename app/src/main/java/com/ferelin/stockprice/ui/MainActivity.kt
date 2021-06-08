@@ -27,8 +27,6 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.di.AppComponent
-import com.ferelin.stockprice.di.DaggerAppComponent
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDialog
@@ -59,8 +57,10 @@ class MainActivity(
 
     override fun onResume() {
         super.onResume()
-        mMessagesForServiceCollectorJob?.cancel()
-        StockObserverController.stopService(this@MainActivity)
+        if (mViewModel.isServiceRunning) {
+            mMessagesForServiceCollectorJob?.cancel()
+            StockObserverController.stopService(this@MainActivity)
+        }
     }
 
     override fun onPause() {
@@ -114,8 +114,15 @@ class MainActivity(
             mViewModel.eventObserverCompanyChanged.collect {
                 when {
                     !isActive -> cancel()
-                    it == null -> StockObserverController.stopService(this@MainActivity)
-                    else -> StockObserverController.updateService(this@MainActivity, it)
+                    it == null -> {
+                        if (mViewModel.isServiceRunning) {
+                            StockObserverController.stopService(this@MainActivity)
+                        }
+                    }
+                    else -> {
+                        StockObserverController.updateService(this@MainActivity, it)
+                        mViewModel.isServiceRunning = true
+                    }
                 }
             }
         }

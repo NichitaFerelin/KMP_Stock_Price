@@ -18,6 +18,7 @@ package com.ferelin.stockprice.services.observer
 
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
@@ -30,7 +31,6 @@ class StockObserverService : Service() {
         if (intent?.getStringExtra(KEY_STOP) != null) {
             // Mocked start and end
             val notification = NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
                 .build()
             startForeground(1, notification)
             stopForeground(true)
@@ -44,18 +44,27 @@ class StockObserverService : Service() {
         val profitStr = intent?.getStringExtra(KEY_PROFIT_STR) ?: ""
         val profitTextColorRes = intent?.getIntExtra(KEY_PROFIT_TEXT_COLOR_RES, 0)!!
 
-        val packageName = resources.getResourcePackageName(R.layout.item_notification_observer)
-        val notificationLayout = RemoteViews(packageName, R.layout.item_notification_observer)
-        notificationLayout.setTextViewText(R.id.textViewCompanyName, companyName)
-        notificationLayout.setTextViewText(R.id.textViewCurrentPrice, priceStr)
-        notificationLayout.setTextViewText(R.id.textViewDayProfit, profitStr)
-        notificationLayout.setTextColor(R.id.textViewDayProfit, profitTextColorRes)
+        // To avoid RemoteServiceException
+        val notification = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val packageName = resources.getResourcePackageName(R.layout.item_notification_observer)
+            val notificationLayout = RemoteViews(packageName, R.layout.item_notification_observer)
+            notificationLayout.setTextViewText(R.id.textViewCompanyName, companyName)
+            notificationLayout.setTextViewText(R.id.textViewCurrentPrice, priceStr)
+            notificationLayout.setTextViewText(R.id.textViewDayProfit, profitStr)
+            notificationLayout.setTextColor(R.id.textViewDayProfit, profitTextColorRes)
 
-        val notification = NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setContent(notificationLayout)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .build()
+            NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContent(notificationLayout)
+                .build()
+        } else {
+            NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
+                .setContentTitle(companyName)
+                .setContentText(priceStr)
+                .setSmallIcon(R.drawable.ic_favourite_active)
+                .build()
+        }
 
         startForeground(1, notification)
         return START_NOT_STICKY
