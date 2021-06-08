@@ -31,6 +31,7 @@ class StockObserverService : Service() {
         if (intent?.getStringExtra(KEY_STOP) != null) {
             // Mocked start and end
             val notification = NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_favourite_active)
                 .build()
             startForeground(1, notification)
             stopForeground(true)
