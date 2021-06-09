@@ -21,12 +21,26 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.custom.ChartView
 
 /**
- * [SuggestionControlHelper] providing a method to control and display the SuggestionView on Chart.
+ * [SuggestionControlHelper] provides a method to control and display the SuggestionView at Chart.
+ * @see [ChartView]
  */
 object SuggestionControlHelper {
 
+    /**
+     * When user clicks on the ChartView, it returns coordinates of marker that were clicked. From
+     * this coordinates it it necessary to set SuggestionView. This method make it correct avoiding
+     * off-screen or any other problems.
+     *
+     * @param rootSuggestionView is a suggestion view that must be set correct
+     * @param pointView is a point tied to suggestion view
+     * @param plugView is a view that plugs a space between arrow and suggestion
+     * @param arrowView is a arrow tied to suggestion view
+     * @param relativeView is a view to which the coordinates need to be aligned
+     * @param marker is a marker with coordinates of clicked point
+     * */
     fun applyCoordinatesChanges(
         rootSuggestionView: ConstraintLayout,
         pointView: View,

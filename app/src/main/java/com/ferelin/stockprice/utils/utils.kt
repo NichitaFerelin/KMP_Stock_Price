@@ -16,11 +16,15 @@ package com.ferelin.stockprice.utils
  * limitations under the License.
  */
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.AttrRes
@@ -83,6 +87,12 @@ fun withTimer(time: Long = 200L, body: () -> Unit) {
     }, time)
 }
 
+fun withTimerOnUi(time: Long = 200L, body: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed({
+        body.invoke()
+    }, time)
+}
+
 @SuppressLint("Recycle")
 fun Context.themeColor(
     @AttrRes themeAttrId: Int
@@ -108,4 +118,14 @@ fun Float.normalize(
 
     return outputMin * (1 - (this - inputMin) / (inputMax - inputMin)) +
             outputMax * ((this - inputMin) / (inputMax - inputMin))
+}
+
+fun Animation.invalidate() {
+    setAnimationListener(null)
+    cancel()
+}
+
+fun Animator.invalidate() {
+    removeAllListeners()
+    cancel()
 }

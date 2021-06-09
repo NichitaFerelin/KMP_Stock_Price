@@ -16,21 +16,15 @@
 
 package com.ferelin.stockprice.ui.bottomDrawerSection.menu
 
-import androidx.lifecycle.viewModelScope
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.common.menu.MenuItemsAdapter
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MenuViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+class MenuViewModel : BaseViewModel() {
 
     private val mMenuAdapter = MenuItemsAdapter().apply {
         setHasStableIds(true)
@@ -49,8 +43,6 @@ class MenuViewModel(
     }
 
     fun onLogOut() {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.logOut()
-        }
+        mAppScope.launch { mDataInteractor.logOut() }
     }
 }

@@ -33,13 +33,16 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
 
     override fun onDestroyView() {
         postponeReferencesRemove {
-            viewBinding!!.recyclerViewMenu.adapter = null
+            viewBinding.recyclerViewMenu.adapter = null
             super.onDestroyView()
         }
     }
 
     fun onMenuItemsPrepared(notificator: DataNotificator<List<MenuItem>>) {
-        (viewBinding!!.recyclerViewMenu.adapter as MenuItemsAdapter).setData(notificator.data!!)
+        val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
+        if (recyclerViewAdapter is MenuItemsAdapter) {
+            recyclerViewAdapter.setData(notificator.data!!)
+        }
     }
 
     fun onMenuItemClicked(
@@ -48,15 +51,9 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
         onLogOut: () -> Unit
     ) {
         when (item.type) {
-            is MenuItemType.LogIn -> {
-                Navigator.navigateToLoginFragment(
-                    currentFragment,
-                    currentFragment.parentFragmentManager
-                )
-            }
-            is MenuItemType.LogOut -> { /*Log Out */
-                showExitDialog(currentFragment.requireContext(), onLogOut)
-            }
+            is MenuItemType.LogIn -> Navigator.navigateToLoginFragment(currentFragment)
+            is MenuItemType.LogOut -> showExitDialog(currentFragment.requireContext(), onLogOut)
+
             is MenuItemType.Messages -> { /*Messages */
             }
             is MenuItemType.Notes -> {/*Notes*/
@@ -67,12 +64,13 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
     }
 
     fun setArgumentsViewDependsOn(menuItemsItemsAdapter: MenuItemsAdapter) {
-        viewBinding!!.recyclerViewMenu.adapter = menuItemsItemsAdapter
+        viewBinding.recyclerViewMenu.adapter = menuItemsItemsAdapter
     }
 
     fun onLogOut() {
-        viewBinding?.let {
-            (it.recyclerViewMenu.adapter as MenuItemsAdapter).onLogOutNotify()
+        val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
+        if (recyclerViewAdapter is MenuItemsAdapter) {
+            recyclerViewAdapter.onLogOutNotify()
         }
     }
 

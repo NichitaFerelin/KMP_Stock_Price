@@ -32,11 +32,8 @@ class LoadingViewController : BaseViewController<LoadingViewAnimator, FragmentLo
         isFirstTimeLaunch?.let { initFragmentReplace(fragment, it) }
     }
 
-    private fun initFragmentReplace(
-        fragment: LoadingFragment,
-        isFirstTimeLaunch: Boolean
-    ) {
-        viewBinding!!.root.setTransitionListener(object : MotionManager() {
+    private fun initFragmentReplace(fragment: LoadingFragment, isFirstTimeLaunch: Boolean) {
+        viewBinding.root.setTransitionListener(object : MotionManager() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 super.onTransitionCompleted(p0, p1)
                 removeAutoTransition()
@@ -47,9 +44,9 @@ class LoadingViewController : BaseViewController<LoadingViewAnimator, FragmentLo
 
     // Stop transition cycle
     private fun removeAutoTransition() {
-        viewBinding!!.root.getTransition(R.id.transitionMain).autoTransition =
+        viewBinding.root.getTransition(R.id.transitionMain).autoTransition =
             MotionScene.Transition.AUTO_NONE
-        viewBinding!!.root.getTransition(R.id.transitionJump).autoTransition =
+        viewBinding.root.getTransition(R.id.transitionJump).autoTransition =
             MotionScene.Transition.AUTO_NONE
     }
 

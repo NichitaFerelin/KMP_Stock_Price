@@ -21,6 +21,9 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 
+/**
+ * [StockObserverController] provides easy way to control [StockObserverService]
+ * */
 object StockObserverController {
 
     fun updateService(context: Context, company: AdaptiveCompany) {

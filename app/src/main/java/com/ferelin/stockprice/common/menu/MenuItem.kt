@@ -16,6 +16,9 @@
 
 package com.ferelin.stockprice.common.menu
 
+/**
+ * [MenuItem] represents a model for adapter which is set to bottom menu
+ */
 data class MenuItem(
     val id: Int,
     val type: MenuItemType,

@@ -22,11 +22,12 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewAnimator
+import com.ferelin.stockprice.utils.invalidate
 
-class SearchViewAnimatorScrollable : BaseStocksViewAnimator() {
+class SearchViewAnimator : BaseStocksViewAnimator() {
 
-    private var mScaleOut: Animation? = null
-    private var mScaleIn: Animation? = null
+    private lateinit var mScaleOut: Animation
+    private lateinit var mScaleIn: Animation
 
     override fun loadAnimations(context: Context) {
         super.loadAnimations(context)
@@ -36,12 +37,12 @@ class SearchViewAnimatorScrollable : BaseStocksViewAnimator() {
 
     override fun invalidateAnimations() {
         super.invalidateAnimations()
-        mScaleOut?.cancel()
-        mScaleIn?.cancel()
+        mScaleOut.invalidate()
+        mScaleIn.invalidate()
     }
 
     fun runScaleIn(target: View, callback: Animation.AnimationListener? = null) {
-        mScaleIn?.setAnimationListener(callback)
+        mScaleIn.setAnimationListener(callback)
         target.startAnimation(mScaleIn)
     }
 }

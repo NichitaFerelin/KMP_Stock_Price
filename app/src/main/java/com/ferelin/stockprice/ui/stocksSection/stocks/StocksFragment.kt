@@ -21,10 +21,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentStocksBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,10 +30,8 @@ import kotlinx.coroutines.withContext
 class StocksFragment :
     BaseStocksFragment<FragmentStocksBinding, StocksViewModel, StockViewController>() {
 
-    override val mViewController: StockViewController = StockViewController()
-    override val mViewModel: StocksViewModel by viewModels {
-        DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
-    }
+    override val mViewController = StockViewController()
+    override val mViewModel: StocksViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksBinding
         get() = FragmentStocksBinding::inflate
@@ -51,7 +47,16 @@ class StocksFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            collectEventOnError()
+            launch { collectStateCompanies() }
+            launch { collectEventOnError() }
+        }
+    }
+
+    private suspend fun collectStateCompanies() {
+        mViewModel.stateCompanies.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onCompaniesLoaded(notificator)
+            }
         }
     }
 

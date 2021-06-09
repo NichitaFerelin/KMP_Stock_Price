@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.custom.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,22 +14,27 @@ package com.ferelin.stockprice.custom.utils
  * limitations under the License.
  */
 
-/**
- * [Marker] represents model of chart "advanced" point with data.
- * */
-data class Marker(
-    val position: Point = Point(0f, 0f),
-    val price: Double,
-    val priceStr: String,
-    val date: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is Marker) {
-            other.position == position
-        } else false
+package com.ferelin.stockprice.di
+
+import com.ferelin.shared.CoroutineContextProvider
+import dagger.Module
+import dagger.Provides
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Singleton
+
+@Module
+class CoroutineModule {
+
+    @Provides
+    @Singleton
+    fun provideCoroutineContext(): CoroutineContextProvider {
+        return CoroutineContextProvider()
     }
 
-    override fun hashCode(): Int {
-        return 31 * position.hashCode()
+    @Provides
+    @Singleton
+    fun provideAppScope(coroutineContextProvider: CoroutineContextProvider): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + coroutineContextProvider.IO)
     }
 }

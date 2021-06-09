@@ -32,10 +32,11 @@ import javax.inject.Singleton
 @Singleton
 class StylesProvider @Inject constructor(private val mContext: Context) {
 
-    private val mDrawableFavouriteDefaultIcon = R.drawable.ic_favourite
-    private val mDrawableFavouriteDefaultIconActive = R.drawable.ic_favourite_active
-    private val mDrawableFavouriteSingleIcon = R.drawable.ic_star
-    private val mDrawableFavouriteSingleIconActive = R.drawable.ic_star_active
+    private val mDrawableFavouriteBackgroundIcon = R.drawable.ic_favourite
+    private val mDrawableFavouriteBackgroundIconActive = R.drawable.ic_favourite_active
+    private val mDrawableFavouriteForegroundIcon = R.drawable.ic_star
+    private val mDrawableFavouriteForegroundIconActive = R.drawable.ic_star_active
+
     private val mDrawableRippleLight = R.drawable.ripple_light
     private val mDrawableRippleDark = R.drawable.ripple_dark
     private val mColorProfitPlus = R.color.green
@@ -47,18 +48,18 @@ class StylesProvider @Inject constructor(private val mContext: Context) {
         adaptiveCompany.companyStyle.apply {
             holderBackground = getHolderBackground(index)
             rippleForeground = getRippleForeground(index)
-            favouriteDefaultIconResource = getDefaultIconDrawable(adaptiveCompany.isFavourite)
-            favouriteSingleIconResource = getSingleIconDrawable(adaptiveCompany.isFavourite)
+            favouriteBackgroundIconResource = getBackgroundIconDrawable(adaptiveCompany.isFavourite)
+            favouriteForegroundIconResource = getForegroundIconDrawable(adaptiveCompany.isFavourite)
             dayProfitBackground = getProfitBackground(adaptiveCompany.companyDayData.profit)
         }
     }
 
-    fun getDefaultIconDrawable(isFavourite: Boolean): Int {
-        return if (isFavourite) mDrawableFavouriteDefaultIconActive else mDrawableFavouriteDefaultIcon
+    fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
+        return if (isFavourite) mDrawableFavouriteBackgroundIconActive else mDrawableFavouriteBackgroundIcon
     }
 
-    fun getSingleIconDrawable(isFavourite: Boolean): Int {
-        return if (isFavourite) mDrawableFavouriteSingleIconActive else mDrawableFavouriteSingleIcon
+    fun getForegroundIconDrawable(isFavourite: Boolean): Int {
+        return if (isFavourite) mDrawableFavouriteForegroundIconActive else mDrawableFavouriteForegroundIcon
     }
 
     fun getProfitBackground(profit: String): Int {

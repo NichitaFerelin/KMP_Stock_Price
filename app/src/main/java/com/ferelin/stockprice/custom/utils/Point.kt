@@ -16,4 +16,7 @@ package com.ferelin.stockprice.custom.utils
  * limitations under the License.
  */
 
+/**
+ * [Point] represents base point with coords for chart
+ * */
 data class Point(var x: Float, var y: Float)

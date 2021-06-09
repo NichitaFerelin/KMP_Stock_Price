@@ -22,33 +22,38 @@ import android.content.Context
 import android.view.View
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
+import com.ferelin.stockprice.utils.invalidate
 
 class ChartViewAnimator : BaseViewAnimator() {
 
-    private var mScaleInOut: Animator? = null
-    private val mViewsPropertyAnimator = hashMapOf<View, Any?>()
+    private lateinit var mScaleInOut: Animator
+
+    /**
+     * Contains views that requested animation to cancel it.
+     */
+    private val mViewsPropertyAnimator = mutableListOf<View>()
 
     override fun loadAnimations(context: Context) {
         mScaleInOut = AnimatorInflater.loadAnimator(context, R.animator.scale_in_out)
     }
 
     override fun invalidateAnimations() {
-        mScaleInOut?.cancel()
-        mViewsPropertyAnimator.keys.forEach { it.animate().cancel() }
+        mScaleInOut.invalidate()
+        mViewsPropertyAnimator.forEach { it.animate().cancel() }
     }
 
     fun runScaleInOut(target: View, callback: Animator.AnimatorListener? = null) {
-        mScaleInOut?.let {
-            it.setTarget(target)
-            callback?.let { listener -> it.addListener(listener) }
-            it.start()
+        mScaleInOut.run {
+            setTarget(target)
+            callback?.let { listener -> addListener(listener) }
+            start()
         }
     }
 
     fun runFadeIn(vararg targets: View) {
-        targets.forEach {
-            mViewsPropertyAnimator[it] = null
-            it.animate().alpha(1F).duration = 150L
+        targets.forEach { view ->
+            mViewsPropertyAnimator.add(view)
+            view.animate().alpha(1F).duration = 150L
         }
     }
 

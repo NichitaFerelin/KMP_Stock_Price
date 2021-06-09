@@ -24,7 +24,6 @@ import android.view.View
 import android.view.animation.Animation
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
@@ -33,6 +32,7 @@ import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.isOut
 import com.ferelin.stockprice.utils.openKeyboard
+import com.ferelin.stockprice.utils.showToast
 
 class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginBinding>() {
 
@@ -44,22 +44,18 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     private var mCheckIconScale = 1F
     private var mEnterCodeAlpha = 0F
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
         if (savedInstanceState != null) {
             restoreState(savedInstanceState)
         }
 
-        mLastInputCode = viewBinding!!.editTextCode.text.toString()
-        mLastInputPhone = viewBinding!!.editTextPhone.text.toString()
+        mLastInputCode = viewBinding.editTextCode.text.toString()
+        mLastInputPhone = viewBinding.editTextPhone.text.toString()
     }
 
     override fun onDestroyView() {
-        with(viewBinding!!) {
+        with(viewBinding) {
             mCheckIconVisibility = imageViewIconCheck.visibility
             mEnterCodeAlpha = editTextCodeLayout.alpha
         }
@@ -68,19 +64,18 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(sCheckIconVisibilityKey, mCheckIconVisibility)
         outState.putFloat(sCheckIconScaleKey, mCheckIconScale)
         outState.putFloat(sEnterCodeAlphaKey, mEnterCodeAlpha)
     }
 
     fun onPhoneNumberChanged(phone: String) {
-        with(viewBinding!!) {
+        with(viewBinding) {
             if (phone == mLastInputPhone) {
                 return
             }
 
             mLastInputPhone = phone
-            viewBinding!!.editTextCode.text = SpannableStringBuilder("")
+            viewBinding.editTextCode.text = SpannableStringBuilder("")
 
             when {
                 phone.isNotEmpty() && !isBtnCheckEnabled() -> enableBtnCheck()
@@ -105,14 +100,19 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         hideBtnCheck()
     }
 
-    fun onCodeSent() {
-        hideBtnCheck()
-        showEditTextCode()
-        setFocus(viewBinding!!.editTextCode)
+    fun onCodeSentStateChanged(isCodeSent: Boolean) {
+        if (isCodeSent) {
+            hideBtnCheck()
+            showEditTextCode()
+            setFocus(viewBinding.editTextCode)
+        } else {
+            hideEditTextCode()
+            showBtnCheck()
+        }
     }
 
     fun onCodeChanged() {
-        with(viewBinding!!) {
+        with(viewBinding) {
             val code = editTextCode.text.toString()
             if (code == mLastInputCode) {
                 return
@@ -135,8 +135,12 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         }
     }
 
+    fun onError(message: String) {
+        showToast(context, message)
+    }
+
     private fun showProgressBar() {
-        with(viewBinding!!.progressBar) {
+        viewBinding.progressBar.apply {
             scaleY = 1F
             scaleX = 1F
             mViewAnimator.runScaleIn(this)
@@ -144,38 +148,34 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     private fun hideProgressBar() {
-        viewBinding?.let {
-            with(it.progressBar) {
-                scaleY = 0F
-                scaleX = 0F
-                mViewAnimator.runScaleOut(this)
-            }
+        viewBinding.progressBar.apply {
+            scaleY = 0F
+            scaleX = 0F
+            mViewAnimator.runScaleOut(this)
         }
     }
 
     private fun setFocus(target: View) {
-        with(viewBinding!!) {
-            target.requestFocus()
-            openKeyboard(root.context, target)
-        }
+        target.requestFocus()
+        openKeyboard(context, target)
     }
 
     private fun enableBtnCheck() {
-        viewBinding!!.imageViewIconCheck.isClickable = true
+        viewBinding.imageViewIconCheck.isClickable = true
         switchBtnColor(R.color.green)
     }
 
     private fun disableBtnCheck() {
-        viewBinding!!.imageViewIconCheck.isClickable = false
+        viewBinding.imageViewIconCheck.isClickable = false
         switchBtnColor(R.color.grey)
     }
 
     private fun isBtnCheckEnabled(): Boolean {
-        return viewBinding!!.imageViewIconCheck.isClickable
+        return viewBinding.imageViewIconCheck.isClickable
     }
 
     private fun switchBtnColor(colorResource: Int) {
-        with(viewBinding!!.imageViewIconCheck) {
+        with(viewBinding.imageViewIconCheck) {
             val animationCallback = object : AnimatorManager() {
                 override fun onAnimationStart(animation: Animator?) {
                     setColorFilter(
@@ -189,7 +189,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     private fun hideBtnCheck() {
-        with(viewBinding!!.imageViewIconCheck) {
+        with(viewBinding.imageViewIconCheck) {
             val animationCallback = object : AnimationManager() {
                 override fun onAnimationEnd(animation: Animation?) {
                     scaleX = 0F
@@ -201,7 +201,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     private fun showBtnCheck() {
-        with(viewBinding!!.imageViewIconCheck) {
+        with(viewBinding.imageViewIconCheck) {
             scaleX = 1F
             scaleY = 1F
             mViewAnimator.runScaleIn(this)
@@ -209,31 +209,30 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     private fun showEditTextCode() {
-        viewBinding!!.editTextCodeLayout.alpha = 1F
-        mViewAnimator.runSlideToBottomFadeIn(viewBinding!!.editTextCodeLayout)
+        viewBinding.editTextCodeLayout.alpha = 1F
+        mViewAnimator.runSlideToBottomFadeIn(viewBinding.editTextCodeLayout)
     }
 
     private fun hideEditTextCode() {
         val callback = object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
-                viewBinding!!.editTextCodeLayout.alpha = 0F
+                viewBinding.editTextCodeLayout.alpha = 0F
             }
         }
-        mViewAnimator.runSlideToTopFadeOut(viewBinding!!.editTextCodeLayout, callback)
+        mViewAnimator.runSlideToTopFadeOut(viewBinding.editTextCodeLayout, callback)
     }
 
     private fun restoreState(savedInstanceState: Bundle) {
-        val checkIconVisibility = savedInstanceState.getInt(sCheckIconVisibilityKey)
         val checkIconScale = savedInstanceState.getFloat(sCheckIconScaleKey)
         val enterCodeAlpha = savedInstanceState.getFloat(sEnterCodeAlphaKey)
-        viewBinding!!.imageViewIconCheck.visibility = checkIconVisibility
-        viewBinding!!.editTextCodeLayout.alpha = enterCodeAlpha
-        viewBinding!!.imageViewIconCheck.scaleX = checkIconScale
-        viewBinding!!.imageViewIconCheck.scaleY = checkIconScale
+        viewBinding.run {
+            editTextCodeLayout.alpha = enterCodeAlpha
+            imageViewIconCheck.scaleX = checkIconScale
+            imageViewIconCheck.scaleY = checkIconScale
+        }
     }
 
     companion object {
-        private const val sCheckIconVisibilityKey = "check_icon_visibility_key"
         private const val sCheckIconScaleKey = "check_icon_scale_key"
         private const val sEnterCodeAlphaKey = "enter_code_key"
     }

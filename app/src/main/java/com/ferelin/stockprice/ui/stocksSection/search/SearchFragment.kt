@@ -23,11 +23,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
@@ -37,10 +35,8 @@ import kotlinx.coroutines.withContext
 class SearchFragment :
     BaseStocksFragment<FragmentSearchBinding, SearchViewModel, SearchViewController>() {
 
-    override val mViewController: SearchViewController = SearchViewController()
-    override val mViewModel: SearchViewModel by viewModels {
-        DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
-    }
+    override val mViewController = SearchViewController()
+    override val mViewModel: SearchViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
         get() = FragmentSearchBinding::inflate
@@ -75,7 +71,7 @@ class SearchFragment :
     }
 
     private fun setUpClickListeners() {
-        mViewController.viewBinding!!.imageViewBack.setOnClickListener {
+        mViewController.viewBinding.imageViewBack.setOnClickListener {
             mViewController.onBackButtonClicked(
                 ifNotHandled = {
                     mOnBackPressedCallback.remove()
@@ -83,11 +79,11 @@ class SearchFragment :
                 }
             )
         }
-        mViewController.viewBinding!!.editTextSearch.doAfterTextChanged {
+        mViewController.viewBinding.editTextSearch.doAfterTextChanged {
             mViewModel.onSearchTextChanged(it?.toString() ?: "")
             mViewController.onSearchTextChanged(it?.toString() ?: "")
         }
-        mViewController.viewBinding!!.imageViewIconClose.setOnClickListener {
+        mViewController.viewBinding.imageViewIconClose.setOnClickListener {
             mViewController.onCloseIconClicked()
         }
     }
@@ -132,7 +128,7 @@ class SearchFragment :
 
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (!mViewController.handleOnBackPressed(mViewModel.searchRequest)) {
+            if (!mViewController.handleOnBackPressed(mViewModel.lastSearchRequest)) {
                 this.remove()
                 activity?.onBackPressed()
             }

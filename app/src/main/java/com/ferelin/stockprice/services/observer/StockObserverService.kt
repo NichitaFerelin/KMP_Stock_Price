@@ -22,21 +22,18 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.notification.Notification
 
+/**
+ * [StockObserverService] is a foreground service that shows the price of a
+ * favourite company in real time
+ */
 class StockObserverService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.getStringExtra(KEY_STOP) != null) {
-            // Mocked start and end
-            val notification = NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_favourite_active)
-                .build()
-            startForeground(1, notification)
-            stopForeground(true)
-            stopSelf()
-
+            stopService()
             return START_NOT_STICKY
         }
 
@@ -54,13 +51,13 @@ class StockObserverService : Service() {
             notificationLayout.setTextViewText(R.id.textViewDayProfit, profitStr)
             notificationLayout.setTextColor(R.id.textViewDayProfit, profitTextColorRes)
 
-            NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
+            NotificationCompat.Builder(this, Notification.PRICE_OBSERVER_CHANNEL_ID)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContent(notificationLayout)
                 .build()
         } else {
-            NotificationCompat.Builder(this, App.PRICE_OBSERVER_CHANNEL_ID)
+            NotificationCompat.Builder(this, Notification.PRICE_OBSERVER_CHANNEL_ID)
                 .setContentTitle(companyName)
                 .setContentText(priceStr)
                 .setSmallIcon(R.drawable.ic_favourite_active)
@@ -73,6 +70,15 @@ class StockObserverService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    private fun stopService() {
+        val notification = NotificationCompat.Builder(this, Notification.PRICE_OBSERVER_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_favourite_active)
+            .build()
+        startForeground(1, notification)
+        stopForeground(true)
+        stopSelf()
     }
 
     companion object {

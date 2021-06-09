@@ -37,7 +37,7 @@ class AboutPagerFragment(
 
     override val mViewController = AboutPagerViewController()
     override val mViewModel: AboutPagerViewModel by viewModels {
-        CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
+        CompanyViewModelFactory(selectedCompany)
     }
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
@@ -85,7 +85,8 @@ class AboutPagerFragment(
                 viewLifecycleOwner.lifecycle,
                 mViewModel.selectedCompany
             ),
-            lastSelectedTabPosition = mViewModel.selectedTabPagePosition
+            lastSelectedTabPosition = mViewModel.selectedTabPagePosition,
+            selectedCompany = mViewModel.selectedCompany
         )
     }
 
@@ -96,11 +97,11 @@ class AboutPagerFragment(
 
     private fun onTabClicked(clickedView: OrderedTextView) {
         mViewController.onTabClicked(clickedView)
-        mViewModel.onTabClicked(clickedView.orderNumber)
+        mViewModel.selectedTabPagePosition = clickedView.orderNumber
     }
 
     private fun setUpTabClickListeners() {
-        mViewController.viewBinding!!.apply {
+        mViewController.viewBinding.run {
             textViewProfile.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewChart.setOnClickListener { onTabClicked(it as OrderedTextView) }
             textViewNews.setOnClickListener { onTabClicked(it as OrderedTextView) }
@@ -110,10 +111,8 @@ class AboutPagerFragment(
     }
 
     private fun setUpImageClickListeners() {
-        mViewController.viewBinding!!.imageViewBack.setOnClickListener {
-            comeBack()
-        }
-        mViewController.viewBinding!!.imageViewStar.setOnClickListener {
+        mViewController.viewBinding.imageViewBack.setOnClickListener { popBackStack() }
+        mViewController.viewBinding.imageViewStar.setOnClickListener {
             mViewModel.onFavouriteIconClicked()
             mViewController.onFavouriteIconClicked()
         }
@@ -122,7 +121,7 @@ class AboutPagerFragment(
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (!mViewController.handleOnBackPressed()) {
-                comeBack()
+                popBackStack()
             }
         }
     }
@@ -134,7 +133,7 @@ class AboutPagerFragment(
         )
     }
 
-    private fun comeBack() {
+    private fun popBackStack() {
         mOnBackPressedCallback.remove()
         activity?.onBackPressed()
     }

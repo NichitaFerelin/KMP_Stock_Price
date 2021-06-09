@@ -55,11 +55,12 @@ class StockViewHolder private constructor(
             textViewCurrentPrice.text = item.companyDayData.currentPrice
             textViewDayProfit.text = item.companyDayData.profit
             textViewDayProfit.setTextColor(item.companyStyle.dayProfitBackground)
-            imageViewFavourite.setImageResource(item.companyStyle.favouriteDefaultIconResource)
-            imageViewBoundedIcon.setImageResource(item.companyStyle.favouriteSingleIconResource)
+            imageViewFavourite.setImageResource(item.companyStyle.favouriteBackgroundIconResource)
+            imageViewBoundedIcon.setImageResource(item.companyStyle.favouriteForegroundIconResource)
 
+            // TODO
             // Tag to identify image for animation at BaseStocksFragment
-            imageViewBoundedIcon.tag = item.companyStyle.favouriteSingleIconResource
+            imageViewBoundedIcon.tag = item.companyStyle.favouriteForegroundIconResource
 
             root.setCardBackgroundColor(item.companyStyle.holderBackground)
             root.foreground =

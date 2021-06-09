@@ -25,7 +25,6 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.common.menu.MenuItemClickListener
 import com.ferelin.stockprice.databinding.FragmentMenuBinding
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,10 +32,8 @@ import kotlinx.coroutines.withContext
 class MenuFragment : BaseFragment<FragmentMenuBinding, MenuViewModel, MenuViewController>(),
     MenuItemClickListener {
 
-    override val mViewController: MenuViewController = MenuViewController()
-    override val mViewModel: MenuViewModel by viewModels {
-        DataViewModelFactory(mCoroutineContext, mDataInteractor)
-    }
+    override val mViewController = MenuViewController()
+    override val mViewModel: MenuViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMenuBinding
         get() = FragmentMenuBinding::inflate

@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.AnimatorManager
+import com.ferelin.stockprice.utils.invalidate
 
 class StockItemAnimator : DefaultItemAnimator() {
 
@@ -79,17 +80,10 @@ class StockItemAnimator : DefaultItemAnimator() {
         super.endAnimation(item)
         if (item is StockViewHolder) {
             item.apply {
-                attachedPriceAnimator?.cancel()
-                attachedPriceAnimator = null
-
-                attachedProfitAnimator?.cancel()
-                attachedProfitAnimator = null
-
-                attachedStartAnimator?.cancel()
-                attachedProfitAnimator = null
-
-                attachedPriceFadeAnimation?.cancel()
-                attachedPriceFadeAnimation = null
+                attachedPriceAnimator?.invalidate()
+                attachedProfitAnimator?.invalidate()
+                attachedStartAnimator?.invalidate()
+                attachedPriceFadeAnimation?.invalidate()
             }
         }
     }

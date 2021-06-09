@@ -19,18 +19,17 @@ package com.ferelin.stockprice.viewModelFactories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
 import com.ferelin.stockprice.ui.aboutSection.profile.ProfileViewModel
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 @Suppress("UNCHECKED_CAST")
-open class CompanyViewModelFactory(
-    private val mCoroutineContext: CoroutineContextProvider,
-    private val mDataInteractor: DataInteractor,
+open class CompanyViewModelFactory @Inject constructor(
     private val mSelectedCompany: AdaptiveCompany?
 ) : ViewModelProvider.Factory {
 
@@ -38,13 +37,13 @@ open class CompanyViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(ChartViewModel::class.java) -> {
-                ChartViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
+                ChartViewModel(mSelectedCompany!!) as T
             }
             modelClass.isAssignableFrom(AboutPagerViewModel::class.java) -> {
-                AboutPagerViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
+                AboutPagerViewModel(mSelectedCompany!!) as T
             }
             modelClass.isAssignableFrom(NewsViewModel::class.java) -> {
-                NewsViewModel(mCoroutineContext, mDataInteractor, mSelectedCompany) as T
+                NewsViewModel(mSelectedCompany!!) as T
             }
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(mSelectedCompany!!) as T

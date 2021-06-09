@@ -23,7 +23,6 @@ import android.view.animation.Animation
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
@@ -33,23 +32,17 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
-import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.*
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.MotionManager
-import com.ferelin.stockprice.utils.hideKeyboard
-import com.ferelin.stockprice.utils.openKeyboard
-import com.ferelin.stockprice.utils.showToast
 import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
-    override val mViewAnimator: SearchViewAnimatorScrollable = SearchViewAnimatorScrollable()
+    override val mViewAnimator: SearchViewAnimator = SearchViewAnimator()
 
     override val mStocksRecyclerView: RecyclerView
-        get() = viewBinding!!.recyclerViewSearchResults
+        get() = viewBinding.recyclerViewSearchResults
 
     override fun onCreateFragment(fragment: Fragment) {
         super.onCreateFragment(fragment)
@@ -58,12 +51,8 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         }
     }
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
         setUpRecyclerViews()
         if (savedInstanceState == null) {
             setFocus()
@@ -73,8 +62,8 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
     override fun onDestroyView() {
         postponeReferencesRemove {
             mStocksRecyclerView.adapter = null
-            viewBinding!!.recyclerViewSearchedHistory.adapter = null
-            viewBinding!!.recyclerViewPopularRequests.adapter = null
+            viewBinding.recyclerViewSearchedHistory.adapter = null
+            viewBinding.recyclerViewPopularRequests.adapter = null
             super.onDestroyView()
         }
     }
@@ -94,10 +83,10 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         popularSearchesRecyclerAdapter.setOnTickerClickListener { item, _ ->
             onSearchTickerClicked(item)
         }
-        stocksRecyclerAdapter.setHeader(mContext!!.resources.getString(R.string.hintStocks))
+        stocksRecyclerAdapter.setHeader(context.resources.getString(R.string.hintStocks))
         mStocksRecyclerView.adapter = stocksRecyclerAdapter
-        viewBinding!!.recyclerViewSearchedHistory.adapter = searchesHistoryRecyclerAdapter
-        viewBinding!!.recyclerViewPopularRequests.adapter = popularSearchesRecyclerAdapter
+        viewBinding.recyclerViewSearchedHistory.adapter = searchesHistoryRecyclerAdapter
+        viewBinding.recyclerViewPopularRequests.adapter = popularSearchesRecyclerAdapter
 
         super.fragmentManager = fragmentManager
     }
@@ -107,11 +96,11 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
      */
     fun onSearchStocksResultChanged(results: ArrayList<AdaptiveCompany>?): Int {
         return if (results == null || results.isEmpty()) {
-            viewBinding!!.root.transitionToStart()
+            viewBinding.root.transitionToStart()
             0
         } else {
-            (mStocksRecyclerView.adapter as StocksRecyclerAdapter).setCompanies(results)
-            viewBinding!!.root.transitionToEnd()
+            mStocksRecyclerAdapter.setCompanies(results)
+            viewBinding.root.transitionToEnd()
             1
         }
     }
@@ -123,23 +112,27 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
     }
 
     fun onSearchRequestsChanged(notificator: DataNotificator<ArrayList<AdaptiveSearchRequest>>) {
-        val data = notificator.data!!
-        val adapter = viewBinding!!.recyclerViewSearchedHistory.adapter as SearchRequestsAdapter
-        adapter.setData(data)
+        val adapterSearchesHistory = viewBinding.recyclerViewSearchedHistory.adapter
+        if (adapterSearchesHistory is SearchRequestsAdapter) {
+            val data = notificator.data!!
+            adapterSearchesHistory.setData(data)
+        }
     }
 
     fun onPopularSearchRequestsChanged(results: ArrayList<AdaptiveSearchRequest>) {
-        val adapter = viewBinding!!.recyclerViewPopularRequests.adapter as SearchRequestsAdapter
-        adapter.setData(results)
+        val adapterPopularRequests = viewBinding.recyclerViewPopularRequests.adapter
+        if (adapterPopularRequests is SearchRequestsAdapter) {
+            adapterPopularRequests.setData(results)
+        }
     }
 
     fun onBackButtonClicked(ifNotHandled: () -> Unit) {
-        if (viewBinding!!.root.progress == 0F) {
+        if (viewBinding.root.progress == 0F) {
             ifNotHandled.invoke()
             return
         }
 
-        viewBinding!!.root.apply {
+        viewBinding.root.apply {
             addTransitionListener(object : MotionManager() {
                 override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                     ifNotHandled.invoke()
@@ -151,81 +144,78 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     fun handleOnBackPressed(lastSearchRequest: String): Boolean {
         if (lastSearchRequest.isEmpty()) {
-            hideKeyboard(mContext!!, viewBinding!!.root)
+            hideKeyboard(context, viewBinding.root)
             return false
         }
 
-        viewBinding!!.editTextSearch.setText("")
+        viewBinding.editTextSearch.setText("")
         return true
     }
 
     fun onCloseIconClicked() {
-        viewBinding!!.editTextSearch.setText("")
+        viewBinding.editTextSearch.setText("")
     }
 
     fun onError(message: String) {
-        showToast(mContext!!, message)
+        showToast(context, message)
     }
 
     fun onStop() {
-        hideKeyboard(mContext!!, viewBinding!!.root)
+        hideKeyboard(context, viewBinding.root)
     }
 
     private fun setFocus() {
-        mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
-            // Wait animation
-            delay(200)
-            withContext(mCoroutineContext.Main) {
-                viewBinding!!.editTextSearch.requestFocus()
-                openKeyboard(mContext!!, viewBinding!!.editTextSearch)
-            }
+        // Wait animation
+        withTimerOnUi {
+            viewBinding.editTextSearch.requestFocus()
+            openKeyboard(context, viewBinding.editTextSearch)
         }
     }
 
     private fun setUpRecyclerViews() {
-        viewBinding!!.recyclerViewSearchedHistory.addItemDecoration(provideItemDecoration())
-        viewBinding!!.recyclerViewPopularRequests.addItemDecoration(provideItemDecoration())
+        viewBinding.recyclerViewSearchedHistory.addItemDecoration(provideItemDecoration())
+        viewBinding.recyclerViewPopularRequests.addItemDecoration(provideItemDecoration())
     }
 
     private fun provideItemDecoration(): SearchItemDecoration {
-        return if (mContext!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            SearchItemDecorationLandscape(mContext!!)
-        } else SearchItemDecoration(mContext!!)
+        return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            SearchItemDecorationLandscape(context)
+        } else SearchItemDecoration(context)
     }
 
     private fun onSearchTickerClicked(item: AdaptiveSearchRequest) {
-        viewBinding!!.editTextSearch.setText(item.searchText)
-        viewBinding!!.editTextSearch.setSelection(item.searchText.length)
+        viewBinding.editTextSearch.setText(item.searchText)
+        viewBinding.editTextSearch.setSelection(item.searchText.length)
     }
 
     private fun restoreTransitionState(lastTransitionState: Int) {
         // Zero transition state is set by default
         if (lastTransitionState == 1) {
-            viewBinding!!.root.progress = 1F
+            viewBinding.root.progress = 1F
         }
     }
 
     private fun hideCloseIcon() {
-        if (viewBinding!!.imageViewIconClose.scaleX == 1F) {
+        if (viewBinding.imageViewIconClose.scaleX == 1F) {
             mViewAnimator.runScaleOutAnimation(
-                target = viewBinding!!.imageViewIconClose,
+                target = viewBinding.imageViewIconClose,
                 listener = object : AnimationManager() {
                     override fun onAnimationEnd(animation: Animation?) {
-                        viewBinding!!.imageViewIconClose.scaleX = 0F
-                        viewBinding!!.imageViewIconClose.scaleY = 0F
+                        viewBinding.imageViewIconClose.scaleX = 0F
+                        viewBinding.imageViewIconClose.scaleY = 0F
                     }
                 })
         }
     }
 
     private fun showCloseIcon() {
-        if (viewBinding!!.imageViewIconClose.scaleX == 0F) {
+        if (viewBinding.imageViewIconClose.scaleX == 0F) {
             mViewAnimator.runScaleIn(
-                target = viewBinding!!.imageViewIconClose,
+                target = viewBinding.imageViewIconClose,
                 callback = object : AnimationManager() {
                     override fun onAnimationStart(animation: Animation?) {
-                        viewBinding!!.imageViewIconClose.scaleX = 1F
-                        viewBinding!!.imageViewIconClose.scaleY = 1F
+                        viewBinding.imageViewIconClose.scaleX = 1F
+                        viewBinding.imageViewIconClose.scaleY = 1F
                     }
                 })
         }

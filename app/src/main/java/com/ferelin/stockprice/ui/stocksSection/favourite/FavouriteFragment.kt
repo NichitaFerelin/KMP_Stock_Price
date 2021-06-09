@@ -21,10 +21,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,10 +30,8 @@ import kotlinx.coroutines.withContext
 class FavouriteFragment :
     BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel, FavouriteViewController>() {
 
-    override val mViewController: FavouriteViewController = FavouriteViewController()
-    override val mViewModel: FavouriteViewModel by viewModels {
-        DataViewModelFactory(CoroutineContextProvider(), mDataInteractor)
-    }
+    override val mViewController = FavouriteViewController()
+    override val mViewModel: FavouriteViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
         get() = FragmentFavouriteBinding::inflate
@@ -51,14 +47,24 @@ class FavouriteFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            collectEventOnNewItem()
+            launch { collectStateFavouriteCompanies() }
+            launch { collectSharedCompaniesUpdates() }
         }
     }
 
-    private suspend fun collectEventOnNewItem() {
-        mViewModel.eventOnNewItem.collect {
+    private suspend fun collectStateFavouriteCompanies() {
+        mViewModel.stateFavouriteCompanies.collect {
             withContext(mCoroutineContext.Main) {
-                mViewController.onNewItem()
+                mViewController.onFavouriteCompaniesUpdated(it)
+            }
+
+        }
+    }
+
+    private suspend fun collectSharedCompaniesUpdates() {
+        mViewModel.sharedCompaniesUpdates.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onCompanyRemovedOrAdded(notificator)
             }
         }
     }

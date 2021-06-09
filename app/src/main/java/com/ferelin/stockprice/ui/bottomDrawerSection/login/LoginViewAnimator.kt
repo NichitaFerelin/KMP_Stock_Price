@@ -26,6 +26,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.AnimatorManager
+import com.ferelin.stockprice.utils.invalidate
 
 class LoginViewAnimator : BaseViewAnimator() {
 
@@ -45,19 +46,11 @@ class LoginViewAnimator : BaseViewAnimator() {
     }
 
     override fun invalidateAnimations() {
-        mSlideToBottomFadeIn.cancel()
-
-        mSlideToTopFadeOut.setAnimationListener(null)
-        mSlideToTopFadeOut.cancel()
-
-        mScaleInOut.removeAllListeners()
-        mScaleInOut.cancel()
-
-        mScaleIn.setAnimationListener(null)
-        mScaleIn.cancel()
-
-        mScaleOut.setAnimationListener(null)
-        mScaleOut.cancel()
+        mSlideToBottomFadeIn.invalidate()
+        mSlideToTopFadeOut.invalidate()
+        mScaleInOut.invalidate()
+        mScaleIn.invalidate()
+        mScaleOut.invalidate()
     }
 
     fun runSlideToBottomFadeIn(target: View) {

@@ -16,10 +16,13 @@
 
 package com.ferelin.stockprice.common.menu
 
+/**
+ * Items in the bottom menu that can be installed in it.
+ * */
 sealed class MenuItemType {
-    object LogIn: MenuItemType()
-    object LogOut: MenuItemType()
-    object Notes: MenuItemType()
-    object Messages: MenuItemType()
-    object Settings: MenuItemType()
+    object LogIn : MenuItemType()
+    object LogOut : MenuItemType()
+    object Notes : MenuItemType()
+    object Messages : MenuItemType()
+    object Settings : MenuItemType()
 }

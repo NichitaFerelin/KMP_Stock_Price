@@ -42,7 +42,8 @@ class SynchronizationManager @Inject constructor(
     private val mCoroutineContextProvider: CoroutineContextProvider,
     private val mCompaniesSyncHelper: CompaniesSyncHelper,
     private val mSearchRequestsSyncHelper: SearchRequestsSyncHelper,
-    private val mRepositoryManager: RepositoryManagerHelper
+    private val mRepositoryManager: RepositoryManagerHelper,
+    private val mAppScope: CoroutineScope
 ) {
 
     /*
@@ -120,19 +121,21 @@ class SynchronizationManager @Inject constructor(
         mCompaniesSyncHelper.prepareForSync(userId, syncMode)
         mSearchRequestsSyncHelper.prepareToSync(userId, syncMode)
 
-        mSyncJob = CoroutineScope(mCoroutineContextProvider.IO).launch {
-            collectCompaniesIds(this, userId)
-            collectSearchRequests(this, userId)
+        mAppScope.launch {
+            mSyncJob = launch {
+                collectCompaniesIds(this, userId)
+                collectSearchRequests(this, userId)
 
-            launch {
-                /*
-                * Waits while synchronization will be done and stop all jobs.
-                * */
-                mSearchRequestsSyncJob!!.join()
-                mCompaniesSyncJob!!.join()
-                if (isActive) {
-                    invalidateSynchronization()
-                    mIsDataSynchronized = true
+                launch {
+                    /*
+                    * Waits while synchronization will be done and stop all jobs.
+                    * */
+                    mSearchRequestsSyncJob!!.join()
+                    mCompaniesSyncJob!!.join()
+                    if (isActive) {
+                        invalidateSynchronization()
+                        mIsDataSynchronized = true
+                    }
                 }
             }
         }

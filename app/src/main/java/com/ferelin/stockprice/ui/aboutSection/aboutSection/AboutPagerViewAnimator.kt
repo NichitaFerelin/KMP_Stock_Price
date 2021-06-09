@@ -22,21 +22,22 @@ import android.content.Context
 import android.view.View
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
+import com.ferelin.stockprice.utils.invalidate
 
 class AboutPagerViewAnimator : BaseViewAnimator() {
 
-    private var mScaleInOut: Animator? = null
+    private lateinit var mScaleInOut: Animator
 
     override fun loadAnimations(context: Context) {
         mScaleInOut = AnimatorInflater.loadAnimator(context, R.animator.scale_in_out)
     }
 
     override fun invalidateAnimations() {
-        mScaleInOut?.cancel()
+        mScaleInOut.invalidate()
     }
 
     fun runScaleInOut(target: View) {
-        mScaleInOut?.setTarget(target)
-        mScaleInOut?.start()
+        mScaleInOut.setTarget(target)
+        mScaleInOut.start()
     }
 }

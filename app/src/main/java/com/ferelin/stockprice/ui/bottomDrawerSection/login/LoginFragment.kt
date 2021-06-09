@@ -27,23 +27,19 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import com.ferelin.stockprice.utils.showToast
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginViewController>() {
 
-    override val mViewController: LoginViewController = LoginViewController()
-    override val mViewModel: LoginViewModel by viewModels {
-        DataViewModelFactory(mCoroutineContext, mDataInteractor)
-    }
+    override val mViewController = LoginViewController()
+    override val mViewModel: LoginViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoginBinding
         get() = FragmentLoginBinding::inflate
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy {
+    private val mBottomNavDrawer: BottomDrawerFragment by lazy(LazyThreadSafetyMode.NONE) {
         requireParentFragment() as BottomDrawerFragment
     }
 
@@ -64,7 +60,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     }
 
     private fun setUpListeners() {
-        with(mViewController.viewBinding!!) {
+        with(mViewController.viewBinding) {
             editTextPhone.addTextChangedListener {
                 val phone = it.toString()
                 mViewModel.onPhoneNumberChanged(phone)
@@ -74,7 +70,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
                 setOnClickListener {
                     mViewModel.onSendCodeClicked(
                         requireActivity(),
-                        mViewController.viewBinding!!.editTextPhone.text.toString()
+                        mViewController.viewBinding.editTextPhone.text.toString()
                     )
                     mViewController.onSendCodeClicked()
                 }
@@ -100,13 +96,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     }
 
     private suspend fun collectCodeSentState() {
-        mViewModel.stateCodeSent
-            .filter { it }
-            .collect {
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onCodeSent()
-                }
+        mViewModel.stateCodeSent.collect { isCodeSent ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onCodeSentStateChanged(isCodeSent)
             }
+        }
     }
 
     private suspend fun collectLoadingState() {
@@ -118,9 +112,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     }
 
     private suspend fun collectErrorState() {
-        mViewModel.eventError.collect {
+        mViewModel.eventError.collect { error ->
             withContext(mCoroutineContext.Main) {
-                showToast(requireContext(), it)
+                mViewController.onError(error)
             }
         }
     }

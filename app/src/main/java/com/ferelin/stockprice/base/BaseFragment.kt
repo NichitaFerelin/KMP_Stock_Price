@@ -16,28 +16,24 @@ package com.ferelin.stockprice.base
  * limitations under the License.
  */
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.ui.MainActivity
+import com.ferelin.stockprice.App
 
 /**
  * [BaseFragment] is the fundament for fragments.
  *
- *  In the architecture of this application, the inheritors of this
- *  class have very simple logic, which consists of setting listeners
- *  on the view and notifying about clicking in other components
- *  such a [BaseViewModel] or [BaseViewController].
+ * [BaseFragment] represent a Fragment with minimal logic(usually it is
+ * only 'setOnClickListeners' or collecting view model states logic.
+ * Listeners notifies about click to [BaseViewController] or [BaseViewModel])
  *
  *
- *  All view UI logic is delegated to [BaseViewController].
+ *  All UI logic is delegated to [BaseViewController].
  *
  *  All logic about getting data to display is delegated to [BaseViewModel].
  *
@@ -47,29 +43,29 @@ import com.ferelin.stockprice.ui.MainActivity
  *   2. ViewModel sends a request to the network for data.
  *   3. ViewModel updates the state of data.
  *   4. Fragment receives data and sends it to ViewController.
- *   5. ViewController display data with animations or whatever.
- *
+ *   5. ViewController displays data with animations or whatever.
  */
 abstract class BaseFragment<
         ViewBindingType : ViewBinding,
-        out ViewModelType : BaseViewModel,
-        out ViewControllerType : BaseViewController<BaseViewAnimator, ViewBindingType>>(
-    protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
-) : Fragment() {
+        ViewModelType : BaseViewModel,
+        ViewControllerType : BaseViewController<BaseViewAnimator, ViewBindingType>> :
+    Fragment() {
 
-    protected abstract val mViewModel: ViewModelType
     protected abstract val mViewController: ViewControllerType
-    protected lateinit var mDataInteractor: DataInteractor
+    protected abstract val mViewModel: ViewModelType
 
+    protected val mCoroutineContext = CoroutineContextProvider()
+
+    /**
+     * The application uses view binding.
+     * To avoid a lot of repetitive code, view inflates in the base class. For such an
+     * implementation, need to override this variable in the subclass.
+     * */
     abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mDataInteractor = (activity as MainActivity).dataInteractor
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectDependencies()
         mViewController.onCreateFragment(this)
     }
 
@@ -79,16 +75,13 @@ abstract class BaseFragment<
         savedInstanceState: Bundle?
     ): View? {
         val viewBinding = mBindingInflater.invoke(inflater, container, false)
-        mViewController.viewBinding = viewBinding
+        mViewController.setViewBinding(viewBinding)
         return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*
-        * Is important to call it before collecting any ViewModel states to avoid threads conflicts.
-        * */
         mViewModel.triggerCreate()
 
         setUpViewComponents(savedInstanceState)
@@ -101,11 +94,7 @@ abstract class BaseFragment<
     }
 
     protected open fun setUpViewComponents(savedInstanceState: Bundle?) {
-        mViewController.onViewCreated(
-            savedInstanceState,
-            this@BaseFragment,
-            viewLifecycleOwner.lifecycleScope
-        )
+        mViewController.onViewCreated(savedInstanceState, this@BaseFragment)
     }
 
     protected open fun initObservers() {
@@ -115,5 +104,12 @@ abstract class BaseFragment<
     override fun onDestroyView() {
         mViewController.onDestroyView()
         super.onDestroyView()
+    }
+
+    private fun injectDependencies() {
+        val application = requireActivity().application
+        if (application is App) {
+            application.appComponent.inject(mViewModel)
+        }
     }
 }

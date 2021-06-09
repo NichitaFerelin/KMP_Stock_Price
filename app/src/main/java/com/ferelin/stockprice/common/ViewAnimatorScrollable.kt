@@ -22,18 +22,16 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
+import com.ferelin.stockprice.utils.invalidate
 
 /**
- * [ViewAnimatorScrollable] providing default Fade, ScaleOut animations
- *  - @property: [mFadeOut]
- *  - @property: [mFadeIn]
- *  - @property: [mScaleOut]
+ * [ViewAnimatorScrollable] provides default Fade IN/OUT, ScaleOut animations
  */
 open class ViewAnimatorScrollable : BaseViewAnimator() {
 
-    private var mFadeOut: Animation? = null
-    private var mFadeIn: Animation? = null
-    private var mScaleOut: Animation? = null
+    private lateinit var mFadeOut: Animation
+    private lateinit var mFadeIn: Animation
+    private lateinit var mScaleOut: Animation
 
     override fun loadAnimations(context: Context) {
         mFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
@@ -42,28 +40,23 @@ open class ViewAnimatorScrollable : BaseViewAnimator() {
     }
 
     override fun invalidateAnimations() {
-        mFadeOut?.setAnimationListener(null)
-        mFadeOut?.cancel()
-
-        mFadeIn?.setAnimationListener(null)
-        mFadeIn?.cancel()
-
-        mScaleOut?.setAnimationListener(null)
-        mScaleOut?.cancel()
+        mFadeOut.invalidate()
+        mFadeIn.invalidate()
+        mScaleOut.invalidate()
     }
 
     fun runFadeInAnimation(target: View, listener: Animation.AnimationListener? = null) {
-        mFadeIn?.setAnimationListener(listener)
+        mFadeIn.setAnimationListener(listener)
         target.startAnimation(mFadeIn)
     }
 
     fun runFadeOutAnimation(target: View, listener: Animation.AnimationListener? = null) {
-        mFadeOut?.setAnimationListener(listener)
+        mFadeOut.setAnimationListener(listener)
         target.startAnimation(mFadeOut)
     }
 
     fun runScaleOutAnimation(target: View, listener: Animation.AnimationListener? = null) {
-        mScaleOut?.setAnimationListener(listener)
+        mScaleOut.setAnimationListener(listener)
         target.startAnimation(mScaleOut)
     }
 }

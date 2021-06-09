@@ -23,7 +23,6 @@ import android.net.NetworkRequest
 import androidx.room.Room
 import com.ferelin.local.database.CompaniesDatabase
 import com.ferelin.repository.RepositoryManagerHelper
-import com.ferelin.shared.CoroutineContextProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -53,12 +52,6 @@ class DataInteractorModule {
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideCoroutineContext(): CoroutineContextProvider {
-        return CoroutineContextProvider()
     }
 
     @Provides

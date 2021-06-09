@@ -16,14 +16,9 @@ package com.ferelin.stockprice.ui.stocksSection.stocksPager
  * limitations under the License.
  */
 
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 
-class StocksPagerViewModel(
-    contextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseViewModel(contextProvider, dataInteractor) {
+class StocksPagerViewModel : BaseViewModel() {
 
     var arrowState: Float = 0F
 

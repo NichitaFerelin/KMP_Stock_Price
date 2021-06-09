@@ -19,32 +19,19 @@ package com.ferelin.stockprice.ui.aboutSection.chart
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.custom.utils.Marker
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ChartViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor,
-    selectedCompany: AdaptiveCompany?
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
-
-    private val mSelectedCompany: AdaptiveCompany? = selectedCompany
-
-    val isHistoryEmpty: Boolean
-        get() = mSelectedCompany?.companyHistory?.datePrices?.isEmpty() ?: true
+class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
     /*
     * There are different modes of displaying data.
-    * For each of them, need to convert the data. This is the original list that can be used for this.
+    * For each of them, need to convert the data. This is the original list that can be used for it.
     */
     private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null
-
-    private val mStateIsNetworkResponded = MutableStateFlow(false)
 
     private val mStateStockHistory = MutableStateFlow<AdaptiveCompanyHistoryForChart?>(null)
     val stateStockHistory: StateFlow<AdaptiveCompanyHistoryForChart?>
@@ -54,50 +41,44 @@ class ChartViewModel(
     val stateIsDataLoading: StateFlow<Boolean>
         get() = mStateIsDataLoading
 
-    private val mEventOnDayDataChanged = MutableSharedFlow<Unit>(1)
-    val eventOnDayDataChanged: SharedFlow<Unit>
-        get() = mEventOnDayDataChanged
+    private var mIsNetworkResponded = false
 
-    private var mChartViewMode: ChartViewMode = ChartViewMode.All
-    val chartViewMode: ChartViewMode
-        get() = mChartViewMode
+    val eventOnDayDataChanged: Flow<DataNotificator<AdaptiveCompany>>
+        get() = mDataInteractor.sharedCompaniesUpdates.filter { filterSharedUpdate(it) }
 
-    private var mClickedMarker: Marker? = null
-    val clickedMarker: Marker?
-        get() = mClickedMarker
+    var chartViewMode: ChartViewMode = ChartViewMode.All
+    var lastClickedMarker: Marker? = null
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadStockCandlesError
 
     val stockPrice: String
-        get() = mSelectedCompany?.companyDayData?.currentPrice ?: ""
+        get() = selectedCompany.companyDayData.currentPrice
 
     val dayProfit: String
-        get() = mSelectedCompany?.companyDayData?.profit ?: ""
+        get() = selectedCompany.companyDayData.profit
 
     val profitBackgroundResource: Int
-        get() = mSelectedCompany?.companyStyle?.dayProfitBackground ?: 0
+        get() = selectedCompany.companyStyle.dayProfitBackground
+
+    val isHistoryEmpty: Boolean
+        get() = selectedCompany.companyHistory.datePrices.isEmpty()
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            prepareData()
-            launch { collectStateNetworkAvailable() }
-            launch { collectSharedCompaniesUpdates() }
+            prepareChart()
+            collectStateNetworkAvailable()
         }
     }
 
-    fun onChartClicked(marker: Marker) {
-        mClickedMarker = marker
-    }
-
     fun onChartControlButtonClicked(selectedViewMode: ChartViewMode) {
-        mClickedMarker = null
-        mChartViewMode = selectedViewMode
+        lastClickedMarker = null
+        chartViewMode = selectedViewMode
         mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedViewMode) }
     }
 
     private suspend fun collectStockCandles() {
-        val selectedCompanySymbol = mSelectedCompany!!.companyProfile.symbol
+        val selectedCompanySymbol = selectedCompany.companyProfile.symbol
         mDataInteractor.loadStockCandles(selectedCompanySymbol).collect { responseCompany ->
             onStockHistoryLoaded(responseCompany)
         }
@@ -107,34 +88,19 @@ class ChartViewModel(
         mDataInteractor.stateIsNetworkAvailable.collect { onNetworkStateChanged(it) }
     }
 
-    private suspend fun collectSharedCompaniesUpdates() {
-        mDataInteractor.sharedCompaniesUpdates
-            .filter { filterSharedUpdate(it) }
-            .collect { mEventOnDayDataChanged.emit(Unit) }
-    }
-
-    private fun prepareData() {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            prepareChart()
-
-            // Trigger view observer to take data from view model
-            mEventOnDayDataChanged.emit(Unit)
-        }
-    }
-
     private fun prepareChart() {
         if (isHistoryEmpty) {
             return
         }
 
         val adaptiveHistory = mDataInteractor.stockHistoryConverter
-            .toCompanyHistoryForChart(mSelectedCompany!!.companyHistory)
+            .toCompanyHistoryForChart(selectedCompany.companyHistory)
         mOriginalStockHistory = adaptiveHistory
         mStateStockHistory.value = adaptiveHistory
     }
 
     private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
-        if (isAvailable && !mStateIsNetworkResponded.value) {
+        if (isAvailable && !mIsNetworkResponded) {
             mStateIsDataLoading.value = true
             collectStockCandles()
         } else mStateIsDataLoading.value = false
@@ -143,7 +109,7 @@ class ChartViewModel(
     private fun onStockHistoryLoaded(company: AdaptiveCompany) {
         val adaptiveHistory = mDataInteractor.stockHistoryConverter
             .toCompanyHistoryForChart(company.companyHistory)
-        mStateIsNetworkResponded.value = true
+        mIsNetworkResponded = true
         mStateIsDataLoading.value = false
 
         if (isNewData(adaptiveHistory)) {
@@ -176,6 +142,6 @@ class ChartViewModel(
         return (notificator is DataNotificator.ItemUpdatedLiveTime
                 || notificator is DataNotificator.ItemUpdatedQuote)
                 && notificator.data != null
-                && notificator.data.companyProfile.symbol == mSelectedCompany?.companyProfile?.symbol
+                && notificator.data.companyProfile.symbol == selectedCompany.companyProfile.symbol
     }
 }

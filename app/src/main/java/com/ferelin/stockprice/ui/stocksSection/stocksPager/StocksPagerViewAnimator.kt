@@ -24,6 +24,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
+import com.ferelin.stockprice.utils.invalidate
 
 class StocksPagerViewAnimator : BaseViewAnimator() {
 
@@ -36,9 +37,8 @@ class StocksPagerViewAnimator : BaseViewAnimator() {
     }
 
     override fun invalidateAnimations() {
-        mScaleInOut.setTarget(null)
-        mScaleInOut.removeAllListeners()
-        mScaleOut.setAnimationListener(null)
+        mScaleInOut.invalidate()
+        mScaleOut.invalidate()
     }
 
     fun runScaleInOut(target: View) {

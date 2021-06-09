@@ -18,19 +18,14 @@ package com.ferelin.stockprice.ui.stocksSection.base
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-abstract class BaseStocksViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+abstract class BaseStocksViewModel : BaseViewModel() {
 
     protected val mStocksRecyclerAdapter = StocksRecyclerAdapter().apply {
         setHasStableIds(true)
@@ -49,7 +44,7 @@ abstract class BaseStocksViewModel(
     }
 
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
-        viewModelScope.launch(mCoroutineContext.IO) {
+        mAppScope.launch {
             if (company.isFavourite) {
                 mDataInteractor.removeCompanyFromFavourite(company)
             } else mDataInteractor.addCompanyToFavourite(company)

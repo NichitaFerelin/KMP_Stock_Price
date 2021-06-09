@@ -24,8 +24,8 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.transition.TransitionManager
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
@@ -35,8 +35,7 @@ import com.ferelin.stockprice.databinding.FragmentChartBinding
 import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.utils.showToast
 
-class ChartViewController :
-    BaseViewController<ChartViewAnimator, FragmentChartBinding>(), ChartControlHelper {
+class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartBinding>() {
 
     override val mViewAnimator: ChartViewAnimator = ChartViewAnimator()
 
@@ -44,13 +43,9 @@ class ChartViewController :
     private var mSelectedCard: CardView? = null
     private var mSelectedText: TextView? = null
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
-        saveSelectedViews(viewBinding!!.cardViewAll, viewBinding!!.textViewAll)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
+        saveSelectedViews(viewBinding.cardViewAll, viewBinding.textViewAll)
     }
 
     override fun onDestroyView() {
@@ -62,11 +57,18 @@ class ChartViewController :
     fun setArgumentsViewDependsOn(
         isHistoryForChartEmpty: Boolean,
         lastChartViewMode: ChartViewMode,
-        lastClickedMarker: Marker?
+        lastClickedMarker: Marker?,
+        selectedCompany: AdaptiveCompany
     ) {
-        if (isHistoryForChartEmpty) viewBinding!!.groupChartWidgets.visibility = View.GONE
+        if (isHistoryForChartEmpty) viewBinding.groupChartWidgets.visibility = View.GONE
         lastClickedMarker?.let { restoreChartState(it) }
         restoreSelectedViewMode(lastChartViewMode)
+        onDayDataChanged(
+            currentPrice = selectedCompany.companyDayData.currentPrice,
+            dayProfit = selectedCompany.companyDayData.profit,
+            profitBackgroundResource = selectedCompany.companyStyle.dayProfitBackground,
+            hintBuyFor = context.resources.getString(R.string.hintBuyFor)
+        )
     }
 
     fun onChartClicked(previousClickedMarker: Marker?, newClickedMarker: Marker) {
@@ -89,12 +91,12 @@ class ChartViewController :
             return
         }
 
-        val cardViewMode = getCardAttachedViewMode(viewBinding!!, card)
+        val cardViewMode = getCardAttachedViewMode(card)
         onNewCardClicked.invoke(cardViewMode)
 
         hideSuggestion()
 
-        val attachedTextView = getCardAttachedTextView(viewBinding!!, card)
+        val attachedTextView = getCardAttachedTextView(card)
         applySelectedStyle(card, attachedTextView)
         applyDefaultStyle(mSelectedCard!!, mSelectedText!!)
         saveSelectedViews(card, attachedTextView)
@@ -109,10 +111,10 @@ class ChartViewController :
         hintBuyFor: String
     ) {
         mViewAnimator.runScaleInOut(
-            target = viewBinding!!.textViewCurrentPrice,
+            target = viewBinding.textViewCurrentPrice,
             callback = object : AnimatorManager() {
                 override fun onAnimationStart(animation: Animator?) {
-                    viewBinding!!.apply {
+                    viewBinding.run {
                         textViewCurrentPrice.text = currentPrice
                         textViewBuyPrice.text = String.format(hintBuyFor, currentPrice)
                         textViewDayProfit.text = dayProfit
@@ -124,7 +126,7 @@ class ChartViewController :
 
     fun onStockHistoryChanged(history: AdaptiveCompanyHistoryForChart) {
         if (history.isNotEmpty()) {
-            viewBinding!!.chartView.setData(history)
+            viewBinding.chartView.setData(history)
             showChart()
             hideProgressBar()
         }
@@ -140,15 +142,15 @@ class ChartViewController :
     }
 
     private fun showChart() {
-        if (viewBinding!!.groupChartWidgets.visibility != View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(viewBinding!!.root)
-            viewBinding!!.groupChartWidgets.visibility = View.VISIBLE
+        if (viewBinding.groupChartWidgets.visibility != View.VISIBLE) {
+            TransitionManager.beginDelayedTransition(viewBinding.root)
+            viewBinding.groupChartWidgets.visibility = View.VISIBLE
         }
     }
 
     private fun updateSuggestionText(marker: Marker) {
-        viewBinding!!.includeSuggestion.textViewDate.text = marker.date
-        viewBinding!!.includeSuggestion.textViewPrice.text = marker.priceStr
+        viewBinding.includeSuggestion.textViewDate.text = marker.date
+        viewBinding.includeSuggestion.textViewPrice.text = marker.priceStr
     }
 
     private fun restoreSelectedViewMode(lastSelectedChartViewMode: ChartViewMode) {
@@ -157,25 +159,22 @@ class ChartViewController :
             return
         }
 
-        val (restoredCardView, restoredTextView) = getAttachedViewsByMode(
-            viewBinding!!,
-            lastSelectedChartViewMode
-        )
-        applyDefaultStyle(viewBinding!!.cardViewAll, viewBinding!!.textViewAll)
+        val (restoredCardView, restoredTextView) = getAttachedViewsByMode(lastSelectedChartViewMode)
+        applyDefaultStyle(viewBinding.cardViewAll, viewBinding.textViewAll)
         applySelectedStyle(restoredCardView as CardView, restoredTextView as TextView)
         saveSelectedViews(restoredCardView, restoredTextView)
     }
 
     private fun restoreChartState(lastClickedMarker: Marker) {
-        viewBinding!!.chartView.addOnChartPreparedListener {
-            viewBinding!!.chartView.restoreMarker(lastClickedMarker)?.let { restoredMarker ->
+        viewBinding.chartView.addOnChartPreparedListener {
+            viewBinding.chartView.restoreMarker(lastClickedMarker)?.let { restoredMarker ->
                 onChartClicked(null, restoredMarker)
             }
         }
     }
 
     private fun changeSuggestionCoordinates(marker: Marker) {
-        with(viewBinding!!) {
+        with(viewBinding) {
             mSuggestionControl.applyCoordinatesChanges(
                 rootSuggestionView = includeSuggestion.root,
                 pointView = point,
@@ -193,22 +192,22 @@ class ChartViewController :
     }
 
     private fun showSuggestion() {
-        mViewAnimator.runFadeIn(viewBinding!!.includeSuggestion.root, viewBinding!!.point)
+        mViewAnimator.runFadeIn(viewBinding.includeSuggestion.root, viewBinding.point)
     }
 
     private fun hideSuggestion() {
-        mViewAnimator.runFadeOut(viewBinding!!.includeSuggestion.root, viewBinding!!.point)
+        mViewAnimator.runFadeOut(viewBinding.includeSuggestion.root, viewBinding.point)
     }
 
     private fun showProgressBar() {
-        if (viewBinding!!.progressBar.visibility != View.VISIBLE) {
-            viewBinding!!.progressBar.visibility = View.VISIBLE
+        if (viewBinding.progressBar.visibility != View.VISIBLE) {
+            viewBinding.progressBar.visibility = View.VISIBLE
         }
     }
 
     private fun hideProgressBar() {
-        if (viewBinding!!.progressBar.visibility != View.GONE) {
-            viewBinding!!.progressBar.visibility = View.GONE
+        if (viewBinding.progressBar.visibility != View.GONE) {
+            viewBinding.progressBar.visibility = View.GONE
         }
     }
 
@@ -220,5 +219,46 @@ class ChartViewController :
     private fun applyDefaultStyle(card: CardView, attachedTextView: TextView) {
         card.setCardBackgroundColor(ContextCompat.getColor(card.context, R.color.whiteDark))
         attachedTextView.setTextColor(ContextCompat.getColor(card.context, R.color.black))
+    }
+
+    private fun getAttachedViewsByMode(mode: ChartViewMode): Array<View> {
+        with(viewBinding) {
+            return when (mode) {
+                is ChartViewMode.Year -> arrayOf(cardViewYear, textViewYear)
+                is ChartViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
+                is ChartViewMode.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
+                is ChartViewMode.Days -> arrayOf(cardViewDay, textViewDays)
+                is ChartViewMode.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
+                is ChartViewMode.All -> arrayOf(cardViewAll, textViewAll)
+            }
+        }
+    }
+
+    private fun getCardAttachedViewMode(card: CardView): ChartViewMode {
+        with(viewBinding) {
+            return when (card) {
+                cardViewDay -> ChartViewMode.Days
+                cardViewWeek -> ChartViewMode.Weeks
+                cardViewMonth -> ChartViewMode.Months
+                cardViewHalfYear -> ChartViewMode.SixMonths
+                cardViewYear -> ChartViewMode.Year
+                cardViewAll -> ChartViewMode.All
+                else -> throw IllegalStateException("Unexpected card view: $card")
+            }
+        }
+    }
+
+    private fun getCardAttachedTextView(card: CardView): TextView {
+        with(viewBinding) {
+            return when (card) {
+                cardViewDay -> textViewDays
+                cardViewWeek -> textViewWeeks
+                cardViewMonth -> textViewMonths
+                cardViewHalfYear -> textViewSixMonths
+                cardViewYear -> textViewYear
+                cardViewAll -> textViewAll
+                else -> throw IllegalStateException("Unexpected card view: $card")
+            }
+        }
     }
 }

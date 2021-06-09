@@ -23,15 +23,17 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
 import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
-import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * [BaseStocksFragment] provides base logic of loading companies updates
+ */
 abstract class BaseStocksFragment<
         ViewBindingType : ViewBinding,
-        out ViewModelType : BaseStocksViewModel,
-        out ViewControllerType : BaseStocksViewController<ViewBindingType>>
+        ViewModelType : BaseStocksViewModel,
+        ViewControllerType : BaseStocksViewController<ViewBindingType>>
     : BaseFragment<ViewBindingType, ViewModelType, ViewControllerType>(), StockClickListener {
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
@@ -42,13 +44,12 @@ abstract class BaseStocksFragment<
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectEventCompanyChanged() }
-            launch { collectEventOnFabClicked() }
+            collectEventCompanyChanged()
         }
     }
 
     override fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
-        mViewController.onStockClicked(this, stockViewHolder, company)
+        mViewController.onStockClicked(stockViewHolder, company)
     }
 
     override fun onFavouriteIconClicked(company: AdaptiveCompany) {
@@ -67,23 +68,14 @@ abstract class BaseStocksFragment<
         )
     }
 
+    fun onFabClicked() {
+        mViewController.onFabClicked()
+    }
+
     private suspend fun collectEventCompanyChanged() {
         mViewModel.eventCompanyChanged.collect { notificator ->
             withContext(mCoroutineContext.Main) {
                 mViewController.onCompanyChanged(notificator)
-            }
-        }
-    }
-
-    /*
-    * Is available only for stockPagerFragment child
-    * */
-    private suspend fun collectEventOnFabClicked() {
-        if (parentFragment is StocksPagerFragment) {
-            (parentFragment as StocksPagerFragment).eventOnFabClicked.collect {
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onFabClicked()
-                }
             }
         }
     }

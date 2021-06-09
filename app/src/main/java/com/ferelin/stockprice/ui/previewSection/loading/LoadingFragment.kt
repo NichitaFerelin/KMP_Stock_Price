@@ -22,17 +22,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoadingBinding
-import com.ferelin.stockprice.viewModelFactories.DataViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LoadingFragment :
     BaseFragment<FragmentLoadingBinding, LoadingViewModel, LoadingViewController>() {
 
-    override val mViewController: LoadingViewController = LoadingViewController()
-    override val mViewModel: LoadingViewModel by viewModels {
-        DataViewModelFactory(mCoroutineContext, mDataInteractor)
-    }
+    override val mViewController = LoadingViewController()
+    override val mViewModel: LoadingViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoadingBinding
         get() = FragmentLoadingBinding::inflate

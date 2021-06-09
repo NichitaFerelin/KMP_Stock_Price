@@ -18,17 +18,20 @@ package com.ferelin.stockprice.ui.stocksSection.favourite
 
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewAnimator
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.NULL_INDEX
 
 class FavouriteViewController : BaseStocksViewController<FragmentFavouriteBinding>() {
 
     override val mViewAnimator: BaseStocksViewAnimator = BaseStocksViewAnimator()
 
     override val mStocksRecyclerView: RecyclerView
-        get() = viewBinding!!.recyclerViewFavourites
+        get() = viewBinding.recyclerViewFavourites
 
     override fun onDestroyView() {
         postponeReferencesRemove {
@@ -37,15 +40,36 @@ class FavouriteViewController : BaseStocksViewController<FragmentFavouriteBindin
         }
     }
 
-    fun onNewItem() {
-        mStocksRecyclerView.scrollToPosition(0)
-    }
-
     fun setArgumentsViewDependsOn(
         stocksRecyclerAdapter: StocksRecyclerAdapter,
         fragmentManager: FragmentManager
     ) {
         super.fragmentManager = fragmentManager
         mStocksRecyclerView.adapter = stocksRecyclerAdapter
+    }
+
+    fun onFavouriteCompaniesUpdated(notificator: DataNotificator<ArrayList<AdaptiveCompany>>) {
+        val recyclerViewAdapter = mStocksRecyclerView.adapter
+        if (recyclerViewAdapter is StocksRecyclerAdapter) {
+            recyclerViewAdapter.setCompanies(notificator.data!!)
+        }
+    }
+
+    fun onCompanyRemovedOrAdded(notificator: DataNotificator<AdaptiveCompany>) {
+        notificator.data?.let {
+            when (notificator) {
+                is DataNotificator.NewItemAdded -> {
+                    mStocksRecyclerAdapter.addCompany(notificator.data)
+                    mStocksRecyclerView.scrollToPosition(0)
+                }
+                is DataNotificator.ItemRemoved -> {
+                    val index = mStocksRecyclerAdapter.companies.indexOf(notificator.data)
+                    if (index != NULL_INDEX) {
+                        mStocksRecyclerAdapter.removeCompany(index)
+                    }
+                }
+                else -> Unit
+            }
+        }
     }
 }

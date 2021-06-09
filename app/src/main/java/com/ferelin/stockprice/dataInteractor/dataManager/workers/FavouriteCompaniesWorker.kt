@@ -138,20 +138,20 @@ class FavouriteCompaniesWorker @Inject constructor(
     private fun applyChangesToRemovedFavouriteCompany(company: AdaptiveCompany) {
         company.apply {
             isFavourite = false
-            companyStyle.favouriteDefaultIconResource =
-                mStylesProvider.getDefaultIconDrawable(isFavourite)
-            companyStyle.favouriteSingleIconResource =
-                mStylesProvider.getSingleIconDrawable(isFavourite)
+            companyStyle.favouriteBackgroundIconResource =
+                mStylesProvider.getBackgroundIconDrawable(isFavourite)
+            companyStyle.favouriteForegroundIconResource =
+                mStylesProvider.getForegroundIconDrawable(isFavourite)
         }
     }
 
     private fun applyChangesToAddedFavouriteCompany(company: AdaptiveCompany) {
         company.apply {
             isFavourite = true
-            companyStyle.favouriteDefaultIconResource =
-                mStylesProvider.getDefaultIconDrawable(isFavourite)
-            companyStyle.favouriteSingleIconResource =
-                mStylesProvider.getSingleIconDrawable(isFavourite)
+            companyStyle.favouriteBackgroundIconResource =
+                mStylesProvider.getBackgroundIconDrawable(isFavourite)
+            companyStyle.favouriteForegroundIconResource =
+                mStylesProvider.getForegroundIconDrawable(isFavourite)
 
             val orderIndex = mFavouriteCompanies.firstOrNull()?.favouriteOrderIndex?.plus(1) ?: 0
             favouriteOrderIndex = orderIndex

@@ -19,6 +19,9 @@ package com.ferelin.stockprice.utils.bottomDrawer
 import android.view.View
 import androidx.annotation.FloatRange
 
+/**
+ * [OnSlideAction] provides method to control bottom sheet view
+ * */
 interface OnSlideAction {
     fun onSlide(
         sheet: View,

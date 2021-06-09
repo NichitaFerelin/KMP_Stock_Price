@@ -24,9 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
@@ -36,93 +34,79 @@ import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
-import kotlinx.coroutines.launch
 
-/*
-* App navigator
-* */
+/**
+ * [Navigator] represents a class that provides ability to navigate between fragments.
+ */
 object Navigator {
 
-    private val coroutineContextProvider: CoroutineContextProvider = CoroutineContextProvider()
+    private const val sStackNameMain = "main-stack"
+    private const val sStackNameBottomDrawer = "bottom-stack"
 
-    private const val stackMain = "main-stack"
-    private const val stackBottomDrawer = "bottom-stack"
-
-    fun navigateToLoadingFragment(activity: MainActivity) {
-        activity.lifecycleScope.launch(coroutineContextProvider.IO) {
-            if (activity.supportFragmentManager.fragments.isEmpty()) {
-                activity.supportFragmentManager.commit {
+    fun navigateToLoadingFragment(currentActivity: MainActivity) {
+        currentActivity.run {
+            if (currentActivity.supportFragmentManager.fragments.isEmpty()) {
+                supportFragmentManager.commit {
                     add(R.id.fragmentContainer, LoadingFragment())
                 }
             }
         }
     }
 
-    fun navigateToWelcomeFragment(fragment: Fragment) {
-        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
-            fragment.parentFragmentManager.commit {
-                replace(R.id.fragmentContainer, WelcomeFragment())
-            }
+    fun navigateToWelcomeFragment(currentFragment: Fragment) {
+        currentFragment.parentFragmentManager.commit {
+            replace(R.id.fragmentContainer, WelcomeFragment())
         }
     }
 
-    fun navigateToStocksPagerFragment(fragment: Fragment) {
-        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
-            fragment.parentFragmentManager.commit {
-                replace(R.id.fragmentContainer, StocksPagerFragment())
-            }
+    fun navigateToStocksPagerFragment(currentFragment: Fragment) {
+        currentFragment.parentFragmentManager.commit {
+            replace(R.id.fragmentContainer, StocksPagerFragment())
         }
     }
 
     fun navigateToSearchFragment(
-        fragment: Fragment,
+        currentFragment: Fragment,
         onCommit: ((FragmentTransaction) -> Unit)? = null
     ) {
-        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
-            fragment.parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, SearchFragment())
-                addToBackStack(stackMain)
-                onCommit?.invoke(this)
-            }
+        currentFragment.parentFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.fragmentContainer, SearchFragment())
+            addToBackStack(sStackNameMain)
+            onCommit?.invoke(this)
         }
     }
 
     fun navigateToAboutPagerFragment(
-        fragment: Fragment,
-        company: AdaptiveCompany,
+        selectedCompany: AdaptiveCompany,
         fragmentManager: FragmentManager,
         onCommit: ((FragmentTransaction) -> Unit)? = null
     ) {
-        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
-            fragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.fragmentContainer, AboutPagerFragment(company))
-                addToBackStack(stackMain)
-                onCommit?.invoke(this)
-            }
-        }
-    }
-
-    fun navigateToMenuFragment(fragmentManager: FragmentManager) {
         fragmentManager.commit {
-            replace(R.id.containerBottom, MenuFragment())
-            addToBackStack(stackBottomDrawer)
+            setReorderingAllowed(true)
+            replace(R.id.fragmentContainer, AboutPagerFragment(selectedCompany))
+            addToBackStack(sStackNameMain)
+            onCommit?.invoke(this)
         }
     }
 
-    fun navigateToLoginFragment(fragment: Fragment, fragmentManager: FragmentManager) {
-        fragment.viewLifecycleOwner.lifecycleScope.launch(coroutineContextProvider.IO) {
-            fragmentManager.commit {
-                setCustomAnimations(
-                    R.anim.slide_right,
-                    R.anim.slide_left,
-                    R.anim.slide_right,
-                    R.anim.slide_left
-                )
-                replace(R.id.containerBottom, LoginFragment())
-                addToBackStack(stackBottomDrawer)
-            }
+    fun navigateToMenuFragment(currentFragment: Fragment) {
+        currentFragment.childFragmentManager.commit {
+            replace(R.id.containerBottom, MenuFragment())
+            addToBackStack(sStackNameBottomDrawer)
+        }
+    }
+
+    fun navigateToLoginFragment(currentFragment: Fragment) {
+        currentFragment.parentFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_right,
+                R.anim.slide_left,
+                R.anim.slide_right,
+                R.anim.slide_left
+            )
+            replace(R.id.containerBottom, LoginFragment())
+            addToBackStack(sStackNameBottomDrawer)
         }
     }
 

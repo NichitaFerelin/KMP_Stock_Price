@@ -24,7 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 
 /**
- * [FabBehaviourScrollable] providing the behaviour for FAB that is localed at scrollable view.
+ * [FabBehaviourScrollable] provides the behaviour for FAB that is located at scrollable view.
  * - FAB will hide on the Scroll UP.
  * - FAB will show on the Scroll BOTTOM.
  *

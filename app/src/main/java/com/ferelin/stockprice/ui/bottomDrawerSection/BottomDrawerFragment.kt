@@ -67,7 +67,7 @@ class BottomDrawerFragment : Fragment() {
     ): View {
         mBinding = FragmentBottomDrawerBinding.inflate(inflater, container, false).also {
             if (savedInstanceState == null) {
-                Navigator.navigateToMenuFragment(childFragmentManager)
+                Navigator.navigateToMenuFragment(this)
             }
         }
         return mBinding!!.root

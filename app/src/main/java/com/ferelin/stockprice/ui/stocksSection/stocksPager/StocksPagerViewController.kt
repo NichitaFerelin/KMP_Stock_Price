@@ -22,28 +22,23 @@ import android.view.animation.Animation
 import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.transition.Fade
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteFragment
+import com.ferelin.stockprice.ui.stocksSection.stocks.StocksFragment
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.google.android.material.transition.Hold
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 class StocksPagerViewController :
     BaseViewController<StocksPagerViewAnimator, FragmentStocksPagerBinding>() {
 
     override val mViewAnimator: StocksPagerViewAnimator = StocksPagerViewAnimator()
-    private lateinit var mViewPagerChangeCallback: ViewPager2.OnPageChangeCallback
 
-    private val mEventOnFabClicked = MutableSharedFlow<Unit>()
-    val eventOnFabClicked: SharedFlow<Unit>
-        get() = mEventOnFabClicked
+    private lateinit var mViewPagerChangeCallback: ViewPager2.OnPageChangeCallback
 
     override fun onCreateFragment(fragment: Fragment) {
         super.onCreateFragment(fragment)
@@ -51,42 +46,43 @@ class StocksPagerViewController :
         fragment.enterTransition = Fade(Fade.IN)
     }
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
         postponeTransitions(fragment)
         setUpViewPager()
     }
 
     override fun onDestroyView() {
-        viewBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
+        viewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
         super.onDestroyView()
     }
 
     fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter, arrowState: Float) {
-        viewBinding!!.viewPager.adapter = viewPagerAdapter
-        viewBinding!!.bottomAppBarImageViewArrowUp.rotation = arrowState
+        viewBinding.viewPager.adapter = viewPagerAdapter
+        viewBinding.bottomAppBarImageViewArrowUp.rotation = arrowState
     }
 
-    fun onFabClicked() {
-        mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
-            mEventOnFabClicked.emit(Unit)
+    fun onFabClicked(currentFragment: StocksPagerFragment) {
+        val childFragments = currentFragment.childFragmentManager.fragments
+        val currentChildPosition = viewBinding.viewPager.currentItem
+        when (val currentChildFragment = childFragments.getOrNull(currentChildPosition)) {
+            null -> return
+            is StocksFragment -> currentChildFragment.onFabClicked()
+            is FavouriteFragment -> currentChildFragment.onFabClicked()
         }
+
         hideFab()
     }
 
     fun onHintStocksClicked() {
-        if (viewBinding!!.viewPager.currentItem != 0) {
-            viewBinding!!.viewPager.setCurrentItem(0, true)
+        if (viewBinding.viewPager.currentItem != 0) {
+            viewBinding.viewPager.setCurrentItem(0, true)
         }
     }
 
     fun onHintFavouriteClicked() {
-        if (viewBinding!!.viewPager.currentItem != 1) {
-            viewBinding!!.viewPager.setCurrentItem(1, true)
+        if (viewBinding.viewPager.currentItem != 1) {
+            viewBinding.viewPager.setCurrentItem(1, true)
         }
     }
 
@@ -95,11 +91,11 @@ class StocksPagerViewController :
     }
 
     fun handleOnBackPressed(): Boolean {
-        if (viewBinding!!.viewPager.currentItem == 0) {
+        if (viewBinding.viewPager.currentItem == 0) {
             return false
         }
 
-        viewBinding!!.viewPager.setCurrentItem(0, true)
+        viewBinding.viewPager.setCurrentItem(0, true)
         return true
     }
 
@@ -110,15 +106,15 @@ class StocksPagerViewController :
                 switchTextStyles(position)
             }
         }
-        viewBinding!!.viewPager.registerOnPageChangeCallback(mViewPagerChangeCallback)
+        viewBinding.viewPager.registerOnPageChangeCallback(mViewPagerChangeCallback)
     }
 
     private fun hideFab() {
-        mViewAnimator.runScaleOut(viewBinding!!.fab, object : AnimationManager() {
+        mViewAnimator.runScaleOut(viewBinding.fab, object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
-                viewBinding!!.fab.visibility = View.INVISIBLE
-                viewBinding!!.fab.scaleX = 1.0F
-                viewBinding!!.fab.scaleY = 1.0F
+                viewBinding.fab.visibility = View.INVISIBLE
+                viewBinding.fab.scaleX = 1.0F
+                viewBinding.fab.scaleY = 1.0F
             }
         })
     }
@@ -126,8 +122,8 @@ class StocksPagerViewController :
     private fun navigateToSearchFragment(fragment: Fragment) {
         Navigator.navigateToSearchFragment(fragment) {
             it.addSharedElement(
-                viewBinding!!.toolbar,
-                mContext!!.resources.getString(R.string.transitionSearchFragment)
+                viewBinding.toolbar,
+                context.resources.getString(R.string.transitionSearchFragment)
             )
         }
     }
@@ -142,13 +138,13 @@ class StocksPagerViewController :
 
     private fun switchTextStyles(selectedPosition: Int) {
         if (selectedPosition == 0) {
-            applySelectedStyle(viewBinding!!.textViewHintStocks)
-            applyDefaultStyle(viewBinding!!.textViewHintFavourite)
-            mViewAnimator.runScaleInOut(viewBinding!!.textViewHintStocks)
+            applySelectedStyle(viewBinding.textViewHintStocks)
+            applyDefaultStyle(viewBinding.textViewHintFavourite)
+            mViewAnimator.runScaleInOut(viewBinding.textViewHintStocks)
         } else {
-            applySelectedStyle(viewBinding!!.textViewHintFavourite)
-            applyDefaultStyle(viewBinding!!.textViewHintStocks)
-            mViewAnimator.runScaleInOut(viewBinding!!.textViewHintFavourite)
+            applySelectedStyle(viewBinding.textViewHintFavourite)
+            applyDefaultStyle(viewBinding.textViewHintStocks)
+            mViewAnimator.runScaleInOut(viewBinding.textViewHintFavourite)
         }
     }
 }

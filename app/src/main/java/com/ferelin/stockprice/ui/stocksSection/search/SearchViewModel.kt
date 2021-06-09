@@ -19,8 +19,6 @@ package com.ferelin.stockprice.ui.stocksSection.search
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.filterCompanies
@@ -28,10 +26,7 @@ import com.ferelin.stockprice.utils.withTimer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SearchViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
+class SearchViewModel : BaseStocksViewModel() {
 
     private var mCompanies: ArrayList<AdaptiveCompany>? = null
 
@@ -47,19 +42,18 @@ class SearchViewModel(
     val stateSearchStockResults: StateFlow<ArrayList<AdaptiveCompany>?>
         get() = mStateSearchStockResults
 
-    private val mStateSearchRequests =
-        MutableStateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>?>(null)
     val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>?>
-        get() = mStateSearchRequests
+        get() = mDataInteractor.stateSearchRequests
 
-    private val mStatePopularSearchRequests =
-        MutableStateFlow<ArrayList<AdaptiveSearchRequest>?>(null)
-    val statePopularSearchRequests: StateFlow<ArrayList<AdaptiveSearchRequest>?>
-        get() = mStatePopularSearchRequests
+    val statePopularSearchRequests: Flow<ArrayList<AdaptiveSearchRequest>?>
+        get() = mDataInteractor.statePopularSearchRequests
+            .filter { it.data != null }
+            .take(1)
+            .map { it.data!! }
 
-    private var mSearchRequest = ""
-    val searchRequest: String
-        get() = mSearchRequest
+    private var mLastSearchRequest = ""
+    val lastSearchRequest: String
+        get() = mLastSearchRequest
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadSearchRequestsError
@@ -69,25 +63,23 @@ class SearchViewModel(
     override fun initObserversBlock() {
         super.initObserversBlock()
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectStateCompanies() }
-            launch { collectStateSearchRequests() }
-            launch { collectStatePopularSearchRequests() }
+            collectStateCompanies()
         }
     }
 
     fun onSearchTextChanged(searchText: String) {
-        if (searchText == mSearchRequest) {
+        if (searchText == mLastSearchRequest) {
             return
         }
 
         /*
         * To avoid fast input
         * */
-        withTimer {
+        withTimer(time = 300L) {
             viewModelScope.launch(mCoroutineContext.IO) {
-                mSearchRequest = searchText
+                mLastSearchRequest = searchText
 
-                if (mSearchRequest.isEmpty()) {
+                if (mLastSearchRequest.isEmpty()) {
                     mStateSearchStockResults.value = null
                 } else {
                     val searchResults = search(searchText)
@@ -105,24 +97,16 @@ class SearchViewModel(
             .collect { mCompanies = ArrayList(it.data!!) }
     }
 
-    private suspend fun collectStateSearchRequests() {
-        mDataInteractor.stateSearchRequests.collect { mStateSearchRequests.value = it }
-    }
-
-    private suspend fun collectStatePopularSearchRequests() {
-        mDataInteractor.statePopularSearchRequests
-            .take(1)
-            .collect { mStatePopularSearchRequests.value = it.data!! }
-    }
-
     private suspend fun onNewSearch(searchText: String, resultsSize: Int) {
         if (resultsSize in 1..5) {
-            mDataInteractor.cacheNewSearchRequest(searchText)
+            mAppScope.launch {
+                mDataInteractor.cacheNewSearchRequest(searchText)
+            }
         }
     }
 
     private fun search(searchText: String): MutableList<AdaptiveCompany> {
-        val itemsToSearchIn = if (searchText.length > mSearchRequest.length) {
+        val itemsToSearchIn = if (searchText.length > mLastSearchRequest.length) {
             mStocksRecyclerAdapter.companies
         } else mCompanies
 

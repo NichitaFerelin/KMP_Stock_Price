@@ -21,6 +21,10 @@ import com.ferelin.stockprice.base.BaseViewAnimator
 
 class LoadingViewAnimator : BaseViewAnimator() {
 
-    override fun loadAnimations(context: Context) {}
-    override fun invalidateAnimations() {}
+    override fun loadAnimations(context: Context) {
+        // Do nothing
+    }
+    override fun invalidateAnimations() {
+        // Do nothing
+    }
 }

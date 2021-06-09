@@ -16,9 +16,9 @@ package com.ferelin.stockprice.ui.aboutSection.chart
  * limitations under the License.
  */
 
-/*
-* Charts Tabs
-* */
+/**
+ * [ChartViewMode] represents view-modes of chart that can be
+ */
 sealed class ChartViewMode {
     object All : ChartViewMode()
     object Year : ChartViewMode()

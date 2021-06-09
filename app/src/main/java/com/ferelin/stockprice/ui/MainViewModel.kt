@@ -16,26 +16,16 @@ package com.ferelin.stockprice.ui
  * limitations under the License.
  */
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import com.ferelin.stockprice.base.BaseViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
-class MainViewModel(
-    private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider(),
-    private val mDataInteractor: DataInteractor,
-    mApplication: Application
-) : AndroidViewModel(mApplication) {
+class MainViewModel : BaseViewModel() {
 
     init {
-        initObservers()
+        initObserversBlock()
     }
 
     private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
@@ -71,8 +61,8 @@ class MainViewModel(
 
     private var mPrepareDataJob: Job? = null
 
-    fun initObservers() {
-        viewModelScope.launch(mCoroutineContext.IO) {
+    override fun initObserversBlock() {
+        viewModelScope.launch(Dispatchers.IO) {
             mPrepareDataJob = launch { mDataInteractor.prepareData() }
             launch { collectCompanyUpdatesForObserver() }
         }
@@ -95,7 +85,7 @@ class MainViewModel(
 
     private fun collectObserverCompanyUpdates(target: AdaptiveCompany) {
         mObserverCompanyCollectorJob?.cancel()
-        mObserverCompanyCollectorJob = viewModelScope.launch(mCoroutineContext.IO) {
+        mObserverCompanyCollectorJob = viewModelScope.launch(Dispatchers.IO) {
             mDataInteractor.sharedCompaniesUpdates
                 .filter { it.data == target }
                 .collect {

@@ -20,8 +20,8 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
@@ -30,7 +30,6 @@ import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDialog
-import com.ferelin.stockprice.viewModelFactories.ApplicationViewModelFactory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -40,7 +39,7 @@ class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : AppCompatActivity() {
 
-    private lateinit var mViewModel: MainViewModel
+    private val mViewModel: MainViewModel by viewModels()
 
     private var mMessagesForServiceCollectorJob: Job? = null
 
@@ -48,12 +47,22 @@ class MainActivity(
     lateinit var dataInteractor: DataInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (application as App).appComponent.inject(this)
+        injectDependencies()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setUpComponents()
         initObservers()
         Navigator.navigateToLoadingFragment(this)
+    }
+
+    private fun injectDependencies() {
+        if (application is App) {
+            (application as App).run {
+                appComponent.inject(this@MainActivity)
+                appComponent.inject(mViewModel)
+            }
+        }
     }
 
     override fun onResume() {
@@ -130,9 +139,6 @@ class MainActivity(
     }
 
     private fun setUpComponents() {
-        val factory = ApplicationViewModelFactory(mCoroutineContext, dataInteractor, application)
-        mViewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
-
         setStatusBarColor()
     }
 

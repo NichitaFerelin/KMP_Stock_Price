@@ -20,8 +20,8 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.viewpager2.widget.ViewPager2
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.custom.OrderedTextView
@@ -33,9 +33,10 @@ import com.google.android.material.transition.MaterialContainerTransform
 class AboutPagerViewController :
     BaseViewController<AboutPagerViewAnimator, FragmentAboutPagerBinding>() {
 
-    override val mViewAnimator: AboutPagerViewAnimator = AboutPagerViewAnimator()
+    override val mViewAnimator = AboutPagerViewAnimator()
 
     private var mSelectedTabPagePosition = 0
+
     private val mViewPagerCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -49,27 +50,29 @@ class AboutPagerViewController :
         setUpTransitions(fragment)
     }
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
         postponeTransitions(fragment)
         setUpViewPager()
     }
 
     override fun onDestroyView() {
-        viewBinding!!.viewPager.unregisterOnPageChangeCallback(mViewPagerCallback)
+        viewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerCallback)
         super.onDestroyView()
     }
 
     fun setArgumentsViewDependsOn(
         viewPagerAdapter: AboutPagerAdapter,
-        lastSelectedTabPosition: Int
+        lastSelectedTabPosition: Int,
+        selectedCompany: AdaptiveCompany
     ) {
-        viewBinding!!.viewPager.adapter = viewPagerAdapter
+        viewBinding.viewPager.adapter = viewPagerAdapter
         restoreSelectedTab(lastSelectedTabPosition)
+        onDataChanged(
+            companyName = selectedCompany.companyProfile.name,
+            companySymbol = selectedCompany.companyProfile.symbol,
+            favouriteIconResource = selectedCompany.companyStyle.favouriteForegroundIconResource
+        )
     }
 
     fun onTabClicked(selectedTab: OrderedTextView) {
@@ -79,34 +82,36 @@ class AboutPagerViewController :
 
         val previousTab = getTabByPosition(mSelectedTabPagePosition)
         changeTabStyle(previousTab, selectedTab)
-        viewBinding!!.viewPager.currentItem = selectedTab.orderNumber
+        viewBinding.viewPager.currentItem = selectedTab.orderNumber
         mSelectedTabPagePosition = selectedTab.orderNumber
     }
 
     fun onFavouriteIconClicked() {
-        mViewAnimator.runScaleInOut(viewBinding!!.imageViewStar)
+        mViewAnimator.runScaleInOut(viewBinding.imageViewStar)
     }
 
     fun onDataChanged(companyName: String, companySymbol: String, favouriteIconResource: Int) {
-        viewBinding!!.textViewCompanyName.text = companyName
-        viewBinding!!.textViewCompanySymbol.text = companySymbol
-        viewBinding!!.imageViewStar.setImageResource(favouriteIconResource)
+        viewBinding.run {
+            textViewCompanyName.text = companyName
+            textViewCompanySymbol.text = companySymbol
+            imageViewStar.setImageResource(favouriteIconResource)
+        }
     }
 
     fun onError(text: String) {
-        mContext?.let { showToast(it, text) }
+        showToast(context, text)
     }
 
     fun handleOnBackPressed(): Boolean {
         return if (isNotFirstPageSelected()) {
-            viewBinding!!.viewPager.setCurrentItem(0, true)
+            viewBinding.viewPager.setCurrentItem(0, true)
             true
         } else false
     }
 
     private fun setUpViewPager() {
-        viewBinding!!.viewPager.registerOnPageChangeCallback(mViewPagerCallback)
-        viewBinding!!.viewPager.offscreenPageLimit = 5
+        viewBinding.viewPager.registerOnPageChangeCallback(mViewPagerCallback)
+        viewBinding.viewPager.offscreenPageLimit = 5
     }
 
     private fun changeTabStyle(previousTab: OrderedTextView, newTab: OrderedTextView) {
@@ -126,11 +131,11 @@ class AboutPagerViewController :
 
     private fun getTabByPosition(position: Int): OrderedTextView {
         return when (position) {
-            0 -> viewBinding!!.textViewProfile
-            1 -> viewBinding!!.textViewChart
-            2 -> viewBinding!!.textViewNews
-            3 -> viewBinding!!.textViewForecasts
-            4 -> viewBinding!!.textViewIdeas
+            0 -> viewBinding.textViewProfile
+            1 -> viewBinding.textViewChart
+            2 -> viewBinding.textViewNews
+            3 -> viewBinding.textViewForecasts
+            4 -> viewBinding.textViewIdeas
             else -> throw IllegalStateException("Unexpected tab position: $position")
         }
     }

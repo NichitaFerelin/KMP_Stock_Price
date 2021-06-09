@@ -19,14 +19,25 @@ package com.ferelin.stockprice.base
 import androidx.lifecycle.ViewModel
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
+import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
 /**
- * [BaseViewModel] holds the logic of data loading using [mDataInteractor].
+ * [BaseViewModel] contains all logic for data loading. [mDataInteractor] makes it possible.
  */
-abstract class BaseViewModel(
-    protected val mCoroutineContext: CoroutineContextProvider,
-    protected val mDataInteractor: DataInteractor
-) : ViewModel() {
+abstract class BaseViewModel : ViewModel() {
+
+    /**
+     * Application scope that is not tied to activity/fragment lifecycle
+     * */
+    @Inject
+    protected lateinit var mAppScope: CoroutineScope
+
+    @Inject
+    protected lateinit var mDataInteractor: DataInteractor
+
+    @Inject
+    protected lateinit var mCoroutineContext: CoroutineContextProvider
 
     /*
     * Add your observers here.
@@ -34,7 +45,7 @@ abstract class BaseViewModel(
     protected abstract fun initObserversBlock()
 
     /*
-    * To avoid calling non-final function in init-block.
+    * To avoid calls non-final function in init-block.
     * */
     private var mWasInitialized = false
 
@@ -46,6 +57,6 @@ abstract class BaseViewModel(
     }
 
     fun triggerCreate() {
-        // Do nothing. Used to trigger lazy initialization.
+        // Do nothing. Used to trigger lazy initialization of view model.
     }
 }

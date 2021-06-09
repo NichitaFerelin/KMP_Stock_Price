@@ -18,8 +18,8 @@ package com.ferelin.repository.adaptiveModels
 
 class AdaptiveCompanyStyle(
     var holderBackground: Int = 0,
-    var favouriteDefaultIconResource: Int = 0,
-    var favouriteSingleIconResource: Int = 0,
+    var favouriteBackgroundIconResource: Int = 0,
+    var favouriteForegroundIconResource: Int = 0,
     var dayProfitBackground: Int = 0,
     var rippleForeground: Int = 0
 )

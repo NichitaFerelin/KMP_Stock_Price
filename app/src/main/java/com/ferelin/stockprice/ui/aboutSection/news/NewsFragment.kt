@@ -34,9 +34,9 @@ class NewsFragment(
     selectedCompany: AdaptiveCompany? = null
 ) : BaseFragment<FragmentNewsBinding, NewsViewModel, NewsViewController>(), NewsClickListener {
 
-    override val mViewController: NewsViewController = NewsViewController()
+    override val mViewController = NewsViewController()
     override val mViewModel: NewsViewModel by viewModels {
-        CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
+        CompanyViewModelFactory(selectedCompany)
     }
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentNewsBinding
@@ -62,7 +62,7 @@ class NewsFragment(
     }
 
     private fun setUpClickListeners() {
-        mViewController.viewBinding!!.fab.setOnClickListener {
+        mViewController.viewBinding.fab.setOnClickListener {
             mViewController.onFabClicked()
         }
     }

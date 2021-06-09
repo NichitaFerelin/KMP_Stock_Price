@@ -35,12 +35,9 @@ import kotlin.math.abs
  * For example. class A, with fields:
  *  - Price = 100$, Date = 12.04.18
  *
- * Height / Width(@see [calculatePositions]):
- * - Chart is drawing by building Bezier Points.
+ * - Chart is built by plotting Bezier points.
  * - The width of the chart is calculated by the number of points.
  * - The height of the points is calculated from the average of all input data.
- *
- * [ChartView] providing a public method [findNearestPoint] that returns nearest point by touched coordinates.
  */
 class ChartView @JvmOverloads constructor(
     context: Context,
@@ -66,6 +63,9 @@ class ChartView @JvmOverloads constructor(
     private var mTooManyPoints = false
     private var mTooManyPointsMargin = 0F
 
+    /**
+     * Chart background color as gradient
+     * */
     private val mGradientColors = intArrayOf(
         ContextCompat.getColor(context, R.color.gradientEnd),
         ContextCompat.getColor(context, R.color.gradientStart)
@@ -140,7 +140,10 @@ class ChartView @JvmOverloads constructor(
         if (history.isEmpty()) {
             return
         }
-        
+
+        /**
+         * Converts input history to markers
+         * */
         val newList = mutableListOf<Marker>()
         for (index in history.price.indices) {
             newList.add(
@@ -161,6 +164,7 @@ class ChartView @JvmOverloads constructor(
 
         val startFakePoint = newList.first().price
         val endFakePoint = newList.last().price
+
         // Fake points
         newList.add(0, Marker(price = startFakePoint, priceStr = "", date = ""))
         newList.add(Marker(price = endFakePoint, priceStr = "", date = ""))
@@ -355,11 +359,15 @@ class ChartView @JvmOverloads constructor(
         mLastNearestPoint = nearestPoint
     }
 
-    /*
-    * The point is searched using only X coordinate.
-    * */
+    /**
+     * Provides to find nearest point by touched coordinates.
+     * The point is searched using only X coordinate.
+     *
+     * @return nearest point by coordinates
+     * */
     private fun findNearestPoint(event: MotionEvent): Marker? {
         var nearestPoint: Marker? = null
+
         val (startIndex, endIndex) = if (mTooManyPoints) {
             intArrayOf(2, mMarkers.size - 2)
         } else intArrayOf(1, mMarkers.size - 1)

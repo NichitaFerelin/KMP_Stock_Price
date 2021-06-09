@@ -21,9 +21,9 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.ferelin.stockprice.R
 
-/*
-* TextView with "orderNumber" attribute
-* */
+/**
+ *TextView with "orderNumber" attribute, which is easier to find in code.
+ */
 class OrderedTextView(
     context: Context,
     attrs: AttributeSet? = null

@@ -16,76 +16,21 @@ package com.ferelin.stockprice.ui.stocksSection.favourite
  * limitations under the License.
  */
 
-import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.NULL_INDEX
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 
-class FavouriteViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseStocksViewModel(coroutineContextProvider, dataInteractor) {
+class FavouriteViewModel : BaseStocksViewModel() {
 
-    private val mEventOnNewItem = MutableSharedFlow<Unit>()
-    val eventOnNewItem: SharedFlow<Unit>
-        get() = mEventOnNewItem
-
-    override fun initObserversBlock() {
-        super.initObserversBlock()
-        viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectStateFavouriteCompanies() }
-            launch { collectSharedFavouriteCompaniesUpdates() }
-        }
-    }
-
-    private suspend fun collectStateFavouriteCompanies() {
-        mDataInteractor.stateFavouriteCompanies
+    val stateFavouriteCompanies: Flow<DataNotificator<ArrayList<AdaptiveCompany>>>
+        get() = mDataInteractor.stateFavouriteCompanies
             .filter { it is DataNotificator.DataPrepared }
             .take(1)
-            .collect {
-                withContext(mCoroutineContext.Main) {
-                    onFavouriteCompaniesPrepared(it)
-                }
-            }
-    }
 
-    private suspend fun collectSharedFavouriteCompaniesUpdates() {
-        mDataInteractor.sharedFavouriteCompaniesUpdates
+    val sharedCompaniesUpdates: Flow<DataNotificator<AdaptiveCompany>>
+        get() = mDataInteractor.sharedCompaniesUpdates
             .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
-            .collect { onFavouriteCompanyUpdateShared(it) }
-    }
-
-    private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
-    }
-
-    private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            notificator.data?.let {
-                when (notificator) {
-                    is DataNotificator.NewItemAdded -> {
-                        withContext(mCoroutineContext.Main) {
-                            mStocksRecyclerAdapter.addCompany(notificator.data)
-                            mEventOnNewItem.emit(Unit)
-                        }
-                    }
-                    is DataNotificator.ItemRemoved -> {
-                        val index = mStocksRecyclerAdapter.companies.indexOf(notificator.data)
-                        if (index != NULL_INDEX) {
-                            withContext(mCoroutineContext.Main) {
-                                mStocksRecyclerAdapter.removeCompany(index)
-                            }
-                        }
-                    }
-                    else -> Unit
-                }
-            }
-        }
-    }
 }

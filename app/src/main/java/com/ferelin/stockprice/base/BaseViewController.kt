@@ -20,58 +20,68 @@ import android.content.Context
 import android.os.Bundle
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
-import kotlinx.coroutines.*
+import com.ferelin.stockprice.utils.withTimerOnUi
+import javax.inject.Inject
 
 /**
- * [BaseViewController] holds the logic for displaying any data.
+ * [BaseViewController] represents a class that controls the behavior of the view and all
+ * associated logic using [mViewBinding].
+ *
+ * [mViewAnimator] provides ability to run animations.
+ *
+ * To control view lifecycle class uses [onViewCreated] and [onDestroyView] methods.
  */
-abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewBindingType : ViewBinding>(
-    protected val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
-) {
-    var viewBinding: ViewBindingType? = null
+abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewBindingType : ViewBinding> {
 
     protected abstract val mViewAnimator: ViewAnimatorType
 
-    protected var mContext: Context? = null
-    protected var mViewLifecycleScope: LifecycleCoroutineScope? = null
+    private var mViewBinding: ViewBindingType? = null
+    val viewBinding: ViewBindingType
+        get() = checkNotNull(mViewBinding)
 
-    open fun onCreateFragment(fragment: Fragment) {}
+    private var mContext: Context? = null
+    protected val context: Context
+        get() = checkNotNull(mContext)
 
-    open fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
+    @Inject
+    lateinit var mCoroutineContext: CoroutineContextProvider
+
+    open fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         mContext = fragment.requireContext()
-        mViewLifecycleScope = viewLifecycleScope
         mViewAnimator.loadAnimations(fragment.requireContext())
     }
 
     open fun onDestroyView() {
         mViewAnimator.invalidateAnimations()
-        mViewLifecycleScope = null
-        viewBinding = null
+        mViewBinding = null
         mContext = null
     }
 
+    /**
+     * Notifies about fragment creating
+     */
+    open fun onCreateFragment(fragment: Fragment) {
+        // Do nothing
+    }
+
+    /**
+     * Can be used to save arguments in bundle object
+     */
     open fun onSaveInstanceState(outState: Bundle) {
         // Do nothing
     }
 
+    fun setViewBinding(viewBinding: ViewBindingType) {
+        mViewBinding = viewBinding
+    }
+
     /*
-    * To avoid breaks of shared transition anim
+    * To avoid breaks of shared transition at the exit of the fragment
     *  */
     fun postponeReferencesRemove(finally: () -> Unit) {
-        CoroutineScope(mCoroutineContext.IO).launch {
-            delay(200)
-            withContext(mCoroutineContext.Main) {
-                finally.invoke()
-            }
-            cancel()
-        }
+        withTimerOnUi { finally.invoke() }
     }
 
     fun postponeTransitions(fragment: Fragment) {

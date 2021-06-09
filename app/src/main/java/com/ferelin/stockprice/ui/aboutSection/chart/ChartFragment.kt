@@ -37,9 +37,9 @@ class ChartFragment(
     selectedCompany: AdaptiveCompany? = null
 ) : BaseFragment<FragmentChartBinding, ChartViewModel, ChartViewController>() {
 
-    override val mViewController: ChartViewController = ChartViewController()
+    override val mViewController = ChartViewController()
     override val mViewModel: ChartViewModel by viewModels {
-        CompanyViewModelFactory(mCoroutineContext, mDataInteractor, selectedCompany)
+        CompanyViewModelFactory(selectedCompany)
     }
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChartBinding
@@ -101,7 +101,7 @@ class ChartFragment(
     }
 
     private fun setUpChartWidgetsListeners() {
-        mViewController.viewBinding!!.apply {
+        mViewController.viewBinding.run {
             cardViewDay.setOnClickListener { onCardClicked(it) }
             cardViewWeek.setOnClickListener { onCardClicked(it) }
             cardViewMonth.setOnClickListener { onCardClicked(it) }
@@ -111,10 +111,10 @@ class ChartFragment(
 
             chartView.setOnTouchListener { clickedMarker ->
                 mViewController.onChartClicked(
-                    previousClickedMarker = mViewModel.clickedMarker,
+                    previousClickedMarker = mViewModel.lastClickedMarker,
                     newClickedMarker = clickedMarker
                 )
-                mViewModel.onChartClicked(clickedMarker)
+                mViewModel.lastClickedMarker = clickedMarker
             }
         }
     }
@@ -123,7 +123,8 @@ class ChartFragment(
         mViewController.setArgumentsViewDependsOn(
             isHistoryForChartEmpty = mViewModel.isHistoryEmpty,
             lastChartViewMode = mViewModel.chartViewMode,
-            lastClickedMarker = mViewModel.clickedMarker
+            lastClickedMarker = mViewModel.lastClickedMarker,
+            selectedCompany = mViewModel.selectedCompany
         )
     }
 

@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.animation.Animation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,20 +36,19 @@ import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.swipe.SwipeActionCallback
+import com.ferelin.stockprice.utils.withTimer
 import com.google.android.material.transition.Hold
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     BaseViewController<BaseStocksViewAnimator, ViewBindingType>() {
 
     protected abstract val mStocksRecyclerView: RecyclerView
 
-    private val mStocksRecyclerAdapter: StocksRecyclerAdapter
+    protected val mStocksRecyclerAdapter: StocksRecyclerAdapter
         get() = mStocksRecyclerView.adapter as StocksRecyclerAdapter
 
     /*
-    * To use common "replace fragment" logic on different fragments
+    * To use common "replace fragment" logic at different fragments
     * */
     var fragmentManager: FragmentManager? = null
 
@@ -59,12 +57,8 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         fragment.exitTransition = Hold()
     }
 
-    override fun onViewCreated(
-        savedInstanceState: Bundle?,
-        fragment: Fragment,
-        viewLifecycleScope: LifecycleCoroutineScope
-    ) {
-        super.onViewCreated(savedInstanceState, fragment, viewLifecycleScope)
+    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
+        super.onViewCreated(savedInstanceState, fragment)
         postponeTransitions(fragment)
         setUpStocksRecyclerView()
     }
@@ -84,19 +78,18 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         onAccepted: (AdaptiveCompany) -> Unit
     ) {
         if (rebounded) {
-            mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
-                val company = findCompanyByHolder(stockViewHolder)
-                onAccepted.invoke(company)
-            }
+            val company = findCompanyByHolder(stockViewHolder)
+            onAccepted.invoke(company)
         }
     }
 
-    fun onStockClicked(
-        fragment: Fragment,
-        stockViewHolder: StockViewHolder,
-        company: AdaptiveCompany
-    ) {
-        navigateToAboutFragment(fragment, stockViewHolder, company)
+    fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
+        Navigator.navigateToAboutPagerFragment(company, fragmentManager!!, onCommit = {
+            it.addSharedElement(
+                stockViewHolder.binding.root,
+                context.resources.getString(R.string.transitionAboutPager)
+            )
+        })
     }
 
     fun onFabClicked() {
@@ -115,7 +108,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         mStocksRecyclerView.apply {
             itemAnimator = StockItemAnimator()
             ItemTouchHelper(SwipeActionCallback()).attachToRecyclerView(this)
-            addItemDecoration(StockItemDecoration(mContext!!))
+            addItemDecoration(StockItemDecoration(context))
         }
     }
 
@@ -123,7 +116,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         val animationCallback = object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
                 val newImageResource =
-                    if (holder.company!!.companyStyle.favouriteSingleIconResource == R.drawable.ic_star) {
+                    if (holder.company!!.companyStyle.favouriteForegroundIconResource == R.drawable.ic_star) {
                         R.drawable.ic_star_active
                     } else R.drawable.ic_star
                 holder.binding.imageViewBoundedIcon.setImageResource(newImageResource)
@@ -139,21 +132,9 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         return mStocksRecyclerAdapter.getCompanyByAdapterPosition(viewHolderPosition)
     }
 
-    private fun navigateToAboutFragment(
-        fragment: Fragment,
-        holder: StockViewHolder,
-        company: AdaptiveCompany
-    ) {
-        Navigator.navigateToAboutPagerFragment(fragment, company, fragmentManager!!) {
-            it.addSharedElement(
-                holder.binding.root,
-                mContext?.resources?.getString(R.string.transitionAboutPager) ?: ""
-            )
-        }
-    }
-
     private fun scrollToTopWithAnimation() {
-        if ((mStocksRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() < 40) {
+        val layoutManager = mStocksRecyclerView.layoutManager
+        if (layoutManager is LinearLayoutManager && layoutManager.findFirstVisibleItemPosition() < 40) {
             mStocksRecyclerView.smoothScrollToPosition(0)
             return
         }
@@ -166,10 +147,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
 
             override fun onAnimationEnd(animation: Animation?) {
                 // To avoid graphic bug
-                mViewLifecycleScope!!.launch(mCoroutineContext.IO) {
-                    delay(200)
-                    mStocksRecyclerView.itemAnimator = StockItemAnimator()
-                }
+                withTimer { mStocksRecyclerView.itemAnimator = StockItemAnimator() }
             }
         }
 

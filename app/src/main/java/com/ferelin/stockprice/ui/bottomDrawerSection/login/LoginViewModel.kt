@@ -19,16 +19,11 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.login
 import android.app.Activity
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.utils.RepositoryMessages
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    coroutineContextProvider: CoroutineContextProvider,
-    dataInteractor: DataInteractor
-) : BaseViewModel(coroutineContextProvider, dataInteractor) {
+class LoginViewModel : BaseViewModel() {
 
     private val mStateSignIn = MutableSharedFlow<Unit>()
     val stateSignIn: SharedFlow<Unit>
@@ -44,7 +39,7 @@ class LoginViewModel(
 
     private var mInputPhoneNumber = ""
     private var mInputCode = ""
-    
+
     val eventError: Flow<String>
         get() = mDataInteractor.sharedAuthenticationError
             .onEach { mStateIsLoading.value = false }
