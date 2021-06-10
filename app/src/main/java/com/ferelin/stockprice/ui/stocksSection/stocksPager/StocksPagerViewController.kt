@@ -64,7 +64,10 @@ class StocksPagerViewController :
 
     fun onFabClicked(currentFragment: StocksPagerFragment) {
         val childFragments = currentFragment.childFragmentManager.fragments
-        val currentChildPosition = viewBinding.viewPager.currentItem
+
+        // BottomDrawerFragment is first at list in fragment manager
+        val currentChildPosition = viewBinding.viewPager.currentItem + 1
+
         when (val currentChildFragment = childFragments.getOrNull(currentChildPosition)) {
             null -> return
             is StocksFragment -> currentChildFragment.onFabClicked()

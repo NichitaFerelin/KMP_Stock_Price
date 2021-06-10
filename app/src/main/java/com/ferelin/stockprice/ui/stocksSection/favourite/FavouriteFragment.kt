@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 class FavouriteFragment :
     BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel, FavouriteViewController>() {
 
-    override val mViewController = FavouriteViewController()
+    override val mViewController: FavouriteViewController = FavouriteViewController()
     override val mViewModel: FavouriteViewModel by viewModels()
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
@@ -47,24 +47,14 @@ class FavouriteFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateFavouriteCompanies() }
-            launch { collectSharedCompaniesUpdates() }
+            collectEventOnNewItem()
         }
     }
 
-    private suspend fun collectStateFavouriteCompanies() {
-        mViewModel.stateFavouriteCompanies.collect {
+    private suspend fun collectEventOnNewItem() {
+        mViewModel.eventOnNewItem.collect {
             withContext(mCoroutineContext.Main) {
-                mViewController.onFavouriteCompaniesUpdated(it)
-            }
-
-        }
-    }
-
-    private suspend fun collectSharedCompaniesUpdates() {
-        mViewModel.sharedCompaniesUpdates.collect { notificator ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onCompanyRemovedOrAdded(notificator)
+                mViewController.onNewItem()
             }
         }
     }
