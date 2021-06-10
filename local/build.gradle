@@ -7,19 +7,6 @@ plugins {
 android {
     compileSdkVersion 30
 
-    defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
-
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,7 +18,6 @@ android {
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
         ]
     }
-
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -42,26 +28,12 @@ android {
 dependencies {
     implementation project(path: ':shared')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.appcompat:appcompat:$compat_version"
-
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
-
+    // Preferences
     implementation "androidx.datastore:datastore-preferences:1.0.0-beta01"
 
-    // DI
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    // Room
+    kapt "androidx.room:room-compiler:$room_version"
 
-    // Tests
-    testImplementation "androidx.test.ext:junit-ktx:$junit_version"
-    testImplementation "androidx.test:core:$test_core_version"
-    testImplementation "org.robolectric:robolectric:$robolectric_version"
-    testImplementation "org.mockito:mockito-core:$mockito_version"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
+    // Coroutines Test
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
 }

@@ -25,7 +25,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.debounce
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -70,7 +72,7 @@ open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
 
             mWebSocket = okHttp.newWebSocket(request, WebSocketManager {
                 val converted = mResponseConverter.fromJson(it, mOpenPricesHolder)
-                offer(converted)
+                this.trySend(converted).isSuccess
             }).also {
                 while (mMessagesQueue.isNotEmpty()) {
                     subscribe(it, mMessagesQueue.poll()!!)
