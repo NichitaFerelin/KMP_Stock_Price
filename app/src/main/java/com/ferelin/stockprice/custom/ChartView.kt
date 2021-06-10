@@ -189,7 +189,7 @@ class ChartView @JvmOverloads constructor(
         mOnTouchListener = func
     }
 
-    fun restoreMarker(previousMarker: Marker?): Marker? {
+    fun restoreMarker(previousMarker: Marker): Marker? {
         for (marker in mMarkers) {
             if (marker == previousMarker) {
                 return marker

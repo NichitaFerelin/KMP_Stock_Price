@@ -27,11 +27,13 @@ data class Marker(
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is Marker) {
-            other.position == position
+            other.price == price && other.date == date
         } else false
     }
 
     override fun hashCode(): Int {
-        return 31 * position.hashCode()
+        var result = price.hashCode()
+        result = 31 * result + date.hashCode()
+        return result
     }
 }
