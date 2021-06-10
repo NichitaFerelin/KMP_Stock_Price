@@ -16,11 +16,10 @@ package com.ferelin.stockprice.dataInteractor.local
  * limitations under the License.
  */
 
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,18 +29,18 @@ import javax.inject.Singleton
 
 @Singleton
 open class LocalInteractor @Inject constructor(
-    private val mRepository: RepositoryManagerHelper
+    private val mRepository: Repository
 ) : LocalInteractorHelper {
 
     override suspend fun getCompanies(): LocalInteractorResponse {
-        val responseCompanies = mRepository.getAllCompanies().firstOrNull()
+        val responseCompanies = mRepository.getAllCompanies()
         return if (responseCompanies is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(responseCompanies.data)
         } else LocalInteractorResponse.Failed()
     }
 
     override suspend fun getSearchRequestsHistory(): LocalInteractorResponse {
-        val responseSearches = mRepository.getSearchesHistory().firstOrNull()
+        val responseSearches = mRepository.getSearchesHistory()
         return if (responseSearches is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(searchesHistory = responseSearches.data)
         } else LocalInteractorResponse.Failed()
@@ -64,7 +63,7 @@ open class LocalInteractor @Inject constructor(
     }
 
     override suspend fun getFirstTimeLaunchState(): LocalInteractorResponse {
-        val firstTimeStateResponse = mRepository.getFirstTimeLaunchState().firstOrNull()
+        val firstTimeStateResponse = mRepository.getFirstTimeLaunchState()
         return if (firstTimeStateResponse is RepositoryResponse.Success) {
             LocalInteractorResponse.Success(firstTimeLaunch = firstTimeStateResponse.data)
         } else LocalInteractorResponse.Failed()

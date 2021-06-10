@@ -20,13 +20,11 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.local.json.JsonAssets
 import com.ferelin.local.json.JsonAssetsReader
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Spy
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -45,7 +43,7 @@ class JsonAssetsReaderTest {
     @Test
     fun correctRead(): Unit = runBlocking {
         val companiesInAsset = 1487
-        mJsonReader.readCompanies().first().also {
+        mJsonReader.readCompanies().also {
             Assert.assertEquals(companiesInAsset, it.size)
         }
     }
@@ -54,7 +52,7 @@ class JsonAssetsReaderTest {
     fun readWithException(): Unit = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         mJsonReader = JsonAssetsReader(context, "Wrong file name")
-        mJsonReader.readCompanies().first().also {
+        mJsonReader.readCompanies().also {
             Assert.assertEquals(0, it.size)
         }
     }

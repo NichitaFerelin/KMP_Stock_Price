@@ -17,12 +17,11 @@ package com.ferelin.stockprice.dataInteractor
  */
 
 import android.app.Activity
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.repository.utils.StockHistoryConverter
 import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorsWorker
@@ -31,6 +30,7 @@ import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.StockHistoryConverter
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -48,7 +48,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DataInteractor @Inject constructor(
-    private val mRepositoryHelper: RepositoryManagerHelper,
+    private val mRepositoryHelper: Repository,
     private val mLocalInteractorHelper: LocalInteractorHelper,
     private val mDataMediator: DataMediator,
     private val mErrorsWorker: ErrorsWorker,
@@ -237,7 +237,7 @@ class DataInteractor @Inject constructor(
     override suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany) {
         mDataMediator.onAddFavouriteCompany(adaptiveCompany).also { isAdded ->
             /**
-             * The company may not be accepted to favourites @see .
+             * The company may not be accepted to favourites.
              * If accepted -> then notify to sync manager
              */
             if (isAdded) {

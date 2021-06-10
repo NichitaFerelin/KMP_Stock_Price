@@ -16,18 +16,8 @@ package com.ferelin.local.json
  * limitations under the License.
  */
 
-import android.content.Context
 import com.ferelin.local.models.Company
-import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-open class JsonManager @Inject constructor(
-    private val mContext: Context
-) : JsonManagerHelper {
-
-    override fun getCompaniesFromJson(): Flow<List<Company>> {
-        return JsonAssetsReader(mContext, JsonAssets.COMPANIES).readCompanies()
-    }
+interface JsonManager {
+    fun getCompaniesFromJson(): List<Company>
 }

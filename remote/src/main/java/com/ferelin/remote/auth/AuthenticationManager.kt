@@ -19,91 +19,28 @@ package com.ferelin.remote.auth
 import android.app.Activity
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.*
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 /**
- * [AuthenticationManager] provides methods for login / logout by phone number.
- *
- * For more info about methods look at [AuthenticationManagerHelper]
+ * [AuthenticationManager] interface of [AuthenticationManagerImpl]
  */
-@Singleton
-class AuthenticationManager @Inject constructor() : AuthenticationManagerHelper {
+interface AuthenticationManager {
 
-    private val mFirebaseAuth: FirebaseAuth by lazy {
-        FirebaseAuth.getInstance().apply {
-            useAppLanguage()
-        }
-    }
+    /**
+     * @param [holderActivity] is used to build PhoneAuthOptions.
+     * @param [phone] phone number to log in.
+     * @return [BaseResponse] with [Api] response codes as flow.
+     */
+    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<BaseResponse<Boolean>>
 
-    // User ID is used to complete verification
-    private lateinit var mUserVerificationId: String
-    private lateinit var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    /**
+     * @param code is a code that was sent to the entered phone number
+     */
+    fun logInWithCode(code: String)
 
-    override fun tryToLogIn(
-        holderActivity: Activity,
-        phone: String
-    ) = callbackFlow<BaseResponse<Boolean>> {
+    fun logOut()
 
-        // Empty phone number causes exception
-        if (phone.isEmpty()) {
-            return@callbackFlow
-        }
+    fun provideUserId(): String?
 
-        mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
-                mUserVerificationId = p0
-                offer(BaseResponse(responseCode = Api.VERIFICATION_CODE_SENT))
-            }
-
-            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
-                    when {
-                        task.isSuccessful -> offer(BaseResponse(responseCode = Api.VERIFICATION_COMPLETED))
-                        else -> offer(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
-                    }
-                }
-            }
-
-            override fun onVerificationFailed(p0: FirebaseException) {
-                when (p0) {
-                    is FirebaseTooManyRequestsException -> offer(BaseResponse(responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS))
-                    else -> offer(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
-                }
-            }
-        }
-
-        val options = PhoneAuthOptions.newBuilder(mFirebaseAuth)
-            .setPhoneNumber(phone)
-            .setTimeout(30L, TimeUnit.SECONDS)
-            .setActivity(holderActivity)
-            .setCallbacks(mAuthCallbacks)
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
-
-        awaitClose()
-    }
-
-    override fun logInWithCode(code: String) {
-        val credential = PhoneAuthProvider.getCredential(mUserVerificationId, code)
-        mAuthCallbacks.onVerificationCompleted(credential)
-    }
-
-    override fun logOut() {
-        mFirebaseAuth.signOut()
-    }
-
-    override fun provideUserId(): String? {
-        return mFirebaseAuth.uid
-    }
-
-    override fun provideIsUserLogged(): Boolean {
-        return mFirebaseAuth.currentUser != null
-    }
+    fun provideIsUserLogged(): Boolean
 }

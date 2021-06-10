@@ -16,7 +16,7 @@ package com.ferelin.local.json
  * limitations under the License.
  */
 
-object JsonAssets {
+internal object JsonAssets {
     // Asset file name
     const val COMPANIES = "companies.json"
 }

@@ -22,9 +22,16 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import androidx.room.Room
 import com.ferelin.local.database.CompaniesDatabase
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.remote.utils.Api
+import com.ferelin.repository.Repository
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -42,6 +49,22 @@ class DataInteractorModule {
     }
 
     @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+        val httpClient = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(Api.FINNHUB_BASE_URL)
+            .client(httpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
     fun provideConnectivityManager(context: Context): ConnectivityManager {
         return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
@@ -56,7 +79,7 @@ class DataInteractorModule {
 
     @Provides
     @Named("isUserLogged")
-    fun provideUserLogState(repositoryManagerHelper: RepositoryManagerHelper): Boolean {
-        return repositoryManagerHelper.provideIsUserLogged()
+    fun provideUserLogState(repository: Repository): Boolean {
+        return repository.provideIsUserLogged()
     }
 }

@@ -50,6 +50,11 @@ dependencies {
     // For DI and Tests
     implementation project(path: ':local')
     implementation project(path: ':remote')
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:2.6.2"
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
 
     // Base
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

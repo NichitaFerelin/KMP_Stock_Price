@@ -16,7 +16,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
  * limitations under the License.
  */
 
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
@@ -46,7 +46,7 @@ import javax.inject.Singleton
 class FavouriteCompaniesWorker @Inject constructor(
     private val mStylesProvider: StylesProvider,
     private val mLocalInteractorHelper: LocalInteractorHelper,
-    private val mRepositoryHelper: RepositoryManagerHelper,
+    private val mRepositoryHelper: Repository,
     private val mErrorsWorker: ErrorsWorker
 ) {
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()

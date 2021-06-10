@@ -1,4 +1,4 @@
-package com.ferelin.remote.webSocket
+package com.ferelin.remote.webSocket.connector
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,15 +18,28 @@ package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
+import com.ferelin.remote.webSocket.response.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 
-interface WebSocketConnectorHelper {
+interface WebSocketConnector {
 
+    /**
+     * Opens web socket and start returns responses on this flow
+     * */
     fun openWebSocketConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse<WebSocketResponse>>
 
     fun closeWebSocketConnection()
 
+    /**
+     * Subscribes new item for live time updates.
+     * @param symbol is a company symbol that must be subscribed for updates
+     * @param previousPrice is a current price of stock that is used to calculate the price difference
+     * */
     fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double)
 
+    /**
+     * Unsubscribes items from live time updates.
+     * @param symbol is a company symbol that must be unsubscribed from updates
+     * */
     fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
 }

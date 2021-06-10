@@ -18,148 +18,66 @@ package com.ferelin.remote.database
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.ferelin.remote.utils.offerSafe
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 /**
- * [RealtimeDatabase] is Firebase-Realtime-Database and is used to save
- * user data(such as favourite companies) in cloud.
- *
- *
- * Fore more info about methods look at [RealtimeDatabaseHelper]
- *
- * Data at cloud looks like:
- *
- *
- *      -FAVOURITE_COMPANIES
- *          -[userId1]
- *              -[companyId1]
- *              -[companyId2]
- *              -[companyId3]
- *          -[userId2]
- *              - ...
- *      -SEARCH_REQUESTS
- *          -[userId1]
- *              -[searchRequest1]
- *              -[searchRequest2]
- *              -[searchRequest3]
+ * [RealtimeDatabase] is an interface of [RealtimeDatabaseImpl]
  */
-class RealtimeDatabase @Inject constructor() : RealtimeDatabaseHelper {
+interface RealtimeDatabase {
 
-    private val mDatabaseFirebase = Firebase.database.reference
+    /**
+     * Provides ability to erase a database id from cloud database
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param companyId is a company id at local database that will be erased.
+     */
+    fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
 
-    companion object {
-        /*
-        * Root cloud-nodes
-        * */
-        private const val sSearchesHistoryRef = "search-requests"
-        private const val sFavouriteCompaniesRef = "favourite-companies"
-    }
+    /**
+     * Provides ability to write a company id to cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param companyId is a company id at local database that will be saved.
+     */
+    fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
 
-    override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .child(companyId)
-            .removeValue()
-    }
+    /**
+     * Provides ability to write a list of ids to cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param companiesId is a list of ids that will be saved.
+     */
+    fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
 
-    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .child(companyId)
-            .setValue(companyId)
-    }
+    /**
+     * Provides ability to read user favourite companies ids from cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @return [BaseResponse] with company ID and [Api] response code as flow.
+     */
+    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>>
 
-    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
-        companiesId.forEach { companyId -> writeCompanyIdToRealtimeDb(userId, companyId) }
-    }
+    /**
+     * Provides ability to save search requests to cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param searchRequest is a search requests that will be saved.
+     */
+    fun writeSearchRequestToDb(userId: String, searchRequest: String)
 
-    override fun readCompaniesIdsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (companySnapshot in snapshot.children) {
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = companySnapshot.key
-                            )
-                            offerSafe(response)
-                        }
-                        offerSafe(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else offerSafe(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
-    }
+    /**
+     * Provides ability to save a list of search requests to cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param searchRequests is a search requests list that will be saved.
+     */
+    fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
 
-    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
-        val fixedRequest = encrypt(searchRequest)
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .child(fixedRequest)
-            .setValue(fixedRequest)
-    }
+    /**
+     * Provides ability to read a search history from cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @return [BaseResponse] with search request and [Api] response code as flow.
+     */
+    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>>
 
-    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
-        searchRequests.forEach { request -> writeSearchRequestToDb(userId, request) }
-    }
-
-    override fun readSearchRequestsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (searchSnapshot in snapshot.children) {
-
-                            val fixedResponse = decrypt(searchSnapshot?.key)
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = fixedResponse
-                            )
-                            offerSafe(response)
-                        }
-                        offerSafe(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else offerSafe(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
-    }
-
-    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
-        val fixedRequest = encrypt(searchRequest)
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .child(fixedRequest)
-            .removeValue()
-    }
-
-    /*
-    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
-    * Encrypts to avoid exceptions
-    * */
-    private fun encrypt(str: String): String {
-        return str.replace(Regex("[.#$\\[\\]]"), "%")
-    }
-
-    /*
-    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
-    * Decrypts for repository
-    * */
-    private fun decrypt(str: String?): String? {
-        return str?.replace('%', '.')
-    }
+    /**
+     * Provides ability to erase a search request from cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param searchRequest is a search request that will be erased.
+     */
+    fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
 }

@@ -1,4 +1,4 @@
-package com.ferelin.repository.responseConverter
+package com.ferelin.repository.converter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -19,18 +19,18 @@ package com.ferelin.repository.responseConverter
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
-import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.api.stockCandles.StockCandlesResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.webSocket.WebSocketResponse
+import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface ResponseConverterHelper {
+interface ResponseConverter {
 
     fun convertCompaniesResponse(response: CompaniesResponse): RepositoryResponse<List<AdaptiveCompany>>
 

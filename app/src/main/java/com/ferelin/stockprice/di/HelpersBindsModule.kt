@@ -17,27 +17,29 @@
 package com.ferelin.stockprice.di
 
 import com.ferelin.local.LocalManager
-import com.ferelin.local.LocalManagerHelper
+import com.ferelin.local.LocalManagerImpl
 import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.database.CompaniesManagerHelper
+import com.ferelin.local.database.CompaniesManagerImpl
 import com.ferelin.local.json.JsonManager
-import com.ferelin.local.json.JsonManagerHelper
+import com.ferelin.local.json.JsonManagerImpl
 import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.local.preferences.StorePreferencesHelper
+import com.ferelin.local.preferences.StorePreferencesImpl
 import com.ferelin.remote.RemoteMediator
-import com.ferelin.remote.RemoteMediatorHelper
+import com.ferelin.remote.RemoteMediatorImpl
 import com.ferelin.remote.api.ApiManager
-import com.ferelin.remote.api.ApiManagerHelper
+import com.ferelin.remote.api.ApiManagerImpl
+import com.ferelin.remote.api.throttleManager.ThrottleManager
+import com.ferelin.remote.api.throttleManager.ThrottleManagerImpl
 import com.ferelin.remote.auth.AuthenticationManager
-import com.ferelin.remote.auth.AuthenticationManagerHelper
+import com.ferelin.remote.auth.AuthenticationManagerImpl
 import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.database.RealtimeDatabaseHelper
-import com.ferelin.remote.webSocket.WebSocketConnector
-import com.ferelin.remote.webSocket.WebSocketConnectorHelper
-import com.ferelin.repository.RepositoryManager
-import com.ferelin.repository.RepositoryManagerHelper
-import com.ferelin.repository.responseConverter.ResponseConverter
-import com.ferelin.repository.responseConverter.ResponseConverterHelper
+import com.ferelin.remote.database.RealtimeDatabaseImpl
+import com.ferelin.remote.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
+import com.ferelin.repository.Repository
+import com.ferelin.repository.RepositoryImpl
+import com.ferelin.repository.converter.ResponseConverter
+import com.ferelin.repository.converter.ResponseConverterImpl
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
 import dagger.Binds
@@ -47,38 +49,41 @@ import dagger.Module
 abstract class HelpersBindsModule {
 
     @Binds
-    abstract fun provideRepositoryManagerHelper(repositoryManager: RepositoryManager): RepositoryManagerHelper
+    abstract fun provideRepositoryManagerHelper(repositoryImpl: RepositoryImpl): Repository
 
     @Binds
     abstract fun provideLocalInteractorHelper(localInteractor: LocalInteractor): LocalInteractorHelper
 
     @Binds
-    abstract fun provideRemoteMediatorHelper(remote: RemoteMediator): RemoteMediatorHelper
+    abstract fun provideRemoteMediatorHelper(remote: RemoteMediatorImpl): RemoteMediator
 
     @Binds
-    abstract fun provideNetworkManagerHelper(network: ApiManager): ApiManagerHelper
+    abstract fun provideNetworkManagerHelper(network: ApiManagerImpl): ApiManager
 
     @Binds
-    abstract fun provideWebSocketConnectorHelper(web: WebSocketConnector): WebSocketConnectorHelper
+    abstract fun provideWebSocketConnectorHelper(web: WebSocketConnectorImpl): WebSocketConnector
 
     @Binds
-    abstract fun provideLocalManagerHelper(local: LocalManager): LocalManagerHelper
+    abstract fun provideLocalManagerHelper(local: LocalManagerImpl): LocalManager
 
     @Binds
-    abstract fun provideJsonManagerHelper(json: JsonManager): JsonManagerHelper
+    abstract fun provideJsonManagerHelper(json: JsonManagerImpl): JsonManager
 
     @Binds
-    abstract fun provideCompaniesManagerHelper(companies: CompaniesManager): CompaniesManagerHelper
+    abstract fun provideCompaniesManagerHelper(companies: CompaniesManagerImpl): CompaniesManager
 
     @Binds
-    abstract fun provideStorePreferencesHelper(store: StorePreferences): StorePreferencesHelper
+    abstract fun provideStorePreferencesHelper(store: StorePreferencesImpl): StorePreferences
 
     @Binds
-    abstract fun provideDataConverterHelper(responseConverter: ResponseConverter): ResponseConverterHelper
+    abstract fun provideDataConverterHelper(responseConverter: ResponseConverterImpl): ResponseConverter
 
     @Binds
-    abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManager): AuthenticationManagerHelper
+    abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManagerImpl): AuthenticationManager
 
     @Binds
-    abstract fun provideRealtimeDatabaseManager(database: RealtimeDatabase): RealtimeDatabaseHelper
+    abstract fun provideRealtimeDatabaseManager(database: RealtimeDatabaseImpl): RealtimeDatabase
+
+    @Binds
+    abstract fun provideThrottleManager(throttleManagerImpl: ThrottleManagerImpl): ThrottleManager
 }

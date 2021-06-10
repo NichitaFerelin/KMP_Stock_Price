@@ -18,12 +18,15 @@ package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
+import com.ferelin.remote.webSocket.response.WebSocketResponse
+import com.ferelin.remote.webSocket.response.WebSocketSubResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 class WebResponseConverter {
 
     private val mConverter = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
     private val mListAdapter = mConverter.adapter(WebSocketSubResponse::class.java)
     private val mResponseAdapter = mConverter.adapter(WebSocketResponse::class.java).lenient()
 

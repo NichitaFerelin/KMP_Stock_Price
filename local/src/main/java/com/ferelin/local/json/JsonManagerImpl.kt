@@ -1,4 +1,4 @@
-package com.ferelin.remote.api.throttleManager
+package com.ferelin.local.json
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,17 +16,17 @@ package com.ferelin.remote.api.throttleManager
  * limitations under the License.
  */
 
-interface ThrottleManagerHelper {
+import android.content.Context
+import com.ferelin.local.models.Company
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    fun addMessage(
-        symbol: String,
-        api: String,
-        position: Int = 0,
-        eraseIfNotActual: Boolean = true,
-        ignoreDuplicate: Boolean = false
-    )
+@Singleton
+open class JsonManagerImpl @Inject constructor(
+    private val mContext: Context
+) : JsonManager {
 
-    fun setUpApi(api: String, func: (String) -> Unit)
-
-    fun invalidate()
+    override fun getCompaniesFromJson(): List<Company> {
+        return JsonAssetsReader(mContext, JsonAssets.COMPANIES).readCompanies()
+    }
 }

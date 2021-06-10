@@ -22,7 +22,7 @@ import com.squareup.moshi.Types
 /*
 * Room data converter
 * */
-class CompaniesConverter {
+internal class CompaniesConverter {
 
     private val mMoshi = Moshi.Builder().build()
 

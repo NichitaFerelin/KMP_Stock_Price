@@ -1,7 +1,7 @@
 package com.ferelin.provider
 
 import com.ferelin.provider.provider.FakeData
-import com.ferelin.repository.responseConverter.DataAdapter
+import com.ferelin.repository.converter.adapter.DataAdapter
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

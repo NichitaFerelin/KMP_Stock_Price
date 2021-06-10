@@ -16,59 +16,15 @@ package com.ferelin.local.preferences
  * limitations under the License.
  */
 
-import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringSetPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
+interface StorePreferences {
 
-/**
- * [StorePreferences] providing:
- *  - Access to search requests history. @property [mSearchRequestsHistoryKey]
- *  - Access to first time launch state. @property [mFirstTimeLaunchKey]
- */
+    suspend fun clearSearchRequestsHistory()
 
-@Singleton
-open class StorePreferences @Inject constructor(
-    private val mContext: Context
-) : StorePreferencesHelper {
+    suspend fun getSearchRequestsHistory(): Set<String>
 
-    private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
+    suspend fun setSearchRequestsHistory(requests: Set<String>)
 
-    private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
-    private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
+    suspend fun getFirstTimeLaunchState(): Boolean?
 
-    override fun getSearchesHistory(): Flow<Set<String>> {
-        return mContext.dataStorePreferences.data.map {
-            it[mSearchRequestsHistoryKey] ?: emptySet()
-        }
-    }
-
-    override suspend fun setSearchesHistory(requests: Set<String>) {
-        mContext.dataStorePreferences.edit {
-            it[mSearchRequestsHistoryKey] = requests
-        }
-    }
-
-    override suspend fun clearSearchesHistory() {
-        mContext.dataStorePreferences.edit {
-            it[mSearchRequestsHistoryKey] = emptySet()
-        }
-    }
-
-    override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
-        mContext.dataStorePreferences.edit {
-            it[mFirstTimeLaunchKey] = boolean
-        }
-    }
-
-    override fun getFirstTimeLaunchState(): Flow<Boolean?> {
-        return mContext.dataStorePreferences.data.map {
-            it[mFirstTimeLaunchKey]
-        }
-    }
+    suspend fun setFirstTimeLaunchState(boolean: Boolean)
 }

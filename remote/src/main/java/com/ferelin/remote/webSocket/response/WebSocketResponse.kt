@@ -1,4 +1,4 @@
-package com.ferelin.remote.webSocket
+package com.ferelin.remote.webSocket.response
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,6 +18,9 @@ package com.ferelin.remote.webSocket
 
 import com.squareup.moshi.Json
 
+/**
+ * Base response of web socket for repository
+ * */
 class WebSocketResponse(
     @Json(name = "s") val symbol: String,
     @Json(name = "p") val lastPrice: Double,

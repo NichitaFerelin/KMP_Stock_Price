@@ -23,6 +23,6 @@ sealed class RepositoryMessages {
     object Error : RepositoryMessages()
     object Limit : RepositoryMessages()
 
-    // Represent a message that can notify that AuthenticationManager send code
+    // Represent a message that can notify that AuthenticationManagerImpl send code
     object CodeSent: RepositoryMessages()
 }

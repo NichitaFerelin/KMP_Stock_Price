@@ -1,4 +1,4 @@
-package com.ferelin.remote.webSocket
+package com.ferelin.remote.webSocket.connector
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,13 +18,14 @@ package com.ferelin.remote.webSocket
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
+import com.ferelin.remote.webSocket.WebResponseConverter
+import com.ferelin.remote.webSocket.WebSocketManager
+import com.ferelin.remote.webSocket.response.WebSocketResponse
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.debounce
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -33,7 +34,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class WebSocketConnector @Inject constructor() : WebSocketConnectorHelper {
+open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
 
     private val mBaseApiUrl = "wss://ws.finnhub.io?token="
     private val mResponseConverter = WebResponseConverter()

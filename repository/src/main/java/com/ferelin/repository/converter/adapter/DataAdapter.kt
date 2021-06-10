@@ -1,4 +1,4 @@
-package com.ferelin.repository.responseConverter
+package com.ferelin.repository.converter.adapter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,6 +18,7 @@ package com.ferelin.repository.responseConverter
 
 import com.ferelin.local.models.Company
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.shared.formatPrice
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -26,7 +27,6 @@ import javax.inject.Singleton
 /**
  * [DataAdapter] is used to convert date/string/time/adaptive models for UI or network requests.
  */
-
 @Singleton
 class DataAdapter @Inject constructor() {
 
@@ -34,14 +34,6 @@ class DataAdapter @Inject constructor() {
         val datePattern = "dd MMM yyyy"
         val dateFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
         return dateFormat.format(Date(time)).filter { it != ',' }
-    }
-
-    fun parseMonthFromDate(date: String): String {
-        return date.filter { it.isLetter() }
-    }
-
-    fun parseYearFromDate(date: String): String {
-        return date.split(" ").getOrNull(2) ?: ""
     }
 
     /*
@@ -61,15 +53,6 @@ class DataAdapter @Inject constructor() {
     * */
     fun adaptPhone(phone: String): String {
         return phone.substringBefore('.')
-    }
-
-    /*
-    * Format price example:
-    *   Before:   123456.75
-    *   After:    $123456.75
-    * */
-    fun formatPrice(price: Double): String {
-        return "$${adaptPrice(price)}"
     }
 
     /*
@@ -198,37 +181,5 @@ class DataAdapter @Inject constructor() {
             it.companyProfile.capitalization =
                 formatPrice(it.companyProfile.capitalization.toDouble())
         }
-    }
-
-    /*
-    * Call:     adaptPrice(2253.14)
-    * Result:   2 253.14
-    * */
-    private fun adaptPrice(price: Double): String {
-        var resultStr = ""
-        val priceStr = price.toString()
-
-        val reminder = priceStr.substringAfter(".")
-        var formattedSeparator = "."
-        val formattedReminder = when {
-            reminder.length > 2 -> reminder.substring(0, 2)
-            reminder.last() == '0' -> {
-                formattedSeparator = ""
-                ""
-            }
-            else -> reminder
-        }
-
-        val integer = priceStr.substringBefore(".")
-        var counter = 0
-        for (index in integer.length - 1 downTo 0) {
-            resultStr += integer[index]
-            counter++
-            if (counter == 3 && index != 0) {
-                resultStr += " "
-                counter = 0
-            }
-        }
-        return "${resultStr.reversed()}$formattedSeparator$formattedReminder"
     }
 }

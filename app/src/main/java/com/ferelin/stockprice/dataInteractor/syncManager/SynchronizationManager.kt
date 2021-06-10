@@ -16,7 +16,7 @@
 
 package com.ferelin.stockprice.dataInteractor.syncManager
 
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.CoroutineContextProvider
@@ -42,7 +42,7 @@ class SynchronizationManager @Inject constructor(
     private val mCoroutineContextProvider: CoroutineContextProvider,
     private val mCompaniesSyncHelper: CompaniesSyncHelper,
     private val mSearchRequestsSyncHelper: SearchRequestsSyncHelper,
-    private val mRepositoryManager: RepositoryManagerHelper,
+    private val mRepositoryManager: Repository,
     private val mAppScope: CoroutineScope
 ) {
 

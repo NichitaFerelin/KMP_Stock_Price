@@ -22,13 +22,8 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
-class JsonAssetsReader(
+internal class JsonAssetsReader(
     private val mContext: Context,
     private val mFileName: String,
 ) {
@@ -37,14 +32,10 @@ class JsonAssetsReader(
     /*
     * Parsing companies data from json
     * */
-    @Suppress("BlockingMethodInNonBlockingContext")
-    fun readCompanies(): Flow<List<Company>> = flow {
+    fun readCompanies(): List<Company> {
         val json = mContext.assets.open(mFileName).bufferedReader().use { it.readText() }
         val type = Types.newParameterizedType(List::class.java, Company::class.java)
         val adapter: JsonAdapter<List<Company>> = mMoshi.adapter(type)
-        val list = adapter.fromJson(json) ?: emptyList()
-        emit(list)
+        return adapter.fromJson(json) ?: emptyList()
     }
-        .flowOn(Dispatchers.Default)
-        .catch { emit(emptyList()) }
 }

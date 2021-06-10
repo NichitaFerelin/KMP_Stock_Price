@@ -17,17 +17,31 @@ package com.ferelin.local.database
  */
 
 import com.ferelin.local.models.Company
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface CompaniesManagerHelper {
+@Singleton
+open class CompaniesManagerImpl @Inject constructor(
+    companiesDatabase: CompaniesDatabase
+) : CompaniesManager {
 
-    fun insertCompany(company: Company)
+    private val mCompaniesDao = companiesDatabase.companiesDao()
 
-    fun insertAllCompanies(list: List<Company>)
+    override fun insertCompany(company: Company) {
+        mCompaniesDao.insert(company)
+    }
 
-    fun updateCompany(company: Company)
+    override fun insertAllCompanies(list: List<Company>) {
+        mCompaniesDao.insertAll(list)
+    }
 
-    fun getAllCompanies(): Flow<List<Company>>
+    override fun updateCompany(company: Company) {
+        mCompaniesDao.update(company)
+    }
 
-    fun deleteCompany(company: Company)
+    override fun getCompanies(): List<Company> {
+        return mCompaniesDao.getAll()
+    }
 }
+
+

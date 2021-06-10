@@ -16,116 +16,62 @@ package com.ferelin.remote.api
  * limitations under the License.
  */
 
-import com.ferelin.remote.base.BaseManager
-import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.api.companyNews.CompanyNewsApi
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
-import com.ferelin.remote.api.companyProfile.CompanyProfileApi
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteApi
 import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesApi
 import com.ferelin.remote.api.stockCandles.StockCandlesResponse
-import com.ferelin.remote.api.stockSymbols.StockSymbolApi
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.api.throttleManager.ThrottleManager
-import com.ferelin.remote.api.throttleManager.ThrottleManagerHelper
-import com.ferelin.remote.utils.Api
-import com.ferelin.remote.utils.RetrofitDelegate
-import com.ferelin.remote.utils.offerSafe
-import kotlinx.coroutines.channels.awaitClose
+import com.ferelin.remote.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import retrofit2.Retrofit
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-open class ApiManager @Inject constructor() : ApiManagerHelper {
+interface ApiManager {
 
-    private val mRetrofit: Retrofit by RetrofitDelegate(Api.FINNHUB_BASE_URL)
+    /**
+     * Request to load all available stock symbols
+     * */
+    fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>>
 
-    private val mCompanyProfileService = mRetrofit.create(CompanyProfileApi::class.java)
-    private val mCompanyNewsService = mRetrofit.create(CompanyNewsApi::class.java)
-    private val mCompanyQuoteService = mRetrofit.create(CompanyQuoteApi::class.java)
-    private val mStockCandlesService = mRetrofit.create(StockCandlesApi::class.java)
-    private val mStockSymbolsService = mRetrofit.create(StockSymbolApi::class.java)
+    /**
+     * Request to load company profile
+     * @param symbol is a company symbol for which profile need to load
+     * */
+    fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>>
 
-    private val mThrottleManager: ThrottleManagerHelper = ThrottleManager()
-
-    override fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>> = callbackFlow {
-        mStockSymbolsService
-            .getStockSymbolList(Api.FINNHUB_TOKEN)
-            .enqueue(BaseManager<StockSymbolResponse> {
-                offerSafe(it)
-            })
-        awaitClose()
-    }
-
-    override fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>> =
-        callbackFlow {
-            mCompanyProfileService
-                .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
-                .enqueue(BaseManager<CompanyProfileResponse> {
-                    offerSafe(it)
-                })
-            awaitClose()
-        }
-
-    override fun loadStockCandles(
+    /**
+     * Request to load stock candles(history)
+     * @param symbol is a company symbol for which candles need to load
+     * @param from is a left timestamp border of data
+     * @param to is a right timestamp border of data
+     * @param resolution is a type of data model that network must returns(By days, months, years...)
+     * */
+    fun loadStockCandles(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<BaseResponse<StockCandlesResponse>> = callbackFlow {
-        mStockCandlesService
-            .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
-            .enqueue(BaseManager<StockCandlesResponse> {
-                offerSafe(it)
-            })
-        awaitClose()
-    }
+    ): Flow<BaseResponse<StockCandlesResponse>>
 
-    override fun loadCompanyNews(
+    /**
+     * Request to load company news
+     * @param symbol is a company symbol for which news need to load
+     * @param from is a left timestamp border of data
+     * @param to is a right timestamp border of data
+     * */
+    fun loadCompanyNews(
         symbol: String,
         from: String,
         to: String
-    ): Flow<BaseResponse<List<CompanyNewsResponse>>> = callbackFlow {
-        mCompanyNewsService
-            .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
-            .enqueue(BaseManager<List<CompanyNewsResponse>> {
-                offerSafe(it)
-            })
-        awaitClose()
-    }
+    ): Flow<BaseResponse<List<CompanyNewsResponse>>>
 
-    /*
-    * Example of ThrottleManager usage
-    * */
-    override fun loadCompanyQuote(
+    /**
+     * Request to load company stock quote.
+     * @param symbol is a company symbol for which quote need to load
+     * @param position is a position on UI list. Required by ThrottleManagerImpl
+     * @param isImportant forces the request to be executed ignoring ThrottleManagerImpl
+     * */
+    fun loadCompanyQuote(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
-
-        // Add message(request) to throttle manager.
-        mThrottleManager.addMessage(
-            symbol = symbol,
-            api = Api.COMPANY_QUOTE,
-            position = position,
-            eraseIfNotActual = !isImportant,
-            ignoreDuplicate = isImportant
-        )
-
-        // SetUp api to invoke request
-        mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
-            mCompanyQuoteService
-                .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
-                .enqueue(BaseManager<CompanyQuoteResponse> {
-                    it.additionalMessage = symbolToRequest
-                    offerSafe(it)
-                })
-        }
-        awaitClose { mThrottleManager.invalidate() }
-    }
+    ): Flow<BaseResponse<CompanyQuoteResponse>>
 }

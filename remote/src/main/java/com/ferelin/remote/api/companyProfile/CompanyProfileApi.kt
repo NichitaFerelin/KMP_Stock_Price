@@ -20,7 +20,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface CompanyProfileApi {
+internal interface CompanyProfileApi {
     @GET("stock/profile2")
     fun getCompanyProfile(
         @Query("symbol") symbol: String,

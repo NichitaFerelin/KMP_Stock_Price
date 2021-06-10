@@ -16,7 +16,7 @@
 
 package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
-import com.ferelin.repository.RepositoryManagerHelper
+import com.ferelin.repository.Repository
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
@@ -33,7 +33,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsSyncHelper @Inject constructor(
     private val mDataMediator: DataMediator,
-    private val mRepositoryManager: RepositoryManagerHelper
+    private val mRepositoryManager: Repository
 ) {
     /*
     * Container for search requests which is at realtime database.

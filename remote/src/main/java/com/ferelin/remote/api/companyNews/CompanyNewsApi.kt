@@ -20,7 +20,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface CompanyNewsApi {
+internal interface CompanyNewsApi {
     @GET("company-news")
     fun getCompanyNews(
         @Query("symbol") symbol: String,

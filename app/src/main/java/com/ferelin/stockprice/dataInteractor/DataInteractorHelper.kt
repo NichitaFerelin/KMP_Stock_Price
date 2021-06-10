@@ -17,9 +17,9 @@ package com.ferelin.stockprice.dataInteractor
  */
 
 import android.app.Activity
+import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryMessages
-import com.ferelin.remote.auth.AuthenticationManagerHelper
 import kotlinx.coroutines.flow.Flow
 
 interface DataInteractorHelper {
@@ -47,17 +47,17 @@ interface DataInteractorHelper {
     suspend fun removeCompanyFromFavourite(symbol: String)
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     suspend fun signIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages>
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun logInWithCode(code: String)
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     suspend fun logOut()
 

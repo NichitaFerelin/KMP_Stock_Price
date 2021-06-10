@@ -1,4 +1,4 @@
-package com.ferelin.repository.responseConverter
+package com.ferelin.repository.converter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -20,27 +20,30 @@ import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.local.responses.SearchesResponse
-import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
 import com.ferelin.remote.api.stockCandles.StockCandlesResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.ferelin.remote.webSocket.WebSocketResponse
+import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.converter.adapter.DataAdapter
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
+import com.ferelin.shared.formatPrice
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [ResponseConverter] is used to convert responses for UI from local/remote modules.
+ * [ResponseConverterImpl] is used to convert responses for UI from local/remote modules.
  */
 @Singleton
-class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
-    ResponseConverterHelper {
+class ResponseConverterImpl @Inject constructor(
+    private val mAdapter: DataAdapter
+) : ResponseConverter {
 
     override fun convertCompaniesResponse(
         response: CompaniesResponse
@@ -59,7 +62,7 @@ class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
     override fun convertWebSocketResponse(response: BaseResponse<WebSocketResponse>): RepositoryResponse<AdaptiveWebSocketPrice> {
         return if (response.responseCode == Api.RESPONSE_OK) {
             val itemResponse = response.responseData as WebSocketResponse
-            val formattedPrice = mAdapter.formatPrice(itemResponse.lastPrice)
+            val formattedPrice = formatPrice(itemResponse.lastPrice)
             RepositoryResponse.Success(
                 owner = itemResponse.symbol,
                 data = AdaptiveWebSocketPrice(
@@ -82,10 +85,10 @@ class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyHistory(
-                    itemResponse.openPrices.map { mAdapter.formatPrice(it) },
-                    itemResponse.highPrices.map { mAdapter.formatPrice(it) },
-                    itemResponse.lowPrices.map { mAdapter.formatPrice(it) },
-                    itemResponse.closePrices.map { mAdapter.formatPrice(it) },
+                    itemResponse.openPrices.map { formatPrice(it) },
+                    itemResponse.highPrices.map { formatPrice(it) },
+                    itemResponse.lowPrices.map { formatPrice(it) },
+                    itemResponse.closePrices.map { formatPrice(it) },
                     itemResponse.timestamps.map {
                         mAdapter.fromLongToDateStr(Time.convertMillisFromResponse(it))
                     }
@@ -116,7 +119,7 @@ class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
                     itemResponse.webUrl,
                     itemResponse.industry,
                     itemResponse.currency,
-                    mAdapter.formatPrice(itemResponse.capitalization)
+                    formatPrice(itemResponse.capitalization)
                 )
             )
         } else RepositoryResponse.Failed()
@@ -184,11 +187,11 @@ class ResponseConverter @Inject constructor(private val mAdapter: DataAdapter) :
             RepositoryResponse.Success(
                 owner = response.additionalMessage,
                 data = AdaptiveCompanyDayData(
-                    mAdapter.formatPrice(itemResponse.currentPrice),
-                    mAdapter.formatPrice(itemResponse.previousClosePrice),
-                    mAdapter.formatPrice(itemResponse.openPrice),
-                    mAdapter.formatPrice(itemResponse.highPrice),
-                    mAdapter.formatPrice(itemResponse.lowPrice),
+                    formatPrice(itemResponse.currentPrice),
+                    formatPrice(itemResponse.previousClosePrice),
+                    formatPrice(itemResponse.openPrice),
+                    formatPrice(itemResponse.highPrice),
+                    formatPrice(itemResponse.lowPrice),
                     mAdapter.buildProfitString(itemResponse.currentPrice, itemResponse.openPrice)
                 )
             )

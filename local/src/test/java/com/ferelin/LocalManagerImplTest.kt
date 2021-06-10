@@ -1,18 +1,16 @@
 package com.ferelin
 
 import com.ferelin.local.LocalManager
-import com.ferelin.local.LocalManagerHelper
+import com.ferelin.local.LocalManagerImpl
 import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.database.CompaniesManagerHelper
+import com.ferelin.local.database.CompaniesManagerImpl
 import com.ferelin.local.json.JsonManager
-import com.ferelin.local.json.JsonManagerHelper
+import com.ferelin.local.json.JsonManagerImpl
 import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.local.preferences.StorePreferencesHelper
+import com.ferelin.local.preferences.StorePreferencesImpl
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.provider.FakeLocalResponses
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -21,25 +19,25 @@ import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.Spy
 
-class LocalManagerTest {
+class LocalManagerImplTest {
 
-    private lateinit var mLocalManager: LocalManagerHelper
-
-    @Spy
-    private lateinit var mJsonManager: JsonManagerHelper
+    private lateinit var mLocalManager: LocalManager
 
     @Spy
-    private lateinit var mCompaniesManager: CompaniesManagerHelper
+    private lateinit var mJsonManager: JsonManager
 
     @Spy
-    private lateinit var mStorePreferences: StorePreferencesHelper
+    private lateinit var mCompaniesManager: CompaniesManager
+
+    @Spy
+    private lateinit var mStorePreferences: StorePreferences
 
     @Before
     fun setUp() {
-        mJsonManager = mock(JsonManager::class.java)
-        mCompaniesManager = mock(CompaniesManager::class.java)
-        mStorePreferences = mock(StorePreferences::class.java)
-        mLocalManager = LocalManager(mJsonManager, mCompaniesManager, mStorePreferences)
+        mJsonManager = mock(JsonManagerImpl::class.java)
+        mCompaniesManager = mock(CompaniesManagerImpl::class.java)
+        mStorePreferences = mock(StorePreferencesImpl::class.java)
+        mLocalManager = LocalManagerImpl(mJsonManager, mCompaniesManager, mStorePreferences)
     }
 
     @Test
@@ -67,16 +65,16 @@ class LocalManagerTest {
 
     @Test
     fun getAllCompanies(): Unit = runBlocking {
-        `when`(mLocalManager.getAllCompanies()).thenReturn(flowOf(emptyList()))
-        mLocalManager.getAllCompanies().first()
-        verify(mCompaniesManager, times(1)).getAllCompanies()
+        `when`(mLocalManager.getCompanies()).thenReturn(flowOf(emptyList()))
+        mLocalManager.getCompanies().first()
+        verify(mCompaniesManager, times(1)).getCompanies()
     }
 
     @Test
     fun responseLoadedFromDatabase(): Unit = runBlocking {
-        `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(listOf(FakeLocalResponses.company)))
+        `when`(mCompaniesManager.getCompanies()).thenReturn(flowOf(listOf(FakeLocalResponses.company)))
 
-        val response = mLocalManager.getAllCompaniesAsResponse().first()
+        val response = mLocalManager.getCompanies().first()
         Assert.assertEquals(true, response is CompaniesResponse.Success)
         Assert.assertEquals(
             Responses.LOADED_FROM_DB,
@@ -86,10 +84,10 @@ class LocalManagerTest {
 
     @Test
     fun responseLoadedFromJson(): Unit = runBlocking {
-        `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(emptyList()))
+        `when`(mCompaniesManager.getCompanies()).thenReturn(flowOf(emptyList()))
         `when`(mLocalManager.getCompaniesFromJson()).thenReturn(flowOf(emptyList()))
 
-        val response = mLocalManager.getAllCompaniesAsResponse().first()
+        val response = mLocalManager.getCompanies().first()
         Assert.assertEquals(true, response is CompaniesResponse.Success)
         Assert.assertEquals(
             Responses.LOADED_FROM_JSON,
@@ -101,22 +99,22 @@ class LocalManagerTest {
     fun getAllCompaniesAsResponseFirstTime(): Unit = runBlocking {
         val item = listOf(FakeLocalResponses.companiesResponseSuccessFromJson.companies.first())
 
-        `when`(mCompaniesManager.getAllCompanies()).thenReturn(flowOf(emptyList()))
+        `when`(mCompaniesManager.getCompanies()).thenReturn(flowOf(emptyList()))
         `when`(mJsonManager.getCompaniesFromJson()).thenReturn(flowOf(item))
 
-        mLocalManager.getAllCompaniesAsResponse().first()
-        verify(mCompaniesManager, times(1)).getAllCompanies()
+        mLocalManager.getCompanies().first()
+        verify(mCompaniesManager, times(1)).getCompanies()
         verify(mJsonManager, times(1)).getCompaniesFromJson()
         verify(mCompaniesManager, times(1)).insertAllCompanies(item)
     }
 
     @Test
     fun getAllCompaniesAsResponse(): Unit = runBlocking {
-        `when`(mCompaniesManager.getAllCompanies())
+        `when`(mCompaniesManager.getCompanies())
             .thenReturn(flowOf(listOf(FakeLocalResponses.companiesResponseSuccessFromJson.companies.first())))
 
-        mLocalManager.getAllCompaniesAsResponse().first()
-        verify(mCompaniesManager, times(1)).getAllCompanies()
+        mLocalManager.getCompanies().first()
+        verify(mCompaniesManager, times(1)).getCompanies()
         verify(mJsonManager, times(0)).getCompaniesFromJson()
         verify(mCompaniesManager, times(0)).insertAllCompanies(emptyList())
     }
@@ -124,7 +122,7 @@ class LocalManagerTest {
     @Test
     fun getSearchesHistoryAsResponse() {
         mLocalManager.getSearchesHistoryAsResponse()
-        verify(mStorePreferences, times(1)).getSearchesHistory()
+        verify(mStorePreferences, times(1)).getSearchRequestsHistory()
     }
 
     @Test
@@ -143,15 +141,15 @@ class LocalManagerTest {
 
     @Test
     fun getSearchesHistory(): Unit = runBlocking {
-        `when`(mLocalManager.getSearchesHistory()).thenReturn(flowOf(setOf()))
-        mLocalManager.getSearchesHistory().first()
-        verify(mStorePreferences, times(1)).getSearchesHistory()
+        `when`(mLocalManager.getSearchRequestsHistory()).thenReturn(flowOf(setOf()))
+        mLocalManager.getSearchRequestsHistory().first()
+        verify(mStorePreferences, times(1)).getSearchRequestsHistory()
     }
 
     @Test
     fun setSearchesHistory() = runBlocking {
         val search = "search"
-        mLocalManager.setSearchesHistory(setOf(search))
-        verify(mStorePreferences, times(1)).setSearchesHistory(setOf(search))
+        mLocalManager.setSearchRequestsHistory(setOf(search))
+        verify(mStorePreferences, times(1)).setSearchRequestsHistory(setOf(search))
     }
 }

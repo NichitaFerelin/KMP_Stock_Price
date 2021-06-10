@@ -17,15 +17,15 @@ package com.ferelin.repository
  */
 
 import android.app.Activity
+import com.ferelin.remote.auth.AuthenticationManager
+import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
 import kotlinx.coroutines.flow.Flow
-import com.ferelin.remote.auth.AuthenticationManagerHelper
-import com.ferelin.remote.database.RealtimeDatabaseHelper
 
-interface RepositoryManagerHelper {
+interface Repository {
 
     fun loadStockCandles(
         symbol: String,
@@ -34,7 +34,7 @@ interface RepositoryManagerHelper {
         * */
         from: Long = Time.convertMillisForRequest(System.currentTimeMillis() - Time.ONE_YEAR),
         to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
-        // Days format
+        // Time format
         resolution: String = "D"
     ): Flow<RepositoryResponse<AdaptiveCompanyHistory>>
 
@@ -63,24 +63,24 @@ interface RepositoryManagerHelper {
 
     fun saveCompanyData(adaptiveCompany: AdaptiveCompany)
 
-    fun getAllCompanies(): Flow<RepositoryResponse<List<AdaptiveCompany>>>
+    fun getAllCompanies(): RepositoryResponse<List<AdaptiveCompany>>
 
     fun subscribeItemToLiveTimeUpdates(symbol: String, openPrice: Double)
 
     fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
 
-    fun getSearchesHistory(): Flow<RepositoryResponse<List<AdaptiveSearchRequest>>>
+    suspend fun getSearchesHistory(): RepositoryResponse<List<AdaptiveSearchRequest>>
 
     suspend fun setSearchesHistory(requests: List<AdaptiveSearchRequest>)
 
-    fun getFirstTimeLaunchState(): Flow<RepositoryResponse<Boolean>>
+    suspend fun getFirstTimeLaunchState(): RepositoryResponse<Boolean>
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
     suspend fun clearSearchesHistory()
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun tryToSignIn(
         holderActivity: Activity,
@@ -88,62 +88,62 @@ interface RepositoryManagerHelper {
     ): Flow<RepositoryResponse<RepositoryMessages>>
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun logInWithCode(code: String)
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun provideUserId(): String?
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun provideIsUserLogged(): Boolean
 
     /**
-     * @see [AuthenticationManagerHelper]
+     * @see [AuthenticationManager]
      */
     fun logOut()
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun eraseCompanyFromRealtimeDb(userId: String, companyId: String)
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun readCompaniesIdsFromDb(userId: String): Flow<RepositoryResponse<String?>>
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun writeSearchRequestToDb(userId: String, searchRequest: String)
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun readSearchRequestsFromDb(userId: String): Flow<RepositoryResponse<String?>>
 
     /**
-     * @see [RealtimeDatabaseHelper]
+     * @see [RealtimeDatabase]
      */
     fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
 }

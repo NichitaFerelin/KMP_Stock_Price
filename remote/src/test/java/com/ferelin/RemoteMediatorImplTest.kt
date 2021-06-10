@@ -1,11 +1,11 @@
 package com.ferelin
 
 import com.ferelin.remote.RemoteMediator
-import com.ferelin.remote.RemoteMediatorHelper
+import com.ferelin.remote.RemoteMediatorImpl
 import com.ferelin.remote.api.ApiManager
-import com.ferelin.remote.api.ApiManagerHelper
-import com.ferelin.remote.webSocket.WebSocketConnector
-import com.ferelin.remote.webSocket.WebSocketConnectorHelper
+import com.ferelin.remote.api.ApiManagerImpl
+import com.ferelin.remote.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,21 +16,21 @@ import org.robolectric.annotation.Config
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class RemoteMediatorTest {
+class RemoteMediatorImplTest {
 
-    private lateinit var mRemoteMediator: RemoteMediatorHelper
-
-    @Spy
-    private lateinit var mApiManager: ApiManagerHelper
+    private lateinit var mRemoteMediator: RemoteMediator
 
     @Spy
-    private lateinit var mWebSocketConnector: WebSocketConnectorHelper
+    private lateinit var mApiManager: ApiManager
+
+    @Spy
+    private lateinit var mWebSocketConnector: WebSocketConnector
 
     @Before
     fun setUp() {
-        mApiManager = mock(ApiManager::class.java)
-        mWebSocketConnector = mock(WebSocketConnector::class.java)
-        mRemoteMediator = RemoteMediator(mApiManager, mWebSocketConnector)
+        mApiManager = mock(ApiManagerImpl::class.java)
+        mWebSocketConnector = mock(WebSocketConnectorImpl::class.java)
+        mRemoteMediator = RemoteMediatorImpl(mApiManager, mWebSocketConnector)
     }
 
     @Test
