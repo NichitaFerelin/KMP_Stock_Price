@@ -36,7 +36,7 @@ class StorePreferencesImplTest {
     @Test
     fun get_setFirstTimeLaunch() : Unit = runBlocking {
         mStorePreferences.setFirstTimeLaunchState(true)
-        mStorePreferences.getFirstTimeLaunchState().first().also {
+        mStorePreferences.getFirstTimeLaunchState().also {
             Assert.assertEquals(it, true)
         }
     }

@@ -23,20 +23,6 @@ class DataAdapterTest {
     }
 
     @Test
-    fun getMonthFromDate() {
-        val date = "25 Mar 2021"
-        val result = mAdapter.parseMonthFromDate(date)
-        Assert.assertEquals("Mar", result)
-    }
-
-    @Test
-    fun getYearFromDate() {
-        val date = "25 Mar 2021"
-        val result = mAdapter.parseYearFromDate(date)
-        Assert.assertEquals("2021", result)
-    }
-
-    @Test
     fun adaptName() {
         val name = "Apple Inc"
         val result = mAdapter.adaptName(name)
@@ -48,13 +34,6 @@ class DataAdapterTest {
         val phone = "123456789.0"
         val result = mAdapter.adaptPhone(phone)
         Assert.assertEquals("123456789", result)
-    }
-
-    @Test
-    fun formatPrice() {
-        val price = 1042.32
-        val result = mAdapter.formatPrice(price)
-        Assert.assertEquals("$1 042.32", result)
     }
 
     @Test
@@ -143,6 +122,6 @@ class DataAdapterTest {
         val currentPrice = 100.0
         val previousPrice = 50.0
         val result = mAdapter.buildProfitString(currentPrice, previousPrice)
-        Assert.assertEquals("+$50.0 (50,0%)" , result)
+        Assert.assertEquals("+$50.0 (50,0%)", result)
     }
 }

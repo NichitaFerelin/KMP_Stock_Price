@@ -1,9 +1,12 @@
 package com.ferelin
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.ferelin.remote.RemoteMediator
 import com.ferelin.remote.RemoteMediatorImpl
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.ApiManagerImpl
+import com.ferelin.remote.auth.AuthenticationManagerImpl
+import com.ferelin.remote.database.RealtimeDatabaseImpl
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
 import org.junit.Before
@@ -30,7 +33,17 @@ class RemoteMediatorImplTest {
     fun setUp() {
         mApiManager = mock(ApiManagerImpl::class.java)
         mWebSocketConnector = mock(WebSocketConnectorImpl::class.java)
-        mRemoteMediator = RemoteMediatorImpl(mApiManager, mWebSocketConnector)
+        val authManager = mock(AuthenticationManagerImpl::class.java)
+        val realtimeDb = mock(RealtimeDatabaseImpl::class.java)
+        val context = InstrumentationRegistry.getInstrumentation().context
+
+        mRemoteMediator = RemoteMediatorImpl(
+            mApiManager,
+            mWebSocketConnector,
+            authManager,
+            realtimeDb,
+            context
+        )
     }
 
     @Test

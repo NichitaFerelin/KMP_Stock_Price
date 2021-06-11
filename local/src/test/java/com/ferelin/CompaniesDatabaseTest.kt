@@ -7,7 +7,6 @@ import com.ferelin.local.database.CompaniesDao
 import com.ferelin.local.database.CompaniesDatabase
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.After
@@ -42,7 +41,7 @@ class CompaniesDatabaseTest {
     fun insert(): Unit = runBlocking {
         val company = FakeLocalResponses.companiesResponseSuccessFromDatabase.companies.first()
         mDatabaseDao.insert(company)
-        mDatabaseDao.getAll().first().first().also {
+        mDatabaseDao.getAll().first().also {
             Assert.assertEquals(company.id, it.id)
             Assert.assertEquals(company.name, it.name)
             Assert.assertEquals(company.symbol, it.symbol)
@@ -82,7 +81,7 @@ class CompaniesDatabaseTest {
         val secondCompany = firstCompany.copy(id = 10, name = "newName")
         val companies = listOf(firstCompany, secondCompany)
         mDatabaseDao.insertAll(companies)
-        mDatabaseDao.getAll().first().also {
+        mDatabaseDao.getAll().also {
             Assert.assertEquals(2, it.size)
         }
     }
@@ -93,20 +92,8 @@ class CompaniesDatabaseTest {
         val updated = company.copy(name = "newName")
         mDatabaseDao.insert(company)
         mDatabaseDao.update(updated)
-        mDatabaseDao.getAll().first().first().also {
-            Assert.assertEquals(it.name, updated.name)
-        }
-    }
-
-    @Test
-    fun delete(): Unit = runBlocking {
-        val firstCompany = FakeLocalResponses.companiesResponseSuccessFromDatabase.companies.first()
-        val secondCompany = firstCompany.copy(id = 10, name = "newName")
-        val companies = listOf(firstCompany, secondCompany)
-        mDatabaseDao.insertAll(companies)
-        mDatabaseDao.delete(firstCompany)
         mDatabaseDao.getAll().first().also {
-            Assert.assertEquals(1, it.size)
+            Assert.assertEquals(it.name, updated.name)
         }
     }
 
