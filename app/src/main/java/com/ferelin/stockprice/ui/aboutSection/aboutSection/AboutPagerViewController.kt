@@ -26,7 +26,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.custom.OrderedTextView
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showSnackbar
 import com.google.android.material.transition.Hold
 import com.google.android.material.transition.MaterialContainerTransform
 
@@ -99,7 +99,7 @@ class AboutPagerViewController :
     }
 
     fun onError(text: String) {
-        showToast(context, text)
+        showSnackbar(viewBinding.root, text)
     }
 
     fun handleOnBackPressed(): Boolean {

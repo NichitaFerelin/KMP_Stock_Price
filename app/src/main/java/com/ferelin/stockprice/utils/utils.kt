@@ -26,12 +26,12 @@ import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.core.content.res.use
 import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
+import com.google.android.material.snackbar.Snackbar
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -49,8 +49,8 @@ fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
         .contains(text.toLowerCase(Locale.ROOT))
 }
 
-fun showToast(context: Context, text: String) {
-    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+fun showSnackbar(contextView: View, text: String) {
+    Snackbar.make(contextView, text, Snackbar.LENGTH_LONG).show()
 }
 
 fun parseDoubleFromStr(str: String): Double {

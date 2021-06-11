@@ -17,7 +17,6 @@ package com.ferelin.stockprice.ui.aboutSection.chart
  */
 
 import android.animation.Animator
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -33,7 +32,7 @@ import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.custom.utils.SuggestionControlHelper
 import com.ferelin.stockprice.databinding.FragmentChartBinding
 import com.ferelin.stockprice.utils.anim.AnimatorManager
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showSnackbar
 
 class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartBinding>() {
 
@@ -132,8 +131,8 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
         }
     }
 
-    fun onError(context: Context, text: String) {
-        showToast(context, text)
+    fun onError(text: String) {
+        showSnackbar(viewBinding.root, text)
         hideProgressBar()
     }
 

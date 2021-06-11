@@ -26,7 +26,7 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewAnimator
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showSnackbar
 
 class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
 
@@ -60,6 +60,6 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        showSnackbar(viewBinding.root, message)
     }
 }

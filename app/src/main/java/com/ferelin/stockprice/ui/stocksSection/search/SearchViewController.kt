@@ -157,7 +157,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        showSnackbar(viewBinding.root, message)
     }
 
     fun onStop() {

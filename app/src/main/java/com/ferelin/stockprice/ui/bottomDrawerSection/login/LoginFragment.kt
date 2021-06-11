@@ -22,11 +22,9 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.utils.showToast
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -89,7 +87,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     private suspend fun collectSignInState() {
         mViewModel.stateSignIn.collect {
             withContext(mCoroutineContext.Main) {
-                showToast(requireContext(), getString(R.string.hintSuccess))
+                mViewController.onSignIn()
                 parentFragmentManager.popBackStack()
             }
         }

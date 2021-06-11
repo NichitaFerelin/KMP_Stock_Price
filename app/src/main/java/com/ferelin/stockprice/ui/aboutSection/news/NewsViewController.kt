@@ -29,7 +29,7 @@ import com.ferelin.stockprice.common.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.anim.AnimationManager
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showSnackbar
 
 class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNewsBinding>() {
 
@@ -62,7 +62,7 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
         val url = company.companyNews.browserUrls[position]
         val isNavigated = Navigator.navigateToUrl(context, url)
         if (!isNavigated) {
-            showToast(context, context.getString(R.string.errorNoAppToOpenUrl))
+            showSnackbar(viewBinding.root, context.getString(R.string.errorNoAppToOpenUrl))
         }
     }
 
@@ -77,7 +77,7 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        showSnackbar(viewBinding.root, message)
         viewBinding.progressBar.visibility = View.INVISIBLE
     }
 

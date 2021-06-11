@@ -32,7 +32,7 @@ import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.isOut
 import com.ferelin.stockprice.utils.openKeyboard
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showSnackbar
 
 class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginBinding>() {
 
@@ -136,7 +136,11 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        showSnackbar(viewBinding.root, message)
+    }
+
+    fun onSignIn() {
+        showSnackbar(viewBinding.root, context.getString(R.string.hintSuccess))
     }
 
     private fun showProgressBar() {
