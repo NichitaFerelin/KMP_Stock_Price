@@ -19,7 +19,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,18 +35,18 @@ import javax.inject.Singleton
  *   - Observing [mSharedCompaniesUpdates] to update items at list.
  *
  * Also [CompaniesWorker] manually doing:
- *   - Using [mLocalInteractorHelper] to data caching.
+ *   - Using [mLocalInteractor] to data caching.
  *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
  */
 
 @Singleton
 class CompaniesWorker @Inject constructor(
     private val mStylesProvider: StylesProvider,
-    private val mLocalInteractorHelper: LocalInteractorHelper
+    private val mLocalInteractor: LocalInteractor
 ) {
     private var mCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
-    val companies: ArrayList<AdaptiveCompany>
-        get() = mCompanies
+    val companies: List<AdaptiveCompany>
+        get() = mCompanies.toList()
 
     private val mStateCompanies = MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(
         DataNotificator.Loading()
@@ -74,7 +74,7 @@ class CompaniesWorker @Inject constructor(
             isDataNew = { it.companyHistory == response.data },
             onApply = { companyToUpdate ->
                 companyToUpdate.companyHistory = response.data
-                mLocalInteractorHelper.cacheCompany(companyToUpdate)
+                mLocalInteractor.cacheCompany(companyToUpdate)
             }
         )
     }
@@ -85,7 +85,7 @@ class CompaniesWorker @Inject constructor(
             isDataNew = { it.companyNews == response.data },
             onApply = { companyToUpdate ->
                 companyToUpdate.companyNews = response.data
-                mLocalInteractorHelper.cacheCompany(companyToUpdate)
+                mLocalInteractor.cacheCompany(companyToUpdate)
             }
         )
     }
@@ -99,7 +99,7 @@ class CompaniesWorker @Inject constructor(
                 companyToUpdate.companyStyle.dayProfitBackground =
                     mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
 
-                mLocalInteractorHelper.cacheCompany(companyToUpdate)
+                mLocalInteractor.cacheCompany(companyToUpdate)
             }
         )
     }
@@ -114,7 +114,7 @@ class CompaniesWorker @Inject constructor(
                 companyToUpdate.companyStyle.dayProfitBackground =
                     mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
 
-                mLocalInteractorHelper.cacheCompany(companyToUpdate)
+                mLocalInteractor.cacheCompany(companyToUpdate)
             }
         )
     }

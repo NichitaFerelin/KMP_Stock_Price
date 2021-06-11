@@ -36,6 +36,7 @@ open class DataMediator @Inject constructor(
     val searchRequestsWorker: SearchRequestsWorker,
     val firstTimeLaunchWorker: FirstTimeLaunchWorker,
     val menuItemsWorker: MenuItemsWorker,
+    val networkConnectivityWorker: NetworkConnectivityWorker
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)

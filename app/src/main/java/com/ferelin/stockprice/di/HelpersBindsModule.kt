@@ -41,7 +41,7 @@ import com.ferelin.repository.RepositoryImpl
 import com.ferelin.repository.converter.ResponseConverter
 import com.ferelin.repository.converter.ResponseConverterImpl
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractorImpl
 import dagger.Binds
 import dagger.Module
 
@@ -52,7 +52,7 @@ abstract class HelpersBindsModule {
     abstract fun provideRepositoryManagerHelper(repositoryImpl: RepositoryImpl): Repository
 
     @Binds
-    abstract fun provideLocalInteractorHelper(localInteractor: LocalInteractor): LocalInteractorHelper
+    abstract fun provideLocalInteractorHelper(localInteractor: LocalInteractorImpl): LocalInteractor
 
     @Binds
     abstract fun provideRemoteMediatorHelper(remote: RemoteMediatorImpl): RemoteMediator

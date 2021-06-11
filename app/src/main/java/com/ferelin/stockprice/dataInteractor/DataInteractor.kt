@@ -25,8 +25,7 @@ import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.ErrorsWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.NetworkConnectivityWorker
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import com.ferelin.stockprice.utils.DataNotificator
@@ -40,19 +39,16 @@ import javax.inject.Singleton
  * [DataInteractor] is MAIN and SINGLE entity for the UI layer interaction with data.
  *   - Providing states of data and errors.
  *   - Sending network requests to Repository using [mRepositoryHelper].
- *   - Sending local requests to Repository using [mLocalInteractorHelper].
+ *   - Sending local requests to Repository using [mLocalInteractor].
  *   - Sending errors to [mErrorsWorker].
- *   - Providing network state using [mNetworkConnectivityWorker].
  *   - Providing states about data loading to [mDataMediator].
  */
-
 @Singleton
 class DataInteractor @Inject constructor(
     private val mRepositoryHelper: Repository,
-    private val mLocalInteractorHelper: LocalInteractorHelper,
+    private val mLocalInteractor: LocalInteractor,
     private val mDataMediator: DataMediator,
     private val mErrorsWorker: ErrorsWorker,
-    private val mNetworkConnectivityWorker: NetworkConnectivityWorker,
     private val mSynchronizationManager: SynchronizationManager
 ) : DataInteractorHelper {
 
@@ -78,7 +74,7 @@ class DataInteractor @Inject constructor(
         get() = mDataMediator.searchRequestsWorker.statePopularSearchRequests
 
     val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
+        get() = mDataMediator.networkConnectivityWorker.stateIsNetworkAvailable
 
     val stateFirstTimeLaunch: StateFlow<Boolean?>
         get() = mDataMediator.firstTimeLaunchWorker.stateFirstTimeLaunch
@@ -260,7 +256,7 @@ class DataInteractor @Inject constructor(
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
-        mLocalInteractorHelper.setFirstTimeLaunchState(state)
+        mLocalInteractor.setFirstTimeLaunchState(state)
     }
 
     override fun prepareToWebSocketReconnection() {
@@ -275,21 +271,21 @@ class DataInteractor @Inject constructor(
     }
 
     private suspend fun prepareCompaniesData() {
-        val responseCompanies = mLocalInteractorHelper.getCompanies()
+        val responseCompanies = mLocalInteractor.getCompanies()
         if (responseCompanies is LocalInteractorResponse.Success) {
             mDataMediator.onCompaniesDataPrepared(responseCompanies.companies)
         } else mErrorsWorker.onPrepareCompaniesError()
     }
 
     private suspend fun prepareSearchesHistory() {
-        val responseSearchesHistory = mLocalInteractorHelper.getSearchRequestsHistory()
+        val responseSearchesHistory = mLocalInteractor.getSearchRequestsHistory()
         if (responseSearchesHistory is LocalInteractorResponse.Success) {
             mDataMediator.onSearchRequestsHistoryPrepared(responseSearchesHistory.searchesHistory)
         } else mErrorsWorker.onLoadSearchRequestsError()
     }
 
     private suspend fun prepareFirstTimeLaunchState() {
-        val firstTimeLaunchResponse = mLocalInteractorHelper.getFirstTimeLaunchState()
+        val firstTimeLaunchResponse = mLocalInteractor.getFirstTimeLaunchState()
         mDataMediator.onFirstTimeLaunchStateResponse(firstTimeLaunchResponse)
     }
 

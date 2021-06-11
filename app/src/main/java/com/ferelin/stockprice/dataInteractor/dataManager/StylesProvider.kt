@@ -28,7 +28,6 @@ import javax.inject.Singleton
  *  This class is responsible for providing right color/image/icon depending
  *  on some fields like: is company favourite or not, company price profit, etc.
  */
-
 @Singleton
 class StylesProvider @Inject constructor(private val mContext: Context) {
 
@@ -39,6 +38,7 @@ class StylesProvider @Inject constructor(private val mContext: Context) {
 
     private val mDrawableRippleLight = R.drawable.ripple_light
     private val mDrawableRippleDark = R.drawable.ripple_dark
+
     private val mColorProfitPlus = R.color.green
     private val mColorProfitMinus = R.color.red
     private val mColorHolderFirst = R.color.white
@@ -69,12 +69,18 @@ class StylesProvider @Inject constructor(private val mContext: Context) {
         } else getColor(mColorProfitMinus)
     }
 
+    /**
+     * Holder background depends of index at UI
+     * */
     private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
             getColor(mColorHolderFirst)
         } else getColor(mColorHolderSecond)
     }
 
+    /**
+     * Ripple foreground depends of index at UI
+     * */
     private fun getRippleForeground(index: Int): Int {
         return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
     }

@@ -16,56 +16,22 @@ package com.ferelin.stockprice.dataInteractor.local
  * limitations under the License.
  */
 
-import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.repository.utils.RepositoryResponse
-import javax.inject.Inject
-import javax.inject.Singleton
 
-/**
- * [LocalInteractor] is responsible for local requests.
- */
+interface LocalInteractor {
 
-@Singleton
-open class LocalInteractor @Inject constructor(
-    private val mRepository: Repository
-) : LocalInteractorHelper {
+    suspend fun getCompanies(): LocalInteractorResponse
 
-    override suspend fun getCompanies(): LocalInteractorResponse {
-        val responseCompanies = mRepository.getAllCompanies()
-        return if (responseCompanies is RepositoryResponse.Success) {
-            LocalInteractorResponse.Success(responseCompanies.data)
-        } else LocalInteractorResponse.Failed()
-    }
+    suspend fun getSearchRequestsHistory(): LocalInteractorResponse
 
-    override suspend fun getSearchRequestsHistory(): LocalInteractorResponse {
-        val responseSearches = mRepository.getSearchesHistory()
-        return if (responseSearches is RepositoryResponse.Success) {
-            LocalInteractorResponse.Success(searchesHistory = responseSearches.data)
-        } else LocalInteractorResponse.Failed()
-    }
+    suspend fun cacheSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
 
-    override suspend fun cacheCompany(adaptiveCompany: AdaptiveCompany) {
-        mRepository.saveCompanyData(adaptiveCompany)
-    }
+    suspend fun clearSearchRequestsHistory()
 
-    override suspend fun cacheSearchRequestsHistory(requests: List<AdaptiveSearchRequest>) {
-        mRepository.setSearchesHistory(requests)
-    }
+    suspend fun setFirstTimeLaunchState(state: Boolean)
 
-    override suspend fun setFirstTimeLaunchState(state: Boolean) {
-        mRepository.setFirstTimeLaunchState(state)
-    }
+    suspend fun getFirstTimeLaunchState(): LocalInteractorResponse
 
-    override suspend fun clearSearchRequestsHistory() {
-        mRepository.clearSearchesHistory()
-    }
-
-    override suspend fun getFirstTimeLaunchState(): LocalInteractorResponse {
-        val firstTimeStateResponse = mRepository.getFirstTimeLaunchState()
-        return if (firstTimeStateResponse is RepositoryResponse.Success) {
-            LocalInteractorResponse.Success(firstTimeLaunch = firstTimeStateResponse.data)
-        } else LocalInteractorResponse.Failed()
-    }
+    suspend fun cacheCompany(adaptiveCompany: AdaptiveCompany)
 }

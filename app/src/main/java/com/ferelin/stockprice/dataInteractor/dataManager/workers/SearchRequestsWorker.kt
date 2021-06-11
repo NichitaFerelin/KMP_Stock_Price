@@ -17,7 +17,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
  */
 
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import com.ferelin.stockprice.utils.actionHolder.ActionType
@@ -34,18 +34,18 @@ import kotlin.collections.ArrayList
  *   - Observing [mStatePopularSearchRequests] to display populars search requests.
  *
  *  Also [SearchRequestsWorker] do manually:
- *   - Using [mLocalInteractorHelper] to data caching.
+ *   - Using [mLocalInteractor] to data caching.
  *   - Using [mSearchRequestsLimit] to control limit of search requests.
  *   - Optimizing search requests size. @see [removeSearchRequestsDuplicates]
  */
 
 @Singleton
 class SearchRequestsWorker @Inject constructor(
-    private val mLocalInteractorHelper: LocalInteractorHelper
+    private val mLocalInteractor: LocalInteractor
 ) {
     private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
     val searchRequests: List<AdaptiveSearchRequest>
-        get() = mSearchRequests
+        get() = mSearchRequests.toList()
 
     private val mSearchRequestsLimit = 30
 
@@ -104,7 +104,7 @@ class SearchRequestsWorker @Inject constructor(
         }
 
         mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
-        mLocalInteractorHelper.cacheSearchRequestsHistory(mSearchRequests)
+        mLocalInteractor.cacheSearchRequestsHistory(mSearchRequests)
 
         return actionsContainer
     }
@@ -112,7 +112,7 @@ class SearchRequestsWorker @Inject constructor(
     suspend fun clearSearchRequests() {
         mSearchRequests.clear()
         mStateSearchRequests.value = DataNotificator.Loading()
-        mLocalInteractorHelper.clearSearchRequestsHistory()
+        mLocalInteractor.clearSearchRequestsHistory()
     }
 
     /*

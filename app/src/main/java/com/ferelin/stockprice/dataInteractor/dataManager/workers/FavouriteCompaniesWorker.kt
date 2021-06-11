@@ -19,7 +19,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorHelper
+import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.parseDoubleFromStr
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,20 +38,18 @@ import javax.inject.Singleton
  *   - Subscribing favourite companies for live-time updates using [mRepositoryHelper].
  *   - Unsubscribing companies from live-time updates when it was removed from favourites using [mRepositoryHelper].
  *   - Control the limit of favourite companies @see [mCompaniesLimit] notifying with [mErrorsWorker].
- *   - Using [mLocalInteractorHelper] to data caching.
+ *   - Using [mLocalInteractor] to data caching.
  *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
  */
 
 @Singleton
 class FavouriteCompaniesWorker @Inject constructor(
     private val mStylesProvider: StylesProvider,
-    private val mLocalInteractorHelper: LocalInteractorHelper,
+    private val mLocalInteractor: LocalInteractor,
     private val mRepositoryHelper: Repository,
     private val mErrorsWorker: ErrorsWorker
 ) {
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
-    val favouriteCompanies: List<AdaptiveCompany>
-        get() = mFavouriteCompanies.toList()
 
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(DataNotificator.Loading())
@@ -102,7 +100,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         mFavouriteCompanies.add(0, company)
         mStateCompanyForObserver.value = company
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.NewItemAdded(company))
-        mLocalInteractorHelper.cacheCompany(company)
+        mLocalInteractor.cacheCompany(company)
         return company
     }
 
@@ -116,7 +114,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         }
 
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
-        mLocalInteractorHelper.cacheCompany(company)
+        mLocalInteractor.cacheCompany(company)
         return company
     }
 
