@@ -59,22 +59,22 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
         mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 mUserVerificationId = p0
-                offer(BaseResponse(responseCode = Api.VERIFICATION_CODE_SENT))
+                trySend(BaseResponse(responseCode = Api.VERIFICATION_CODE_SENT))
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     when {
-                        task.isSuccessful -> offer(BaseResponse(responseCode = Api.VERIFICATION_COMPLETED))
-                        else -> offer(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
+                        task.isSuccessful -> trySend(BaseResponse(responseCode = Api.VERIFICATION_COMPLETED))
+                        else -> trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
                     }
                 }
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
                 when (p0) {
-                    is FirebaseTooManyRequestsException -> offer(BaseResponse(responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS))
-                    else -> offer(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
+                    is FirebaseTooManyRequestsException -> trySend(BaseResponse(responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS))
+                    else -> trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
                 }
             }
         }

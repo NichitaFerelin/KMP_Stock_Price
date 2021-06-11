@@ -30,7 +30,6 @@ import com.ferelin.remote.api.throttleManager.ThrottleManager
 import com.ferelin.remote.base.BaseManager
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.ferelin.remote.utils.offerSafe
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -54,7 +53,7 @@ open class ApiManagerImpl @Inject constructor(
         mStockSymbolsService
             .getStockSymbolList(Api.FINNHUB_TOKEN)
             .enqueue(BaseManager<StockSymbolResponse> {
-                offerSafe(it)
+                trySend(it)
             })
         awaitClose()
     }
@@ -64,7 +63,7 @@ open class ApiManagerImpl @Inject constructor(
             mCompanyProfileService
                 .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
                 .enqueue(BaseManager<CompanyProfileResponse> {
-                    offerSafe(it)
+                    trySend(it)
                 })
             awaitClose()
         }
@@ -78,7 +77,7 @@ open class ApiManagerImpl @Inject constructor(
         mStockCandlesService
             .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
             .enqueue(BaseManager<StockCandlesResponse> {
-                offerSafe(it)
+                trySend(it)
             })
         awaitClose()
     }
@@ -91,7 +90,7 @@ open class ApiManagerImpl @Inject constructor(
         mCompanyNewsService
             .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
             .enqueue(BaseManager<List<CompanyNewsResponse>> {
-                offerSafe(it)
+                trySend(it)
             })
         awaitClose()
     }
@@ -116,7 +115,7 @@ open class ApiManagerImpl @Inject constructor(
                 .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
                 .enqueue(BaseManager<CompanyQuoteResponse> {
                     it.additionalMessage = symbolToRequest
-                    offerSafe(it)
+                    trySend(it)
                 })
         }
         awaitClose { mThrottleManager.invalidate() }

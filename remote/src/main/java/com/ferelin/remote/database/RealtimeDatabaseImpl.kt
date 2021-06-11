@@ -18,7 +18,6 @@ package com.ferelin.remote.database
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
-import com.ferelin.remote.utils.offerSafe
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -93,10 +92,10 @@ class RealtimeDatabaseImpl @Inject constructor() : RealtimeDatabase {
                                 responseCode = Api.RESPONSE_OK,
                                 responseData = companySnapshot.key
                             )
-                            offerSafe(response)
+                            trySend(response)
                         }
-                        offerSafe(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else offerSafe(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
+                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
+                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
                 }
             })
         awaitClose()
@@ -129,10 +128,10 @@ class RealtimeDatabaseImpl @Inject constructor() : RealtimeDatabase {
                                 responseCode = Api.RESPONSE_OK,
                                 responseData = fixedResponse
                             )
-                            offerSafe(response)
+                            trySend(response)
                         }
-                        offerSafe(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else offerSafe(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
+                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
+                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
                 }
             })
         awaitClose()
