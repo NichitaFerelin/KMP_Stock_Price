@@ -68,9 +68,21 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
     }
 
     fun onLogOut() {
-        val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
-        if (recyclerViewAdapter is MenuItemsAdapter) {
-            recyclerViewAdapter.onLogOutNotify()
+        try {
+            val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
+            if (recyclerViewAdapter is MenuItemsAdapter) {
+                recyclerViewAdapter.onLogOutNotify()
+            }
+        } catch (e: IllegalStateException) {
+            /*
+            * viewBinding can be null at this moment.
+            *
+            * When user returns to the fragment that contains this menu, the view of this menu-fragment
+            * quickly goes through a full lifecycle from onCreateView to onDestroyView and
+            * then is created on a new one from onCreateView.
+            *
+            * I don't understand why this is happening
+            * */
         }
     }
 
