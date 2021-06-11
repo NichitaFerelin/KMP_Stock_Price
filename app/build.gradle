@@ -65,7 +65,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
     // Compose
-    def compose = '1.0.0-beta07'
+    def compose = '1.0.0-beta08'
     implementation "androidx.compose.ui:ui:$compose"
     implementation "androidx.compose.ui:ui-tooling:$compose"
     implementation "androidx.compose.foundation:foundation:$compose"
