@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName", "PropertyName", "PropertyName")
+
 package com.ferelin.shared
 
 /*
