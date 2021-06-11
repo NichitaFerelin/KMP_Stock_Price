@@ -74,14 +74,6 @@ open class ErrorsWorker @Inject constructor(private val mContext: Context) {
         )
     }
 
-    private val mSharedOpenConnectionError = MutableSharedFlow<String>()
-    val sharedOpenConnectionError: SharedFlow<String>
-        get() = mSharedOpenConnectionError
-
-    suspend fun onOpenConnectionError() {
-        mSharedOpenConnectionError.emit(getString(mContext, R.string.errorLiveTimeDataLoad))
-    }
-
     private val mSharedLoadSearchRequestsError = MutableSharedFlow<String>()
     val sharedLoadSearchRequestsError: SharedFlow<String>
         get() = mSharedLoadSearchRequestsError

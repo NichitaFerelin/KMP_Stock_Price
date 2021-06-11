@@ -38,14 +38,9 @@ class StocksViewModel : BaseStocksViewModel() {
     override fun initObserversBlock() {
         super.initObserversBlock()
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectSharedOpenConnectionError() }
             launch { collectSharedFavouritesLimitReached() }
             launch { collectSharedCompanyQuoteError() }
         }
-    }
-
-    private suspend fun collectSharedOpenConnectionError() {
-        mDataInteractor.sharedOpenConnectionError.collect { mEventError.emit(it) }
     }
 
     private suspend fun collectSharedFavouritesLimitReached() {
