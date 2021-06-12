@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:transitionName="transitionCardContainer"
-            app:layout_scrollFlags="scroll">
+            app:layout_scrollFlags="scroll|snap">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardViewSearch"
