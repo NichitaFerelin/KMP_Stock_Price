@@ -19,9 +19,11 @@ package com.ferelin.stockprice.ui
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
@@ -29,7 +31,9 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
+import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
+import com.ferelin.stockprice.utils.withTimerOnUi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -46,6 +50,8 @@ class MainActivity(
     @Inject
     lateinit var dataInteractor: DataInteractor
 
+    private var mTextViewError: TextView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
 
@@ -54,15 +60,6 @@ class MainActivity(
         setUpComponents()
         initObservers()
         Navigator.navigateToLoadingFragment(this)
-    }
-
-    private fun injectDependencies() {
-        if (application is App) {
-            (application as App).run {
-                appComponent.inject(this@MainActivity)
-                appComponent.inject(mViewModel)
-            }
-        }
     }
 
     override fun onResume() {
@@ -81,15 +78,40 @@ class MainActivity(
     }
 
     override fun onDestroy() {
+        mTextViewError = null
         StockObserverController.stopService(this@MainActivity)
         super.onDestroy()
     }
 
+    private fun injectDependencies() {
+        if (application is App) {
+            (application as App).run {
+                appComponent.inject(this@MainActivity)
+                appComponent.inject(mViewModel)
+            }
+        }
+    }
+
+    private fun onError(text: String) {
+        mTextViewError!!.text = text
+        showError()
+        withTimerOnUi(4000L) { hideError() }
+    }
+
     private fun initObservers() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectEventCriticalError() }
             launch { collectNetworkState() }
+            launch { collectEventCriticalError() }
             launch { collectEventApiLimitError() }
+            launch { collectFavouriteCompaniesLimitError() }
+        }
+    }
+
+    private suspend fun collectFavouriteCompaniesLimitError() {
+        mViewModel.eventOnFavouriteCompaniesLimitError.collect {
+            withContext(mCoroutineContext.Main) {
+                showDefaultDialog(this@MainActivity, it)
+            }
         }
     }
 
@@ -101,11 +123,7 @@ class MainActivity(
         mViewModel.stateIsNetworkAvailable.collect { isAvailable ->
             if (!isAvailable) {
                 withContext(mCoroutineContext.Main) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        R.string.errorNetwork,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    onError(getString(R.string.errorNetwork))
                 }
             }
         }
@@ -114,7 +132,7 @@ class MainActivity(
     private suspend fun collectEventApiLimitError() {
         mViewModel.eventApiLimitError.collect { message ->
             withContext(mCoroutineContext.Main) {
-                Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                onError(message)
             }
         }
     }
@@ -140,11 +158,32 @@ class MainActivity(
 
     private fun setUpComponents() {
         setStatusBarColor()
+        mTextViewError = findViewById(R.id.textViewError)
     }
 
     private fun setStatusBarColor() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             window.statusBarColor = Color.BLACK
+        }
+    }
+
+    private fun showError() {
+        val root = findViewById<ConstraintLayout>(R.id.mainRoot)
+        ConstraintSet().apply {
+            clone(root)
+            clear(R.id.textViewError, ConstraintSet.TOP)
+            connect(R.id.textViewError, ConstraintSet.BOTTOM, R.id.mainRoot, ConstraintSet.BOTTOM)
+            applyTo(root)
+        }
+    }
+
+    private fun hideError() {
+        val root = findViewById<ConstraintLayout>(R.id.mainRoot)
+        ConstraintSet().apply {
+            clone(root)
+            clear(R.id.textViewError, ConstraintSet.BOTTOM)
+            connect(R.id.textViewError, ConstraintSet.TOP, R.id.mainRoot, ConstraintSet.BOTTOM)
+            applyTo(root)
         }
     }
 }

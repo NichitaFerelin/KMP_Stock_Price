@@ -94,7 +94,7 @@ class StocksRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun notifyUpdate(index: Int) {
+    fun notifyUpdated(index: Int) {
         notifyItemChanged(index + mOffsetWithHeader)
     }
 

@@ -28,7 +28,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentProfileBinding
 import com.ferelin.stockprice.navigation.Navigator
-import com.ferelin.stockprice.utils.showSnackbar
+import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 
 
@@ -98,6 +98,6 @@ class ProfileFragment(private val mSelectedCompany: AdaptiveCompany? = null) : F
     }
 
     private fun showNoAppError() {
-        showSnackbar(mBinding!!.root, getString(R.string.errorNoAppToOpenUrl))
+        showDefaultDialog(requireContext(), getString(R.string.errorNoAppToOpenUrl))
     }
 }

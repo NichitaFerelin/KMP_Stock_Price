@@ -19,7 +19,6 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.login
 import android.animation.Animator
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.view.View
 import android.view.animation.Animation
 import androidx.core.content.ContextCompat
@@ -27,12 +26,9 @@ import androidx.fragment.app.Fragment
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
+import com.ferelin.stockprice.utils.*
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.AnimatorManager
-import com.ferelin.stockprice.utils.hideKeyboard
-import com.ferelin.stockprice.utils.isOut
-import com.ferelin.stockprice.utils.openKeyboard
-import com.ferelin.stockprice.utils.showSnackbar
 
 class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginBinding>() {
 
@@ -75,7 +71,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
             }
 
             mLastInputPhone = phone
-            viewBinding.editTextCode.text = SpannableStringBuilder("")
+            viewBinding.editTextCode.setText("")
 
             when {
                 phone.isNotEmpty() && !isBtnCheckEnabled() -> enableBtnCheck()
@@ -97,6 +93,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     fun onSendCodeClicked() {
+        invalidateErrors()
         hideBtnCheck()
     }
 
@@ -105,6 +102,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
             hideBtnCheck()
             showEditTextCode()
             setFocus(viewBinding.editTextCode)
+            invalidateErrors()
         } else {
             hideEditTextCode()
             showBtnCheck()
@@ -128,6 +126,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     fun onLoadingStateChanged(isLoading: Boolean) {
         when {
             isLoading -> {
+                invalidateErrors()
                 showProgressBar()
                 hideBtnCheck()
             }
@@ -136,11 +135,19 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     fun onError(message: String) {
-        showSnackbar(viewBinding.root, message)
+        when {
+            viewBinding.editTextCode.isFocused -> viewBinding.editTextCode.error = message
+            viewBinding.editTextPhone.isFocused -> viewBinding.editTextPhone.error = message
+        }
     }
 
     fun onSignIn() {
-        showSnackbar(viewBinding.root, context.getString(R.string.hintSuccess))
+        showDefaultDialog(context, getString(context, R.string.hintAuthorization))
+    }
+
+    private fun invalidateErrors() {
+        viewBinding.editTextCode.error = null
+        viewBinding.editTextPhone.error = null
     }
 
     private fun showProgressBar() {

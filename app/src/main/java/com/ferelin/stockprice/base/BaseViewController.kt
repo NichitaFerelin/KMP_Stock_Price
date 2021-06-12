@@ -21,9 +21,7 @@ import android.os.Bundle
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.utils.withTimerOnUi
-import javax.inject.Inject
 
 /**
  * [BaseViewController] represents a class that controls the behavior of the view and all
@@ -44,9 +42,6 @@ abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewB
     private var mContext: Context? = null
     protected val context: Context
         get() = checkNotNull(mContext)
-
-    @Inject
-    lateinit var mCoroutineContext: CoroutineContextProvider
 
     open fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         mContext = fragment.requireContext()

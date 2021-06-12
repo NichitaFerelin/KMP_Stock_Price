@@ -100,7 +100,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         val company = notificator.data!!
         val actualCompanyIndex = mStocksRecyclerAdapter.companies.indexOf(company)
         if (actualCompanyIndex != NULL_INDEX) {
-            mStocksRecyclerAdapter.notifyUpdate(actualCompanyIndex)
+            mStocksRecyclerAdapter.notifyUpdated(actualCompanyIndex)
         }
     }
 

@@ -44,16 +44,6 @@ open class ErrorsWorker @Inject constructor(private val mContext: Context) {
         mSharedPrepareCompaniesError.emit(getString(mContext, R.string.errorPrepareData))
     }
 
-    private val mSharedLoadCompanyQuoteError = MutableSharedFlow<String>()
-    val sharedLoadCompanyQuoteError: SharedFlow<String>
-        get() = mSharedLoadCompanyQuoteError
-
-    suspend fun onLoadCompanyQuoteError(message: RepositoryMessages, companySymbol: String) {
-        mSharedLoadCompanyQuoteError.emit(
-            handleErrorWithLimit(message, R.string.errorLoadCompanyQuote, companySymbol)
-        )
-    }
-
     private val mSharedLoadStockCandlesError = MutableSharedFlow<String>()
     val sharedLoadStockCandlesError: SharedFlow<String>
         get() = mSharedLoadStockCandlesError
@@ -104,6 +94,10 @@ open class ErrorsWorker @Inject constructor(private val mContext: Context) {
         mSharedAuthenticationError.emit(errorMessage)
     }
 
+    /**
+     * Errors can be caused by the API limit, in which case the alternative error message
+     * is meaningless.
+     * */
     private fun handleErrorWithLimit(
         message: RepositoryMessages,
         errorResource: Int,

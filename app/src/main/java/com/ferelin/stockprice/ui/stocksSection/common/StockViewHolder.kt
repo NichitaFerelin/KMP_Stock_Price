@@ -20,11 +20,13 @@ import android.animation.Animator
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.Animation
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.ItemStockBinding
 
 class StockViewHolder private constructor(
@@ -41,10 +43,14 @@ class StockViewHolder private constructor(
         company = item
         bindData(item)
 
+        val context = binding.rootLayout.context
+        val errorIcon = AppCompatResources.getDrawable(context, R.drawable.ic_load_error)
+
         Glide
             .with(binding.root)
             .load(item.companyProfile.logoUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
+            .error(errorIcon)
             .into(binding.imageViewIcon)
     }
 

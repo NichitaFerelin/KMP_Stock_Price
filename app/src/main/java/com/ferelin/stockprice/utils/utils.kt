@@ -27,11 +27,12 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.use
 import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
-import com.google.android.material.snackbar.Snackbar
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -47,10 +48,6 @@ fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
     return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
             || item.companyProfile.symbol.toLowerCase(Locale.ROOT)
         .contains(text.toLowerCase(Locale.ROOT))
-}
-
-fun showSnackbar(contextView: View, text: String) {
-    Snackbar.make(contextView, text, Snackbar.LENGTH_LONG).show()
 }
 
 fun parseDoubleFromStr(str: String): Double {
@@ -128,4 +125,12 @@ fun Animation.invalidate() {
 fun Animator.invalidate() {
     removeAllListeners()
     cancel()
+}
+
+fun showDefaultDialog(context: Context, message: String) {
+    AlertDialog.Builder(context)
+        .setMessage(message)
+        .setCancelable(true)
+        .setPositiveButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
+        .show()
 }

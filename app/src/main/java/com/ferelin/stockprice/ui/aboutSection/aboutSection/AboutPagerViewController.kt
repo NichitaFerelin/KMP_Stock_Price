@@ -26,7 +26,6 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.custom.OrderedTextView
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
-import com.ferelin.stockprice.utils.showSnackbar
 import com.google.android.material.transition.Hold
 import com.google.android.material.transition.MaterialContainerTransform
 
@@ -96,10 +95,6 @@ class AboutPagerViewController :
             textViewCompanySymbol.text = companySymbol
             imageViewStar.setImageResource(favouriteIconResource)
         }
-    }
-
-    fun onError(text: String) {
-        showSnackbar(viewBinding.root, text)
     }
 
     fun handleOnBackPressed(): Boolean {

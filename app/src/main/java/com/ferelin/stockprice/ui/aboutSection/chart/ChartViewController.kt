@@ -32,7 +32,6 @@ import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.custom.utils.SuggestionControlHelper
 import com.ferelin.stockprice.databinding.FragmentChartBinding
 import com.ferelin.stockprice.utils.anim.AnimatorManager
-import com.ferelin.stockprice.utils.showSnackbar
 
 class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartBinding>() {
 
@@ -127,17 +126,31 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
         if (history.isNotEmpty()) {
             viewBinding.chartView.setData(history)
             showChart()
+            hideTextViewError()
             hideProgressBar()
         }
     }
 
     fun onError(text: String) {
-        showSnackbar(viewBinding.root, text)
+        viewBinding.textViewError.text = text
+        showTextViewError()
         hideProgressBar()
     }
 
     fun onDataLoadingStateChanged(isDataLoading: Boolean) {
         if (isDataLoading) showProgressBar() else hideProgressBar()
+    }
+
+    private fun showTextViewError() {
+        if (viewBinding.textViewError.visibility != View.VISIBLE) {
+            viewBinding.textViewError.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideTextViewError() {
+        if (viewBinding.textViewError.visibility != View.GONE) {
+            viewBinding.textViewError.visibility = View.GONE
+        }
     }
 
     private fun showChart() {

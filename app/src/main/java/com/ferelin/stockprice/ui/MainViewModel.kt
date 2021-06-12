@@ -55,6 +55,9 @@ class MainViewModel : BaseViewModel() {
     val eventApiLimitError: SharedFlow<String>
         get() = mDataInteractor.sharedApiLimitError
 
+    val eventOnFavouriteCompaniesLimitError: SharedFlow<String>
+        get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
+
     private var mObserverCompanyCollectorJob: Job? = null
 
     private var mNetworkWasLost: Boolean = false
