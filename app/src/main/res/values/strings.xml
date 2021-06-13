@@ -35,6 +35,7 @@
     <string name="errorNoAppToOpenUrl">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorSmthWentWrong">Something went wrong</string>
+    <string name="errorDefault">Error</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
@@ -64,6 +65,9 @@
     <string name="hintSuccess">Success</string>
     <string name="hintNo">No</string>
     <string name="hintMenu">Menu</string>
+    <string name="hintOk">OK</string>
+    <string name="hintAuthorization">Successful authorization. From now, all your favorite
+        stocks and search requests will be synced from the cloud.</string>
 
     <!-- Menu -->
     <string name="menuLogIn">Log In</string>

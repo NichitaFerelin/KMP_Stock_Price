@@ -89,9 +89,16 @@ class FavouriteCompaniesWorker @Inject constructor(
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemUpdatedCommon(company))
     }
 
-    suspend fun addCompanyToFavourites(company: AdaptiveCompany): AdaptiveCompany? {
+    suspend fun addCompanyToFavourites(
+        company: AdaptiveCompany,
+        ignoreError: Boolean
+    ): AdaptiveCompany? {
         if (isFavouritesCompaniesLimitExceeded()) {
-            mErrorsWorker.onFavouriteCompaniesLimitReached()
+
+            if (!ignoreError) {
+                mErrorsWorker.onFavouriteCompaniesLimitReached()
+            }
+
             return null
         }
 

@@ -20,7 +20,6 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -28,9 +27,6 @@ class AboutPagerViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel(
 
     val eventOnDataChanged: Flow<DataNotificator<AdaptiveCompany>>
         get() = mDataInteractor.sharedCompaniesUpdates.filter { filterUpdate(it) }
-
-    val eventOnError: SharedFlow<String>
-        get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
 
     val companySymbol: String
         get() = selectedCompany.companyProfile.symbol

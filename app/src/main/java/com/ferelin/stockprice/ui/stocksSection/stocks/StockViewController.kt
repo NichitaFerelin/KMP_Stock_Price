@@ -26,7 +26,7 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewAnimator
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showDefaultDialog
 
 class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
 
@@ -59,7 +59,7 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
         mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
     }
 
-    fun onError(message: String) {
-        showToast(context, message)
+    fun onLimitReachedError(message: String) {
+        showDefaultDialog(context, message)
     }
 }

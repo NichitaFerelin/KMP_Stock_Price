@@ -41,6 +41,18 @@
             tools:text="+$0.12(1,15%)"
             tools:textColor="@color/green" />
 
+        <TextView
+            android:id="@+id/textViewError"
+            style="@style/textViewH2"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewDayProfit"
+            tools:text="Error "
+            tools:visibility="visible" />
+
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
             style="@style/progressBar"

@@ -53,8 +53,7 @@ class AboutPagerFragment(
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectEventOnDataChanged() }
-            launch { collectEventOnError() }
+            collectEventOnDataChanged()
         }
     }
 
@@ -66,14 +65,6 @@ class AboutPagerFragment(
                     mViewModel.companySymbol,
                     mViewModel.companyFavouriteIconResource
                 )
-            }
-        }
-    }
-
-    private suspend fun collectEventOnError() {
-        mViewModel.eventOnError.collect { message ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onError(message)
             }
         }
     }

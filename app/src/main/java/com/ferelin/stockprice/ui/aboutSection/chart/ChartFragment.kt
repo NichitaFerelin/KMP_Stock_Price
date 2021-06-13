@@ -95,7 +95,7 @@ class ChartFragment(
     private suspend fun collectEventOnError() {
         mViewModel.eventOnError.collect { message ->
             withContext(mCoroutineContext.Main) {
-                mViewController.onError(requireContext(), message)
+                mViewController.onError(message)
             }
         }
     }

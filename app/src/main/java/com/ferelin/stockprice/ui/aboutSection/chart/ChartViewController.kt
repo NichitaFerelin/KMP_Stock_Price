@@ -17,7 +17,6 @@ package com.ferelin.stockprice.ui.aboutSection.chart
  */
 
 import android.animation.Animator
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -33,7 +32,6 @@ import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.custom.utils.SuggestionControlHelper
 import com.ferelin.stockprice.databinding.FragmentChartBinding
 import com.ferelin.stockprice.utils.anim.AnimatorManager
-import com.ferelin.stockprice.utils.showToast
 
 class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartBinding>() {
 
@@ -128,17 +126,31 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
         if (history.isNotEmpty()) {
             viewBinding.chartView.setData(history)
             showChart()
+            hideTextViewError()
             hideProgressBar()
         }
     }
 
-    fun onError(context: Context, text: String) {
-        showToast(context, text)
+    fun onError(text: String) {
+        viewBinding.textViewError.text = text
+        showTextViewError()
         hideProgressBar()
     }
 
     fun onDataLoadingStateChanged(isDataLoading: Boolean) {
         if (isDataLoading) showProgressBar() else hideProgressBar()
+    }
+
+    private fun showTextViewError() {
+        if (viewBinding.textViewError.visibility != View.VISIBLE) {
+            viewBinding.textViewError.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideTextViewError() {
+        if (viewBinding.textViewError.visibility != View.GONE) {
+            viewBinding.textViewError.visibility = View.GONE
+        }
     }
 
     private fun showChart() {

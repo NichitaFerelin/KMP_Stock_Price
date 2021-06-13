@@ -67,8 +67,11 @@ open class DataMediator @Inject constructor(
         }
     }
 
-    suspend fun onAddFavouriteCompany(company: AdaptiveCompany): Boolean {
-        favouriteCompaniesWorker.addCompanyToFavourites(company)?.let { addedCompany ->
+    suspend fun onAddFavouriteCompany(
+        company: AdaptiveCompany,
+        ignoreError: Boolean = false
+    ): Boolean {
+        favouriteCompaniesWorker.addCompanyToFavourites(company, ignoreError)?.let { addedCompany ->
             companiesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))
             return true
         }
@@ -96,7 +99,7 @@ open class DataMediator @Inject constructor(
         menuItemsWorker.onLogStateChanged(isLogged)
     }
 
-    suspend fun cacheNewSearchRequest(searchText: String) : List<ActionHolder<String>> {
+    suspend fun cacheNewSearchRequest(searchText: String): List<ActionHolder<String>> {
         return searchRequestsWorker.cacheNewSearchRequest(searchText)
     }
 

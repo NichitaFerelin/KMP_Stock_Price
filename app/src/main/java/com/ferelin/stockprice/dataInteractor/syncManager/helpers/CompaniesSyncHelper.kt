@@ -81,8 +81,10 @@ class CompaniesSyncHelper @Inject constructor(
             }
 
             else -> {
-                mRemoteCompaniesContainer.add(localTargetCompany)
-                mDataMediator.onAddFavouriteCompany(localTargetCompany)
+                val isAdded = mDataMediator.onAddFavouriteCompany(localTargetCompany, true)
+                if (isAdded) {
+                    mRemoteCompaniesContainer.add(localTargetCompany)
+                }
             }
         }
     }

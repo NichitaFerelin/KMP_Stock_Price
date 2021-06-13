@@ -88,17 +88,11 @@ class DataInteractor @Inject constructor(
     val sharedPrepareCompaniesError: SharedFlow<String>
         get() = mErrorsWorker.sharedPrepareCompaniesError
 
-    val sharedLoadCompanyQuoteError: SharedFlow<String>
-        get() = mErrorsWorker.sharedLoadCompanyQuoteError
-
     val sharedLoadStockCandlesError: SharedFlow<String>
         get() = mErrorsWorker.sharedLoadStockCandlesError
 
     val sharedLoadCompanyNewsError: SharedFlow<String>
         get() = mErrorsWorker.sharedLoadCompanyNewsError
-
-    val sharedOpenConnectionError: SharedFlow<String>
-        get() = mErrorsWorker.sharedOpenConnectionError
 
     val sharedLoadSearchRequestsError: SharedFlow<String>
         get() = mErrorsWorker.sharedLoadSearchRequestsError
@@ -165,36 +159,15 @@ class DataInteractor @Inject constructor(
         isImportant: Boolean
     ): Flow<AdaptiveCompany> {
         return mRepositoryHelper.loadCompanyQuote(symbol, position, isImportant)
-            .onEach {
-                when (it) {
-                    is RepositoryResponse.Success -> mDataMediator.onCompanyQuoteLoaded(it)
-                    is RepositoryResponse.Failed -> {
-                        if (stateIsNetworkAvailable.value) {
-                            mErrorsWorker.onLoadCompanyQuoteError(
-                                it.message,
-                                it.owner ?: ""
-                            )
-                        }
-                    }
-                }
-            }
             .filter { it is RepositoryResponse.Success && it.owner != null }
+            .onEach { mDataMediator.onCompanyQuoteLoaded(it as RepositoryResponse.Success) }
             .map { getCompany((it as RepositoryResponse.Success).owner!!)!! }
     }
 
     override suspend fun openConnection(): Flow<AdaptiveCompany> {
         return mRepositoryHelper.openWebSocketConnection()
-            .onEach {
-                when (it) {
-                    is RepositoryResponse.Success -> mDataMediator.onWebSocketResponse(it)
-                    is RepositoryResponse.Failed -> {
-                        if (!stateCompanies.value.data.isNullOrEmpty() && stateIsNetworkAvailable.value) {
-                            mErrorsWorker.onOpenConnectionError()
-                        }
-                    }
-                }
-            }
             .filter { it is RepositoryResponse.Success && it.owner != null }
+            .onEach { mDataMediator.onWebSocketResponse(it as RepositoryResponse.Success) }
             .map { getCompany((it as RepositoryResponse.Success).owner!!)!! }
     }
 

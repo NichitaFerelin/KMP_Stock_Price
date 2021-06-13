@@ -20,6 +20,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.animation.Animation
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -32,9 +33,12 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
-import com.ferelin.stockprice.utils.*
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.MotionManager
+import com.ferelin.stockprice.utils.hideKeyboard
+import com.ferelin.stockprice.utils.openKeyboard
+import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.transition.MaterialContainerTransform
 
 class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
@@ -157,7 +161,11 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        AlertDialog.Builder(context)
+            .setMessage(message)
+            .setCancelable(true)
+            .setNegativeButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
+            .show()
     }
 
     fun onStop() {

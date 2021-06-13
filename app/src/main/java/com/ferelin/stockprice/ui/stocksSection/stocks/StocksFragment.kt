@@ -47,8 +47,7 @@ class StocksFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateCompanies() }
-            launch { collectEventOnError() }
+            collectStateCompanies()
         }
     }
 
@@ -56,14 +55,6 @@ class StocksFragment :
         mViewModel.stateCompanies.collect { notificator ->
             withContext(mCoroutineContext.Main) {
                 mViewController.onCompaniesLoaded(notificator)
-            }
-        }
-    }
-
-    private suspend fun collectEventOnError() {
-        mViewModel.eventError.collect { message ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onError(message)
             }
         }
     }

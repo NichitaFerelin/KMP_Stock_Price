@@ -26,11 +26,12 @@ import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.annotation.AttrRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.use
 import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -47,10 +48,6 @@ fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
     return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
             || item.companyProfile.symbol.toLowerCase(Locale.ROOT)
         .contains(text.toLowerCase(Locale.ROOT))
-}
-
-fun showToast(context: Context, text: String) {
-    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 }
 
 fun parseDoubleFromStr(str: String): Double {
@@ -128,4 +125,12 @@ fun Animation.invalidate() {
 fun Animator.invalidate() {
     removeAllListeners()
     cancel()
+}
+
+fun showDefaultDialog(context: Context, message: String) {
+    AlertDialog.Builder(context)
+        .setMessage(message)
+        .setCancelable(true)
+        .setPositiveButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
+        .show()
 }

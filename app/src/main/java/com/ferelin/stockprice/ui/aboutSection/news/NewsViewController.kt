@@ -29,7 +29,7 @@ import com.ferelin.stockprice.common.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.anim.AnimationManager
-import com.ferelin.stockprice.utils.showToast
+import com.ferelin.stockprice.utils.showDefaultDialog
 
 class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNewsBinding>() {
 
@@ -54,6 +54,7 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
     fun onNewsChanged(news: AdaptiveCompanyNews) {
         val recyclerViewAdapter = viewBinding.recyclerViewNews.adapter
         if (recyclerViewAdapter is NewsRecyclerAdapter) {
+            hideTextViewError()
             recyclerViewAdapter.setData(news)
         }
     }
@@ -62,7 +63,7 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
         val url = company.companyNews.browserUrls[position]
         val isNavigated = Navigator.navigateToUrl(context, url)
         if (!isNavigated) {
-            showToast(context, context.getString(R.string.errorNoAppToOpenUrl))
+            showDefaultDialog(context, context.getString(R.string.errorNoAppToOpenUrl))
         }
     }
 
@@ -77,8 +78,21 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
     }
 
     fun onError(message: String) {
-        showToast(context, message)
+        viewBinding.textViewError.text = message
+        showTextViewError()
         viewBinding.progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun showTextViewError() {
+        if (viewBinding.textViewError.visibility != View.VISIBLE) {
+            viewBinding.textViewError.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideTextViewError() {
+        if (viewBinding.textViewError.visibility != View.GONE) {
+            viewBinding.textViewError.visibility = View.GONE
+        }
     }
 
     private fun setUpRecyclerView() {

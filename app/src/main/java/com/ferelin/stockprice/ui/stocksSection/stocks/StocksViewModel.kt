@@ -16,18 +16,15 @@ package com.ferelin.stockprice.ui.stocksSection.stocks
  * limitations under the License.
  */
 
-import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.take
 
 class StocksViewModel : BaseStocksViewModel() {
-
-    private val mEventError = MutableSharedFlow<String>()
-    val eventError: SharedFlow<String>
-        get() = mEventError
 
     val stateCompanies: Flow<DataNotificator.DataPrepared<List<AdaptiveCompany>>>
         get() = mDataInteractor.stateCompanies
@@ -36,23 +33,6 @@ class StocksViewModel : BaseStocksViewModel() {
             .map { it as DataNotificator.DataPrepared }
 
     override fun initObserversBlock() {
-        super.initObserversBlock()
-        viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectSharedOpenConnectionError() }
-            launch { collectSharedFavouritesLimitReached() }
-            launch { collectSharedCompanyQuoteError() }
-        }
-    }
-
-    private suspend fun collectSharedOpenConnectionError() {
-        mDataInteractor.sharedOpenConnectionError.collect { mEventError.emit(it) }
-    }
-
-    private suspend fun collectSharedFavouritesLimitReached() {
-        mDataInteractor.sharedFavouriteCompaniesLimitReached.collect { mEventError.emit(it) }
-    }
-
-    private suspend fun collectSharedCompanyQuoteError() {
-        mDataInteractor.sharedLoadCompanyQuoteError.collect { mEventError.emit(it) }
+        // Do nothing
     }
 }
