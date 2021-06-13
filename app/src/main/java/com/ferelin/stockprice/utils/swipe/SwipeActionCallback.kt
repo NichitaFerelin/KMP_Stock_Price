@@ -81,7 +81,7 @@ class SwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RI
         ) / ln(
             3.toDouble()
         )
-        val dragTo = dragFraction * swipeDismissDistanceHorizontal * 0.8F
+        val dragTo = dragFraction * swipeDismissDistanceHorizontal * 1.2F
         viewHolder.binding.rootLayout.translationX = dragTo.toFloat()
     }
 
