@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">Stock Price</string>
+
+    <!-- Titles -->
+    <string name="titleChart">График</string>
+    <string name="titleNews">Новости</string>
+    <string name="titleForecasts">Прогнозы</string>
+    <string name="titleIdeas">Идеи</string>
+    <string name="titleStocks">Акции</string>
+    <string name="titleFavourite">Любимые</string>
+    <string name="titleSummary">Резюме</string>
+    <string name="titlePopularRequests">Популярные запросы</string>
+    <string name="titleYourSearches">Вы искали это</string>
+    <string name="titleChartCardDays">D</string>
+    <string name="titleChartCardWeeks">W</string>
+    <string name="titleChartCardMonths">M</string>
+    <string name="titleChartCardHalfYear">6M</string>
+    <string name="titleChartCardYear">1Y</string>
+    <string name="titleChartCardAll">Все</string>
+    <string name="titleStockPriceObserver">Stock price live-time updater</string>
+    <string name="titleChannelStockPrice">Обновление цены в реальном времени</string>
+    <string name="titleProfile">Профиль</string>
+
+    <!-- Errors -->
+    <string name="errorLoadingData">Ошибка загрузки данных</string>
+    <string name="errorLiveTimeDataLoad">Ошибка загрузки цены акций в реальном времени. Маркет может быть закрыт</string>
+    <string name="errorLoadCompanyQuote">Ошибка загрузки %s цены</string>
+    <string name="errorFavouriteCompaniesLimit">Вы достигли лимит любимых компаний (50)</string>
+    <string name="errorLoadSearchesHistory">Ошибка при загрузке истории поиска</string>
+    <string name="errorPrepareData">Произошла ошибка при загрузке данных. Попробуйте переустановить приложение или очистить кэш.</string>
+    <string name="errorLoadStockCandles">Ошибка загрузки %s данных</string>
+    <string name="errorLoadCompanyNews">Ошибка загрузки %s новостей</string>
+    <string name="errorApiLimit">Достигнут лимит API. Попробуйте через минуту</string>
+    <string name="errorNetwork">Соединение прервано</string>
+    <string name="errorNoAppToOpenUrl">Не найдено приложение которое может это выполнить</string>
+    <string name="errorTooManyRequests">Слишком много запросов. Попробуйте через минуту</string>
+    <string name="errorSmthWentWrong">Что-то пошло не так</string>
+    <string name="errorDefault">Ошибка</string>
+
+    <!-- Descriptions -->
+    <string name="descriptionBack">Navigate back</string>
+    <string name="descriptionAddToFavourite">Add or remove from favourite</string>
+    <string name="descriptionCompanyIcon">Company icon</string>
+    <string name="descriptionScrollToTop">Scroll to top</string>
+    <string name="descriptionIconClose">Clear search request</string>
+    <string name="descriptionImageSearch">Search company or ticker</string>
+    <string name="descriptionUserPhoto">User photo</string>
+
+    <!-- Hints -->
+    <string name="hintBuyFor">Купить за %s</string>
+    <string name="hintFindCompany">Поиск компании или тикера</string>
+    <string name="hintOpenInBrowser">Открыть в браузере:</string>
+    <string name="hintStocks">Акции</string>
+    <string name="hintName">Название</string>
+    <string name="hintWebsite">Веб-сайт</string>
+    <string name="hintCountry">Страна:</string>
+    <string name="hintIndustry">Индустрия: </string>
+    <string name="hintPhone">Телефон:</string>
+    <string name="hintCapitalization">Капитализация:</string>
+    <string name="hintPhoneEdit">Телефон</string>
+    <string name="hintEnterPhone">Введите номер телефона</string>
+    <string name="hintEnterCode">Введите код</string>
+    <string name="hintAreYouSure">Вы уверены?</string>
+    <string name="hintYes">Да</string>
+    <string name="hintSuccess">Успех</string>
+    <string name="hintNo">Нет</string>
+    <string name="hintMenu">Меню</string>
+    <string name="hintOk">OK</string>
+    <string name="hintAuthorization">Успешная авторизация. С этого момента все любимые компании
+        или история поиска будут синхронизированы с облачной базой данных.</string>
+
+    <!-- Menu -->
+    <string name="menuLogIn">Вход</string>
+    <string name="menuLogOut">Выход</string>
+    <string name="menuNotes">Заметки</string>
+    <string name="menuMessages">Сообщения</string>
+    <string name="menuSettings">Настройки</string>
+
+    <string name="transitionSearchFragment">searchContainer</string>
+    <string name="transitionAboutPager">Transition container about fragment pager</string>
+    <string name="transitionStocksPager">Transition container stock fragment pager</string>
+
+    <string name="notificationNewItems">New items loaded</string>
+</resources>
