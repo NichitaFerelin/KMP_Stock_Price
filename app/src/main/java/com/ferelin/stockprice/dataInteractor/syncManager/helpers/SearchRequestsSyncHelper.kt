@@ -146,7 +146,7 @@ class SearchRequestsSyncHelper @Inject constructor(
      * */
     private fun detectInconsistencyAndSync() {
         val localSearchRequests =
-            mDataMediator.searchRequestsWorker.stateSearchRequests.value.data!!
+            mDataMediator.searchRequestsWorker.stateSearchRequests.value.data ?: return
 
         if (mRemoteSearchRequestsContainer.isEmpty()) {
             val searchRequests = localSearchRequests.map { it.searchText }
