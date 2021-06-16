@@ -33,6 +33,8 @@ object Api {
     const val RESPONSE_NO_DATA = 490
     const val RESPONSE_UNDEFINED = 491
     const val RESPONSE_END = 492
+    const val RESPONSE_BAD_LOGIN = 493
+    const val RESPONSE_LOGIN_EXISTS = 494
     const val RESPONSE_WEB_SOCKET_CLOSED = 1001
 
     /*

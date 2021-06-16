@@ -1,5 +1,3 @@
-package com.ferelin.local.database
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,15 +14,24 @@ package com.ferelin.local.database
  * limitations under the License.
  */
 
-import com.ferelin.local.models.Company
+package com.ferelin.remote.database.helpers.userHelper
 
-interface CompaniesManager {
+import com.ferelin.remote.base.BaseResponse
+import kotlinx.coroutines.flow.Flow
 
-    fun insertCompany(company: Company)
+interface UsersHelper {
 
-    fun insertAllCompanies(list: List<Company>)
+    /**
+     * Finds user by login
+     * */
+    fun findUserByLogin(login: String): Flow<Boolean>
 
-    fun updateCompany(company: Company)
+    fun findUserById(userId: String): Flow<Boolean>
 
-    fun getCompanies(): List<Company>
+    /**
+     * Registers new user
+     * @param userId is a user id that must be cached to cloud database
+     * @param login is a user login selected during registration
+     * */
+    suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>>
 }

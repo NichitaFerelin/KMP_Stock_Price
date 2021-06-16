@@ -33,6 +33,7 @@ import javax.inject.Singleton
  *
  * For more info about methods look at [AuthenticationManager]
  */
+// GoogleApiAvailability.makeGooglePlayServicesAvailable()
 @Singleton
 class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
 

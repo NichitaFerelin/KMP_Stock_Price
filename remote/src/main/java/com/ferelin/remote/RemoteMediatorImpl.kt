@@ -120,6 +120,14 @@ class RemoteMediatorImpl @Inject constructor(
         return mAuthenticationManager.provideIsUserLogged()
     }
 
+    override fun findUserByLogin(login: String): Flow<Boolean> {
+        return mRealtimeDatabaseManager.findUserByLogin(login)
+    }
+
+    override suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>> {
+        return mRealtimeDatabaseManager.tryToRegister(userId, login)
+    }
+
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
         mRealtimeDatabaseManager.eraseCompanyIdFromRealtimeDb(userId, companyId)
     }
@@ -150,5 +158,43 @@ class RemoteMediatorImpl @Inject constructor(
 
     override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
         mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequest)
+    }
+
+    override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
+        mRealtimeDatabaseManager.addNewRelation(sourceUserLogin, secondSideUserLogin)
+    }
+
+    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<String>>> {
+        return mRealtimeDatabaseManager.getUserRelations(userLogin)
+    }
+
+    override fun getMessagesAssociatedWithSpecifiedUser(
+        sourceUserLogin: String,
+        secondSideUserLogin: String
+    ): Flow<BaseResponse<List<Pair<Char, String>>>> {
+        return mRealtimeDatabaseManager.getMessagesAssociatedWithSpecifiedUser(
+            sourceUserLogin,
+            secondSideUserLogin
+        )
+    }
+
+    override fun addNewMessage(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        messageId: String,
+        message: String,
+        sentFromSource: Boolean
+    ) {
+        mRealtimeDatabaseManager.addNewMessage(
+            sourceUserLogin,
+            secondSideUserLogin,
+            messageId,
+            message,
+            sentFromSource
+        )
+    }
+
+    override fun findUserById(userId: String): Flow<Boolean> {
+        return mRealtimeDatabaseManager.findUserById(userId)
     }
 }
