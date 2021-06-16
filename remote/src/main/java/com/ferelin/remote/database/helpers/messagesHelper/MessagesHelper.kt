@@ -17,6 +17,7 @@
 package com.ferelin.remote.database.helpers.messagesHelper
 
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 
 interface MessagesHelper {
@@ -35,6 +36,6 @@ interface MessagesHelper {
         secondSideUserLogin: String,
         messageId: String,
         message: String,
-        sentFromSource: Boolean
+        side: MessageSide
     )
 }

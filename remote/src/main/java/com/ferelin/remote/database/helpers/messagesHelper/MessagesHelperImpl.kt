@@ -17,8 +17,10 @@
 package com.ferelin.remote.database.helpers.messagesHelper
 
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.database.RealtimeValueEventListener
 import com.ferelin.remote.utils.Api
+import com.ferelin.shared.MessageSide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
@@ -34,9 +36,6 @@ class MessagesHelperImpl @Inject constructor(
     companion object {
         private const val sRelationsRef = "relations"
         private const val sMessagesRef = "messages"
-
-        const val MESSAGE_SIDE_SOURCE = 'R'
-        const val MESSAGE_SIDE_ASSOCIATED = 'L'
     }
 
     override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
@@ -88,7 +87,9 @@ class MessagesHelperImpl @Inject constructor(
                         for (messageSnapshot in snapshot.children) {
                             snapshot.key?.let { messageSideWithId ->
                                 val messageSide = messageSideWithId[0]
-                                messages.add(Pair(messageSide, snapshot.value.toString()))
+                                val decryptedMessage =
+                                    RealtimeDatabase.decrypt(snapshot.value.toString())
+                                messages.add(Pair(messageSide, decryptedMessage!!))
                             }
                         }
                         trySend(
@@ -109,15 +110,19 @@ class MessagesHelperImpl @Inject constructor(
         secondSideUserLogin: String,
         messageId: String,
         message: String,
-        sentFromSource: Boolean
+        side: MessageSide
     ) {
-        val key = if (sentFromSource) MESSAGE_SIDE_SOURCE else MESSAGE_SIDE_ASSOCIATED
+        val key = when (side) {
+            is MessageSide.Source -> MessageSide.Source.key
+            is MessageSide.Associated -> MessageSide.Associated.key
+        }
         val messageKey = key + messageId
+        val encryptedMessage = RealtimeDatabase.encrypt(message)
         mDatabaseFirebase
             .child(sMessagesRef)
             .child(sourceUserLogin)
             .child(secondSideUserLogin)
             .child(messageKey)
-            .setValue(message)
+            .setValue(encryptedMessage)
     }
 }
