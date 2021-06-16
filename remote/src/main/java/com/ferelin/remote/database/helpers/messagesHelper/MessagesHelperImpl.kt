@@ -36,6 +36,10 @@ class MessagesHelperImpl @Inject constructor(
     companion object {
         private const val sRelationsRef = "relations"
         private const val sMessagesRef = "messages"
+
+        const val MESSAGE_ID_KEY = "message_id_key"
+        const val MESSAGE_TEXT_KEY = "message_text_key"
+        const val MESSAGE_SIDE_KEY = "message_side_key"
     }
 
     override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
@@ -75,7 +79,7 @@ class MessagesHelperImpl @Inject constructor(
     override fun getMessagesAssociatedWithSpecifiedUser(
         sourceUserLogin: String,
         secondSideUserLogin: String
-    ) = callbackFlow<BaseResponse<List<Pair<Char, String>>>> {
+    ) = callbackFlow<BaseResponse<List<HashMap<String, String>>>> {
         mDatabaseFirebase
             .child(sMessagesRef)
             .child(sourceUserLogin)
@@ -83,19 +87,26 @@ class MessagesHelperImpl @Inject constructor(
             .addValueEventListener(object : RealtimeValueEventListener() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val messages = mutableListOf<Pair<Char, String>>()
+                        val messages = mutableListOf<HashMap<String, String>>()
                         for (messageSnapshot in snapshot.children) {
                             snapshot.key?.let { messageSideWithId ->
-                                val messageSide = messageSideWithId[0]
+                                val messageSide = messageSideWithId[0].toString()
+                                val messageId = messageSideWithId.filter { it.isDigit() }
                                 val decryptedMessage =
-                                    RealtimeDatabase.decrypt(snapshot.value.toString())
-                                messages.add(Pair(messageSide, decryptedMessage!!))
+                                    RealtimeDatabase.decrypt(snapshot.value.toString())!!
+                                messages.add(
+                                    hashMapOf(
+                                        MESSAGE_ID_KEY to messageId,
+                                        MESSAGE_SIDE_KEY to messageSide,
+                                        MESSAGE_TEXT_KEY to decryptedMessage
+                                    )
+                                )
                             }
                         }
                         trySend(
                             BaseResponse(
                                 responseCode = Api.RESPONSE_OK,
-                                additionalMessage = sourceUserLogin,
+                                additionalMessage = secondSideUserLogin,
                                 responseData = messages
                             )
                         )

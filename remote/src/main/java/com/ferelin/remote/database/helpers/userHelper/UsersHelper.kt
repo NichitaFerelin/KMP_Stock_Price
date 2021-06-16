@@ -21,9 +21,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UsersHelper {
 
-    /**
-     * Finds user by login
-     * */
     fun findUserByLogin(login: String): Flow<Boolean>
 
     fun findUserById(userId: String): Flow<Boolean>

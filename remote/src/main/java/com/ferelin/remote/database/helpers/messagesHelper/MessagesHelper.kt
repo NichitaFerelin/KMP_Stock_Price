@@ -29,7 +29,7 @@ interface MessagesHelper {
     fun getMessagesAssociatedWithSpecifiedUser(
         sourceUserLogin: String,
         secondSideUserLogin: String
-    ): Flow<BaseResponse<List<Pair<Char, String>>>>
+    ): Flow<BaseResponse<List<HashMap<String, String>>>>
 
     fun addNewMessage(
         sourceUserLogin: String,
