@@ -19,10 +19,10 @@ package com.ferelin.local.messagesDb
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ferelin.local.models.Messages
+import com.ferelin.local.models.MessagesHolder
 import com.ferelin.local.typeConverters.Converter
 
-@Database(entities = [Messages::class], version = 1)
+@Database(entities = [MessagesHolder::class], version = 1)
 @TypeConverters(Converter::class)
 abstract class MessagesDatabase : RoomDatabase() {
 

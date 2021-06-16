@@ -19,14 +19,21 @@ package com.ferelin.local.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ferelin.local.messagesDb.MessagesDatabase
+import com.ferelin.shared.MessageSide
 
 /**
  * @param secondSideLogin is a login of side-person associated with messages
  * */
 @Entity(tableName = MessagesDatabase.DB_NAME)
-class Messages(
+class MessagesHolder(
     @PrimaryKey
     val id: Int,
     val secondSideLogin: String,
-    val messages: List<String>
+    val messages: List<Message>
+)
+
+class Message(
+    val id: Int,
+    val side: MessageSide,
+    val text: String
 )

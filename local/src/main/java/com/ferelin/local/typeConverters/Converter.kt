@@ -17,6 +17,8 @@ package com.ferelin.local.typeConverters
  */
 
 import androidx.room.TypeConverter
+import com.ferelin.local.models.Message
+import com.ferelin.shared.MessageSide
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
@@ -39,5 +41,26 @@ internal class Converter {
     fun jsonToListString(json: String): List<String> {
         val adapter = mMoshi.adapter<List<String>>(mTypeStringList)
         return adapter.fromJson(json) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun messageToString(message: Message): String {
+        val side = message.side.key
+        val messageId = message.id
+        return "$side $messageId ${message.text}"
+    }
+
+    @TypeConverter
+    fun stringToMessage(string: String): Message {
+        val data = string.split(" ")
+        val parsedSide = if (data[0][0] == MessageSide.Associated.key) {
+            MessageSide.Associated
+        } else MessageSide.Source
+
+        return Message(
+            id = data[1].toInt(),
+            side = parsedSide,
+            text = data[2]
+        )
     }
 }

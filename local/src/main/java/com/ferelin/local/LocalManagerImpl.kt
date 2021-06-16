@@ -20,7 +20,7 @@ import com.ferelin.local.companiesDb.CompaniesDao
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.messagesDb.MessagesDao
 import com.ferelin.local.models.Company
-import com.ferelin.local.models.Messages
+import com.ferelin.local.models.MessagesHolder
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
@@ -78,15 +78,15 @@ open class LocalManagerImpl @Inject constructor(
         return mCompaniesDao.getAllCompanies()
     }
 
-    override suspend fun insertMessage(message: Messages) {
+    override suspend fun insertMessage(message: MessagesHolder) {
         mMessagesDao.insertMessage(message)
     }
 
-    override suspend fun getAllMessages(): List<Messages> {
+    override suspend fun getAllMessages(): List<MessagesHolder> {
         return mMessagesDao.getAllMessages()
     }
 
-    override suspend fun deleteMessage(message: Messages) {
+    override suspend fun deleteMessage(message: MessagesHolder) {
         mMessagesDao.deleteMessage(message)
     }
 
