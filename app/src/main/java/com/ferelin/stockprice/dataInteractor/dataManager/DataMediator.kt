@@ -19,7 +19,6 @@ package com.ferelin.stockprice.dataInteractor.dataManager
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.*
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractorResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import javax.inject.Inject
@@ -34,9 +33,9 @@ open class DataMediator @Inject constructor(
     val companiesWorker: CompaniesWorker,
     val favouriteCompaniesWorker: FavouriteCompaniesWorker,
     val searchRequestsWorker: SearchRequestsWorker,
-    val firstTimeLaunchWorker: FirstTimeLaunchWorker,
     val menuItemsWorker: MenuItemsWorker,
-    val networkConnectivityWorker: NetworkConnectivityWorker
+    val networkConnectivityWorker: NetworkConnectivityWorker,
+    val messagesWorker: MessagesWorker
 ) {
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companiesWorker.onDataPrepared(companies)
@@ -89,10 +88,6 @@ open class DataMediator @Inject constructor(
 
     fun subscribeItemsOnLiveTimeUpdates() {
         favouriteCompaniesWorker.subscribeCompaniesOnLiveTimeUpdates()
-    }
-
-    fun onFirstTimeLaunchStateResponse(response: LocalInteractorResponse) {
-        firstTimeLaunchWorker.onResponse(response)
     }
 
     suspend fun onLogStateChanged(isLogged: Boolean) {

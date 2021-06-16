@@ -28,7 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.DataInteractorImpl
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.utils.showDefaultDialog
@@ -48,7 +48,7 @@ class MainActivity(
     private var mMessagesForServiceCollectorJob: Job? = null
 
     @Inject
-    lateinit var dataInteractor: DataInteractor
+    lateinit var dataInteractor: DataInteractorImpl
 
     private var mTextViewError: TextView? = null
 

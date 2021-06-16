@@ -54,7 +54,7 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
             is MenuItemType.LogIn -> Navigator.navigateToLoginFragment(currentFragment)
             is MenuItemType.LogOut -> showExitDialog(currentFragment.requireContext(), onLogOut)
 
-            is MenuItemType.Messages -> { /*Messages */
+            is MenuItemType.Messages -> { /*MessagesHolder */
             }
             is MenuItemType.Notes -> {/*Notes*/
             }

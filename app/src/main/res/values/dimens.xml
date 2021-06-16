@@ -36,4 +36,5 @@
     <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
 
     <dimen name="bottomDrawerElevation">16dp</dimen>
+    <dimen name="appBarHeight">55dp</dimen>
 </resources>

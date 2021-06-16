@@ -99,14 +99,14 @@ class SearchRequestsSyncHelper @Inject constructor(
 
     /**
      * Provides ability to notify real-time database that search request was removed/added to
-     * local database. Used directly when user type a new search.
+     * local database. Used directly when user side a new search.
      *
      * @param changesActionsHistory is a actions-container with steps that was invoked while
      * new search request has been cached. This steps must be repeated on real-time database.
      * Example: [ ("abc", Removed), ("bbb", Added) ]
      * */
     fun onSearchRequestsChanged(changesActionsHistory: List<ActionHolder<String>>) {
-        mRepositoryManager.provideUserId()?.let { authorizedUserId ->
+        mRepositoryManager.provideUserId().let { authorizedUserId ->
             changesActionsHistory.forEach { actionHolder ->
                 when (actionHolder.actionType) {
                     is ActionType.Added -> {

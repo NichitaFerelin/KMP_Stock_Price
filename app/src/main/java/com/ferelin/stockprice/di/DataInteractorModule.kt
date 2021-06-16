@@ -21,7 +21,10 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import androidx.room.Room
-import com.ferelin.local.database.CompaniesDatabase
+import com.ferelin.local.companiesDb.CompaniesDao
+import com.ferelin.local.companiesDb.CompaniesDatabase
+import com.ferelin.local.messagesDb.MessagesDao
+import com.ferelin.local.messagesDb.MessagesDatabase
 import com.ferelin.remote.utils.Api
 import com.ferelin.repository.Repository
 import com.squareup.moshi.Moshi
@@ -46,6 +49,26 @@ class DataInteractorModule {
             CompaniesDatabase::class.java,
             CompaniesDatabase.DB_NAME
         ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun provideCompaniesDao(database: CompaniesDatabase): CompaniesDao {
+        return database.companiesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessagesDatabase(context: Context): MessagesDatabase {
+        return Room.databaseBuilder(
+            context,
+            MessagesDatabase::class.java,
+            MessagesDatabase.DB_NAME
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun provideMessagesDao(database: MessagesDatabase): MessagesDao {
+        return database.messagedDao()
     }
 
     @Provides

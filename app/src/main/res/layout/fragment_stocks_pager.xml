@@ -15,10 +15,9 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+            style="@style/collapsingToolbar"
             android:layout_height="wrap_content"
-            android:transitionName="transitionCardContainer"
-            app:layout_scrollFlags="scroll|snap">
+            android:transitionName="transitionCardContainer">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardViewSearch"

@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [ErrorsWorker] providing different type-states of errors.
+ * [ErrorsWorker] providing different side-states of errors.
  */
 
 @Singleton
@@ -92,6 +92,19 @@ open class ErrorsWorker @Inject constructor(private val mContext: Context) {
             else -> getString(mContext, R.string.errorSmthWentWrong)
         }
         mSharedAuthenticationError.emit(errorMessage)
+    }
+
+    private val mSharedRegisterError = MutableSharedFlow<String>()
+    val sharedRegisterError: SharedFlow<String>
+        get() = mSharedRegisterError
+
+    suspend fun onRegisterError(message: RepositoryMessages) {
+        val errorMessage = when (message) {
+            is RepositoryMessages.BadLogin -> getString(mContext, R.string.errorBadLogin)
+            is RepositoryMessages.AlreadyExists -> getString(mContext, R.string.errorLoginExists)
+            else -> getString(mContext, R.string.errorUndefiend)
+        }
+        mSharedRegisterError.emit(errorMessage)
     }
 
     /**

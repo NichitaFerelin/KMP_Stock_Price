@@ -16,10 +16,10 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
  * limitations under the License.
  */
 
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,19 +30,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [CompaniesWorker] providing an ability to:
+ * [CompaniesWorker] provides an ability to:
  *   - Observing [mStateCompanies] to display a list of companies.
  *   - Observing [mSharedCompaniesUpdates] to update items at list.
  *
  * Also [CompaniesWorker] manually doing:
- *   - Using [mLocalInteractor] to data caching.
+ *   - Using [mRepository] to data caching.
  *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
  */
 
 @Singleton
 class CompaniesWorker @Inject constructor(
     private val mStylesProvider: StylesProvider,
-    private val mLocalInteractor: LocalInteractor
+    private val mRepository: Repository
 ) {
     private var mCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
     val companies: List<AdaptiveCompany>
@@ -68,29 +68,29 @@ class CompaniesWorker @Inject constructor(
         mSharedCompaniesUpdates.emit(notification)
     }
 
-    suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>): AdaptiveCompany? {
+    fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>): AdaptiveCompany? {
         return onDataChanged(
             responseOwner = response.owner,
             isDataNew = { it.companyHistory == response.data },
             onApply = { companyToUpdate ->
                 companyToUpdate.companyHistory = response.data
-                mLocalInteractor.cacheCompany(companyToUpdate)
+                mRepository.cacheCompany(companyToUpdate)
             }
         )
     }
 
-    suspend fun onCompanyNewsLoaded(response: RepositoryResponse.Success<AdaptiveCompanyNews>): AdaptiveCompany? {
+    fun onCompanyNewsLoaded(response: RepositoryResponse.Success<AdaptiveCompanyNews>): AdaptiveCompany? {
         return onDataChanged(
             responseOwner = response.owner,
             isDataNew = { it.companyNews == response.data },
             onApply = { companyToUpdate ->
                 companyToUpdate.companyNews = response.data
-                mLocalInteractor.cacheCompany(companyToUpdate)
+                mRepository.cacheCompany(companyToUpdate)
             }
         )
     }
 
-    suspend fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyDayData>): AdaptiveCompany? {
+    fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyDayData>): AdaptiveCompany? {
         return onDataChanged(
             responseOwner = response.owner,
             isDataNew = { it.companyDayData == response.data },
@@ -99,12 +99,12 @@ class CompaniesWorker @Inject constructor(
                 companyToUpdate.companyStyle.dayProfitBackground =
                     mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
 
-                mLocalInteractor.cacheCompany(companyToUpdate)
+                mRepository.cacheCompany(companyToUpdate)
             }
         )
     }
 
-    suspend fun onLiveTimePriceChanged(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>): AdaptiveCompany? {
+    fun onLiveTimePriceChanged(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>): AdaptiveCompany? {
         return onDataChanged(
             responseOwner = response.owner,
             isDataNew = { it.companyDayData.profit == response.data.price },
@@ -114,7 +114,7 @@ class CompaniesWorker @Inject constructor(
                 companyToUpdate.companyStyle.dayProfitBackground =
                     mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
 
-                mLocalInteractor.cacheCompany(companyToUpdate)
+                mRepository.cacheCompany(companyToUpdate)
             }
         )
     }

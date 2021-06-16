@@ -68,6 +68,7 @@
     <string name="hintOk">OK</string>
     <string name="hintAuthorization">Успешная авторизация. С этого момента все любимые компании
         или история поиска будут синхронизированы с облачной базой данных.</string>
+    <string name="hintMessages">Сообщения</string>
 
     <!-- Menu -->
     <string name="menuLogIn">Вход</string>

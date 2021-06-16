@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout style="@style/appBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout style="@style/collapsingToolbar">
+
+            <ImageView
+                style="@style/imageView"
+                android:contentDescription="@string/descriptionBack"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                style="@style/textViewH2"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                tools:text="User name" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/appBarHeight"
+        android:layout_marginBottom="@dimen/appBarHeight" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        style="@style/appBar"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:id="@+id/imageViewAttach"
+            style="@style/imageView"
+            android:contentDescription="@string/descriptionAttach"
+            android:src="@drawable/ic_attach" />
+
+        <ImageView
+            android:id="@+id/imageViewMicrophone"
+            style="@style/imageView"
+            android:contentDescription="@string/descriptionAttach"
+            android:src="@drawable/ic_mic" />
+
+        <EditText
+            android:id="@+id/editTextMessage"
+            style="@style/editText"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:autofillHints="no"
+            android:hint="@string/hintEnterMessage" />
+
+        <ImageView
+            android:id="@+id/imageViewSend"
+            style="@style/imageView"
+            android:contentDescription="@string/descriptionAttach"
+            android:src="@drawable/ic_send" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

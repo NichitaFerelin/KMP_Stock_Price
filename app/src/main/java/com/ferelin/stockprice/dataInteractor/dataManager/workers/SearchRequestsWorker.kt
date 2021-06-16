@@ -16,8 +16,8 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
  * limitations under the License.
  */
 
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import com.ferelin.stockprice.utils.actionHolder.ActionType
@@ -34,14 +34,14 @@ import kotlin.collections.ArrayList
  *   - Observing [mStatePopularSearchRequests] to display populars search requests.
  *
  *  Also [SearchRequestsWorker] do manually:
- *   - Using [mLocalInteractor] to data caching.
+ *   - Using [mRepository] to data caching.
  *   - Using [mSearchRequestsLimit] to control limit of search requests.
  *   - Optimizing search requests size. @see [removeSearchRequestsDuplicates]
  */
 
 @Singleton
 class SearchRequestsWorker @Inject constructor(
-    private val mLocalInteractor: LocalInteractor
+    private val mRepository: Repository
 ) {
     private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
     val searchRequests: List<AdaptiveSearchRequest>
@@ -104,7 +104,7 @@ class SearchRequestsWorker @Inject constructor(
         }
 
         mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
-        mLocalInteractor.cacheSearchRequestsHistory(mSearchRequests)
+        mRepository.setSearchesHistory(mSearchRequests)
 
         return actionsContainer
     }
@@ -112,7 +112,7 @@ class SearchRequestsWorker @Inject constructor(
     suspend fun clearSearchRequests() {
         mSearchRequests.clear()
         mStateSearchRequests.value = DataNotificator.Loading()
-        mLocalInteractor.clearSearchRequestsHistory()
+        mRepository.clearSearchesHistory()
     }
 
     /*

@@ -18,8 +18,6 @@ package com.ferelin.stockprice.di
 
 import com.ferelin.local.LocalManager
 import com.ferelin.local.LocalManagerImpl
-import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.database.CompaniesManagerImpl
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.json.JsonManagerImpl
 import com.ferelin.local.preferences.StorePreferences
@@ -38,7 +36,6 @@ import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
 import com.ferelin.repository.Repository
 import com.ferelin.repository.RepositoryImpl
-import com.ferelin.repository.converter.ResponseConverter
 import com.ferelin.repository.converter.ResponseConverterImpl
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
 import com.ferelin.stockprice.dataInteractor.local.LocalInteractorImpl
@@ -70,13 +67,10 @@ abstract class HelpersBindsModule {
     abstract fun provideJsonManagerHelper(json: JsonManagerImpl): JsonManager
 
     @Binds
-    abstract fun provideCompaniesManagerHelper(companies: CompaniesManagerImpl): CompaniesManager
-
-    @Binds
     abstract fun provideStorePreferencesHelper(store: StorePreferencesImpl): StorePreferences
 
     @Binds
-    abstract fun provideDataConverterHelper(responseConverter: ResponseConverterImpl): ResponseConverter
+    abstract fun provideDataConverterHelper(responseConverter: ResponseConverterImpl): ResponseConverterImpl
 
     @Binds
     abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManagerImpl): AuthenticationManager
