@@ -17,11 +17,14 @@
 package com.ferelin.shared
 
 sealed class MessageSide {
+
+    abstract val key: Char
+
     object Source : MessageSide() {
-        const val key = "R"
+        override val key = 'R'
     }
 
     object Associated : MessageSide() {
-        const val key = "L"
+        override val key = 'L'
     }
 }
