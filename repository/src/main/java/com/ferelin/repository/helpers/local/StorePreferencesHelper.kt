@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.local
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,22 +14,24 @@ package com.ferelin.stockprice.dataInteractor.local
  * limitations under the License.
  */
 
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+package com.ferelin.repository.helpers.local
+
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.repository.utils.RepositoryResponse
 
-interface LocalInteractor {
+interface StorePreferencesHelper {
 
-    suspend fun getCompanies(): LocalInteractorResponse
+    suspend fun clearLocalSearchRequestsHistory()
 
-    suspend fun getSearchRequestsHistory(): LocalInteractorResponse
+    suspend fun getSearchesHistoryFromLocalDb(): RepositoryResponse<List<AdaptiveSearchRequest>>
 
-    suspend fun cacheSearchRequestsHistory(requests: List<AdaptiveSearchRequest>)
+    suspend fun cacheSearchRequestsHistoryToLocalDb(requests: List<AdaptiveSearchRequest>)
 
-    suspend fun clearSearchRequestsHistory()
+    suspend fun getFirstTimeLaunchState(): RepositoryResponse<Boolean>
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
-    suspend fun getFirstTimeLaunchState(): LocalInteractorResponse
+    suspend fun getUserRegisterState() : Boolean?
 
-    suspend fun cacheCompany(adaptiveCompany: AdaptiveCompany)
+    suspend fun setUserRegisterState(state: Boolean)
 }

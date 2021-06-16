@@ -1,5 +1,3 @@
-package com.ferelin.repository.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,17 +14,25 @@ package com.ferelin.repository.utils
  * limitations under the License.
  */
 
-sealed class RepositoryMessages {
-    object Ok : RepositoryMessages()
-    object End : RepositoryMessages()
-    object Empty : RepositoryMessages()
-    object Error : RepositoryMessages()
-    object Limit : RepositoryMessages()
+package com.ferelin.repository.helpers.remote.auth
 
-    // Represent a message that can notify that AuthenticationManagerImpl send code
-    object CodeSent : RepositoryMessages()
+import android.app.Activity
+import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.repository.utils.RepositoryResponse
+import kotlinx.coroutines.flow.Flow
 
-    // Represent a message that can notify that user choose bad login to register
-    object BadLogin : RepositoryMessages()
-    object AlreadyExists : RepositoryMessages()
+interface AuthenticationHelper {
+
+    fun tryToSignIn(
+        holderActivity: Activity,
+        phone: String
+    ): Flow<RepositoryResponse<RepositoryMessages>>
+
+    fun logInWithCode(code: String)
+
+    fun logOut()
+
+    fun getUserAuthenticationId(): String?
+
+    fun isUserAuthenticated(): Boolean
 }

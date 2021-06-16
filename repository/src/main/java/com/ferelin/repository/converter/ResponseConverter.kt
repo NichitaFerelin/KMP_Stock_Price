@@ -1,5 +1,3 @@
-package com.ferelin.repository.converter
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,64 +14,23 @@ package com.ferelin.repository.converter
  * limitations under the License.
  */
 
-import com.ferelin.local.models.Company
-import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
-import com.ferelin.remote.api.companyNews.CompanyNewsResponse
-import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
-import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
-import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.webSocket.response.WebSocketResponse
-import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.utils.RepositoryMessages
-import com.ferelin.repository.utils.RepositoryResponse
+package com.ferelin.repository.converter
 
-interface ResponseConverter {
+import com.ferelin.repository.converter.helpers.apiConverter.ApiResponseConverter
+import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationResponseConverter
+import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesResponseConverter
+import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
+import com.ferelin.repository.converter.helpers.messagesConverter.MessagesResponseConverter
+import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
+import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
+import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 
-    fun convertCompaniesResponse(response: CompaniesResponse): RepositoryResponse<List<AdaptiveCompany>>
-
-    fun convertWebSocketResponse(response: BaseResponse<WebSocketResponse>): RepositoryResponse<AdaptiveWebSocketPrice>
-
-    fun convertStockCandlesResponse(
-        response: BaseResponse<StockCandlesResponse>,
-        symbol: String
-    ): RepositoryResponse<AdaptiveCompanyHistory>
-
-    fun convertCompanyProfileResponse(
-        response: BaseResponse<CompanyProfileResponse>,
-        symbol: String
-    ): RepositoryResponse<AdaptiveCompanyProfile>
-
-    fun convertStockSymbolsResponse(response: BaseResponse<StockSymbolResponse>): RepositoryResponse<AdaptiveStocksSymbols>
-
-    fun convertCompanyNewsResponse(
-        response: BaseResponse<List<CompanyNewsResponse>>,
-        symbol: String
-    ): RepositoryResponse<AdaptiveCompanyNews>
-
-    fun convertCompanyQuoteResponse(response: BaseResponse<CompanyQuoteResponse>): RepositoryResponse<AdaptiveCompanyDayData>
-
-    fun convertSearchesForResponse(response: SearchesResponse): RepositoryResponse<List<AdaptiveSearchRequest>>
-
-    fun convertCompaniesForInsert(companies: List<AdaptiveCompany>): List<Company>
-
-    fun convertCompanyForInsert(company: AdaptiveCompany): Company
-
-    fun convertSearchesForInsert(search: List<AdaptiveSearchRequest>): Set<String>
-
-    fun convertFirstTimeLaunchStateToResponse(state: Boolean?): RepositoryResponse<Boolean>
-
-    /**
-     * @param response is a response from remote module
-     * @return [RepositoryResponse] object with [RepositoryMessages]
-     */
-    fun convertAuthenticationResponse(response: BaseResponse<Boolean>): RepositoryResponse<RepositoryMessages>
-
-    /**
-     * @param response is a response from remote module
-     * @return [RepositoryResponse] object with string-data
-     */
-    fun convertRealtimeDatabaseResponse(response: BaseResponse<String?>): RepositoryResponse<String>
-}
+interface ResponseConverter :
+        ApiResponseConverter,
+        AuthenticationResponseConverter,
+        CompaniesResponseConverter,
+        FirstTimeLaunchConverter,
+        MessagesResponseConverter,
+        RealtimeDatabaseConverter,
+        SearchRequestsConverter,
+        WebSocketConverter

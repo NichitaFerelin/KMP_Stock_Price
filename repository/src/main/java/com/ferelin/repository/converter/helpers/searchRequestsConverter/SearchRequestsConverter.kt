@@ -1,5 +1,3 @@
-package com.ferelin.repository.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,17 +14,17 @@ package com.ferelin.repository.utils
  * limitations under the License.
  */
 
-sealed class RepositoryMessages {
-    object Ok : RepositoryMessages()
-    object End : RepositoryMessages()
-    object Empty : RepositoryMessages()
-    object Error : RepositoryMessages()
-    object Limit : RepositoryMessages()
+package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
-    // Represent a message that can notify that AuthenticationManagerImpl send code
-    object CodeSent : RepositoryMessages()
+import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.repository.utils.RepositoryResponse
 
-    // Represent a message that can notify that user choose bad login to register
-    object BadLogin : RepositoryMessages()
-    object AlreadyExists : RepositoryMessages()
+interface SearchRequestsConverter {
+
+    fun convertSearchesForLocal(search: List<AdaptiveSearchRequest>): Set<String>
+
+    fun convertSearchesForUi(
+        response: SearchesResponse
+    ): RepositoryResponse<List<AdaptiveSearchRequest>>
 }

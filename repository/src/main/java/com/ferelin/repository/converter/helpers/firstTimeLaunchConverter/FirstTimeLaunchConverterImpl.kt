@@ -1,5 +1,3 @@
-package com.ferelin.repository.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,17 +14,18 @@ package com.ferelin.repository.utils
  * limitations under the License.
  */
 
-sealed class RepositoryMessages {
-    object Ok : RepositoryMessages()
-    object End : RepositoryMessages()
-    object Empty : RepositoryMessages()
-    object Error : RepositoryMessages()
-    object Limit : RepositoryMessages()
+package com.ferelin.repository.converter.helpers.firstTimeLaunchConverter
 
-    // Represent a message that can notify that AuthenticationManagerImpl send code
-    object CodeSent : RepositoryMessages()
+import com.ferelin.repository.utils.RepositoryResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    // Represent a message that can notify that user choose bad login to register
-    object BadLogin : RepositoryMessages()
-    object AlreadyExists : RepositoryMessages()
+@Singleton
+class FirstTimeLaunchConverterImpl @Inject constructor() : FirstTimeLaunchConverter {
+
+    override fun convertFirstTimeLaunchStateForUi(state: Boolean?): RepositoryResponse<Boolean> {
+        return state?.let {
+            RepositoryResponse.Success(data = state)
+        } ?: RepositoryResponse.Failed()
+    }
 }
