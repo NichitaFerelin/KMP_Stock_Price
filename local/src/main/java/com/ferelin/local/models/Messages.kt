@@ -1,5 +1,3 @@
-package com.ferelin.local.database
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,21 +14,19 @@ package com.ferelin.local.database
  * limitations under the License.
  */
 
-import androidx.room.*
-import com.ferelin.local.models.Company
+package com.ferelin.local.models
 
-@Dao
-interface CompaniesDao {
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.ferelin.local.messagesDb.MessagesDatabase
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(company: Company)
-
-    @Insert
-    fun insertAll(list: List<Company>)
-
-    @Update
-    fun update(company: Company)
-
-    @Query("SELECT * FROM `stockprice.companies.db`")
-    fun getAll(): List<Company>
-}
+/**
+ * @param secondSideLogin is a login of side-person associated with messages
+ * */
+@Entity(tableName = MessagesDatabase.DB_NAME)
+class Messages(
+    @PrimaryKey
+    val id: Int,
+    val secondSideLogin: String,
+    val messages: List<String>
+)

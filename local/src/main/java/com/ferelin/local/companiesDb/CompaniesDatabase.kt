@@ -1,4 +1,4 @@
-package com.ferelin.local
+package com.ferelin.local.companiesDb
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,15 +16,19 @@ package com.ferelin.local
  * limitations under the License.
  */
 
-import com.ferelin.local.companiesDb.CompaniesDao
-import com.ferelin.local.messagesDb.MessagesDao
-import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.ferelin.local.models.Company
+import com.ferelin.local.typeConverters.Converter
 
-interface LocalManager : StorePreferences, CompaniesDao, MessagesDao {
+@Database(entities = [Company::class], version = 1)
+@TypeConverters(Converter::class)
+abstract class CompaniesDatabase : RoomDatabase() {
 
-    suspend fun getAllCompaniesAsResponse(): CompaniesResponse
+    abstract fun companiesDao(): CompaniesDao
 
-    suspend fun getSearchesHistoryAsResponse(): SearchesResponse
+    companion object {
+        const val DB_NAME = "stockprice.companies.db"
+    }
 }

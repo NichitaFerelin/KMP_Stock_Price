@@ -1,5 +1,3 @@
-package com.ferelin.local.database
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,18 +14,21 @@ package com.ferelin.local.database
  * limitations under the License.
  */
 
+package com.ferelin.local.messagesDb
+
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ferelin.local.models.Company
+import com.ferelin.local.models.Messages
+import com.ferelin.local.typeConverters.Converter
 
-@Database(entities = [Company::class], version = 1)
-@TypeConverters(CompaniesConverter::class)
-abstract class CompaniesDatabase : RoomDatabase() {
+@Database(entities = [Messages::class], version = 1)
+@TypeConverters(Converter::class)
+abstract class MessagesDatabase : RoomDatabase() {
 
-    abstract fun companiesDao(): CompaniesDao
+    abstract fun messagedDao(): MessagesDao
 
     companion object {
-        const val DB_NAME = "stockprice.companies.db"
+        const val DB_NAME = "stockprice.messages.db"
     }
 }

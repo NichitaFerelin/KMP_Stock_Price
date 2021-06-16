@@ -1,5 +1,3 @@
-package com.ferelin.local
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,15 +14,23 @@ package com.ferelin.local
  * limitations under the License.
  */
 
-import com.ferelin.local.companiesDb.CompaniesDao
-import com.ferelin.local.messagesDb.MessagesDao
-import com.ferelin.local.preferences.StorePreferences
-import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
+package com.ferelin.local.messagesDb
 
-interface LocalManager : StorePreferences, CompaniesDao, MessagesDao {
+import androidx.room.*
+import com.ferelin.local.models.Messages
 
-    suspend fun getAllCompaniesAsResponse(): CompaniesResponse
+@Dao
+interface MessagesDao {
 
-    suspend fun getSearchesHistoryAsResponse(): SearchesResponse
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMessage(message: Messages)
+
+    @Query("SELECT * FROM `stockprice.messages.db`")
+    suspend fun getAllMessages(): List<Messages>
+
+    @Delete
+    suspend fun deleteMessage(message: Messages)
+
+    @Query("DELETE FROM `stockprice.messages.db`")
+    fun clearMessagesTable()
 }

@@ -1,4 +1,4 @@
-package com.ferelin.local.database
+package com.ferelin.local.typeConverters
 
 /*
  * Copyright 2021 Leah Nichita
@@ -19,10 +19,8 @@ package com.ferelin.local.database
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-/*
-* Room data converter
-* */
-internal class CompaniesConverter {
+
+internal class Converter {
 
     private val mMoshi = Moshi.Builder().build()
 

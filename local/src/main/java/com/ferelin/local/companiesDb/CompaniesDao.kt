@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.local
+package com.ferelin.local.companiesDb
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,15 +16,21 @@ package com.ferelin.stockprice.dataInteractor.local
  * limitations under the License.
  */
 
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import androidx.room.*
+import com.ferelin.local.models.Company
 
-sealed class LocalInteractorResponse {
-    data class Success(
-        val companies: List<AdaptiveCompany> = emptyList(),
-        val searchesHistory: List<AdaptiveSearchRequest> = emptyList(),
-        val firstTimeLaunch: Boolean = false
-    ) : LocalInteractorResponse()
+@Dao
+interface CompaniesDao {
 
-    data class Failed(val error: String? = null) : LocalInteractorResponse()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCompany(company: Company)
+
+    @Insert
+    suspend fun insertAllCompanies(list: List<Company>)
+
+    @Update
+    suspend fun updateCompany(company: Company)
+
+    @Query("SELECT * FROM `stockprice.companies.db`")
+    suspend fun getAllCompanies(): List<Company>
 }

@@ -27,4 +27,8 @@ interface StorePreferences {
     suspend fun getFirstTimeLaunchState(): Boolean?
 
     suspend fun setFirstTimeLaunchState(boolean: Boolean)
+
+    suspend fun getUserRegisterState() : Boolean?
+
+    suspend fun setUserRegisterState(state: Boolean)
 }
