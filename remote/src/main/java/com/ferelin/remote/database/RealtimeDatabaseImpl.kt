@@ -21,6 +21,7 @@ import com.ferelin.remote.database.helpers.favouriteCompaniesHelper.FavouriteCom
 import com.ferelin.remote.database.helpers.messagesHelper.MessagesHelper
 import com.ferelin.remote.database.helpers.searchRequestsHelper.SearchRequestsHelper
 import com.ferelin.remote.database.helpers.userHelper.UsersHelper
+import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -124,14 +125,14 @@ class RealtimeDatabaseImpl @Inject constructor(
         secondSideUserLogin: String,
         messageId: String,
         message: String,
-        sentFromSource: Boolean
+        side: MessageSide
     ) {
         mMessagesHelper.addNewMessage(
             sourceUserLogin,
             secondSideUserLogin,
             messageId,
             message,
-            sentFromSource
+            side
         )
     }
 }
