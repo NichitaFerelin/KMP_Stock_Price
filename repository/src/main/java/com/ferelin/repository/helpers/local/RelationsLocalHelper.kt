@@ -25,5 +25,7 @@ interface RelationsLocalHelper {
 
     suspend fun getAllRelationsFromLocalDb(): RepositoryResponse<List<AdaptiveRelation>>
 
+    suspend fun eraseRelationFromLocalDb(relation: AdaptiveRelation)
+
     fun clearRelationsDatabase()
 }

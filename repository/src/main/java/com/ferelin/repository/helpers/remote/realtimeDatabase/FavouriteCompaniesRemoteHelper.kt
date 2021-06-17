@@ -23,7 +23,7 @@ interface FavouriteCompaniesRemoteHelper {
 
     fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
 
-    fun cacheCompanyIdToRealtimeD(userId: String, companyId: String)
+    fun cacheCompanyIdToRealtimeDb(userId: String, companyId: String)
 
     fun getCompaniesIdsFromRealtimeDb(userId: String): Flow<RepositoryResponse<String?>>
 }

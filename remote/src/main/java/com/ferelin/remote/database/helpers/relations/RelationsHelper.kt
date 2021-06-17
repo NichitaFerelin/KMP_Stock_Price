@@ -23,5 +23,7 @@ interface RelationsHelper {
 
     fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String, relationId: String)
 
+    fun eraseRelation(sourceUserLogin: String, relationId: String)
+
     fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>>
 }

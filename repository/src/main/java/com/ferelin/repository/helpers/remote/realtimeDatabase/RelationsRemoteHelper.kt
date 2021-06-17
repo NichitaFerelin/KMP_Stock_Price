@@ -21,9 +21,14 @@ import com.ferelin.repository.utils.RepositoryResponse
 
 interface RelationsRemoteHelper {
 
-    fun addNewRelationToRealtimeDb(
+    fun cacheNewRelationToRealtimeDb(
         sourceUserLogin: String,
         secondSideUserLogin: String,
+        relationId: String
+    )
+
+    fun eraseRelationFromRealtimeDb(
+        sourceUserLogin: String,
         relationId: String
     )
 

@@ -51,7 +51,7 @@ open class RepositoryImpl @Inject constructor(
         mRemoteMediator.eraseCompanyIdFromRealtimeDb(userId, companyId)
     }
 
-    override fun cacheCompanyIdToRealtimeD(userId: String, companyId: String) {
+    override fun cacheCompanyIdToRealtimeDb(userId: String, companyId: String) {
         mRemoteMediator.writeCompanyIdToRealtimeDb(userId, companyId)
     }
 
@@ -89,7 +89,7 @@ open class RepositoryImpl @Inject constructor(
         mRemoteMediator.writeSearchRequestToDb(userId, searchRequest)
     }
 
-    override fun addNewRelationToRealtimeDb(
+    override fun cacheNewRelationToRealtimeDb(
         sourceUserLogin: String,
         secondSideUserLogin: String,
         relationId: String
@@ -102,6 +102,15 @@ open class RepositoryImpl @Inject constructor(
     ): RepositoryResponse<List<AdaptiveRelation>> {
         val response = mRemoteMediator.getUserRelations(userLogin).firstOrNull()
         return mResponseMediator.convertRealtimeRelationResponseForUi(response)
+    }
+
+    override suspend fun eraseRelationFromLocalDb(relation: AdaptiveRelation) {
+        val preparedForLocal = mResponseMediator.convertRelationForLocal(relation)
+        mLocalManager.deleteRelation(preparedForLocal)
+    }
+
+    override fun eraseRelationFromRealtimeDb(sourceUserLogin: String, relationId: String) {
+        mRemoteMediator.eraseRelation(sourceUserLogin, relationId)
     }
 
     override suspend fun cacheRelationToLocalDb(relation: AdaptiveRelation) {

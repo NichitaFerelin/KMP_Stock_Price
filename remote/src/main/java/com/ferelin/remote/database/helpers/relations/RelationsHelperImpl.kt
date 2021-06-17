@@ -47,6 +47,14 @@ class RelationsHelperImpl @Inject constructor(
             .setValue(secondSideUserLogin)
     }
 
+    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
+        mDatabaseFirebase
+            .child(sRelationsRef)
+            .child(sourceUserLogin)
+            .child(relationId)
+            .removeValue()
+    }
+
     override fun getUserRelations(userLogin: String) =
         callbackFlow<BaseResponse<List<Pair<Int, String>>>> {
             mDatabaseFirebase

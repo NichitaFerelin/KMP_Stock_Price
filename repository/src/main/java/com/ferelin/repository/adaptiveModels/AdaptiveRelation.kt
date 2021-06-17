@@ -19,4 +19,14 @@ package com.ferelin.repository.adaptiveModels
 class AdaptiveRelation(
     val id: Int,
     val associatedUserLogin: String
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is AdaptiveRelation) {
+            other.id == id
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+}

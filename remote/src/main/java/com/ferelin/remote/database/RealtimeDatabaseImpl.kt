@@ -112,6 +112,10 @@ class RealtimeDatabaseImpl @Inject constructor(
         mRelationsHelper.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
     }
 
+    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
+        mRelationsHelper.eraseRelation(sourceUserLogin, relationId)
+    }
+
     override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
         return mRelationsHelper.getUserRelations(userLogin)
     }

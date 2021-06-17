@@ -195,6 +195,10 @@ class RemoteMediatorImpl @Inject constructor(
         mRealtimeDatabaseManager.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
     }
 
+    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
+        mRealtimeDatabaseManager.eraseRelation(sourceUserLogin, relationId)
+    }
+
     override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
         return mRealtimeDatabaseManager.getUserRelations(userLogin)
     }
