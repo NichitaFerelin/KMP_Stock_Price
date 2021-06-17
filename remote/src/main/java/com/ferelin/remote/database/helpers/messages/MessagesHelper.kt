@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.messagesHelper
+package com.ferelin.remote.database.helpers.messages
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 
 interface MessagesHelper {
-
-    fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String)
-
-    fun getUserRelations(userLogin: String): Flow<BaseResponse<List<String>>>
 
     fun getMessagesAssociatedWithSpecifiedUser(
         sourceUserLogin: String,

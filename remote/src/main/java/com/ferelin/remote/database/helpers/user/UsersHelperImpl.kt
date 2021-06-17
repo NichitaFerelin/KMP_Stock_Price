@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.userHelper
+package com.ferelin.remote.database.helpers.user
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase

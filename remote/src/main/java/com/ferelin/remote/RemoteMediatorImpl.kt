@@ -29,6 +29,7 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.response.WebSocketResponse
+import com.ferelin.shared.MessageSide
 import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -160,18 +161,10 @@ class RemoteMediatorImpl @Inject constructor(
         mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequest)
     }
 
-    override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
-        mRealtimeDatabaseManager.addNewRelation(sourceUserLogin, secondSideUserLogin)
-    }
-
-    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<String>>> {
-        return mRealtimeDatabaseManager.getUserRelations(userLogin)
-    }
-
     override fun getMessagesAssociatedWithSpecifiedUser(
         sourceUserLogin: String,
         secondSideUserLogin: String
-    ): Flow<BaseResponse<List<Pair<Char, String>>>> {
+    ): Flow<BaseResponse<List<HashMap<String, String>>>> {
         return mRealtimeDatabaseManager.getMessagesAssociatedWithSpecifiedUser(
             sourceUserLogin,
             secondSideUserLogin
@@ -183,15 +176,27 @@ class RemoteMediatorImpl @Inject constructor(
         secondSideUserLogin: String,
         messageId: String,
         message: String,
-        sentFromSource: Boolean
+        side: MessageSide
     ) {
         mRealtimeDatabaseManager.addNewMessage(
             sourceUserLogin,
             secondSideUserLogin,
             messageId,
             message,
-            sentFromSource
+            side
         )
+    }
+
+    override fun addNewRelation(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        relationId: String
+    ) {
+        mRealtimeDatabaseManager.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
+    }
+
+    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
+        return mRealtimeDatabaseManager.getUserRelations(userLogin)
     }
 
     override fun findUserById(userId: String): Flow<Boolean> {

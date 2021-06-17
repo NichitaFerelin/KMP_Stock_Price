@@ -16,16 +16,18 @@
 
 package com.ferelin.remote.database
 
-import com.ferelin.remote.database.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
-import com.ferelin.remote.database.helpers.messagesHelper.MessagesHelper
-import com.ferelin.remote.database.helpers.searchRequestsHelper.SearchRequestsHelper
-import com.ferelin.remote.database.helpers.userHelper.UsersHelper
+import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
+import com.ferelin.remote.database.helpers.messages.MessagesHelper
+import com.ferelin.remote.database.helpers.relations.RelationsHelper
+import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
+import com.ferelin.remote.database.helpers.user.UsersHelper
 
 interface RealtimeDatabase :
     FavouriteCompaniesHelper,
     SearchRequestsHelper,
     UsersHelper,
-    MessagesHelper {
+    MessagesHelper,
+    RelationsHelper {
 
     companion object {
 

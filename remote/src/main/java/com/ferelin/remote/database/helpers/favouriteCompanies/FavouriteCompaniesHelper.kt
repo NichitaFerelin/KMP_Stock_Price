@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.searchRequestsHelper
+package com.ferelin.remote.database.helpers.favouriteCompanies
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
-interface SearchRequestsHelper {
+interface FavouriteCompaniesHelper {
 
     /**
-     * Provides ability to save search requests to cloud database.
+     * Provides ability to erase a database id from cloud database
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequest is a search requests that will be saved.
+     * @param companyId is a company id at local database that will be erased.
      */
-    fun writeSearchRequestToDb(userId: String, searchRequest: String)
+    fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
 
     /**
-     * Provides ability to save a list of search requests to cloud database.
+     * Provides ability to write a company id to cloud database.
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequests is a search requests list that will be saved.
+     * @param companyId is a company id at local database that will be saved.
      */
-    fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
+    fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
 
     /**
-     * Provides ability to read a search history from cloud database.
+     * Provides ability to write a list of ids to cloud database.
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @return [BaseResponse] with search request and [Api] response code as flow.
+     * @param companiesId is a list of ids that will be saved.
      */
-    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>>
+    fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
 
     /**
-     * Provides ability to erase a search request from cloud database.
+     * Provides ability to read user favourite companies ids from cloud database.
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequest is a search request that will be erased.
+     * @return [BaseResponse] with company ID and [Api] response code as flow.
      */
-    fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
+    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>>
 }

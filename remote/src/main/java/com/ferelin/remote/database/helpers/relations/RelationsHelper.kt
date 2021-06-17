@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.userHelper
+package com.ferelin.remote.database.helpers.relations
 
 import com.ferelin.remote.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 
-interface UsersHelper {
+interface RelationsHelper {
 
-    fun findUserByLogin(login: String): Flow<Boolean>
+    fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String, relationId: String)
 
-    fun findUserById(userId: String): Flow<Boolean>
-
-    /**
-     * Registers new user
-     * @param userId is a user id that must be cached to cloud database
-     * @param login is a user login selected during registration
-     * */
-    suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>>
+    fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>>
 }

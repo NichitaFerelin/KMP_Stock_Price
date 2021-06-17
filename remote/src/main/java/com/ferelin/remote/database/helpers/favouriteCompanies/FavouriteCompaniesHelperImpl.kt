@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.favouriteCompaniesHelper
+package com.ferelin.remote.database.helpers.favouriteCompanies
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeValueEventListener

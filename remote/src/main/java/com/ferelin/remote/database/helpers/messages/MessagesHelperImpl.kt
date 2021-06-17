@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.messagesHelper
+package com.ferelin.remote.database.helpers.messages
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
@@ -34,46 +34,11 @@ class MessagesHelperImpl @Inject constructor(
 ) : MessagesHelper {
 
     companion object {
-        private const val sRelationsRef = "relations"
         private const val sMessagesRef = "messages"
 
         const val MESSAGE_ID_KEY = "message_id_key"
         const val MESSAGE_TEXT_KEY = "message_text_key"
         const val MESSAGE_SIDE_KEY = "message_side_key"
-    }
-
-    override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
-        mDatabaseFirebase
-            .child(sRelationsRef)
-            .child(sourceUserLogin)
-            .child(secondSideUserLogin)
-            .setValue(secondSideUserLogin)
-    }
-
-    override fun getUserRelations(userLogin: String) = callbackFlow<BaseResponse<List<String>>> {
-        mDatabaseFirebase
-            .child(sRelationsRef)
-            .child(userLogin)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val relations = mutableListOf<String>()
-                        for (relationSnapshot in snapshot.children) {
-                            relationSnapshot.key?.let { associatedUserLogin ->
-                                relations.add(associatedUserLogin)
-                            }
-                        }
-                        trySend(
-                            BaseResponse(
-                                responseCode = Api.RESPONSE_OK,
-                                additionalMessage = userLogin,
-                                responseData = relations.toList()
-                            )
-                        )
-                    } else trySend(BaseResponse(Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
     }
 
     override fun getMessagesAssociatedWithSpecifiedUser(

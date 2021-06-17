@@ -17,10 +17,11 @@
 package com.ferelin.remote.database
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
-import com.ferelin.remote.database.helpers.messagesHelper.MessagesHelper
-import com.ferelin.remote.database.helpers.searchRequestsHelper.SearchRequestsHelper
-import com.ferelin.remote.database.helpers.userHelper.UsersHelper
+import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
+import com.ferelin.remote.database.helpers.messages.MessagesHelper
+import com.ferelin.remote.database.helpers.relations.RelationsHelper
+import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
+import com.ferelin.remote.database.helpers.user.UsersHelper
 import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -55,7 +56,8 @@ class RealtimeDatabaseImpl @Inject constructor(
     private val mFavouriteCompaniesHelper: FavouriteCompaniesHelper,
     private val mSearchRequestsHelper: SearchRequestsHelper,
     private val mUsersHelper: UsersHelper,
-    private val mMessagesHelper: MessagesHelper
+    private val mMessagesHelper: MessagesHelper,
+    private val mRelationsHelper: RelationsHelper
 ) : RealtimeDatabase {
 
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
@@ -102,20 +104,24 @@ class RealtimeDatabaseImpl @Inject constructor(
         return mUsersHelper.tryToRegister(userId, login)
     }
 
-    override fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String) {
-        mMessagesHelper.addNewRelation(sourceUserLogin, secondSideUserLogin)
+    override fun addNewRelation(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        relationId: String
+    ) {
+        mRelationsHelper.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
     }
 
-    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<String>>> {
-        return mMessagesHelper.getUserRelations(userLogin)
+    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
+        return mRelationsHelper.getUserRelations(userLogin)
     }
 
     override fun getMessagesAssociatedWithSpecifiedUser(
         sourceUserLogin: String,
         secondSideUserLogin: String
-    ): Flow<BaseResponse<List<Pair<Char, String>>>> {
+    ): Flow<BaseResponse<List<HashMap<String, String>>>> {
         return mMessagesHelper.getMessagesAssociatedWithSpecifiedUser(
-            sourceUserLogin,
+            secondSideUserLogin,
             secondSideUserLogin
         )
     }
