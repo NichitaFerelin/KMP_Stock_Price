@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.models
+package com.ferelin.local.databases.messagesDb
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.ferelin.local.databases.messagesDb.MessagesDatabase
-import com.ferelin.shared.MessageSide
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.typeConverters.Converter
 
-/**
- * @param secondSideLogin is a login of side-person associated with messages
- * */
-@Entity(tableName = MessagesDatabase.DB_NAME)
-class MessagesHolder(
-    @PrimaryKey
-    val id: Int,
-    val secondSideLogin: String,
-    val messages: List<Message>
-)
+@Database(entities = [MessagesHolder::class], version = 1)
+@TypeConverters(Converter::class)
+abstract class MessagesDatabase : RoomDatabase() {
 
-class Message(
-    val id: Int,
-    val side: MessageSide,
-    val text: String
-)
+    abstract fun messagedDao(): MessagesDao
+
+    companion object {
+        const val DB_NAME = "stockprice.messages.db"
+    }
+}

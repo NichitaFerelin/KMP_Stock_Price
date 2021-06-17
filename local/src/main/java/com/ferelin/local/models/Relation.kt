@@ -1,5 +1,3 @@
-package com.ferelin.local.companiesDb
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,19 +14,15 @@ package com.ferelin.local.companiesDb
  * limitations under the License.
  */
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.ferelin.local.models.Company
-import com.ferelin.local.typeConverters.Converter
+package com.ferelin.local.models
 
-@Database(entities = [Company::class], version = 1)
-@TypeConverters(Converter::class)
-abstract class CompaniesDatabase : RoomDatabase() {
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.ferelin.local.databases.relationsDb.RelationsDatabase
 
-    abstract fun companiesDao(): CompaniesDao
-
-    companion object {
-        const val DB_NAME = "stockprice.companies.db"
-    }
-}
+@Entity(tableName = RelationsDatabase.DB_NAME)
+class Relation(
+    @PrimaryKey
+    val id: Int,
+    val associatedUserLogin: String
+)

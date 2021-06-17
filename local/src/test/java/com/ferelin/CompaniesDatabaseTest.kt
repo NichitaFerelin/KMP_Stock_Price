@@ -3,8 +3,8 @@ package com.ferelin
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.ferelin.local.companiesDb.CompaniesDao
-import com.ferelin.local.companiesDb.CompaniesDatabase
+import com.ferelin.local.databases.companiesDb.CompaniesDao
+import com.ferelin.local.databases.companiesDb.CompaniesDatabase
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking

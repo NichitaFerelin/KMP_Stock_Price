@@ -16,11 +16,13 @@ package com.ferelin.local
  * limitations under the License.
  */
 
-import com.ferelin.local.companiesDb.CompaniesDao
+import com.ferelin.local.databases.companiesDb.CompaniesDao
+import com.ferelin.local.databases.messagesDb.MessagesDao
+import com.ferelin.local.databases.relationsDb.RelationsDao
 import com.ferelin.local.json.JsonManager
-import com.ferelin.local.messagesDb.MessagesDao
 import com.ferelin.local.models.Company
 import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.models.Relation
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
@@ -33,7 +35,8 @@ open class LocalManagerImpl @Inject constructor(
     private val mJsonManager: JsonManager,
     private val mStorePreferences: StorePreferences,
     private val mCompaniesDao: CompaniesDao,
-    private val mMessagesDao: MessagesDao
+    private val mMessagesDao: MessagesDao,
+    private val mRelationsDao: RelationsDao
 ) : LocalManager {
 
     override suspend fun insertCompany(company: Company) {
@@ -126,5 +129,21 @@ open class LocalManagerImpl @Inject constructor(
 
     override suspend fun setUserRegisterState(state: Boolean) {
         mStorePreferences.setUserRegisterState(state)
+    }
+
+    override suspend fun insertRelation(relation: Relation) {
+        mRelationsDao.insertRelation(relation)
+    }
+
+    override suspend fun getAllRelations(): List<Relation> {
+        return mRelationsDao.getAllRelations()
+    }
+
+    override suspend fun deleteRelation(relation: Relation) {
+        mRelationsDao.deleteRelation(relation)
+    }
+
+    override fun clearRelationsTable() {
+        mRelationsDao.clearRelationsTable()
     }
 }

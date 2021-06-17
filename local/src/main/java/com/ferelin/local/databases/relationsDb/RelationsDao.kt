@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.messagesDb
+package com.ferelin.local.databases.relationsDb
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.ferelin.local.models.MessagesHolder
-import com.ferelin.local.typeConverters.Converter
+import androidx.room.*
+import com.ferelin.local.models.Relation
 
-@Database(entities = [MessagesHolder::class], version = 1)
-@TypeConverters(Converter::class)
-abstract class MessagesDatabase : RoomDatabase() {
+@Dao
+interface RelationsDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRelation(relation: Relation)
 
-    abstract fun messagedDao(): MessagesDao
+    @Query("SELECT * FROM `stockprice.relations.db`")
+    suspend fun getAllRelations(): List<Relation>
 
-    companion object {
-        const val DB_NAME = "stockprice.messages.db"
-    }
+    @Delete
+    suspend fun deleteRelation(relation: Relation)
+
+    @Query("DELETE FROM `stockprice.relations.db`")
+    fun clearRelationsTable()
 }

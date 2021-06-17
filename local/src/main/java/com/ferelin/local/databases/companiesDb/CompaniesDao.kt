@@ -1,3 +1,5 @@
+package com.ferelin.local.databases.companiesDb
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,23 +16,21 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.messagesDb
-
 import androidx.room.*
-import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.models.Company
 
 @Dao
-interface MessagesDao {
+interface CompaniesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: MessagesHolder)
+    suspend fun insertCompany(company: Company)
 
-    @Query("SELECT * FROM `stockprice.messages.db`")
-    suspend fun getAllMessages(): List<MessagesHolder>
+    @Insert
+    suspend fun insertAllCompanies(list: List<Company>)
 
-    @Delete
-    suspend fun deleteMessage(message: MessagesHolder)
+    @Update
+    suspend fun updateCompany(company: Company)
 
-    @Query("DELETE FROM `stockprice.messages.db`")
-    fun clearMessagesTable()
+    @Query("SELECT * FROM `stockprice.companies.db`")
+    suspend fun getAllCompanies(): List<Company>
 }

@@ -1,4 +1,4 @@
-package com.ferelin.local.companiesDb
+package com.ferelin.local.databases.companiesDb
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,21 +16,19 @@ package com.ferelin.local.companiesDb
  * limitations under the License.
  */
 
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.ferelin.local.models.Company
+import com.ferelin.local.typeConverters.Converter
 
-@Dao
-interface CompaniesDao {
+@Database(entities = [Company::class], version = 1)
+@TypeConverters(Converter::class)
+abstract class CompaniesDatabase : RoomDatabase() {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCompany(company: Company)
+    abstract fun companiesDao(): CompaniesDao
 
-    @Insert
-    suspend fun insertAllCompanies(list: List<Company>)
-
-    @Update
-    suspend fun updateCompany(company: Company)
-
-    @Query("SELECT * FROM `stockprice.companies.db`")
-    suspend fun getAllCompanies(): List<Company>
+    companion object {
+        const val DB_NAME = "stockprice.companies.db"
+    }
 }
