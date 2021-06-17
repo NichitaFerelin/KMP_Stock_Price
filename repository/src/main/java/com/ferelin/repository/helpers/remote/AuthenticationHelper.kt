@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.auth
+package com.ferelin.repository.helpers.remote
 
 import android.app.Activity
 import com.ferelin.repository.utils.RepositoryMessages

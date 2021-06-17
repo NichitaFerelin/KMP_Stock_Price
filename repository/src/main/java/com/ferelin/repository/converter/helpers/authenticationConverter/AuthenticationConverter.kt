@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.repository.converter.helpers.authenticationConverter
 
-class AdaptiveMessagesHolder(
-    val id: Int = 0,
-    val secondSideLogin: String,
-    val messages: MutableList<AdaptiveMessage>
-) {
-    fun addMessage(message: AdaptiveMessage) {
-        messages.add(message)
-    }
+import com.ferelin.remote.base.BaseResponse
+import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.repository.utils.RepositoryResponse
+
+interface AuthenticationConverter {
+
+    fun convertTryToRegisterResponseForUi(
+        response: BaseResponse<Boolean>
+    ): RepositoryResponse<Boolean>
+
+    fun convertAuthenticationResponseForUi(
+        response: BaseResponse<Boolean>
+    ): RepositoryResponse<RepositoryMessages>
 }

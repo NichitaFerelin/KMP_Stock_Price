@@ -16,12 +16,7 @@
 
 package com.ferelin.repository.adaptiveModels
 
-class AdaptiveMessagesHolder(
-    val id: Int = 0,
-    val secondSideLogin: String,
-    val messages: MutableList<AdaptiveMessage>
-) {
-    fun addMessage(message: AdaptiveMessage) {
-        messages.add(message)
-    }
-}
+class AdaptiveRelation(
+    val id: Int,
+    val associatedUserLogin: String
+)

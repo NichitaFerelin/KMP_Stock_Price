@@ -24,7 +24,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthenticationResponseConverterImpl @Inject constructor() : AuthenticationResponseConverter {
+class AuthenticationConverterImpl @Inject constructor() : AuthenticationConverter {
 
     override fun convertTryToRegisterResponseForUi(
         response: BaseResponse<Boolean>

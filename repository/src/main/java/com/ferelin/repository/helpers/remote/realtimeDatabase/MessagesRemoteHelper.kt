@@ -23,10 +23,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessagesRemoteHelper {
 
-    fun cacheNewUsersRelationToRealtimeDb(sourceUserLogin: String, secondSideUserLogin: String)
-
-    fun getUserRelationsFromRealtimeDb(userLogin: String): Flow<RepositoryResponse<List<String>>>
-
     fun getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
         sourceUserLogin: String,
         secondSideUserLogin: String

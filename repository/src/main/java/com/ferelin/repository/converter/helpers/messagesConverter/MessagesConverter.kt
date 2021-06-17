@@ -21,7 +21,7 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface MessagesResponseConverter {
+interface MessagesConverter {
 
     fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder
 

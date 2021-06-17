@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.webSocket
+package com.ferelin.repository.helpers.local
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
 
-interface WebSocketHelper {
+interface RelationsLocalHelper {
 
-    fun openWebSocketConnection():Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+    suspend fun cacheRelationToLocalDb(relation: AdaptiveRelation)
 
-    fun closeWebSocketConnection()
+    suspend fun getAllRelationsFromLocalDb(): RepositoryResponse<List<AdaptiveRelation>>
 
-    fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double)
-
-    fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
+    fun clearRelationsDatabase()
 }

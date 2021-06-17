@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.repository.converter.helpers.companiesConverter
 
-class AdaptiveMessagesHolder(
-    val id: Int = 0,
-    val secondSideLogin: String,
-    val messages: MutableList<AdaptiveMessage>
-) {
-    fun addMessage(message: AdaptiveMessage) {
-        messages.add(message)
-    }
+import com.ferelin.local.models.Company
+import com.ferelin.local.responses.CompaniesResponse
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.utils.RepositoryResponse
+
+interface CompaniesConverter {
+
+    fun convertCompaniesResponseForUi(
+        response: CompaniesResponse
+    ): RepositoryResponse<List<AdaptiveCompany>>
+
+    fun convertCompanyForLocal(company: AdaptiveCompany): Company
 }

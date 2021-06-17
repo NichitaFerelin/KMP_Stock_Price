@@ -26,9 +26,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CompaniesResponseConverterImpl @Inject constructor(
+class CompaniesConverterImpl @Inject constructor(
     private val mAdapter: DataAdapter
-) : CompaniesResponseConverter {
+) : CompaniesConverter {
 
     override fun convertCompaniesResponseForUi(
         response: CompaniesResponse

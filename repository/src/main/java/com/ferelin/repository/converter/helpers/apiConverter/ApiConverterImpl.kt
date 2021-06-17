@@ -33,9 +33,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ApiResponseConverterImpl @Inject constructor(
+class ApiConverterImpl @Inject constructor(
     private val mAdapter: DataAdapter
-) : ApiResponseConverter {
+) : ApiConverter {
 
     override fun convertStockCandlesResponseForUi(
         response: BaseResponse<StockCandlesResponse>,

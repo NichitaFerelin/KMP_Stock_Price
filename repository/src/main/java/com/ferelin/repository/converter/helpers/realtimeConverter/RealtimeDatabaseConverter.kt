@@ -24,8 +24,4 @@ interface RealtimeDatabaseConverter {
     fun convertRealtimeDatabaseResponseForUi(
         response: BaseResponse<String?>
     ): RepositoryResponse<String>
-
-    fun convertUserRelationsResponseForUi(
-        response: BaseResponse<List<String>>
-    ): RepositoryResponse<List<String>>
 }

@@ -25,7 +25,7 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface ApiResponseConverter {
+interface ApiConverter {
 
     fun convertStockCandlesResponseForUi(
         response: BaseResponse<StockCandlesResponse>,

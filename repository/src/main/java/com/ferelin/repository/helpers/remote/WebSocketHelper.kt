@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.repository.helpers.remote
 
-class AdaptiveMessagesHolder(
-    val id: Int = 0,
-    val secondSideLogin: String,
-    val messages: MutableList<AdaptiveMessage>
-) {
-    fun addMessage(message: AdaptiveMessage) {
-        messages.add(message)
-    }
+import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.utils.RepositoryResponse
+import kotlinx.coroutines.flow.Flow
+
+interface WebSocketHelper {
+
+    fun openWebSocketConnection():Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+
+    fun closeWebSocketConnection()
+
+    fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double)
+
+    fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
 }

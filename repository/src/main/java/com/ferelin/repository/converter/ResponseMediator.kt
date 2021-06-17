@@ -16,21 +16,23 @@
 
 package com.ferelin.repository.converter
 
-import com.ferelin.repository.converter.helpers.apiConverter.ApiResponseConverter
-import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationResponseConverter
-import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesResponseConverter
+import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
+import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
+import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
-import com.ferelin.repository.converter.helpers.messagesConverter.MessagesResponseConverter
+import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
+import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 
-interface ResponseConverter :
-        ApiResponseConverter,
-        AuthenticationResponseConverter,
-        CompaniesResponseConverter,
+interface ResponseMediator :
+        ApiConverter,
+        AuthenticationConverter,
+        CompaniesConverter,
         FirstTimeLaunchConverter,
-        MessagesResponseConverter,
+        MessagesConverter,
         RealtimeDatabaseConverter,
         SearchRequestsConverter,
-        WebSocketConverter
+        WebSocketConverter,
+        RelationsConverter

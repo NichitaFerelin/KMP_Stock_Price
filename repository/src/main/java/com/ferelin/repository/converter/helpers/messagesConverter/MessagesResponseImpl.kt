@@ -19,7 +19,7 @@ package com.ferelin.repository.converter.helpers.messagesConverter
 import com.ferelin.local.models.Message
 import com.ferelin.local.models.MessagesHolder
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.helpers.messagesHelper.MessagesHelperImpl
+import com.ferelin.remote.database.helpers.messages.MessagesHelperImpl
 import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
@@ -29,7 +29,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MessagesResponseConverterImpl @Inject constructor() : MessagesResponseConverter {
+class MessagesResponseImpl @Inject constructor() : MessagesConverter {
 
     override fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder {
         return MessagesHolder(

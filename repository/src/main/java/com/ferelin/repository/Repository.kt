@@ -18,23 +18,23 @@ package com.ferelin.repository
 
 import com.ferelin.repository.helpers.local.FavouriteCompaniesLocalHelper
 import com.ferelin.repository.helpers.local.MessagesLocalHelper
+import com.ferelin.repository.helpers.local.RelationsLocalHelper
 import com.ferelin.repository.helpers.local.StorePreferencesHelper
-import com.ferelin.repository.helpers.remote.api.ApiManagerHelper
-import com.ferelin.repository.helpers.remote.auth.AuthenticationHelper
-import com.ferelin.repository.helpers.remote.realtimeDatabase.FavouriteCompaniesRemoteHelper
-import com.ferelin.repository.helpers.remote.realtimeDatabase.MessagesRemoteHelper
-import com.ferelin.repository.helpers.remote.realtimeDatabase.SearchRequestsRemoteHelper
-import com.ferelin.repository.helpers.remote.realtimeDatabase.UsersRemoteHelper
-import com.ferelin.repository.helpers.remote.webSocket.WebSocketHelper
+import com.ferelin.repository.helpers.remote.ApiManagerHelper
+import com.ferelin.repository.helpers.remote.AuthenticationHelper
+import com.ferelin.repository.helpers.remote.WebSocketHelper
+import com.ferelin.repository.helpers.remote.realtimeDatabase.*
 
 interface Repository :
     FavouriteCompaniesLocalHelper,
     MessagesLocalHelper,
     StorePreferencesHelper,
+    RelationsLocalHelper,
     ApiManagerHelper,
     AuthenticationHelper,
     FavouriteCompaniesRemoteHelper,
     MessagesRemoteHelper,
     SearchRequestsRemoteHelper,
     UsersRemoteHelper,
-    WebSocketHelper
+    WebSocketHelper,
+    RelationsRemoteHelper

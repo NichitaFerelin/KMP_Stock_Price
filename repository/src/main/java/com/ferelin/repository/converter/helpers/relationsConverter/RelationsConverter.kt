@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.converter.helpers.authenticationConverter
+package com.ferelin.repository.converter.helpers.relationsConverter
 
+import com.ferelin.local.models.Relation
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface AuthenticationResponseConverter {
+interface RelationsConverter {
 
-    fun convertTryToRegisterResponseForUi(
-        response: BaseResponse<Boolean>
-    ): RepositoryResponse<Boolean>
+    fun convertRelationForLocal(item: AdaptiveRelation) : Relation
 
-    fun convertAuthenticationResponseForUi(
-        response: BaseResponse<Boolean>
-    ): RepositoryResponse<RepositoryMessages>
+    fun convertLocalRelationResponseForUi(
+        data: List<Relation>
+    ): RepositoryResponse<List<AdaptiveRelation>>
+
+    fun convertRealtimeRelationResponseForUi(
+        response: BaseResponse<List<Pair<Int, String>>>?
+    ): RepositoryResponse<List<AdaptiveRelation>>
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.api
+package com.ferelin.repository.helpers.remote
 
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.repository.adaptiveModels.*

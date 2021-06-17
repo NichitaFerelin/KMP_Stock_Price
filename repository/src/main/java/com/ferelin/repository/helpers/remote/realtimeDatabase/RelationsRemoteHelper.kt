@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.converter.helpers.companiesConverter
+package com.ferelin.repository.helpers.remote.realtimeDatabase
 
-import com.ferelin.local.models.Company
-import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface CompaniesResponseConverter {
+interface RelationsRemoteHelper {
 
-    fun convertCompaniesResponseForUi(
-        response: CompaniesResponse
-    ): RepositoryResponse<List<AdaptiveCompany>>
+    fun addNewRelationToRealtimeDb(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        relationId: String
+    )
 
-    fun convertCompanyForLocal(company: AdaptiveCompany): Company
+    suspend fun getUserRelationsFromRealtimeDb(
+        userLogin: String
+    ): RepositoryResponse<List<AdaptiveRelation>>
 }

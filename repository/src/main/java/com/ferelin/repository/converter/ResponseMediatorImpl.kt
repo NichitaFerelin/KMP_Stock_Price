@@ -18,6 +18,7 @@ package com.ferelin.repository.converter
 
 import com.ferelin.local.models.Company
 import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.models.Relation
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
@@ -28,12 +29,13 @@ import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.converter.helpers.apiConverter.ApiResponseConverter
-import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationResponseConverter
-import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesResponseConverter
+import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
+import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
+import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
-import com.ferelin.repository.converter.helpers.messagesConverter.MessagesResponseConverter
+import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
+import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 import com.ferelin.repository.utils.RepositoryMessages
@@ -42,73 +44,74 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [ResponseConverterImpl] is used to convert responses for UI from local/remote modules.
+ * [ResponseMediatorImpl] is used to convert responses for UI from local/remote modules.
  */
 @Singleton
-class ResponseConverterImpl @Inject constructor(
-    private val mApiResponseConverter: ApiResponseConverter,
-    private val mAuthenticationResponseConverter: AuthenticationResponseConverter,
-    private val mCompaniesResponseConverter: CompaniesResponseConverter,
+class ResponseMediatorImpl @Inject constructor(
+    private val mApiConverter: ApiConverter,
+    private val mAuthenticationConverter: AuthenticationConverter,
+    private val mCompaniesConverter: CompaniesConverter,
     private val mFirstTimeLaunchConverter: FirstTimeLaunchConverter,
-    private val mMessagesResponseConverter: MessagesResponseConverter,
+    private val mMessagesConverter: MessagesConverter,
     private val mRealtimeDatabaseConverter: RealtimeDatabaseConverter,
     private val mSearchRequestsConverter: SearchRequestsConverter,
-    private val mWebSocketConverter: WebSocketConverter
-) : ResponseConverter {
+    private val mWebSocketConverter: WebSocketConverter,
+    private val mRelationsConverter: RelationsConverter
+) : ResponseMediator {
 
     override fun convertStockCandlesResponseForUi(
         response: BaseResponse<StockCandlesResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
-        return mApiResponseConverter.convertStockCandlesResponseForUi(response, symbol)
+        return mApiConverter.convertStockCandlesResponseForUi(response, symbol)
     }
 
     override fun convertCompanyProfileResponseForUi(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyProfile> {
-        return mApiResponseConverter.convertCompanyProfileResponseForUi(response, symbol)
+        return mApiConverter.convertCompanyProfileResponseForUi(response, symbol)
     }
 
     override fun convertStockSymbolsResponseForUi(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
-        return mApiResponseConverter.convertStockSymbolsResponseForUi(response)
+        return mApiConverter.convertStockSymbolsResponseForUi(response)
     }
 
     override fun convertCompanyNewsResponseForUi(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
-        return mApiResponseConverter.convertCompanyNewsResponseForUi(response, symbol)
+        return mApiConverter.convertCompanyNewsResponseForUi(response, symbol)
     }
 
     override fun convertCompanyQuoteResponseForUi(
         response: BaseResponse<CompanyQuoteResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
-        return mApiResponseConverter.convertCompanyQuoteResponseForUi(response)
+        return mApiConverter.convertCompanyQuoteResponseForUi(response)
     }
 
     override fun convertTryToRegisterResponseForUi(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<Boolean> {
-        return mAuthenticationResponseConverter.convertTryToRegisterResponseForUi(response)
+        return mAuthenticationConverter.convertTryToRegisterResponseForUi(response)
     }
 
     override fun convertAuthenticationResponseForUi(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<RepositoryMessages> {
-        return mAuthenticationResponseConverter.convertAuthenticationResponseForUi(response)
+        return mAuthenticationConverter.convertAuthenticationResponseForUi(response)
     }
 
     override fun convertCompaniesResponseForUi(
         response: CompaniesResponse
     ): RepositoryResponse<List<AdaptiveCompany>> {
-        return mCompaniesResponseConverter.convertCompaniesResponseForUi(response)
+        return mCompaniesConverter.convertCompaniesResponseForUi(response)
     }
 
     override fun convertCompanyForLocal(company: AdaptiveCompany): Company {
-        return mCompaniesResponseConverter.convertCompanyForLocal(company)
+        return mCompaniesConverter.convertCompanyForLocal(company)
     }
 
     override fun convertFirstTimeLaunchStateForUi(state: Boolean?): RepositoryResponse<Boolean> {
@@ -116,13 +119,13 @@ class ResponseConverterImpl @Inject constructor(
     }
 
     override fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder {
-        return mMessagesResponseConverter.convertMessageForLocal(messagesHolder)
+        return mMessagesConverter.convertMessageForLocal(messagesHolder)
     }
 
     override fun convertRemoteMessagesResponseForUi(
         response: BaseResponse<List<HashMap<String, String>>>
     ): RepositoryResponse<AdaptiveMessagesHolder> {
-        return mMessagesResponseConverter.convertRemoteMessagesResponseForUi(response)
+        return mMessagesConverter.convertRemoteMessagesResponseForUi(response)
     }
 
     override fun convertRealtimeDatabaseResponseForUi(
@@ -151,5 +154,23 @@ class ResponseConverterImpl @Inject constructor(
         response: BaseResponse<WebSocketResponse>
     ): RepositoryResponse<AdaptiveWebSocketPrice> {
         return mWebSocketConverter.convertWebSocketResponseForUi(response)
+    }
+
+    override fun convertLocalMessagesResponseForUi(
+        items: List<MessagesHolder>
+    ): RepositoryResponse<List<AdaptiveMessagesHolder>> {
+        return mMessagesConverter.convertLocalMessagesResponseForUi(items)
+    }
+
+    override fun convertLocalRelationResponseForUi(
+        data: List<Relation>
+    ): RepositoryResponse<List<AdaptiveRelation>> {
+        return mRelationsConverter.convertLocalRelationResponseForUi(data)
+    }
+
+    override fun convertRealtimeRelationResponseForUi(
+        response: BaseResponse<List<Pair<Int, String>>>
+    ): RepositoryResponse<List<AdaptiveRelation>> {
+        return mRelationsConverter.convertRealtimeRelationResponseForUi(response)
     }
 }
