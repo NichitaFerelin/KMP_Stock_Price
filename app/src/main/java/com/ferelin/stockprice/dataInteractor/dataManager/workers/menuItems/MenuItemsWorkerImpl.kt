@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems
 
 import android.content.Context
 import com.ferelin.stockprice.R
@@ -30,10 +30,11 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class MenuItemsWorker @Inject constructor(
+class MenuItemsWorkerImpl @Inject constructor(
     context: Context,
     @Named("isUserLogged") isUserLogged: Boolean
-) {
+) : MenuItemsWorker, MenuItemsWorkerStates {
+
     private val mLogInItem = MenuItem(
         id = 0,
         type = MenuItemType.LogIn,
@@ -77,14 +78,14 @@ class MenuItemsWorker @Inject constructor(
     private val mStateMenuItems = MutableStateFlow<DataNotificator<List<MenuItem>>>(
         DataNotificator.DataPrepared(mMenuItems)
     )
-    val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
+    override val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mStateMenuItems
 
     private val mSharedLogOut = MutableSharedFlow<Unit>()
-    val sharedLogOut: SharedFlow<Unit>
+    override val sharedLogOut: SharedFlow<Unit>
         get() = mSharedLogOut
 
-    suspend fun onLogStateChanged(isLogged: Boolean) {
+    override suspend fun onLogStateChanged(isLogged: Boolean) {
         if (isLogged) {
             mMenuItems.remove(mLogInItem)
             mMenuItems.add(mLogOutItem)

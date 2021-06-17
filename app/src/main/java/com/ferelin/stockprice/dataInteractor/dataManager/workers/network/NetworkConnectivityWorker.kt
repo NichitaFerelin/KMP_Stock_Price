@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.dataManager.workers
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.network
 
 /*
  * Copyright 2021 Leah Nichita
@@ -31,10 +31,12 @@ import javax.inject.Singleton
 
 @Singleton
 open class NetworkConnectivityWorker @Inject constructor(
-    service: ConnectivityManager, networkRequest: NetworkRequest
-) {
+    service: ConnectivityManager,
+    networkRequest: NetworkRequest
+) : NetworkConnectivityWorkerStates {
+
     private val mStateIsNetworkAvailable = MutableStateFlow(isNetworkAvailable(service))
-    val stateIsNetworkAvailable: StateFlow<Boolean>
+    override val stateIsNetworkAvailable: StateFlow<Boolean>
         get() = mStateIsNetworkAvailable
 
     init {

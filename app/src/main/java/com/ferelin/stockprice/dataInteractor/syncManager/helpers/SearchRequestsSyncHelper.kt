@@ -17,7 +17,7 @@
 package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
-import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediatorImpl
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import com.ferelin.stockprice.utils.actionHolder.ActionType
@@ -32,7 +32,7 @@ import javax.inject.Singleton
  * */
 @Singleton
 class SearchRequestsSyncHelper @Inject constructor(
-    private val mDataMediator: DataMediator,
+    private val mDataMediator: DataMediatorImpl,
     private val mRepositoryManager: Repository
 ) {
     /*
@@ -74,7 +74,7 @@ class SearchRequestsSyncHelper @Inject constructor(
         if (remoteSearchRequestAtLocal == null) {
             when (mSyncMode) {
                 is SyncConflictMode.LocalPriority -> {
-                    mRepositoryManager.eraseSearchRequestFromDb(mUserId, searchRequest)
+                    mRepositoryManager.eraseSearchRequestFromRealtimeDb(mUserId, searchRequest)
                 }
                 else -> {
                     mRemoteSearchRequestsContainer.add(searchRequest)
@@ -106,13 +106,13 @@ class SearchRequestsSyncHelper @Inject constructor(
      * Example: [ ("abc", Removed), ("bbb", Added) ]
      * */
     fun onSearchRequestsChanged(changesActionsHistory: List<ActionHolder<String>>) {
-        mRepositoryManager.provideUserId().let { authorizedUserId ->
+        mRepositoryManager.getUserAuthenticationId()?.let { authorizedUserId ->
             changesActionsHistory.forEach { actionHolder ->
                 when (actionHolder.actionType) {
                     is ActionType.Added -> {
                         if (!mRemoteSearchRequestsContainer.contains(actionHolder.key)) {
                             mRemoteSearchRequestsContainer.add(actionHolder.key)
-                            mRepositoryManager.writeSearchRequestToDb(
+                            mRepositoryManager.cacheSearchRequestToRealtimeDb(
                                 authorizedUserId,
                                 actionHolder.key
                             )
@@ -121,7 +121,7 @@ class SearchRequestsSyncHelper @Inject constructor(
                     is ActionType.Removed -> {
                         if (mRemoteSearchRequestsContainer.contains(actionHolder.key)) {
                             mRemoteSearchRequestsContainer.remove(actionHolder.key)
-                            mRepositoryManager.eraseSearchRequestFromDb(
+                            mRepositoryManager.eraseSearchRequestFromRealtimeDb(
                                 authorizedUserId,
                                 actionHolder.key
                             )
@@ -149,15 +149,21 @@ class SearchRequestsSyncHelper @Inject constructor(
             mDataMediator.searchRequestsWorker.stateSearchRequests.value.data ?: return
 
         if (mRemoteSearchRequestsContainer.isEmpty()) {
-            val searchRequests = localSearchRequests.map { it.searchText }
-            mRepositoryManager.writeSearchRequestsToDb(mUserId, searchRequests)
+            localSearchRequests
+                .map { it.searchText }
+                .forEach { request ->
+                    mRepositoryManager.cacheSearchRequestToRealtimeDb(mUserId, request)
+                }
         } else {
             localSearchRequests.forEach { searchRequest ->
                 val itemAtRemoteContainer =
                     mRemoteSearchRequestsContainer.find { it == searchRequest.searchText }
 
                 if (itemAtRemoteContainer == null) {
-                    mRepositoryManager.writeSearchRequestToDb(mUserId, searchRequest.searchText)
+                    mRepositoryManager.cacheSearchRequestToRealtimeDb(
+                        mUserId,
+                        searchRequest.searchText
+                    )
                 }
             }
         }

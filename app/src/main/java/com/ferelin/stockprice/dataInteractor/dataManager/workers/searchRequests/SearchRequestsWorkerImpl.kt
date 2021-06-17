@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.dataManager.workers
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests
 
 /*
  * Copyright 2021 Leah Nichita
@@ -29,29 +29,30 @@ import javax.inject.Singleton
 import kotlin.collections.ArrayList
 
 /**
- *  [SearchRequestsWorker] ab ability to:
+ *  [SearchRequestsWorkerImpl] ab ability to:
  *   - Observing [mStateSearchRequests] to display a history of searches.
  *   - Observing [mStatePopularSearchRequests] to display populars search requests.
  *
- *  Also [SearchRequestsWorker] do manually:
+ *  Also [SearchRequestsWorkerImpl] do manually:
  *   - Using [mRepository] to data caching.
  *   - Using [mSearchRequestsLimit] to control limit of search requests.
  *   - Optimizing search requests size. @see [removeSearchRequestsDuplicates]
  */
 
 @Singleton
-class SearchRequestsWorker @Inject constructor(
+class SearchRequestsWorkerImpl @Inject constructor(
     private val mRepository: Repository
-) {
+) : SearchRequestsWorker, SearchRequestsWorkerStates {
+
     private var mSearchRequests: ArrayList<AdaptiveSearchRequest> = arrayListOf()
-    val searchRequests: List<AdaptiveSearchRequest>
+    override val searchRequests: List<AdaptiveSearchRequest>
         get() = mSearchRequests.toList()
 
     private val mSearchRequestsLimit = 30
 
     private val mStateSearchRequests =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>(DataNotificator.Loading())
-    val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+    override val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
         get() = mStateSearchRequests
 
     /*
@@ -83,15 +84,15 @@ class SearchRequestsWorker @Inject constructor(
 
     private val mStatePopularSearchRequests =
         MutableStateFlow(DataNotificator.DataPrepared(mPopularSearchRequests))
-    val statePopularSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
+    override val statePopularSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
         get() = mStatePopularSearchRequests
 
-    fun onDataPrepared(searches: List<AdaptiveSearchRequest>) {
+    override fun onSearchRequestsDataPrepared(searches: List<AdaptiveSearchRequest>) {
         mSearchRequests = ArrayList(searches)
         mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
     }
 
-    suspend fun cacheNewSearchRequest(searchText: String): List<ActionHolder<String>> {
+    override suspend fun cacheNewSearchRequest(searchText: String): List<ActionHolder<String>> {
         val newSearchRequest = AdaptiveSearchRequest(searchText)
         val actionsContainer = mutableListOf<ActionHolder<String>>()
 
@@ -104,15 +105,15 @@ class SearchRequestsWorker @Inject constructor(
         }
 
         mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
-        mRepository.setSearchesHistory(mSearchRequests)
+        mRepository.cacheSearchRequestsHistoryToLocalDb(mSearchRequests)
 
         return actionsContainer
     }
 
-    suspend fun clearSearchRequests() {
+    override suspend fun clearSearchRequests() {
         mSearchRequests.clear()
         mStateSearchRequests.value = DataNotificator.Loading()
-        mRepository.clearSearchesHistory()
+        mRepository.clearLocalSearchRequestsHistory()
     }
 
     /*

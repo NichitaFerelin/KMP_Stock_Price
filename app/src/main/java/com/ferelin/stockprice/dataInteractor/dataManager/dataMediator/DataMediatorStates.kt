@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.dataInteractor.dataManager.dataMediator
+
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.favouritesCompanies.FavouriteCompaniesWorkerStates
@@ -24,42 +24,22 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuI
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorkerStates
-import com.ferelin.stockprice.dataInteractor.helpers.apiHelper.ApiHelper
-import com.ferelin.stockprice.dataInteractor.helpers.authenticationHelper.AuthenticationHelper
-import com.ferelin.stockprice.dataInteractor.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.messagesHelper.MessagesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.registerHelper.RegisterHelper
-import com.ferelin.stockprice.dataInteractor.helpers.webHelper.WebHelper
-import com.ferelin.stockprice.utils.StockHistoryConverter
-import kotlinx.coroutines.flow.Flow
 
-interface DataInteractor :
-// States
-    CompaniesWorkerStates,
-    ErrorsWorkerStates,
-    FavouriteCompaniesWorkerStates,
-    LoginWorkerStates,
-    MenuItemsWorkerStates,
-    MessagesWorkerStates,
-    NetworkConnectivityWorkerStates,
-    SearchRequestsWorkerStates,
-    // Helpers
-    ApiHelper,
-    AuthenticationHelper,
-    FavouriteCompaniesHelper,
-    MessagesHelper,
-    RegisterHelper,
-    WebHelper {
+interface DataMediatorStates {
 
-    val stockHistoryConverter: StockHistoryConverter
+    val companiesWorker: CompaniesWorkerStates
 
-    suspend fun prepareData()
+    val favouriteCompaniesWorker: FavouriteCompaniesWorkerStates
 
-    suspend fun cacheNewSearchRequest(searchText: String)
+    val searchRequestsWorker: SearchRequestsWorkerStates
 
-    suspend fun setFirstTimeLaunchState(state: Boolean)
+    val menuItemsWorker: MenuItemsWorkerStates
 
-    suspend fun getFirstTimeLaunchState(): Boolean
+    val networkConnectivityWorker: NetworkConnectivityWorkerStates
 
-    fun provideNetworkStateFlow(): Flow<Boolean>
+    val messagesWorker: MessagesWorkerStates
+
+    val errorsWorker: ErrorsWorkerStates
+
+    val loginWorker: LoginWorkerStates
 }

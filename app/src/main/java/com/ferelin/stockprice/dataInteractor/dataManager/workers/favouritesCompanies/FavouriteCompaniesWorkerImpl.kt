@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.dataManager.workers
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.favouritesCompanies
 
 /*
  * Copyright 2021 Leah Nichita
@@ -18,8 +18,8 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.StylesProvider
-import com.ferelin.stockprice.dataInteractor.local.LocalInteractor
+import com.ferelin.stockprice.dataInteractor.dataManager.stylesProvider.StylesProvider
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerImpl
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.parseDoubleFromStr
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,11 +30,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [FavouriteCompaniesWorker] providing an ability to:
+ * [FavouriteCompaniesWorkerImpl] providing an ability to:
  *   - Observing [mStateFavouriteCompanies] to display a list of favourite companies.
  *   - Observing [mSharedFavouriteCompaniesUpdates] to add/remove item from list of favourite companies.
  *
- * Also [FavouriteCompaniesWorker] manually doing:
+ * Also [FavouriteCompaniesWorkerImpl] manually doing:
  *   - Subscribing favourite companies for live-time updates using [mRepositoryHelper].
  *   - Unsubscribing companies from live-time updates when it was removed from favourites using [mRepositoryHelper].
  *   - Control the limit of favourite companies @see [mCompaniesLimit] notifying with [mErrorsWorker].
@@ -43,29 +43,29 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class FavouriteCompaniesWorker @Inject constructor(
+class FavouriteCompaniesWorkerImpl @Inject constructor(
     private val mStylesProvider: StylesProvider,
-    private val mLocalInteractor: LocalInteractor,
     private val mRepositoryHelper: Repository,
-    private val mErrorsWorker: ErrorsWorker
-) {
+    private val mErrorsWorker: ErrorsWorkerImpl
+) : FavouriteCompaniesWorker, FavouriteCompaniesWorkerStates {
+
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
 
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(DataNotificator.Loading())
-    val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
+    override val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
         get() = mStateFavouriteCompanies
 
     private val mSharedFavouriteCompaniesUpdates =
         MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
-    val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+    override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mSharedFavouriteCompaniesUpdates
 
     /*
     * To observe company by foreground service
     * */
     private val mStateCompanyForObserver = MutableStateFlow<AdaptiveCompany?>(null)
-    val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
+    override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
         get() = mStateCompanyForObserver
 
     /*
@@ -75,7 +75,7 @@ class FavouriteCompaniesWorker @Inject constructor(
     * */
     private val mCompaniesLimit = 50
 
-    fun onDataPrepared(companies: List<AdaptiveCompany>) {
+    override fun onFavouriteCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         mFavouriteCompanies = ArrayList(companies
             .filter { it.isFavourite }
             .sortedByDescending { it.favouriteOrderIndex }
@@ -85,11 +85,11 @@ class FavouriteCompaniesWorker @Inject constructor(
         mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
     }
 
-    suspend fun onCompanyChanged(company: AdaptiveCompany) {
+    override suspend fun onFavouriteCompanyChanged(company: AdaptiveCompany) {
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemUpdatedCommon(company))
     }
 
-    suspend fun addCompanyToFavourites(
+    override suspend fun addCompanyToFavourites(
         company: AdaptiveCompany,
         ignoreError: Boolean
     ): AdaptiveCompany? {
@@ -107,11 +107,11 @@ class FavouriteCompaniesWorker @Inject constructor(
         mFavouriteCompanies.add(0, company)
         mStateCompanyForObserver.value = company
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.NewItemAdded(company))
-        mLocalInteractor.cacheCompany(company)
+        mRepositoryHelper.cacheCompanyToLocalDb(company)
         return company
     }
 
-    suspend fun removeCompanyFromFavourites(company: AdaptiveCompany): AdaptiveCompany {
+    override suspend fun removeCompanyFromFavourites(company: AdaptiveCompany): AdaptiveCompany {
         applyChangesToRemovedFavouriteCompany(company)
         mRepositoryHelper.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
         mFavouriteCompanies.remove(company)
@@ -121,11 +121,11 @@ class FavouriteCompaniesWorker @Inject constructor(
         }
 
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
-        mLocalInteractor.cacheCompany(company)
+        mRepositoryHelper.cacheCompanyToLocalDb(company)
         return company
     }
 
-    fun subscribeCompaniesOnLiveTimeUpdates() {
+    override fun subscribeCompaniesOnLiveTimeUpdates() {
         mFavouriteCompanies.forEach { subscribeCompanyOnLiveTimeUpdates(it) }
     }
 
@@ -134,7 +134,7 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     private fun subscribeCompanyOnLiveTimeUpdates(company: AdaptiveCompany) {
-        mRepositoryHelper.subscribeItemToLiveTimeUpdates(
+        mRepositoryHelper.subscribeItemOnLiveTimeUpdates(
             company.companyProfile.symbol,
             parseDoubleFromStr(company.companyDayData.openPrice)
         )

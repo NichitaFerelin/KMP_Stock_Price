@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.dataManager
+package com.ferelin.stockprice.dataInteractor.dataManager.stylesProvider
 
 /*
  * Copyright 2021 Leah Nichita

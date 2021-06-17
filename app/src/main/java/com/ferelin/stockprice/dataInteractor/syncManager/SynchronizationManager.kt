@@ -113,11 +113,11 @@ class SynchronizationManager @Inject constructor(
      * @param syncMode is a synchronization mode
      * */
     private fun initDataSync(syncMode: SyncConflictMode = SyncConflictMode.Merge) {
-        if (!mIsDataSynchronized && !mRepositoryManager.provideIsUserLogged()) {
+        if (!mIsDataSynchronized && !mRepositoryManager.isUserAuthenticated()) {
             return
         }
 
-        val userId = mRepositoryManager.provideUserId()!!
+        val userId = mRepositoryManager.getUserAuthenticationId()!!
         mCompaniesSyncHelper.prepareForSync(userId, syncMode)
         mSearchRequestsSyncHelper.prepareToSync(userId, syncMode)
 
@@ -154,7 +154,7 @@ class SynchronizationManager @Inject constructor(
 
     private fun collectCompaniesIds(scope: CoroutineScope, userId: String) {
         mCompaniesSyncJob = scope.launch {
-            mRepositoryManager.readCompaniesIdsFromDb(userId).collect { response ->
+            mRepositoryManager.getCompaniesIdsFromRealtimeDb(userId).collect { response ->
                 if (isActive) {
                     when (response) {
                         is RepositoryResponse.Success -> {
@@ -172,7 +172,7 @@ class SynchronizationManager @Inject constructor(
 
     private fun collectSearchRequests(scope: CoroutineScope, userId: String) {
         mSearchRequestsSyncJob = scope.launch {
-            mRepositoryManager.readSearchRequestsFromDb(userId).collect { response ->
+            mRepositoryManager.getSearchRequestsFromRealtimeDb(userId).collect { response ->
                 if (isActive) {
                     when (response) {
                         is RepositoryResponse.Success -> {
