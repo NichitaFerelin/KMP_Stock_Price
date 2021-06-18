@@ -20,7 +20,7 @@ import android.app.Activity
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter

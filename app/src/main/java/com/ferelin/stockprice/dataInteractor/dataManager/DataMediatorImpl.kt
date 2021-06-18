@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.dataInteractor.dataManager.dataMediator
+package com.ferelin.stockprice.dataInteractor.dataManager
 
 /*
  * Copyright 2021 Leah Nichita
@@ -25,7 +25,6 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWo
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.favouritesCompanies.FavouriteCompaniesWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.favouritesCompanies.FavouriteCompaniesWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.login.LoginWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.login.LoginWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorkerStates
@@ -59,15 +58,11 @@ open class DataMediatorImpl @Inject constructor(
     override val loginWorker: LoginWorkerStates,
     override val errorsWorker: ErrorsWorkerStates,
 
-    /**
-     * Provided to resolve interface methods
-     * */
     private val mCompaniesWorker: CompaniesWorker,
     private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
     private val mSearchRequestsWorker: SearchRequestsWorker,
     private val mMenuItemsWorker: MenuItemsWorker,
     private val mMessagesWorker: MessagesWorker,
-    private val mLoginWorker: LoginWorker,
     private val mErrorsWorker: ErrorsWorker
 ) : DataMediator {
 
@@ -133,12 +128,11 @@ open class DataMediatorImpl @Inject constructor(
         mFavouriteCompaniesWorker.subscribeCompaniesOnLiveTimeUpdates()
     }
 
-    override fun getMessagesStateForLogin(
+    override suspend fun getMessagesStateForLoginFromCache(
         associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
-        return mMessagesWorker.getMessagesStateForLogin(associatedUserLogin)
+        return mMessagesWorker.getMessagesStateForLoginFromCache(associatedUserLogin)
     }
-
 
     override suspend fun onLogStateChanged(isLogged: Boolean) {
         mMenuItemsWorker.onLogStateChanged(isLogged)
@@ -193,6 +187,8 @@ open class DataMediatorImpl @Inject constructor(
     override fun getCompany(symbol: String): AdaptiveCompany? {
         return findCompany(companiesWorker.companies, symbol)
     }
+
+
 
     private suspend fun onDataChanged(
         company: AdaptiveCompany,

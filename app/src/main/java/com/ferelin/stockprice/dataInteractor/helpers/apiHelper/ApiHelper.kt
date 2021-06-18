@@ -21,11 +21,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface ApiHelper {
 
-    suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany>
+    suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany>
 
-    suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany>
+    suspend fun loadCompanyNewsFromNetwork(symbol: String): Flow<AdaptiveCompany>
 
-    suspend fun loadCompanyQuote(
+    suspend fun loadCompanyQuoteFromNetwork(
         symbol: String,
         position: Int,
         isImportant: Boolean

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.dataMediator
+package com.ferelin.stockprice.dataInteractor.dataManager
 
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import kotlinx.coroutines.flow.StateFlow
 
 interface DataMediator :
     DataMediatorStates,
-    ErrorsWorker {
+    ErrorsWorker,
+    MessagesWorker {
 
     fun onCommonCompaniesDataPrepared(companies: List<AdaptiveCompany>)
 
@@ -40,23 +42,15 @@ interface DataMediator :
 
     fun onSearchRequestsHistoryPrepared(searches: List<AdaptiveSearchRequest>)
 
-    suspend fun onStockCandlesLoaded(
-        response: RepositoryResponse.Success<AdaptiveCompanyHistory>
-    )
+    suspend fun onStockCandlesLoaded(response: RepositoryResponse.Success<AdaptiveCompanyHistory>)
 
-    suspend fun onCompanyNewsLoaded(
-        response: RepositoryResponse.Success<AdaptiveCompanyNews>
-    )
+    suspend fun onCompanyNewsLoaded(response: RepositoryResponse.Success<AdaptiveCompanyNews>)
 
-    suspend fun onCompanyQuoteLoaded(
-        response: RepositoryResponse.Success<AdaptiveCompanyDayData>
-    )
+    suspend fun onCompanyQuoteLoaded(response: RepositoryResponse.Success<AdaptiveCompanyDayData>)
 
-    suspend fun onLiveTimePriceChanged(
-        response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
-    )
+    suspend fun onLiveTimePriceChanged(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>)
 
-    fun getMessagesStateForLogin(
+    suspend fun getMessagesStateForLoginFromCache(
         associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
 

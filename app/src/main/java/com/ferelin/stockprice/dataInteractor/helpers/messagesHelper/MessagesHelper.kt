@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface MessagesHelper {
 
-    suspend fun getMessagesForLogin(
+    suspend fun getMessagesStateForLoginFromCache(
         login: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
 

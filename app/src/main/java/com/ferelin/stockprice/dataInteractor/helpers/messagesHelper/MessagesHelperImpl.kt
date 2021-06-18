@@ -19,7 +19,7 @@ package com.ferelin.stockprice.dataInteractor.helpers.messagesHelper
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -32,10 +32,10 @@ class MessagesHelperImpl @Inject constructor(
     private val mDataMediator: DataMediator
 ) : MessagesHelper {
 
-    override suspend fun getMessagesForLogin(
+    override suspend fun getMessagesStateForLoginFromCache(
         login: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
-        return mDataMediator.getMessagesStateForLogin(login)
+        return mDataMediator.getMessagesStateForLoginFromCache(login)
     }
 
     override suspend fun loadMessagesAssociatedWithLogin(
@@ -55,7 +55,7 @@ class MessagesHelperImpl @Inject constructor(
                 null
             }
             is RepositoryResponse.Success -> {
-                mDataMediator.onMessagesLoaded(repositoryResponse.data)
+                mDataMediator.on(repositoryResponse.data)
                 repositoryResponse.data
             }
         }

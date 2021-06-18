@@ -19,7 +19,7 @@ package com.ferelin.stockprice.dataInteractor.helpers.webHelper
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -33,7 +33,7 @@ class WebHelperImpl @Inject constructor(
     private val mDataMediator: DataMediator
 ) : WebHelper {
 
-    override suspend fun openConnection(): Flow<AdaptiveCompany> {
+    override suspend fun openWebSocketConnection(): Flow<AdaptiveCompany> {
         return mRepository.openWebSocketConnection()
             .filter { it is RepositoryResponse.Success && it.owner != null }
             .onEach { mDataMediator.onLiveTimePriceChanged(it as RepositoryResponse.Success) }

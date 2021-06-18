@@ -17,7 +17,7 @@
 package com.ferelin.stockprice.dataInteractor.helpers.favouriteCompaniesHelper
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +28,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
     private val mSynchronizationManager: SynchronizationManager
 ) : FavouriteCompaniesHelper {
 
-    override suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany) {
+    override suspend fun addCompanyToFavourites(adaptiveCompany: AdaptiveCompany) {
         mDataMediator.onAddFavouriteCompany(adaptiveCompany).also { isAdded ->
             /**
              * The company may not be accepted to favourites.
@@ -40,16 +40,16 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeCompanyFromFavourite(adaptiveCompany: AdaptiveCompany) {
+    override suspend fun removeCompanyFromFavourites(adaptiveCompany: AdaptiveCompany) {
         mDataMediator.onRemoveFavouriteCompany(adaptiveCompany)
         mSynchronizationManager.onCompanyRemovedFromLocal(adaptiveCompany)
     }
 
-    override suspend fun addCompanyToFavourite(symbol: String) {
-        mDataMediator.getCompany(symbol)?.let { addCompanyToFavourite(it) }
+    override suspend fun addCompanyToFavourites(symbol: String) {
+        mDataMediator.getCompany(symbol)?.let { addCompanyToFavourites(it) }
     }
 
-    override suspend fun removeCompanyFromFavourite(symbol: String) {
-        mDataMediator.getCompany(symbol)?.let { removeCompanyFromFavourite(it) }
+    override suspend fun removeCompanyFromFavourites(symbol: String) {
+        mDataMediator.getCompany(symbol)?.let { removeCompanyFromFavourites(it) }
     }
 }

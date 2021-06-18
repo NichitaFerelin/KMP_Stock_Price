@@ -17,7 +17,7 @@
 package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediatorImpl
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediatorImpl
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import com.ferelin.stockprice.utils.actionHolder.ActionType

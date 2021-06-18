@@ -18,7 +18,7 @@ package com.ferelin.stockprice.dataInteractor.helpers.registerHelper
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map

@@ -18,7 +18,7 @@ package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediatorImpl
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediatorImpl
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import javax.inject.Inject
 import javax.inject.Singleton

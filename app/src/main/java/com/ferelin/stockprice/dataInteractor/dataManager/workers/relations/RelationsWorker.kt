@@ -22,7 +22,7 @@ interface RelationsWorker {
 
     fun onRelationsPrepared(items: List<AdaptiveRelation>)
 
-    suspend fun createNewRelation(associatedUserLogin: String)
+    suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String)
 
-    suspend fun removeRelation(relation: AdaptiveRelation)
+    suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation)
 }

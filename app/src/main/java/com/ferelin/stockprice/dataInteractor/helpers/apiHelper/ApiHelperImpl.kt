@@ -19,7 +19,7 @@ package com.ferelin.stockprice.dataInteractor.helpers.apiHelper
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class ApiHelperImpl @Inject constructor(
     private val mStateIsNetworkAvailable: StateFlow<Boolean>
         get() = mNetworkConnectivityWorkerStates.stateIsNetworkAvailable
 
-    override suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany> {
+    override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
         return mRepository.loadStockCandles(symbol)
             .onEach { repositoryResponse ->
                 when (repositoryResponse) {
@@ -56,7 +56,7 @@ class ApiHelperImpl @Inject constructor(
             .map { mDataMediator.getCompany(symbol)!! }
     }
 
-    override suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany> {
+    override suspend fun loadCompanyNewsFromNetwork(symbol: String): Flow<AdaptiveCompany> {
         return mRepository.loadCompanyNews(symbol)
             .onEach {
                 when (it) {
@@ -75,7 +75,7 @@ class ApiHelperImpl @Inject constructor(
             .map { mDataMediator.getCompany(symbol)!! }
     }
 
-    override suspend fun loadCompanyQuote(
+    override suspend fun loadCompanyQuoteFromNetwork(
         symbol: String,
         position: Int,
         isImportant: Boolean

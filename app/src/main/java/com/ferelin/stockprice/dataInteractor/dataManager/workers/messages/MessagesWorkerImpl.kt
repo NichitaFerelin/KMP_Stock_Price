@@ -19,6 +19,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.messages
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -37,8 +38,8 @@ class MessagesWorkerImpl @Inject constructor(
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
         get() = mSharedMessagesUpdates
 
-    override fun getMessagesStateForLogin(
-        associatedUserLogin: String,
+    override suspend fun getMessagesStateForLoginFromCache(
+        associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
         return when {
             mStateMessages.value is DataNotificator.DataPrepared
@@ -53,30 +54,67 @@ class MessagesWorkerImpl @Inject constructor(
             }
 
             else -> {
-                mStateMessages.value = DataNotificator.NoData()
+                val localMessagesHolder = getMessagesFromLocalCache(associatedUserLogin)
+                if (localMessagesHolder != null) {
+                    mMessagesHolders[localMessagesHolder.secondSideLogin] = localMessagesHolder
+                    mStateMessages.value = DataNotificator.DataPrepared(localMessagesHolder)
+                } else mStateMessages.value = DataNotificator.NoData()
                 mStateMessages.asStateFlow()
             }
         }
     }
 
-    override fun onMessagesLoaded(data: AdaptiveMessagesHolder) {
+    override suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder) {
         mMessagesHolders[data.secondSideLogin] = data
         mStateMessages.value = DataNotificator.DataPrepared(data)
+
+        mRepository.cacheMessagesHolderToLocalDb(data)
+        data.messages.forEach { message ->
+            mRepository.cacheNewMessageToRealtimeDb(
+                sourceUserLogin = sourceUserLogin,
+                secondSideUserLogin = data.secondSideLogin,
+                messageId = message.id.toString(),
+                message = message.text,
+                side = message.side
+            )
+        }
     }
 
-    override fun onNewMessage(
+    override suspend fun onNewMessage(
+        sourceUserLogin: String,
         associatedUserLogin: String,
-        message: AdaptiveMessage
+        message: AdaptiveMessage,
+        onNewRelationDetected: (String) -> Unit
     ) {
-        when {
-            mMessagesHolders[associatedUserLogin] == null -> {
-                mMessagesHolders[associatedUserLogin] = AdaptiveMessagesHolder(
-                    id = 0, // TODO
-                    secondSideLogin = associatedUserLogin,
-                    messages = mutableListOf(message)
-                )
-            }
+        if (mMessagesHolders[associatedUserLogin] == null) {
+            mMessagesHolders[associatedUserLogin] = AdaptiveMessagesHolder(
+                id = mMessagesHolders.size,
+                secondSideLogin = associatedUserLogin,
+                messages = mutableListOf(message)
+            )
+            onNewRelationDetected.invoke(associatedUserLogin)
+        } else mMessagesHolders[associatedUserLogin]!!.messages.add(message)
+
+        mSharedMessagesUpdates.emit(message)
+
+        mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
+        mRepository.cacheNewMessageToRealtimeDb(
+            sourceUserLogin = sourceUserLogin,
+            secondSideUserLogin = associatedUserLogin,
+            messageId = message.id.toString(),
+            message = message.text,
+            side = message.side
+        )
+    }
+
+    private suspend fun getMessagesFromLocalCache(
+        associatedUserLogin: String
+    ): AdaptiveMessagesHolder? {
+        val localResponse = mRepository.getMessagesByLoginFromLocalDb(associatedUserLogin)
+        return when {
+            localResponse is RepositoryResponse.Success
+                    && localResponse.data.messages.isNotEmpty() -> localResponse.data
+            else -> null
         }
-        // on new relation
     }
 }

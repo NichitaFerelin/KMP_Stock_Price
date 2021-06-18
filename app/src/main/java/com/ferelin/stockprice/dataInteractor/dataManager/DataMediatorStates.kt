@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.dataMediator
+package com.ferelin.stockprice.dataInteractor.dataManager
 
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates

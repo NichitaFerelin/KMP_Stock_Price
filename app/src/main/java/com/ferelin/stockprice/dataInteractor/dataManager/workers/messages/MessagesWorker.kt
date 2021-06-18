@@ -23,14 +23,16 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface MessagesWorker {
 
-    fun getMessagesStateForLogin(
+    suspend fun getMessagesStateForLoginFromCache(
         associatedUserLogin: String,
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
 
-    fun onMessagesLoaded(data: AdaptiveMessagesHolder)
+    suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder)
 
-    fun onNewMessage(
+    suspend fun onNewMessage(
+        sourceUserLogin: String,
         associatedUserLogin: String,
-        message: AdaptiveMessage
+        message: AdaptiveMessage,
+        onNewRelationDetected: (String) -> Unit
     )
 }

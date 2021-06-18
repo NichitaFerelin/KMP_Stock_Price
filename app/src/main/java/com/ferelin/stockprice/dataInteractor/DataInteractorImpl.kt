@@ -25,7 +25,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.common.menu.MenuItem
-import com.ferelin.stockprice.dataInteractor.dataManager.dataMediator.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
 import com.ferelin.stockprice.dataInteractor.helpers.apiHelper.ApiHelper
 import com.ferelin.stockprice.dataInteractor.helpers.authenticationHelper.AuthenticationHelper
 import com.ferelin.stockprice.dataInteractor.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
@@ -138,20 +138,20 @@ class DataInteractorImpl @Inject constructor(
         prepareSearchesHistory()
     }
 
-    override suspend fun loadStockCandles(symbol: String): Flow<AdaptiveCompany> {
-        return mApiHelper.loadStockCandles(symbol)
+    override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
+        return mApiHelper.loadStockCandlesFromNetwork(symbol)
     }
 
-    override suspend fun loadCompanyNews(symbol: String): Flow<AdaptiveCompany> {
-        return mApiHelper.loadCompanyNews(symbol)
+    override suspend fun loadCompanyNewsFromNetwork(symbol: String): Flow<AdaptiveCompany> {
+        return mApiHelper.loadCompanyNewsFromNetwork(symbol)
     }
 
-    override suspend fun loadCompanyQuote(
+    override suspend fun loadCompanyQuoteFromNetwork(
         symbol: String,
         position: Int,
         isImportant: Boolean
     ): Flow<AdaptiveCompany> {
-        return mApiHelper.loadCompanyQuote(symbol, position, isImportant)
+        return mApiHelper.loadCompanyQuoteFromNetwork(symbol, position, isImportant)
     }
 
     override suspend fun signIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages> {
@@ -170,20 +170,20 @@ class DataInteractorImpl @Inject constructor(
         mAuthenticationHelper.logOut()
     }
 
-    override suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany) {
-        mFavouriteCompaniesHelper.addCompanyToFavourite(adaptiveCompany)
+    override suspend fun addCompanyToFavourites(adaptiveCompany: AdaptiveCompany) {
+        mFavouriteCompaniesHelper.addCompanyToFavourites(adaptiveCompany)
     }
 
-    override suspend fun removeCompanyFromFavourite(adaptiveCompany: AdaptiveCompany) {
-        mFavouriteCompaniesHelper.removeCompanyFromFavourite(adaptiveCompany)
+    override suspend fun removeCompanyFromFavourites(adaptiveCompany: AdaptiveCompany) {
+        mFavouriteCompaniesHelper.removeCompanyFromFavourites(adaptiveCompany)
     }
 
-    override suspend fun addCompanyToFavourite(symbol: String) {
-        mFavouriteCompaniesHelper.addCompanyToFavourite(symbol)
+    override suspend fun addCompanyToFavourites(symbol: String) {
+        mFavouriteCompaniesHelper.addCompanyToFavourites(symbol)
     }
 
-    override suspend fun removeCompanyFromFavourite(symbol: String) {
-        mFavouriteCompaniesHelper.removeCompanyFromFavourite(symbol)
+    override suspend fun removeCompanyFromFavourites(symbol: String) {
+        mFavouriteCompaniesHelper.removeCompanyFromFavourites(symbol)
     }
 
     override suspend fun tryToRegister(login: String): Flow<Boolean> {
@@ -198,8 +198,8 @@ class DataInteractorImpl @Inject constructor(
         return mRegisterHelper.findUser(login)
     }
 
-    override suspend fun openConnection(): Flow<AdaptiveCompany> {
-        return mWebHelper.openConnection()
+    override suspend fun openWebSocketConnection(): Flow<AdaptiveCompany> {
+        return mWebHelper.openWebSocketConnection()
     }
 
     override fun prepareToWebSocketReconnection() {
@@ -211,10 +211,10 @@ class DataInteractorImpl @Inject constructor(
         mSynchronizationManager.onSearchRequestsChanged(changesActionsHistory)
     }
 
-    override suspend fun getMessagesForLogin(
+    override suspend fun getMessagesStateForLoginFromCache(
         login: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
-        return mMessagesHelper.getMessagesForLogin(login)
+        return mMessagesHelper.getMessagesStateForLoginFromCache(login)
     }
 
     override suspend fun loadMessagesAssociatedWithLogin(

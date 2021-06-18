@@ -47,7 +47,7 @@ class RelationsWorkerImpl @Inject constructor(
         mStateUserRelations.value = DataNotificator.DataPrepared(mRelations)
     }
 
-    override suspend fun createNewRelation(associatedUserLogin: String) {
+    override suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
         val newRelation = AdaptiveRelation(
             id = mRelations.size,
             associatedUserLogin = associatedUserLogin
@@ -55,13 +55,21 @@ class RelationsWorkerImpl @Inject constructor(
 
         mRelations.add(newRelation)
         mSharedUserRelationsUpdates.emit(DataNotificator.NewItemAdded(newRelation))
+
         mRepository.cacheRelationToLocalDb(newRelation)
+        mRepository.cacheNewRelationToRealtimeDb(
+            sourceUserLogin = sourceUserLogin,
+            secondSideUserLogin = associatedUserLogin,
+            relationId = newRelation.id.toString()
+        )
     }
 
-    override suspend fun removeRelation(relation: AdaptiveRelation) {
+    override suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation) {
         val target = mRelations.binarySearchBy(relation.id) { it.id }
         mRelations.removeAt(target)
         mSharedUserRelationsUpdates.emit(DataNotificator.ItemRemoved(relation))
+
         mRepository.eraseRelationFromLocalDb(relation)
+        mRepository.eraseRelationFromRealtimeDb(sourceUserLogin, relation.id.toString())
     }
 }

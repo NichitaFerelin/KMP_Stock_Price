@@ -20,11 +20,11 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 
 interface FavouriteCompaniesHelper {
 
-    suspend fun addCompanyToFavourite(adaptiveCompany: AdaptiveCompany)
+    suspend fun addCompanyToFavourites(adaptiveCompany: AdaptiveCompany)
 
-    suspend fun removeCompanyFromFavourite(adaptiveCompany: AdaptiveCompany)
+    suspend fun removeCompanyFromFavourites(adaptiveCompany: AdaptiveCompany)
 
-    suspend fun addCompanyToFavourite(symbol: String)
+    suspend fun addCompanyToFavourites(symbol: String)
 
-    suspend fun removeCompanyFromFavourite(symbol: String)
+    suspend fun removeCompanyFromFavourites(symbol: String)
 }
