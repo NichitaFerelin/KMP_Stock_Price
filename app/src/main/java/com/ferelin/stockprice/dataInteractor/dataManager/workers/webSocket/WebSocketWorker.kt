@@ -16,12 +16,32 @@
 
 package com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket
 
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface WebSocketWorker {
+@Singleton
+class WebSocketWorker @Inject constructor(
+    private val mRepository: Repository,
+    private val mCompaniesMediator: CompaniesMediator
+) {
 
-    suspend fun openWebSocketConnection(): Flow<AdaptiveCompany>
+    suspend fun openWebSocketConnection(): Flow<AdaptiveCompany> {
+        return mRepository.openWebSocketConnection()
+            .filter { it is RepositoryResponse.Success && it.owner != null }
+            .onEach { mCompaniesMediator.onLiveTimePriceChanged(it as RepositoryResponse.Success) }
+            .map { mCompaniesMediator.getCompany((it as RepositoryResponse.Success).owner!!)!! }
+    }
 
-    fun prepareToWebSocketReconnection()
+    fun prepareToWebSocketReconnection() {
+        mRepository.closeWebSocketConnection()
+        mCompaniesMediator.subscribeItemsOnLiveTimeUpdates()
+    }
 }

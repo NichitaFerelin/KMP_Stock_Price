@@ -1,3 +1,5 @@
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.errors
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,25 +16,129 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.errors
-
+import android.content.Context
 import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.stockprice.R
+import com.ferelin.stockprice.utils.getString
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface ErrorsWorker {
+/**
+ * [ErrorsWorker] providing different side-states of errors.
+ */
 
-    suspend fun onPrepareCompaniesError()
+@Singleton
+open class ErrorsWorker @Inject constructor(
+    private val mContext: Context
+) : ErrorsWorkerStates {
 
-    suspend fun onLoadStockCandlesError(message: RepositoryMessages, companySymbol: String)
+    private val mSharedApiLimitError = MutableSharedFlow<String>()
+    override val sharedApiLimitError: SharedFlow<String>
+        get() = mSharedApiLimitError
 
-    suspend fun onLoadCompanyNewsError(message: RepositoryMessages, companySymbol: String)
+    private val mSharedPrepareCompaniesError = MutableSharedFlow<String>()
+    override val sharedPrepareCompaniesError: SharedFlow<String>
+        get() = mSharedPrepareCompaniesError
 
-    suspend fun onLoadSearchRequestsError()
+    suspend fun onPrepareCompaniesError() {
+        mSharedPrepareCompaniesError.emit(getString(mContext, R.string.errorPrepareData))
+    }
 
-    suspend fun onFavouriteCompaniesLimitReached()
+    private val mSharedLoadStockCandlesError = MutableSharedFlow<String>()
+    override val sharedLoadStockCandlesError: SharedFlow<String>
+        get() = mSharedLoadStockCandlesError
 
-    suspend fun onAuthenticationError(message: RepositoryMessages)
+    suspend fun onLoadStockCandlesError(
+        message: RepositoryMessages,
+        companySymbol: String
+    ) {
+        mSharedLoadStockCandlesError.emit(
+            handleErrorWithLimit(message, R.string.errorLoadStockCandles, companySymbol)
+        )
+    }
 
-    suspend fun onRegisterError(message: RepositoryMessages)
+    private val mSharedLoadCompanyNewsError = MutableSharedFlow<String>()
+    override val sharedLoadCompanyNewsError: SharedFlow<String>
+        get() = mSharedLoadCompanyNewsError
 
-    suspend fun onLoadMessageError()
+    suspend fun onLoadCompanyNewsError(
+        message: RepositoryMessages,
+        companySymbol: String
+    ) {
+        mSharedLoadCompanyNewsError.emit(
+            handleErrorWithLimit(message, R.string.errorLoadCompanyNews, companySymbol)
+        )
+    }
+
+    private val mSharedLoadSearchRequestsError = MutableSharedFlow<String>()
+    override val sharedLoadSearchRequestsError: SharedFlow<String>
+        get() = mSharedLoadSearchRequestsError
+
+    suspend fun onLoadSearchRequestsError() {
+        mSharedLoadSearchRequestsError.emit(getString(mContext, R.string.errorLoadSearchesHistory))
+    }
+
+    private val mSharedFavouriteCompaniesLimitError = MutableSharedFlow<String>()
+    override val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
+        get() = mSharedFavouriteCompaniesLimitError
+
+    suspend fun onFavouriteCompaniesLimitReached() {
+        mSharedFavouriteCompaniesLimitError.emit(
+            getString(mContext, R.string.errorFavouriteCompaniesLimit)
+        )
+    }
+
+    private val mSharedAuthenticationError = MutableSharedFlow<String>()
+    override val sharedAuthenticationError: SharedFlow<String>
+        get() = mSharedAuthenticationError
+
+    suspend fun onAuthenticationError(message: RepositoryMessages) {
+        val errorMessage = when (message) {
+            is RepositoryMessages.Limit -> getString(mContext, R.string.errorTooManyRequests)
+            else -> getString(mContext, R.string.errorSmthWentWrong)
+        }
+        mSharedAuthenticationError.emit(errorMessage)
+    }
+
+    private val mSharedRegisterError = MutableSharedFlow<String>()
+    override val sharedRegisterError: SharedFlow<String>
+        get() = mSharedRegisterError
+
+    suspend fun onRegisterError(message: RepositoryMessages) {
+        val errorMessage = when (message) {
+            is RepositoryMessages.BadLogin -> getString(mContext, R.string.errorBadLogin)
+            is RepositoryMessages.AlreadyExists -> getString(mContext, R.string.errorLoginExists)
+            else -> getString(mContext, R.string.errorUndefiend)
+        }
+        mSharedRegisterError.emit(errorMessage)
+    }
+
+    private val mSharedLoadMessagesError = MutableSharedFlow<String>()
+    override val sharedLoadMessagesError: SharedFlow<String>
+        get() = mSharedLoadMessagesError
+
+    suspend fun onLoadMessageError() {
+        val errorMessage = getString(mContext, R.string.errorLoadMessages)
+        mSharedLoadMessagesError.emit(errorMessage)
+    }
+
+    /**
+     * Errors can be caused by the API limit, in which case the alternative error message
+     * is meaningless.
+     * */
+    private fun handleErrorWithLimit(
+        message: RepositoryMessages,
+        errorResource: Int,
+        companySymbol: String
+    ): String {
+        return when (message) {
+            RepositoryMessages.Limit -> getString(mContext, R.string.errorApiLimit)
+            else -> String.format(
+                getString(mContext, errorResource),
+                companySymbol
+            )
+        }
+    }
 }

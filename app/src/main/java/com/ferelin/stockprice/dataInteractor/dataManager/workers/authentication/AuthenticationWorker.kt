@@ -17,23 +17,67 @@
 package com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication
 
 import android.app.Activity
+import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface AuthenticationWorker {
+@Singleton
+class AuthenticationWorker @Inject constructor(
+    private val mRepository: Repository,
+    private val mSynchronizationManager: SynchronizationManager
+) : AuthenticationWorkerStates {
+
+    /**
+     * TODO remove to register worker
+     * */
+    private var mUserLogin: String? = null
+    override val userLogin: String?
+        get() = mUserLogin
+
+    fun onUserLoginChanged(newLogin: String) {
+        mUserLogin = newLogin
+    }
 
     suspend fun signIn(
         holderActivity: Activity,
         phone: String,
         onLogStateChanged: suspend (Boolean) -> Unit,
         onError: suspend (RepositoryMessages) -> Unit
-    ): Flow<RepositoryMessages>
+    ): Flow<RepositoryMessages> {
+        return mRepository.tryToSignIn(holderActivity, phone)
+            .onEach { response ->
+                when (response) {
+                    is RepositoryResponse.Success -> {
+                        if (response.data is RepositoryMessages.Ok) {
+                            onLogStateChanged.invoke(mRepository.isUserAuthenticated())
+                            mSynchronizationManager.onLogIn()
+                        }
+                    }
+                    is RepositoryResponse.Failed -> onError.invoke(response.message)
+                }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { (it as RepositoryResponse.Success).data }
+    }
 
-    fun isUserLogged(): Boolean
+    fun isUserLogged(): Boolean {
+        return mRepository.isUserAuthenticated()
+    }
 
-    fun logInWithCode(code: String)
+    fun logInWithCode(code: String) {
+        mRepository.logInWithCode(code)
+    }
 
-    suspend fun logOut()
-
-    fun onUserLoginChanged(newLogin: String)
+    suspend fun logOut() {
+        mRepository.setUserRegisterState(false)
+        mRepository.logOut()
+        mSynchronizationManager.onLogOut()
+    }
 }

@@ -23,22 +23,14 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.register.RegisterWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import com.ferelin.stockprice.utils.DataNotificator
@@ -70,114 +62,104 @@ class DataInteractorImpl @Inject constructor(
     private val mAuthenticationWorker: AuthenticationWorker,
     private val mWebSocketWorker: WebSocketWorker,
     private val mRegisterWorker: RegisterWorker,
-
-    // States
-    private val mCompaniesWorkerStates: CompaniesWorkerStates,
-    private val mFavouriteCompaniesWorkerStates: FavouriteCompaniesWorkerStates,
-    private val mSearchRequestsWorkerStates: SearchRequestsWorkerStates,
-    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates,
-    private val mMenuItemsWorkerStates: MenuItemsWorkerStates,
-    private val mMessagesWorkerStates: MessagesWorkerStates,
-    private val mErrorsWorkerStates: ErrorsWorkerStates,
-    private val mAuthenticationWorkerStates: AuthenticationWorkerStates,
-    private val mRelationsWorkerStates: RelationsWorkerStates
+    private val mNetworkConnectivityWorker: NetworkConnectivityWorker
 ) : DataInteractor {
 
     /**
      * Companies states
      * */
     override val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
-        get() = mCompaniesWorkerStates.stateCompanies
+        get() = mCompaniesMediator.stateCompanies
 
     override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mCompaniesWorkerStates.sharedCompaniesUpdates
+        get() = mCompaniesMediator.sharedCompaniesUpdates
 
     override val companies: List<AdaptiveCompany>
-        get() = mCompaniesWorkerStates.companies
+        get() = mCompaniesMediator.companies
 
     /**
      * Favourite companies states
      * */
     override val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
-        get() = mFavouriteCompaniesWorkerStates.stateFavouriteCompanies
+        get() = mCompaniesMediator.stateFavouriteCompanies
 
     override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
-        get() = mFavouriteCompaniesWorkerStates.stateCompanyForObserver
+        get() = mCompaniesMediator.stateCompanyForObserver
 
     override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mFavouriteCompaniesWorkerStates.sharedFavouriteCompaniesUpdates
+        get() = mCompaniesMediator.sharedFavouriteCompaniesUpdates
 
     /**
      * Search requests states
      * */
     override val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
-        get() = mSearchRequestsWorkerStates.stateSearchRequests
+        get() = mSearchRequestsWorker.stateSearchRequests
 
     override val statePopularSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
-        get() = mSearchRequestsWorkerStates.statePopularSearchRequests
+        get() = mSearchRequestsWorker.statePopularSearchRequests
 
     override val searchRequests: List<AdaptiveSearchRequest>
-        get() = mSearchRequestsWorkerStates.searchRequests
+        get() = mSearchRequestsWorker.searchRequests
 
     override val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityWorkerStates.stateIsNetworkAvailable
+        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
 
     override val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
-        get() = mMenuItemsWorkerStates.stateMenuItems
+        get() = mMenuItemsWorker.stateMenuItems
 
     override val sharedLogOut: SharedFlow<Unit>
-        get() = mMenuItemsWorkerStates.sharedLogOut
+        get() = mMenuItemsWorker.sharedLogOut
 
     /*
     * Errors states
     * */
     override val sharedLoadMessagesError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedLoadMessagesError
+        get() = mErrorsWorker.sharedLoadMessagesError
 
     override val sharedApiLimitError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedApiLimitError
+        get() = mErrorsWorker.sharedApiLimitError
 
     override val sharedPrepareCompaniesError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedPrepareCompaniesError
+        get() = mErrorsWorker.sharedPrepareCompaniesError
 
     override val sharedLoadStockCandlesError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedLoadStockCandlesError
+        get() = mErrorsWorker.sharedLoadStockCandlesError
 
     override val sharedLoadCompanyNewsError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedLoadCompanyNewsError
+        get() = mErrorsWorker.sharedLoadCompanyNewsError
 
     override val sharedLoadSearchRequestsError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedLoadSearchRequestsError
+        get() = mErrorsWorker.sharedLoadSearchRequestsError
 
     override val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedFavouriteCompaniesLimitReached
+        get() = mErrorsWorker.sharedFavouriteCompaniesLimitReached
 
     override val sharedAuthenticationError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedAuthenticationError
+        get() = mErrorsWorker.sharedAuthenticationError
 
     override val sharedRegisterError: SharedFlow<String>
-        get() = mErrorsWorkerStates.sharedRegisterError
+        get() = mErrorsWorker.sharedRegisterError
 
     /**
      * Relations states
      * */
     override val stateUserRelations: StateFlow<DataNotificator<List<AdaptiveRelation>>>
-        get() = mRelationsWorkerStates.stateUserRelations
+        get() = mRelationsWorker.stateUserRelations
 
     override val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
-        get() = mRelationsWorkerStates.sharedUserRelationsUpdates
+        get() = mRelationsWorker.sharedUserRelationsUpdates
 
     /**
      * Other states
      * */
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
-        get() = mMessagesWorkerStates.sharedMessagesHolderUpdates
+        get() = mMessagesWorker.sharedMessagesHolderUpdates
 
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
     override val userLogin: String
-        get() = mAuthenticationWorkerStates.userLogin ?: ""
+        get() = mAuthenticationWorker.userLogin ?: ""
 
     override suspend fun prepareData() {
         prepareCompaniesData()
@@ -229,6 +211,7 @@ class DataInteractorImpl @Inject constructor(
 
     override suspend fun logOut() {
         mAuthenticationWorker.logOut()
+        mMenuItemsWorker.onLogStateChanged(mRepository.isUserAuthenticated())
     }
 
     override suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {

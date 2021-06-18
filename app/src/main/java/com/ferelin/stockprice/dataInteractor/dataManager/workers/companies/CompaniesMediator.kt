@@ -1,3 +1,5 @@
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.companies
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,44 +16,178 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.companies
-
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.Repository
+import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
+import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.findCompany
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface CompaniesMediator {
+/**
+ * [CompaniesMediator] is an implementation of the pattern Mediator, that helps to work with data.
+ */
 
-    fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>)
+@Singleton
+open class CompaniesMediator @Inject constructor(
+    private val mRepository: Repository,
+    private val mCompaniesWorker: CompaniesWorker,
+    private val mCompaniesWorkerStates: CompaniesWorkerStates,
+    private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
+    private val mSynchronizationManager: SynchronizationManager,
+    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates,
+) : CompaniesWorkerStates, FavouriteCompaniesWorkerStates {
 
-    fun subscribeItemsOnLiveTimeUpdates()
+    private val mStateIsNetworkAvailable: StateFlow<Boolean>
+        get() = mNetworkConnectivityWorkerStates.stateIsNetworkAvailable
 
-    suspend fun addCompanyToFavourites(
-        company: AdaptiveCompany,
-        ignoreError: Boolean = false
-    )
+    override val companies: List<AdaptiveCompany>
+        get() = mCompaniesWorker.companies
 
-    suspend fun removeCompanyFromFavourites(company: AdaptiveCompany)
+    override val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
+        get() = mCompaniesWorker.stateCompanies
 
-    suspend fun onLiveTimePriceChanged(response: RepositoryResponse.Success<AdaptiveWebSocketPrice>)
+    override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mCompaniesWorker.sharedCompaniesUpdates
 
-    fun getCompany(symbol: String): AdaptiveCompany?
+    override val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
+        get() = mFavouriteCompaniesWorker.stateFavouriteCompanies
+
+    override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mFavouriteCompaniesWorker.sharedFavouriteCompaniesUpdates
+
+    override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
+        get() = mFavouriteCompaniesWorker.stateCompanyForObserver
+
+    fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
+        mCompaniesWorker.onCompaniesDataPrepared(companies)
+        mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
+    }
+
+    suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
+        mFavouriteCompaniesWorker.addCompanyToFavourites(company, ignoreError)
+            ?.let { addedCompany ->
+                mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))
+                mSynchronizationManager.onCompanyAddedToLocal(addedCompany)
+            }
+    }
+
+    suspend fun removeCompanyFromFavourites(company: AdaptiveCompany) {
+        val updatedCompany = mFavouriteCompaniesWorker.removeCompanyFromFavourites(company)
+        mSynchronizationManager.onCompanyRemovedFromLocal(company)
+        mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updatedCompany))
+    }
 
     suspend fun loadStockCandlesFromNetwork(
         symbol: String,
         onError: suspend (RepositoryMessages, String) -> Unit
-    ): Flow<AdaptiveCompany>
+    ): Flow<AdaptiveCompany> {
+        return mRepository.loadStockCandles(symbol)
+            .onEach { repositoryResponse ->
+                when (repositoryResponse) {
+                    is RepositoryResponse.Success -> {
+                        onStockCandlesLoaded(repositoryResponse)
+                    }
+                    is RepositoryResponse.Failed -> {
+                        if (mStateIsNetworkAvailable.value) {
+                            onError.invoke(
+                                repositoryResponse.message,
+                                symbol
+                            )
+                        }
+                    }
+                }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { getCompany(symbol)!! }
+    }
 
     suspend fun loadCompanyNewsFromNetwork(
         symbol: String,
         onError: suspend (RepositoryMessages, String) -> Unit
-    ): Flow<AdaptiveCompany>
+    ): Flow<AdaptiveCompany> {
+        return mRepository.loadCompanyNews(symbol)
+            .onEach {
+                when (it) {
+                    is RepositoryResponse.Success -> onCompanyNewsLoaded(it)
+                    is RepositoryResponse.Failed -> {
+                        if (mStateIsNetworkAvailable.value) {
+                            onError.invoke(
+                                it.message,
+                                symbol
+                            )
+                        }
+                    }
+                }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { getCompany(symbol)!! }
+    }
 
     suspend fun loadCompanyQuoteFromNetwork(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<AdaptiveCompany>
+    ): Flow<AdaptiveCompany> {
+        return mRepository.loadCompanyQuote(symbol, position, isImportant)
+            .filter { it is RepositoryResponse.Success && it.owner != null }
+            .onEach { onCompanyQuoteLoaded(it as RepositoryResponse.Success) }
+            .map { getCompany((it as RepositoryResponse.Success).owner!!)!! }
+    }
+
+    suspend fun onLiveTimePriceChanged(
+        response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
+    ) {
+        mCompaniesWorker.onLiveTimePriceChanged(response)?.let { updatedCompany ->
+            onDataChanged(updatedCompany, DataNotificator.ItemUpdatedLiveTime(updatedCompany))
+        }
+    }
+
+    fun subscribeItemsOnLiveTimeUpdates() {
+        mFavouriteCompaniesWorker.subscribeCompaniesOnLiveTimeUpdates()
+    }
+
+    fun getCompany(symbol: String): AdaptiveCompany? {
+        return findCompany(mCompaniesWorkerStates.companies, symbol)
+    }
+
+    private suspend fun onCompanyQuoteLoaded(
+        response: RepositoryResponse.Success<AdaptiveCompanyDayData>
+    ) {
+        mCompaniesWorker.onCompanyQuoteLoaded(response)?.let { updatedCompany ->
+            onDataChanged(updatedCompany, DataNotificator.ItemUpdatedQuote(updatedCompany))
+        }
+    }
+
+    private suspend fun onStockCandlesLoaded(
+        response: RepositoryResponse.Success<AdaptiveCompanyHistory>
+    ) {
+        mCompaniesWorker.onStockCandlesLoaded(response)?.let { updatedCompany ->
+            onDataChanged(updatedCompany)
+        }
+    }
+
+    private suspend fun onCompanyNewsLoaded(
+        response: RepositoryResponse.Success<AdaptiveCompanyNews>
+    ) {
+        mCompaniesWorker.onCompanyNewsLoaded(response)?.let { updatedCompany ->
+            onDataChanged(updatedCompany)
+        }
+    }
+
+    private suspend fun onDataChanged(
+        company: AdaptiveCompany,
+        notification: DataNotificator<AdaptiveCompany> = DataNotificator.ItemUpdatedCommon(company)
+    ) {
+        mCompaniesWorker.onCompanyChanged(notification)
+        mFavouriteCompaniesWorker.onFavouriteCompanyChanged(company)
+    }
 }

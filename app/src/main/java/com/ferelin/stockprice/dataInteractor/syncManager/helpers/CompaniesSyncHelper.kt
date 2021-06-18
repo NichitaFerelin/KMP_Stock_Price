@@ -18,7 +18,7 @@ package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediatorImpl
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +31,7 @@ import javax.inject.Singleton
  * */
 @Singleton
 class CompaniesSyncHelper @Inject constructor(
-    private val mDataMediator: CompaniesMediatorImpl,
+    private val mDataMediator: CompaniesMediator,
     private val mRepositoryManager: Repository
 ) {
     /*

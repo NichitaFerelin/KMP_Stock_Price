@@ -16,17 +16,55 @@
 
 package com.ferelin.stockprice.dataInteractor.dataManager.workers.register
 
+import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface RegisterWorker {
+@Singleton
+class RegisterWorker @Inject constructor(
+    private val mRepository: Repository
+) {
 
     suspend fun tryToRegister(
         login: String,
         onError: suspend (RepositoryMessages) -> Unit
-    ): Flow<Boolean>
+    ): Flow<Boolean> {
+        return mRepository.tryToRegister(mRepository.getUserAuthenticationId()!!, login)
+            .onEach { response ->
+                if (response is RepositoryResponse.Failed) {
+                    onError.invoke(response.message)
+                }
+            }
+            .filter { it is RepositoryResponse.Success }
+            .map { (it as RepositoryResponse.Success).data }
+    }
 
-    suspend fun isUserRegistered(): Boolean
+    suspend fun isUserRegistered(): Boolean {
+        if (!mRepository.isUserAuthenticated()) {
+            return false
+        }
 
-    suspend fun findUser(login: String): Boolean
+        val localIsRegistered = mRepository.getUserRegisterState() == true
+
+        if (!localIsRegistered) {
+            val remoteIsRegistered =
+                mRepository.isUserIdExist(mRepository.getUserAuthenticationId()!!)
+
+            if (!remoteIsRegistered) {
+                return false
+            } else mRepository.setUserRegisterState(true)
+        }
+
+        return true
+    }
+
+    suspend fun findUser(login: String): Boolean {
+        return mRepository.isUserExist(login)
+    }
 }

@@ -1,3 +1,5 @@
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,31 +16,133 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults
-
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.dataManager.stylesProvider.StylesProvider
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.findCompany
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface CompaniesWorker {
+/**
+ * [CompaniesWorker] provides an ability to:
+ *   - Observing [mStateCompanies] to display a list of companies.
+ *   - Observing [mSharedCompaniesUpdates] to update items at list.
+ *
+ * Also [CompaniesWorker] manually doing:
+ *   - Using [mRepository] to data caching.
+ *   - Using [mStylesProvider] to change some stock fields that will be affect on stock's appearance.
+ */
 
-    fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>)
+@Singleton
+class CompaniesWorker @Inject constructor(
+    private val mStylesProvider: StylesProvider,
+    private val mRepository: Repository
+) : CompaniesWorkerStates {
 
-    suspend fun onCompanyChanged(notification: DataNotificator<AdaptiveCompany>)
+    private var mCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
+
+    private val mStateCompanies = MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(
+        DataNotificator.Loading()
+    )
+    private val mSharedCompaniesUpdates = MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
+
+    override val companies: List<AdaptiveCompany>
+        get() = mCompanies.toList()
+
+    override val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
+        get() = mStateCompanies
+
+    override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+        get() = mSharedCompaniesUpdates
+
+    fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
+        companies.forEachIndexed { index, company -> mStylesProvider.applyStyles(company, index) }
+        mCompanies = ArrayList(companies)
+        mStateCompanies.value = DataNotificator.DataPrepared(mCompanies)
+    }
+
+    suspend fun onCompanyChanged(notification: DataNotificator<AdaptiveCompany>) {
+        mSharedCompaniesUpdates.emit(notification)
+    }
 
     suspend fun onStockCandlesLoaded(
         response: RepositoryResponse.Success<AdaptiveCompanyHistory>
-    ): AdaptiveCompany?
+    ): AdaptiveCompany? {
+        return onDataChanged(
+            responseOwner = response.owner,
+            isDataNew = { it.companyHistory == response.data },
+            onApply = { companyToUpdate ->
+                companyToUpdate.companyHistory = response.data
+                mRepository.cacheCompanyToLocalDb(companyToUpdate)
+            }
+        )
+    }
 
     suspend fun onCompanyNewsLoaded(
         response: RepositoryResponse.Success<AdaptiveCompanyNews>
-    ): AdaptiveCompany?
+    ): AdaptiveCompany? {
+        return onDataChanged(
+            responseOwner = response.owner,
+            isDataNew = { it.companyNews == response.data },
+            onApply = { companyToUpdate ->
+                companyToUpdate.companyNews = response.data
+                mRepository.cacheCompanyToLocalDb(companyToUpdate)
+            }
+        )
+    }
 
     suspend fun onCompanyQuoteLoaded(
         response: RepositoryResponse.Success<AdaptiveCompanyDayData>
-    ): AdaptiveCompany?
+    ): AdaptiveCompany? {
+        return onDataChanged(
+            responseOwner = response.owner,
+            isDataNew = { it.companyDayData == response.data },
+            onApply = { companyToUpdate ->
+                companyToUpdate.companyDayData = response.data
+                companyToUpdate.companyStyle.dayProfitBackground =
+                    mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
+
+                mRepository.cacheCompanyToLocalDb(companyToUpdate)
+            }
+        )
+    }
 
     suspend fun onLiveTimePriceChanged(
         response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
-    ): AdaptiveCompany?
+    ): AdaptiveCompany? {
+        return onDataChanged(
+            responseOwner = response.owner,
+            isDataNew = { it.companyDayData.profit == response.data.price },
+            onApply = { companyToUpdate ->
+                companyToUpdate.companyDayData.currentPrice = response.data.price
+                companyToUpdate.companyDayData.profit = response.data.profit
+                companyToUpdate.companyStyle.dayProfitBackground =
+                    mStylesProvider.getProfitBackground(companyToUpdate.companyDayData.profit)
+
+                mRepository.cacheCompanyToLocalDb(companyToUpdate)
+            }
+        )
+    }
+
+    private inline fun onDataChanged(
+        responseOwner: String?,
+        isDataNew: (AdaptiveCompany) -> Boolean,
+        onApply: (AdaptiveCompany) -> Unit
+    ): AdaptiveCompany? {
+        return findCompany(mCompanies, responseOwner)?.let { companyToUpdate ->
+            // Response data that is equal to original makes no sense.
+            if (isDataNew.invoke(companyToUpdate)) {
+                null
+            } else {
+                onApply.invoke(companyToUpdate)
+                companyToUpdate
+            }
+        }
+    }
 }

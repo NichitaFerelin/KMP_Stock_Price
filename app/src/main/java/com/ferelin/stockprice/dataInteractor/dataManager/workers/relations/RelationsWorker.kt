@@ -16,13 +16,60 @@
 
 package com.ferelin.stockprice.dataInteractor.dataManager.workers.relations
 
+import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface RelationsWorker {
+@Singleton
+class RelationsWorker @Inject constructor(
+    private val mRepository: Repository
+) : RelationsWorkerStates {
 
-    fun onRelationsPrepared(items: List<AdaptiveRelation>)
+    private var mRelations = mutableListOf<AdaptiveRelation>()
 
-    suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String)
+    private val mStateUserRelations =
+        MutableStateFlow<DataNotificator<List<AdaptiveRelation>>>(DataNotificator.Loading())
+    override val stateUserRelations: StateFlow<DataNotificator<List<AdaptiveRelation>>>
+        get() = mStateUserRelations
 
-    suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation)
+    private val mSharedUserRelationsUpdates = MutableSharedFlow<DataNotificator<AdaptiveRelation>>()
+    override val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
+        get() = mSharedUserRelationsUpdates
+
+    fun onRelationsPrepared(items: List<AdaptiveRelation>) {
+        mRelations = items.toMutableList()
+        mStateUserRelations.value = DataNotificator.DataPrepared(mRelations)
+    }
+
+    suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
+        val newRelation = AdaptiveRelation(
+            id = mRelations.size,
+            associatedUserLogin = associatedUserLogin
+        )
+
+        mRelations.add(newRelation)
+        mSharedUserRelationsUpdates.emit(DataNotificator.NewItemAdded(newRelation))
+
+        mRepository.cacheRelationToLocalDb(newRelation)
+        mRepository.cacheNewRelationToRealtimeDb(
+            sourceUserLogin = sourceUserLogin,
+            secondSideUserLogin = associatedUserLogin,
+            relationId = newRelation.id.toString()
+        )
+    }
+
+    suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation) {
+        val target = mRelations.binarySearchBy(relation.id) { it.id }
+        mRelations.removeAt(target)
+        mSharedUserRelationsUpdates.emit(DataNotificator.ItemRemoved(relation))
+
+        mRepository.eraseRelationFromLocalDb(relation)
+        mRepository.eraseRelationFromRealtimeDb(sourceUserLogin, relation.id.toString())
+    }
 }
