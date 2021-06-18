@@ -46,7 +46,8 @@ interface DataInteractor :
     RegisterHelper,
     RelationsHelper,
     SearchRequestsHelper,
-    WebSocketHelper {
+    WebSocketHelper,
+    MessagesHelper {
 
     val stockHistoryConverter: StockHistoryConverter
 

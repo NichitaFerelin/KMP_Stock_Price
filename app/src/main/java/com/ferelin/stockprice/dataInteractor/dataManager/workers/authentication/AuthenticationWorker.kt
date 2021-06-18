@@ -25,8 +25,8 @@ interface AuthenticationWorker {
     suspend fun signIn(
         holderActivity: Activity,
         phone: String,
-        onLogStateChanged: (Boolean) -> Unit,
-        onError: (RepositoryMessages) -> Unit
+        onLogStateChanged: suspend (Boolean) -> Unit,
+        onError: suspend (RepositoryMessages) -> Unit
     ): Flow<RepositoryMessages>
 
     fun isUserLogged(): Boolean

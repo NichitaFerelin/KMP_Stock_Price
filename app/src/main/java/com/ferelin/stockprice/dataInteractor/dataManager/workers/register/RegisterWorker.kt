@@ -21,7 +21,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface RegisterWorker {
 
-    suspend fun tryToRegister(login: String, onError: (RepositoryMessages) -> Unit): Flow<Boolean>
+    suspend fun tryToRegister(
+        login: String,
+        onError: suspend (RepositoryMessages) -> Unit
+    ): Flow<Boolean>
 
     suspend fun isUserRegistered(): Boolean
 

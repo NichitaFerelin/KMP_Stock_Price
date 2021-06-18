@@ -42,7 +42,7 @@ open class CompaniesMediatorImpl @Inject constructor(
     private val mCompaniesWorkerStates: CompaniesWorkerStates,
     private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
     private val mSynchronizationManager: SynchronizationManager,
-    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates
+    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates,
 ) : CompaniesMediator {
 
     private val mStateIsNetworkAvailable: StateFlow<Boolean>
@@ -53,10 +53,7 @@ open class CompaniesMediatorImpl @Inject constructor(
         mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
     }
 
-    override suspend fun addCompanyToFavourites(
-        company: AdaptiveCompany,
-        ignoreError: Boolean
-    ) {
+    override suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
         mFavouriteCompaniesWorker.addCompanyToFavourites(company, ignoreError)
             ?.let { addedCompany ->
                 mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))

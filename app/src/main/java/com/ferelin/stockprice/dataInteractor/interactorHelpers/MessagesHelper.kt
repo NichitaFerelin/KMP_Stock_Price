@@ -14,34 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.messages
+package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.StateFlow
 
-interface MessagesWorker {
+interface MessagesHelper {
 
     suspend fun getMessagesStateForLoginFromCache(
         associatedUserLogin: String,
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
 
-    suspend fun loadMessagesAssociatedWithLogin(
-        sourceUserLogin: String,
-        associatedLogin: String,
-        onError: suspend () -> Unit
-    )
+    suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String)
 
-    suspend fun onNewMessageReceived(
-        sourceUserLogin: String,
-        associatedUserLogin: String,
-        message: AdaptiveMessage,
-    )
-
-    suspend fun sendNewMessage(
-        sourceUserLogin: String,
-        associatedUserLogin: String,
-        text: String
-    )
+    suspend fun sendNewMessage(associatedUserLogin: String, text: String)
 }

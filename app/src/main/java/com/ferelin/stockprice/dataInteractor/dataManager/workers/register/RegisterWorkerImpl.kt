@@ -33,7 +33,7 @@ class RegisterWorkerImpl @Inject constructor(
 
     override suspend fun tryToRegister(
         login: String,
-        onError: (RepositoryMessages) -> Unit
+        onError: suspend (RepositoryMessages) -> Unit
     ): Flow<Boolean> {
         return mRepository.tryToRegister(mRepository.getUserAuthenticationId()!!, login)
             .onEach { response ->

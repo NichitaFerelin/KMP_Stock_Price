@@ -18,20 +18,28 @@ package com.ferelin.stockprice.dataInteractor
 
 import android.app.Activity
 import com.ferelin.repository.Repository
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveMessage
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.common.menu.MenuItem
-import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
-import com.ferelin.stockprice.dataInteractor.helpers.apiHelper.ApiHelper
-import com.ferelin.stockprice.dataInteractor.helpers.authenticationHelper.AuthenticationHelper
-import com.ferelin.stockprice.dataInteractor.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.messagesHelper.MessagesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.registerHelper.RegisterHelper
-import com.ferelin.stockprice.dataInteractor.helpers.webHelper.WebHelper
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.register.RegisterWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.StockHistoryConverter
@@ -42,108 +50,156 @@ import javax.inject.Singleton
 /**
  * [DataInteractorImpl] is MAIN and SINGLE entity for the UI layer interaction with data.
  *   - Providing states of data and errors.
- *   - Sending network requests to Repository using [mRepositoryHelper].
+ *   - Sending network requests to Repository using [mRepository].
  *   - Sending local requests to Repository using [mLocalInteractor].
  *   - Sending errors to [mErrorsWorker].
  *   - Providing states about data loading to [mDataMediator].
  */
 @Singleton
 class DataInteractorImpl @Inject constructor(
-    private val mRepositoryHelper: Repository,
-    private val mDataMediator: DataMediator,
+    private val mRepository: Repository,
     private val mSynchronizationManager: SynchronizationManager,
-    // Helpers
-    private val mApiHelper: ApiHelper,
-    private val mAuthenticationHelper: AuthenticationHelper,
-    private val mFavouriteCompaniesHelper: FavouriteCompaniesHelper,
-    private val mMessagesHelper: MessagesHelper,
-    private val mRegisterHelper: RegisterHelper,
-    private val mWebHelper: WebHelper
+    private val mCompaniesMediator: CompaniesMediator,
+
+    // Workers
+    private val mSearchRequestsWorker: SearchRequestsWorker,
+    private val mMenuItemsWorker: MenuItemsWorker,
+    private val mErrorsWorker: ErrorsWorker,
+    private val mMessagesWorker: MessagesWorker,
+    private val mRelationsWorker: RelationsWorker,
+    private val mAuthenticationWorker: AuthenticationWorker,
+    private val mWebSocketWorker: WebSocketWorker,
+    private val mRegisterWorker: RegisterWorker,
+
+    // States
+    private val mCompaniesWorkerStates: CompaniesWorkerStates,
+    private val mFavouriteCompaniesWorkerStates: FavouriteCompaniesWorkerStates,
+    private val mSearchRequestsWorkerStates: SearchRequestsWorkerStates,
+    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates,
+    private val mMenuItemsWorkerStates: MenuItemsWorkerStates,
+    private val mMessagesWorkerStates: MessagesWorkerStates,
+    private val mErrorsWorkerStates: ErrorsWorkerStates,
+    private val mAuthenticationWorkerStates: AuthenticationWorkerStates,
+    private val mRelationsWorkerStates: RelationsWorkerStates
 ) : DataInteractor {
 
+    /**
+     * Companies states
+     * */
     override val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
-        get() = mDataMediator.companiesWorker.stateCompanies
+        get() = mCompaniesWorkerStates.stateCompanies
 
     override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataMediator.companiesWorker.sharedCompaniesUpdates
+        get() = mCompaniesWorkerStates.sharedCompaniesUpdates
 
+    override val companies: List<AdaptiveCompany>
+        get() = mCompaniesWorkerStates.companies
+
+    /**
+     * Favourite companies states
+     * */
     override val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
-        get() = mDataMediator.favouriteCompaniesWorker.stateFavouriteCompanies
+        get() = mFavouriteCompaniesWorkerStates.stateFavouriteCompanies
 
     override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
-        get() = mDataMediator.favouriteCompaniesWorker.stateCompanyForObserver
+        get() = mFavouriteCompaniesWorkerStates.stateCompanyForObserver
 
     override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mDataMediator.favouriteCompaniesWorker.sharedFavouriteCompaniesUpdates
+        get() = mFavouriteCompaniesWorkerStates.sharedFavouriteCompaniesUpdates
 
+    /**
+     * Search requests states
+     * */
     override val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
-        get() = mDataMediator.searchRequestsWorker.stateSearchRequests
+        get() = mSearchRequestsWorkerStates.stateSearchRequests
 
     override val statePopularSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>>
-        get() = mDataMediator.searchRequestsWorker.statePopularSearchRequests
+        get() = mSearchRequestsWorkerStates.statePopularSearchRequests
+
+    override val searchRequests: List<AdaptiveSearchRequest>
+        get() = mSearchRequestsWorkerStates.searchRequests
 
     override val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mDataMediator.networkConnectivityWorker.stateIsNetworkAvailable
+        get() = mNetworkConnectivityWorkerStates.stateIsNetworkAvailable
 
     override val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
-        get() = mDataMediator.menuItemsWorker.stateMenuItems
-
-    override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
-        get() = mDataMediator.messagesWorker.sharedMessagesHolderUpdates
-
-    override val sharedLoadMessagesError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedLoadMessagesError
-
-    override val sharedApiLimitError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedApiLimitError
-
-    override val sharedPrepareCompaniesError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedPrepareCompaniesError
-
-    override val sharedLoadStockCandlesError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedLoadStockCandlesError
-
-    override val sharedLoadCompanyNewsError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedLoadCompanyNewsError
-
-    override val sharedLoadSearchRequestsError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedLoadSearchRequestsError
-
-    override val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedFavouriteCompaniesLimitReached
-
-    override val sharedAuthenticationError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedAuthenticationError
-
-    override val sharedRegisterError: SharedFlow<String>
-        get() = mDataMediator.errorsWorker.sharedRegisterError
+        get() = mMenuItemsWorkerStates.stateMenuItems
 
     override val sharedLogOut: SharedFlow<Unit>
-        get() = mDataMediator.menuItemsWorker.sharedLogOut
+        get() = mMenuItemsWorkerStates.sharedLogOut
+
+    /*
+    * Errors states
+    * */
+    override val sharedLoadMessagesError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedLoadMessagesError
+
+    override val sharedApiLimitError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedApiLimitError
+
+    override val sharedPrepareCompaniesError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedPrepareCompaniesError
+
+    override val sharedLoadStockCandlesError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedLoadStockCandlesError
+
+    override val sharedLoadCompanyNewsError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedLoadCompanyNewsError
+
+    override val sharedLoadSearchRequestsError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedLoadSearchRequestsError
+
+    override val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedFavouriteCompaniesLimitReached
+
+    override val sharedAuthenticationError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedAuthenticationError
+
+    override val sharedRegisterError: SharedFlow<String>
+        get() = mErrorsWorkerStates.sharedRegisterError
+
+    /**
+     * Relations states
+     * */
+    override val stateUserRelations: StateFlow<DataNotificator<List<AdaptiveRelation>>>
+        get() = mRelationsWorkerStates.stateUserRelations
+
+    override val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
+        get() = mRelationsWorkerStates.sharedUserRelationsUpdates
+
+    /**
+     * Other states
+     * */
+    override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
+        get() = mMessagesWorkerStates.sharedMessagesHolderUpdates
 
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
-    override val companies: List<AdaptiveCompany>
-        get() = mDataMediator.companiesWorker.companies
-
-    override val searchRequests: List<AdaptiveSearchRequest>
-        get() = mDataMediator.searchRequestsWorker.searchRequests
-
-    override val userLogin: String?
-        get() = mDataMediator.loginWorker.userLogin
+    override val userLogin: String
+        get() = mAuthenticationWorkerStates.userLogin ?: ""
 
     override suspend fun prepareData() {
         prepareCompaniesData()
         prepareSearchesHistory()
+        prepareUserRelations()
     }
 
     override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
-        return mApiHelper.loadStockCandlesFromNetwork(symbol)
+        return mCompaniesMediator.loadStockCandlesFromNetwork(
+            symbol,
+            onError = { message, companySymbol ->
+                mErrorsWorker.onLoadStockCandlesError(message, companySymbol)
+            })
     }
 
     override suspend fun loadCompanyNewsFromNetwork(symbol: String): Flow<AdaptiveCompany> {
-        return mApiHelper.loadCompanyNewsFromNetwork(symbol)
+        return mCompaniesMediator.loadCompanyNewsFromNetwork(
+            symbol,
+            onError = { message, companySymbol ->
+                mErrorsWorker.onLoadCompanyNewsError(message, companySymbol)
+            }
+        )
     }
 
     override suspend fun loadCompanyQuoteFromNetwork(
@@ -151,87 +207,85 @@ class DataInteractorImpl @Inject constructor(
         position: Int,
         isImportant: Boolean
     ): Flow<AdaptiveCompany> {
-        return mApiHelper.loadCompanyQuoteFromNetwork(symbol, position, isImportant)
+        return mCompaniesMediator.loadCompanyQuoteFromNetwork(symbol, position, isImportant)
     }
 
     override suspend fun signIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages> {
-        return mAuthenticationHelper.signIn(holderActivity, phone)
+        return mAuthenticationWorker.signIn(
+            holderActivity,
+            phone,
+            onLogStateChanged = { logState -> mMenuItemsWorker.onLogStateChanged(logState) },
+            onError = { message -> mErrorsWorker.onAuthenticationError(message) }
+        )
     }
 
     override fun isUserLogged(): Boolean {
-        return mAuthenticationHelper.isUserLogged()
+        return mAuthenticationWorker.isUserLogged()
     }
 
     override fun logInWithCode(code: String) {
-        mAuthenticationHelper.logInWithCode(code)
+        mAuthenticationWorker.logInWithCode(code)
     }
 
     override suspend fun logOut() {
-        mAuthenticationHelper.logOut()
+        mAuthenticationWorker.logOut()
     }
 
-    override suspend fun addCompanyToFavourites(adaptiveCompany: AdaptiveCompany) {
-        mFavouriteCompaniesHelper.addCompanyToFavourites(adaptiveCompany)
+    override suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
+        mCompaniesMediator.addCompanyToFavourites(company, ignoreError)
     }
 
-    override suspend fun removeCompanyFromFavourites(adaptiveCompany: AdaptiveCompany) {
-        mFavouriteCompaniesHelper.removeCompanyFromFavourites(adaptiveCompany)
-    }
-
-    override suspend fun addCompanyToFavourites(symbol: String) {
-        mFavouriteCompaniesHelper.addCompanyToFavourites(symbol)
-    }
-
-    override suspend fun removeCompanyFromFavourites(symbol: String) {
-        mFavouriteCompaniesHelper.removeCompanyFromFavourites(symbol)
+    override suspend fun removeCompanyFromFavourites(company: AdaptiveCompany) {
+        mCompaniesMediator.removeCompanyFromFavourites(company)
     }
 
     override suspend fun tryToRegister(login: String): Flow<Boolean> {
-        return mRegisterHelper.tryToRegister(login)
+        return mRegisterWorker.tryToRegister(
+            login,
+            onError = { message -> mErrorsWorker.onRegisterError(message) }
+        )
     }
 
     override suspend fun isUserRegistered(): Boolean {
-        return mRegisterHelper.isUserRegistered()
+        return mRegisterWorker.isUserRegistered()
     }
 
-    override suspend fun findUser(login: String): Boolean {
-        return mRegisterHelper.findUser(login)
+    override suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
+        mRelationsWorker.createNewRelation(sourceUserLogin, associatedUserLogin)
     }
 
-    override suspend fun openWebSocketConnection(): Flow<AdaptiveCompany> {
-        return mWebHelper.openWebSocketConnection()
-    }
-
-    override fun prepareToWebSocketReconnection() {
-        mWebHelper.prepareToWebSocketReconnection()
+    override suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation) {
+        mRelationsWorker.removeRelation(sourceUserLogin, relation)
     }
 
     override suspend fun cacheNewSearchRequest(searchText: String) {
-        val changesActionsHistory = mDataMediator.cacheNewSearchRequest(searchText)
-        mSynchronizationManager.onSearchRequestsChanged(changesActionsHistory)
+        mSearchRequestsWorker.cacheNewSearchRequest(searchText)
+    }
+
+    override suspend fun openWebSocketConnection(): Flow<AdaptiveCompany> {
+        return mWebSocketWorker.openWebSocketConnection()
     }
 
     override suspend fun getMessagesStateForLoginFromCache(
-        login: String
+        associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
-        return mMessagesHelper.getMessagesStateForLoginFromCache(login)
+        return mMessagesWorker.getMessagesStateForLoginFromCache(associatedUserLogin)
     }
 
-    override suspend fun loadMessagesAssociatedWithLogin(
-        associatedLogin: String
-    ): AdaptiveMessagesHolder? {
-        return mMessagesHelper.loadMessagesAssociatedWithLogin(associatedLogin)
+    override suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String) {
+        mMessagesWorker.loadMessagesAssociatedWithLogin(
+            sourceUserLogin = userLogin,
+            associatedLogin = associatedLogin,
+            onError = { mErrorsWorker.onLoadMessageError() }
+        )
     }
 
-    override suspend fun setFirstTimeLaunchState(state: Boolean) {
-        mRepositoryHelper.setFirstTimeLaunchState(state)
-    }
-
-    override suspend fun getFirstTimeLaunchState(): Boolean {
-        val repositoryResponse = mRepositoryHelper.getFirstTimeLaunchState()
-        return if (repositoryResponse is RepositoryResponse.Success) {
-            repositoryResponse.data
-        } else false
+    override suspend fun sendNewMessage(associatedUserLogin: String, text: String) {
+        mMessagesWorker.sendNewMessage(
+            sourceUserLogin = userLogin,
+            associatedUserLogin = associatedUserLogin,
+            text = text
+        )
     }
 
     override fun provideNetworkStateFlow(): Flow<Boolean> {
@@ -241,16 +295,27 @@ class DataInteractorImpl @Inject constructor(
     }
 
     private suspend fun prepareCompaniesData() {
-        val responseCompanies = mRepositoryHelper.getAllCompaniesFromLocalDb()
+        val responseCompanies = mRepository.getAllCompaniesFromLocalDb()
         if (responseCompanies is RepositoryResponse.Success) {
-            mDataMediator.onCommonCompaniesDataPrepared(responseCompanies.data)
-        } else mDataMediator.onPrepareCompaniesError()
+            mCompaniesMediator.onCompaniesDataPrepared(responseCompanies.data)
+        } else mErrorsWorker.onPrepareCompaniesError()
     }
 
     private suspend fun prepareSearchesHistory() {
-        val responseSearchesHistory = mRepositoryHelper.getSearchesHistoryFromLocalDb()
+        val responseSearchesHistory = mRepository.getSearchesHistoryFromLocalDb()
         if (responseSearchesHistory is RepositoryResponse.Success) {
-            mDataMediator.onSearchRequestsHistoryPrepared(responseSearchesHistory.data)
-        } else mDataMediator.onLoadSearchRequestsError()
+            mSearchRequestsWorker.onSearchRequestsDataPrepared(responseSearchesHistory.data)
+        } else mErrorsWorker.onLoadSearchRequestsError()
+    }
+
+    private suspend fun prepareUserRelations() {
+        if (!mRepository.isUserAuthenticated()) {
+            return
+        }
+
+        val relationsResponse = mRepository.getAllRelationsFromLocalDb()
+        if (relationsResponse is RepositoryResponse.Success) {
+            mRelationsWorker.onRelationsPrepared(relationsResponse.data)
+        }
     }
 }

@@ -20,6 +20,7 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.shared.MessageSide
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
@@ -86,7 +87,7 @@ class MessagesWorkerImpl @Inject constructor(
         }
     }
 
-    override suspend fun onNewMessage(
+    override suspend fun onNewMessageReceived(
         sourceUserLogin: String,
         associatedUserLogin: String,
         message: AdaptiveMessage,
@@ -113,12 +114,41 @@ class MessagesWorkerImpl @Inject constructor(
         )
     }
 
-    suspend fun sendNewMessage(
+    override suspend fun sendNewMessage(
         sourceUserLogin: String,
         associatedUserLogin: String,
         text: String
     ) {
-        mMessagesHolders[associatedUserLogin]
+        val newMessage = if (mMessagesHolders[associatedUserLogin] == null) {
+            val message = AdaptiveMessage(
+                id = 0,
+                side = MessageSide.Source,
+                text = text
+            )
+            mMessagesHolders[associatedUserLogin] = AdaptiveMessagesHolder(
+                id = mMessagesHolders.size,
+                secondSideLogin = associatedUserLogin,
+                messages = mutableListOf(message)
+            )
+            message
+        } else {
+            AdaptiveMessage(
+                id = mMessagesHolders[associatedUserLogin]!!.messages.size,
+                side = MessageSide.Source,
+                text = text
+            )
+        }
+
+        mSharedMessagesUpdates.emit(newMessage)
+
+        mRepository.cacheNewMessageToRealtimeDb(
+            sourceUserLogin,
+            associatedUserLogin,
+            newMessage.id.toString(),
+            newMessage.text,
+            newMessage.side
+        )
+        mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
     }
 
     private suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder) {

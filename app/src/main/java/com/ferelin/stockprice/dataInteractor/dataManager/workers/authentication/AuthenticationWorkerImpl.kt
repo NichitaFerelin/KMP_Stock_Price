@@ -45,8 +45,8 @@ class AuthenticationWorkerImpl @Inject constructor(
     override suspend fun signIn(
         holderActivity: Activity,
         phone: String,
-        onLogStateChanged: (Boolean) -> Unit,
-        onError: (RepositoryMessages) -> Unit
+        onLogStateChanged: suspend (Boolean) -> Unit,
+        onError: suspend (RepositoryMessages) -> Unit
     ): Flow<RepositoryMessages> {
         return mRepository.tryToSignIn(holderActivity, phone)
             .onEach { response ->
