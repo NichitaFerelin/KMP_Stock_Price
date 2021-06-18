@@ -20,6 +20,7 @@ import android.app.Application
 import com.ferelin.stockprice.di.AppComponent
 import com.ferelin.stockprice.di.DaggerAppComponent
 import com.ferelin.stockprice.notification.Notification
+import com.google.firebase.FirebaseApp
 
 class App : Application() {
 
@@ -29,6 +30,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         Notification.initNotificationChannels(this)
     }
 }

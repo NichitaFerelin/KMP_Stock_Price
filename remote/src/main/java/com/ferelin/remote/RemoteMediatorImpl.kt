@@ -17,7 +17,6 @@ package com.ferelin.remote
  */
 
 import android.app.Activity
-import android.content.Context
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
@@ -30,7 +29,6 @@ import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.shared.MessageSide
-import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,13 +42,7 @@ class RemoteMediatorImpl @Inject constructor(
     private val mWebSocketConnector: WebSocketConnector,
     private val mAuthenticationManager: AuthenticationManager,
     private val mRealtimeDatabaseManager: RealtimeDatabase,
-    context: Context
 ) : RemoteMediator {
-
-    init {
-        // Firebase must be initialized before usage
-        FirebaseApp.initializeApp(context)
-    }
 
     override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
         return mWebSocketConnector.openWebSocketConnection(token)
