@@ -65,29 +65,27 @@ class MessagesResponseImpl @Inject constructor() : MessagesConverter {
                             side = messageSide,
                             text = messageText
                         )
-                    }
+                    }.toMutableList()
                 )
             )
         } else RepositoryResponse.Failed()
     }
 
     override fun convertLocalMessagesResponseForUi(
-        items: List<MessagesHolder>
-    ): RepositoryResponse<List<AdaptiveMessagesHolder>> {
+        holder: MessagesHolder
+    ): RepositoryResponse<AdaptiveMessagesHolder> {
         return RepositoryResponse.Success(
-            data = items.map { messagesHolder ->
-                AdaptiveMessagesHolder(
-                    id = messagesHolder.id,
-                    secondSideLogin = messagesHolder.secondSideLogin,
-                    messages = messagesHolder.messages.map { message ->
-                        AdaptiveMessage(
-                            id = message.id,
-                            side = message.side,
-                            text = message.text
-                        )
-                    }
-                )
-            }
+            data = AdaptiveMessagesHolder(
+                id = holder.id,
+                secondSideLogin = holder.secondSideLogin,
+                messages = holder.messages.map { localMessage ->
+                    AdaptiveMessage(
+                        id = localMessage.id,
+                        side = localMessage.side,
+                        text = localMessage.text
+                    )
+                }.toMutableList()
+            )
         )
     }
 }

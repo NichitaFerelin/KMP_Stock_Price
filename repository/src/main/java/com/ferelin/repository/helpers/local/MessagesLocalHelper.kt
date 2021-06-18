@@ -21,9 +21,11 @@ import com.ferelin.repository.utils.RepositoryResponse
 
 interface MessagesLocalHelper {
 
-    suspend fun cacheMessageToLocalDb(messagesHolder: AdaptiveMessagesHolder)
+    suspend fun cacheMessagesHolderToLocalDb(messagesHolder: AdaptiveMessagesHolder)
 
-    suspend fun getAllMessagesFromLocalDb(): RepositoryResponse<List<AdaptiveMessagesHolder>>
+    suspend fun getMessagesByLoginFromLocalDb(
+        associatedLogin: String
+    ): RepositoryResponse<AdaptiveMessagesHolder>
 
     fun clearMessagesDatabase()
 }

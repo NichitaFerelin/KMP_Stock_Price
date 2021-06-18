@@ -186,13 +186,15 @@ open class RepositoryImpl @Inject constructor(
         return mRemoteMediator.provideIsUserLogged()
     }
 
-    override suspend fun cacheMessageToLocalDb(messagesHolder: AdaptiveMessagesHolder) {
+    override suspend fun cacheMessagesHolderToLocalDb(messagesHolder: AdaptiveMessagesHolder) {
         val preparedForInsert = mResponseMediator.convertMessageForLocal(messagesHolder)
         mLocalManager.insertMessage(preparedForInsert)
     }
 
-    override suspend fun getAllMessagesFromLocalDb(): RepositoryResponse<List<AdaptiveMessagesHolder>> {
-        val localMessages = mLocalManager.getAllMessages()
+    override suspend fun getMessagesByLoginFromLocalDb(
+        associatedLogin: String
+    ): RepositoryResponse<AdaptiveMessagesHolder> {
+        val localMessages = mLocalManager.getMessagesAssociatedWithLogin(associatedLogin)
         return mResponseMediator.convertLocalMessagesResponseForUi(localMessages)
     }
 

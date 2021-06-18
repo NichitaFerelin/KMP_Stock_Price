@@ -30,6 +30,6 @@ interface MessagesConverter {
     ): RepositoryResponse<AdaptiveMessagesHolder>
 
     fun convertLocalMessagesResponseForUi(
-        items: List<MessagesHolder>
-    ): RepositoryResponse<List<AdaptiveMessagesHolder>>
+        holder: MessagesHolder
+    ): RepositoryResponse<AdaptiveMessagesHolder>
 }
