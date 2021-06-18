@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.di
+package com.ferelin.stockprice.di.modules
 
 import com.ferelin.shared.CoroutineContextProvider
 import dagger.Module
