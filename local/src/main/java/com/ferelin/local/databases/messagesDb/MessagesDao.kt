@@ -25,8 +25,8 @@ interface MessagesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(message: MessagesHolder)
 
-    @Query("SELECT * FROM `stockprice.messages.db`")
-    suspend fun getAllMessages(): List<MessagesHolder>
+    @Query("SELECT * FROM `stockprice.messages.db` WHERE secondSideLogin=:associatedLogin")
+    suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder
 
     @Delete
     suspend fun deleteMessage(message: MessagesHolder)
