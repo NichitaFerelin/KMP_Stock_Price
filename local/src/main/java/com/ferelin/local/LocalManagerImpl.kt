@@ -146,4 +146,12 @@ open class LocalManagerImpl @Inject constructor(
     override fun clearRelationsTable() {
         mRelationsDao.clearRelationsTable()
     }
+
+    override suspend fun setUserLogin(login: String) {
+        mStorePreferences.setUserLogin(login)
+    }
+
+    override suspend fun getUserLogin(): String? {
+        return mStorePreferences.getUserLogin()
+    }
 }

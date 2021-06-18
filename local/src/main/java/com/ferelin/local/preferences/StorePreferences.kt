@@ -31,4 +31,8 @@ interface StorePreferences {
     suspend fun getUserRegisterState() : Boolean?
 
     suspend fun setUserRegisterState(state: Boolean)
+
+    suspend fun setUserLogin(login: String)
+
+    suspend fun getUserLogin() : String?
 }
