@@ -16,50 +16,41 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.favouritesCompanies.FavouriteCompaniesWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.login.LoginWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorkerStates
-import com.ferelin.stockprice.dataInteractor.helpers.apiHelper.ApiHelper
-import com.ferelin.stockprice.dataInteractor.helpers.authenticationHelper.AuthenticationHelper
-import com.ferelin.stockprice.dataInteractor.helpers.favouriteCompaniesHelper.FavouriteCompaniesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.messagesHelper.MessagesHelper
-import com.ferelin.stockprice.dataInteractor.helpers.registerHelper.RegisterHelper
-import com.ferelin.stockprice.dataInteractor.helpers.webHelper.WebHelper
+import com.ferelin.stockprice.dataInteractor.interactorHelpers.*
 import com.ferelin.stockprice.utils.StockHistoryConverter
 import kotlinx.coroutines.flow.Flow
 
 interface DataInteractor :
 // States
     CompaniesWorkerStates,
-    ErrorsWorkerStates,
     FavouriteCompaniesWorkerStates,
-    LoginWorkerStates,
+    ErrorsWorkerStates,
+    AuthenticationWorkerStates,
     MenuItemsWorkerStates,
+    RelationsWorkerStates,
     MessagesWorkerStates,
     NetworkConnectivityWorkerStates,
     SearchRequestsWorkerStates,
     // Helpers
-    ApiHelper,
     AuthenticationHelper,
-    FavouriteCompaniesHelper,
-    MessagesHelper,
+    CompaniesHelper,
     RegisterHelper,
-    WebHelper {
+    RelationsHelper,
+    SearchRequestsHelper,
+    WebSocketHelper {
 
     val stockHistoryConverter: StockHistoryConverter
 
     suspend fun prepareData()
-
-    suspend fun cacheNewSearchRequest(searchText: String)
-
-    suspend fun setFirstTimeLaunchState(state: Boolean)
-
-    suspend fun getFirstTimeLaunchState(): Boolean
 
     fun provideNetworkStateFlow(): Flow<Boolean>
 }

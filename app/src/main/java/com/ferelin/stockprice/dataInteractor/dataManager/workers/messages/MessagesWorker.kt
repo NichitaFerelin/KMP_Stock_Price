@@ -27,12 +27,20 @@ interface MessagesWorker {
         associatedUserLogin: String,
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
 
-    suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder)
+    suspend fun loadMessagesAssociatedWithLogin(
+        sourceUserLogin: String,
+        associatedLogin: String,
+        onError: suspend () -> Unit
+    )
 
     suspend fun onNewMessage(
         sourceUserLogin: String,
         associatedUserLogin: String,
         message: AdaptiveMessage,
-        onNewRelationDetected: (String) -> Unit
     )
+
+    /**
+     * TODO
+     * add new message
+     * */
 }

@@ -20,6 +20,7 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -28,7 +29,9 @@ import javax.inject.Singleton
 @Singleton
 class MessagesWorkerImpl @Inject constructor(
     private val mRepository: Repository,
+    private val mRelationWorker: RelationsWorker
 ) : MessagesWorker, MessagesWorkerStates {
+
     private var mMessagesHolders: LinkedHashMap<String, AdaptiveMessagesHolder> = LinkedHashMap(20)
 
     private val mStateMessages =
@@ -64,7 +67,61 @@ class MessagesWorkerImpl @Inject constructor(
         }
     }
 
-    override suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder) {
+    override suspend fun loadMessagesAssociatedWithLogin(
+        sourceUserLogin: String,
+        associatedLogin: String,
+        onError: suspend () -> Unit
+    ) {
+        val repositoryResponse = mRepository
+            .getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
+                sourceUserLogin = sourceUserLogin,
+                secondSideUserLogin = associatedLogin
+            ).firstOrNull()
+
+        when (repositoryResponse) {
+            is RepositoryResponse.Failed -> onError.invoke()
+            is RepositoryResponse.Success -> {
+                onMessagesLoaded(sourceUserLogin, repositoryResponse.data)
+            }
+        }
+    }
+
+    override suspend fun onNewMessage(
+        sourceUserLogin: String,
+        associatedUserLogin: String,
+        message: AdaptiveMessage,
+    ) {
+
+        if (mMessagesHolders[associatedUserLogin] == null) {
+            mMessagesHolders[associatedUserLogin] = AdaptiveMessagesHolder(
+                id = mMessagesHolders.size,
+                secondSideLogin = associatedUserLogin,
+                messages = mutableListOf(message)
+            )
+            mRelationWorker.createNewRelation(sourceUserLogin, associatedUserLogin)
+        } else mMessagesHolders[associatedUserLogin]!!.messages.add(message)
+
+        mSharedMessagesUpdates.emit(message)
+
+        mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
+        mRepository.cacheNewMessageToRealtimeDb(
+            sourceUserLogin = sourceUserLogin,
+            secondSideUserLogin = associatedUserLogin,
+            messageId = message.id.toString(),
+            message = message.text,
+            side = message.side
+        )
+    }
+
+    suspend fun sendNewMessage(
+        sourceUserLogin: String,
+        associatedUserLogin: String,
+        text: String
+    ) {
+        mMessagesHolders[associatedUserLogin]
+    }
+
+    private suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder) {
         mMessagesHolders[data.secondSideLogin] = data
         mStateMessages.value = DataNotificator.DataPrepared(data)
 
@@ -78,33 +135,6 @@ class MessagesWorkerImpl @Inject constructor(
                 side = message.side
             )
         }
-    }
-
-    override suspend fun onNewMessage(
-        sourceUserLogin: String,
-        associatedUserLogin: String,
-        message: AdaptiveMessage,
-        onNewRelationDetected: (String) -> Unit
-    ) {
-        if (mMessagesHolders[associatedUserLogin] == null) {
-            mMessagesHolders[associatedUserLogin] = AdaptiveMessagesHolder(
-                id = mMessagesHolders.size,
-                secondSideLogin = associatedUserLogin,
-                messages = mutableListOf(message)
-            )
-            onNewRelationDetected.invoke(associatedUserLogin)
-        } else mMessagesHolders[associatedUserLogin]!!.messages.add(message)
-
-        mSharedMessagesUpdates.emit(message)
-
-        mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
-        mRepository.cacheNewMessageToRealtimeDb(
-            sourceUserLogin = sourceUserLogin,
-            secondSideUserLogin = associatedUserLogin,
-            messageId = message.id.toString(),
-            message = message.text,
-            side = message.side
-        )
     }
 
     private suspend fun getMessagesFromLocalCache(

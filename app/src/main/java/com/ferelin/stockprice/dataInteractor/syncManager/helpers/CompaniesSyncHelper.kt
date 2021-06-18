@@ -18,7 +18,7 @@ package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.DataMediatorImpl
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediatorImpl
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +31,7 @@ import javax.inject.Singleton
  * */
 @Singleton
 class CompaniesSyncHelper @Inject constructor(
-    private val mDataMediator: DataMediatorImpl,
+    private val mDataMediator: CompaniesMediatorImpl,
     private val mRepositoryManager: Repository
 ) {
     /*
@@ -81,7 +81,7 @@ class CompaniesSyncHelper @Inject constructor(
             }
 
             else -> {
-                val isAdded = mDataMediator.onAddFavouriteCompany(localTargetCompany, true)
+                val isAdded = mDataMediator.addCompanyToFavourites(localTargetCompany, true)
                 if (isAdded) {
                     mRemoteCompaniesContainer.add(localTargetCompany)
                 }
@@ -146,7 +146,7 @@ class CompaniesSyncHelper @Inject constructor(
     suspend fun onLogOut() {
         val localFavouriteCompanies =
             mDataMediator.favouriteCompaniesWorker.stateFavouriteCompanies.value.data!!.toList()
-        localFavouriteCompanies.forEach { mDataMediator.onRemoveFavouriteCompany(it) }
+        localFavouriteCompanies.forEach { mDataMediator.removeCompanyFromFavourites(it) }
     }
 
     /**
