@@ -29,7 +29,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MessagesResponseImpl @Inject constructor() : MessagesConverter {
+class MessagesConverterImpl @Inject constructor() : MessagesConverter {
 
     override fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder {
         return MessagesHolder(

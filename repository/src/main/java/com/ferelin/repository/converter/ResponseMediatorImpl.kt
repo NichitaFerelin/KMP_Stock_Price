@@ -134,12 +134,6 @@ class ResponseMediatorImpl @Inject constructor(
         return mRealtimeDatabaseConverter.convertRealtimeDatabaseResponseForUi(response)
     }
 
-    override fun convertUserRelationsResponseForUi(
-        response: BaseResponse<List<String>>
-    ): RepositoryResponse<List<String>> {
-        return mRealtimeDatabaseConverter.convertUserRelationsResponseForUi(response)
-    }
-
     override fun convertSearchesForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
         return mSearchRequestsConverter.convertSearchesForLocal(search)
     }
@@ -157,9 +151,9 @@ class ResponseMediatorImpl @Inject constructor(
     }
 
     override fun convertLocalMessagesResponseForUi(
-        items: List<MessagesHolder>
-    ): RepositoryResponse<List<AdaptiveMessagesHolder>> {
-        return mMessagesConverter.convertLocalMessagesResponseForUi(items)
+        holder: MessagesHolder
+    ): RepositoryResponse<AdaptiveMessagesHolder> {
+        return mMessagesConverter.convertLocalMessagesResponseForUi(holder)
     }
 
     override fun convertLocalRelationResponseForUi(
@@ -168,8 +162,12 @@ class ResponseMediatorImpl @Inject constructor(
         return mRelationsConverter.convertLocalRelationResponseForUi(data)
     }
 
+    override fun convertRelationForLocal(item: AdaptiveRelation): Relation {
+        return mRelationsConverter.convertRelationForLocal(item)
+    }
+
     override fun convertRealtimeRelationResponseForUi(
-        response: BaseResponse<List<Pair<Int, String>>>
+        response: BaseResponse<List<Pair<Int, String>>>?
     ): RepositoryResponse<List<AdaptiveRelation>> {
         return mRelationsConverter.convertRealtimeRelationResponseForUi(response)
     }
