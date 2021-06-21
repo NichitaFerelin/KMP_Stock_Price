@@ -21,8 +21,11 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.repository.utils.RepositoryResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RelationsConverterImpl : RelationsConverter {
+@Singleton
+class RelationsConverterImpl @Inject constructor() : RelationsConverter {
 
     override fun convertRelationForLocal(item: AdaptiveRelation): Relation {
         return Relation(

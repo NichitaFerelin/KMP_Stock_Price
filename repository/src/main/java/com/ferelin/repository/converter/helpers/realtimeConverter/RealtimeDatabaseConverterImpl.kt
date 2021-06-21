@@ -36,15 +36,4 @@ class RealtimeDatabaseConverterImpl @Inject constructor() : RealtimeDatabaseConv
             else -> RepositoryResponse.Failed()
         }
     }
-
-    override fun convertUserRelationsResponseForUi(
-        response: BaseResponse<List<String>>
-    ): RepositoryResponse<List<String>> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
-            RepositoryResponse.Success(
-                owner = response.additionalMessage!!,
-                data = response.responseData!!
-            )
-        } else RepositoryResponse.Failed()
-    }
 }
