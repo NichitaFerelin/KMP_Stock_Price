@@ -44,14 +44,26 @@ internal class Converter {
     }
 
     @TypeConverter
-    fun messageToString(message: Message): String {
+    fun listMessagesToJson(data: List<Message>): String {
+        val listStr = data.map { messageToString(it) }
+        val adapter = mMoshi.adapter<List<String>>(mTypeListString)
+        return adapter.toJson(listStr)
+    }
+
+    @TypeConverter
+    fun jsonToListMessages(json: String): List<Message> {
+        val adapter = mMoshi.adapter<List<String>>(mTypeStringList)
+        val listStr = adapter.fromJson(json) ?: emptyList()
+        return listStr.map { stringToMessage(it) }
+    }
+
+    private fun messageToString(message: Message): String {
         val side = message.side.key
         val messageId = message.id
         return "$side $messageId ${message.text}"
     }
 
-    @TypeConverter
-    fun stringToMessage(string: String): Message {
+    private fun stringToMessage(string: String): Message {
         val data = string.split(" ")
         val parsedSide = if (data[0][0] == MessageSide.Associated.key) {
             MessageSide.Associated

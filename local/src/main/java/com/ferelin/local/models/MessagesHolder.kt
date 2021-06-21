@@ -29,7 +29,7 @@ class MessagesHolder(
     @PrimaryKey
     val id: Int,
     val secondSideLogin: String,
-    val messages: List<Message>
+    val messages: List<Message> = emptyList()
 )
 
 class Message(
