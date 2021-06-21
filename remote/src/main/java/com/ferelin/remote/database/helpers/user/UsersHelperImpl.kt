@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -56,7 +57,7 @@ class UsersHelperImpl @Inject constructor(
             awaitClose()
         }
 
-    override fun findUserById(userId: String) = callbackFlow {
+    override fun findUserById(userId: String) : Flow<Boolean> = callbackFlow {
         mDatabaseFirebase
             .child(sUsersRef)
             .child(userId)
@@ -68,7 +69,7 @@ class UsersHelperImpl @Inject constructor(
         awaitClose()
     }
 
-    override fun findUserByLogin(login: String) = callbackFlow {
+    override fun findUserByLogin(login: String) : Flow<Boolean> = callbackFlow {
         mDatabaseFirebase
             .child(sUsersRef)
             .addValueEventListener(object : RealtimeValueEventListener() {
