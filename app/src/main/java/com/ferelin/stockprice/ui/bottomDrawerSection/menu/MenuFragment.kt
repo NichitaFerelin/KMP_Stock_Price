@@ -22,9 +22,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
-import com.ferelin.stockprice.common.menu.MenuItem
-import com.ferelin.stockprice.common.menu.MenuItemClickListener
 import com.ferelin.stockprice.databinding.FragmentMenuBinding
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemClickListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

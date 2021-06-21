@@ -30,8 +30,10 @@ import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.MenuFragment
+import com.ferelin.stockprice.ui.messagesSection.relations.RelationsFragment
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
+import com.ferelin.stockprice.ui.register.RegisterFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
 
@@ -107,6 +109,31 @@ object Navigator {
             )
             replace(R.id.containerBottom, LoginFragment())
             addToBackStack(sStackNameBottomDrawer)
+        }
+    }
+
+    fun navigateToRelationsFragment(currentFragment: Fragment) {
+        currentFragment.parentFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_right,
+                R.anim.slide_left,
+                R.anim.slide_right,
+                R.anim.slide_left
+            )
+            replace(R.id.containerBottom, RelationsFragment())
+            addToBackStack(sStackNameBottomDrawer)
+        }
+    }
+
+    fun navigateToRegisterFragmentFromRelations(currentFragment: Fragment) {
+        currentFragment.parentFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_right,
+                R.anim.slide_left,
+                R.anim.slide_right,
+                R.anim.slide_left
+            )
+            replace(R.id.containerBottom, RegisterFragment())
         }
     }
 

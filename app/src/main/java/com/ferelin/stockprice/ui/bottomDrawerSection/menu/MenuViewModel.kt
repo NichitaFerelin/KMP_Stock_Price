@@ -17,8 +17,8 @@
 package com.ferelin.stockprice.ui.bottomDrawerSection.menu
 
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.common.menu.MenuItem
-import com.ferelin.stockprice.common.menu.MenuItemsAdapter
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemsAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow

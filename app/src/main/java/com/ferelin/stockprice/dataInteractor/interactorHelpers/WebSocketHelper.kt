@@ -22,4 +22,6 @@ import kotlinx.coroutines.flow.Flow
 interface WebSocketHelper {
 
     suspend fun openWebSocketConnection(): Flow<AdaptiveCompany>
+
+    fun prepareForWebSocketReconnection()
 }

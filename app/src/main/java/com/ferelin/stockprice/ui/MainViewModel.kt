@@ -42,7 +42,7 @@ class MainViewModel : BaseViewModel() {
                     if (mNetworkWasLost) {
                         restartWebSocket()
                     }
-                    launch { mDataInteractor.openConnection().collect() }
+                    launch { mDataInteractor.openWebSocketConnection().collect() }
                 } else mNetworkWasLost = true
             }
         }
@@ -100,7 +100,7 @@ class MainViewModel : BaseViewModel() {
     }
 
     private fun restartWebSocket() {
-        mDataInteractor.prepareToWebSocketReconnection()
+        mDataInteractor.prepareForWebSocketReconnection()
         mNetworkWasLost = false
     }
 }

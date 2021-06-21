@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.common.menu
+package com.ferelin.stockprice.ui.messagesSection.chat.adapter
 
-/**
- * Items in the bottom menu that can be installed in it.
- * */
-sealed class MenuItemType {
-    object LogIn : MenuItemType()
-    object LogOut : MenuItemType()
-    object Notes : MenuItemType()
-    object Messages : MenuItemType()
-    object Settings : MenuItemType()
+interface MessageClickListener {
+    fun onMessageClicked(position: Int)
 }

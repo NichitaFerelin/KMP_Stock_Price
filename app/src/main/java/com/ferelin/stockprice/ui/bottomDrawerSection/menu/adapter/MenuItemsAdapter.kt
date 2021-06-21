@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.common.menu
+package com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

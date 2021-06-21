@@ -35,14 +35,14 @@ import javax.inject.Singleton
  * @param mCoroutineContextProvider is coroutine context provider for coroutine launch.
  * @param mCompaniesSyncHelper is a synchronization helper for favourite companies.
  * @param mSearchRequestsSyncHelper is a synchronization helper for search requests.
- * @param mRepositoryManager is used to work with real-time database.
+ * @param mRepository is used to work with real-time database.
  */
 @Singleton
 class SynchronizationManager @Inject constructor(
     private val mCoroutineContextProvider: CoroutineContextProvider,
     private val mCompaniesSyncHelper: CompaniesSyncHelper,
     private val mSearchRequestsSyncHelper: SearchRequestsSyncHelper,
-    private val mRepositoryManager: Repository,
+    private val mRepository: Repository,
     private val mAppScope: CoroutineScope
 ) {
 
@@ -113,11 +113,11 @@ class SynchronizationManager @Inject constructor(
      * @param syncMode is a synchronization mode
      * */
     private fun initDataSync(syncMode: SyncConflictMode = SyncConflictMode.Merge) {
-        if (!mIsDataSynchronized && !mRepositoryManager.isUserAuthenticated()) {
+        if (!mIsDataSynchronized && !mRepository.isUserAuthenticated()) {
             return
         }
 
-        val userId = mRepositoryManager.getUserAuthenticationId()!!
+        val userId = mRepository.getUserAuthenticationId()!!
         mCompaniesSyncHelper.prepareForSync(userId, syncMode)
         mSearchRequestsSyncHelper.prepareToSync(userId, syncMode)
 
@@ -154,7 +154,7 @@ class SynchronizationManager @Inject constructor(
 
     private fun collectCompaniesIds(scope: CoroutineScope, userId: String) {
         mCompaniesSyncJob = scope.launch {
-            mRepositoryManager.getCompaniesIdsFromRealtimeDb(userId).collect { response ->
+            mRepository.getCompaniesIdsFromRealtimeDb(userId).collect { response ->
                 if (isActive) {
                     when (response) {
                         is RepositoryResponse.Success -> {
@@ -172,7 +172,7 @@ class SynchronizationManager @Inject constructor(
 
     private fun collectSearchRequests(scope: CoroutineScope, userId: String) {
         mSearchRequestsSyncJob = scope.launch {
-            mRepositoryManager.getSearchRequestsFromRealtimeDb(userId).collect { response ->
+            mRepository.getSearchRequestsFromRealtimeDb(userId).collect { response ->
                 if (isActive) {
                     when (response) {
                         is RepositoryResponse.Success -> {

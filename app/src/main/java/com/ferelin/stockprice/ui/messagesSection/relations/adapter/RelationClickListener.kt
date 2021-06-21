@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.common.menu
+package com.ferelin.stockprice.ui.messagesSection.relations.adapter
 
-/**
- * [MenuItem] represents a model for adapter which is set to bottom menu
- */
-data class MenuItem(
-    val id: Int,
-    val type: MenuItemType,
-    val iconResource: Int,
-    val title: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is MenuItem) {
-            return other.id == id
-        } else false
-    }
-
-    override fun hashCode(): Int {
-        return 31 * id.hashCode()
-    }
+interface RelationClickListener {
+    fun onRelationClicked(position: Int)
 }

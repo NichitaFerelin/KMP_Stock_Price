@@ -17,8 +17,8 @@ package com.ferelin.stockprice.utils
  */
 
 /**
-* Default class to set data to State/Shared Flow
-*/
+ * Default class to set data to State/Shared Flow
+ */
 sealed class DataNotificator<out T>(val data: T? = null) {
 
     class DataPrepared<out T>(data: T) : DataNotificator<T>(data)
@@ -34,6 +34,8 @@ sealed class DataNotificator<out T>(val data: T? = null) {
     class ItemUpdatedQuote<out T>(data: T) : DataNotificator<T>(data)
 
     class ItemUpdatedLiveTime<out T>(data: T) : DataNotificator<T>(data)
+
+    class NoData<out T> : DataNotificator<T>()
 
     class Loading<out T> : DataNotificator<T>()
 }

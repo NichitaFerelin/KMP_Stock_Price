@@ -46,7 +46,7 @@ abstract class RepositoryBindsModule {
     abstract fun provideRepositoryManagerHelper(repositoryImpl: RepositoryImpl): Repository
 
     @Binds
-    abstract fun provideDataConverterHelper(responseMediator: ResponseMediatorImpl): ResponseMediatorImpl
+    abstract fun provideResponseMediator(responseMediator: ResponseMediatorImpl): ResponseMediator
 
     @Binds
     abstract fun provideApiConverter(apiConverterImpl: ApiConverterImpl): ApiConverter
@@ -75,11 +75,6 @@ abstract class RepositoryBindsModule {
     abstract fun provideSearchRequestsConverter(
         searchRequestsConverterImpl: SearchRequestsConverterImpl
     ): SearchRequestsConverter
-
-    @Binds
-    abstract fun provideResponseMediator(
-        responseMediatorImpl: ResponseMediatorImpl
-    ): ResponseMediator
 
     @Binds
     abstract fun provideWebSocketConverter(

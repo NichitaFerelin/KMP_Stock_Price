@@ -24,8 +24,7 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defau
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
-import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.findCompany
 import kotlinx.coroutines.flow.*
@@ -40,17 +39,18 @@ import javax.inject.Singleton
 open class CompaniesMediator @Inject constructor(
     private val mRepository: Repository,
     private val mCompaniesWorker: CompaniesWorker,
-    private val mCompaniesWorkerStates: CompaniesWorkerStates,
     private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
-    private val mSynchronizationManager: SynchronizationManager,
-    private val mNetworkConnectivityWorkerStates: NetworkConnectivityWorkerStates,
+    private val mNetworkConnectivityWorker: NetworkConnectivityWorker,
 ) : CompaniesWorkerStates, FavouriteCompaniesWorkerStates {
 
     private val mStateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityWorkerStates.stateIsNetworkAvailable
+        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
 
     override val companies: List<AdaptiveCompany>
         get() = mCompaniesWorker.companies
+
+    override val favouriteCompanies: List<AdaptiveCompany>
+        get() = mFavouriteCompaniesWorker.favouriteCompanies
 
     override val stateCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
         get() = mCompaniesWorker.stateCompanies
@@ -72,17 +72,24 @@ open class CompaniesMediator @Inject constructor(
         mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
     }
 
-    suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
+    suspend fun addCompanyToFavourites(
+        company: AdaptiveCompany,
+        ignoreError: Boolean,
+        onAdd: ((AdaptiveCompany) -> Unit)? = null
+    ) {
         mFavouriteCompaniesWorker.addCompanyToFavourites(company, ignoreError)
             ?.let { addedCompany ->
                 mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(addedCompany))
-                mSynchronizationManager.onCompanyAddedToLocal(addedCompany)
+                onAdd?.invoke(addedCompany)
             }
     }
 
-    suspend fun removeCompanyFromFavourites(company: AdaptiveCompany) {
+    suspend fun removeCompanyFromFavourites(
+        company: AdaptiveCompany,
+        onRemove: ((AdaptiveCompany) -> Unit)? = null
+    ) {
         val updatedCompany = mFavouriteCompaniesWorker.removeCompanyFromFavourites(company)
-        mSynchronizationManager.onCompanyRemovedFromLocal(company)
+        onRemove?.invoke(updatedCompany)
         mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updatedCompany))
     }
 
@@ -156,7 +163,7 @@ open class CompaniesMediator @Inject constructor(
     }
 
     fun getCompany(symbol: String): AdaptiveCompany? {
-        return findCompany(mCompaniesWorkerStates.companies, symbol)
+        return findCompany(mCompaniesWorker.companies, symbol)
     }
 
     private suspend fun onCompanyQuoteLoaded(

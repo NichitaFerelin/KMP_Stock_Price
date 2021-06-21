@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.common.menu
+package com.ferelin.stockprice.ui.messagesSection.relations
 
-interface MenuItemClickListener {
-    fun onMenuItemClicked(item: MenuItem)
+import android.content.Context
+import com.ferelin.stockprice.base.BaseViewAnimator
+
+class RelationsViewAnimator : BaseViewAnimator() {
+
+    override fun loadAnimations(context: Context) {
+
+    }
+
+    override fun invalidateAnimations() {
+
+    }
 }

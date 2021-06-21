@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface FavouriteCompaniesWorkerStates {
 
+    val favouriteCompanies: List<AdaptiveCompany>
+
     val stateFavouriteCompanies: StateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>
 
     val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>

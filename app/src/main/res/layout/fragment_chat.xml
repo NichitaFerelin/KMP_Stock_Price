@@ -9,11 +9,13 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout style="@style/collapsingToolbar">
 
             <ImageView
+                android:id="@+id/imageViewBack"
                 style="@style/imageView"
                 android:contentDescription="@string/descriptionBack"
                 android:src="@drawable/ic_back" />
 
             <TextView
+                android:id="@+id/textViewUserLogin"
                 style="@style/textViewH2"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
@@ -24,6 +26,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/appBarHeight"

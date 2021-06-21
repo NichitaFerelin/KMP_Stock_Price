@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.previewSection.register
+package com.ferelin.stockprice.ui.register
 
 import android.animation.Animator
 import android.graphics.PorterDuff

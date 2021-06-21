@@ -46,8 +46,8 @@ class AboutPagerViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel(
     fun onFavouriteIconClicked() {
         mAppScope.launch(mCoroutineContext.IO) {
             when (selectedCompany.isFavourite) {
-                true -> mDataInteractor.removeCompanyFromFavourite(selectedCompany)
-                false -> mDataInteractor.addCompanyToFavourite(selectedCompany)
+                true -> mDataInteractor.removeCompanyFromFavourites(selectedCompany)
+                false -> mDataInteractor.addCompanyToFavourites(selectedCompany)
             }
         }
     }

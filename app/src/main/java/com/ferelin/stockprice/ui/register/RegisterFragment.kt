@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.previewSection.register
+package com.ferelin.stockprice.ui.register
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
@@ -67,7 +65,6 @@ class RegisterFragment :
         mViewModel.stateRegistered.collect { registered ->
             if (registered) {
                 withContext(mCoroutineContext.Main) {
-                    setFragmentResult(RESULT_KEY, bundleOf())
                     activity?.onBackPressed()
                 }
             }
@@ -80,9 +77,5 @@ class RegisterFragment :
                 mViewController.onError(message)
             }
         }
-    }
-
-    companion object {
-        const val RESULT_KEY = "register_result"
     }
 }

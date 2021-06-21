@@ -17,7 +17,7 @@
 package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import com.ferelin.stockprice.utils.actionHolder.ActionHolder
 import com.ferelin.stockprice.utils.actionHolder.ActionType
@@ -28,12 +28,12 @@ import javax.inject.Singleton
  * [SearchRequestsSyncHelper] holds logic about search requests synchronization
  * with realtime database.
  * @param mDataMediator is used to notify about new search requests.
- * @param mRepositoryManager is used to work with realtime database
+ * @param mRepository is used to work with realtime database
  * */
 @Singleton
 class SearchRequestsSyncHelper @Inject constructor(
-    private val mDataMediator: CompaniesMediator,
-    private val mRepositoryManager: Repository
+    private val mRepository: Repository,
+    private val mSearchRequestsWorker: SearchRequestsWorker
 ) {
     /*
     * Container for search requests which is at realtime database.
@@ -68,17 +68,17 @@ class SearchRequestsSyncHelper @Inject constructor(
      * @param searchRequest is a search request that was loaded and read from response.
      * */
     suspend fun onSearchRequestResponseSync(searchRequest: String) {
-        val localSearchRequests = mDataMediator.searchRequestsWorker.searchRequests
+        val localSearchRequests = mSearchRequestsWorker.searchRequests
         val remoteSearchRequestAtLocal = localSearchRequests.find { it.searchText == searchRequest }
 
         if (remoteSearchRequestAtLocal == null) {
             when (mSyncMode) {
                 is SyncConflictMode.LocalPriority -> {
-                    mRepositoryManager.eraseSearchRequestFromRealtimeDb(mUserId, searchRequest)
+                    mRepository.eraseSearchRequestFromRealtimeDb(mUserId, searchRequest)
                 }
                 else -> {
                     mRemoteSearchRequestsContainer.add(searchRequest)
-                    mDataMediator.cacheNewSearchRequest(searchRequest)
+                    mSearchRequestsWorker.cacheNewSearchRequest(searchRequest)
                 }
             }
         }
@@ -106,13 +106,13 @@ class SearchRequestsSyncHelper @Inject constructor(
      * Example: [ ("abc", Removed), ("bbb", Added) ]
      * */
     fun onSearchRequestsChanged(changesActionsHistory: List<ActionHolder<String>>) {
-        mRepositoryManager.getUserAuthenticationId()?.let { authorizedUserId ->
+        mRepository.getUserAuthenticationId()?.let { authorizedUserId ->
             changesActionsHistory.forEach { actionHolder ->
                 when (actionHolder.actionType) {
                     is ActionType.Added -> {
                         if (!mRemoteSearchRequestsContainer.contains(actionHolder.key)) {
                             mRemoteSearchRequestsContainer.add(actionHolder.key)
-                            mRepositoryManager.cacheSearchRequestToRealtimeDb(
+                            mRepository.cacheSearchRequestToRealtimeDb(
                                 authorizedUserId,
                                 actionHolder.key
                             )
@@ -121,7 +121,7 @@ class SearchRequestsSyncHelper @Inject constructor(
                     is ActionType.Removed -> {
                         if (mRemoteSearchRequestsContainer.contains(actionHolder.key)) {
                             mRemoteSearchRequestsContainer.remove(actionHolder.key)
-                            mRepositoryManager.eraseSearchRequestFromRealtimeDb(
+                            mRepository.eraseSearchRequestFromRealtimeDb(
                                 authorizedUserId,
                                 actionHolder.key
                             )
@@ -136,7 +136,7 @@ class SearchRequestsSyncHelper @Inject constructor(
      * When the user exits need to call this method to clear his data
      */
     suspend fun onLogOut() {
-        mDataMediator.clearSearchRequests()
+        mSearchRequestsWorker.clearSearchRequests()
     }
 
     /**
@@ -145,14 +145,13 @@ class SearchRequestsSyncHelper @Inject constructor(
      * added to real-time database.
      * */
     private fun detectInconsistencyAndSync() {
-        val localSearchRequests =
-            mDataMediator.searchRequestsWorker.stateSearchRequests.value.data ?: return
+        val localSearchRequests = mSearchRequestsWorker.stateSearchRequests.value.data ?: return
 
         if (mRemoteSearchRequestsContainer.isEmpty()) {
             localSearchRequests
                 .map { it.searchText }
                 .forEach { request ->
-                    mRepositoryManager.cacheSearchRequestToRealtimeDb(mUserId, request)
+                    mRepository.cacheSearchRequestToRealtimeDb(mUserId, request)
                 }
         } else {
             localSearchRequests.forEach { searchRequest ->
@@ -160,7 +159,7 @@ class SearchRequestsSyncHelper @Inject constructor(
                     mRemoteSearchRequestsContainer.find { it == searchRequest.searchText }
 
                 if (itemAtRemoteContainer == null) {
-                    mRepositoryManager.cacheSearchRequestToRealtimeDb(
+                    mRepository.cacheSearchRequestToRealtimeDb(
                         mUserId,
                         searchRequest.searchText
                     )

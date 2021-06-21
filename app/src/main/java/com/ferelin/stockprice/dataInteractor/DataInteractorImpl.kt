@@ -21,7 +21,6 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.common.menu.MenuItem
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorker
@@ -33,6 +32,7 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.Relat
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.StockHistoryConverter
 import kotlinx.coroutines.flow.*
@@ -76,6 +76,9 @@ class DataInteractorImpl @Inject constructor(
 
     override val companies: List<AdaptiveCompany>
         get() = mCompaniesMediator.companies
+
+    override val favouriteCompanies: List<AdaptiveCompany>
+        get() = mCompaniesMediator.favouriteCompanies
 
     /**
      * Favourite companies states
@@ -215,11 +218,17 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
-        mCompaniesMediator.addCompanyToFavourites(company, ignoreError)
+        mCompaniesMediator.addCompanyToFavourites(company, ignoreError,
+            onAdd = { addedCompany ->
+                mSynchronizationManager.onCompanyAddedToLocal(addedCompany)
+            })
     }
 
     override suspend fun removeCompanyFromFavourites(company: AdaptiveCompany) {
-        mCompaniesMediator.removeCompanyFromFavourites(company)
+        mCompaniesMediator.removeCompanyFromFavourites(company,
+            onRemove = { removedCompany ->
+                mSynchronizationManager.onCompanyRemovedFromLocal(removedCompany)
+            })
     }
 
     override suspend fun tryToRegister(login: String): Flow<Boolean> {
@@ -249,10 +258,14 @@ class DataInteractorImpl @Inject constructor(
         return mWebSocketWorker.openWebSocketConnection()
     }
 
-    override suspend fun getMessagesStateForLoginFromCache(
+    override fun prepareForWebSocketReconnection() {
+        mWebSocketWorker.prepareToWebSocketReconnection()
+    }
+
+    override suspend fun getMessagesStateForLogin(
         associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
-        return mMessagesWorker.getMessagesStateForLoginFromCache(associatedUserLogin)
+        return mMessagesWorker.getMessagesStateForLogin(associatedUserLogin)
     }
 
     override suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String) {
@@ -275,6 +288,17 @@ class DataInteractorImpl @Inject constructor(
         return stateIsNetworkAvailable.onEach {
             mSynchronizationManager.onNetworkStateChanged(it)
         }
+    }
+
+    override suspend fun setFirstTimeLaunchState(state: Boolean) {
+        mRepository.setFirstTimeLaunchState(state)
+    }
+
+    override suspend fun getFirstTimeLaunchState(): Boolean {
+        val repositoryResponse = mRepository.getFirstTimeLaunchState()
+        return if (repositoryResponse is RepositoryResponse.Success) {
+            repositoryResponse.data
+        } else false
     }
 
     private suspend fun prepareCompaniesData() {

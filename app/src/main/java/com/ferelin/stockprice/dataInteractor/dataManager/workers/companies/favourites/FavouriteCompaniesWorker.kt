@@ -50,6 +50,8 @@ class FavouriteCompaniesWorker @Inject constructor(
 ) : FavouriteCompaniesWorkerStates {
 
     private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
+    override val favouriteCompanies: List<AdaptiveCompany>
+        get() = mFavouriteCompanies
 
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveCompany>>>(DataNotificator.Loading())

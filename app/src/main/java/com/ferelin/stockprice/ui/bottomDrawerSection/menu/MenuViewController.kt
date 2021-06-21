@@ -20,11 +20,11 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.common.menu.MenuItem
-import com.ferelin.stockprice.common.menu.MenuItemType
-import com.ferelin.stockprice.common.menu.MenuItemsAdapter
 import com.ferelin.stockprice.databinding.FragmentMenuBinding
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemType
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemsAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 
 class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBinding>() {
@@ -53,9 +53,7 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
         when (item.type) {
             is MenuItemType.LogIn -> Navigator.navigateToLoginFragment(currentFragment)
             is MenuItemType.LogOut -> showExitDialog(currentFragment.requireContext(), onLogOut)
-
-            is MenuItemType.Messages -> { /*MessagesHolder */
-            }
+            is MenuItemType.Messages -> Navigator.navigateToRelationsFragment(currentFragment)
             is MenuItemType.Notes -> {/*Notes*/
             }
             is MenuItemType.Settings -> {/*Settings*/

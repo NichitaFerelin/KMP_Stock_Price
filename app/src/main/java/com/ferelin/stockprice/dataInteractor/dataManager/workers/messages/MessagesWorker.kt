@@ -42,7 +42,7 @@ class MessagesWorker @Inject constructor(
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
         get() = mSharedMessagesUpdates
 
-    suspend fun getMessagesStateForLoginFromCache(
+    suspend fun getMessagesStateForLogin(
         associatedUserLogin: String
     ): StateFlow<DataNotificator<AdaptiveMessagesHolder>> {
         return when {

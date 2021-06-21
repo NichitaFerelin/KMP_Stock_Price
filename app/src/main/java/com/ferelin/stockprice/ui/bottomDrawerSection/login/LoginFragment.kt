@@ -24,8 +24,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -86,10 +88,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
 
     private suspend fun collectSignInState() {
         mViewModel.stateSignIn.collect {
-            withContext(mCoroutineContext.Main) {
+            collectUserRegisterState()
+            /*withContext(mCoroutineContext.Main) {
                 mViewController.onSignIn()
-                parentFragmentManager.popBackStack()
-            }
+            }*/
         }
     }
 
@@ -107,6 +109,20 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
                 mViewController.onLoadingStateChanged(isLoading)
             }
         }
+    }
+
+    private suspend fun collectUserRegisterState() {
+        mViewModel.stateIsUserRegistered
+            .filter { it != null }
+            .collect { isRegistered ->
+                withContext(mCoroutineContext.Main) {
+                    if (isRegistered!!) {
+                        activity?.onBackPressed()
+                    } else {
+                        Navigator.navigateToRegisterFragmentFromRelations(this@LoginFragment)
+                    }
+                }
+            }
     }
 
     private suspend fun collectErrorState() {

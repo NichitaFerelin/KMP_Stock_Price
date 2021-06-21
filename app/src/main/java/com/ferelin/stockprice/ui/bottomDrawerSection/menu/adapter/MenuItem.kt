@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
-import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.StateFlow
+/**
+ * [MenuItem] represents a model for adapter which is set to bottom menu
+ */
+data class MenuItem(
+    val id: Int,
+    val type: MenuItemType,
+    val iconResource: Int,
+    val title: String
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is MenuItem) {
+            return other.id == id
+        } else false
+    }
 
-interface MessagesHelper {
-
-    suspend fun getMessagesStateForLogin(
-        associatedUserLogin: String,
-    ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
-
-    suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String)
-
-    suspend fun sendNewMessage(associatedUserLogin: String, text: String)
+    override fun hashCode(): Int {
+        return 31 * id.hashCode()
+    }
 }
