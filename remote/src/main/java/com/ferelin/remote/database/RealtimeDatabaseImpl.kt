@@ -96,7 +96,7 @@ class RealtimeDatabaseImpl @Inject constructor(
         return mUsersHelper.findUserByLogin(login)
     }
 
-    override fun findUserById(userId: String): Flow<Boolean> {
+    override fun findUserById(userId: String): Flow<BaseResponse<String?>> {
         return mUsersHelper.findUserById(userId)
     }
 

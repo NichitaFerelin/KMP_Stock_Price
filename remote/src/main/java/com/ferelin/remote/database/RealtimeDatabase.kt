@@ -37,7 +37,7 @@ interface RealtimeDatabase :
         private const val sUnavailableSymbolsPattern = "[.#$\\[\\]]"
 
         fun isTextAvailableForFirebase(text: String): Boolean {
-            return text.contains(Regex(sUnavailableSymbolsPattern))
+            return !text.contains(Regex(sUnavailableSymbolsPattern))
         }
 
         /*

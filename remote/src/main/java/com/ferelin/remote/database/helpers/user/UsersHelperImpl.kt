@@ -43,33 +43,40 @@ class UsersHelperImpl @Inject constructor(
         callbackFlow<BaseResponse<Boolean>> {
             if (!RealtimeDatabase.isTextAvailableForFirebase(login)) {
                 trySend(BaseResponse(responseCode = Api.RESPONSE_BAD_LOGIN))
+            } else {
+                findUserById(userId).firstOrNull()?.let { response ->
+                    if (response.responseCode == Api.RESPONSE_OK) {
+                        trySend(BaseResponse(responseCode = Api.RESPONSE_LOGIN_EXISTS))
+                    } else {
+                        cacheNewUser(userId, login)
+                        trySend(BaseResponse(responseCode = Api.RESPONSE_OK, responseData = true))
+                    }
+                } ?: trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
             }
-
-            findUserById(userId).firstOrNull()?.let { isRegistered ->
-                if (isRegistered) {
-                    trySend(BaseResponse(responseCode = Api.RESPONSE_LOGIN_EXISTS))
-                } else {
-                    cacheNewUser(userId, login)
-                    trySend(BaseResponse(responseCode = Api.RESPONSE_OK, responseData = true))
-                }
-            } ?: trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
 
             awaitClose()
         }
 
-    override fun findUserById(userId: String) : Flow<Boolean> = callbackFlow {
+    override fun findUserById(userId: String): Flow<BaseResponse<String?>> = callbackFlow {
         mDatabaseFirebase
             .child(sUsersRef)
             .child(userId)
             .addValueEventListener(object : RealtimeValueEventListener() {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.exists())
+                    if (snapshot.exists()) {
+                        trySend(
+                            BaseResponse<String?>(
+                                responseCode = Api.RESPONSE_OK,
+                                responseData = snapshot.value.toString()
+                            )
+                        )
+                    } else trySend(BaseResponse<String?>(responseCode = Api.RESPONSE_NO_DATA))
                 }
             })
         awaitClose()
     }
 
-    override fun findUserByLogin(login: String) : Flow<Boolean> = callbackFlow {
+    override fun findUserByLogin(login: String): Flow<Boolean> = callbackFlow {
         mDatabaseFirebase
             .child(sUsersRef)
             .addValueEventListener(object : RealtimeValueEventListener() {

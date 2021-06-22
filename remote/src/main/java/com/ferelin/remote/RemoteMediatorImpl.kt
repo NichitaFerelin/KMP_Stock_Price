@@ -195,7 +195,7 @@ class RemoteMediatorImpl @Inject constructor(
         return mRealtimeDatabaseManager.getUserRelations(userLogin)
     }
 
-    override fun findUserById(userId: String): Flow<Boolean> {
+    override fun findUserById(userId: String): Flow<BaseResponse<String?>> {
         return mRealtimeDatabaseManager.findUserById(userId)
     }
 }

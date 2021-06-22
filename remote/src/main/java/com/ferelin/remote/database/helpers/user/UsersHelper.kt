@@ -23,7 +23,7 @@ interface UsersHelper {
 
     fun findUserByLogin(login: String): Flow<Boolean>
 
-    fun findUserById(userId: String): Flow<Boolean>
+    fun findUserById(userId: String): Flow<BaseResponse<String?>>
 
     /**
      * Registers new user
