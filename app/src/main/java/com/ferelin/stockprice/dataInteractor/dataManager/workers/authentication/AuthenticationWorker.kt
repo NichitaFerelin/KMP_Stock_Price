@@ -32,18 +32,7 @@ import javax.inject.Singleton
 class AuthenticationWorker @Inject constructor(
     private val mRepository: Repository,
     private val mSynchronizationManager: SynchronizationManager
-) : AuthenticationWorkerStates {
-
-    /**
-     * TODO remove to register worker
-     * */
-    private var mUserLogin: String? = null
-    override val userLogin: String?
-        get() = mUserLogin
-
-    fun onUserLoginChanged(newLogin: String) {
-        mUserLogin = newLogin
-    }
+) {
 
     suspend fun signIn(
         holderActivity: Activity,

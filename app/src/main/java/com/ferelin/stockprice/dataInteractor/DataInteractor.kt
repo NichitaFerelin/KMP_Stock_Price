@@ -16,13 +16,13 @@ package com.ferelin.stockprice.dataInteractor
  * limitations under the License.
  */
 
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.defaults.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.favourites.FavouriteCompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.register.RegisterWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorkerStates
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorkerStates
 import com.ferelin.stockprice.dataInteractor.interactorHelpers.*
@@ -34,7 +34,7 @@ interface DataInteractor :
     CompaniesWorkerStates,
     FavouriteCompaniesWorkerStates,
     ErrorsWorkerStates,
-    AuthenticationWorkerStates,
+    RegisterWorkerStates,
     MenuItemsWorkerStates,
     RelationsWorkerStates,
     MessagesWorkerStates,

@@ -18,6 +18,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.relations
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,12 +43,31 @@ class RelationsWorker @Inject constructor(
     override val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
         get() = mSharedUserRelationsUpdates
 
-    fun onRelationsPrepared(items: List<AdaptiveRelation>) {
-        mRelations = items.toMutableList()
-        mStateUserRelations.value = DataNotificator.DataPrepared(mRelations)
+    suspend fun prepareUserRelations() {
+        if (!mRepository.isUserAuthenticated()) {
+            return
+        }
+
+        val relationsResponse = mRepository.getAllRelationsFromLocalDb()
+        if (relationsResponse is RepositoryResponse.Success) {
+            onRelationsPrepared(relationsResponse.data)
+        }
+    }
+
+    fun onLogOut() {
+        mRelations.clear()
+        mStateUserRelations.value = DataNotificator.NoData()
+    }
+
+    suspend fun onLogIn() {
+        prepareUserRelations()
     }
 
     suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
+        if (mRelations.find { it.associatedUserLogin == associatedUserLogin } != null) {
+            return
+        }
+
         val newRelation = AdaptiveRelation(
             id = mRelations.size,
             associatedUserLogin = associatedUserLogin
@@ -71,5 +91,10 @@ class RelationsWorker @Inject constructor(
 
         mRepository.eraseRelationFromLocalDb(relation)
         mRepository.eraseRelationFromRealtimeDb(sourceUserLogin, relation.id.toString())
+    }
+
+    private fun onRelationsPrepared(items: List<AdaptiveRelation>) {
+        mRelations = items.toMutableList()
+        mStateUserRelations.value = DataNotificator.DataPrepared(mRelations)
     }
 }

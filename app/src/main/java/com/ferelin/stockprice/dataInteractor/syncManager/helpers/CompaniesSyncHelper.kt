@@ -145,7 +145,7 @@ class CompaniesSyncHelper @Inject constructor(
      * When the user exits need to call this method to clear his data
      */
     suspend fun onLogOut() {
-        val localFavouriteCompanies = mCompaniesMediator.favouriteCompanies
+        val localFavouriteCompanies = mCompaniesMediator.favouriteCompanies.toList()
         localFavouriteCompanies.forEach { mCompaniesMediator.removeCompanyFromFavourites(it) }
     }
 

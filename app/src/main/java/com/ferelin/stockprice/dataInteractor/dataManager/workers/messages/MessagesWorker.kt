@@ -19,6 +19,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.messages
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
@@ -71,7 +72,7 @@ class MessagesWorker @Inject constructor(
     suspend fun loadMessagesAssociatedWithLogin(
         sourceUserLogin: String,
         associatedLogin: String,
-        onError: suspend () -> Unit
+        onError: suspend (RepositoryMessages) -> Unit
     ) {
         val repositoryResponse = mRepository
             .getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
@@ -80,7 +81,7 @@ class MessagesWorker @Inject constructor(
             ).firstOrNull()
 
         when (repositoryResponse) {
-            is RepositoryResponse.Failed -> onError.invoke()
+            is RepositoryResponse.Failed -> onError.invoke(repositoryResponse.message)
             is RepositoryResponse.Success -> {
                 onMessagesLoaded(sourceUserLogin, repositoryResponse.data)
             }
@@ -132,11 +133,13 @@ class MessagesWorker @Inject constructor(
             )
             message
         } else {
-            AdaptiveMessage(
+            val message = AdaptiveMessage(
                 id = mMessagesHolders[associatedUserLogin]!!.messages.size,
                 side = MessageSide.Source,
                 text = text
             )
+            mMessagesHolders[associatedUserLogin]!!.messages.add(message)
+            message
         }
 
         mSharedMessagesUpdates.emit(newMessage)
@@ -149,6 +152,12 @@ class MessagesWorker @Inject constructor(
             newMessage.side
         )
         mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
+    }
+
+    fun onLogOut() {
+        mMessagesHolders.clear()
+        mStateMessages.value = DataNotificator.NoData()
+        mRepository.clearMessagesDatabase()
     }
 
     private suspend fun onMessagesLoaded(sourceUserLogin: String, data: AdaptiveMessagesHolder) {

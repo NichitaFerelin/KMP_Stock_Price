@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.register
 
-interface AuthenticationWorkerStates {
+import kotlinx.coroutines.flow.StateFlow
+
+interface RegisterWorkerStates {
 
     val userLogin: String?
+
+    val stateUserRegister: StateFlow<Boolean?>
 }

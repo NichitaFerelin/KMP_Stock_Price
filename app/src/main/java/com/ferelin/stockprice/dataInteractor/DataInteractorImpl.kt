@@ -153,6 +153,15 @@ class DataInteractorImpl @Inject constructor(
         get() = mRelationsWorker.sharedUserRelationsUpdates
 
     /**
+     * Register states
+     * */
+    override val stateUserRegister: StateFlow<Boolean?>
+        get() = mRegisterWorker.stateUserRegister
+
+    override val userLogin: String
+        get() = mRegisterWorker.userLogin ?: ""
+
+    /**
      * Other states
      * */
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
@@ -161,13 +170,11 @@ class DataInteractorImpl @Inject constructor(
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
-    override val userLogin: String
-        get() = mAuthenticationWorker.userLogin ?: ""
-
     override suspend fun prepareData() {
         prepareCompaniesData()
         prepareSearchesHistory()
-        prepareUserRelations()
+        mRelationsWorker.prepareUserRelations()
+        mRegisterWorker.prepareUserRegisterState()
     }
 
     override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
@@ -199,7 +206,11 @@ class DataInteractorImpl @Inject constructor(
         return mAuthenticationWorker.signIn(
             holderActivity,
             phone,
-            onLogStateChanged = { logState -> mMenuItemsWorker.onLogStateChanged(logState) },
+            onLogStateChanged = { logState ->
+                mRegisterWorker.onLogIn()
+                mRelationsWorker.onLogIn()
+                mMenuItemsWorker.onLogStateChanged(logState)
+            },
             onError = { message -> mErrorsWorker.onAuthenticationError(message) }
         )
     }
@@ -213,6 +224,9 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun logOut() {
+        mRegisterWorker.onLogOut()
+        mRelationsWorker.onLogOut()
+        mMessagesWorker.onLogOut()
         mAuthenticationWorker.logOut()
         mMenuItemsWorker.onLogStateChanged(mRepository.isUserAuthenticated())
     }
@@ -236,10 +250,6 @@ class DataInteractorImpl @Inject constructor(
             login,
             onError = { message -> mErrorsWorker.onRegisterError(message) }
         )
-    }
-
-    override suspend fun isUserRegistered(): Boolean {
-        return mRegisterWorker.isUserRegistered()
     }
 
     override suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
@@ -272,7 +282,7 @@ class DataInteractorImpl @Inject constructor(
         mMessagesWorker.loadMessagesAssociatedWithLogin(
             sourceUserLogin = userLogin,
             associatedLogin = associatedLogin,
-            onError = { mErrorsWorker.onLoadMessageError() }
+            onError = { message -> mErrorsWorker.onLoadMessageError(message) }
         )
     }
 
@@ -313,16 +323,5 @@ class DataInteractorImpl @Inject constructor(
         if (responseSearchesHistory is RepositoryResponse.Success) {
             mSearchRequestsWorker.onSearchRequestsDataPrepared(responseSearchesHistory.data)
         } else mErrorsWorker.onLoadSearchRequestsError()
-    }
-
-    private suspend fun prepareUserRelations() {
-        if (!mRepository.isUserAuthenticated()) {
-            return
-        }
-
-        val relationsResponse = mRepository.getAllRelationsFromLocalDb()
-        if (relationsResponse is RepositoryResponse.Success) {
-            mRelationsWorker.onRelationsPrepared(relationsResponse.data)
-        }
     }
 }

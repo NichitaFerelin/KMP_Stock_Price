@@ -19,17 +19,54 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.register
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RegisterWorker @Inject constructor(
     private val mRepository: Repository
-) {
+) : RegisterWorkerStates {
+
+    private val mStateUserRegister = MutableStateFlow<Boolean?>(null)
+    override val stateUserRegister: StateFlow<Boolean?>
+        get() = mStateUserRegister
+
+    private var mUserLogin: String? = null
+    override val userLogin: String?
+        get() = mUserLogin
+
+    suspend fun prepareUserRegisterState() {
+        if (!mRepository.isUserAuthenticated()) {
+            mStateUserRegister.value = false
+            return
+        }
+
+        val localIsRegistered = mRepository.getUserRegisterState() == true
+        if (!localIsRegistered) {
+            val remoteUserResponse =
+                mRepository.findUserById(mRepository.getUserAuthenticationId()!!)
+
+            when (remoteUserResponse) {
+                is RepositoryResponse.Success -> {
+                    mUserLogin = remoteUserResponse.data!!
+                    mStateUserRegister.value = true
+                    mRepository.setUserRegisterState(true)
+                    mRepository.setUserLogin(mUserLogin!!)
+                }
+                is RepositoryResponse.Failed -> mStateUserRegister.value = false
+            }
+        } else mStateUserRegister.value = true
+    }
+
+    fun onLogOut() {
+        mUserLogin = ""
+        mStateUserRegister.value = null
+    }
+
+    suspend fun onLogIn() {
+        prepareUserRegisterState()
+    }
 
     suspend fun tryToRegister(
         login: String,
@@ -42,29 +79,11 @@ class RegisterWorker @Inject constructor(
                 }
             }
             .filter { it is RepositoryResponse.Success }
+            .onEach {
+                mStateUserRegister.value = true
+                mUserLogin = login
+                mRepository.setUserRegisterState(true)
+            }
             .map { (it as RepositoryResponse.Success).data }
-    }
-
-    suspend fun isUserRegistered(): Boolean {
-        if (!mRepository.isUserAuthenticated()) {
-            return false
-        }
-
-        val localIsRegistered = mRepository.getUserRegisterState() == true
-
-        if (!localIsRegistered) {
-            val remoteIsRegistered =
-                mRepository.isUserIdExist(mRepository.getUserAuthenticationId()!!)
-
-            if (!remoteIsRegistered) {
-                return false
-            } else mRepository.setUserRegisterState(true)
-        }
-
-        return true
-    }
-
-    suspend fun findUser(login: String): Boolean {
-        return mRepository.isUserExist(login)
     }
 }

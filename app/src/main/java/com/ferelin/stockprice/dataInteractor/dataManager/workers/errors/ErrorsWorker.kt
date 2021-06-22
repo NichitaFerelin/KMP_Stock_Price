@@ -119,7 +119,11 @@ open class ErrorsWorker @Inject constructor(
     override val sharedLoadMessagesError: SharedFlow<String>
         get() = mSharedLoadMessagesError
 
-    suspend fun onLoadMessageError() {
+    suspend fun onLoadMessageError(message: RepositoryMessages) {
+        if (message is RepositoryMessages.Empty) {
+            return
+        }
+
         val errorMessage = getString(mContext, R.string.errorLoadMessages)
         mSharedLoadMessagesError.emit(errorMessage)
     }

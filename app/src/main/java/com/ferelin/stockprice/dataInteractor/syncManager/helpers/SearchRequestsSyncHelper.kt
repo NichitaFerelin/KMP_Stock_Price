@@ -68,7 +68,7 @@ class SearchRequestsSyncHelper @Inject constructor(
      * @param searchRequest is a search request that was loaded and read from response.
      * */
     suspend fun onSearchRequestResponseSync(searchRequest: String) {
-        val localSearchRequests = mSearchRequestsWorker.searchRequests
+        val localSearchRequests = mSearchRequestsWorker.searchRequests.toList()
         val remoteSearchRequestAtLocal = localSearchRequests.find { it.searchText == searchRequest }
 
         if (remoteSearchRequestAtLocal == null) {

@@ -21,6 +21,4 @@ import kotlinx.coroutines.flow.Flow
 interface RegisterHelper {
 
     suspend fun tryToRegister(login: String): Flow<Boolean>
-
-    suspend fun isUserRegistered(): Boolean
 }
