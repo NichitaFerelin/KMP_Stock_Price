@@ -18,20 +18,21 @@ package com.ferelin.stockprice.viewModelFactories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ferelin.stockprice.ui.messagesSection.chat.ChatViewModel
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.ChatViewModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 @Suppress("UNCHECKED_CAST")
 class LoginViewModelFactory @Inject constructor(
-    private val mAssociatedUserLogin: String?
+    private val mRelation: AdaptiveRelation?
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(ChatViewModel::class.java) -> {
-                ChatViewModel(mAssociatedUserLogin!!) as T
+                ChatViewModel(mRelation!!) as T
             }
             else -> throw IllegalStateException("Unknown view model class: $modelClass")
         }
