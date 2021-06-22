@@ -129,7 +129,7 @@ class ResponseMediatorImpl @Inject constructor(
     }
 
     override fun convertRealtimeDatabaseResponseForUi(
-        response: BaseResponse<String?>
+        response: BaseResponse<String?>?
     ): RepositoryResponse<String> {
         return mRealtimeDatabaseConverter.convertRealtimeDatabaseResponseForUi(response)
     }
@@ -151,7 +151,7 @@ class ResponseMediatorImpl @Inject constructor(
     }
 
     override fun convertLocalMessagesResponseForUi(
-        holder: MessagesHolder
+        holder: MessagesHolder?
     ): RepositoryResponse<AdaptiveMessagesHolder> {
         return mMessagesConverter.convertLocalMessagesResponseForUi(holder)
     }

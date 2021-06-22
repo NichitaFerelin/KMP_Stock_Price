@@ -23,7 +23,7 @@ interface UsersRemoteHelper {
 
     suspend fun isUserExist(login: String): Boolean
 
-    suspend fun isUserIdExist(userId: String): Boolean
+    suspend fun findUserById(userId: String): RepositoryResponse<String?>
 
     suspend fun tryToRegister(userId: String, login: String): Flow<RepositoryResponse<Boolean>>
 }

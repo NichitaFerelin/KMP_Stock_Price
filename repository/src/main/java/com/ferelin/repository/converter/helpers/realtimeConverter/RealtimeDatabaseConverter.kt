@@ -22,6 +22,6 @@ import com.ferelin.repository.utils.RepositoryResponse
 interface RealtimeDatabaseConverter {
 
     fun convertRealtimeDatabaseResponseForUi(
-        response: BaseResponse<String?>
+        response: BaseResponse<String?>?
     ): RepositoryResponse<String>
 }

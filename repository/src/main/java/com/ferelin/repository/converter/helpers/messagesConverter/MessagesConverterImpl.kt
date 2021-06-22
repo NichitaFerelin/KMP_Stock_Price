@@ -23,6 +23,7 @@ import com.ferelin.remote.database.helpers.messages.MessagesHelperImpl
 import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
 import javax.inject.Inject
@@ -48,32 +49,42 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
     override fun convertRemoteMessagesResponseForUi(
         response: BaseResponse<List<HashMap<String, String>>>
     ): RepositoryResponse<AdaptiveMessagesHolder> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
-            RepositoryResponse.Success(
-                data = AdaptiveMessagesHolder(
-                    secondSideLogin = response.additionalMessage!!,
-                    messages = response.responseData!!.map { map ->
-                        val messageId = map[MessagesHelperImpl.MESSAGE_ID_KEY]!!.toInt()
-                        val side = map[MessagesHelperImpl.MESSAGE_SIDE_KEY]!![0]
-                        val messageSide = if (side == MessageSide.Source.key) {
-                            MessageSide.Source
-                        } else MessageSide.Associated
-                        val messageText = map[MessagesHelperImpl.MESSAGE_TEXT_KEY].toString()
+        return when (response.responseCode) {
+            Api.RESPONSE_NO_DATA -> {
+                RepositoryResponse.Failed<AdaptiveMessagesHolder>(message = RepositoryMessages.Empty)
+            }
+            Api.RESPONSE_OK -> {
+                RepositoryResponse.Success(
+                    data = AdaptiveMessagesHolder(
+                        secondSideLogin = response.additionalMessage!!,
+                        messages = response.responseData!!.map { map ->
+                            val messageId = map[MessagesHelperImpl.MESSAGE_ID_KEY]!!.toInt()
+                            val side = map[MessagesHelperImpl.MESSAGE_SIDE_KEY]!![0]
+                            val messageSide = if (side == MessageSide.Source.key) {
+                                MessageSide.Source
+                            } else MessageSide.Associated
+                            val messageText = map[MessagesHelperImpl.MESSAGE_TEXT_KEY].toString()
 
-                        AdaptiveMessage(
-                            id = messageId,
-                            side = messageSide,
-                            text = messageText
-                        )
-                    }.toMutableList()
+                            AdaptiveMessage(
+                                id = messageId,
+                                side = messageSide,
+                                text = messageText
+                            )
+                        }.toMutableList()
+                    )
                 )
-            )
-        } else RepositoryResponse.Failed()
+            }
+            else -> RepositoryResponse.Failed()
+        }
     }
 
     override fun convertLocalMessagesResponseForUi(
-        holder: MessagesHolder
+        holder: MessagesHolder?
     ): RepositoryResponse<AdaptiveMessagesHolder> {
+        if (holder == null) {
+            return RepositoryResponse.Failed()
+        }
+
         return RepositoryResponse.Success(
             data = AdaptiveMessagesHolder(
                 id = holder.id,

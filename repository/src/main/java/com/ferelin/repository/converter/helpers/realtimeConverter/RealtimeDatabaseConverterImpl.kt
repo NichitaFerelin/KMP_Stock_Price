@@ -27,8 +27,12 @@ import javax.inject.Singleton
 class RealtimeDatabaseConverterImpl @Inject constructor() : RealtimeDatabaseConverter {
 
     override fun convertRealtimeDatabaseResponseForUi(
-        response: BaseResponse<String?>
+        response: BaseResponse<String?>?
     ): RepositoryResponse<String> {
+        if (response == null) {
+            return RepositoryResponse.Failed()
+        }
+
         return when (response.responseCode) {
             Api.RESPONSE_OK -> RepositoryResponse.Success(data = response.responseData!!)
             Api.RESPONSE_END -> RepositoryResponse.Failed(message = RepositoryMessages.End)

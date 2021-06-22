@@ -144,12 +144,21 @@ open class RepositoryImpl @Inject constructor(
         mLocalManager.setUserRegisterState(state)
     }
 
+    override suspend fun setUserLogin(login: String) {
+        mLocalManager.setUserLogin(login)
+    }
+
+    override suspend fun getUserLogin(): String? {
+        return mLocalManager.getUserLogin()
+    }
+
     override suspend fun isUserExist(login: String): Boolean {
         return mRemoteMediator.findUserByLogin(login).firstOrNull() == true
     }
 
-    override suspend fun isUserIdExist(userId: String): Boolean {
-        return mRemoteMediator.findUserById(userId).firstOrNull() == true
+    override suspend fun findUserById(userId: String): RepositoryResponse<String?> {
+        val remoteResponse = mRemoteMediator.findUserById(userId).firstOrNull()
+        return mResponseMediator.convertRealtimeDatabaseResponseForUi(remoteResponse)
     }
 
     override suspend fun tryToRegister(
