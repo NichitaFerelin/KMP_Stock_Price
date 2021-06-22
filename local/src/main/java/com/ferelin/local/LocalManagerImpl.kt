@@ -85,7 +85,7 @@ open class LocalManagerImpl @Inject constructor(
         mMessagesDao.insertMessage(message)
     }
 
-    override suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder {
+    override suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder? {
         return mMessagesDao.getMessagesAssociatedWithLogin(associatedLogin)
     }
 
