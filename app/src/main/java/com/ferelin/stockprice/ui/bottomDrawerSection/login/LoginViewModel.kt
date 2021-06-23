@@ -37,10 +37,6 @@ class LoginViewModel : BaseViewModel() {
     val stateIsLoading: StateFlow<Boolean>
         get() = mStateIsLoading
 
-    private val mStateIsUserRegistered = MutableStateFlow<Boolean?>(null)
-    val stateIsUserRegistered: StateFlow<Boolean?>
-        get() = mStateIsUserRegistered
-
     private var mInputPhoneNumber = ""
     private var mInputCode = ""
 
@@ -81,15 +77,6 @@ class LoginViewModel : BaseViewModel() {
             if (text.length == 6) {
                 mStateIsLoading.value = true
                 mDataInteractor.logInWithCode(text)
-            }
-        }
-    }
-
-    fun updateUserRegisterState() {
-        if (mStateIsUserRegistered.value == null) {
-            viewModelScope.launch(mCoroutineContext.IO) {
-                val isUserRegistered = mDataInteractor.isUserRegistered()
-                mStateIsUserRegistered.value = isUserRegistered
             }
         }
     }

@@ -19,12 +19,15 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.menu
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentMenuBinding
+import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemClickListener
+import com.ferelin.stockprice.ui.bottomDrawerSection.register.RegisterFragment
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,7 +44,26 @@ class MenuFragment : BaseFragment<FragmentMenuBinding, MenuViewModel, MenuViewCo
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpClickListeners()
-        mViewController.setArgumentsViewDependsOn(mViewModel.menuItemsAdapter)
+        mViewController.setArgumentsViewDependsOn(
+            menuItemsAdapter = mViewModel.menuItemsAdapter,
+            isWaitingForLoginResult = mViewModel.isWaitingForLoginResult,
+            isWaitingForRegisterResult = mViewModel.isWaitingForRegisterResult,
+            isUserAuthenticated = mViewModel.isUserAuthenticated
+        )
+
+        setFragmentResultListener(LoginFragment.LOGIN_REQUEST_KEY) { _, bundle ->
+            mViewController.onLoginResult(
+                this,
+                bundle,
+                mViewModel.stateIsUserRegister.value ?: false
+            )
+            mViewModel.isWaitingForLoginResult = false
+        }
+
+        setFragmentResultListener(RegisterFragment.REGISTER_REQUEST_KEY) { _, bundle ->
+            mViewController.onRegisterResult(this, bundle)
+            mViewModel.isWaitingForRegisterResult = false
+        }
     }
 
     override fun initObservers() {
@@ -53,9 +75,21 @@ class MenuFragment : BaseFragment<FragmentMenuBinding, MenuViewModel, MenuViewCo
     }
 
     override fun onMenuItemClicked(item: MenuItem) {
-        mViewController.onMenuItemClicked(this, item, onLogOut = {
-            mViewModel.onLogOut()
-        })
+        mViewController.onMenuItemClicked(
+            currentFragment = this,
+            item = item,
+            isUserAuthenticated = mViewModel.isUserAuthenticated,
+            isUserRegistered = mViewModel.stateIsUserRegister.value ?: false,
+            onLogOut = { mViewModel.onLogOut() }
+        )
+    }
+
+    fun onWaitingForLoginResult() {
+        mViewModel.isWaitingForLoginResult = true
+    }
+
+    fun onWaitingForRegisterResult() {
+        mViewModel.isWaitingForRegisterResult = true
     }
 
     private fun setUpClickListeners() {

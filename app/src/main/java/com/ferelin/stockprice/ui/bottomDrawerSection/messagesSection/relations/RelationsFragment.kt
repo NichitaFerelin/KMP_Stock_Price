@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentRelationsBinding
-import com.ferelin.stockprice.navigation.Navigator
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationClickListener
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.addUser.DialogAddUser
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations.adapter.RelationClickListener
 import kotlinx.coroutines.launch
 
 class RelationsFragment :
@@ -42,24 +41,27 @@ class RelationsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpClickListeners()
         mViewController.setArgumentsViewDependsOn(mViewModel.relationsAdapter)
         mViewModel.relationsAdapter.setOnClickListener(this)
-    }
 
-    override fun initObservers() {
-        super.initObservers()
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            collectStateUserRegister()
+        setFragmentResultListener(DialogAddUser.ADD_USER_REQUEST_KEY) { _, bundle ->
+            mViewModel.onAddUserResult(bundle)
         }
     }
 
     override fun onRelationClicked(position: Int) {
-        // navigate
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewController.onRelationClicked(this@RelationsFragment, position)
+        }
     }
 
-    private suspend fun collectStateUserRegister() {
-        mViewModel.userRegisterState
-            .filter { it != null }
-            .collect { Navigator.navigateToRegisterFragmentFromRelations(this) }
+    private fun setUpClickListeners() {
+        mViewController.viewBinding.run {
+            imageViewBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            imageViewAdd.setOnClickListener {
+                mViewController.onAddPersonClicked(this@RelationsFragment)
+            }
+        }
     }
 }

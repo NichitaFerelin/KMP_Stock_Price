@@ -16,9 +16,12 @@ package com.ferelin.stockprice.ui.stocksSection.stocksPager
  * limitations under the License.
  */
 
+import android.view.View
 import com.ferelin.stockprice.base.BaseViewModel
 
 class StocksPagerViewModel : BaseViewModel() {
+
+    var scrimVisibilityState: Int = View.GONE
 
     var arrowState: Float = 0F
 

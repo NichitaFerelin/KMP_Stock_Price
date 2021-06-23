@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.register
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
@@ -22,10 +22,9 @@ import android.content.Context
 import android.view.View
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
-import com.ferelin.stockprice.utils.anim.AnimatorManager
 import com.ferelin.stockprice.utils.invalidate
 
-class RegisterViewAnimator : BaseViewAnimator() {
+class ChatViewAnimator : BaseViewAnimator() {
 
     private lateinit var mScaleInOut: Animator
 
@@ -37,9 +36,8 @@ class RegisterViewAnimator : BaseViewAnimator() {
         mScaleInOut.invalidate()
     }
 
-    fun runScaleInOut(target: View, listener: AnimatorManager) {
+    fun runScaleInOut(target: View) {
         mScaleInOut.setTarget(target)
-        mScaleInOut.addListener(listener)
         mScaleInOut.start()
     }
 }

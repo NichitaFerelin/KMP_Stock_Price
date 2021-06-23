@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.chat
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.adapter.MessagesRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChatViewModel(val associatedUserLogin: String) : BaseViewModel() {
+class ChatViewModel(val relation: AdaptiveRelation) : BaseViewModel() {
 
     val messagesAdapter = MessagesRecyclerAdapter().apply {
         setHasStableIds(true)
     }
+
+    private val mEventNewItem = MutableSharedFlow<Unit>()
+    val eventNewItem: SharedFlow<Unit>
+        get() = mEventNewItem
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadMessagesError
@@ -42,25 +49,31 @@ class ChatViewModel(val associatedUserLogin: String) : BaseViewModel() {
     }
 
     fun onSendClicked(text: String) {
-        mAppScope.launch {
-            mDataInteractor.sendNewMessage(associatedUserLogin, text)
+        if (text.isNotEmpty()) {
+            mAppScope.launch {
+                mDataInteractor.sendNewMessage(relation.associatedUserLogin, text)
+            }
         }
     }
 
     private suspend fun collectStateMessages() {
-        mDataInteractor.getMessagesStateForLogin(associatedUserLogin).collect { notificator ->
-            when (notificator) {
-                is DataNotificator.DataPrepared -> {
-                    withContext(mCoroutineContext.Main) {
-                        messagesAdapter.setData(notificator.data!!.messages)
+        mDataInteractor.getMessagesStateForLogin(relation.associatedUserLogin)
+            .collect { notificator ->
+                Log.d("Test", "Notificator: $notificator")
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        withContext(mCoroutineContext.Main) {
+                            messagesAdapter.setData(notificator.data!!.messages)
+                        }
                     }
+                    is DataNotificator.NoData -> {
+                        mDataInteractor.loadMessagesAssociatedWithLogin(
+                            relation.associatedUserLogin
+                        )
+                    }
+                    else -> Unit
                 }
-                is DataNotificator.NoData -> {
-                    mDataInteractor.loadMessagesAssociatedWithLogin(associatedUserLogin)
-                }
-                else -> Unit
             }
-        }
     }
 
     private suspend fun collectSharedMessagesUpdates() {
@@ -68,6 +81,7 @@ class ChatViewModel(val associatedUserLogin: String) : BaseViewModel() {
             withContext(mCoroutineContext.Main) {
                 messagesAdapter.addItem(adaptiveMessage)
             }
+            mEventNewItem.emit(Unit)
         }
     }
 }

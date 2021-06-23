@@ -96,5 +96,11 @@
     <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
     <string name="titleMessages">Messages</string>
     <string name="hintUserLogin">Enter user login</string>
+    <string name="hintRegistration">Registration</string>
+    <string name="descriptionAddPerson">Add person to chat</string>
+
+    <string name="titleAuthorized">Authorized</string>
+    <string name="titleNotAuthorized">Not authorized</string>
+    <string name="descriptionSendMessage">Send message</string>
 
 </resources>

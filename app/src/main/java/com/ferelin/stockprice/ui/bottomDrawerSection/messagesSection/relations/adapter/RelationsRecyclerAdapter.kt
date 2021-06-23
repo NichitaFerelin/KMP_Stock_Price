@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations.adapter
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -44,10 +44,23 @@ class RelationsRecyclerAdapter(
         return mRelations.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return mRelations[position].id.toLong()
+    }
+
+    fun getRelation(position: Int): AdaptiveRelation {
+        return mRelations[position]
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun setData(items: List<AdaptiveRelation>) {
         mRelations = ArrayList(items)
         notifyDataSetChanged()
+    }
+
+    fun addItem(relation: AdaptiveRelation) {
+        mRelations.add(relation)
+        notifyItemInserted(mRelations.size - 1)
     }
 
     fun setOnClickListener(listener: RelationClickListener) {

@@ -19,6 +19,7 @@ package com.ferelin.stockprice.ui.stocksSection.stocksPager
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
@@ -28,9 +29,14 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.AlphaSlideAction
+import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.ArrowUpAction
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteFragment
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksFragment
 import com.ferelin.stockprice.utils.anim.AnimationManager
+import com.ferelin.stockprice.utils.bottomDrawer.BottomSheetManager
+import com.ferelin.stockprice.utils.isHidden
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.transition.Hold
 
 class StocksPagerViewController :
@@ -39,6 +45,11 @@ class StocksPagerViewController :
     override val mViewAnimator: StocksPagerViewAnimator = StocksPagerViewAnimator()
 
     private lateinit var mViewPagerChangeCallback: ViewPager2.OnPageChangeCallback
+
+    private var mBottomSheetBehavior: BottomSheetBehavior<FrameLayout>? = null
+    private val mBottomSheetManager: BottomSheetManager by lazy(LazyThreadSafetyMode.NONE) {
+        BottomSheetManager()
+    }
 
     override fun onCreateFragment(fragment: Fragment) {
         super.onCreateFragment(fragment)
@@ -50,16 +61,33 @@ class StocksPagerViewController :
         super.onViewCreated(savedInstanceState, fragment)
         postponeTransitions(fragment)
         setUpViewPager()
+        initBottomDrawer()
     }
 
     override fun onDestroyView() {
+        mBottomSheetBehavior = null
         viewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
         super.onDestroyView()
     }
 
-    fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter, arrowState: Float) {
+    fun setUpArgumentsViewDependsOn(
+        viewPagerAdapter: StocksPagerAdapter,
+        arrowState: Float,
+        scrimVisibilityState: Int
+    ) {
         viewBinding.viewPager.adapter = viewPagerAdapter
         viewBinding.bottomAppBarImageViewArrowUp.rotation = arrowState
+        restoreScrimState(scrimVisibilityState)
+    }
+
+    fun onControlButtonPressed() {
+        if (mBottomSheetBehavior!!.isHidden()) {
+            openDrawer()
+        } else closeDrawer()
+    }
+
+    fun onScrimClicked() {
+        closeDrawer()
     }
 
     fun onFabClicked(currentFragment: StocksPagerFragment) {
@@ -94,12 +122,37 @@ class StocksPagerViewController :
     }
 
     fun handleOnBackPressed(): Boolean {
-        if (viewBinding.viewPager.currentItem == 0) {
-            return false
+        return when {
+            viewBinding.viewPager.currentItem == 0 -> false
+            !mBottomSheetBehavior!!.isHidden() -> {
+                closeDrawer()
+                true
+            }
+            else -> {
+                viewBinding.viewPager.setCurrentItem(0, true)
+                true
+            }
         }
+    }
 
-        viewBinding.viewPager.setCurrentItem(0, true)
-        return true
+    private fun initBottomDrawer() {
+        mBottomSheetBehavior = BottomSheetBehavior.from(viewBinding.containerRoot)
+            .also {
+                it.addBottomSheetCallback(mBottomSheetManager)
+                it.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
+        mBottomSheetManager.apply {
+            addOnSlideAction(AlphaSlideAction(viewBinding.viewScrim))
+            addOnSlideAction(ArrowUpAction(viewBinding.bottomAppBarImageViewArrowUp))
+        }
+    }
+
+    private fun restoreScrimState(scrimVisibilityState: Int) {
+        if (scrimVisibilityState != View.GONE) {
+            viewBinding.viewScrim.visibility = scrimVisibilityState
+            viewBinding.viewScrim.alpha = 1F
+        }
     }
 
     private fun setUpViewPager() {
@@ -120,6 +173,14 @@ class StocksPagerViewController :
                 viewBinding.fab.scaleY = 1.0F
             }
         })
+    }
+
+    private fun openDrawer() {
+        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun closeDrawer() {
+        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun navigateToSearchFragment(fragment: Fragment) {

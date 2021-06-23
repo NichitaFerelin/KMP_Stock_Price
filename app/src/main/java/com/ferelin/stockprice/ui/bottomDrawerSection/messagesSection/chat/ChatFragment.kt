@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.chat
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.viewModelFactories.LoginViewModelFactory
@@ -28,12 +29,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChatFragment(associatedUserLogin: String? = null) :
+class ChatFragment(relation: AdaptiveRelation? = null) :
     BaseFragment<FragmentChatBinding, ChatViewModel, ChatViewController>() {
 
     override val mViewController = ChatViewController()
     override val mViewModel: ChatViewModel by viewModels {
-        LoginViewModelFactory(associatedUserLogin)
+        LoginViewModelFactory(relation)
     }
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChatBinding
@@ -43,7 +44,7 @@ class ChatFragment(associatedUserLogin: String? = null) :
         super.setUpViewComponents(savedInstanceState)
         mViewController.setArgumentsViewDependsOn(
             messagesRecyclerAdapter = mViewModel.messagesAdapter,
-            associatedUserLogin = mViewModel.associatedUserLogin
+            relation = mViewModel.relation
         )
         setUpClickListeners()
     }
@@ -51,18 +52,27 @@ class ChatFragment(associatedUserLogin: String? = null) :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            collectEventError()
+            launch { collectEventNewItem() }
+            launch { collectEventError() }
         }
     }
 
     private fun setUpClickListeners() {
         mViewController.viewBinding.run {
             imageViewSend.setOnClickListener {
-                mViewController.onSendClicked()
                 mViewModel.onSendClicked(mViewController.viewBinding.editTextMessage.text.toString())
+                mViewController.onSendClicked()
             }
             imageViewBack.setOnClickListener {
-                activity?.onBackPressed()
+                parentFragmentManager.popBackStack()
+            }
+        }
+    }
+
+    private suspend fun collectEventNewItem() {
+        mViewModel.eventNewItem.collect {
+            withContext(mCoroutineContext.Main) {
+                mViewController.onNewItem()
             }
         }
     }

@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations.adapter
 
-import android.content.Context
-import com.ferelin.stockprice.base.BaseViewAnimator
-
-class RelationsViewAnimator : BaseViewAnimator() {
-
-    override fun loadAnimations(context: Context) {
-
-    }
-
-    override fun invalidateAnimations() {
-
-    }
+interface RelationClickListener {
+    fun onRelationClicked(position: Int)
 }

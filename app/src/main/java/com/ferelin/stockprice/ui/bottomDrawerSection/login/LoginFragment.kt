@@ -19,15 +19,14 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.login
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
-import com.ferelin.stockprice.navigation.Navigator
-import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -39,13 +38,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoginBinding
         get() = FragmentLoginBinding::inflate
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy(LazyThreadSafetyMode.NONE) {
-        requireParentFragment() as BottomDrawerFragment
-    }
-
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
-        mBottomNavDrawer.openDrawer()
         setUpListeners()
     }
 
@@ -88,10 +82,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
 
     private suspend fun collectSignInState() {
         mViewModel.stateSignIn.collect {
-            collectUserRegisterState()
-            /*withContext(mCoroutineContext.Main) {
+            withContext(mCoroutineContext.Main) {
+                setFragmentResult(LOGIN_REQUEST_KEY, bundleOf(LOGIN_LOG_STATE_KEY to true))
                 mViewController.onSignIn()
-            }*/
+                parentFragmentManager.popBackStack()
+            }
         }
     }
 
@@ -111,25 +106,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
         }
     }
 
-    private suspend fun collectUserRegisterState() {
-        mViewModel.stateIsUserRegistered
-            .filter { it != null }
-            .collect { isRegistered ->
-                withContext(mCoroutineContext.Main) {
-                    if (isRegistered!!) {
-                        activity?.onBackPressed()
-                    } else {
-                        Navigator.navigateToRegisterFragmentFromRelations(this@LoginFragment)
-                    }
-                }
-            }
-    }
-
     private suspend fun collectErrorState() {
         mViewModel.eventError.collect { error ->
             withContext(mCoroutineContext.Main) {
                 mViewController.onError(error)
             }
         }
+    }
+
+    companion object {
+        const val LOGIN_REQUEST_KEY = "login_request_key"
+        const val LOGIN_LOG_STATE_KEY = "log_state_key"
     }
 }

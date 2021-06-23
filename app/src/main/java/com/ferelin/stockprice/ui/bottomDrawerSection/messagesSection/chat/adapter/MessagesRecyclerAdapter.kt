@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.chat.adapter
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
+import com.ferelin.shared.MessageSide
 import com.ferelin.stockprice.databinding.ItemMessageBinding
 
 class MessagesRecyclerAdapter(
@@ -28,6 +29,11 @@ class MessagesRecyclerAdapter(
 ) : RecyclerView.Adapter<MessagesRecyclerAdapter.MessageViewHolder>() {
 
     private var mMessages = arrayListOf<AdaptiveMessage>()
+
+    companion object {
+        const val RIGHT_SIDE_KEY = 1
+        const val LEFT_SIDE_KEY = 0
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return MessageViewHolder.from(parent)
@@ -44,6 +50,10 @@ class MessagesRecyclerAdapter(
         return mMessages.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return mMessages[position].id.toLong()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun setData(messages: List<AdaptiveMessage>) {
         mMessages = ArrayList(messages)
@@ -53,6 +63,12 @@ class MessagesRecyclerAdapter(
     fun addItem(message: AdaptiveMessage) {
         mMessages.add(message)
         notifyItemInserted(mMessages.size - 1)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (mMessages[position].side is MessageSide.Source) {
+            RIGHT_SIDE_KEY
+        } else LEFT_SIDE_KEY
     }
 
     class MessageViewHolder(

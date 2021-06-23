@@ -32,11 +32,20 @@ class MenuViewModel : BaseViewModel() {
     val menuItemsAdapter: MenuItemsAdapter
         get() = mMenuAdapter
 
+    val stateIsUserRegister: StateFlow<Boolean?>
+        get() = mDataInteractor.stateUserRegister
+
+    val isUserAuthenticated: Boolean
+        get() = mDataInteractor.isUserLogged()
+
     val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mDataInteractor.stateMenuItems
 
     val sharedLogOut: SharedFlow<Unit>
         get() = mDataInteractor.sharedLogOut
+
+    var isWaitingForLoginResult = false
+    var isWaitingForRegisterResult = false
 
     override fun initObserversBlock() {
         // Do nothing

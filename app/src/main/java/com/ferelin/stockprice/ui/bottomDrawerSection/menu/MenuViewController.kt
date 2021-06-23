@@ -17,19 +17,26 @@
 package com.ferelin.stockprice.ui.bottomDrawerSection.menu
 
 import android.content.Context
+import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentMenuBinding
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemType
 import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemsAdapter
+import com.ferelin.stockprice.ui.bottomDrawerSection.register.RegisterFragment
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.getString
 
 class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBinding>() {
 
     override val mViewAnimator: MenuViewAnimator = MenuViewAnimator()
+
+    private var mIsWaitingForLoginResult = false
+    private var mIsWaitingForRegisterResult = false
 
     override fun onDestroyView() {
         postponeReferencesRemove {
@@ -48,12 +55,19 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
     fun onMenuItemClicked(
         currentFragment: MenuFragment,
         item: MenuItem,
+        isUserAuthenticated: Boolean,
+        isUserRegistered: Boolean,
         onLogOut: () -> Unit
     ) {
         when (item.type) {
             is MenuItemType.LogIn -> Navigator.navigateToLoginFragment(currentFragment)
             is MenuItemType.LogOut -> showExitDialog(currentFragment.requireContext(), onLogOut)
-            is MenuItemType.Messages -> Navigator.navigateToRelationsFragment(currentFragment)
+
+            is MenuItemType.Messages -> navigateToRelations(
+                currentFragment,
+                isUserAuthenticated,
+                isUserRegistered
+            )
             is MenuItemType.Notes -> {/*Notes*/
             }
             is MenuItemType.Settings -> {/*Settings*/
@@ -61,12 +75,51 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
         }
     }
 
-    fun setArgumentsViewDependsOn(menuItemsItemsAdapter: MenuItemsAdapter) {
-        viewBinding.recyclerViewMenu.adapter = menuItemsItemsAdapter
+    fun setArgumentsViewDependsOn(
+        menuItemsAdapter: MenuItemsAdapter,
+        isWaitingForLoginResult: Boolean,
+        isWaitingForRegisterResult: Boolean,
+        isUserAuthenticated: Boolean
+    ) {
+        viewBinding.recyclerViewMenu.adapter = menuItemsAdapter
+        mIsWaitingForLoginResult = isWaitingForLoginResult
+        mIsWaitingForRegisterResult = isWaitingForRegisterResult
+
+        val titleText = if (isUserAuthenticated) {
+            getString(context, R.string.titleAuthorized)
+        } else getString(context, R.string.titleNotAuthorized)
+        viewBinding.textViewAuthorization.text = titleText
+    }
+
+    fun onLoginResult(currentFragment: MenuFragment, arguments: Bundle, isUserRegistered: Boolean) {
+        if (!mIsWaitingForLoginResult) {
+            return
+        }
+
+        val isUserAuthenticated = arguments[LoginFragment.LOGIN_LOG_STATE_KEY]
+        if (isUserAuthenticated is Boolean && isUserAuthenticated == true) {
+            navigateToRelations(currentFragment, isUserAuthenticated, isUserRegistered)
+        }
+    }
+
+    fun onRegisterResult(currentFragment: MenuFragment, arguments: Bundle) {
+        if (!mIsWaitingForRegisterResult) {
+            return
+        }
+
+        val isUserRegistered = arguments[RegisterFragment.REGISTER_REQUEST_KEY]
+        if (isUserRegistered is Boolean && isUserRegistered == true) {
+            navigateToRelations(
+                currentFragment,
+                isUserAuthenticated = true,
+                isUserRegistered = true
+            )
+        }
     }
 
     fun onLogOut() {
         try {
+            viewBinding.textViewAuthorization.text = getString(context, R.string.titleNotAuthorized)
             val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
             if (recyclerViewAdapter is MenuItemsAdapter) {
                 recyclerViewAdapter.onLogOutNotify()
@@ -81,6 +134,26 @@ class MenuViewController : BaseViewController<MenuViewAnimator, FragmentMenuBind
             *
             * I don't understand why this is happening
             * */
+        }
+    }
+
+    private fun navigateToRelations(
+        currentFragment: MenuFragment,
+        isUserAuthenticated: Boolean,
+        isUserRegistered: Boolean
+    ) {
+        when {
+            isUserAuthenticated && isUserRegistered -> {
+                Navigator.navigateToRelationsFragment(currentFragment)
+            }
+            !isUserAuthenticated -> {
+                currentFragment.onWaitingForLoginResult()
+                Navigator.navigateToLoginFragment(currentFragment)
+            }
+            !isUserRegistered -> {
+                currentFragment.onWaitingForRegisterResult()
+                Navigator.navigateToRegisterFragment(currentFragment)
+            }
         }
     }
 

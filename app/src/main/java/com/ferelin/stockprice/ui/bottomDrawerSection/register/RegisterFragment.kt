@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.register
+package com.ferelin.stockprice.ui.bottomDrawerSection.register
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
@@ -55,6 +57,9 @@ class RegisterFragment :
             imageViewIconCheck.setOnClickListener {
                 mViewModel.onIconCheckClicked(mViewController.viewBinding.editTextLogin.text.toString())
             }
+            imageViewBack.setOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
             editTextLogin.addTextChangedListener {
                 mViewController.onLoginChanged()
             }
@@ -64,9 +69,11 @@ class RegisterFragment :
     private suspend fun collectStateRegister() {
         mViewModel.stateRegistered.collect { registered ->
             if (registered) {
-                withContext(mCoroutineContext.Main) {
-                    activity?.onBackPressed()
-                }
+                setFragmentResult(
+                    requestKey = REGISTER_REQUEST_KEY,
+                    result = bundleOf(REGISTER_RESULT_KEY to true)
+                )
+                parentFragmentManager.popBackStack()
             }
         }
     }
@@ -77,5 +84,10 @@ class RegisterFragment :
                 mViewController.onError(message)
             }
         }
+    }
+
+    companion object {
+        const val REGISTER_REQUEST_KEY = "register_request_key"
+        const val REGISTER_RESULT_KEY = "register_result_key"
     }
 }

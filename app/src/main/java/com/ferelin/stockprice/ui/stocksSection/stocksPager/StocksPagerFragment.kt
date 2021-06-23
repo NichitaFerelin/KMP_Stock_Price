@@ -22,12 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.ArrowUpAction
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.ferelin.stockprice.navigation.Navigator
 
 class StocksPagerFragment :
     BaseFragment<FragmentStocksPagerBinding, StocksPagerViewModel, StocksPagerViewController>() {
@@ -38,10 +35,6 @@ class StocksPagerFragment :
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
         get() = FragmentStocksPagerBinding::inflate
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy {
-        childFragmentManager.findFragmentById(R.id.bottomNavigationDrawerContainer) as BottomDrawerFragment
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewController.setUpArgumentsViewDependsOn(
@@ -49,27 +42,40 @@ class StocksPagerFragment :
                 childFragmentManager,
                 viewLifecycleOwner.lifecycle
             ),
-            arrowState = mViewModel.arrowState
+            arrowState = mViewModel.arrowState,
+            scrimVisibilityState = mViewModel.scrimVisibilityState
         )
 
         setUpClickListeners()
         setUpBackPressedCallback()
-        configureBottomSheet()
+
+        if (savedInstanceState == null) {
+            Navigator.navigateToMenuFragment(this)
+        }
     }
 
     override fun onStop() {
         mViewModel.arrowState =
             if (mViewController.viewBinding.bottomAppBarImageViewArrowUp.rotation > 90F) 180F else 0F
+        mViewModel.scrimVisibilityState = mViewController.viewBinding.viewScrim.visibility
         super.onStop()
     }
 
     private fun setUpClickListeners() {
         with(mViewController.viewBinding) {
-            cardViewSearch.setOnClickListener { mViewController.onCardSearchClicked(this@StocksPagerFragment) }
+            cardViewSearch.setOnClickListener {
+                mViewController.onCardSearchClicked(this@StocksPagerFragment)
+            }
+
             textViewHintStocks.setOnClickListener { mViewController.onHintStocksClicked() }
             textViewHintFavourite.setOnClickListener { mViewController.onHintFavouriteClicked() }
-            fab.setOnClickListener { mViewController.onFabClicked(this@StocksPagerFragment) }
-            bottomAppBarLinearRoot.setOnClickListener { mBottomNavDrawer.onControlButtonPressed() }
+
+            fab.setOnClickListener {
+                mViewController.onFabClicked(this@StocksPagerFragment)
+            }
+
+            bottomAppBarLinearRoot.setOnClickListener { mViewController.onControlButtonPressed() }
+            viewScrim.setOnClickListener { mViewController.onScrimClicked() }
         }
     }
 
@@ -79,20 +85,10 @@ class StocksPagerFragment :
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (!mViewController.handleOnBackPressed()) {
-                        if (mBottomNavDrawer.bottomFragmentState == BottomSheetBehavior.STATE_EXPANDED) {
-                            mBottomNavDrawer.closeDrawer()
-                            return
-                        }
                         this.remove()
                         activity?.onBackPressed()
                     }
                 }
             })
-    }
-
-    private fun configureBottomSheet() {
-        mBottomNavDrawer.addOnSlideAction(
-            ArrowUpAction(mViewController.viewBinding.bottomAppBarImageViewArrowUp)
-        )
     }
 }

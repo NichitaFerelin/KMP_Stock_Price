@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationsRecyclerAdapter
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.addUser.DialogAddUser
+import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations.adapter.RelationsRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RelationsViewModel : BaseViewModel() {
-
-    private val mUserRegisterState = MutableStateFlow<Boolean?>(null)
-    val userRegisterState: StateFlow<Boolean?>
-        get() = mUserRegisterState
 
     val relationsAdapter = RelationsRecyclerAdapter().apply {
         setHasStableIds(true)
@@ -41,7 +37,20 @@ class RelationsViewModel : BaseViewModel() {
         viewModelScope.launch(mCoroutineContext.IO) {
             launch { collectStateUserRelations() }
             launch { collectSharedRelationUpdates() }
-            launch { getUserRegisterState() }
+        }
+    }
+
+    fun onAddUserResult(arguments: Bundle) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            val addedUserLogin = arguments[DialogAddUser.USER_LOGIN_KEY]
+            if (addedUserLogin is String && addedUserLogin.isNotEmpty()) {
+                mAppScope.launch {
+                    mDataInteractor.createNewRelation(
+                        sourceUserLogin = mDataInteractor.userLogin,
+                        associatedUserLogin = addedUserLogin
+                    )
+                }
+            }
         }
     }
 
@@ -65,16 +74,11 @@ class RelationsViewModel : BaseViewModel() {
                 }
                 is DataNotificator.NewItemAdded -> {
                     withContext(mCoroutineContext.Main) {
-                        relationsAdapter.notifyItemInserted(notificator.data!!.id)
+                        relationsAdapter.addItem(notificator.data!!)
                     }
                 }
                 else -> Unit
             }
         }
-    }
-
-    private suspend fun getUserRegisterState() {
-        val isUserRegistered = mDataInteractor.isUserRegistered()
-        mUserRegisterState.value = isUserRegistered
     }
 }

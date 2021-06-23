@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations.adapter
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.adapter
 
-interface RelationClickListener {
-    fun onRelationClicked(position: Int)
+interface MessageClickListener {
+    fun onMessageClicked(position: Int)
 }

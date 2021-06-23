@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.addUser
+package com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.addUser
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.DialogAddUserBinding
 
 class DialogAddUser : DialogFragment() {
@@ -36,6 +37,14 @@ class DialogAddUser : DialogFragment() {
     ): View {
         mBinding = DialogAddUserBinding.inflate(inflater, container, false)
         return mBinding!!.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dialog?.window?.setLayout(
+            resources.getDimension(R.dimen.dialogWidth).toInt(),
+            resources.getDimension(R.dimen.dialogHeight).toInt()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
