@@ -19,6 +19,7 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.relations
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.register.RegisterWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,8 @@ import javax.inject.Singleton
 
 @Singleton
 class RelationsWorker @Inject constructor(
-    private val mRepository: Repository
+    private val mRepository: Repository,
+    private val mRegisterWorker: RegisterWorker
 ) : RelationsWorkerStates {
 
     private var mRelations = mutableListOf<AdaptiveRelation>()
@@ -50,7 +52,10 @@ class RelationsWorker @Inject constructor(
 
         val relationsResponse = mRepository.getAllRelationsFromLocalDb()
         if (relationsResponse is RepositoryResponse.Success) {
-            onRelationsPrepared(relationsResponse.data)
+
+            if (relationsResponse.data.isEmpty()) {
+                loadRelationsFromRemote()
+            } else onRelationsPrepared(relationsResponse.data)
         }
     }
 
@@ -96,5 +101,21 @@ class RelationsWorker @Inject constructor(
     private fun onRelationsPrepared(items: List<AdaptiveRelation>) {
         mRelations = items.toMutableList()
         mStateUserRelations.value = DataNotificator.DataPrepared(mRelations)
+    }
+
+    private suspend fun loadRelationsFromRemote() {
+        mRegisterWorker.userLogin?.let { userLogin ->
+            val remoteRelations = mRepository.getUserRelationsFromRealtimeDb(userLogin)
+            if (remoteRelations is RepositoryResponse.Success) {
+                onRelationsPrepared(remoteRelations.data)
+                remoteRelations.data.forEach {
+                    mRepository.cacheNewRelationToRealtimeDb(
+                        relationId = it.id.toString(),
+                        sourceUserLogin = userLogin,
+                        secondSideUserLogin = it.associatedUserLogin
+                    )
+                }
+            }
+        }
     }
 }

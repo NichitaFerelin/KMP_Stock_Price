@@ -43,6 +43,7 @@ class RegisterWorker @Inject constructor(
         }
 
         val localIsRegistered = mRepository.getUserRegisterState() == true
+
         if (!localIsRegistered) {
             val remoteUserResponse =
                 mRepository.findUserById(mRepository.getUserAuthenticationId()!!)
@@ -56,7 +57,10 @@ class RegisterWorker @Inject constructor(
                 }
                 is RepositoryResponse.Failed -> mStateUserRegister.value = false
             }
-        } else mStateUserRegister.value = true
+        } else {
+            mUserLogin = mRepository.getUserLogin() ?: ""
+            mStateUserRegister.value = true
+        }
     }
 
     fun onLogOut() {
@@ -82,6 +86,7 @@ class RegisterWorker @Inject constructor(
             .onEach {
                 mStateUserRegister.value = true
                 mUserLogin = login
+                mRepository.setUserLogin(login)
                 mRepository.setUserRegisterState(true)
             }
             .map { (it as RepositoryResponse.Success).data }

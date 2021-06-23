@@ -173,8 +173,8 @@ class DataInteractorImpl @Inject constructor(
     override suspend fun prepareData() {
         prepareCompaniesData()
         prepareSearchesHistory()
-        mRelationsWorker.prepareUserRelations()
         mRegisterWorker.prepareUserRegisterState()
+        mRelationsWorker.prepareUserRelations()
     }
 
     override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
@@ -308,7 +308,7 @@ class DataInteractorImpl @Inject constructor(
         val repositoryResponse = mRepository.getFirstTimeLaunchState()
         return if (repositoryResponse is RepositoryResponse.Success) {
             repositoryResponse.data
-        } else false
+        } else true
     }
 
     private suspend fun prepareCompaniesData() {
