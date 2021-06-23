@@ -45,20 +45,22 @@ class MessagesHelperImpl @Inject constructor(
         sourceUserLogin: String,
         secondSideUserLogin: String
     ) = callbackFlow<BaseResponse<List<HashMap<String, String>>>> {
+        val encryptedSecondSideLogin = RealtimeDatabase.encrypt(secondSideUserLogin)
         mDatabaseFirebase
             .child(sMessagesRef)
             .child(sourceUserLogin)
-            .child(secondSideUserLogin)
+            .child(encryptedSecondSideLogin)
             .addValueEventListener(object : RealtimeValueEventListener() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         val messages = mutableListOf<HashMap<String, String>>()
                         for (messageSnapshot in snapshot.children) {
-                            snapshot.key?.let { messageSideWithId ->
+                            messageSnapshot.key?.let { messageSideWithId ->
                                 val messageSide = messageSideWithId[0].toString()
                                 val messageId = messageSideWithId.filter { it.isDigit() }
                                 val decryptedMessage =
-                                    RealtimeDatabase.decrypt(snapshot.value.toString())!!
+                                    RealtimeDatabase.decrypt(messageSnapshot.value.toString())!!
+
                                 messages.add(
                                     hashMapOf(
                                         MESSAGE_ID_KEY to messageId,

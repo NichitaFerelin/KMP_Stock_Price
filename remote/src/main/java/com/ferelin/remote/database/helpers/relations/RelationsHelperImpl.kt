@@ -17,6 +17,7 @@
 package com.ferelin.remote.database.helpers.relations
 
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.database.RealtimeValueEventListener
 import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
@@ -40,11 +41,12 @@ class RelationsHelperImpl @Inject constructor(
         secondSideUserLogin: String,
         relationId: String
     ) {
+        val encryptedSecondSideLogin = RealtimeDatabase.encrypt(secondSideUserLogin)
         mDatabaseFirebase
             .child(sRelationsRef)
             .child(sourceUserLogin)
             .child(relationId)
-            .setValue(secondSideUserLogin)
+            .setValue(encryptedSecondSideLogin)
     }
 
     override fun eraseRelation(sourceUserLogin: String, relationId: String) {

@@ -125,7 +125,7 @@ class RealtimeDatabaseImpl @Inject constructor(
         secondSideUserLogin: String
     ): Flow<BaseResponse<List<HashMap<String, String>>>> {
         return mMessagesHelper.getMessagesAssociatedWithSpecifiedUser(
-            secondSideUserLogin,
+            sourceUserLogin,
             secondSideUserLogin
         )
     }
