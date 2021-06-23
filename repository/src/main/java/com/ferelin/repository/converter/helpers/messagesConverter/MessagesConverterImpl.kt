@@ -50,9 +50,7 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
         response: BaseResponse<List<HashMap<String, String>>>
     ): RepositoryResponse<AdaptiveMessagesHolder> {
         return when (response.responseCode) {
-            Api.RESPONSE_NO_DATA -> {
-                RepositoryResponse.Failed<AdaptiveMessagesHolder>(message = RepositoryMessages.Empty)
-            }
+            Api.RESPONSE_NO_DATA -> RepositoryResponse.Failed(message = RepositoryMessages.Empty)
             Api.RESPONSE_OK -> {
                 RepositoryResponse.Success(
                     data = AdaptiveMessagesHolder(
@@ -70,7 +68,7 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
                                 side = messageSide,
                                 text = messageText
                             )
-                        }.toMutableList()
+                        }.sortedBy { it.id }.toMutableList()
                     )
                 )
             }

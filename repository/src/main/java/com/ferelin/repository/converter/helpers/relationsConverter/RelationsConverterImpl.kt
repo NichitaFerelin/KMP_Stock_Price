@@ -43,7 +43,7 @@ class RelationsConverterImpl @Inject constructor() : RelationsConverter {
                     id = relation.id,
                     associatedUserLogin = relation.associatedUserLogin
                 )
-            }
+            }.sortedBy { it.id }
         )
     }
 
@@ -57,7 +57,7 @@ class RelationsConverterImpl @Inject constructor() : RelationsConverter {
                         id = pair.first,
                         associatedUserLogin = pair.second
                     )
-                }
+                }.sortedBy { it.id }
             )
         } else RepositoryResponse.Failed()
     }
