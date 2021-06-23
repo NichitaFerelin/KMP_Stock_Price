@@ -85,18 +85,34 @@
         android:layout_marginTop="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <fragment
-        android:id="@+id/bottomNavigationDrawerContainer"
-        android:name="com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment"
+    <View
+        android:id="@+id/viewScrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:ignore="FragmentTagUsage"
-        tools:visibility="gone" />
+        android:alpha="0"
+        android:background="?attr/scrimBackground"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/containerRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/whiteDark"
+        app:behavior_hideable="true"
+        app:behavior_skipCollapsed="true"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/containerBottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/bottomAppBarHeight"
         android:layout_gravity="bottom"
         app:backgroundTint="@color/white"
         app:hideOnScroll="true">

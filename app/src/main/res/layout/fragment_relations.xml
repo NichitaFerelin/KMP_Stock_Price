@@ -2,14 +2,20 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_marginBottom="@dimen/bottomAppBarHeight"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout style="@style/appBar">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout style="@style/collapsingToolbar">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <ImageView
-                style="@style/imageView"
+                android:id="@+id/imageViewBack"
+                style="@style/clickableImage"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
                 android:contentDescription="@string/descriptionBack"
                 android:src="@drawable/ic_back" />
 
@@ -19,7 +25,15 @@
                 android:layout_gravity="center"
                 android:text="@string/titleMessages" />
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+            <ImageView
+                android:id="@+id/imageViewAdd"
+                style="@style/clickableImage"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_add_person"
+                android:contentDescription="@string/descriptionAddPerson" />
+
+        </FrameLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 

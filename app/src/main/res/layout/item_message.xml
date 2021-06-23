@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/whiteDark"
-    android:elevation="0dp"
+    android:backgroundTint="@color/white"
+    app:cardElevation="0dp"
     app:cardCornerRadius="8dp">
 
     <TextView
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:maxWidth="250dp"
-        android:padding="8dp"
-        tools:text="Message Message Message Message " />
+        android:padding="16dp"
+        tools:text="Message Message Message Message  ssssssssss" />
 
 </androidx.cardview.widget.CardView>
