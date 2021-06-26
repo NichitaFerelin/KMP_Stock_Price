@@ -23,7 +23,7 @@ class StocksPagerViewModel : BaseViewModel() {
 
     var scrimVisibilityState: Int = View.GONE
 
-    var arrowState: Float = 0F
+
 
     override fun initObserversBlock() {
         // Do nothing.

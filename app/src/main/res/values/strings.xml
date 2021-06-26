@@ -73,6 +73,7 @@
     <string name="menuLogIn">Log In</string>
     <string name="menuLogOut">Log Out</string>
     <string name="menuNotes">Notes</string>
+    <string name="menuStocks">Stocks</string>
     <string name="menuMessages">Messages</string>
     <string name="menuSettings">Settings</string>
 

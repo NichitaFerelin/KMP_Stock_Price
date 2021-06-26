@@ -25,15 +25,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.login.LoginFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.MenuFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.ChatFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.relations.RelationsFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.register.RegisterFragment
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
@@ -48,12 +42,8 @@ object Navigator {
     private const val sStackNameBottomDrawer = "bottom-stack"
 
     fun navigateToLoadingFragment(currentActivity: MainActivity) {
-        currentActivity.run {
-            if (currentActivity.supportFragmentManager.fragments.isEmpty()) {
-                supportFragmentManager.commit {
-                    add(R.id.fragmentContainer, LoadingFragment())
-                }
-            }
+        currentActivity.supportFragmentManager.commit {
+            add(R.id.fragmentContainer, LoadingFragment())
         }
     }
 
@@ -83,73 +73,12 @@ object Navigator {
 
     fun navigateToAboutPagerFragment(
         selectedCompany: AdaptiveCompany,
-        fragmentManager: FragmentManager,
-        onCommit: ((FragmentTransaction) -> Unit)? = null
+        fragmentManager: FragmentManager
     ) {
         fragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.fragmentContainer, AboutPagerFragment(selectedCompany))
             addToBackStack(sStackNameMain)
-            onCommit?.invoke(this)
-        }
-    }
-
-    fun navigateToMenuFragment(currentFragment: Fragment) {
-        currentFragment.childFragmentManager.commit {
-            replace(R.id.containerBottom, MenuFragment())
-            addToBackStack(sStackNameBottomDrawer)
-        }
-    }
-
-    fun navigateToLoginFragment(currentFragment: Fragment) {
-        currentFragment.parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_right,
-                R.anim.slide_left,
-                R.anim.slide_right,
-                R.anim.slide_left
-            )
-            replace(R.id.containerBottom, LoginFragment())
-            addToBackStack(sStackNameBottomDrawer)
-        }
-    }
-
-    fun navigateToRelationsFragment(currentFragment: Fragment) {
-        currentFragment.parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_right,
-                R.anim.slide_left,
-                R.anim.slide_right,
-                R.anim.slide_left
-            )
-            replace(R.id.containerBottom, RelationsFragment())
-            addToBackStack(sStackNameBottomDrawer)
-        }
-    }
-
-    fun navigateToRegisterFragment(currentFragment: Fragment) {
-        currentFragment.parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_right,
-                R.anim.slide_left,
-                R.anim.slide_right,
-                R.anim.slide_left
-            )
-            replace(R.id.containerBottom, RegisterFragment())
-            addToBackStack(sStackNameBottomDrawer)
-        }
-    }
-
-    fun navigateToChatFragment(currentFragment: Fragment, relation: AdaptiveRelation) {
-        currentFragment.parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_right,
-                R.anim.slide_left,
-                R.anim.slide_right,
-                R.anim.slide_left
-            )
-            replace(R.id.containerBottom, ChatFragment(relation))
-            addToBackStack(sStackNameBottomDrawer)
         }
     }
 

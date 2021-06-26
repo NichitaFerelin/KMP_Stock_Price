@@ -19,7 +19,7 @@ package com.ferelin.stockprice.viewModelFactories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
-import com.ferelin.stockprice.ui.bottomDrawerSection.messagesSection.chat.ChatViewModel
+import com.ferelin.stockprice.ui.messagesSection.chat.ChatViewModel
 import javax.inject.Inject
 import javax.inject.Singleton
 

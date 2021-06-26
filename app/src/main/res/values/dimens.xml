@@ -43,7 +43,7 @@
 
     <dimen name="relationMarginHorizontal">30dp</dimen>
     <dimen name="relationMarginBetween">8dp</dimen>
-    <dimen name="bottomAppBarHeight">45dp</dimen>
+    <dimen name="bottomAppBarHeight">56dp</dimen>
 
     <dimen name="messageMarginTop">8dp</dimen>
     <dimen name="messageMarginStart">16dp</dimen>

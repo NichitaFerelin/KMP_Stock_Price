@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
+import com.ferelin.stockprice.ui.MainActivity
 
 /**
  * [BaseFragment] is the fundament for fragments.
@@ -61,7 +62,7 @@ abstract class BaseFragment<
      * To avoid a lot of repetitive code, view inflates in the base class. For such an
      * implementation, need to override this variable in the subclass.
      * */
-    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType
+    abstract val mBindingInflater: ((LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType)?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,9 +75,11 @@ abstract class BaseFragment<
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewBinding = mBindingInflater.invoke(inflater, container, false)
-        mViewController.setViewBinding(viewBinding)
-        return viewBinding.root
+        return mBindingInflater?.let { bindingInflater ->
+            val viewBinding = bindingInflater.invoke(inflater, container, false)
+            mViewController.setViewBinding(viewBinding)
+            return@let viewBinding.root
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,6 +102,27 @@ abstract class BaseFragment<
 
     protected open fun initObservers() {
         mViewModel.initObservers()
+    }
+
+    fun handleBottomDrawerOnBack(): Boolean {
+        val hostActivity = requireActivity()
+        return if (hostActivity is MainActivity) {
+            hostActivity.handleOnBackPressed()
+        } else false
+    }
+
+    fun hideBottomBar() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            hostActivity.hideBottomBar()
+        }
+    }
+
+    fun showBottomBar() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            hostActivity.showBottomBar()
+        }
     }
 
     override fun onDestroyView() {

@@ -88,6 +88,30 @@ class MessagesWorker @Inject constructor(
         }
     }
 
+    suspend fun findNewMessages(sourceUserLogin: String, associatedUserLogin: String) {
+        val repositoryResponse = mRepository
+            .getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
+                sourceUserLogin = sourceUserLogin,
+                secondSideUserLogin = associatedUserLogin
+            ).firstOrNull()
+
+        if (repositoryResponse is RepositoryResponse.Success) {
+            val actualMessages = repositoryResponse.data
+            val previousCachedMessages = mMessagesHolders[associatedUserLogin]!!.messages
+
+            if (actualMessages.messages.size == previousCachedMessages.size) {
+                return
+            }
+
+            for (index in previousCachedMessages.size until actualMessages.messages.size) {
+                val newMessage = actualMessages.messages[index]
+                previousCachedMessages.add(newMessage)
+                mSharedMessagesUpdates.emit(newMessage)
+            }
+            mRepository.cacheMessagesHolderToLocalDb(mMessagesHolders[associatedUserLogin]!!)
+        }
+    }
+
     suspend fun onNewMessageReceived(
         sourceUserLogin: String,
         associatedUserLogin: String,

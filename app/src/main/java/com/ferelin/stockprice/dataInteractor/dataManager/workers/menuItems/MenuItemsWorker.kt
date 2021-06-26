@@ -18,8 +18,8 @@ package com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems
 
 import android.content.Context
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItemType
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,18 +51,25 @@ class MenuItemsWorker @Inject constructor(
     private val mMenuItems = mutableListOf(
         MenuItem(
             id = 2,
+            type = MenuItemType.Stocks,
+            iconResource = R.drawable.ic_stocks,
+            title = context.getString(R.string.menuStocks),
+            isSelected = true
+        ),
+        MenuItem(
+            id = 3,
             type = MenuItemType.Notes,
             iconResource = R.drawable.ic_note,
             title = context.getString(R.string.menuNotes)
         ),
         MenuItem(
-            id = 3,
+            id = 4,
             type = MenuItemType.Messages,
             iconResource = R.drawable.ic_message,
             title = context.getString(R.string.menuMessages)
         ),
         MenuItem(
-            id = 4,
+            id = 5,
             type = MenuItemType.Settings,
             iconResource = R.drawable.ic_settings,
             title = context.getString(R.string.menuSettings)

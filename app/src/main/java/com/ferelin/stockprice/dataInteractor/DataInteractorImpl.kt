@@ -32,7 +32,7 @@ import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.Relat
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.StockHistoryConverter
 import kotlinx.coroutines.flow.*
@@ -292,6 +292,10 @@ class DataInteractorImpl @Inject constructor(
             associatedUserLogin = associatedUserLogin,
             text = text
         )
+    }
+
+    override suspend fun findNewMessages(sourceUserLogin: String, associatedUserLogin: String) {
+        mMessagesWorker.findNewMessages(sourceUserLogin, associatedUserLogin)
     }
 
     override fun provideNetworkStateFlow(): Flow<Boolean> {

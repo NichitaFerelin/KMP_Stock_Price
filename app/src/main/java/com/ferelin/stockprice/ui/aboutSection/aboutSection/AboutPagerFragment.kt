@@ -27,6 +27,7 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.custom.OrderedTextView
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,6 +43,13 @@ class AboutPagerFragment(
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
         get() = FragmentAboutPagerBinding::inflate
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
+        }
+    }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)

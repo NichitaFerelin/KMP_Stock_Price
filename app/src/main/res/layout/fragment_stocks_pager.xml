@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -84,70 +84,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <View
-        android:id="@+id/viewScrim"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="?attr/scrimBackground"
-        android:visibility="gone" />
-
-    <FrameLayout
-        android:id="@+id/containerRoot"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/whiteDark"
-        app:behavior_hideable="true"
-        app:behavior_skipCollapsed="true"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/containerBottom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottomAppBarHeight"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/white"
-        app:hideOnScroll="true">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/bottomAppBarLinearRoot"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:foreground="@drawable/ripple_bottom_app_bar"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="8dp"
-            android:paddingEnd="16dp"
-            tools:ignore="UnusedAttribute">
-
-            <ImageView
-                android:id="@+id/bottomAppBarImageViewArrowUp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_arrow_drop_up"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/bottomAppBarTitle"
-                style="@style/textViewH3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/hintMenu" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

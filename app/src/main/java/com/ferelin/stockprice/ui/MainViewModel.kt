@@ -32,6 +32,12 @@ class MainViewModel : BaseViewModel() {
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged
 
+    private var mObserverCompanyCollectorJob: Job? = null
+
+    private var mNetworkWasLost: Boolean = false
+
+    private var mPrepareDataJob: Job? = null
+
     val stateIsNetworkAvailable: Flow<Boolean>
         get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
             viewModelScope.launch(mCoroutineContext.IO) {
@@ -49,6 +55,9 @@ class MainViewModel : BaseViewModel() {
 
     var isServiceRunning = false
 
+    var arrowState: Float = 0F
+    var bottomAppBarState: Float = 0F
+
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
 
@@ -57,12 +66,6 @@ class MainViewModel : BaseViewModel() {
 
     val eventOnFavouriteCompaniesLimitError: SharedFlow<String>
         get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
-
-    private var mObserverCompanyCollectorJob: Job? = null
-
-    private var mNetworkWasLost: Boolean = false
-
-    private var mPrepareDataJob: Job? = null
 
     override fun initObserversBlock() {
         viewModelScope.launch(Dispatchers.IO) {

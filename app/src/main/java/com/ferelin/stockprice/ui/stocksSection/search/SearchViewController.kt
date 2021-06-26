@@ -45,7 +45,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     override val mViewAnimator: SearchViewAnimator = SearchViewAnimator()
 
-    override val mStocksRecyclerView: RecyclerView
+    override val stocksRecyclerView: RecyclerView
         get() = viewBinding.recyclerViewSearchResults
 
     override fun onCreateFragment(fragment: Fragment) {
@@ -65,7 +65,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     override fun onDestroyView() {
         postponeReferencesRemove {
-            mStocksRecyclerView.adapter = null
+            stocksRecyclerView.adapter = null
             viewBinding.recyclerViewSearchedHistory.adapter = null
             viewBinding.recyclerViewPopularRequests.adapter = null
             super.onDestroyView()
@@ -88,7 +88,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
             onSearchTickerClicked(item)
         }
         stocksRecyclerAdapter.setHeader(context.resources.getString(R.string.hintStocks))
-        mStocksRecyclerView.adapter = stocksRecyclerAdapter
+        stocksRecyclerView.adapter = stocksRecyclerAdapter
         viewBinding.recyclerViewSearchedHistory.adapter = searchesHistoryRecyclerAdapter
         viewBinding.recyclerViewPopularRequests.adapter = popularSearchesRecyclerAdapter
 

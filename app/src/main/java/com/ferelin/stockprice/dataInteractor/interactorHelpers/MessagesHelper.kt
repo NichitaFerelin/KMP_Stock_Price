@@ -29,4 +29,6 @@ interface MessagesHelper {
     suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String)
 
     suspend fun sendNewMessage(associatedUserLogin: String, text: String)
+
+    suspend fun findNewMessages(sourceUserLogin: String, associatedUserLogin: String)
 }

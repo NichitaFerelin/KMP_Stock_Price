@@ -13,4 +13,5 @@
     <color name="blue">#187BCD</color>
     <color name="gradientEnd">#DCDCDC</color>
     <color name="gradientStart">#00EBEBEB</color>
+    <color name="blueLight">#E2EDFF</color>
 </resources>

@@ -32,19 +32,21 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
 
     override val mViewAnimator: BaseStocksViewAnimator = BaseStocksViewAnimator()
 
-    override val mStocksRecyclerView: RecyclerView
+    override val stocksRecyclerView: RecyclerView
         get() = viewBinding.recyclerViewStocks
 
     override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         super.onViewCreated(savedInstanceState, fragment)
-        mStocksRecyclerView.setHasFixedSize(true)
+        stocksRecyclerView.setHasFixedSize(true)
     }
 
     override fun onDestroyView() {
         postponeReferencesRemove {
-            mStocksRecyclerView.adapter = null
+            stocksRecyclerView.adapter = null
             super.onDestroyView()
         }
+
+
     }
 
     fun setArgumentsViewDependsOn(
@@ -52,7 +54,7 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
         fragmentManager: FragmentManager
     ) {
         super.fragmentManager = fragmentManager
-        mStocksRecyclerView.adapter = stocksAdapter
+        stocksRecyclerView.adapter = stocksAdapter
     }
 
     fun onCompaniesLoaded(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
