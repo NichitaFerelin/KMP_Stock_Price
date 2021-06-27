@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.chats
 
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
-interface RelationsHelper {
+interface ChatsWorkerStates {
 
-    suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String)
+    val stateUserRelations: StateFlow<DataNotificator<List<AdaptiveRelation>>>
 
-    suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation)
+    val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
 }

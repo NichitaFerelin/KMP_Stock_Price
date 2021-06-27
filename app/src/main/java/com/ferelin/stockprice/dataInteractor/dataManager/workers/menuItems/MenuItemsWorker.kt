@@ -54,7 +54,6 @@ class MenuItemsWorker @Inject constructor(
             type = MenuItemType.Stocks,
             iconResource = R.drawable.ic_stocks,
             title = context.getString(R.string.menuStocks),
-            isSelected = true
         ),
         MenuItem(
             id = 3,
@@ -64,7 +63,7 @@ class MenuItemsWorker @Inject constructor(
         ),
         MenuItem(
             id = 4,
-            type = MenuItemType.Messages,
+            type = MenuItemType.Chats,
             iconResource = R.drawable.ic_message,
             title = context.getString(R.string.menuMessages)
         ),

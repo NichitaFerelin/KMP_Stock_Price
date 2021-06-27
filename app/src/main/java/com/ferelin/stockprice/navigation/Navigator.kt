@@ -28,57 +28,69 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
+import com.ferelin.stockprice.ui.login.LoginFragment
+import com.ferelin.stockprice.ui.messagesSection.chats.ChatsFragment
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
+import com.ferelin.stockprice.utils.withTimerOnUi
 
 /**
  * [Navigator] represents a class that provides ability to navigate between fragments.
  */
-object Navigator {
+class Navigator(private val mHostActivity: MainActivity) {
 
-    private const val sStackNameMain = "main-stack"
-    private const val sStackNameBottomDrawer = "bottom-stack"
+    private val mChatsTag = "chats"
+    private val mStocksPagerTag = "stocksPager"
 
-    fun navigateToLoadingFragment(currentActivity: MainActivity) {
-        currentActivity.supportFragmentManager.commit {
-            add(R.id.fragmentContainer, LoadingFragment())
+    fun navigateToLoadingFragment() {
+        replaceMainContainerBy(LoadingFragment())
+    }
+
+    fun navigateToLoginFragment() {
+        mHostActivity.hideBottomBar()
+        replaceMainContainerBy(LoginFragment(), addToBackStack = true)
+    }
+
+    fun navigateToChatsFragment() {
+        mHostActivity.showFab()
+        if (!contains(mChatsTag)) {
+            replaceMainContainerBy(ChatsFragment(), mChatsTag)
         }
     }
 
-    fun navigateToWelcomeFragment(currentFragment: Fragment) {
-        currentFragment.parentFragmentManager.commit {
-            replace(R.id.fragmentContainer, WelcomeFragment())
+    fun navigateToWelcomeFragment() {
+        replaceMainContainerBy(WelcomeFragment())
+    }
+
+    fun navigateToStocksPagerFragment() {
+        mHostActivity.showFab()
+        if (!contains(mStocksPagerTag)) {
+            // To avoid animation abort
+            replaceMainContainerBy(StocksPagerFragment(), mStocksPagerTag)
         }
     }
 
-    fun navigateToStocksPagerFragment(currentFragment: Fragment) {
-        currentFragment.parentFragmentManager.commit {
-            replace(R.id.fragmentContainer, StocksPagerFragment())
-        }
+    fun navigateToDrawerHostFragment() {
+        withTimerOnUi(500) { mHostActivity.showBottomBar() }
+        replaceMainContainerBy(StocksPagerFragment(),  mStocksPagerTag)
     }
 
-    fun navigateToSearchFragment(
-        currentFragment: Fragment,
-        onCommit: ((FragmentTransaction) -> Unit)? = null
-    ) {
-        currentFragment.parentFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.fragmentContainer, SearchFragment())
-            addToBackStack(sStackNameMain)
-            onCommit?.invoke(this)
-        }
+    fun navigateToSearchFragment(onCommit: ((FragmentTransaction) -> Unit)? = null) {
+        mHostActivity.hideBottomBar()
+        replaceMainContainerBy(SearchFragment(), addToBackStack = true, onCommit = onCommit)
     }
 
     fun navigateToAboutPagerFragment(
         selectedCompany: AdaptiveCompany,
         fragmentManager: FragmentManager
     ) {
+        mHostActivity.hideBottomBar()
         fragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.fragmentContainer, AboutPagerFragment(selectedCompany))
-            addToBackStack(sStackNameMain)
+            addToBackStack(null)
         }
     }
 
@@ -91,6 +103,32 @@ object Navigator {
     fun navigateToContacts(context: Context, phone: String): Boolean {
         val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null))
         return launchIntent(intent, context)
+    }
+
+    fun navigateBackToHostFragment() {
+        mHostActivity.supportFragmentManager.popBackStack()
+        withTimerOnUi(200) { mHostActivity.showBottomBar() }
+    }
+
+    private fun contains(tag: String): Boolean {
+        return mHostActivity
+            .supportFragmentManager
+            .fragments
+            .find { it.tag == tag } != null
+    }
+
+    private fun replaceMainContainerBy(
+        fragment: Fragment,
+        tag: String? = null,
+        addToBackStack: Boolean = false,
+        onCommit: ((FragmentTransaction) -> Unit)? = null
+    ) {
+        mHostActivity.supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.fragmentContainer, fragment, tag)
+            if (addToBackStack) addToBackStack(null)
+            onCommit?.invoke(this)
+        }
     }
 
     private fun launchIntent(intent: Intent, context: Context): Boolean {

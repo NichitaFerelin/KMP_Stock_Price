@@ -27,6 +27,8 @@ class MenuItemsAdapter(
 ) : RecyclerView.Adapter<MenuItemsAdapter.MenuItemViewHolder>() {
 
     private var mMenuItems = emptyList<MenuItem>()
+    val menuItems: List<MenuItem>
+        get() = mMenuItems.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuItemViewHolder {
         return MenuItemViewHolder.from(parent)
@@ -69,7 +71,6 @@ class MenuItemsAdapter(
         fun bind(menuItem: MenuItem) {
             binding.imageViewIcon.setImageResource(menuItem.iconResource)
             binding.textViewTitle.text = menuItem.title
-            binding.root.isPressed = menuItem.isSelected
         }
 
         companion object {

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationsRecyclerAdapter
+import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RelationsViewModel : BaseViewModel() {
+class ChatsViewModel : BaseViewModel() {
 
-    val relationsAdapter = RelationsRecyclerAdapter().apply {
+    val relationsAdapter = ChatRecyclerAdapter().apply {
         setHasStableIds(true)
     }
 

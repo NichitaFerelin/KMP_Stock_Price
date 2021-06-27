@@ -92,10 +92,10 @@
 
     <string name="errorBadLogin">Login must not contain ".#$[]"</string>
     <string name="errorLoginExists">Login is already exists</string>
-    <string name="errorUndefiend">Undefined error</string>
+    <string name="errorUndefined">Undefined error</string>
 
     <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
-    <string name="titleMessages">Messages</string>
+    <string name="titleChats">Chats</string>
     <string name="hintUserLogin">Enter user login</string>
     <string name="hintRegistration">Registration</string>
     <string name="descriptionAddPerson">Add person to chat</string>
@@ -103,5 +103,7 @@
     <string name="titleAuthorized">Authorized</string>
     <string name="titleNotAuthorized">Not authorized</string>
     <string name="descriptionSendMessage">Send message</string>
+    <string name="hintAuthentication">Authentication by phone number</string>
+    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
 
 </resources>

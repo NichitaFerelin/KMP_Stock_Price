@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
@@ -24,7 +24,7 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewAnimator
 import com.ferelin.stockprice.utils.invalidate
 
-class RelationsViewAnimator : BaseViewAnimator() {
+class ChatsViewAnimator : BaseViewAnimator() {
 
     private lateinit var mScaleInOutAnimator: Animator
 

@@ -22,13 +22,13 @@ import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.authentication.AuthenticationWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.chats.ChatsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.menuItems.MenuItemsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.messages.MessagesWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.network.NetworkConnectivityWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.register.RegisterWorker
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.dataManager.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
@@ -58,7 +58,7 @@ class DataInteractorImpl @Inject constructor(
     private val mMenuItemsWorker: MenuItemsWorker,
     private val mErrorsWorker: ErrorsWorker,
     private val mMessagesWorker: MessagesWorker,
-    private val mRelationsWorker: RelationsWorker,
+    private val mChatsWorker: ChatsWorker,
     private val mAuthenticationWorker: AuthenticationWorker,
     private val mWebSocketWorker: WebSocketWorker,
     private val mRegisterWorker: RegisterWorker,
@@ -104,9 +104,9 @@ class DataInteractorImpl @Inject constructor(
     override val searchRequests: List<AdaptiveSearchRequest>
         get() = mSearchRequestsWorker.searchRequests
 
-    override val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
-
+    /**
+     * Menu items states
+     * */
     override val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mMenuItemsWorker.stateMenuItems
 
@@ -114,8 +114,8 @@ class DataInteractorImpl @Inject constructor(
         get() = mMenuItemsWorker.sharedLogOut
 
     /*
-    * Errors states
-    * */
+        * Errors states
+        * */
     override val sharedLoadMessagesError: SharedFlow<String>
         get() = mErrorsWorker.sharedLoadMessagesError
 
@@ -147,10 +147,10 @@ class DataInteractorImpl @Inject constructor(
      * Relations states
      * */
     override val stateUserRelations: StateFlow<DataNotificator<List<AdaptiveRelation>>>
-        get() = mRelationsWorker.stateUserRelations
+        get() = mChatsWorker.stateUserRelations
 
     override val sharedUserRelationsUpdates: SharedFlow<DataNotificator<AdaptiveRelation>>
-        get() = mRelationsWorker.sharedUserRelationsUpdates
+        get() = mChatsWorker.sharedUserRelationsUpdates
 
     /**
      * Register states
@@ -167,14 +167,21 @@ class DataInteractorImpl @Inject constructor(
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
         get() = mMessagesWorker.sharedMessagesHolderUpdates
 
+    override val stateIsNetworkAvailable: StateFlow<Boolean>
+        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
+
+    override val stateUserLogged: StateFlow<Boolean?>
+        get() = mAuthenticationWorker.stateUserLogged
+
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
     override suspend fun prepareData() {
         prepareCompaniesData()
         prepareSearchesHistory()
+        mAuthenticationWorker.prepareAuthenticationState()
         mRegisterWorker.prepareUserRegisterState()
-        mRelationsWorker.prepareUserRelations()
+        mChatsWorker.prepareUserRelations()
     }
 
     override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {
@@ -208,15 +215,11 @@ class DataInteractorImpl @Inject constructor(
             phone,
             onLogStateChanged = { logState ->
                 mRegisterWorker.onLogIn()
-                mRelationsWorker.onLogIn()
+                mChatsWorker.onLogIn()
                 mMenuItemsWorker.onLogStateChanged(logState)
             },
             onError = { message -> mErrorsWorker.onAuthenticationError(message) }
         )
-    }
-
-    override fun isUserLogged(): Boolean {
-        return mAuthenticationWorker.isUserLogged()
     }
 
     override fun logInWithCode(code: String) {
@@ -225,7 +228,7 @@ class DataInteractorImpl @Inject constructor(
 
     override suspend fun logOut() {
         mRegisterWorker.onLogOut()
-        mRelationsWorker.onLogOut()
+        mChatsWorker.onLogOut()
         mMessagesWorker.onLogOut()
         mAuthenticationWorker.logOut()
         mMenuItemsWorker.onLogStateChanged(mRepository.isUserAuthenticated())
@@ -253,11 +256,11 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String) {
-        mRelationsWorker.createNewRelation(sourceUserLogin, associatedUserLogin)
+        mChatsWorker.createNewRelation(sourceUserLogin, associatedUserLogin)
     }
 
     override suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation) {
-        mRelationsWorker.removeRelation(sourceUserLogin, relation)
+        mChatsWorker.removeRelation(sourceUserLogin, relation)
     }
 
     override suspend fun cacheNewSearchRequest(searchText: String) {

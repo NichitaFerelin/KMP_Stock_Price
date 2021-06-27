@@ -21,10 +21,7 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.syncManager.SynchronizationManager
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +29,15 @@ import javax.inject.Singleton
 class AuthenticationWorker @Inject constructor(
     private val mRepository: Repository,
     private val mSynchronizationManager: SynchronizationManager
-) {
+) : AuthenticationWorkerStates {
+
+    private val mStateUserLogged = MutableStateFlow<Boolean?>(null)
+    override val stateUserLogged: StateFlow<Boolean?>
+        get() = mStateUserLogged
+
+    fun prepareAuthenticationState() {
+        mStateUserLogged.value = mRepository.isUserAuthenticated()
+    }
 
     suspend fun signIn(
         holderActivity: Activity,
@@ -45,6 +50,7 @@ class AuthenticationWorker @Inject constructor(
                 when (response) {
                     is RepositoryResponse.Success -> {
                         if (response.data is RepositoryMessages.Ok) {
+                            mStateUserLogged.value = true
                             onLogStateChanged.invoke(mRepository.isUserAuthenticated())
                             mSynchronizationManager.onLogIn()
                         }
@@ -56,16 +62,13 @@ class AuthenticationWorker @Inject constructor(
             .map { (it as RepositoryResponse.Success).data }
     }
 
-    fun isUserLogged(): Boolean {
-        return mRepository.isUserAuthenticated()
-    }
-
     fun logInWithCode(code: String) {
         mRepository.logInWithCode(code)
     }
 
     suspend fun logOut() {
         mRepository.setUserRegisterState(false)
+        mStateUserLogged.value = false
         mRepository.logOut()
         mSynchronizationManager.onLogOut()
     }

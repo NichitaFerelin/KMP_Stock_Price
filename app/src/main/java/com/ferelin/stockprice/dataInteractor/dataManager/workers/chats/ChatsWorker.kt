@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.dataManager.workers.relations
+package com.ferelin.stockprice.dataInteractor.dataManager.workers.chats
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
@@ -29,10 +29,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RelationsWorker @Inject constructor(
+class ChatsWorker @Inject constructor(
     private val mRepository: Repository,
     private val mRegisterWorker: RegisterWorker
-) : RelationsWorkerStates {
+) : ChatsWorkerStates {
 
     private var mRelations = mutableListOf<AdaptiveRelation>()
 

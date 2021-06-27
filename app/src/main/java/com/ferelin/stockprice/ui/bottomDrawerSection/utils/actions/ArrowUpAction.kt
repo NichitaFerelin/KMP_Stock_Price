@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.bottomDrawerSection.utils.onSlide
+package com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions
 
 import android.view.View
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
 import com.ferelin.stockprice.utils.normalize
 
 /**
- * Changes the alpha of [view] when a bottom sheet is slid.
+ * A slide action which rotates a view counterclockwise by 180 degrees between the hidden state
+ * and the half expanded state.
  */
-class AlphaSlideAction(
-    private val view: View,
-    private val reverse: Boolean = false
+class ArrowUpAction(
+    private val view: View
 ) : OnSlideAction {
 
     override fun onSlide(sheet: View, slideOffset: Float) {
-        val alpha = slideOffset.normalize(-1F, 0F, 0F, 1F)
-        view.alpha = if (!reverse) alpha else 1F - alpha
-
-        if (view.alpha == 0F && view.visibility == View.VISIBLE) {
-            view.visibility = View.GONE
-        } else if (view.alpha != 0F && view.visibility == View.GONE) {
-            view.visibility = View.VISIBLE
-        }
+        view.rotation = slideOffset.normalize(
+            -1F,
+            0F,
+            0F,
+            180F
+        )
     }
 }

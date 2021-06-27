@@ -11,25 +11,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/imageViewBack"
-                style="@style/clickableImage"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:contentDescription="@string/descriptionBack"
-                android:src="@drawable/ic_back" />
-
             <TextView
                 style="@style/textViewH2"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/titleMessages" />
+                android:text="@string/titleChats" />
 
             <ImageView
                 android:id="@+id/imageViewAdd"
                 style="@style/clickableImage"
                 android:layout_gravity="center_vertical|end"
-                android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_add_person"
                 android:contentDescription="@string/descriptionAddPerson" />
 

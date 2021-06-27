@@ -64,6 +64,10 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         outState.putFloat(sEnterCodeAlphaKey, mEnterCodeAlpha)
     }
 
+    fun onBackPressed() {
+        mNavigator?.navigateBackToHostFragment()
+    }
+
     fun onPhoneNumberChanged(phone: String) {
         with(viewBinding) {
             if (phone == mLastInputPhone) {

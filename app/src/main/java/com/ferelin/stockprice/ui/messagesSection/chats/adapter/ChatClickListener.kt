@@ -14,26 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.bottomDrawerSection.utils.onSlide
+package com.ferelin.stockprice.ui.messagesSection.chats.adapter
 
-import android.view.View
-import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
-import com.ferelin.stockprice.utils.normalize
-
-/**
- * A slide action which rotates a view counterclockwise by 180 degrees between the hidden state
- * and the half expanded state.
- */
-class ArrowUpAction(
-    private val view: View
-) : OnSlideAction {
-
-    override fun onSlide(sheet: View, slideOffset: Float) {
-        view.rotation = slideOffset.normalize(
-            -1F,
-            0F,
-            0F,
-            180F
-        )
-    }
+interface ChatClickListener {
+    fun onRelationClicked(position: Int)
 }

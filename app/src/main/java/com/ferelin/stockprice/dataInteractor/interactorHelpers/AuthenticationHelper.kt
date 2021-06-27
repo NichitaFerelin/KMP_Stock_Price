@@ -27,8 +27,6 @@ interface AuthenticationHelper {
         phone: String,
     ): Flow<RepositoryMessages>
 
-    fun isUserLogged(): Boolean
-
     fun logInWithCode(code: String)
 
     suspend fun logOut()

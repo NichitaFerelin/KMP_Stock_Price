@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.databinding.FragmentRelationsBinding
+import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationItemDecoration
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationsRecyclerAdapter
+import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatItemDecoration
+import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatRecyclerAdapter
 
-class RelationsViewController :
-    BaseViewController<RelationsViewAnimator, FragmentRelationsBinding>() {
+class ChatsViewController :
+    BaseViewController<ChatsViewAnimator, FragmentChatsBinding>() {
 
-    override val mViewAnimator = RelationsViewAnimator()
+    override val mViewAnimator = ChatsViewAnimator()
 
     override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         super.onViewCreated(savedInstanceState, fragment)
-        viewBinding.recyclerViewRelations.addItemDecoration(RelationItemDecoration(context))
+        viewBinding.recyclerViewRelations.addItemDecoration(ChatItemDecoration(context))
     }
 
     override fun onDestroyView() {
@@ -41,7 +41,7 @@ class RelationsViewController :
         }
     }
 
-    fun setArgumentsViewDependsOn(adapter: RelationsRecyclerAdapter) {
+    fun setArgumentsViewDependsOn(adapter: ChatRecyclerAdapter) {
         viewBinding.recyclerViewRelations.adapter = adapter
     }
 
@@ -52,7 +52,7 @@ class RelationsViewController :
 
     fun onRelationClicked(currentFragment: Fragment, position: Int) {
         val recyclerAdapter = viewBinding.recyclerViewRelations.adapter
-        if (recyclerAdapter is RelationsRecyclerAdapter) {
+        if (recyclerAdapter is ChatRecyclerAdapter) {
             val targetRelation = recyclerAdapter.getRelation(position)
             //Navigator.navigateToChatFragment(currentFragment, targetRelation)
         }

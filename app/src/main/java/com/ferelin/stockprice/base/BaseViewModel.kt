@@ -33,6 +33,7 @@ abstract class BaseViewModel : ViewModel() {
     @Inject
     protected lateinit var mAppScope: CoroutineScope
 
+    // TODO Impl to Interface
     @Inject
     protected lateinit var mDataInteractor: DataInteractorImpl
 

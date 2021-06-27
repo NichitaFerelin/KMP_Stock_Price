@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations.adapter
+package com.ferelin.stockprice.ui.messagesSection.chats.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -23,9 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveRelation
 import com.ferelin.stockprice.databinding.ItemRelationBinding
 
-class RelationsRecyclerAdapter(
-    private var mRelationClickListener: RelationClickListener? = null
-) : RecyclerView.Adapter<RelationsRecyclerAdapter.RelationsViewHolder>() {
+class ChatRecyclerAdapter(
+    private var mChatClickListener: ChatClickListener? = null
+) : RecyclerView.Adapter<ChatRecyclerAdapter.RelationsViewHolder>() {
 
     private var mRelations = arrayListOf<AdaptiveRelation>()
 
@@ -36,7 +36,7 @@ class RelationsRecyclerAdapter(
     override fun onBindViewHolder(holder: RelationsViewHolder, position: Int) {
         holder.bind(mRelations[position].associatedUserLogin)
         holder.binding.root.setOnClickListener {
-            mRelationClickListener?.onRelationClicked(position)
+            mChatClickListener?.onRelationClicked(position)
         }
     }
 
@@ -63,8 +63,8 @@ class RelationsRecyclerAdapter(
         notifyItemInserted(mRelations.size - 1)
     }
 
-    fun setOnClickListener(listener: RelationClickListener) {
-        mRelationClickListener = listener
+    fun setOnClickListener(listener: ChatClickListener) {
+        mChatClickListener = listener
     }
 
     class RelationsViewHolder(

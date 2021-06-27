@@ -110,7 +110,7 @@ open class ErrorsWorker @Inject constructor(
         val errorMessage = when (message) {
             is RepositoryMessages.BadLogin -> getString(mContext, R.string.errorBadLogin)
             is RepositoryMessages.AlreadyExists -> getString(mContext, R.string.errorLoginExists)
-            else -> getString(mContext, R.string.errorUndefiend)
+            else -> getString(mContext, R.string.errorUndefined)
         }
         mSharedRegisterError.emit(errorMessage)
     }

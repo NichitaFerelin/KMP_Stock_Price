@@ -89,6 +89,10 @@ class AboutPagerViewController :
         mViewAnimator.runScaleInOut(viewBinding.imageViewStar)
     }
 
+    fun onBackPressed() {
+        handleOnBackPressed()
+    }
+
     fun onDataChanged(companyName: String, companySymbol: String, favouriteIconResource: Int) {
         viewBinding.run {
             textViewCompanyName.text = companyName
@@ -97,11 +101,10 @@ class AboutPagerViewController :
         }
     }
 
-    fun handleOnBackPressed(): Boolean {
-        return if (isNotFirstPageSelected()) {
+    private fun handleOnBackPressed() {
+        if (isNotFirstPageSelected()) {
             viewBinding.viewPager.setCurrentItem(0, true)
-            true
-        } else false
+        } else mNavigator?.navigateBackToHostFragment()
     }
 
     private fun setUpViewPager() {

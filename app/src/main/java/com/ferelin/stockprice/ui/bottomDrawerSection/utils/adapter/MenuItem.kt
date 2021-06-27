@@ -23,8 +23,7 @@ data class MenuItem(
     val id: Int,
     val type: MenuItemType,
     val iconResource: Int,
-    val title: String,
-    var isSelected: Boolean = false
+    val title: String
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is MenuItem) {

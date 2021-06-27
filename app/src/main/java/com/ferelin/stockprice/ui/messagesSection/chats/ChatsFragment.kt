@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations
+package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,20 +24,28 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
-import com.ferelin.stockprice.databinding.FragmentRelationsBinding
+import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
-import com.ferelin.stockprice.ui.messagesSection.relations.adapter.RelationClickListener
+import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatClickListener
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.launch
 
-class RelationsFragment :
-    BaseFragment<FragmentRelationsBinding, RelationsViewModel, RelationsViewController>(),
-    RelationClickListener {
+class ChatsFragment :
+    BaseFragment<FragmentChatsBinding, ChatsViewModel, ChatsViewController>(),
+    ChatClickListener {
 
-    override val mViewController = RelationsViewController()
-    override val mViewModel: RelationsViewModel by viewModels()
+    override val mViewController = ChatsViewController()
+    override val mViewModel: ChatsViewModel by viewModels()
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentRelationsBinding
-        get() = FragmentRelationsBinding::inflate
+    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChatsBinding
+        get() = FragmentChatsBinding::inflate
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,16 +60,13 @@ class RelationsFragment :
 
     override fun onRelationClicked(position: Int) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewController.onRelationClicked(this@RelationsFragment, position)
+            mViewController.onRelationClicked(this@ChatsFragment, position)
         }
     }
 
     private fun setUpClickListeners() {
-        mViewController.viewBinding.run {
-            imageViewBack.setOnClickListener { parentFragmentManager.popBackStack() }
-            imageViewAdd.setOnClickListener {
-                mViewController.onAddPersonClicked(this@RelationsFragment)
-            }
+        mViewController.viewBinding.imageViewAdd.setOnClickListener {
+            mViewController.onAddPersonClicked(this@ChatsFragment)
         }
     }
 }

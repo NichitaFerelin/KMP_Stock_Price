@@ -27,7 +27,6 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.common.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
-import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.showDefaultDialog
 
@@ -61,8 +60,8 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
 
     fun onNewsUrlClicked(company: AdaptiveCompany, position: Int) {
         val url = company.companyNews.browserUrls[position]
-        val isNavigated = Navigator.navigateToUrl(context, url)
-        if (!isNavigated) {
+        val isNavigated = mNavigator?.navigateToUrl(context, url)
+        if (isNavigated == false) {
             showDefaultDialog(context, context.getString(R.string.errorNoAppToOpenUrl))
         }
     }

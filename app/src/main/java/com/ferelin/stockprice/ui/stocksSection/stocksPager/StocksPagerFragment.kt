@@ -24,7 +24,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 
@@ -42,9 +41,7 @@ class StocksPagerFragment :
         enterTransition = MaterialFadeThrough().apply {
             duration = 300L
         }
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = 200L
-        }
+        exitTransition = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,20 +55,15 @@ class StocksPagerFragment :
 
         setUpClickListeners()
         setUpBackPressedCallback()
-
-        if (savedInstanceState == null) {
-            // To avoid animation abort
-            withTimerOnUi(500) { showBottomBar() }
-        }
     }
 
     private fun setUpClickListeners() {
         with(mViewController.viewBinding) {
             cardViewSearch.setOnClickListener {
-                // TODO. Migrates to navigation component
-                hideBottomBar()
-
-                mViewController.onCardSearchClicked(this@StocksPagerFragment)
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration = 200L
+                }
+                mViewController.onCardSearchClicked()
             }
 
             textViewHintStocks.setOnClickListener { mViewController.onHintStocksClicked() }

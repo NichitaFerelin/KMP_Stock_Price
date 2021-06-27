@@ -110,7 +110,9 @@ class AboutPagerFragment(
     }
 
     private fun setUpImageClickListeners() {
-        mViewController.viewBinding.imageViewBack.setOnClickListener { popBackStack() }
+        mViewController.viewBinding.imageViewBack.setOnClickListener {
+            mViewController.onBackPressed()
+        }
         mViewController.viewBinding.imageViewStar.setOnClickListener {
             mViewModel.onFavouriteIconClicked()
             mViewController.onFavouriteIconClicked()
@@ -119,9 +121,7 @@ class AboutPagerFragment(
 
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (!mViewController.handleOnBackPressed()) {
-                popBackStack()
-            }
+            mViewController.onBackPressed()
         }
     }
 
@@ -130,10 +130,5 @@ class AboutPagerFragment(
             viewLifecycleOwner,
             mOnBackPressedCallback
         )
-    }
-
-    private fun popBackStack() {
-        mOnBackPressedCallback.remove()
-        activity?.onBackPressed()
     }
 }

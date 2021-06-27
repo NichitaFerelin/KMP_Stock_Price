@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations.adapter
+package com.ferelin.stockprice.ui.messagesSection.chats.adapter
 
 import android.content.Context
 import android.graphics.Rect
@@ -22,7 +22,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
 
-class RelationItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+class ChatItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -32,9 +32,10 @@ class RelationItemDecoration(private val mContext: Context) : RecyclerView.ItemD
     ) {
         super.getItemOffsets(outRect, view, parent, state)
         val horizontalMargin = mContext.resources.getDimension(R.dimen.relationMarginHorizontal).toInt()
+        val verticalMargin = mContext.resources.getDimension(R.dimen.relationMarginBetween).toInt()
         outRect.left = horizontalMargin
         outRect.right = horizontalMargin
-        outRect.top = mContext.resources.getDimension(R.dimen.relationMarginBetween).toInt()
-        outRect.bottom = mContext.resources.getDimension(R.dimen.relationMarginBetween).toInt()
+        outRect.top = verticalMargin
+        outRect.bottom = verticalMargin
     }
 }

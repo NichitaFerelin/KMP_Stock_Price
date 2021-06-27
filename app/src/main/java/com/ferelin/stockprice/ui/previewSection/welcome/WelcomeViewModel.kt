@@ -18,15 +18,15 @@ package com.ferelin.stockprice.ui.previewSection.welcome
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.stockprice.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class WelcomeViewModel : ViewModel() {
+class WelcomeViewModel : BaseViewModel() {
 
     private val mActionMoveToNextScreen = MutableStateFlow(false)
     val actionMoveToNextScreen: StateFlow<Boolean>
@@ -56,8 +56,15 @@ class WelcomeViewModel : ViewModel() {
         onStartScene()
     }
 
+    override fun initObserversBlock() {
+        // Do nothing
+    }
+
     fun onBtnClicked() {
         viewModelScope.launch(Dispatchers.IO) {
+
+            mAppScope.launch { mDataInteractor.setFirstTimeLaunchState(false) }
+
             mBtnDoneVisible.postValue(false)
             delay(200)
             mHintApiLimitVisible.postValue(false)

@@ -67,6 +67,7 @@ abstract class BaseFragment<
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        initNavigator()
         mViewController.onCreateFragment(this)
     }
 
@@ -134,6 +135,13 @@ abstract class BaseFragment<
         val application = requireActivity().application
         if (application is App) {
             application.appComponent.inject(mViewModel)
+        }
+    }
+
+    private fun initNavigator() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            mViewController.setNavigator(hostActivity.navigator)
         }
     }
 }

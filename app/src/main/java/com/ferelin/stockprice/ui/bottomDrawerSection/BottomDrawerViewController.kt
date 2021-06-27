@@ -26,14 +26,14 @@ import androidx.fragment.app.Fragment
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentBottomDrawerBinding
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.AlphaSlideAction
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.OnStateChangedAction
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemsAdapter
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.onSlide.AlphaSlideAction
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.bottomDrawer.BottomSheetManager
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
-import com.ferelin.stockprice.utils.isHidden
 import com.ferelin.stockprice.utils.themeColor
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -89,21 +89,32 @@ class BottomDrawerViewController :
         }
     }
 
-    fun onMenuItemClicked(
-        currentFragment: Fragment,
-        item: MenuItem,
-        onLogOut: () -> Unit
-    ) {
+    fun onMenuItemClicked(item: MenuItem, onLogOut: () -> Unit) {
         when (item.type) {
-            is MenuItemType.LogIn -> {
-            }/*Navigator.navigateToLoginFragment(currentFragment)*/
-            is MenuItemType.LogOut -> showExitDialog(currentFragment.requireContext(), onLogOut)
-            is MenuItemType.Messages -> {
+            is MenuItemType.Stocks -> {
+
+                closeDrawer()
+                mNavigator?.navigateToStocksPagerFragment()
             }
-            is MenuItemType.Notes -> {/*Notes*/
+            is MenuItemType.Chats -> {
+                closeDrawer()
+                mNavigator?.navigateToChatsFragment()
             }
-            is MenuItemType.Settings -> {/*Settings*/
+            is MenuItemType.Notes -> {
+                /*closeDrawer()
+                recyclerAdapter.setSelected(item)
+                Notes*/
             }
+            is MenuItemType.Settings -> {
+                /*closeDrawer()
+                recyclerAdapter.setSelected(item)
+                Settings*/
+            }
+            is MenuItemType.LogIn ->{
+                closeDrawer()
+                mNavigator?.navigateToLoginFragment()
+            }
+            is MenuItemType.LogOut -> showExitDialog(context, onLogOut)
         }
     }
 
@@ -130,6 +141,10 @@ class BottomDrawerViewController :
         mBottomSheetManager.addOnSlideAction(action)
     }
 
+    fun addOnStateAction(action: OnStateChangedAction) {
+        mBottomSheetManager.addOnStateAction(action)
+    }
+
     fun handleOnBackPressed(): Boolean {
         return if (mBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED
             || mBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_HALF_EXPANDED
@@ -137,12 +152,6 @@ class BottomDrawerViewController :
             closeDrawer()
             true
         } else false
-    }
-
-    fun initDrawerStateToChange() {
-        if (mBottomSheetBehavior!!.isHidden()) {
-            openDrawer()
-        } else closeDrawer()
     }
 
     fun openDrawer() {

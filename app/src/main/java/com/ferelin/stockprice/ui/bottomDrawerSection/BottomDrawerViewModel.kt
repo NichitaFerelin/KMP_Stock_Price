@@ -27,19 +27,14 @@ import kotlinx.coroutines.launch
 
 class BottomDrawerViewModel : BaseViewModel() {
 
-    private val mMenuAdapter = MenuItemsAdapter().apply {
+    val menuAdapter = MenuItemsAdapter().apply {
         setHasStableIds(true)
     }
-    val menuItemsAdapter: MenuItemsAdapter
-        get() = mMenuAdapter
 
     var scrimVisibilityState: Int = View.GONE
 
     val stateIsUserRegister: StateFlow<Boolean?>
         get() = mDataInteractor.stateUserRegister
-
-    val isUserAuthenticated: Boolean
-        get() = mDataInteractor.isUserLogged()
 
     val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mDataInteractor.stateMenuItems

@@ -16,16 +16,21 @@
 
 package com.ferelin.stockprice.ui.login
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.Slide
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
+import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,9 +43,24 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoginBinding
         get() = FragmentLoginBinding::inflate
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialContainerTransform().apply {
+            startView = requireActivity().findViewById(R.id.mainFab)
+            endViewId = R.id.loginRoot
+            scrimColor = Color.TRANSPARENT
+            duration = 350L
+        }
+        returnTransition = Slide().apply {
+            duration = 225L
+            addTarget(R.id.loginRoot)
+        }
+    }
+
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpListeners()
+        setUpBackPressedCallback()
     }
 
     override fun initObservers() {
@@ -75,7 +95,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
                 mViewModel.onCodeChanged(it.toString())
             }
             imageViewBack.setOnClickListener {
-                parentFragmentManager.popBackStack()
+                mViewController.onBackPressed()
             }
         }
     }
@@ -112,6 +132,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
                 mViewController.onError(error)
             }
         }
+    }
+
+    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            mViewController.onBackPressed()
+        }
+    }
+
+    private fun setUpBackPressedCallback() {
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            mOnBackPressedCallback
+        )
     }
 
     companion object {

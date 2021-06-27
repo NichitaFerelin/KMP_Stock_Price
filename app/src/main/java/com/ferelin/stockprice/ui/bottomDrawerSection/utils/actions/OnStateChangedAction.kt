@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.relations.adapter
+package com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions
 
-interface RelationClickListener {
-    fun onRelationClicked(position: Int)
+interface OnStateChangedAction {
+
+    fun onStateChanged(newState: Int)
 }

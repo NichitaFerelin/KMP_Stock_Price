@@ -27,7 +27,6 @@ import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemAnimator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
@@ -79,7 +78,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     }
 
     fun onStockClicked(company: AdaptiveCompany) {
-        Navigator.navigateToAboutPagerFragment(company, fragmentManager!!)
+        mNavigator?.navigateToAboutPagerFragment(company, fragmentManager!!)
     }
 
     fun onFabClicked() {

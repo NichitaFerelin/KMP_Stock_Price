@@ -28,6 +28,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentProfileBinding
 import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 
@@ -38,6 +39,13 @@ class ProfileFragment(private val mSelectedCompany: AdaptiveCompany? = null) : F
 
     private val mViewModel: ProfileViewModel by viewModels {
         CompanyViewModelFactory(mSelectedCompany)
+    }
+
+    private var mNavigator: Navigator? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initNavigator()
     }
 
     override fun onCreateView(
@@ -83,15 +91,15 @@ class ProfileFragment(private val mSelectedCompany: AdaptiveCompany? = null) : F
     private fun setUpListeners() {
         mBinding!!.textViewWebUrl.setOnClickListener {
             val url = mViewModel.companyWebUrl
-            val isNavigated = Navigator.navigateToUrl(requireContext(), url)
-            if (!isNavigated) {
+            val isNavigated = mNavigator?.navigateToUrl(requireContext(), url)
+            if (isNavigated == false) {
                 showNoAppError()
             }
         }
 
         mBinding!!.textViewPhone.setOnClickListener {
-            val isNavigated = Navigator.navigateToContacts(requireContext(), mViewModel.phone)
-            if (!isNavigated) {
+            val isNavigated = mNavigator?.navigateToContacts(requireContext(), mViewModel.phone)
+            if (isNavigated == false) {
                 showNoAppError()
             }
         }
@@ -99,5 +107,12 @@ class ProfileFragment(private val mSelectedCompany: AdaptiveCompany? = null) : F
 
     private fun showNoAppError() {
         showDefaultDialog(requireContext(), getString(R.string.errorNoAppToOpenUrl))
+    }
+
+    private fun initNavigator() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            mNavigator = hostActivity.navigator
+        }
     }
 }

@@ -22,7 +22,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
-import com.ferelin.stockprice.dataInteractor.dataManager.workers.relations.RelationsWorker
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.chats.ChatsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -31,7 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class MessagesWorker @Inject constructor(
     private val mRepository: Repository,
-    private val mRelationWorker: RelationsWorker
+    private val mRelationWorker: ChatsWorker
 ) : MessagesWorkerStates {
 
     private var mMessagesHolders: LinkedHashMap<String, AdaptiveMessagesHolder> = LinkedHashMap(20)

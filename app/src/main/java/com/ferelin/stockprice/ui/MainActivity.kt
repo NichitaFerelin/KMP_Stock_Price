@@ -21,8 +21,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -34,10 +32,11 @@ import com.ferelin.stockprice.databinding.ActivityMainBinding
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.onSlide.ArrowUpAction
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
 import com.ferelin.stockprice.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 
@@ -47,6 +46,8 @@ class MainActivity(
 
     @Inject
     lateinit var dataInteractor: DataInteractorImpl
+
+    val navigator: Navigator by lazy(LazyThreadSafetyMode.NONE) { Navigator(this) }
 
     private val mViewModel: MainViewModel by viewModels()
     private var mViewBinding: ActivityMainBinding? = null
@@ -59,9 +60,6 @@ class MainActivity(
 
     private var mMessagesForServiceCollectorJob: Job? = null
 
-    private lateinit var mSlideToBottom: Animation
-    private lateinit var mSlideToTop: Animation
-
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
 
@@ -70,17 +68,46 @@ class MainActivity(
         setContentView(mViewBinding!!.root)
 
         if (savedInstanceState == null) {
-            // TODO. Migrates to navigation component
             hideBottomBar()
             mViewBinding!!.bottomAppBar.visibility = View.GONE
-            mViewBinding!!.fab.visibility = View.GONE
+            mViewBinding!!.mainFab.visibility = View.GONE
         }
 
         initObservers()
         setUpViewComponents()
 
         if (savedInstanceState == null) {
-            Navigator.navigateToLoadingFragment(this)
+            navigator.navigateToLoadingFragment()
+        }
+
+        lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewModel.isUserLogged
+                .filter { it != null }
+                .collect { isLogged ->
+                    withContext(mCoroutineContext.Main) {
+                        if (isLogged!!) {
+                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                        } else {
+                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                        }
+                    }
+                }
+        }
+
+        mViewBinding!!.mainFab.setOnClickListener {
+            lifecycleScope.launch(mCoroutineContext.IO) {
+                mViewModel.isUserLogged
+                    .filter { it != null }
+                    .collect {
+                        if (it!!) {
+
+                        } else {
+                            withContext(mCoroutineContext.Main) {
+                                navigator.navigateToLoginFragment()
+                            }
+                        }
+                    }
+            }
         }
     }
 
@@ -101,7 +128,6 @@ class MainActivity(
 
     override fun onDestroy() {
         saveState()
-        stopAnimations()
         StockObserverController.stopService(this@MainActivity)
         mViewBinding = null
         super.onDestroy()
@@ -109,30 +135,25 @@ class MainActivity(
 
     fun hideBottomBar() {
         with(mViewBinding!!) {
-            fab.hide()
+            mainFab.hide()
             bottomAppBar.performHide()
         }
     }
 
     fun showBottomBar() {
         with(mViewBinding!!) {
-            if(bottomAppBar.visibility != View.VISIBLE) {
+            if (bottomAppBar.visibility != View.VISIBLE) {
                 bottomAppBar.visibility = View.VISIBLE
-                fab.visibility = View.VISIBLE
+                mainFab.visibility = View.VISIBLE
             }
 
             bottomAppBar.performShow()
-            fab.show()
+            mainFab.show()
         }
     }
 
     fun handleOnBackPressed(): Boolean {
         return mBottomNavDrawer.handleOnBackPressed()
-    }
-
-    private fun stopAnimations() {
-        mSlideToBottom.invalidate()
-        mSlideToTop.invalidate()
     }
 
     private fun saveState() {
@@ -144,10 +165,10 @@ class MainActivity(
     private fun onControlButtonPressed() {
         if (mBottomNavDrawer.isDrawerHidden) {
             mBottomNavDrawer.openDrawer()
-            mViewBinding!!.fab.hide()
+            mViewBinding!!.mainFab.hide()
         } else {
+            mViewBinding!!.mainFab.show()
             mBottomNavDrawer.closeDrawer()
-            mViewBinding!!.fab.show()
         }
     }
 
@@ -158,6 +179,14 @@ class MainActivity(
                 appComponent.inject(mViewModel)
             }
         }
+    }
+
+    fun showFab() {
+        mViewBinding!!.mainFab.show()
+    }
+
+    fun hideFab() {
+        mViewBinding!!.mainFab.hide()
     }
 
     private fun initObservers() {
@@ -200,9 +229,6 @@ class MainActivity(
 
     private fun setUpViewComponents() {
         setStatusBarColor()
-
-        mSlideToBottom = AnimationUtils.loadAnimation(this, R.anim.slide_bottom)
-        mSlideToTop = AnimationUtils.loadAnimation(this, R.anim.slide_top)
 
         mViewBinding!!.run {
             bottomAppBarImageViewArrowUp.rotation = mViewModel.arrowState
