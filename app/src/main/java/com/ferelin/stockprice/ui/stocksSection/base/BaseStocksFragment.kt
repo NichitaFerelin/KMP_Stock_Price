@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.stocksSection.base
 
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
@@ -40,24 +39,6 @@ abstract class BaseStocksFragment<
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         mViewModel.stocksRecyclerAdapter.setOnStockCLickListener(this)
-
-        // Hides bottom bar on scroll
-        mViewController.stocksRecyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-
-            private var mIsHidden = false
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && !mIsHidden) {
-                    mIsHidden = true
-                    hideBottomBar()
-                } else if (dy < 0 && mIsHidden) {
-                    mIsHidden = false
-                    showBottomBar()
-                }
-            }
-        })
     }
 
     override fun initObservers() {
@@ -68,7 +49,6 @@ abstract class BaseStocksFragment<
     }
 
     override fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
-        hideBottomBar()
         mViewController.onStockClicked(company)
     }
 

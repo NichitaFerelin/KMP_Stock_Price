@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
@@ -54,7 +53,10 @@ class StocksPagerFragment :
         )
 
         setUpClickListeners()
-        setUpBackPressedCallback()
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        return mViewController.handleOnBackPressed()
     }
 
     private fun setUpClickListeners() {
@@ -73,18 +75,5 @@ class StocksPagerFragment :
                 mViewController.onFabClicked(this@StocksPagerFragment)
             }
         }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (!mViewController.handleOnBackPressed()) {
-                        this.remove()
-                        activity?.onBackPressed()
-                    }
-                }
-            })
     }
 }

@@ -18,23 +18,17 @@ package com.ferelin.stockprice.ui.aboutSection.news
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.stockprice.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
-    private val mNewsRecyclerAdapter = NewsRecyclerAdapter()
-    val newsRecyclerAdapter: NewsRecyclerAdapter
-        get() = mNewsRecyclerAdapter
-
-    private val mStateNews = MutableStateFlow<AdaptiveCompanyNews?>(null)
-    val stateNews: StateFlow<AdaptiveCompanyNews?>
-        get() = mStateNews
+    val newsRecyclerAdapter = NewsRecyclerAdapter()
 
     private val mStateIsDataLoading = MutableStateFlow(false)
     val stateIsDataLoading: StateFlow<Boolean>
@@ -63,13 +57,11 @@ class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     private suspend fun collectCompanyNews() {
         val selectedCompanySymbol = selectedCompany.companyProfile.symbol
         mDataInteractor.loadCompanyNewsFromNetwork(selectedCompanySymbol).collect { company ->
-            onNewsLoaded(company)
+            mStateIsDataLoading.value = false
+            mIsNetworkResponded = true
+            withContext(mCoroutineContext.Main) {
+                newsRecyclerAdapter.setData(company.companyNews)
+            }
         }
-    }
-
-    private fun onNewsLoaded(company: AdaptiveCompany) {
-        mStateIsDataLoading.value = false
-        mIsNetworkResponded = true
-        mStateNews.value = company.companyNews
     }
 }

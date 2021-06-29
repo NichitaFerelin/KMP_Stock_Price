@@ -27,7 +27,6 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentBottomDrawerBinding
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.AlphaSlideAction
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.OnStateChangedAction
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemsAdapter
@@ -139,10 +138,6 @@ class BottomDrawerViewController :
 
     fun addOnSlideAction(action: OnSlideAction) {
         mBottomSheetManager.addOnSlideAction(action)
-    }
-
-    fun addOnStateAction(action: OnStateChangedAction) {
-        mBottomSheetManager.addOnStateAction(action)
     }
 
     fun handleOnBackPressed(): Boolean {

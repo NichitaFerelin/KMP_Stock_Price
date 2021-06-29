@@ -90,7 +90,9 @@ class AboutPagerViewController :
     }
 
     fun onBackPressed() {
-        handleOnBackPressed()
+        if (isNotFirstPageSelected()) {
+            viewBinding.viewPager.setCurrentItem(0, true)
+        } else mNavigator?.navigateBackToHostFragment()
     }
 
     fun onDataChanged(companyName: String, companySymbol: String, favouriteIconResource: Int) {
@@ -99,12 +101,6 @@ class AboutPagerViewController :
             textViewCompanySymbol.text = companySymbol
             imageViewStar.setImageResource(favouriteIconResource)
         }
-    }
-
-    private fun handleOnBackPressed() {
-        if (isNotFirstPageSelected()) {
-            viewBinding.viewPager.setCurrentItem(0, true)
-        } else mNavigator?.navigateBackToHostFragment()
     }
 
     private fun setUpViewPager() {

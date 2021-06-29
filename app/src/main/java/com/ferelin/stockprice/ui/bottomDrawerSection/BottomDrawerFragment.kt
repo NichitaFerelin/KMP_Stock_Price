@@ -24,7 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentBottomDrawerBinding
 import com.ferelin.stockprice.ui.MainActivity
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.OnStateChangedAction
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemClickListener
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
@@ -51,11 +50,7 @@ class BottomDrawerFragment :
             menuItemsAdapter = mViewModel.menuAdapter,
             scrimVisibility = mViewModel.scrimVisibilityState
         )
-        mViewModel.menuAdapter.setOnDrawerMenuClickListener(this)
-        mViewController.viewBinding.viewScrim.setOnClickListener {
-            (requireActivity() as MainActivity).showFab()
-            closeDrawer()
-        }
+        setUpClickListeners()
     }
 
     override fun initObservers() {
@@ -80,10 +75,6 @@ class BottomDrawerFragment :
 
     fun addOnSlideAction(action: OnSlideAction) {
         mViewController.addOnSlideAction(action)
-    }
-
-    fun addOnStateAction(action: OnStateChangedAction) {
-        mViewController.addOnStateAction(action)
     }
 
     fun openDrawer() {
@@ -111,6 +102,14 @@ class BottomDrawerFragment :
             withContext(mCoroutineContext.Main) {
                 mViewController.onLogOut()
             }
+        }
+    }
+
+    private fun setUpClickListeners() {
+        mViewModel.menuAdapter.setOnDrawerMenuClickListener(this)
+        mViewController.viewBinding.viewScrim.setOnClickListener {
+            (requireActivity() as MainActivity).showFab()
+            closeDrawer()
         }
     }
 }

@@ -38,6 +38,7 @@ import com.ferelin.stockprice.utils.withTimerOnUi
 
 /**
  * [Navigator] represents a class that provides ability to navigate between fragments.
+ *  Controls bottom app bar visibility state.
  */
 class Navigator(private val mHostActivity: MainActivity) {
 
@@ -67,7 +68,6 @@ class Navigator(private val mHostActivity: MainActivity) {
     fun navigateToStocksPagerFragment() {
         mHostActivity.showFab()
         if (!contains(mStocksPagerTag)) {
-            // To avoid animation abort
             replaceMainContainerBy(StocksPagerFragment(), mStocksPagerTag)
         }
     }

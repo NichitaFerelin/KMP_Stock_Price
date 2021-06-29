@@ -19,7 +19,6 @@ package com.ferelin.stockprice.ui.aboutSection.aboutSection
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -54,7 +53,6 @@ class AboutPagerFragment(
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpViewControllerArguments()
-        setUpBackPressedCallback()
         setUpClickListeners()
     }
 
@@ -63,6 +61,11 @@ class AboutPagerFragment(
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             collectEventOnDataChanged()
         }
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        mViewController.onBackPressed()
+        return true
     }
 
     private suspend fun collectEventOnDataChanged() {
@@ -117,18 +120,5 @@ class AboutPagerFragment(
             mViewModel.onFavouriteIconClicked()
             mViewController.onFavouriteIconClicked()
         }
-    }
-
-    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            mViewController.onBackPressed()
-        }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            mOnBackPressedCallback
-        )
     }
 }

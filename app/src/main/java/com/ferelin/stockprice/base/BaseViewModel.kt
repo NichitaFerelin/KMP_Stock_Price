@@ -18,7 +18,7 @@ package com.ferelin.stockprice.base
 
 import androidx.lifecycle.ViewModel
 import com.ferelin.shared.CoroutineContextProvider
-import com.ferelin.stockprice.dataInteractor.DataInteractorImpl
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
@@ -33,9 +33,8 @@ abstract class BaseViewModel : ViewModel() {
     @Inject
     protected lateinit var mAppScope: CoroutineScope
 
-    // TODO Impl to Interface
     @Inject
-    protected lateinit var mDataInteractor: DataInteractorImpl
+    protected lateinit var mDataInteractor: DataInteractor
 
     @Inject
     protected lateinit var mCoroutineContext: CoroutineContextProvider

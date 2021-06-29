@@ -18,7 +18,6 @@ package com.ferelin.stockprice.utils.bottomDrawer
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.OnStateChangedAction
 import com.ferelin.stockprice.utils.normalize
 import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior

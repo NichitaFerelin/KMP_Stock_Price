@@ -180,8 +180,8 @@ class DataInteractorImpl @Inject constructor(
         prepareCompaniesData()
         prepareSearchesHistory()
         mAuthenticationWorker.prepareAuthenticationState()
-        mRegisterWorker.prepareUserRegisterState()
-        mChatsWorker.prepareUserRelations()
+        // mRegisterWorker.prepareUserRegisterState()
+        // mChatsWorker.prepareUserRelations()
     }
 
     override suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany> {

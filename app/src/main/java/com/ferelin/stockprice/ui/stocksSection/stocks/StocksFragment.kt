@@ -42,6 +42,7 @@ class StocksFragment :
             stocksAdapter = mViewModel.stocksRecyclerAdapter,
             fragmentManager = requireParentFragment().parentFragmentManager
         )
+        mViewController.viewBinding.recyclerViewStocks.addOnScrollListener(mOnScrollListener)
     }
 
     override fun initObservers() {
