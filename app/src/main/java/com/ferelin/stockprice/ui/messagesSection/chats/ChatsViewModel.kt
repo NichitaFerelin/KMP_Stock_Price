@@ -45,10 +45,10 @@ class ChatsViewModel : BaseViewModel() {
             val addedUserLogin = arguments[DialogAddUser.USER_LOGIN_KEY]
             if (addedUserLogin is String && addedUserLogin.isNotEmpty()) {
                 mAppScope.launch {
-                    mDataInteractor.createNewRelation(
+                    /*mDataInteractor.createNewRelation(
                         sourceUserLogin = mDataInteractor.userLogin,
                         associatedUserLogin = addedUserLogin
-                    )
+                    )*/
                 }
             }
         }

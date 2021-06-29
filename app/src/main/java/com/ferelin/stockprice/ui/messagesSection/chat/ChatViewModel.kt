@@ -76,7 +76,7 @@ class ChatViewModel(val relation: AdaptiveRelation) : BaseViewModel() {
     }
 
     private suspend fun findNewMessages() {
-        mDataInteractor.findNewMessages(mDataInteractor.userLogin, relation.associatedUserLogin)
+        // mDataInteractor.findNewMessages(mDataInteractor.userLogin, relation.associatedUserLogin)
     }
 
     private suspend fun collectSharedMessagesUpdates() {

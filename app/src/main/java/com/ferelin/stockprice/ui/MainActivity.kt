@@ -79,36 +79,6 @@ class MainActivity(
         if (savedInstanceState == null) {
             navigator.navigateToLoadingFragment()
         }
-
-        lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.isUserLogged
-                .filter { it != null }
-                .collect { isLogged ->
-                    withContext(mCoroutineContext.Main) {
-                        if (isLogged!!) {
-                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
-                        } else {
-                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
-                        }
-                    }
-                }
-        }
-
-        mViewBinding!!.mainFab.setOnClickListener {
-            lifecycleScope.launch(mCoroutineContext.IO) {
-                mViewModel.isUserLogged
-                    .filter { it != null }
-                    .collect {
-                        if (it!!) {
-
-                        } else {
-                            withContext(mCoroutineContext.Main) {
-                                navigator.navigateToLoginFragment()
-                            }
-                        }
-                    }
-            }
-        }
     }
 
     override fun onResume() {
@@ -156,6 +126,10 @@ class MainActivity(
         return mBottomNavDrawer.handleOnBackPressed()
     }
 
+    fun showFab() {
+        mViewBinding!!.mainFab.show()
+    }
+
     private fun saveState() {
         mViewModel.arrowState = if (mViewBinding!!.bottomAppBarImageViewArrowUp.rotation > 90F) {
             180F
@@ -179,14 +153,6 @@ class MainActivity(
                 appComponent.inject(mViewModel)
             }
         }
-    }
-
-    fun showFab() {
-        mViewBinding!!.mainFab.show()
-    }
-
-    fun hideFab() {
-        mViewBinding!!.mainFab.hide()
     }
 
     private fun initObservers() {
@@ -229,6 +195,7 @@ class MainActivity(
 
     private fun setUpViewComponents() {
         setStatusBarColor()
+        setUpFab()
 
         mViewBinding!!.run {
             bottomAppBarImageViewArrowUp.rotation = mViewModel.arrowState
@@ -236,6 +203,38 @@ class MainActivity(
             mBottomNavDrawer.addOnSlideAction(
                 ArrowUpAction(bottomAppBarImageViewArrowUp)
             )
+        }
+    }
+
+    private fun setUpFab() {
+        lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewModel.isUserLogged
+                .filter { it != null }
+                .collect { isLogged ->
+                    withContext(mCoroutineContext.Main) {
+                        if (isLogged!!) {
+                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                        } else {
+                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                        }
+                    }
+                }
+        }
+
+        mViewBinding!!.mainFab.setOnClickListener {
+            lifecycleScope.launch(mCoroutineContext.IO) {
+                mViewModel.isUserLogged
+                    .filter { it != null }
+                    .collect {
+                        if (it!!) {
+                            // Do nothing
+                        } else {
+                            withContext(mCoroutineContext.Main) {
+                                navigator.navigateToLoginFragment()
+                            }
+                        }
+                    }
+            }
         }
     }
 

@@ -26,13 +26,11 @@ import kotlin.math.max
 class BottomSheetManager : BottomSheetBehavior.BottomSheetCallback() {
 
     private val mOnSlideActions: MutableList<OnSlideAction> = mutableListOf()
-    private val mOnStateActions: MutableList<OnStateChangedAction> = mutableListOf()
 
     private var mLastSlideOffset = -1.0F
     private var mHalfExpandedSlideOffset = Float.MAX_VALUE
 
     override fun onStateChanged(bottomSheet: View, newState: Int) {
-        mOnStateActions.forEach { it.onStateChanged(newState) }
     }
 
     override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -53,10 +51,6 @@ class BottomSheetManager : BottomSheetBehavior.BottomSheetCallback() {
 
     fun addOnSlideAction(action: OnSlideAction): Boolean {
         return mOnSlideActions.add(action)
-    }
-
-    fun addOnStateAction(action: OnStateChangedAction): Boolean {
-        return mOnStateActions.add(action)
     }
 
     private fun calculateInitialHalfExpandedSlideOffset(sheet: View) {

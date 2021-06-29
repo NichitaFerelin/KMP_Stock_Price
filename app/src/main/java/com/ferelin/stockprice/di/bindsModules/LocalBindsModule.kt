@@ -22,11 +22,16 @@ import com.ferelin.local.json.JsonManager
 import com.ferelin.local.json.JsonManagerImpl
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.preferences.StorePreferencesImpl
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.DataInteractorImpl
 import dagger.Binds
 import dagger.Module
 
 @Module
 abstract class LocalBindsModule {
+
+    @Binds
+    abstract fun provideDataInteractor(dataInteractor: DataInteractorImpl) : DataInteractor
 
     @Binds
     abstract fun provideLocalManagerHelper(local: LocalManagerImpl): LocalManager
