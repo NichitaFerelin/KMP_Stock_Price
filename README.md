@@ -7,7 +7,6 @@ App API: [finnhub](https://finnhub.io/)
 
 GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
 
-Technical task: [PDF](https://drive.google.com/file/d/1QH8JdLSY5LkzjK7qbaxCr_XaVWeQrPS4/view?usp=sharing)
 
 ## Stack
 - MVVM
