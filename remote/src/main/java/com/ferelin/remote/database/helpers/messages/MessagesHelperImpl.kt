@@ -102,5 +102,12 @@ class MessagesHelperImpl @Inject constructor(
             .child(secondSideUserLogin)
             .child(messageKey)
             .setValue(encryptedMessage)
+
+        mDatabaseFirebase
+            .child(sMessagesRef)
+            .child(secondSideUserLogin)
+            .child(sourceUserLogin)
+            .child(messageKey)
+            .setValue(encryptedMessage)
     }
 }
