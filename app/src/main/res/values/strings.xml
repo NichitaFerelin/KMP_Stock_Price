@@ -73,6 +73,7 @@
     <string name="menuLogIn">Log In</string>
     <string name="menuLogOut">Log Out</string>
     <string name="menuNotes">Notes</string>
+    <string name="menuStocks">Stocks</string>
     <string name="menuMessages">Messages</string>
     <string name="menuSettings">Settings</string>
 
@@ -81,5 +82,28 @@
     <string name="transitionStocksPager">Transition container stock fragment pager</string>
 
     <string name="notificationNewItems">New items loaded</string>
+    <string name="hintMessages">Messages</string>
+    <string name="descriptionAttach">Attach file</string>
+    <string name="hintEnterMessage">Enter message</string>
+    <string name="hintEnterLogin">Enter login</string>
+    <string name="hintLogin">Login</string>
+    <string name="hintWithLogin">With this login users will be able to find you</string>
+    <string name="descriptionApply">Apply</string>
+
+    <string name="errorBadLogin">Login must not contain ".#$[]"</string>
+    <string name="errorLoginExists">Login is already exists</string>
+    <string name="errorUndefined">Undefined error</string>
+
+    <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
+    <string name="titleChats">Chats</string>
+    <string name="hintUserLogin">Enter user login</string>
+    <string name="hintRegistration">Registration</string>
+    <string name="descriptionAddPerson">Add person to chat</string>
+
+    <string name="titleAuthorized">Authorized</string>
+    <string name="titleNotAuthorized">Not authorized</string>
+    <string name="descriptionSendMessage">Send message</string>
+    <string name="hintAuthentication">Authentication by phone number</string>
+    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
 
 </resources>

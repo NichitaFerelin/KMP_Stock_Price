@@ -27,7 +27,6 @@ import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemAnimator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
@@ -37,25 +36,20 @@ import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.swipe.SwipeActionCallback
 import com.ferelin.stockprice.utils.withTimer
-import com.google.android.material.transition.Hold
 
 abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     BaseViewController<BaseStocksViewAnimator, ViewBindingType>() {
 
-    protected abstract val mStocksRecyclerView: RecyclerView
+    abstract val stocksRecyclerView: RecyclerView
 
+    // TODO as check
     protected val mStocksRecyclerAdapter: StocksRecyclerAdapter
-        get() = mStocksRecyclerView.adapter as StocksRecyclerAdapter
+        get() = stocksRecyclerView.adapter as StocksRecyclerAdapter
 
     /*
     * To use common "replace fragment" logic at different fragments
     * */
     var fragmentManager: FragmentManager? = null
-
-    override fun onCreateFragment(fragment: Fragment) {
-        super.onCreateFragment(fragment)
-        fragment.exitTransition = Hold()
-    }
 
     override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         super.onViewCreated(savedInstanceState, fragment)
@@ -83,13 +77,8 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
         }
     }
 
-    fun onStockClicked(stockViewHolder: StockViewHolder, company: AdaptiveCompany) {
-        Navigator.navigateToAboutPagerFragment(company, fragmentManager!!, onCommit = {
-            it.addSharedElement(
-                stockViewHolder.binding.root,
-                context.resources.getString(R.string.transitionAboutPager)
-            )
-        })
+    fun onStockClicked(company: AdaptiveCompany) {
+        mNavigator?.navigateToAboutPagerFragment(company, fragmentManager!!)
     }
 
     fun onFabClicked() {
@@ -105,7 +94,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     }
 
     private fun setUpStocksRecyclerView() {
-        mStocksRecyclerView.apply {
+        stocksRecyclerView.apply {
             itemAnimator = StockItemAnimator()
             ItemTouchHelper(SwipeActionCallback()).attachToRecyclerView(this)
             addItemDecoration(StockItemDecoration(context))
@@ -127,45 +116,45 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     }
 
     private fun findCompanyByHolder(stockViewHolder: StockViewHolder): AdaptiveCompany {
-        val layoutManager = mStocksRecyclerView.layoutManager as LinearLayoutManager
+        val layoutManager = stocksRecyclerView.layoutManager as LinearLayoutManager
         val viewHolderPosition = layoutManager.getPosition(stockViewHolder.itemView)
         return mStocksRecyclerAdapter.getCompanyByAdapterPosition(viewHolderPosition)
     }
 
     private fun scrollToTopWithAnimation() {
-        val layoutManager = mStocksRecyclerView.layoutManager
+        val layoutManager = stocksRecyclerView.layoutManager
         if (layoutManager is LinearLayoutManager && layoutManager.findFirstVisibleItemPosition() < 40) {
-            mStocksRecyclerView.smoothScrollToPosition(0)
+            stocksRecyclerView.smoothScrollToPosition(0)
             return
         }
 
         val fadeInCallback = object : AnimationManager() {
             override fun onAnimationStart(animation: Animation?) {
-                mStocksRecyclerView.alpha = 1F
-                mStocksRecyclerView.smoothScrollToPosition(0)
+                stocksRecyclerView.alpha = 1F
+                stocksRecyclerView.smoothScrollToPosition(0)
             }
 
             override fun onAnimationEnd(animation: Animation?) {
                 // To avoid graphic bug
-                withTimer { mStocksRecyclerView.itemAnimator = StockItemAnimator() }
+                withTimer { stocksRecyclerView.itemAnimator = StockItemAnimator() }
             }
         }
 
         val fadeOutCallback = object : AnimationManager() {
             override fun onAnimationStart(animation: Animation?) {
-                mStocksRecyclerView.itemAnimator = null
-                mStocksRecyclerView.smoothScrollBy(
+                stocksRecyclerView.itemAnimator = null
+                stocksRecyclerView.smoothScrollBy(
                     0,
-                    -mStocksRecyclerView.height
+                    -stocksRecyclerView.height
                 )
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                mStocksRecyclerView.alpha = 0F
-                mStocksRecyclerView.scrollToPosition(20)
-                mViewAnimator.runFadeInAnimation(mStocksRecyclerView, fadeInCallback)
+                stocksRecyclerView.alpha = 0F
+                stocksRecyclerView.scrollToPosition(20)
+                mViewAnimator.runFadeInAnimation(stocksRecyclerView, fadeInCallback)
             }
         }
-        mViewAnimator.runFadeOutAnimation(mStocksRecyclerView, fadeOutCallback)
+        mViewAnimator.runFadeOutAnimation(stocksRecyclerView, fadeOutCallback)
     }
 }

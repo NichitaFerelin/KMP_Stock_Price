@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/bottomAppBarHeight">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        style="@style/appBar"
+        android:layout_width="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewBack"
+        style="@style/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:contentDescription="@string/descriptionBack"
+        android:elevation="10dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintBottom_toBottomOf="@id/appBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/appBar" />
+
+    <TextView
+        android:id="@+id/textViewUserLogin"
+        style="@style/textViewH2"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/appBar"
+        app:layout_constraintEnd_toEndOf="@id/appBar"
+        app:layout_constraintStart_toStartOf="@id/appBar"
+        app:layout_constraintTop_toTopOf="@id/appBar"
+        tools:text="User name" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/editTextMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBar"
+        app:stackFromEnd="true" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/appBarHeight"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewAttach"
+        style="@style/imageView"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/descriptionAttach"
+        android:src="@drawable/ic_attach"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewMicrophone"
+        style="@style/imageView"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/descriptionAttach"
+        android:src="@drawable/ic_mic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageViewAttach" />
+
+    <EditText
+        android:id="@+id/editTextMessage"
+        style="@style/editText"
+        android:layout_width="0dp"
+        android:autofillHints="no"
+        android:hint="@string/hintEnterMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/imageViewSend"
+        app:layout_constraintStart_toEndOf="@id/imageViewMicrophone"
+        app:layout_constraintTop_toTopOf="@id/imageViewMicrophone" />
+
+    <ImageView
+        android:id="@+id/imageViewSend"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/descriptionSendMessage"
+        android:padding="16dp"
+        android:src="@drawable/ic_send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

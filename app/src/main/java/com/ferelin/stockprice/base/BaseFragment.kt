@@ -20,10 +20,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.ui.MainActivity
 
 /**
  * [BaseFragment] is the fundament for fragments.
@@ -40,7 +44,7 @@ import com.ferelin.stockprice.App
  *
  *  Example:
  *   1. Fragment begins observing ViewModel data-event state.
- *   2. ViewModel sends a request to the network for data.
+ *   2. ViewModel sends a request to the [DataInteractor] for data.
  *   3. ViewModel updates the state of data.
  *   4. Fragment receives data and sends it to ViewController.
  *   5. ViewController displays data with animations or whatever.
@@ -56,16 +60,36 @@ abstract class BaseFragment<
 
     protected val mCoroutineContext = CoroutineContextProvider()
 
+    // Hides bottom bar on scroll
+    protected val mOnScrollListener: RecyclerView.OnScrollListener by lazy(LazyThreadSafetyMode.NONE) {
+        object : RecyclerView.OnScrollListener() {
+
+            private var mIsHidden = false
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0 && !mIsHidden) {
+                    mIsHidden = true
+                    hideBottomBar()
+                } else if (dy < 0 && mIsHidden) {
+                    mIsHidden = false
+                    showBottomBar()
+                }
+            }
+        }
+    }
+
     /**
      * The application uses view binding.
      * To avoid a lot of repetitive code, view inflates in the base class. For such an
      * implementation, need to override this variable in the subclass.
      * */
-    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType
+    abstract val mBindingInflater: ((LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType)?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependencies()
+        initNavigator()
         mViewController.onCreateFragment(this)
     }
 
@@ -74,9 +98,11 @@ abstract class BaseFragment<
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewBinding = mBindingInflater.invoke(inflater, container, false)
-        mViewController.setViewBinding(viewBinding)
-        return viewBinding.root
+        return mBindingInflater?.let { bindingInflater ->
+            val viewBinding = bindingInflater.invoke(inflater, container, false)
+            mViewController.setViewBinding(viewBinding)
+            return@let viewBinding.root
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,6 +112,7 @@ abstract class BaseFragment<
 
         setUpViewComponents(savedInstanceState)
         initObservers()
+        setUpBackPressedCallback()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -101,15 +128,70 @@ abstract class BaseFragment<
         mViewModel.initObservers()
     }
 
+    /**
+     * Fragments with custom 'BackPressed' logic or bottom app-bar can override this method to avoid
+     * bottom app bar state inconsistency
+     * */
+    protected open fun onBackPressedHandle(): Boolean {
+        return false
+    }
+
     override fun onDestroyView() {
         mViewController.onDestroyView()
         super.onDestroyView()
+    }
+
+    private fun setUpBackPressedCallback() {
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (handleBottomDrawerOnBack()) {
+                        return
+                    }
+
+                    if (onBackPressedHandle()) {
+                        return
+                    }
+
+                    this.remove()
+                    activity?.onBackPressed()
+                }
+            })
+    }
+
+    private fun handleBottomDrawerOnBack(): Boolean {
+        val hostActivity = requireActivity()
+        return if (hostActivity is MainActivity) {
+            hostActivity.handleOnBackPressed()
+        } else false
     }
 
     private fun injectDependencies() {
         val application = requireActivity().application
         if (application is App) {
             application.appComponent.inject(mViewModel)
+        }
+    }
+
+    private fun initNavigator() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            mViewController.setNavigator(hostActivity.navigator)
+        }
+    }
+
+    private fun hideBottomBar() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            hostActivity.hideBottomBar()
+        }
+    }
+
+    private fun showBottomBar() {
+        val hostActivity = requireActivity()
+        if (hostActivity is MainActivity) {
+            hostActivity.showBottomBar()
         }
     }
 }

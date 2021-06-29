@@ -3,8 +3,8 @@ package com.ferelin
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.ferelin.local.database.CompaniesDao
-import com.ferelin.local.database.CompaniesDatabase
+import com.ferelin.local.databases.companiesDb.CompaniesDao
+import com.ferelin.local.databases.companiesDb.CompaniesDatabase
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
@@ -40,8 +40,8 @@ class CompaniesDatabaseTest {
     @Test
     fun insert(): Unit = runBlocking {
         val company = FakeLocalResponses.companiesResponseSuccessFromDatabase.companies.first()
-        mDatabaseDao.insert(company)
-        mDatabaseDao.getAll().first().also {
+        mDatabaseDao.insertCompany(company)
+        mDatabaseDao.getAllCompaniesAsResponse().first().also {
             Assert.assertEquals(company.id, it.id)
             Assert.assertEquals(company.name, it.name)
             Assert.assertEquals(company.symbol, it.symbol)
@@ -80,8 +80,8 @@ class CompaniesDatabaseTest {
         val firstCompany = FakeLocalResponses.companiesResponseSuccessFromDatabase.companies.first()
         val secondCompany = firstCompany.copy(id = 10, name = "newName")
         val companies = listOf(firstCompany, secondCompany)
-        mDatabaseDao.insertAll(companies)
-        mDatabaseDao.getAll().also {
+        mDatabaseDao.insertAllCompanies(companies)
+        mDatabaseDao.getAllCompaniesAsResponse().also {
             Assert.assertEquals(2, it.size)
         }
     }
@@ -90,9 +90,9 @@ class CompaniesDatabaseTest {
     fun update(): Unit = runBlocking {
         val company = FakeLocalResponses.companiesResponseSuccessFromDatabase.companies.first()
         val updated = company.copy(name = "newName")
-        mDatabaseDao.insert(company)
-        mDatabaseDao.update(updated)
-        mDatabaseDao.getAll().first().also {
+        mDatabaseDao.insertCompany(company)
+        mDatabaseDao.updateCompany(updated)
+        mDatabaseDao.getAllCompaniesAsResponse().first().also {
             Assert.assertEquals(it.name, updated.name)
         }
     }

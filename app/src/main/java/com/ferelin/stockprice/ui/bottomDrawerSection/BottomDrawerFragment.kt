@@ -16,122 +16,100 @@
 
 package com.ferelin.stockprice.ui.bottomDrawerSection
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.ferelin.stockprice.R
+import androidx.lifecycle.lifecycleScope
+import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentBottomDrawerBinding
-import com.ferelin.stockprice.navigation.Navigator
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.AlphaSlideAction
-import com.ferelin.stockprice.utils.bottomDrawer.BottomSheetManager
+import com.ferelin.stockprice.ui.MainActivity
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemClickListener
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
-import com.ferelin.stockprice.utils.themeColor
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.shape.MaterialShapeDrawable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class BottomDrawerFragment : Fragment() {
+class BottomDrawerFragment :
+    BaseFragment<FragmentBottomDrawerBinding, BottomDrawerViewModel, BottomDrawerViewController>(),
+    MenuItemClickListener {
 
-    private var mBinding: FragmentBottomDrawerBinding? = null
+    override val mViewController = BottomDrawerViewController()
+    override val mViewModel: BottomDrawerViewModel by viewModels()
 
-    private val mViewModel: BottomDrawerViewModel by viewModels()
+    override val mBindingInflater: ((LayoutInflater, ViewGroup?, Boolean) -> FragmentBottomDrawerBinding)
+        get() = FragmentBottomDrawerBinding::inflate
 
-    private var mBottomSheetBehavior: BottomSheetBehavior<FrameLayout>? = null
-    val bottomFragmentState: Int
-        get() = mBottomSheetBehavior?.state ?: BottomSheetBehavior.STATE_HIDDEN
+    val isDrawerHidden: Boolean
+        get() = mViewController.isDrawerHidden
 
-    private val mBottomSheetManager: BottomSheetManager by lazy {
-        BottomSheetManager()
+    override fun setUpViewComponents(savedInstanceState: Bundle?) {
+        super.setUpViewComponents(savedInstanceState)
+        mViewController.setArgumentsViewDependsOn(
+            menuItemsAdapter = mViewModel.menuAdapter,
+            scrimVisibility = mViewModel.scrimVisibilityState
+        )
+        setUpClickListeners()
     }
 
-    private val mBackgroundShapeDrawable: MaterialShapeDrawable by lazy {
-        val context = requireContext()
-        MaterialShapeDrawable(
-            context,
-            null,
-            R.attr.bottomSheetStyle,
-            0
-        ).apply {
-            fillColor = ColorStateList.valueOf(context.themeColor(R.attr.colorPrimary))
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            launch { collectStateMenuItems() }
+            launch { collectSharedLogOut() }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mBinding = FragmentBottomDrawerBinding.inflate(inflater, container, false).also {
-            if (savedInstanceState == null) {
-                Navigator.navigateToMenuFragment(this)
-            }
-        }
-        return mBinding!!.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initBottomDrawer()
-        restoreScrimState()
-        mBinding!!.viewScrim.setOnClickListener {
-            closeDrawer()
-        }
+    override fun onMenuItemClicked(item: MenuItem) {
+        mViewController.onMenuItemClicked(
+            item = item,
+            onLogOut = { mViewModel.onLogOut() }
+        )
     }
 
     override fun onStop() {
-        mViewModel.scrimVisibilityState = mBinding!!.viewScrim.visibility
+        mViewModel.scrimVisibilityState = mViewController.viewBinding.viewScrim.visibility
         super.onStop()
     }
 
-    override fun onDestroyView() {
-        mBottomSheetBehavior = null
-        mBinding = null
-        super.onDestroyView()
-    }
-
-    fun onControlButtonPressed() {
-        when (mBottomSheetBehavior!!.state) {
-            BottomSheetBehavior.STATE_HIDDEN -> openHalfDrawer()
-            BottomSheetBehavior.STATE_HALF_EXPANDED -> openDrawer()
-            else -> closeDrawer()
-        }
-    }
-
     fun addOnSlideAction(action: OnSlideAction) {
-        mBottomSheetManager.addOnSlideAction(action)
-    }
-
-    private fun initBottomDrawer() {
-        with(mBinding!!) {
-            mBottomSheetBehavior = BottomSheetBehavior.from(containerRoot).also {
-                it.addBottomSheetCallback(mBottomSheetManager)
-                it.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-            addOnSlideAction(AlphaSlideAction(viewScrim))
-            containerRoot.background = mBackgroundShapeDrawable
-        }
-    }
-
-    private fun restoreScrimState() {
-        if (mViewModel.scrimVisibilityState != View.GONE) {
-            mBinding!!.viewScrim.visibility = mViewModel.scrimVisibilityState
-            mBinding!!.viewScrim.alpha = 1F
-        }
+        mViewController.addOnSlideAction(action)
     }
 
     fun openDrawer() {
-        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-    
-    fun closeDrawer() {
-        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HIDDEN
+        mViewController.openDrawer()
     }
 
-    private fun openHalfDrawer() {
-        mBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    fun closeDrawer() {
+        mViewController.closeDrawer()
+    }
+
+    fun handleOnBackPressed(): Boolean {
+        return mViewController.handleOnBackPressed()
+    }
+
+    private suspend fun collectStateMenuItems() {
+        mViewModel.stateMenuItems.collect { items ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onMenuItemsPrepared(items)
+            }
+        }
+    }
+
+    private suspend fun collectSharedLogOut() {
+        mViewModel.sharedLogOut.collect {
+            withContext(mCoroutineContext.Main) {
+                mViewController.onLogOut()
+            }
+        }
+    }
+
+    private fun setUpClickListeners() {
+        mViewModel.menuAdapter.setOnDrawerMenuClickListener(this)
+        mViewController.viewBinding.viewScrim.setOnClickListener {
+            (requireActivity() as MainActivity).showFab()
+            closeDrawer()
+        }
     }
 }

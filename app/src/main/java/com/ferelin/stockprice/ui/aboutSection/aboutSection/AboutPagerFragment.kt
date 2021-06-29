@@ -19,7 +19,6 @@ package com.ferelin.stockprice.ui.aboutSection.aboutSection
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -27,6 +26,7 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.custom.OrderedTextView
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,10 +43,16 @@ class AboutPagerFragment(
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
         get() = FragmentAboutPagerBinding::inflate
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
+        }
+    }
+
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpViewControllerArguments()
-        setUpBackPressedCallback()
         setUpClickListeners()
     }
 
@@ -55,6 +61,11 @@ class AboutPagerFragment(
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             collectEventOnDataChanged()
         }
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        mViewController.onBackPressed()
+        return true
     }
 
     private suspend fun collectEventOnDataChanged() {
@@ -102,30 +113,12 @@ class AboutPagerFragment(
     }
 
     private fun setUpImageClickListeners() {
-        mViewController.viewBinding.imageViewBack.setOnClickListener { popBackStack() }
+        mViewController.viewBinding.imageViewBack.setOnClickListener {
+            mViewController.onBackPressed()
+        }
         mViewController.viewBinding.imageViewStar.setOnClickListener {
             mViewModel.onFavouriteIconClicked()
             mViewController.onFavouriteIconClicked()
         }
-    }
-
-    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (!mViewController.handleOnBackPressed()) {
-                popBackStack()
-            }
-        }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            mOnBackPressedCallback
-        )
-    }
-
-    private fun popBackStack() {
-        mOnBackPressedCallback.remove()
-        activity?.onBackPressed()
     }
 }

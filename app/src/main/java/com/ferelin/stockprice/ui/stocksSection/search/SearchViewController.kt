@@ -45,7 +45,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     override val mViewAnimator: SearchViewAnimator = SearchViewAnimator()
 
-    override val mStocksRecyclerView: RecyclerView
+    override val stocksRecyclerView: RecyclerView
         get() = viewBinding.recyclerViewSearchResults
 
     override fun onCreateFragment(fragment: Fragment) {
@@ -65,7 +65,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     override fun onDestroyView() {
         postponeReferencesRemove {
-            mStocksRecyclerView.adapter = null
+            stocksRecyclerView.adapter = null
             viewBinding.recyclerViewSearchedHistory.adapter = null
             viewBinding.recyclerViewPopularRequests.adapter = null
             super.onDestroyView()
@@ -88,7 +88,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
             onSearchTickerClicked(item)
         }
         stocksRecyclerAdapter.setHeader(context.resources.getString(R.string.hintStocks))
-        mStocksRecyclerView.adapter = stocksRecyclerAdapter
+        stocksRecyclerView.adapter = stocksRecyclerAdapter
         viewBinding.recyclerViewSearchedHistory.adapter = searchesHistoryRecyclerAdapter
         viewBinding.recyclerViewPopularRequests.adapter = popularSearchesRecyclerAdapter
 
@@ -130,30 +130,26 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         }
     }
 
-    fun onBackButtonClicked(ifNotHandled: () -> Unit) {
-        if (viewBinding.root.progress == 0F) {
-            ifNotHandled.invoke()
-            return
-        }
-
-        viewBinding.root.apply {
-            addTransitionListener(object : MotionManager() {
-                override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                    ifNotHandled.invoke()
+    fun onBackPressed(lastSearchRequest: String) {
+        when {
+            viewBinding.root.progress == 0F -> mNavigator?.navigateBackToHostFragment()
+            viewBinding.root.progress == 1F -> viewBinding.editTextSearch.setText("")
+            lastSearchRequest.isEmpty() -> {
+                hideKeyboard(context, viewBinding.root)
+                mNavigator?.navigateBackToHostFragment()
+            }
+            else -> {
+                // Transition to start and popBackStack
+                viewBinding.root.apply {
+                    addTransitionListener(object : MotionManager() {
+                        override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                            mNavigator?.navigateBackToHostFragment()
+                        }
+                    })
+                    transitionToStart()
                 }
-            })
-            transitionToStart()
+            }
         }
-    }
-
-    fun handleOnBackPressed(lastSearchRequest: String): Boolean {
-        if (lastSearchRequest.isEmpty()) {
-            hideKeyboard(context, viewBinding.root)
-            return false
-        }
-
-        viewBinding.editTextSearch.setText("")
-        return true
     }
 
     fun onCloseIconClicked() {

@@ -26,7 +26,6 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -51,7 +50,6 @@ class NewsFragment(
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateNews() }
             launch { collectStateIsDataLoading() }
             launch { collectStateOnError() }
         }
@@ -65,16 +63,6 @@ class NewsFragment(
         mViewController.viewBinding.fab.setOnClickListener {
             mViewController.onFabClicked()
         }
-    }
-
-    private suspend fun collectStateNews() {
-        mViewModel.stateNews
-            .filter { it != null }
-            .collect { news ->
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onNewsChanged(news!!)
-                }
-            }
     }
 
     private suspend fun collectStateIsDataLoading() {

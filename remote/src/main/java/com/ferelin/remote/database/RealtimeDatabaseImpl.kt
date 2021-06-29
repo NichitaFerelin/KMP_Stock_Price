@@ -17,13 +17,15 @@
 package com.ferelin.remote.database
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
+import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
+import com.ferelin.remote.database.helpers.messages.MessagesHelper
+import com.ferelin.remote.database.helpers.relations.RelationsHelper
+import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
+import com.ferelin.remote.database.helpers.user.UsersHelper
+import com.ferelin.shared.MessageSide
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [RealtimeDatabaseImpl] is Firebase-Realtime-Database and is used to save
@@ -48,117 +50,99 @@ import javax.inject.Inject
  *              -[searchRequest2]
  *              -[searchRequest3]
  */
-class RealtimeDatabaseImpl @Inject constructor() : RealtimeDatabase {
 
-    private val mDatabaseFirebase = Firebase.database.reference
-
-    companion object {
-        /*
-        * Root cloud-nodes
-        * */
-        private const val sSearchesHistoryRef = "search-requests"
-        private const val sFavouriteCompaniesRef = "favourite-companies"
-    }
+@Singleton
+class RealtimeDatabaseImpl @Inject constructor(
+    private val mFavouriteCompaniesHelper: FavouriteCompaniesHelper,
+    private val mSearchRequestsHelper: SearchRequestsHelper,
+    private val mUsersHelper: UsersHelper,
+    private val mMessagesHelper: MessagesHelper,
+    private val mRelationsHelper: RelationsHelper
+) : RealtimeDatabase {
 
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .child(companyId)
-            .removeValue()
+        mFavouriteCompaniesHelper.eraseCompanyIdFromRealtimeDb(userId, companyId)
     }
 
     override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .child(companyId)
-            .setValue(companyId)
+        mFavouriteCompaniesHelper.writeCompanyIdToRealtimeDb(userId, companyId)
     }
 
     override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
-        companiesId.forEach { companyId -> writeCompanyIdToRealtimeDb(userId, companyId) }
+        mFavouriteCompaniesHelper.writeCompaniesIdsToDb(userId, companiesId)
     }
 
-    override fun readCompaniesIdsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
-            .child(sFavouriteCompaniesRef)
-            .child(userId)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (companySnapshot in snapshot.children) {
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = companySnapshot.key
-                            )
-                            trySend(response)
-                        }
-                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
+    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>> {
+        return mFavouriteCompaniesHelper.readCompaniesIdsFromDb(userId)
     }
 
     override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
-        val fixedRequest = encrypt(searchRequest)
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .child(fixedRequest)
-            .setValue(fixedRequest)
+        mSearchRequestsHelper.writeSearchRequestToDb(userId, searchRequest)
     }
 
     override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
-        searchRequests.forEach { request -> writeSearchRequestToDb(userId, request) }
+        mSearchRequestsHelper.writeSearchRequestsToDb(userId, searchRequests)
     }
 
-    override fun readSearchRequestsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (searchSnapshot in snapshot.children) {
-
-                            val fixedResponse = decrypt(searchSnapshot?.key)
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = fixedResponse
-                            )
-                            trySend(response)
-                        }
-                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>> {
+        return mSearchRequestsHelper.readSearchRequestsFromDb(userId)
     }
 
     override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
-        val fixedRequest = encrypt(searchRequest)
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .child(fixedRequest)
-            .removeValue()
+        mSearchRequestsHelper.eraseSearchRequestFromDb(userId, searchRequest)
     }
 
-    /*
-    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
-    * Encrypts to avoid exceptions
-    * */
-    private fun encrypt(str: String): String {
-        return str.replace(Regex("[.#$\\[\\]]"), "%")
+    override fun findUserByLogin(login: String): Flow<Boolean> {
+        return mUsersHelper.findUserByLogin(login)
     }
 
-    /*
-    * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
-    * Decrypts for repository
-    * */
-    private fun decrypt(str: String?): String? {
-        return str?.replace('%', '.')
+    override fun findUserById(userId: String): Flow<BaseResponse<String?>> {
+        return mUsersHelper.findUserById(userId)
+    }
+
+    override suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>> {
+        return mUsersHelper.tryToRegister(userId, login)
+    }
+
+    override fun addNewRelation(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        relationId: String
+    ) {
+        mRelationsHelper.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
+    }
+
+    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
+        mRelationsHelper.eraseRelation(sourceUserLogin, relationId)
+    }
+
+    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
+        return mRelationsHelper.getUserRelations(userLogin)
+    }
+
+    override fun getMessagesAssociatedWithSpecifiedUser(
+        sourceUserLogin: String,
+        secondSideUserLogin: String
+    ): Flow<BaseResponse<List<HashMap<String, String>>>> {
+        return mMessagesHelper.getMessagesAssociatedWithSpecifiedUser(
+            sourceUserLogin,
+            secondSideUserLogin
+        )
+    }
+
+    override fun addNewMessage(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        messageId: String,
+        message: String,
+        side: MessageSide
+    ) {
+        mMessagesHelper.addNewMessage(
+            sourceUserLogin,
+            secondSideUserLogin,
+            messageId,
+            message,
+            side
+        )
     }
 }

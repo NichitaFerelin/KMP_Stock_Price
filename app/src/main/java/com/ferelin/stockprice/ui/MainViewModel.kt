@@ -28,9 +28,18 @@ class MainViewModel : BaseViewModel() {
         initObserversBlock()
     }
 
+    val isUserLogged: StateFlow<Boolean?>
+        get() = mDataInteractor.stateUserLogged
+
     private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged
+
+    private var mObserverCompanyCollectorJob: Job? = null
+
+    private var mNetworkWasLost: Boolean = false
+
+    private var mPrepareDataJob: Job? = null
 
     val stateIsNetworkAvailable: Flow<Boolean>
         get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
@@ -42,12 +51,15 @@ class MainViewModel : BaseViewModel() {
                     if (mNetworkWasLost) {
                         restartWebSocket()
                     }
-                    launch { mDataInteractor.openConnection().collect() }
+                    launch { mDataInteractor.openWebSocketConnection().collect() }
                 } else mNetworkWasLost = true
             }
         }
 
     var isServiceRunning = false
+
+    var arrowState: Float = 0F
+    var bottomAppBarState: Float = 0F
 
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
@@ -57,12 +69,6 @@ class MainViewModel : BaseViewModel() {
 
     val eventOnFavouriteCompaniesLimitError: SharedFlow<String>
         get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
-
-    private var mObserverCompanyCollectorJob: Job? = null
-
-    private var mNetworkWasLost: Boolean = false
-
-    private var mPrepareDataJob: Job? = null
 
     override fun initObserversBlock() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -100,7 +106,7 @@ class MainViewModel : BaseViewModel() {
     }
 
     private fun restartWebSocket() {
-        mDataInteractor.prepareToWebSocketReconnection()
+        mDataInteractor.prepareForWebSocketReconnection()
         mNetworkWasLost = false
     }
 }

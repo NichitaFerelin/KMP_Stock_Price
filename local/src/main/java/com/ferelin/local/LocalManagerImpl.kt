@@ -16,9 +16,13 @@ package com.ferelin.local
  * limitations under the License.
  */
 
-import com.ferelin.local.database.CompaniesManager
+import com.ferelin.local.databases.companiesDb.CompaniesDao
+import com.ferelin.local.databases.messagesDb.MessagesDao
+import com.ferelin.local.databases.relationsDb.RelationsDao
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.models.Company
+import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.models.Relation
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
@@ -29,28 +33,30 @@ import javax.inject.Singleton
 @Singleton
 open class LocalManagerImpl @Inject constructor(
     private val mJsonManager: JsonManager,
-    private val mCompaniesManagerHelper: CompaniesManager,
-    private val mStorePreferences: StorePreferences
+    private val mStorePreferences: StorePreferences,
+    private val mCompaniesDao: CompaniesDao,
+    private val mMessagesDao: MessagesDao,
+    private val mRelationsDao: RelationsDao
 ) : LocalManager {
 
-    override fun insertCompany(company: Company) {
-        mCompaniesManagerHelper.insertCompany(company)
+    override suspend fun insertCompany(company: Company) {
+        mCompaniesDao.insertCompany(company)
     }
 
-    override fun insertAllCompanies(list: List<Company>) {
-        mCompaniesManagerHelper.insertAllCompanies(list)
+    override suspend fun insertAllCompanies(list: List<Company>) {
+        mCompaniesDao.insertAllCompanies(list)
     }
 
-    override fun updateCompany(company: Company) {
-        mCompaniesManagerHelper.updateCompany(company)
+    override suspend fun updateCompany(company: Company) {
+        mCompaniesDao.updateCompany(company)
     }
 
     /*
     * Empty room -> parsing from json
     * else -> return data from room
     * */
-    override fun getAllCompanies(): CompaniesResponse {
-        val databaseCompanies = mCompaniesManagerHelper.getCompanies()
+    override suspend fun getAllCompaniesAsResponse(): CompaniesResponse {
+        val databaseCompanies = mCompaniesDao.getAllCompanies()
         return if (databaseCompanies.isEmpty()) {
             /*
             * If data companies loaded from room is empty -> than load companies from json assets
@@ -71,18 +77,30 @@ open class LocalManagerImpl @Inject constructor(
         } else CompaniesResponse.Success(companies = databaseCompanies)
     }
 
-    override fun getCompanies(): List<Company> {
-        return mCompaniesManagerHelper.getCompanies()
+    override suspend fun getAllCompanies(): List<Company> {
+        return mCompaniesDao.getAllCompanies()
+    }
+
+    override suspend fun insertMessage(message: MessagesHolder) {
+        mMessagesDao.insertMessage(message)
+    }
+
+    override suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder? {
+        return mMessagesDao.getMessagesAssociatedWithLogin(associatedLogin)
+    }
+
+    override suspend fun deleteMessage(message: MessagesHolder) {
+        mMessagesDao.deleteMessage(message)
+    }
+
+    override fun clearMessagesTable() {
+        mMessagesDao.clearMessagesTable()
     }
 
     override suspend fun getSearchesHistoryAsResponse(): SearchesResponse {
         return SearchesResponse.Success(
             data = getSearchRequestsHistory()
         )
-    }
-
-    override fun getCompaniesFromJson(): List<Company> {
-        return mJsonManager.getCompaniesFromJson()
     }
 
     override suspend fun getSearchRequestsHistory(): Set<String> {
@@ -103,5 +121,37 @@ open class LocalManagerImpl @Inject constructor(
 
     override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
         mStorePreferences.setFirstTimeLaunchState(boolean)
+    }
+
+    override suspend fun getUserRegisterState(): Boolean? {
+        return mStorePreferences.getUserRegisterState()
+    }
+
+    override suspend fun setUserRegisterState(state: Boolean) {
+        mStorePreferences.setUserRegisterState(state)
+    }
+
+    override suspend fun insertRelation(relation: Relation) {
+        mRelationsDao.insertRelation(relation)
+    }
+
+    override suspend fun getAllRelations(): List<Relation> {
+        return mRelationsDao.getAllRelations()
+    }
+
+    override suspend fun deleteRelation(relation: Relation) {
+        mRelationsDao.deleteRelation(relation)
+    }
+
+    override fun clearRelationsTable() {
+        mRelationsDao.clearRelationsTable()
+    }
+
+    override suspend fun setUserLogin(login: String) {
+        mStorePreferences.setUserLogin(login)
+    }
+
+    override suspend fun getUserLogin(): String? {
+        return mStorePreferences.getUserLogin()
     }
 }

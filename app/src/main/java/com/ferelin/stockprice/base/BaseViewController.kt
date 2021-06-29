@@ -21,6 +21,7 @@ import android.os.Bundle
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.utils.withTimerOnUi
 
 /**
@@ -34,6 +35,8 @@ import com.ferelin.stockprice.utils.withTimerOnUi
 abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewBindingType : ViewBinding> {
 
     protected abstract val mViewAnimator: ViewAnimatorType
+
+    protected var mNavigator: Navigator? = null
 
     private var mViewBinding: ViewBindingType? = null
     val viewBinding: ViewBindingType
@@ -82,5 +85,9 @@ abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewB
     fun postponeTransitions(fragment: Fragment) {
         fragment.postponeEnterTransition()
         fragment.requireView().doOnPreDraw { fragment.startPostponedEnterTransition() }
+    }
+
+    fun setNavigator(navigator: Navigator) {
+        mNavigator = navigator
     }
 }

@@ -16,15 +16,21 @@ package com.ferelin.stockprice.ui.previewSection.loading
  * limitations under the License.
  */
 
+import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class LoadingViewModel : BaseViewModel() {
 
+    private val mIsFirstTimeLaunchState = MutableStateFlow<Boolean?>(null)
     val isFirstTimeLaunchState: StateFlow<Boolean?>
-        get() = mDataInteractor.stateFirstTimeLaunch
+        get() = mIsFirstTimeLaunchState
 
     override fun initObserversBlock() {
-        // Do nothing.
+        viewModelScope.launch(mCoroutineContext.IO) {
+            mIsFirstTimeLaunchState.value = mDataInteractor.getFirstTimeLaunchState()
+        }
     }
 }

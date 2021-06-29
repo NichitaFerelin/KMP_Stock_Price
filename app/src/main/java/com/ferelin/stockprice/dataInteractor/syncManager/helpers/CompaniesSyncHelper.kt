@@ -18,7 +18,7 @@ package com.ferelin.stockprice.dataInteractor.syncManager.helpers
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.dataInteractor.dataManager.DataMediator
+import com.ferelin.stockprice.dataInteractor.dataManager.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.syncManager.SyncConflictMode
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,13 +26,13 @@ import javax.inject.Singleton
 /**
  * [CompaniesSyncHelper] holds logic about favourite companies synchronization
  * with realtime database.
- * @param mDataMediator is used to notify about favourite companies load/erase.
- * @param mRepositoryManager is used to work with realtime database
+ * @param mCompaniesMediator is used to notify about favourite companies load/erase.
+ * @param mRepository is used to work with realtime database
  * */
 @Singleton
 class CompaniesSyncHelper @Inject constructor(
-    private val mDataMediator: DataMediator,
-    private val mRepositoryManager: Repository
+    private val mCompaniesMediator: CompaniesMediator,
+    private val mRepository: Repository
 ) {
     /*
     * Container for favourite companies which is at realtime database.
@@ -69,22 +69,23 @@ class CompaniesSyncHelper @Inject constructor(
      * */
     suspend fun onCompanyResponseSync(companyIdStr: String) {
         val remoteCompanyId = companyIdStr.toInt()
-        val localCompanies = mDataMediator.companiesWorker.companies
+        val localCompanies = mCompaniesMediator.companies
         val localCompanyIndex = localCompanies.binarySearchBy(remoteCompanyId) { it.id }
-        val localTargetCompany = mDataMediator.companiesWorker.companies[localCompanyIndex]
+        val localTargetCompany = mCompaniesMediator.companies[localCompanyIndex]
 
         when {
             localTargetCompany.isFavourite -> return
 
             mSyncMode is SyncConflictMode.LocalPriority -> {
-                mRepositoryManager.eraseCompanyFromRealtimeDb(mUserId, companyIdStr)
+                mRepository.eraseCompanyIdFromRealtimeDb(mUserId, companyIdStr)
             }
 
             else -> {
-                val isAdded = mDataMediator.onAddFavouriteCompany(localTargetCompany, true)
-                if (isAdded) {
-                    mRemoteCompaniesContainer.add(localTargetCompany)
-                }
+                mCompaniesMediator.addCompanyToFavourites(
+                    company = localTargetCompany,
+                    ignoreError = true,
+                    onAdd = { mRemoteCompaniesContainer.add(localTargetCompany) }
+                )
             }
         }
     }
@@ -97,10 +98,10 @@ class CompaniesSyncHelper @Inject constructor(
      * access to the real-time database -> use [mRemoteCompaniesContainer] before.
      */
     fun onCompanyRemovedFromLocal(company: AdaptiveCompany) {
-        mRepositoryManager.provideUserId()?.let { authorizedUserId ->
+        mRepository.getUserAuthenticationId()?.let { authorizedUserId ->
             if (mRemoteCompaniesContainer.contains(company)) {
                 mRemoteCompaniesContainer.remove(company)
-                mRepositoryManager.eraseCompanyFromRealtimeDb(
+                mRepository.eraseCompanyIdFromRealtimeDb(
                     authorizedUserId,
                     company.id.toString()
                 )
@@ -116,11 +117,11 @@ class CompaniesSyncHelper @Inject constructor(
      * access to the real-time database -> use [mRemoteCompaniesContainer] before.
      */
     fun onCompanyAddedToLocal(company: AdaptiveCompany) {
-        mRepositoryManager.provideUserId()?.let { authorizedUserId ->
+        mRepository.getUserAuthenticationId()?.let { authorizedUserId ->
             if (!mRemoteCompaniesContainer.contains(company)) {
                 mRemoteCompaniesContainer.add(company)
-                mRepositoryManager.writeCompanyIdToRealtimeDb(
-                    mRepositoryManager.provideUserId()!!,
+                mRepository.cacheCompanyIdToRealtimeDb(
+                    authorizedUserId,
                     company.id.toString()
                 )
             }
@@ -144,9 +145,8 @@ class CompaniesSyncHelper @Inject constructor(
      * When the user exits need to call this method to clear his data
      */
     suspend fun onLogOut() {
-        val localFavouriteCompanies =
-            mDataMediator.favouriteCompaniesWorker.stateFavouriteCompanies.value.data!!.toList()
-        localFavouriteCompanies.forEach { mDataMediator.onRemoveFavouriteCompany(it) }
+        val localFavouriteCompanies = mCompaniesMediator.favouriteCompanies.toList()
+        localFavouriteCompanies.forEach { mCompaniesMediator.removeCompanyFromFavourites(it) }
     }
 
     /**
@@ -155,18 +155,18 @@ class CompaniesSyncHelper @Inject constructor(
      * added to real-time database.
      * */
     private fun detectInconsistencyAndSync() {
-        val localFavouriteCompanies =
-            mDataMediator.favouriteCompaniesWorker.stateFavouriteCompanies.value.data!!
+        val localFavouriteCompanies = mCompaniesMediator.favouriteCompanies
 
         if (mRemoteCompaniesContainer.isEmpty()) {
-            val ids = localFavouriteCompanies.map { it.id.toString() }
-            mRepositoryManager.writeCompaniesIdsToDb(mUserId, ids)
+            localFavouriteCompanies
+                .map { it.id.toString() }
+                .forEach { id -> mRepository.cacheCompanyIdToRealtimeDb(mUserId, id) }
         } else {
             localFavouriteCompanies.forEach { localCompany ->
                 val id = localCompany.id
                 val indexAtRemoteContainer = mRemoteCompaniesContainer.binarySearchBy(id) { it.id }
                 if (indexAtRemoteContainer < 0) {
-                    mRepositoryManager.writeCompanyIdToRealtimeDb(mUserId, id.toString())
+                    mRepository.cacheCompanyIdToRealtimeDb(mUserId, id.toString())
                 }
             }
         }

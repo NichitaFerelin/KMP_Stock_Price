@@ -72,12 +72,7 @@ class SearchFragment :
 
     private fun setUpClickListeners() {
         mViewController.viewBinding.imageViewBack.setOnClickListener {
-            mViewController.onBackButtonClicked(
-                ifNotHandled = {
-                    mOnBackPressedCallback.remove()
-                    activity?.onBackPressed()
-                }
-            )
+            mViewController.onBackPressed(mViewModel.lastSearchRequest)
         }
         mViewController.viewBinding.editTextSearch.doAfterTextChanged {
             mViewModel.onSearchTextChanged(it?.toString() ?: "")
@@ -128,10 +123,7 @@ class SearchFragment :
 
     private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (!mViewController.handleOnBackPressed(mViewModel.lastSearchRequest)) {
-                this.remove()
-                activity?.onBackPressed()
-            }
+            mViewController.onBackPressed(mViewModel.lastSearchRequest)
         }
     }
 

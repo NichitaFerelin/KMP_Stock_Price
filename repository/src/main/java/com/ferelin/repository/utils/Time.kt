@@ -16,9 +16,11 @@ package com.ferelin.repository.utils
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("NewApi")
 object Time {
 
     const val ONE_YEAR = 31536000000

@@ -26,6 +26,7 @@ import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.use
@@ -33,6 +34,9 @@ import androidx.fragment.app.FragmentManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -133,4 +137,12 @@ fun showDefaultDialog(context: Context, message: String) {
         .setCancelable(true)
         .setPositiveButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
         .show()
+}
+
+fun BottomSheetBehavior<FrameLayout>.isHidden() : Boolean {
+    return state == STATE_HIDDEN
+}
+
+fun BottomSheetBehavior<FrameLayout>.isExpanded() : Boolean {
+    return state == STATE_EXPANDED
 }

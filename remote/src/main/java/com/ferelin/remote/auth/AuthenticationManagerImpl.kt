@@ -33,6 +33,7 @@ import javax.inject.Singleton
  *
  * For more info about methods look at [AuthenticationManager]
  */
+// GoogleApiAvailability.makeGooglePlayServicesAvailable()
 @Singleton
 class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
 
@@ -73,7 +74,13 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
 
             override fun onVerificationFailed(p0: FirebaseException) {
                 when (p0) {
-                    is FirebaseTooManyRequestsException -> trySend(BaseResponse(responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS))
+                    is FirebaseTooManyRequestsException -> {
+                        trySend(
+                            BaseResponse(
+                                responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS
+                            )
+                        )
+                    }
                     else -> trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
                 }
             }

@@ -17,12 +17,16 @@ package com.ferelin.repository.utils
  */
 
 sealed class RepositoryMessages {
-    object Ok: RepositoryMessages()
-    object End: RepositoryMessages()
-    object Empty: RepositoryMessages()
+    object Ok : RepositoryMessages()
+    object End : RepositoryMessages()
+    object Empty : RepositoryMessages()
     object Error : RepositoryMessages()
     object Limit : RepositoryMessages()
 
     // Represent a message that can notify that AuthenticationManagerImpl send code
-    object CodeSent: RepositoryMessages()
+    object CodeSent : RepositoryMessages()
+
+    // Represent a message that can notify that user choose bad login to register
+    object BadLogin : RepositoryMessages()
+    object AlreadyExists : RepositoryMessages()
 }

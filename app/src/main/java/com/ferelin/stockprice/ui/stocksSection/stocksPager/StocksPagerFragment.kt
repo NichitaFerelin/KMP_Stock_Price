@@ -20,14 +20,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
-import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.menu.onSlide.ArrowUpAction
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
 
 class StocksPagerFragment :
     BaseFragment<FragmentStocksPagerBinding, StocksPagerViewModel, StocksPagerViewController>() {
@@ -38,8 +35,12 @@ class StocksPagerFragment :
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
         get() = FragmentStocksPagerBinding::inflate
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy {
-        childFragmentManager.findFragmentById(R.id.bottomNavigationDrawerContainer) as BottomDrawerFragment
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 300L
+        }
+        exitTransition = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,51 +49,31 @@ class StocksPagerFragment :
             viewPagerAdapter = StocksPagerAdapter(
                 childFragmentManager,
                 viewLifecycleOwner.lifecycle
-            ),
-            arrowState = mViewModel.arrowState
+            )
         )
 
         setUpClickListeners()
-        setUpBackPressedCallback()
-        configureBottomSheet()
     }
 
-    override fun onStop() {
-        mViewModel.arrowState =
-            if (mViewController.viewBinding.bottomAppBarImageViewArrowUp.rotation > 90F) 180F else 0F
-        super.onStop()
+    override fun onBackPressedHandle(): Boolean {
+        return mViewController.handleOnBackPressed()
     }
 
     private fun setUpClickListeners() {
         with(mViewController.viewBinding) {
-            cardViewSearch.setOnClickListener { mViewController.onCardSearchClicked(this@StocksPagerFragment) }
+            cardViewSearch.setOnClickListener {
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration = 200L
+                }
+                mViewController.onCardSearchClicked()
+            }
+
             textViewHintStocks.setOnClickListener { mViewController.onHintStocksClicked() }
             textViewHintFavourite.setOnClickListener { mViewController.onHintFavouriteClicked() }
-            fab.setOnClickListener { mViewController.onFabClicked(this@StocksPagerFragment) }
-            bottomAppBarLinearRoot.setOnClickListener { mBottomNavDrawer.onControlButtonPressed() }
+
+            fab.setOnClickListener {
+                mViewController.onFabClicked(this@StocksPagerFragment)
+            }
         }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (!mViewController.handleOnBackPressed()) {
-                        if (mBottomNavDrawer.bottomFragmentState == BottomSheetBehavior.STATE_EXPANDED) {
-                            mBottomNavDrawer.closeDrawer()
-                            return
-                        }
-                        this.remove()
-                        activity?.onBackPressed()
-                    }
-                }
-            })
-    }
-
-    private fun configureBottomSheet() {
-        mBottomNavDrawer.addOnSlideAction(
-            ArrowUpAction(mViewController.viewBinding.bottomAppBarImageViewArrowUp)
-        )
     }
 }

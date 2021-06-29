@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+    <TextView
+        android:id="@+id/textViewAuthorization"
+        style="@style/textViewH2"
+        android:layout_marginTop="12dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="16dp">
-
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_user_def_photo"
-            android:contentDescription="@string/descriptionUserPhoto" />
-
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_width="wrap_content"
+        tools:text="Not authorized" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMenu"

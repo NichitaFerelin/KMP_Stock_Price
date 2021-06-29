@@ -46,14 +46,18 @@ abstract class BaseStocksViewModel : BaseViewModel() {
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
         mAppScope.launch {
             if (company.isFavourite) {
-                mDataInteractor.removeCompanyFromFavourite(company)
-            } else mDataInteractor.addCompanyToFavourite(company)
+                mDataInteractor.removeCompanyFromFavourites(company)
+            } else mDataInteractor.addCompanyToFavourites(company)
         }
     }
 
     private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.loadCompanyQuote(company.companyProfile.symbol, position).collect()
+            mDataInteractor.loadCompanyQuoteFromNetwork(
+                symbol = company.companyProfile.symbol,
+                position = position,
+                isImportant = false
+            ).collect()
         }
     }
 }

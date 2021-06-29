@@ -27,7 +27,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteFragment
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksFragment
 import com.ferelin.stockprice.utils.anim.AnimationManager
@@ -57,16 +56,13 @@ class StocksPagerViewController :
         super.onDestroyView()
     }
 
-    fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter, arrowState: Float) {
+    fun setUpArgumentsViewDependsOn(viewPagerAdapter: StocksPagerAdapter) {
         viewBinding.viewPager.adapter = viewPagerAdapter
-        viewBinding.bottomAppBarImageViewArrowUp.rotation = arrowState
     }
 
     fun onFabClicked(currentFragment: StocksPagerFragment) {
         val childFragments = currentFragment.childFragmentManager.fragments
-
-        // BottomDrawerFragment is first at list in fragment manager
-        val currentChildPosition = viewBinding.viewPager.currentItem + 1
+        val currentChildPosition = viewBinding.viewPager.currentItem
 
         when (val currentChildFragment = childFragments.getOrNull(currentChildPosition)) {
             null -> return
@@ -89,17 +85,17 @@ class StocksPagerViewController :
         }
     }
 
-    fun onCardSearchClicked(fragment: Fragment) {
-        navigateToSearchFragment(fragment)
+    fun onCardSearchClicked() {
+        navigateToSearchFragment()
     }
 
     fun handleOnBackPressed(): Boolean {
-        if (viewBinding.viewPager.currentItem == 0) {
-            return false
+        return if (viewBinding.viewPager.currentItem == 0) {
+            false
+        } else {
+            viewBinding.viewPager.setCurrentItem(0, true)
+            true
         }
-
-        viewBinding.viewPager.setCurrentItem(0, true)
-        return true
     }
 
     private fun setUpViewPager() {
@@ -113,6 +109,7 @@ class StocksPagerViewController :
     }
 
     private fun hideFab() {
+        // TODO fab.hide()
         mViewAnimator.runScaleOut(viewBinding.fab, object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
                 viewBinding.fab.visibility = View.INVISIBLE
@@ -122,13 +119,13 @@ class StocksPagerViewController :
         })
     }
 
-    private fun navigateToSearchFragment(fragment: Fragment) {
-        Navigator.navigateToSearchFragment(fragment) {
-            it.addSharedElement(
+    private fun navigateToSearchFragment() {
+        mNavigator?.navigateToSearchFragment(onCommit = { transaction ->
+            transaction.addSharedElement(
                 viewBinding.toolbar,
                 context.resources.getString(R.string.transitionSearchFragment)
             )
-        }
+        })
     }
 
     private fun applyDefaultStyle(target: TextView) {

@@ -23,7 +23,6 @@ import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
 import com.ferelin.stockprice.ui.aboutSection.profile.ProfileViewModel
-import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +32,6 @@ open class CompanyViewModelFactory @Inject constructor(
     private val mSelectedCompany: AdaptiveCompany?
 ) : ViewModelProvider.Factory {
 
-    @FlowPreview
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(ChartViewModel::class.java) -> {

@@ -89,19 +89,18 @@ class AboutPagerViewController :
         mViewAnimator.runScaleInOut(viewBinding.imageViewStar)
     }
 
+    fun onBackPressed() {
+        if (isNotFirstPageSelected()) {
+            viewBinding.viewPager.setCurrentItem(0, true)
+        } else mNavigator?.navigateBackToHostFragment()
+    }
+
     fun onDataChanged(companyName: String, companySymbol: String, favouriteIconResource: Int) {
         viewBinding.run {
             textViewCompanyName.text = companyName
             textViewCompanySymbol.text = companySymbol
             imageViewStar.setImageResource(favouriteIconResource)
         }
-    }
-
-    fun handleOnBackPressed(): Boolean {
-        return if (isNotFirstPageSelected()) {
-            viewBinding.viewPager.setCurrentItem(0, true)
-            true
-        } else false
     }
 
     private fun setUpViewPager() {

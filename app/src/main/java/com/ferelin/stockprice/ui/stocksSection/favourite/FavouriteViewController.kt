@@ -27,18 +27,18 @@ class FavouriteViewController : BaseStocksViewController<FragmentFavouriteBindin
 
     override val mViewAnimator: BaseStocksViewAnimator = BaseStocksViewAnimator()
 
-    override val mStocksRecyclerView: RecyclerView
+    override val stocksRecyclerView: RecyclerView
         get() = viewBinding.recyclerViewFavourites
 
     override fun onDestroyView() {
         postponeReferencesRemove {
-            mStocksRecyclerView.adapter = null
+            stocksRecyclerView.adapter = null
             super.onDestroyView()
         }
     }
 
     fun onNewItem() {
-        mStocksRecyclerView.scrollToPosition(0)
+        stocksRecyclerView.scrollToPosition(0)
     }
 
     fun setArgumentsViewDependsOn(
@@ -46,6 +46,6 @@ class FavouriteViewController : BaseStocksViewController<FragmentFavouriteBindin
         fragmentManager: FragmentManager
     ) {
         super.fragmentManager = fragmentManager
-        mStocksRecyclerView.adapter = stocksRecyclerAdapter
+        stocksRecyclerView.adapter = stocksRecyclerAdapter
     }
 }

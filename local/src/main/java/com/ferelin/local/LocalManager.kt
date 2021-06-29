@@ -16,15 +16,20 @@ package com.ferelin.local
  * limitations under the License.
  */
 
-import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.json.JsonManager
+import com.ferelin.local.databases.companiesDb.CompaniesDao
+import com.ferelin.local.databases.messagesDb.MessagesDao
+import com.ferelin.local.databases.relationsDb.RelationsDao
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
 
-interface LocalManager : StorePreferences, CompaniesManager, JsonManager {
+interface LocalManager :
+    StorePreferences,
+    CompaniesDao,
+    MessagesDao,
+    RelationsDao {
 
-    fun getAllCompanies(): CompaniesResponse
+    suspend fun getAllCompaniesAsResponse(): CompaniesResponse
 
     suspend fun getSearchesHistoryAsResponse(): SearchesResponse
 }

@@ -17,7 +17,6 @@ package com.ferelin.remote
  */
 
 import android.app.Activity
-import android.content.Context
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
@@ -29,7 +28,7 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.response.WebSocketResponse
-import com.google.firebase.FirebaseApp
+import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,13 +42,7 @@ class RemoteMediatorImpl @Inject constructor(
     private val mWebSocketConnector: WebSocketConnector,
     private val mAuthenticationManager: AuthenticationManager,
     private val mRealtimeDatabaseManager: RealtimeDatabase,
-    context: Context
 ) : RemoteMediator {
-
-    init {
-        // Firebase must be initialized before usage
-        FirebaseApp.initializeApp(context)
-    }
 
     override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
         return mWebSocketConnector.openWebSocketConnection(token)
@@ -120,6 +113,14 @@ class RemoteMediatorImpl @Inject constructor(
         return mAuthenticationManager.provideIsUserLogged()
     }
 
+    override fun findUserByLogin(login: String): Flow<Boolean> {
+        return mRealtimeDatabaseManager.findUserByLogin(login)
+    }
+
+    override suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>> {
+        return mRealtimeDatabaseManager.tryToRegister(userId, login)
+    }
+
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
         mRealtimeDatabaseManager.eraseCompanyIdFromRealtimeDb(userId, companyId)
     }
@@ -150,5 +151,51 @@ class RemoteMediatorImpl @Inject constructor(
 
     override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
         mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequest)
+    }
+
+    override fun getMessagesAssociatedWithSpecifiedUser(
+        sourceUserLogin: String,
+        secondSideUserLogin: String
+    ): Flow<BaseResponse<List<HashMap<String, String>>>> {
+        return mRealtimeDatabaseManager.getMessagesAssociatedWithSpecifiedUser(
+            sourceUserLogin,
+            secondSideUserLogin
+        )
+    }
+
+    override fun addNewMessage(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        messageId: String,
+        message: String,
+        side: MessageSide
+    ) {
+        mRealtimeDatabaseManager.addNewMessage(
+            sourceUserLogin,
+            secondSideUserLogin,
+            messageId,
+            message,
+            side
+        )
+    }
+
+    override fun addNewRelation(
+        sourceUserLogin: String,
+        secondSideUserLogin: String,
+        relationId: String
+    ) {
+        mRealtimeDatabaseManager.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
+    }
+
+    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
+        mRealtimeDatabaseManager.eraseRelation(sourceUserLogin, relationId)
+    }
+
+    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
+        return mRealtimeDatabaseManager.getUserRelations(userLogin)
+    }
+
+    override fun findUserById(userId: String): Flow<BaseResponse<String?>> {
+        return mRealtimeDatabaseManager.findUserById(userId)
     }
 }

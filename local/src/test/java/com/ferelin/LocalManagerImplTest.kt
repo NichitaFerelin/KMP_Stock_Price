@@ -2,8 +2,6 @@ package com.ferelin
 
 import com.ferelin.local.LocalManager
 import com.ferelin.local.LocalManagerImpl
-import com.ferelin.local.database.CompaniesManager
-import com.ferelin.local.database.CompaniesManagerImpl
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.json.JsonManagerImpl
 import com.ferelin.local.preferences.StorePreferences
@@ -73,7 +71,7 @@ class LocalManagerImplTest {
     fun responseLoadedFromDatabase(): Unit = runBlocking {
         `when`(mCompaniesManager.getCompanies()).thenReturn(listOf(FakeLocalResponses.company))
 
-        val response = mLocalManager.getAllCompanies()
+        val response = mLocalManager.getAllCompaniesAsResponse()
         Assert.assertEquals(true, response is CompaniesResponse.Success)
         Assert.assertEquals(
             Responses.LOADED_FROM_DB,
@@ -86,7 +84,7 @@ class LocalManagerImplTest {
         `when`(mCompaniesManager.getCompanies()).thenReturn(emptyList())
         `when`(mLocalManager.getCompaniesFromJson()).thenReturn(emptyList())
 
-        val response = mLocalManager.getAllCompanies()
+        val response = mLocalManager.getAllCompaniesAsResponse()
         Assert.assertEquals(true, response is CompaniesResponse.Success)
         Assert.assertEquals(
             Responses.LOADED_FROM_JSON,
@@ -101,7 +99,7 @@ class LocalManagerImplTest {
         `when`(mCompaniesManager.getCompanies()).thenReturn(emptyList())
         `when`(mJsonManager.getCompaniesFromJson()).thenReturn(item)
 
-        mLocalManager.getAllCompanies()
+        mLocalManager.getAllCompaniesAsResponse()
         verify(mCompaniesManager, times(1)).getCompanies()
         verify(mJsonManager, times(1)).getCompaniesFromJson()
         verify(mCompaniesManager, times(1)).insertAllCompanies(item)
@@ -112,7 +110,7 @@ class LocalManagerImplTest {
         `when`(mCompaniesManager.getCompanies())
             .thenReturn(listOf(FakeLocalResponses.companiesResponseSuccessFromJson.companies.first()))
 
-        mLocalManager.getAllCompanies()
+        mLocalManager.getAllCompaniesAsResponse()
         verify(mCompaniesManager, times(1)).getCompanies()
         verify(mJsonManager, times(0)).getCompaniesFromJson()
         verify(mCompaniesManager, times(0)).insertAllCompanies(emptyList())

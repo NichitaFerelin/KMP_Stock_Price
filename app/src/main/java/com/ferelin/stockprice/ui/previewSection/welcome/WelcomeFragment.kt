@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.stockprice.navigation.Navigator
+import com.ferelin.stockprice.App
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.utils.compose.StockPriceTheme
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +34,11 @@ import kotlinx.coroutines.launch
 class WelcomeFragment : Fragment() {
 
     private val mViewModel: WelcomeViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        injectDependencies()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +58,23 @@ class WelcomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            mViewModel.actionMoveToNextScreen.collect {
-                if (it) {
-                    (activity as MainActivity).dataInteractor.setFirstTimeLaunchState(false)
-                    Navigator.navigateToStocksPagerFragment(this@WelcomeFragment)
+            mViewModel.actionMoveToNextScreen.collect { move ->
+                if (move) {
+                    val hostActivity = requireActivity()
+                    if (hostActivity is MainActivity) {
+                        hostActivity.navigator.navigateToDrawerHostFragment()
+                    }
                 }
             }
         }
+    }
+
+    private fun injectDependencies() {
+        val hostApplication = requireActivity().application
+        if (hostApplication is App) {
+            hostApplication.appComponent.inject(mViewModel)
+        } else throw IllegalStateException(
+            "WelcomeFragment cannot inject dependencies. Host application is not '.App' class"
+        )
     }
 }

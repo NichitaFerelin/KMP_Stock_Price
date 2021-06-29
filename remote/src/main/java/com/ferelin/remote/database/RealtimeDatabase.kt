@@ -16,68 +16,42 @@
 
 package com.ferelin.remote.database
 
-import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
+import com.ferelin.remote.database.helpers.messages.MessagesHelper
+import com.ferelin.remote.database.helpers.relations.RelationsHelper
+import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
+import com.ferelin.remote.database.helpers.user.UsersHelper
 
-/**
- * [RealtimeDatabase] is an interface of [RealtimeDatabaseImpl]
- */
-interface RealtimeDatabase {
+interface RealtimeDatabase :
+    FavouriteCompaniesHelper,
+    SearchRequestsHelper,
+    UsersHelper,
+    MessagesHelper,
+    RelationsHelper {
 
-    /**
-     * Provides ability to erase a database id from cloud database
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param companyId is a company id at local database that will be erased.
-     */
-    fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
+    companion object {
 
-    /**
-     * Provides ability to write a company id to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param companyId is a company id at local database that will be saved.
-     */
-    fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
+        /**
+         * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
+         */
+        private const val sUnavailableSymbolsPattern = "[.#$\\[\\]]"
 
-    /**
-     * Provides ability to write a list of ids to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param companiesId is a list of ids that will be saved.
-     */
-    fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
+        fun isTextAvailableForFirebase(text: String): Boolean {
+            return !text.contains(Regex(sUnavailableSymbolsPattern))
+        }
 
-    /**
-     * Provides ability to read user favourite companies ids from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @return [BaseResponse] with company ID and [Api] response code as flow.
-     */
-    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>>
+        /*
+        * Encrypts to avoid exceptions
+        * */
+        fun encrypt(str: String): String {
+            return str.replace(Regex(sUnavailableSymbolsPattern), "%")
+        }
 
-    /**
-     * Provides ability to save search requests to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequest is a search requests that will be saved.
-     */
-    fun writeSearchRequestToDb(userId: String, searchRequest: String)
-
-    /**
-     * Provides ability to save a list of search requests to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequests is a search requests list that will be saved.
-     */
-    fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
-
-    /**
-     * Provides ability to read a search history from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @return [BaseResponse] with search request and [Api] response code as flow.
-     */
-    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>>
-
-    /**
-     * Provides ability to erase a search request from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequest is a search request that will be erased.
-     */
-    fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
+        /*
+        * Decrypts for repository
+        * */
+        fun decrypt(str: String?): String? {
+            return str?.replace('%', '.')
+        }
+    }
 }

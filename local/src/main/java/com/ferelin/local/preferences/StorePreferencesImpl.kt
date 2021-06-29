@@ -19,6 +19,7 @@ package com.ferelin.local.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
@@ -41,6 +42,8 @@ open class StorePreferencesImpl @Inject constructor(
 
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
     private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
+    private val mRegisterKey = booleanPreferencesKey("register-key")
+    private val mUserLoginKey = stringPreferencesKey("user-login-key")
 
     override suspend fun getSearchRequestsHistory(): Set<String> {
         return mContext.dataStorePreferences.data.map {
@@ -69,6 +72,30 @@ open class StorePreferencesImpl @Inject constructor(
     override suspend fun getFirstTimeLaunchState(): Boolean? {
         return mContext.dataStorePreferences.data.map {
             it[mFirstTimeLaunchKey]
+        }.firstOrNull()
+    }
+
+    override suspend fun getUserRegisterState(): Boolean? {
+        return mContext.dataStorePreferences.data.map {
+            it[mRegisterKey]
+        }.firstOrNull()
+    }
+
+    override suspend fun setUserRegisterState(state: Boolean) {
+        mContext.dataStorePreferences.edit {
+            it[mRegisterKey] = state
+        }
+    }
+
+    override suspend fun setUserLogin(login: String) {
+        mContext.dataStorePreferences.edit {
+            it[mUserLoginKey] = login
+        }
+    }
+
+    override suspend fun getUserLogin(): String? {
+        return mContext.dataStorePreferences.data.map {
+            it[mUserLoginKey]
         }.firstOrNull()
     }
 }

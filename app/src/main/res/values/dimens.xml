@@ -36,4 +36,15 @@
     <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
 
     <dimen name="bottomDrawerElevation">16dp</dimen>
+    <dimen name="appBarHeight">55dp</dimen>
+
+    <dimen name="dialogHeight">220dp</dimen>
+    <dimen name="dialogWidth">300dp</dimen>
+
+    <dimen name="relationMarginHorizontal">30dp</dimen>
+    <dimen name="relationMarginBetween">8dp</dimen>
+    <dimen name="bottomAppBarHeight">56dp</dimen>
+
+    <dimen name="messageMarginTop">8dp</dimen>
+    <dimen name="messageMarginStart">16dp</dimen>
 </resources>
