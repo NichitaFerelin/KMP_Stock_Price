@@ -17,21 +17,25 @@
 package com.ferelin.remote.database.helpers.messages
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 
 interface MessagesHelper {
 
-    fun getMessagesAssociatedWithSpecifiedUser(
-        sourceUserLogin: String,
-        secondSideUserLogin: String
-    ): Flow<BaseResponse<List<HashMap<String, String>>>>
+    companion object {
+        const val MESSAGE_ID_KEY = "message_id_key"
+        const val MESSAGE_TEXT_KEY = "message_text_key"
+        const val MESSAGE_SIDE_KEY = "message_side_key"
+    }
 
-    fun addNewMessage(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        messageId: String,
-        message: String,
-        side: MessageSide
+    fun getMessagesForChat(
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ): Flow<BaseResponse<HashMap<String, Any>>>
+
+    fun cacheMessage(
+        currentUserNumber: String,
+        associatedUserNumber: String,
+        messageText: String,
+        messageSideKey: Char
     )
 }

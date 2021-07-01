@@ -18,15 +18,15 @@ package com.ferelin.repository.converter
 
 import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
+import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
-import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 
-interface ResponseMediator :
+interface ConverterMediator :
         ApiConverter,
         AuthenticationConverter,
         CompaniesConverter,
@@ -35,4 +35,4 @@ interface ResponseMediator :
         RealtimeDatabaseConverter,
         SearchRequestsConverter,
         WebSocketConverter,
-        RelationsConverter
+        ChatsConverter

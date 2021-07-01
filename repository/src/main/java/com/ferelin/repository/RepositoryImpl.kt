@@ -20,12 +20,10 @@ import android.app.Activity
 import com.ferelin.local.LocalManager
 import com.ferelin.remote.RemoteMediator
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.repository.converter.ResponseMediator
+import com.ferelin.repository.converter.ConverterMediator
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,16 +32,16 @@ import javax.inject.Singleton
 open class RepositoryImpl @Inject constructor(
     private val mRemoteMediator: RemoteMediator,
     private val mLocalManager: LocalManager,
-    private val mResponseMediator: ResponseMediator
+    private val mConverterMediator: ConverterMediator
 ) : Repository {
 
     override suspend fun getAllCompaniesFromLocalDb(): RepositoryResponse<List<AdaptiveCompany>> {
         val localCompanies = mLocalManager.getAllCompaniesAsResponse()
-        return mResponseMediator.convertCompaniesResponseForUi(localCompanies)
+        return mConverterMediator.convertCompaniesResponseForUi(localCompanies)
     }
 
     override suspend fun cacheCompanyToLocalDb(adaptiveCompany: AdaptiveCompany) {
-        val preparedForInsert = mResponseMediator.convertCompanyForLocal(adaptiveCompany)
+        val preparedForInsert = mConverterMediator.convertCompanyForLocal(adaptiveCompany)
         mLocalManager.updateCompany(preparedForInsert)
     }
 
@@ -57,7 +55,7 @@ open class RepositoryImpl @Inject constructor(
 
     override fun getCompaniesIdsFromRealtimeDb(userId: String): Flow<RepositoryResponse<String?>> {
         return mRemoteMediator.readCompaniesIdsFromDb(userId).map { response ->
-            mResponseMediator.convertRealtimeDatabaseResponseForUi(response)
+            mConverterMediator.convertRealtimeDatabaseResponseForUi(response)
         }
     }
 
@@ -67,17 +65,17 @@ open class RepositoryImpl @Inject constructor(
 
     override suspend fun getSearchesHistoryFromLocalDb(): RepositoryResponse<List<AdaptiveSearchRequest>> {
         val searchesHistory = mLocalManager.getSearchesHistoryAsResponse()
-        return mResponseMediator.convertSearchesForUi(searchesHistory)
+        return mConverterMediator.convertSearchesForUi(searchesHistory)
     }
 
     override suspend fun cacheSearchRequestsHistoryToLocalDb(requests: List<AdaptiveSearchRequest>) {
-        val preparedForInsert = mResponseMediator.convertSearchesForLocal(requests)
+        val preparedForInsert = mConverterMediator.convertSearchesForLocal(requests)
         mLocalManager.setSearchRequestsHistory(preparedForInsert)
     }
 
     override fun getSearchRequestsFromRealtimeDb(userId: String): Flow<RepositoryResponse<String?>> {
         return mRemoteMediator.readSearchRequestsFromDb(userId).map { response ->
-            mResponseMediator.convertRealtimeDatabaseResponseForUi(response)
+            mConverterMediator.convertRealtimeDatabaseResponseForUi(response)
         }
     }
 
@@ -89,47 +87,13 @@ open class RepositoryImpl @Inject constructor(
         mRemoteMediator.writeSearchRequestToDb(userId, searchRequest)
     }
 
-    override fun cacheNewRelationToRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        relationId: String
-    ) {
-        mRemoteMediator.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
-    }
-
-    override suspend fun getUserRelationsFromRealtimeDb(
-        userLogin: String
-    ): RepositoryResponse<List<AdaptiveRelation>> {
-        val response = mRemoteMediator.getUserRelations(userLogin).firstOrNull()
-        return mResponseMediator.convertRealtimeRelationResponseForUi(response)
-    }
-
-    override suspend fun eraseRelationFromLocalDb(relation: AdaptiveRelation) {
-        val preparedForLocal = mResponseMediator.convertRelationForLocal(relation)
-        mLocalManager.deleteRelation(preparedForLocal)
-    }
-
-    override fun eraseRelationFromRealtimeDb(sourceUserLogin: String, relationId: String) {
-        mRemoteMediator.eraseRelation(sourceUserLogin, relationId)
-    }
-
-    override suspend fun cacheRelationToLocalDb(relation: AdaptiveRelation) {
-        val preparedForInsert = mResponseMediator.convertRelationForLocal(relation)
-        mLocalManager.insertRelation(preparedForInsert)
-    }
-
-    override suspend fun getAllRelationsFromLocalDb(): RepositoryResponse<List<AdaptiveRelation>> {
-        val localResponse = mLocalManager.getAllRelations()
-        return mResponseMediator.convertLocalRelationResponseForUi(localResponse)
-    }
-
-    override fun clearRelationsDatabase() {
-        mLocalManager.clearRelationsTable()
+    override fun clearChatsLocalDb() {
+        mLocalManager.clearChats()
     }
 
     override suspend fun getFirstTimeLaunchState(): RepositoryResponse<Boolean> {
         val firstTimeLaunch = mLocalManager.getFirstTimeLaunchState()
-        return mResponseMediator.convertFirstTimeLaunchStateForUi(firstTimeLaunch)
+        return mConverterMediator.convertFirstTimeLaunchStateForUi(firstTimeLaunch)
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
@@ -152,30 +116,12 @@ open class RepositoryImpl @Inject constructor(
         return mLocalManager.getUserLogin()
     }
 
-    override suspend fun isUserExist(login: String): Boolean {
-        return mRemoteMediator.findUserByLogin(login).firstOrNull() == true
-    }
-
-    override suspend fun findUserById(userId: String): RepositoryResponse<String?> {
-        val remoteResponse = mRemoteMediator.findUserById(userId).firstOrNull()
-        return mResponseMediator.convertRealtimeDatabaseResponseForUi(remoteResponse)
-    }
-
-    override suspend fun tryToRegister(
-        userId: String,
-        login: String
-    ): Flow<RepositoryResponse<Boolean>> {
-        return mRemoteMediator.tryToRegister(userId, login).map { response ->
-            mResponseMediator.convertTryToRegisterResponseForUi(response)
-        }
-    }
-
     override fun tryToSignIn(
         holderActivity: Activity,
         phone: String
     ): Flow<RepositoryResponse<RepositoryMessages>> {
         return mRemoteMediator.tryToLogIn(holderActivity, phone).map {
-            mResponseMediator.convertAuthenticationResponseForUi(it)
+            mConverterMediator.convertAuthenticationResponseForUi(it)
         }
     }
 
@@ -195,18 +141,6 @@ open class RepositoryImpl @Inject constructor(
         return mRemoteMediator.provideIsUserLogged()
     }
 
-    override suspend fun cacheMessagesHolderToLocalDb(messagesHolder: AdaptiveMessagesHolder) {
-        val preparedForInsert = mResponseMediator.convertMessageForLocal(messagesHolder)
-        mLocalManager.insertMessage(preparedForInsert)
-    }
-
-    override suspend fun getMessagesByLoginFromLocalDb(
-        associatedLogin: String
-    ): RepositoryResponse<AdaptiveMessagesHolder> {
-        val localMessages = mLocalManager.getMessagesAssociatedWithLogin(associatedLogin)
-        return mResponseMediator.convertLocalMessagesResponseForUi(localMessages)
-    }
-
     override fun clearMessagesDatabase() {
         mLocalManager.clearMessagesTable()
     }
@@ -218,19 +152,19 @@ open class RepositoryImpl @Inject constructor(
         resolution: String
     ): Flow<RepositoryResponse<AdaptiveCompanyHistory>> {
         return mRemoteMediator.loadStockCandles(symbol, from, to, resolution).map {
-            mResponseMediator.convertStockCandlesResponseForUi(it, symbol)
+            mConverterMediator.convertStockCandlesResponseForUi(it, symbol)
         }
     }
 
     override fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>> {
         return mRemoteMediator.loadCompanyProfile(symbol).map {
-            mResponseMediator.convertCompanyProfileResponseForUi(it, symbol)
+            mConverterMediator.convertCompanyProfileResponseForUi(it, symbol)
         }
     }
 
     override fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStocksSymbols>> {
         return mRemoteMediator.loadStockSymbols().map {
-            mResponseMediator.convertStockSymbolsResponseForUi(it)
+            mConverterMediator.convertStockSymbolsResponseForUi(it)
         }
     }
 
@@ -240,7 +174,7 @@ open class RepositoryImpl @Inject constructor(
         to: String
     ): Flow<RepositoryResponse<AdaptiveCompanyNews>> {
         return mRemoteMediator.loadCompanyNews(symbol, from, to).map {
-            mResponseMediator.convertCompanyNewsResponseForUi(it, symbol)
+            mConverterMediator.convertCompanyNewsResponseForUi(it, symbol)
         }
     }
 
@@ -250,13 +184,13 @@ open class RepositoryImpl @Inject constructor(
         isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
         return mRemoteMediator.loadCompanyQuote(symbol, position, isImportant).map {
-            mResponseMediator.convertCompanyQuoteResponseForUi(it)
+            mConverterMediator.convertCompanyQuoteResponseForUi(it)
         }
     }
 
     override fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
         return mRemoteMediator.openWebSocketConnection().map {
-            mResponseMediator.convertWebSocketResponseForUi(it)
+            mConverterMediator.convertWebSocketResponseForUi(it)
         }
     }
 
@@ -272,29 +206,59 @@ open class RepositoryImpl @Inject constructor(
         mRemoteMediator.unsubscribeItemFromLiveTimeUpdates(symbol)
     }
 
-    override fun getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String
-    ): Flow<RepositoryResponse<AdaptiveMessagesHolder>> {
-        return mRemoteMediator.getMessagesAssociatedWithSpecifiedUser(
-            sourceUserLogin,
-            secondSideUserLogin
-        ).map { response -> mResponseMediator.convertRemoteMessagesResponseForUi(response) }
+    override suspend fun cacheChatToLocalDb(chat: AdaptiveChat) {
+        val preparedForInsert = mConverterMediator.convertAdaptiveChatForLocal(chat)
+        mLocalManager.insertChat(preparedForInsert)
+    }
+
+    override suspend fun getAllChatsFromLocalDb(): RepositoryResponse<List<AdaptiveChat>> {
+        val localChats = mLocalManager.getAllChats()
+        return mConverterMediator.convertLocalChatsForUi(localChats)
+    }
+
+    override suspend fun cacheMessageToLocalDb(message: AdaptiveMessage) {
+        val preparedForLocal = mConverterMediator.convertMessageForLocal(message)
+        mLocalManager.insertMessage(preparedForLocal)
+    }
+
+    override suspend fun getMessagesFromLocalDb(
+        associatedUserNumber: String
+    ): RepositoryResponse<List<AdaptiveMessage>> {
+        val localMessages = mLocalManager.getMessages(associatedUserNumber)
+        return mConverterMediator.convertLocalMessagesResponseForUi(localMessages)
+    }
+
+    override fun cacheChatToRealtimeDb(sourceUserNumber: String, secondSideUserNumber: String) {
+        mRemoteMediator.cacheChat(sourceUserNumber, secondSideUserNumber)
+    }
+
+    override suspend fun getUserChatsFromRealtimeDb(
+        userNumber: String
+    ): Flow<RepositoryResponse<AdaptiveChat>> {
+        return mRemoteMediator.getUserChats(userNumber).map { response ->
+            mConverterMediator.convertRemoteChatResponseForUi(response)
+        }
+    }
+
+    override fun getMessagesFromRealtimeDb(
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ): Flow<RepositoryResponse<AdaptiveMessage>> {
+        return mRemoteMediator.getMessagesForChat(currentUserNumber, associatedUserNumber)
+            .map { response -> mConverterMediator.convertRemoteMessageResponseForUi(response) }
     }
 
     override fun cacheNewMessageToRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        messageId: String,
-        message: String,
-        side: MessageSide
+        currentUserNumber: String,
+        associatedUserNumber: String,
+        messageText: String,
+        messageSideKey: Char
     ) {
-        mRemoteMediator.addNewMessage(
-            sourceUserLogin,
-            secondSideUserLogin,
-            messageId,
-            message,
-            side
+        mRemoteMediator.cacheMessage(
+            currentUserNumber,
+            associatedUserNumber,
+            messageText,
+            messageSideKey
         )
     }
 }

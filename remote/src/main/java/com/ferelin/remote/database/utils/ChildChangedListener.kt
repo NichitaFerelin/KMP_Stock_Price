@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database
+package com.ferelin.remote.database.utils
 
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 
-abstract class RealtimeValueEventListener : ValueEventListener {
+abstract class ChildChangedListener : ChildEventListener {
 
-    override fun onDataChange(snapshot: DataSnapshot) {
+    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+    }
+
+    override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+    }
+
+    override fun onChildRemoved(snapshot: DataSnapshot) {
+    }
+
+    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
     }
 
     override fun onCancelled(error: DatabaseError) {

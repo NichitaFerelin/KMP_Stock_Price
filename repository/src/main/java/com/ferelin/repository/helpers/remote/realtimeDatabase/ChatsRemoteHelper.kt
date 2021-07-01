@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.relationsDb
+package com.ferelin.repository.helpers.remote.realtimeDatabase
 
-import androidx.room.*
-import com.ferelin.local.models.Relation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
+import com.ferelin.repository.utils.RepositoryResponse
+import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface RelationsDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRelation(relation: Relation)
+interface ChatsRemoteHelper {
 
-    @Query("SELECT * FROM `stockprice.relations.db`")
-    suspend fun getAllRelations(): List<Relation>
+    fun cacheChatToRealtimeDb(sourceUserNumber: String, secondSideUserNumber: String)
 
-    @Delete
-    suspend fun deleteRelation(relation: Relation)
-
-    @Query("DELETE FROM `stockprice.relations.db`")
-    fun clearRelationsTable()
+    suspend fun getUserChatsFromRealtimeDb(userNumber: String): Flow<RepositoryResponse<AdaptiveChat>>
 }

@@ -16,13 +16,13 @@ package com.ferelin.local
  * limitations under the License.
  */
 
+import com.ferelin.local.databases.chatsDb.ChatsDao
 import com.ferelin.local.databases.companiesDb.CompaniesDao
 import com.ferelin.local.databases.messagesDb.MessagesDao
-import com.ferelin.local.databases.relationsDb.RelationsDao
 import com.ferelin.local.json.JsonManager
+import com.ferelin.local.models.Chat
 import com.ferelin.local.models.Company
-import com.ferelin.local.models.MessagesHolder
-import com.ferelin.local.models.Relation
+import com.ferelin.local.models.Message
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
@@ -36,7 +36,7 @@ open class LocalManagerImpl @Inject constructor(
     private val mStorePreferences: StorePreferences,
     private val mCompaniesDao: CompaniesDao,
     private val mMessagesDao: MessagesDao,
-    private val mRelationsDao: RelationsDao
+    private val mChatsDao: ChatsDao
 ) : LocalManager {
 
     override suspend fun insertCompany(company: Company) {
@@ -81,16 +81,12 @@ open class LocalManagerImpl @Inject constructor(
         return mCompaniesDao.getAllCompanies()
     }
 
-    override suspend fun insertMessage(message: MessagesHolder) {
+    override suspend fun insertMessage(message: Message) {
         mMessagesDao.insertMessage(message)
     }
 
-    override suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder? {
-        return mMessagesDao.getMessagesAssociatedWithLogin(associatedLogin)
-    }
-
-    override suspend fun deleteMessage(message: MessagesHolder) {
-        mMessagesDao.deleteMessage(message)
+    override suspend fun getMessages(associatedUserNumber: String): List<Message>? {
+        return mMessagesDao.getMessages(associatedUserNumber)
     }
 
     override fun clearMessagesTable() {
@@ -131,20 +127,16 @@ open class LocalManagerImpl @Inject constructor(
         mStorePreferences.setUserRegisterState(state)
     }
 
-    override suspend fun insertRelation(relation: Relation) {
-        mRelationsDao.insertRelation(relation)
+    override suspend fun insertChat(chat: Chat) {
+        mChatsDao.insertChat(chat)
     }
 
-    override suspend fun getAllRelations(): List<Relation> {
-        return mRelationsDao.getAllRelations()
+    override suspend fun getAllChats(): List<Chat>? {
+        return mChatsDao.getAllChats()
     }
 
-    override suspend fun deleteRelation(relation: Relation) {
-        mRelationsDao.deleteRelation(relation)
-    }
-
-    override fun clearRelationsTable() {
-        mRelationsDao.clearRelationsTable()
+    override fun clearChats() {
+        mChatsDao.clearChats()
     }
 
     override suspend fun setUserLogin(login: String) {

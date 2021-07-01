@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.converter.helpers.relationsConverter
+package com.ferelin.repository.helpers.local
 
-import com.ferelin.local.models.Relation
-import com.ferelin.remote.base.BaseResponse
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface RelationsConverter {
+interface ChatsLocalHelper {
 
-    fun convertRelationForLocal(item: AdaptiveRelation) : Relation
+    suspend fun cacheChatToLocalDb(chat: AdaptiveChat)
 
-    fun convertLocalRelationResponseForUi(
-        data: List<Relation>
-    ): RepositoryResponse<List<AdaptiveRelation>>
+    suspend fun getAllChatsFromLocalDb(): RepositoryResponse<List<AdaptiveChat>>
 
-    fun convertRealtimeRelationResponseForUi(
-        response: BaseResponse<List<Pair<Int, String>>>?
-    ): RepositoryResponse<List<AdaptiveRelation>>
+    fun clearChatsLocalDb()
 }

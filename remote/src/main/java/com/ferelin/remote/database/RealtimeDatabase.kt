@@ -16,18 +16,16 @@
 
 package com.ferelin.remote.database
 
+import com.ferelin.remote.database.helpers.chats.ChatsHelper
 import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
 import com.ferelin.remote.database.helpers.messages.MessagesHelper
-import com.ferelin.remote.database.helpers.relations.RelationsHelper
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
-import com.ferelin.remote.database.helpers.user.UsersHelper
 
 interface RealtimeDatabase :
     FavouriteCompaniesHelper,
     SearchRequestsHelper,
-    UsersHelper,
     MessagesHelper,
-    RelationsHelper {
+    ChatsHelper {
 
     companion object {
 
@@ -35,10 +33,6 @@ interface RealtimeDatabase :
          * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
          */
         private const val sUnavailableSymbolsPattern = "[.#$\\[\\]]"
-
-        fun isTextAvailableForFirebase(text: String): Boolean {
-            return !text.contains(Regex(sUnavailableSymbolsPattern))
-        }
 
         /*
         * Encrypts to avoid exceptions

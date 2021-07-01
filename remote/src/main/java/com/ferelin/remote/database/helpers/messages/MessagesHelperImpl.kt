@@ -17,10 +17,8 @@
 package com.ferelin.remote.database.helpers.messages
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.database.RealtimeValueEventListener
+import com.ferelin.remote.database.utils.ChildChangedListener
 import com.ferelin.remote.utils.Api
-import com.ferelin.shared.MessageSide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
@@ -30,84 +28,90 @@ import javax.inject.Singleton
 
 @Singleton
 class MessagesHelperImpl @Inject constructor(
-    private val mDatabaseFirebase: DatabaseReference
+    private val mDatabaseReference: DatabaseReference
 ) : MessagesHelper {
 
-    companion object {
-        private const val sMessagesRef = "messages"
-
-        const val MESSAGE_ID_KEY = "message_id_key"
-        const val MESSAGE_TEXT_KEY = "message_text_key"
-        const val MESSAGE_SIDE_KEY = "message_side_key"
+    private companion object {
+        const val sMessagesReference = "messages"
     }
 
-    override fun getMessagesAssociatedWithSpecifiedUser(
-        sourceUserLogin: String,
-        secondSideUserLogin: String
-    ) = callbackFlow<BaseResponse<List<HashMap<String, String>>>> {
-        val encryptedSecondSideLogin = RealtimeDatabase.encrypt(secondSideUserLogin)
-        mDatabaseFirebase
-            .child(sMessagesRef)
-            .child(sourceUserLogin)
-            .child(encryptedSecondSideLogin)
-            .addValueEventListener(object : RealtimeValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val messages = mutableListOf<HashMap<String, String>>()
-                        for (messageSnapshot in snapshot.children) {
-                            messageSnapshot.key?.let { messageSideWithId ->
-                                val messageSide = messageSideWithId[0].toString()
-                                val messageId = messageSideWithId.filter { it.isDigit() }
-                                val decryptedMessage =
-                                    RealtimeDatabase.decrypt(messageSnapshot.value.toString())!!
+    override fun getMessagesForChat(
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ) = callbackFlow<BaseResponse<HashMap<String, Any>>> {
 
-                                messages.add(
-                                    hashMapOf(
-                                        MESSAGE_ID_KEY to messageId,
-                                        MESSAGE_SIDE_KEY to messageSide,
-                                        MESSAGE_TEXT_KEY to decryptedMessage
-                                    )
-                                )
-                            }
-                        }
-                        trySend(
-                            BaseResponse(
-                                responseCode = Api.RESPONSE_OK,
-                                additionalMessage = secondSideUserLogin,
-                                responseData = messages
-                            )
-                        )
-                    } else trySend(BaseResponse(Api.RESPONSE_NO_DATA))
+        mDatabaseReference
+            .child(sMessagesReference)
+            .child(currentUserNumber)
+            .child(associatedUserNumber)
+            .get()
+            .addOnSuccessListener { dataSnapshot ->
+                for (messageSnapshot in dataSnapshot.children) {
+                    trySend(
+                        element = createResponseBySnapshot(messageSnapshot)
+                    )
+                }
+            }
+            .addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
+
+        mDatabaseReference
+            .child(sMessagesReference)
+            .child(currentUserNumber)
+            .child(associatedUserNumber)
+            .addChildEventListener(object : ChildChangedListener() {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    trySend(
+                        element = createResponseBySnapshot(snapshot)
+                    )
                 }
             })
+
         awaitClose()
     }
 
-    override fun addNewMessage(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        messageId: String,
-        message: String,
-        side: MessageSide
+    override fun cacheMessage(
+        currentUserNumber: String,
+        associatedUserNumber: String,
+        messageText: String,
+        messageSideKey: Char
     ) {
-        val key = when (side) {
-            is MessageSide.Source -> MessageSide.Source.key
-            is MessageSide.Associated -> MessageSide.Associated.key
-        }
-        val messageKey = key + messageId
-        val encryptedMessage = RealtimeDatabase.encrypt(message)
-        mDatabaseFirebase
-            .child(sMessagesRef)
-            .child(sourceUserLogin)
-            .child(secondSideUserLogin)
-            .child(messageKey)
-            .setValue(encryptedMessage)
+        val messageWithSideKey = "$messageSideKey $messageText"
 
-        mDatabaseFirebase
-            .child(sMessagesRef)
-            .child(secondSideUserLogin)
-            .child(sourceUserLogin)
-            .child(messageKey)
-            .setValue(encryptedMessage)
+        mDatabaseReference
+            .child(sMessagesReference)
+            .child(currentUserNumber)
+            .child(associatedUserNumber)
+            .child(messageWithSideKey)
+            .push()
+
+        mDatabaseReference
+            .child(sMessagesReference)
+            .child(associatedUserNumber)
+            .child(currentUserNumber)
+            .child(messageWithSideKey)
+            .push()
+    }
+
+
+    private fun createResponseBySnapshot(
+        messageSnapshot: DataSnapshot
+    ): BaseResponse<HashMap<String, Any>> {
+        return if (messageSnapshot.exists()) {
+            messageSnapshot.value?.let { snapshotValue ->
+                val valueStr = snapshotValue.toString()
+                val messageSide = valueStr[0]
+                val mainMessage = valueStr.substring(2)
+                val messageId = messageSnapshot.key?.toInt() ?: 0
+
+                BaseResponse(
+                    responseCode = Api.RESPONSE_OK,
+                    responseData = hashMapOf(
+                        MessagesHelper.MESSAGE_ID_KEY to messageId,
+                        MessagesHelper.MESSAGE_SIDE_KEY to messageSide,
+                        MessagesHelper.MESSAGE_TEXT_KEY to mainMessage
+                    )
+                )
+            } ?: BaseResponse.failed()
+        } else BaseResponse.failed()
     }
 }

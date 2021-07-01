@@ -1,5 +1,7 @@
 package com.ferelin.remote.base
 
+import com.ferelin.remote.utils.Api
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -23,4 +25,10 @@ class BaseResponse<T>(
     var responseCode: Int? = null,
     var additionalMessage: String? = null,
     var responseData: T? = null
-)
+) {
+    companion object {
+        fun <T> failed(): BaseResponse<T> {
+            return BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)
+        }
+    }
+}

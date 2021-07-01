@@ -17,13 +17,10 @@
 package com.ferelin.repository.converter.helpers.messagesConverter
 
 import com.ferelin.local.models.Message
-import com.ferelin.local.models.MessagesHolder
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.helpers.messages.MessagesHelperImpl
+import com.ferelin.remote.database.helpers.messages.MessagesHelper
 import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
-import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
 import javax.inject.Inject
@@ -32,69 +29,58 @@ import javax.inject.Singleton
 @Singleton
 class MessagesConverterImpl @Inject constructor() : MessagesConverter {
 
-    override fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder {
-        return MessagesHolder(
-            id = messagesHolder.id,
-            secondSideLogin = messagesHolder.secondSideLogin,
-            messages = messagesHolder.messages.map { message ->
-                Message(
-                    id = message.id,
-                    side = message.side,
-                    text = message.text
-                )
-            }
+    override fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message {
+        return Message(
+            id = adaptiveMessage.id,
+            associatedUserNumber = adaptiveMessage.associatedUserNumber,
+            text = adaptiveMessage.text,
+            side = adaptiveMessage.side
         )
     }
 
-    override fun convertRemoteMessagesResponseForUi(
-        response: BaseResponse<List<HashMap<String, String>>>
-    ): RepositoryResponse<AdaptiveMessagesHolder> {
-        return when (response.responseCode) {
-            Api.RESPONSE_NO_DATA -> RepositoryResponse.Failed(message = RepositoryMessages.Empty)
-            Api.RESPONSE_OK -> {
-                RepositoryResponse.Success(
-                    data = AdaptiveMessagesHolder(
-                        secondSideLogin = response.additionalMessage!!,
-                        messages = response.responseData!!.map { map ->
-                            val messageId = map[MessagesHelperImpl.MESSAGE_ID_KEY]!!.toInt()
-                            val side = map[MessagesHelperImpl.MESSAGE_SIDE_KEY]!![0]
-                            val messageSide = if (side == MessageSide.Source.key) {
-                                MessageSide.Source
-                            } else MessageSide.Associated
-                            val messageText = map[MessagesHelperImpl.MESSAGE_TEXT_KEY].toString()
+    override fun convertRemoteMessageResponseForUi(
+        response: BaseResponse<HashMap<String, Any>>
+    ): RepositoryResponse<AdaptiveMessage> {
+        return if (response.responseCode == Api.RESPONSE_OK) {
+            response.responseData!!.let { responseArgs ->
+                val messageId = responseArgs[MessagesHelper.MESSAGE_ID_KEY] as Int
+                val messageAssociatedUserNumber = response.additionalMessage!!
+                val messageText = responseArgs[MessagesHelper.MESSAGE_TEXT_KEY] as String
+                val messageSide =
+                    getMessageSide(responseArgs[MessagesHelper.MESSAGE_SIDE_KEY] as Char)
 
-                            AdaptiveMessage(
-                                id = messageId,
-                                side = messageSide,
-                                text = messageText
-                            )
-                        }.sortedBy { it.id }.toMutableList()
+                RepositoryResponse.Success(
+                    data = AdaptiveMessage(
+                        id = messageId,
+                        associatedUserNumber = messageAssociatedUserNumber,
+                        side = messageSide,
+                        text = messageText
                     )
                 )
             }
-            else -> RepositoryResponse.Failed()
-        }
+        } else RepositoryResponse.Failed()
     }
 
     override fun convertLocalMessagesResponseForUi(
-        holder: MessagesHolder?
-    ): RepositoryResponse<AdaptiveMessagesHolder> {
-        if (holder == null) {
-            return RepositoryResponse.Failed()
-        }
-
-        return RepositoryResponse.Success(
-            data = AdaptiveMessagesHolder(
-                id = holder.id,
-                secondSideLogin = holder.secondSideLogin,
-                messages = holder.messages.map { localMessage ->
+        messages: List<Message>?
+    ): RepositoryResponse<List<AdaptiveMessage>> {
+        return if (messages != null) {
+            RepositoryResponse.Success(
+                data = messages.map {
                     AdaptiveMessage(
-                        id = localMessage.id,
-                        side = localMessage.side,
-                        text = localMessage.text
+                        id = it.id,
+                        associatedUserNumber = it.associatedUserNumber,
+                        side = it.side,
+                        text = it.text
                     )
-                }.toMutableList()
+                }
             )
-        )
+        } else RepositoryResponse.Failed()
+    }
+
+    private fun getMessageSide(messageSide: Char): MessageSide {
+        return if (messageSide == MessageSide.Source.key) {
+            MessageSide.Source
+        } else MessageSide.Associated
     }
 }

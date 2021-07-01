@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.realtimeDatabase
+package com.ferelin.repository.adaptiveModels
 
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+class AdaptiveChat(
+    val id: Int,
+    val associatedUserNumber: String,
+    val previewText: String = ""
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is AdaptiveChat) {
+            other.id == id
+        } else false
+    }
 
-interface UsersRemoteHelper {
-
-    suspend fun isUserExist(login: String): Boolean
-
-    suspend fun findUserById(userId: String): RepositoryResponse<String?>
-
-    suspend fun tryToRegister(userId: String, login: String): Flow<RepositoryResponse<Boolean>>
+    override fun hashCode(): Int {
+        return id
+    }
 }

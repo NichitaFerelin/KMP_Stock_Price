@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.realtimeDatabase
+package com.ferelin.local.databases.chatsDb
 
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
-import com.ferelin.repository.utils.RepositoryResponse
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.ferelin.local.models.Chat
 
-interface RelationsRemoteHelper {
+@Dao
+interface ChatsDao {
 
-    fun cacheNewRelationToRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        relationId: String
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertChat(chat: Chat)
 
-    fun eraseRelationFromRealtimeDb(
-        sourceUserLogin: String,
-        relationId: String
-    )
+    @Query("SELECT * FROM `stockprice.relations.db`")
+    suspend fun getAllChats(): List<Chat>?
 
-    suspend fun getUserRelationsFromRealtimeDb(
-        userLogin: String
-    ): RepositoryResponse<List<AdaptiveRelation>>
+    @Query("DELETE FROM `stockprice.relations.db`")
+    fun clearChats()
 }

@@ -16,16 +16,16 @@
 
 package com.ferelin.repository.helpers.local
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 
 interface MessagesLocalHelper {
 
-    suspend fun cacheMessagesHolderToLocalDb(messagesHolder: AdaptiveMessagesHolder)
+    suspend fun cacheMessageToLocalDb(message: AdaptiveMessage)
 
-    suspend fun getMessagesByLoginFromLocalDb(
-        associatedLogin: String
-    ): RepositoryResponse<AdaptiveMessagesHolder>
+    suspend fun getMessagesFromLocalDb(
+        associatedUserNumber: String
+    ): RepositoryResponse<List<AdaptiveMessage>>
 
     fun clearMessagesDatabase()
 }

@@ -20,6 +20,7 @@ import com.ferelin.shared.MessageSide
 
 class AdaptiveMessage(
     val id: Int,
+    val associatedUserNumber: String,
     val side: MessageSide,
     val text: String
 )

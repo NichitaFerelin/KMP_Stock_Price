@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.local.models
 
-class AdaptiveRelation(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.ferelin.local.databases.chatsDb.ChatsDatabase
+
+@Entity(tableName = ChatsDatabase.DB_NAME)
+class Chat(
+    @PrimaryKey
     val id: Int,
-    val associatedUserLogin: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveRelation) {
-            other.id == id
-        } else false
-    }
-
-    override fun hashCode(): Int {
-        return id
-    }
-}
+    val associatedUserNumber: String,
+    val previewText: String = ""
+)

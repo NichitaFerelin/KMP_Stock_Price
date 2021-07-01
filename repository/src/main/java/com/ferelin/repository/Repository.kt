@@ -16,25 +16,27 @@ package com.ferelin.repository
  * limitations under the License.
  */
 
+import com.ferelin.repository.helpers.local.ChatsLocalHelper
 import com.ferelin.repository.helpers.local.FavouriteCompaniesLocalHelper
 import com.ferelin.repository.helpers.local.MessagesLocalHelper
-import com.ferelin.repository.helpers.local.RelationsLocalHelper
 import com.ferelin.repository.helpers.local.StorePreferencesHelper
 import com.ferelin.repository.helpers.remote.ApiManagerHelper
 import com.ferelin.repository.helpers.remote.AuthenticationHelper
 import com.ferelin.repository.helpers.remote.WebSocketHelper
-import com.ferelin.repository.helpers.remote.realtimeDatabase.*
+import com.ferelin.repository.helpers.remote.realtimeDatabase.ChatsRemoteHelper
+import com.ferelin.repository.helpers.remote.realtimeDatabase.FavouriteCompaniesRemoteHelper
+import com.ferelin.repository.helpers.remote.realtimeDatabase.MessagesRemoteHelper
+import com.ferelin.repository.helpers.remote.realtimeDatabase.SearchRequestsRemoteHelper
 
 interface Repository :
     FavouriteCompaniesLocalHelper,
     MessagesLocalHelper,
     StorePreferencesHelper,
-    RelationsLocalHelper,
+    ChatsLocalHelper,
     ApiManagerHelper,
     AuthenticationHelper,
     FavouriteCompaniesRemoteHelper,
     MessagesRemoteHelper,
     SearchRequestsRemoteHelper,
-    UsersRemoteHelper,
     WebSocketHelper,
-    RelationsRemoteHelper
+    ChatsRemoteHelper

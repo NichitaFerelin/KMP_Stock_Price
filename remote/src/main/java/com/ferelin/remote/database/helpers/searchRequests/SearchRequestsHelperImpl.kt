@@ -18,7 +18,7 @@ package com.ferelin.remote.database.helpers.searchRequests
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.database.RealtimeValueEventListener
+import com.ferelin.remote.database.utils.ValueEventListener
 import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -53,7 +53,7 @@ class SearchRequestsHelperImpl @Inject constructor(
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
-            .addValueEventListener(object : RealtimeValueEventListener() {
+            .addValueEventListener(object : ValueEventListener() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (searchSnapshot in snapshot.children) {

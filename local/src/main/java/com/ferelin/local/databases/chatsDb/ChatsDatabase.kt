@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.relations
+package com.ferelin.local.databases.chatsDb
 
-import com.ferelin.remote.base.BaseResponse
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.ferelin.local.models.Chat
 
-interface RelationsHelper {
+@Database(entities = [Chat::class], version = 1)
+abstract class ChatsDatabase : RoomDatabase() {
 
-    fun addNewRelation(sourceUserLogin: String, secondSideUserLogin: String, relationId: String)
+    abstract fun chatsDao(): ChatsDao
 
-    fun eraseRelation(sourceUserLogin: String, relationId: String)
-
-    fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>>
+    companion object {
+        const val DB_NAME = "stockprice.relations.db"
+    }
 }

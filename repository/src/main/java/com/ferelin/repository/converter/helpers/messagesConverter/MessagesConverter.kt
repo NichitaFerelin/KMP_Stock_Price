@@ -16,20 +16,20 @@
 
 package com.ferelin.repository.converter.helpers.messagesConverter
 
-import com.ferelin.local.models.MessagesHolder
+import com.ferelin.local.models.Message
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 
 interface MessagesConverter {
 
-    fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder
+    fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message
 
-    fun convertRemoteMessagesResponseForUi(
-        response: BaseResponse<List<HashMap<String, String>>>
-    ): RepositoryResponse<AdaptiveMessagesHolder>
+    fun convertRemoteMessageResponseForUi(
+        response: BaseResponse<HashMap<String, Any>>
+    ): RepositoryResponse<AdaptiveMessage>
 
     fun convertLocalMessagesResponseForUi(
-        holder: MessagesHolder?
-    ): RepositoryResponse<AdaptiveMessagesHolder>
+        messages: List<Message>?
+    ): RepositoryResponse<List<AdaptiveMessage>>
 }

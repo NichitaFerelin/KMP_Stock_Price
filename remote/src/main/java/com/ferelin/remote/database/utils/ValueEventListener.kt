@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.user
+package com.ferelin.remote.database.utils
 
-import com.ferelin.remote.base.BaseResponse
-import kotlinx.coroutines.flow.Flow
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
-interface UsersHelper {
+abstract class ValueEventListener :
+    ValueEventListener {
 
-    fun findUserByLogin(login: String): Flow<Boolean>
+    override fun onDataChange(snapshot: DataSnapshot) {
+    }
 
-    fun findUserById(userId: String): Flow<BaseResponse<String?>>
-
-    /**
-     * Registers new user
-     * @param userId is a user id that must be cached to cloud database
-     * @param login is a user login selected during registration
-     * */
-    suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>>
+    override fun onCancelled(error: DatabaseError) {
+    }
 }

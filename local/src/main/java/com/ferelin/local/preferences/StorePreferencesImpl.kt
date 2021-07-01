@@ -38,6 +38,7 @@ open class StorePreferencesImpl @Inject constructor(
     private val mContext: Context
 ) : StorePreferences {
 
+    // TODO
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
 
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")

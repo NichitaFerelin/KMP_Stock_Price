@@ -16,9 +16,9 @@ package com.ferelin.repository.converter
  * limitations under the License.
  */
 
+import com.ferelin.local.models.Chat
 import com.ferelin.local.models.Company
-import com.ferelin.local.models.MessagesHolder
-import com.ferelin.local.models.Relation
+import com.ferelin.local.models.Message
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
@@ -31,11 +31,11 @@ import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
+import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
-import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 import com.ferelin.repository.utils.RepositoryMessages
@@ -44,10 +44,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [ResponseMediatorImpl] is used to convert responses for UI from local/remote modules.
+ * [ConverterMediatorImpl] is used to convert responses for UI from local/remote modules.
  */
 @Singleton
-class ResponseMediatorImpl @Inject constructor(
+class ConverterMediatorImpl @Inject constructor(
     private val mApiConverter: ApiConverter,
     private val mAuthenticationConverter: AuthenticationConverter,
     private val mCompaniesConverter: CompaniesConverter,
@@ -56,8 +56,8 @@ class ResponseMediatorImpl @Inject constructor(
     private val mRealtimeDatabaseConverter: RealtimeDatabaseConverter,
     private val mSearchRequestsConverter: SearchRequestsConverter,
     private val mWebSocketConverter: WebSocketConverter,
-    private val mRelationsConverter: RelationsConverter
-) : ResponseMediator {
+    private val mChatsConverter: ChatsConverter
+) : ConverterMediator {
 
     override fun convertStockCandlesResponseForUi(
         response: BaseResponse<StockCandlesResponse>,
@@ -118,16 +118,6 @@ class ResponseMediatorImpl @Inject constructor(
         return mFirstTimeLaunchConverter.convertFirstTimeLaunchStateForUi(state)
     }
 
-    override fun convertMessageForLocal(messagesHolder: AdaptiveMessagesHolder): MessagesHolder {
-        return mMessagesConverter.convertMessageForLocal(messagesHolder)
-    }
-
-    override fun convertRemoteMessagesResponseForUi(
-        response: BaseResponse<List<HashMap<String, String>>>
-    ): RepositoryResponse<AdaptiveMessagesHolder> {
-        return mMessagesConverter.convertRemoteMessagesResponseForUi(response)
-    }
-
     override fun convertRealtimeDatabaseResponseForUi(
         response: BaseResponse<String?>?
     ): RepositoryResponse<String> {
@@ -150,25 +140,33 @@ class ResponseMediatorImpl @Inject constructor(
         return mWebSocketConverter.convertWebSocketResponseForUi(response)
     }
 
+    override fun convertAdaptiveChatForLocal(adaptiveChat: AdaptiveChat): Chat {
+        return mChatsConverter.convertAdaptiveChatForLocal(adaptiveChat)
+    }
+
+    override fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>> {
+        mChatsConverter.convertLocalChatsForUi(chats)
+    }
+
+    override fun convertRemoteChatResponseForUi(
+        response: BaseResponse<String>
+    ): RepositoryResponse<AdaptiveChat> {
+        return mChatsConverter.convertRemoteChatResponseForUi(response)
+    }
+
+    override fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message {
+        return mMessagesConverter.convertMessageForLocal(adaptiveMessage)
+    }
+
+    override fun convertRemoteMessageResponseForUi(
+        response: BaseResponse<HashMap<String, Any>>
+    ): RepositoryResponse<AdaptiveMessage> {
+        return mMessagesConverter.convertRemoteMessageResponseForUi(response)
+    }
+
     override fun convertLocalMessagesResponseForUi(
-        holder: MessagesHolder?
-    ): RepositoryResponse<AdaptiveMessagesHolder> {
-        return mMessagesConverter.convertLocalMessagesResponseForUi(holder)
-    }
-
-    override fun convertLocalRelationResponseForUi(
-        data: List<Relation>
-    ): RepositoryResponse<List<AdaptiveRelation>> {
-        return mRelationsConverter.convertLocalRelationResponseForUi(data)
-    }
-
-    override fun convertRelationForLocal(item: AdaptiveRelation): Relation {
-        return mRelationsConverter.convertRelationForLocal(item)
-    }
-
-    override fun convertRealtimeRelationResponseForUi(
-        response: BaseResponse<List<Pair<Int, String>>>?
-    ): RepositoryResponse<List<AdaptiveRelation>> {
-        return mRelationsConverter.convertRealtimeRelationResponseForUi(response)
+        messages: List<Message>?
+    ): RepositoryResponse<List<AdaptiveMessage>> {
+        return mMessagesConverter.convertLocalMessagesResponseForUi(messages)
     }
 }

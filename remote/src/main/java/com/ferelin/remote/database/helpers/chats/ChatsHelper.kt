@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.local
+package com.ferelin.remote.database.helpers.chats
 
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
-import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.remote.base.BaseResponse
+import kotlinx.coroutines.flow.Flow
 
-interface RelationsLocalHelper {
+interface ChatsHelper {
 
-    suspend fun cacheRelationToLocalDb(relation: AdaptiveRelation)
+    fun cacheChat(currentUserNumber: String, associatedUserNumber: String)
 
-    suspend fun getAllRelationsFromLocalDb(): RepositoryResponse<List<AdaptiveRelation>>
-
-    suspend fun eraseRelationFromLocalDb(relation: AdaptiveRelation)
-
-    fun clearRelationsDatabase()
+    fun getUserChats(userNumber: String): Flow<BaseResponse<String>>
 }

@@ -17,12 +17,10 @@
 package com.ferelin.remote.database
 
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.database.helpers.chats.ChatsHelper
 import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
 import com.ferelin.remote.database.helpers.messages.MessagesHelper
-import com.ferelin.remote.database.helpers.relations.RelationsHelper
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
-import com.ferelin.remote.database.helpers.user.UsersHelper
-import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,9 +53,8 @@ import javax.inject.Singleton
 class RealtimeDatabaseImpl @Inject constructor(
     private val mFavouriteCompaniesHelper: FavouriteCompaniesHelper,
     private val mSearchRequestsHelper: SearchRequestsHelper,
-    private val mUsersHelper: UsersHelper,
     private val mMessagesHelper: MessagesHelper,
-    private val mRelationsHelper: RelationsHelper
+    private val mChatsHelper: ChatsHelper
 ) : RealtimeDatabase {
 
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
@@ -92,57 +89,32 @@ class RealtimeDatabaseImpl @Inject constructor(
         mSearchRequestsHelper.eraseSearchRequestFromDb(userId, searchRequest)
     }
 
-    override fun findUserByLogin(login: String): Flow<Boolean> {
-        return mUsersHelper.findUserByLogin(login)
+    override fun cacheChat(currentUserNumber: String, associatedUserNumber: String) {
+        mChatsHelper.cacheChat(currentUserNumber, associatedUserNumber)
     }
 
-    override fun findUserById(userId: String): Flow<BaseResponse<String?>> {
-        return mUsersHelper.findUserById(userId)
+    override fun getUserChats(userNumber: String): Flow<BaseResponse<String>> {
+        return mChatsHelper.getUserChats(userNumber)
     }
 
-    override suspend fun tryToRegister(userId: String, login: String): Flow<BaseResponse<Boolean>> {
-        return mUsersHelper.tryToRegister(userId, login)
+    override fun getMessagesForChat(
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ): Flow<BaseResponse<HashMap<String, Any>>> {
+        return mMessagesHelper.getMessagesForChat(currentUserNumber, associatedUserNumber)
     }
 
-    override fun addNewRelation(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        relationId: String
+    override fun cacheMessage(
+        currentUserNumber: String,
+        associatedUserNumber: String,
+        messageText: String,
+        messageSideKey: Char
     ) {
-        mRelationsHelper.addNewRelation(sourceUserLogin, secondSideUserLogin, relationId)
-    }
-
-    override fun eraseRelation(sourceUserLogin: String, relationId: String) {
-        mRelationsHelper.eraseRelation(sourceUserLogin, relationId)
-    }
-
-    override fun getUserRelations(userLogin: String): Flow<BaseResponse<List<Pair<Int, String>>>> {
-        return mRelationsHelper.getUserRelations(userLogin)
-    }
-
-    override fun getMessagesAssociatedWithSpecifiedUser(
-        sourceUserLogin: String,
-        secondSideUserLogin: String
-    ): Flow<BaseResponse<List<HashMap<String, String>>>> {
-        return mMessagesHelper.getMessagesAssociatedWithSpecifiedUser(
-            sourceUserLogin,
-            secondSideUserLogin
-        )
-    }
-
-    override fun addNewMessage(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        messageId: String,
-        message: String,
-        side: MessageSide
-    ) {
-        mMessagesHelper.addNewMessage(
-            sourceUserLogin,
-            secondSideUserLogin,
-            messageId,
-            message,
-            side
+        mMessagesHelper.cacheMessage(
+            currentUserNumber,
+            associatedUserNumber,
+            messageText,
+            messageSideKey
         )
     }
 }

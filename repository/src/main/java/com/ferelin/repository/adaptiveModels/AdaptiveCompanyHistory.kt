@@ -16,7 +16,7 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveCompanyHistory(
+data class AdaptiveCompanyHistory(
     var openPrices: List<String>,
     var highPrices: List<String>,
     var lowPrices: List<String>,

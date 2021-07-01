@@ -16,20 +16,20 @@
 
 package com.ferelin.local.databases.messagesDb
 
-import androidx.room.*
-import com.ferelin.local.models.MessagesHolder
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.ferelin.local.models.Message
 
 @Dao
 interface MessagesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: MessagesHolder)
+    suspend fun insertMessage(message: Message)
 
-    @Query("SELECT * FROM `stockprice.messages.db` WHERE secondSideLogin=:associatedLogin")
-    suspend fun getMessagesAssociatedWithLogin(associatedLogin: String): MessagesHolder?
-
-    @Delete
-    suspend fun deleteMessage(message: MessagesHolder)
+    @Query("SELECT * FROM `stockprice.messages.db` WHERE associatedUserNumber=:associatedUserNumber")
+    suspend fun getMessages(associatedUserNumber: String): List<Message>?
 
     @Query("DELETE FROM `stockprice.messages.db`")
     fun clearMessagesTable()

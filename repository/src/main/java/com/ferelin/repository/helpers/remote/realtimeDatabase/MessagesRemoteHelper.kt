@@ -16,23 +16,21 @@
 
 package com.ferelin.repository.helpers.remote.realtimeDatabase
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 
 interface MessagesRemoteHelper {
 
-    fun getMessagesAssociatedWithSpecifiedUserFromRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String
-    ): Flow<RepositoryResponse<AdaptiveMessagesHolder>>
+    fun getMessagesFromRealtimeDb(
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ) : Flow<RepositoryResponse<AdaptiveMessage>>
 
     fun cacheNewMessageToRealtimeDb(
-        sourceUserLogin: String,
-        secondSideUserLogin: String,
-        messageId: String,
-        message: String,
-        side: MessageSide
+        currentUserNumber: String,
+        associatedUserNumber: String,
+        messageText: String,
+        messageSideKey: Char
     )
 }

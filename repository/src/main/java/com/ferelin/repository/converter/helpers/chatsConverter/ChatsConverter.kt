@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.models
+package com.ferelin.repository.converter.helpers.chatsConverter
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.ferelin.local.databases.messagesDb.MessagesDatabase
-import com.ferelin.shared.MessageSide
+import com.ferelin.local.models.Chat
+import com.ferelin.remote.base.BaseResponse
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
+import com.ferelin.repository.utils.RepositoryResponse
 
-/**
- * @param secondSideLogin is a login of side-person associated with messages
- * */
-@Entity(tableName = MessagesDatabase.DB_NAME)
-class MessagesHolder(
-    @PrimaryKey
-    val id: Int,
-    val secondSideLogin: String,
-    val messages: List<Message> = emptyList()
-)
+interface ChatsConverter {
 
-class Message(
-    val id: Int,
-    val side: MessageSide,
-    val text: String
-)
+    fun convertAdaptiveChatForLocal(adaptiveChat: AdaptiveChat): Chat
+
+    fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>>
+
+    fun convertRemoteChatResponseForUi(
+        response: BaseResponse<String>
+    ): RepositoryResponse<AdaptiveChat>
+}

@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.local.models
 
-class AdaptiveMessagesHolder(
-    val id: Int = 0,
-    val secondSideLogin: String,
-    val messages: MutableList<AdaptiveMessage>
-) {
-    fun addMessage(message: AdaptiveMessage) {
-        messages.add(message)
-    }
-}
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.ferelin.local.databases.messagesDb.MessagesDatabase
+import com.ferelin.shared.MessageSide
+
+@Entity(tableName = MessagesDatabase.DB_NAME)
+class Message(
+    @PrimaryKey
+    val id: Int,
+    val associatedUserNumber: String,
+    val text: String,
+    val side: MessageSide
+)
