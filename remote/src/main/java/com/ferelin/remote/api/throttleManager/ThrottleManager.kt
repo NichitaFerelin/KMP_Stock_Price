@@ -20,29 +20,29 @@ interface ThrottleManager {
 
     /**
      * Provides ability to add request to throttle manager.
-     * @param symbol is a company-owner of request
-     * @param api is a key of request that must be invoked
-     * @param position this is the position of UI according to which it is decided whether to
+     * @param companyOwnerSymbol is a company-owner of request
+     * @param apiTag is a key of request that must be invoked
+     * @param messageNumber this is the position of UI according to which it is decided whether to
      *  execute the request or not
      * @param eraseIfNotActual is a parameter by which the [ThrottleManagerImpl] deletes the
      *  request if it is not relevant
-     * @param ignoreDuplicate is a parameter by which the [ThrottleManagerImpl] deletes the request
+     * @param ignoreDuplicates is a parameter by which the [ThrottleManagerImpl] deletes the request
      * if it is duplicate
      * */
-    fun addMessage(
-        symbol: String,
-        api: String,
-        position: Int = 0,
+    fun addRequestToOrder(
+        companyOwnerSymbol: String,
+        apiTag: String,
+        messageNumber: Int = 0,
         eraseIfNotActual: Boolean = true,
-        ignoreDuplicate: Boolean = false
+        ignoreDuplicates: Boolean = false
     )
 
     /**
      * Provides ability to add API to invoke requests.
-     * @param api is a key by which it will be determined which method to use for invoked request
+     * @param apiTag is a key by which it will be determined which method to use for invoked request
      * @param onResponse gives a symbol-owner of request that has been invoked and received the result
      * */
-    fun setUpApi(api: String, onResponse: (String) -> Unit)
+    fun setUpApi(apiTag: String, onResponse: (String) -> Unit)
 
     fun invalidate()
 }

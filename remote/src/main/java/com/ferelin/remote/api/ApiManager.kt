@@ -29,13 +29,13 @@ interface ApiManager {
     /**
      * Request to load all available stock symbols
      * */
-    fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>>
+    fun loadStockSymbols(): BaseResponse<StockSymbolResponse>
 
     /**
      * Request to load company profile
      * @param symbol is a company symbol for which profile need to load
      * */
-    fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>>
+    fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse>
 
     /**
      * Request to load stock candles(history)
@@ -49,7 +49,7 @@ interface ApiManager {
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<BaseResponse<StockCandlesResponse>>
+    ): BaseResponse<StockCandlesResponse>
 
     /**
      * Request to load company news
@@ -61,7 +61,7 @@ interface ApiManager {
         symbol: String,
         from: String,
         to: String
-    ): Flow<BaseResponse<List<CompanyNewsResponse>>>
+    ): BaseResponse<List<CompanyNewsResponse>>
 
     /**
      * Request to load company stock quote.

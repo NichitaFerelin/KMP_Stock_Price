@@ -43,56 +43,59 @@ open class ApiManagerImpl @Inject constructor(
     retrofit: Retrofit
 ) : ApiManager {
 
-    private val mCompanyProfileService = retrofit.create(CompanyProfileApi::class.java)
-    private val mCompanyNewsService = retrofit.create(CompanyNewsApi::class.java)
-    private val mCompanyQuoteService = retrofit.create(CompanyQuoteApi::class.java)
-    private val mStockCandlesService = retrofit.create(StockCandlesApi::class.java)
-    private val mStockSymbolsService = retrofit.create(StockSymbolApi::class.java)
+    private val mCompanyProfileService by lazy { retrofit.create(CompanyProfileApi::class.java) }
+    private val mCompanyNewsService by lazy { retrofit.create(CompanyNewsApi::class.java) }
+    private val mCompanyQuoteService by lazy { retrofit.create(CompanyQuoteApi::class.java) }
+    private val mStockCandlesService by lazy { retrofit.create(StockCandlesApi::class.java) }
+    private val mStockSymbolsService by lazy { retrofit.create(StockSymbolApi::class.java) }
 
-    override fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>> = callbackFlow {
-        mStockSymbolsService
+    override fun loadStockSymbols(): BaseResponse<StockSymbolResponse> {
+        val retrofitResponse = mStockSymbolsService
             .getStockSymbolList(Api.FINNHUB_TOKEN)
-            .enqueue(BaseManager<StockSymbolResponse> {
-                trySend(it)
-            })
-        awaitClose()
+            .execute()
+        return BaseResponse.createResponse(
+            responseBody = retrofitResponse.body(),
+            responseCode = retrofitResponse.code()
+        )
     }
 
-    override fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>> =
-        callbackFlow {
-            mCompanyProfileService
-                .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
-                .enqueue(BaseManager<CompanyProfileResponse> {
-                    trySend(it)
-                })
-            awaitClose()
-        }
+    override fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse> {
+        val retrofitResponse = mCompanyProfileService
+            .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
+            .execute()
+        return BaseResponse.createResponse(
+            responseBody = retrofitResponse.body(),
+            responseCode = retrofitResponse.code()
+        )
+    }
 
     override fun loadStockCandles(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<BaseResponse<StockCandlesResponse>> = callbackFlow {
-        mStockCandlesService
+    ): BaseResponse<StockCandlesResponse> {
+        val retrofitResponse = mStockCandlesService
             .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
-            .enqueue(BaseManager<StockCandlesResponse> {
-                trySend(it)
-            })
-        awaitClose()
+            .execute()
+        return BaseResponse.createResponse(
+            responseBody = retrofitResponse.body(),
+            responseCode = retrofitResponse.code()
+        )
     }
 
     override fun loadCompanyNews(
         symbol: String,
         from: String,
         to: String
-    ): Flow<BaseResponse<List<CompanyNewsResponse>>> = callbackFlow {
-        mCompanyNewsService
+    ): BaseResponse<List<CompanyNewsResponse>> {
+        val retrofitResponse =  mCompanyNewsService
             .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
-            .enqueue(BaseManager<List<CompanyNewsResponse>> {
-                trySend(it)
-            })
-        awaitClose()
+            .execute()
+        return BaseResponse.createResponse(
+            responseBody = retrofitResponse.body(),
+            responseCode = retrofitResponse.code()
+        )
     }
 
     override fun loadCompanyQuote(
@@ -102,12 +105,12 @@ open class ApiManagerImpl @Inject constructor(
     ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
 
         // Add message(request) to throttle manager
-        mThrottleManager.addMessage(
-            symbol = symbol,
-            api = Api.COMPANY_QUOTE,
-            position = position,
+        mThrottleManager.addRequestToOrder(
+            companyOwnerSymbol = symbol,
+            apiTag = Api.COMPANY_QUOTE,
+            messageNumber = position,
             eraseIfNotActual = !isImportant,
-            ignoreDuplicate = isImportant
+            ignoreDuplicates = isImportant
         )
 
         mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->

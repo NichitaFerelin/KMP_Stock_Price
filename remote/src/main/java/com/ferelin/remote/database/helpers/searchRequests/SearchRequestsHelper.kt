@@ -37,16 +37,16 @@ interface SearchRequestsHelper {
     fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
 
     /**
-     * Provides ability to read a search history from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @return [BaseResponse] with search request and [Api] response code as flow.
-     */
-    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>>
-
-    /**
      * Provides ability to erase a search request from cloud database.
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
      * @param searchRequest is a search request that will be erased.
      */
     fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
+
+    /**
+     * Provides ability to read a search history from cloud database.
+     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @return [BaseResponse] with search request and [Api] response code as flow.
+     */
+    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>>
 }

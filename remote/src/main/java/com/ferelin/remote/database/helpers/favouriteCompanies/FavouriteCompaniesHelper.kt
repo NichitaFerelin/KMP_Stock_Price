@@ -48,5 +48,5 @@ interface FavouriteCompaniesHelper {
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
      * @return [BaseResponse] with company ID and [Api] response code as flow.
      */
-    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>>
+    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>>
 }

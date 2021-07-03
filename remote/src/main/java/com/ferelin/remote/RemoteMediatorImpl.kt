@@ -64,15 +64,15 @@ class RemoteMediatorImpl @Inject constructor(
         from: Long,
         to: Long,
         resolution: String
-    ): Flow<BaseResponse<StockCandlesResponse>> {
+    ): BaseResponse<StockCandlesResponse> {
         return mApiManager.loadStockCandles(symbol, from, to, resolution)
     }
 
-    override fun loadCompanyProfile(symbol: String): Flow<BaseResponse<CompanyProfileResponse>> {
+    override fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse> {
         return mApiManager.loadCompanyProfile(symbol)
     }
 
-    override fun loadStockSymbols(): Flow<BaseResponse<StockSymbolResponse>> {
+    override fun loadStockSymbols(): BaseResponse<StockSymbolResponse> {
         return mApiManager.loadStockSymbols()
     }
 
@@ -80,7 +80,7 @@ class RemoteMediatorImpl @Inject constructor(
         symbol: String,
         from: String,
         to: String
-    ): Flow<BaseResponse<List<CompanyNewsResponse>>> {
+    ): BaseResponse<List<CompanyNewsResponse>> {
         return mApiManager.loadCompanyNews(symbol, from, to)
     }
 
@@ -124,7 +124,7 @@ class RemoteMediatorImpl @Inject constructor(
         mRealtimeDatabaseManager.writeCompaniesIdsToDb(userId, companiesId)
     }
 
-    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>> {
+    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mRealtimeDatabaseManager.readCompaniesIdsFromDb(userId)
     }
 
@@ -136,7 +136,7 @@ class RemoteMediatorImpl @Inject constructor(
         mRealtimeDatabaseManager.writeSearchRequestsToDb(userId, searchRequests)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>> {
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mRealtimeDatabaseManager.readSearchRequestsFromDb(userId)
     }
 

@@ -39,7 +39,6 @@ class MessagesHelperImpl @Inject constructor(
         currentUserNumber: String,
         associatedUserNumber: String
     ) = callbackFlow<BaseResponse<HashMap<String, Any>>> {
-
         mDatabaseReference
             .child(sMessagesReference)
             .child(currentUserNumber)

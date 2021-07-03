@@ -30,5 +30,20 @@ class BaseResponse<T>(
         fun <T> failed(): BaseResponse<T> {
             return BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)
         }
+
+        fun <T> createResponse(responseBody: T?, responseCode: Int): BaseResponse<T> {
+            return when {
+                responseCode == 429 -> BaseResponse(Api.RESPONSE_LIMIT)
+                responseBody == null -> BaseResponse(Api.RESPONSE_NO_DATA)
+                responseCode == 200 -> {
+                        BaseResponse(
+                            responseCode = Api.RESPONSE_OK,
+                            additionalMessage = null,
+                            responseData = responseBody
+                        )
+                }
+                else -> failed()
+            }
+        }
     }
 }

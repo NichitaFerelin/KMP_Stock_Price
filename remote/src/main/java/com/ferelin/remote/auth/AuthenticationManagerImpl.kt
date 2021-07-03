@@ -33,7 +33,8 @@ import javax.inject.Singleton
  *
  * For more info about methods look at [AuthenticationManager]
  */
-// GoogleApiAvailability.makeGooglePlayServicesAvailable()
+
+// TODO GoogleApiAvailability.makeGooglePlayServicesAvailable()
 @Singleton
 class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
 
@@ -44,8 +45,8 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
     }
 
     // User ID is used to complete verification
-    private lateinit var mUserVerificationId: String
-    private lateinit var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private var mUserVerificationId: String? = null
+    private var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
     override fun tryToLogIn(
         holderActivity: Activity,
@@ -86,20 +87,23 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
             }
         }
 
-        val options = PhoneAuthOptions.newBuilder(mFirebaseAuth)
-            .setPhoneNumber(phone)
-            .setTimeout(30L, TimeUnit.SECONDS)
-            .setActivity(holderActivity)
-            .setCallbacks(mAuthCallbacks)
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
-
+        mAuthCallbacks?.let { authCallbacks ->
+            val options = PhoneAuthOptions.newBuilder(mFirebaseAuth)
+                .setPhoneNumber(phone)
+                .setTimeout(30L, TimeUnit.SECONDS)
+                .setActivity(holderActivity)
+                .setCallbacks(authCallbacks)
+                .build()
+            PhoneAuthProvider.verifyPhoneNumber(options)
+        }
         awaitClose()
     }
 
     override fun logInWithCode(code: String) {
-        val credential = PhoneAuthProvider.getCredential(mUserVerificationId, code)
-        mAuthCallbacks.onVerificationCompleted(credential)
+        mUserVerificationId?.let { userVerificationId ->
+            val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
+            mAuthCallbacks?.onVerificationCompleted(credential)
+        }
     }
 
     override fun logOut() {

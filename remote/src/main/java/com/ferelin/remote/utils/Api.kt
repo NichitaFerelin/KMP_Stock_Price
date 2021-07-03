@@ -38,7 +38,7 @@ object Api {
     const val RESPONSE_WEB_SOCKET_CLOSED = 1001
 
     /*
-    * AuthenticationManagerImpl response codes.
+    * AuthenticationManager response codes.
     * */
     const val VERIFICATION_CODE_SENT = 201
     const val VERIFICATION_COMPLETED = 202

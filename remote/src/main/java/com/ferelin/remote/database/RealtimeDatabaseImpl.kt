@@ -69,7 +69,7 @@ class RealtimeDatabaseImpl @Inject constructor(
         mFavouriteCompaniesHelper.writeCompaniesIdsToDb(userId, companiesId)
     }
 
-    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<String?>> {
+    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mFavouriteCompaniesHelper.readCompaniesIdsFromDb(userId)
     }
 
@@ -81,7 +81,7 @@ class RealtimeDatabaseImpl @Inject constructor(
         mSearchRequestsHelper.writeSearchRequestsToDb(userId, searchRequests)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<String?>> {
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mSearchRequestsHelper.readSearchRequestsFromDb(userId)
     }
 

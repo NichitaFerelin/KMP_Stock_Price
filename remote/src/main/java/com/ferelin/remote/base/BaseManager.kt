@@ -16,7 +16,6 @@ package com.ferelin.remote.base
  * limitations under the License.
  */
 
-import com.ferelin.remote.utils.Api
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,23 +30,11 @@ class BaseManager<T>(
     override fun onResponse(call: Call<T>, response: Response<T>) {
         val responseBody = response.body()
         val responseCode = response.code()
-
-        when {
-            responseCode == 429 -> mOnResponse(BaseResponse(Api.RESPONSE_LIMIT))
-            responseBody == null -> mOnResponse(BaseResponse(Api.RESPONSE_NO_DATA))
-            responseCode == 200 -> {
-                mOnResponse(
-                    BaseResponse(
-                        responseCode = Api.RESPONSE_OK,
-                        additionalMessage = null,
-                        responseData = responseBody
-                    )
-                )
-            }
-        }
+        val baseResponse = BaseResponse.createResponse(responseBody, responseCode)
+        mOnResponse.invoke(baseResponse)
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        mOnResponse(BaseResponse(Api.RESPONSE_UNDEFINED))
+        mOnResponse(BaseResponse.failed())
     }
 }

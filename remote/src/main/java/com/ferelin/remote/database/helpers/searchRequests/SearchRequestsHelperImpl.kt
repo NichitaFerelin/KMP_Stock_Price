@@ -18,9 +18,7 @@ package com.ferelin.remote.database.helpers.searchRequests
 
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.database.utils.ValueEventListener
 import com.ferelin.remote.utils.Api
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -49,29 +47,6 @@ class SearchRequestsHelperImpl @Inject constructor(
         searchRequests.forEach { request -> writeSearchRequestToDb(userId, request) }
     }
 
-    override fun readSearchRequestsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
-            .child(sSearchesHistoryRef)
-            .child(userId)
-            .addValueEventListener(object : ValueEventListener() {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (searchSnapshot in snapshot.children) {
-
-                            val fixedResponse = RealtimeDatabase.decrypt(searchSnapshot?.key)
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = fixedResponse
-                            )
-                            trySend(response)
-                        }
-                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
-                }
-            })
-        awaitClose()
-    }
-
     override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
         val fixedRequest = RealtimeDatabase.encrypt(searchRequest)
         mDatabaseFirebase
@@ -79,5 +54,29 @@ class SearchRequestsHelperImpl @Inject constructor(
             .child(userId)
             .child(fixedRequest)
             .removeValue()
+    }
+
+    override fun readSearchRequestsFromDb(
+        userId: String
+    ) = callbackFlow<BaseResponse<List<String>>> {
+        val task = mDatabaseFirebase
+            .child(sSearchesHistoryRef)
+            .child(userId)
+            .get()
+            // TODO. Remove callback flow
+            .addOnSuccessListener { searchRequestsSnapshot ->
+                val searchRequests = mutableListOf<String>()
+                for (iteratorSearchSnapshot in searchRequestsSnapshot.children) {
+                    searchRequests.add(iteratorSearchSnapshot.value?.toString() ?: "")
+                }
+                trySend(
+                    BaseResponse(
+                        responseCode = Api.RESPONSE_OK,
+                        responseData = searchRequests
+                    )
+                )
+            }.addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)) }
+
+        awaitClose()
     }
 }

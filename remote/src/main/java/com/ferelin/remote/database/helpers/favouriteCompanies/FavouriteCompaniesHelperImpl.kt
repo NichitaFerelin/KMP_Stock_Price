@@ -17,9 +17,7 @@
 package com.ferelin.remote.database.helpers.favouriteCompanies
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.utils.ValueEventListener
 import com.ferelin.remote.utils.Api
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -28,15 +26,15 @@ import javax.inject.Singleton
 
 @Singleton
 class FavouriteCompaniesHelperImpl @Inject constructor(
-    private val mDatabaseFirebase: DatabaseReference
+    private val mDatabaseReference: DatabaseReference
 ) : FavouriteCompaniesHelper {
 
-    companion object {
-        private const val sFavouriteCompaniesRef = "favourite-companies"
+    private companion object {
+        const val sFavouriteCompaniesRef = "favourite-companies"
     }
 
     override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
+        mDatabaseReference
             .child(sFavouriteCompaniesRef)
             .child(userId)
             .child(companyId)
@@ -44,7 +42,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
     }
 
     override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
-        mDatabaseFirebase
+        mDatabaseReference
             .child(sFavouriteCompaniesRef)
             .child(userId)
             .child(companyId)
@@ -55,25 +53,24 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
         companiesId.forEach { companyId -> writeCompanyIdToRealtimeDb(userId, companyId) }
     }
 
-    override fun readCompaniesIdsFromDb(userId: String) = callbackFlow<BaseResponse<String?>> {
-        mDatabaseFirebase
+    override fun readCompaniesIdsFromDb(userId: String) = callbackFlow<BaseResponse<List<String>>> {
+        mDatabaseReference
             .child(sFavouriteCompaniesRef)
             .child(userId)
-            .addValueEventListener(object : ValueEventListener() {
-                // TODO .get()
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (companySnapshot in snapshot.children) {
-                            val response = BaseResponse<String?>(
-                                responseCode = Api.RESPONSE_OK,
-                                responseData = companySnapshot.key
-                            )
-                            trySend(response)
-                        }
-                        trySend(BaseResponse(responseCode = Api.RESPONSE_END))
-                    } else trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA))
+            .get()
+            .addOnSuccessListener { idsSnapshot ->
+                val ids = mutableListOf<String>()
+                for (iteratorIdSnapshot in idsSnapshot.children) {
+                    ids.add(iteratorIdSnapshot.key ?: "0")
                 }
-            })
+                trySend(
+                    BaseResponse(
+                        responseCode = Api.RESPONSE_OK,
+                        responseData = ids
+                    )
+                )
+            }.addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
+
         awaitClose()
     }
 }

@@ -46,9 +46,8 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
     private var mStockCandlesApi: ((String) -> Unit)? = null
     private var mStockSymbolsApi: ((String) -> Unit)? = null
 
-    private val mMessagesQueue =
-        Collections.synchronizedSet(LinkedHashSet<HashMap<String, Any>>(100))
-    private var mMessagesHistory = Collections.synchronizedMap(HashMap<String, Any?>(300, 0.5F))
+    private val mMessagesQueue = LinkedHashSet<HashMap<String, Any>>(100)
+    private var mMessagesHistory = HashMap<String, Any?>(300, 0.5F)
 
     private val mPerSecondRequestLimit = 1050L
     private var mIsRunning = true
@@ -59,26 +58,26 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
         mJob = appScope.launch { start() }
     }
 
-    override fun addMessage(
-        symbol: String,
-        api: String,
-        position: Int,
+    override fun addRequestToOrder(
+        companyOwnerSymbol: String,
+        apiTag: String,
+        messageNumber: Int,
         eraseIfNotActual: Boolean,
-        ignoreDuplicate: Boolean
+        ignoreDuplicates: Boolean
     ) {
-        if (ignoreDuplicate || isNotDuplicatedMessage(symbol)) {
-            acceptMessage(symbol, api, position, eraseIfNotActual)
+        if (ignoreDuplicates || isNotDuplicatedMessage(companyOwnerSymbol)) {
+            acceptMessage(companyOwnerSymbol, apiTag, messageNumber, eraseIfNotActual)
         }
     }
 
-    override fun setUpApi(api: String, onResponse: (String) -> Unit) {
-        when (api) {
+    override fun setUpApi(apiTag: String, onResponse: (String) -> Unit) {
+        when (apiTag) {
             Api.COMPANY_PROFILE -> if (mCompanyProfileApi == null) mCompanyProfileApi = onResponse
             Api.COMPANY_NEWS -> if (mCompanyNewsApi == null) mCompanyNewsApi = onResponse
             Api.COMPANY_QUOTE -> if (mCompanyQuoteApi == null) mCompanyQuoteApi = onResponse
             Api.STOCK_CANDLES -> if (mStockCandlesApi == null) mStockCandlesApi = onResponse
             Api.STOCK_SYMBOLS -> if (mStockSymbolsApi == null) mStockSymbolsApi = onResponse
-            else -> throw IllegalStateException("Unknown api for throttleManager: $api")
+            else -> throw IllegalStateException("Unknown api for throttleManager: $apiTag")
         }
     }
 
