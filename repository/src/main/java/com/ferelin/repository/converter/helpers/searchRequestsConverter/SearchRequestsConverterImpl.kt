@@ -17,6 +17,7 @@
 package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
 import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
@@ -25,18 +26,28 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverter {
 
-    override fun convertSearchesForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
+    override fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
         val dataSet = mutableSetOf<String>()
         search.forEach { dataSet.add(it.searchText) }
         return dataSet
     }
 
-    override fun convertSearchesForUi(
+    override fun convertSearchRequestsForUi(
         response: SearchesResponse
     ): RepositoryResponse<List<AdaptiveSearchRequest>> {
         return if (response is SearchesResponse.Success) {
             val convertedData = response.data.map { AdaptiveSearchRequest(it) }
             RepositoryResponse.Success(data = convertedData)
+        } else RepositoryResponse.Failed()
+    }
+
+    override fun convertSearchRequestsTextForUi(
+        response: BaseResponse<List<String>>?
+    ): RepositoryResponse<List<String>> {
+        return if (response != null) {
+            RepositoryResponse.Success(
+                data = response.responseData ?: emptyList()
+            )
         } else RepositoryResponse.Failed()
     }
 }

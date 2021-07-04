@@ -17,14 +17,19 @@
 package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
 import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 
 interface SearchRequestsConverter {
 
-    fun convertSearchesForLocal(search: List<AdaptiveSearchRequest>): Set<String>
+    fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String>
 
-    fun convertSearchesForUi(
+    fun convertSearchRequestsForUi(
         response: SearchesResponse
     ): RepositoryResponse<List<AdaptiveSearchRequest>>
+
+    fun convertSearchRequestsTextForUi(
+        response: BaseResponse<List<String>>?
+    ): RepositoryResponse<List<String>>
 }

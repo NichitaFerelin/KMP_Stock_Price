@@ -19,6 +19,7 @@ package com.ferelin.repository.converter.helpers.companiesConverter
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
+import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.converter.adapter.DataAdapter
 import com.ferelin.repository.utils.RepositoryResponse
@@ -44,6 +45,15 @@ class CompaniesConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
+    override fun convertCompaniesIdsForUi(
+        response: BaseResponse<List<String>>?
+    ): RepositoryResponse<List<String>> {
+        return if (response != null) {
+            RepositoryResponse.Success(
+                data = response.responseData ?: emptyList()
+            )
+        } else RepositoryResponse.Failed()
+    }
 
     override fun convertCompanyForLocal(company: AdaptiveCompany): Company {
         return mAdapter.toDatabaseCompany(company)

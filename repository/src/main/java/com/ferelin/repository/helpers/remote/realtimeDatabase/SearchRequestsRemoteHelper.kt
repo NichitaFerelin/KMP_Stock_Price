@@ -17,13 +17,12 @@
 package com.ferelin.repository.helpers.remote.realtimeDatabase
 
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
 
 interface SearchRequestsRemoteHelper {
 
     fun cacheSearchRequestToRealtimeDb(userId: String, searchRequest: String)
 
-    fun getSearchRequestsFromRealtimeDb(userId: String): Flow<RepositoryResponse<String?>>
-
     fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: String)
+
+    suspend fun getSearchRequestsFromRealtimeDb(userId: String): RepositoryResponse<List<String>>
 }

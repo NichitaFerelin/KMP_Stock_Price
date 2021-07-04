@@ -31,11 +31,7 @@ interface StorePreferencesHelper {
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
-    suspend fun getUserRegisterState() : Boolean?
+    suspend fun setUserNumber(number: String)
 
-    suspend fun setUserRegisterState(state: Boolean)
-
-    suspend fun setUserLogin(login: String)
-
-    suspend fun getUserLogin() : String?
+    suspend fun getUserNumber(): String?
 }

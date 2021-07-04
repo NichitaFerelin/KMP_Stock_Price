@@ -17,7 +17,6 @@
 package com.ferelin.repository.helpers.remote.realtimeDatabase
 
 import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
 
 interface FavouriteCompaniesRemoteHelper {
 
@@ -25,5 +24,5 @@ interface FavouriteCompaniesRemoteHelper {
 
     fun cacheCompanyIdToRealtimeDb(userId: String, companyId: String)
 
-    fun getCompaniesIdsFromRealtimeDb(userId: String): Flow<RepositoryResponse<String?>>
+    suspend fun getCompaniesIdsFromRealtimeDb(userId: String): RepositoryResponse<List<String>>
 }

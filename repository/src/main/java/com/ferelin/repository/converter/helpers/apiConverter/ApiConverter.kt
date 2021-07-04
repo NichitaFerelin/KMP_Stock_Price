@@ -27,26 +27,26 @@ import com.ferelin.repository.utils.RepositoryResponse
 
 interface ApiConverter {
 
-    fun convertStockCandlesResponseForUi(
+    fun fromNetworkResponseToAdaptiveStockCandles(
         response: BaseResponse<StockCandlesResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory>
 
-    fun convertCompanyProfileResponseForUi(
+    fun fromNetworkResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
     ): RepositoryResponse<AdaptiveCompanyProfile>
 
-    fun convertStockSymbolsResponseForUi(
+    fun fromNetworkResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols>
 
-    fun convertCompanyNewsResponseForUi(
+    fun fromNetworkResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews>
 
-    fun convertCompanyQuoteResponseForUi(
+    fun fromNetworkResponseToAdaptiveCompanyDayData(
         response: BaseResponse<CompanyQuoteResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData>
 }

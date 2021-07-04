@@ -37,11 +37,11 @@ interface ApiManagerHelper {
         to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
         // Time format
         resolution: String = "D"
-    ): Flow<RepositoryResponse<AdaptiveCompanyHistory>>
+    ): RepositoryResponse<AdaptiveCompanyHistory>
 
-    fun loadCompanyProfile(symbol: String): Flow<RepositoryResponse<AdaptiveCompanyProfile>>
+    fun loadCompanyProfile(symbol: String): RepositoryResponse<AdaptiveCompanyProfile>
 
-    fun loadStockSymbols(): Flow<RepositoryResponse<AdaptiveStocksSymbols>>
+    fun loadStockSymbols(): RepositoryResponse<AdaptiveStocksSymbols>
 
     fun loadCompanyNews(
         symbol: String,
@@ -50,7 +50,7 @@ interface ApiManagerHelper {
         * */
         from: String = Time.getYearAgoDateForRequest(),
         to: String = Time.getCurrentDateForRequest()
-    ): Flow<RepositoryResponse<AdaptiveCompanyNews>>
+    ): RepositoryResponse<AdaptiveCompanyNews>
 
     fun loadCompanyQuote(
         symbol: String,

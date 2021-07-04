@@ -59,37 +59,37 @@ class ConverterMediatorImpl @Inject constructor(
     private val mChatsConverter: ChatsConverter
 ) : ConverterMediator {
 
-    override fun convertStockCandlesResponseForUi(
+    override fun fromNetworkResponseToAdaptiveStockCandles(
         response: BaseResponse<StockCandlesResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
-        return mApiConverter.convertStockCandlesResponseForUi(response, symbol)
+        return mApiConverter.fromNetworkResponseToAdaptiveStockCandles(response, symbol)
     }
 
-    override fun convertCompanyProfileResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyProfile> {
-        return mApiConverter.convertCompanyProfileResponseForUi(response, symbol)
+        return mApiConverter.fromNetworkResponseToAdaptiveCompanyProfile(response, symbol)
     }
 
-    override fun convertStockSymbolsResponseForUi(
+    override fun fromNetworkResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
-        return mApiConverter.convertStockSymbolsResponseForUi(response)
+        return mApiConverter.fromNetworkResponseToAdaptiveStockSymbols(response)
     }
 
-    override fun convertCompanyNewsResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
-        return mApiConverter.convertCompanyNewsResponseForUi(response, symbol)
+        return mApiConverter.fromNetworkResponseToAdaptiveCompanyNews(response, symbol)
     }
 
-    override fun convertCompanyQuoteResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyDayData(
         response: BaseResponse<CompanyQuoteResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
-        return mApiConverter.convertCompanyQuoteResponseForUi(response)
+        return mApiConverter.fromNetworkResponseToAdaptiveCompanyDayData(response)
     }
 
     override fun convertTryToRegisterResponseForUi(
@@ -124,14 +124,14 @@ class ConverterMediatorImpl @Inject constructor(
         return mRealtimeDatabaseConverter.convertRealtimeDatabaseResponseForUi(response)
     }
 
-    override fun convertSearchesForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
-        return mSearchRequestsConverter.convertSearchesForLocal(search)
+    override fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
+        return mSearchRequestsConverter.convertSearchRequestsForLocal(search)
     }
 
-    override fun convertSearchesForUi(
+    override fun convertSearchRequestsForUi(
         response: SearchesResponse
     ): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        return mSearchRequestsConverter.convertSearchesForUi(response)
+        return mSearchRequestsConverter.convertSearchRequestsForUi(response)
     }
 
     override fun convertWebSocketResponseForUi(

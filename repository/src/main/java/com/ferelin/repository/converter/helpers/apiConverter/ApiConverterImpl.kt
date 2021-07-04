@@ -37,7 +37,7 @@ class ApiConverterImpl @Inject constructor(
     private val mAdapter: DataAdapter
 ) : ApiConverter {
 
-    override fun convertStockCandlesResponseForUi(
+    override fun fromNetworkResponseToAdaptiveStockCandles(
         response: BaseResponse<StockCandlesResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
@@ -63,7 +63,7 @@ class ApiConverterImpl @Inject constructor(
         }
     }
 
-    override fun convertCompanyProfileResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
     ): RepositoryResponse<AdaptiveCompanyProfile> {
@@ -86,7 +86,7 @@ class ApiConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertStockSymbolsResponseForUi(
+    override fun fromNetworkResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
         return if (response.responseCode == Api.RESPONSE_OK) {
@@ -95,7 +95,7 @@ class ApiConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertCompanyNewsResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
@@ -144,7 +144,7 @@ class ApiConverterImpl @Inject constructor(
         }
     }
 
-    override fun convertCompanyQuoteResponseForUi(
+    override fun fromNetworkResponseToAdaptiveCompanyDayData(
         response: BaseResponse<CompanyQuoteResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
         return if (response.responseCode == Api.RESPONSE_OK) {

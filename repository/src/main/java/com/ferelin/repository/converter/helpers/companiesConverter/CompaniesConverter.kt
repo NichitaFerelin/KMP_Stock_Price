@@ -18,6 +18,7 @@ package com.ferelin.repository.converter.helpers.companiesConverter
 
 import com.ferelin.local.models.Company
 import com.ferelin.local.responses.CompaniesResponse
+import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryResponse
 
@@ -26,6 +27,10 @@ interface CompaniesConverter {
     fun convertCompaniesResponseForUi(
         response: CompaniesResponse
     ): RepositoryResponse<List<AdaptiveCompany>>
+
+    fun convertCompaniesIdsForUi(
+        response: BaseResponse<List<String>>?
+    ): RepositoryResponse<List<String>>
 
     fun convertCompanyForLocal(company: AdaptiveCompany): Company
 }
