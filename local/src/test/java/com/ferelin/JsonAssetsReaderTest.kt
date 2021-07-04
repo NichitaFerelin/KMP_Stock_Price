@@ -18,8 +18,6 @@ package com.ferelin
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.ferelin.local.json.JsonAssets
-import com.ferelin.local.json.JsonAssetsReader
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before

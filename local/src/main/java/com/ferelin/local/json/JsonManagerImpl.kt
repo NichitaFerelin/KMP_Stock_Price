@@ -18,6 +18,10 @@ package com.ferelin.local.json
 
 import android.content.Context
 import com.ferelin.local.models.Company
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +31,23 @@ open class JsonManagerImpl @Inject constructor(
 ) : JsonManager {
 
     override fun getCompaniesFromJson(): List<Company> {
-        return JsonAssetsReader(mContext, JsonAssets.COMPANIES).readCompanies()
+        return readCompanies()
+    }
+
+    private val mMoshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+    /*
+    * Parsing companies data from json
+    * */
+    private fun readCompanies(): List<Company> {
+        val json =
+            mContext.assets.open(sCompaniesJsonFileName).bufferedReader().use { it.readText() }
+        val type = Types.newParameterizedType(List::class.java, Company::class.java)
+        val adapter: JsonAdapter<List<Company>> = mMoshi.adapter(type)
+        return adapter.fromJson(json) ?: emptyList()
+    }
+
+    private companion object {
+        const val sCompaniesJsonFileName = "companies.json"
     }
 }

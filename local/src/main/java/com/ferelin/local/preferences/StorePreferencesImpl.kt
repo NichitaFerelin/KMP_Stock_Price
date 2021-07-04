@@ -38,7 +38,6 @@ open class StorePreferencesImpl @Inject constructor(
     private val mContext: Context
 ) : StorePreferences {
 
-    // TODO
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
 
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
@@ -76,25 +75,13 @@ open class StorePreferencesImpl @Inject constructor(
         }.firstOrNull()
     }
 
-    override suspend fun getUserRegisterState(): Boolean? {
-        return mContext.dataStorePreferences.data.map {
-            it[mRegisterKey]
-        }.firstOrNull()
-    }
-
-    override suspend fun setUserRegisterState(state: Boolean) {
-        mContext.dataStorePreferences.edit {
-            it[mRegisterKey] = state
-        }
-    }
-
-    override suspend fun setUserLogin(login: String) {
+    override suspend fun setUserNumber(login: String) {
         mContext.dataStorePreferences.edit {
             it[mUserLoginKey] = login
         }
     }
 
-    override suspend fun getUserLogin(): String? {
+    override suspend fun getUserNumber(): String? {
         return mContext.dataStorePreferences.data.map {
             it[mUserLoginKey]
         }.firstOrNull()

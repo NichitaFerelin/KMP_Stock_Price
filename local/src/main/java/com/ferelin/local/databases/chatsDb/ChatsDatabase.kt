@@ -26,6 +26,6 @@ abstract class ChatsDatabase : RoomDatabase() {
     abstract fun chatsDao(): ChatsDao
 
     companion object {
-        const val DB_NAME = "stockprice.relations.db"
+        const val DB_NAME = "stockprice.chats.db"
     }
 }

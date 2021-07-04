@@ -119,14 +119,6 @@ open class LocalManagerImpl @Inject constructor(
         mStorePreferences.setFirstTimeLaunchState(boolean)
     }
 
-    override suspend fun getUserRegisterState(): Boolean? {
-        return mStorePreferences.getUserRegisterState()
-    }
-
-    override suspend fun setUserRegisterState(state: Boolean) {
-        mStorePreferences.setUserRegisterState(state)
-    }
-
     override suspend fun insertChat(chat: Chat) {
         mChatsDao.insertChat(chat)
     }
@@ -139,11 +131,11 @@ open class LocalManagerImpl @Inject constructor(
         mChatsDao.clearChats()
     }
 
-    override suspend fun setUserLogin(login: String) {
-        mStorePreferences.setUserLogin(login)
+    override suspend fun setUserNumber(login: String) {
+        mStorePreferences.setUserNumber(login)
     }
 
-    override suspend fun getUserLogin(): String? {
-        return mStorePreferences.getUserLogin()
+    override suspend fun getUserNumber(): String? {
+        return mStorePreferences.getUserNumber()
     }
 }
