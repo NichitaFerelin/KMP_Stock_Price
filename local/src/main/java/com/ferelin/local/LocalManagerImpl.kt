@@ -131,8 +131,8 @@ open class LocalManagerImpl @Inject constructor(
         mChatsDao.clearChats()
     }
 
-    override suspend fun setUserNumber(login: String) {
-        mStorePreferences.setUserNumber(login)
+    override suspend fun setUserNumber(number: String) {
+        mStorePreferences.setUserNumber(number)
     }
 
     override suspend fun getUserNumber(): String? {

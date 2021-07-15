@@ -42,8 +42,7 @@ open class StorePreferencesImpl @Inject constructor(
 
     private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
     private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
-    private val mRegisterKey = booleanPreferencesKey("register-key")
-    private val mUserLoginKey = stringPreferencesKey("user-login-key")
+    private val mUserNumberKey = stringPreferencesKey("user-number-key")
 
     override suspend fun getSearchRequestsHistory(): Set<String> {
         return mContext.dataStorePreferences.data.map {
@@ -75,15 +74,15 @@ open class StorePreferencesImpl @Inject constructor(
         }.firstOrNull()
     }
 
-    override suspend fun setUserNumber(login: String) {
+    override suspend fun setUserNumber(number: String) {
         mContext.dataStorePreferences.edit {
-            it[mUserLoginKey] = login
+            it[mUserNumberKey] = number
         }
     }
 
     override suspend fun getUserNumber(): String? {
         return mContext.dataStorePreferences.data.map {
-            it[mUserLoginKey]
+            it[mUserNumberKey]
         }.firstOrNull()
     }
 }
