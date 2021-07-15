@@ -18,11 +18,10 @@ package com.ferelin.remote.api
 
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
-import kotlinx.coroutines.flow.Flow
 
 interface ApiManager {
 
@@ -44,12 +43,12 @@ interface ApiManager {
      * @param to is a right timestamp border of data
      * @param resolution is a type of data model that network must returns(By days, months, years...)
      * */
-    fun loadStockCandles(
+    fun loadStockHistory(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): BaseResponse<StockCandlesResponse>
+    ): BaseResponse<StockHistoryResponse>
 
     /**
      * Request to load company news
@@ -69,9 +68,9 @@ interface ApiManager {
      * @param position is a position on UI list. Required by ThrottleManagerImpl
      * @param isImportant forces the request to be executed ignoring ThrottleManagerImpl
      * */
-    fun loadCompanyQuote(
+    fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<CompanyQuoteResponse>>
+    ): BaseResponse<StockPriceResponse>
 }

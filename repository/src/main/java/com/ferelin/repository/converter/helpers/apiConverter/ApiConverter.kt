@@ -18,8 +18,8 @@ package com.ferelin.repository.converter.helpers.apiConverter
 
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.*
@@ -28,7 +28,7 @@ import com.ferelin.repository.utils.RepositoryResponse
 interface ApiConverter {
 
     fun fromNetworkResponseToAdaptiveStockCandles(
-        response: BaseResponse<StockCandlesResponse>,
+        response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory>
 
@@ -47,6 +47,6 @@ interface ApiConverter {
     ): RepositoryResponse<AdaptiveCompanyNews>
 
     fun fromNetworkResponseToAdaptiveCompanyDayData(
-        response: BaseResponse<CompanyQuoteResponse>
+        response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData>
 }

@@ -80,8 +80,8 @@ class RemoteMediatorImplTest {
         val from = 100L
         val to = 200L
         val resolution = "D"
-        mRemoteMediator.loadStockCandles(symbol, from, to, resolution)
-        verify(mApiManager, times(1)).loadStockCandles(symbol, from, to, resolution)
+        mRemoteMediator.loadStockHistory(symbol, from, to, resolution)
+        verify(mApiManager, times(1)).loadStockHistory(symbol, from, to, resolution)
     }
 
     @Test
@@ -104,7 +104,7 @@ class RemoteMediatorImplTest {
     fun loadCompanyQuote() {
         val symbol = "symbol"
         val position = 1
-        mRemoteMediator.loadCompanyQuote(symbol, position, false)
-        verify(mApiManager, times(1)).loadCompanyQuote(symbol, position, false)
+        mRemoteMediator.loadStockPrice(symbol, position, false)
+        verify(mApiManager, times(1)).loadStockPrice(symbol, position, false)
     }
 }

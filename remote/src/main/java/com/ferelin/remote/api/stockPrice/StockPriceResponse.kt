@@ -1,4 +1,4 @@
-package com.ferelin.remote.api.companyQuote
+package com.ferelin.remote.api.stockPrice
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,15 +16,12 @@ package com.ferelin.remote.api.companyQuote
  * limitations under the License.
  */
 
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.squareup.moshi.Json
 
-internal interface CompanyQuoteApi {
-
-    @GET("quote")
-    fun getCompanyQuote(
-        @Query("symbol") symbol: String,
-        @Query("token") token: String
-    ): Call<CompanyQuoteResponse>
-}
+class StockPriceResponse(
+    @Json(name = "o") val openPrice: Double,
+    @Json(name = "h") val highPrice: Double,
+    @Json(name = "l") val lowPrice: Double,
+    @Json(name = "c") val currentPrice: Double,
+    @Json(name = "pc") val previousClosePrice: Double
+)

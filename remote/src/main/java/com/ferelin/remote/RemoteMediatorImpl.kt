@@ -20,8 +20,8 @@ import android.app.Activity
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.base.BaseResponse
@@ -59,13 +59,13 @@ class RemoteMediatorImpl @Inject constructor(
         mWebSocketConnector.unsubscribeItemFromLiveTimeUpdates(symbol)
     }
 
-    override fun loadStockCandles(
+    override fun loadStockHistory(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): BaseResponse<StockCandlesResponse> {
-        return mApiManager.loadStockCandles(symbol, from, to, resolution)
+    ): BaseResponse<StockHistoryResponse> {
+        return mApiManager.loadStockHistory(symbol, from, to, resolution)
     }
 
     override fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse> {
@@ -84,12 +84,12 @@ class RemoteMediatorImpl @Inject constructor(
         return mApiManager.loadCompanyNews(symbol, from, to)
     }
 
-    override fun loadCompanyQuote(
+    override fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<CompanyQuoteResponse>> {
-        return mApiManager.loadCompanyQuote(symbol, position, isImportant)
+    ): Flow<BaseResponse<StockPriceResponse>> {
+        return mApiManager.loadStockPrice(symbol, position, isImportant)
     }
 
     override fun tryToLogIn(holderActivity: Activity, phone: String): Flow<BaseResponse<Boolean>> {

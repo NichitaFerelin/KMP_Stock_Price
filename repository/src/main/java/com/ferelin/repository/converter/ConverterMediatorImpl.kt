@@ -23,8 +23,8 @@ import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.webSocket.response.WebSocketResponse
@@ -60,7 +60,7 @@ class ConverterMediatorImpl @Inject constructor(
 ) : ConverterMediator {
 
     override fun fromNetworkResponseToAdaptiveStockCandles(
-        response: BaseResponse<StockCandlesResponse>,
+        response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
         return mApiConverter.fromNetworkResponseToAdaptiveStockCandles(response, symbol)
@@ -87,7 +87,7 @@ class ConverterMediatorImpl @Inject constructor(
     }
 
     override fun fromNetworkResponseToAdaptiveCompanyDayData(
-        response: BaseResponse<CompanyQuoteResponse>
+        response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
         return mApiConverter.fromNetworkResponseToAdaptiveCompanyDayData(response)
     }

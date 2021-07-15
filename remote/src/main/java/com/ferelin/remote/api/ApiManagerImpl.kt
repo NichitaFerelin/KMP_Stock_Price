@@ -20,10 +20,10 @@ import com.ferelin.remote.api.companyNews.CompanyNewsApi
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileApi
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteApi
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesApi
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryApi
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceApi
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolApi
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.api.throttleManager.ThrottleManager
@@ -45,8 +45,8 @@ open class ApiManagerImpl @Inject constructor(
 
     private val mCompanyProfileService by lazy { retrofit.create(CompanyProfileApi::class.java) }
     private val mCompanyNewsService by lazy { retrofit.create(CompanyNewsApi::class.java) }
-    private val mCompanyQuoteService by lazy { retrofit.create(CompanyQuoteApi::class.java) }
-    private val mStockCandlesService by lazy { retrofit.create(StockCandlesApi::class.java) }
+    private val mStockPriceService by lazy { retrofit.create(StockPriceApi::class.java) }
+    private val mStockHistoryService by lazy { retrofit.create(StockHistoryApi::class.java) }
     private val mStockSymbolsService by lazy { retrofit.create(StockSymbolApi::class.java) }
 
     override fun loadStockSymbols(): BaseResponse<StockSymbolResponse> {
@@ -69,13 +69,13 @@ open class ApiManagerImpl @Inject constructor(
         )
     }
 
-    override fun loadStockCandles(
+    override fun loadStockHistory(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
-    ): BaseResponse<StockCandlesResponse> {
-        val retrofitResponse = mStockCandlesService
+    ): BaseResponse<StockHistoryResponse> {
+        val retrofitResponse = mStockHistoryService
             .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
             .execute()
         return BaseResponse.createResponse(
@@ -98,11 +98,11 @@ open class ApiManagerImpl @Inject constructor(
         )
     }
 
-    override fun loadCompanyQuote(
+    override fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<CompanyQuoteResponse>> = callbackFlow {
+    ): Flow<BaseResponse<StockPriceResponse>> = callbackFlow {
 
         // Add message(request) to throttle manager
         mThrottleManager.addRequestToOrder(
@@ -114,9 +114,9 @@ open class ApiManagerImpl @Inject constructor(
         )
 
         mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
-            mCompanyQuoteService
+            mStockPriceService
                 .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
-                .enqueue(BaseManager<CompanyQuoteResponse> {
+                .enqueue(BaseManager<StockPriceResponse> {
                     it.additionalMessage = symbolToRequest
                     trySend(it)
                 })

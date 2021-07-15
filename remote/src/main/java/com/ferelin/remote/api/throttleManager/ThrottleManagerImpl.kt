@@ -17,12 +17,12 @@ package com.ferelin.remote.api.throttleManager
  */
 
 import com.ferelin.remote.utils.Api
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashSet
 import kotlin.math.abs
 
 /**
@@ -42,8 +42,8 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
 
     private var mCompanyProfileApi: ((String) -> Unit)? = null
     private var mCompanyNewsApi: ((String) -> Unit)? = null
-    private var mCompanyQuoteApi: ((String) -> Unit)? = null
-    private var mStockCandlesApi: ((String) -> Unit)? = null
+    private var mStockPriceApi: ((String) -> Unit)? = null
+    private var mStockHistoryApi: ((String) -> Unit)? = null
     private var mStockSymbolsApi: ((String) -> Unit)? = null
 
     private val mMessagesQueue = LinkedHashSet<HashMap<String, Any>>(100)
@@ -74,8 +74,8 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
         when (apiTag) {
             Api.COMPANY_PROFILE -> if (mCompanyProfileApi == null) mCompanyProfileApi = onResponse
             Api.COMPANY_NEWS -> if (mCompanyNewsApi == null) mCompanyNewsApi = onResponse
-            Api.COMPANY_QUOTE -> if (mCompanyQuoteApi == null) mCompanyQuoteApi = onResponse
-            Api.STOCK_CANDLES -> if (mStockCandlesApi == null) mStockCandlesApi = onResponse
+            Api.COMPANY_QUOTE -> if (mStockPriceApi == null) mStockPriceApi = onResponse
+            Api.STOCK_CANDLES -> if (mStockHistoryApi == null) mStockHistoryApi = onResponse
             Api.STOCK_SYMBOLS -> if (mStockSymbolsApi == null) mStockSymbolsApi = onResponse
             else -> throw IllegalStateException("Unknown api for throttleManager: $apiTag")
         }
@@ -106,8 +106,8 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
                     when (api) {
                         Api.COMPANY_PROFILE -> mCompanyProfileApi?.invoke(symbol)
                         Api.COMPANY_NEWS -> mCompanyNewsApi?.invoke(symbol)
-                        Api.COMPANY_QUOTE -> mCompanyQuoteApi?.invoke(symbol)
-                        Api.STOCK_CANDLES -> mStockCandlesApi?.invoke(symbol)
+                        Api.COMPANY_QUOTE -> mStockPriceApi?.invoke(symbol)
+                        Api.STOCK_CANDLES -> mStockHistoryApi?.invoke(symbol)
                         Api.STOCK_SYMBOLS -> mStockSymbolsApi?.invoke(symbol)
                     }
                     mMessagesHistory[symbol] = null

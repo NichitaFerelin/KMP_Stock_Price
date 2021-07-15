@@ -20,7 +20,6 @@ import com.ferelin.remote.api.ApiManager
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
-import kotlinx.coroutines.flow.Flow
 
 /**
  * @see [ApiManager]
@@ -28,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
  * */
 interface ApiManagerHelper {
 
-    fun loadStockCandles(
+    fun loadStockHistory(
         symbol: String,
         /*
         * Api has a limit on receiving data a maximum of year ago
@@ -52,9 +51,9 @@ interface ApiManagerHelper {
         to: String = Time.getCurrentDateForRequest()
     ): RepositoryResponse<AdaptiveCompanyNews>
 
-    fun loadCompanyQuote(
+    fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
+    ): RepositoryResponse<AdaptiveCompanyDayData>
 }

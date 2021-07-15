@@ -18,8 +18,8 @@ package com.ferelin.repository.converter.helpers.apiConverter
 
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
-import com.ferelin.remote.api.companyQuote.CompanyQuoteResponse
-import com.ferelin.remote.api.stockCandles.StockCandlesResponse
+import com.ferelin.remote.api.stockHistory.StockHistoryResponse
+import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
@@ -38,11 +38,11 @@ class ApiConverterImpl @Inject constructor(
 ) : ApiConverter {
 
     override fun fromNetworkResponseToAdaptiveStockCandles(
-        response: BaseResponse<StockCandlesResponse>,
+        response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response.responseData as StockCandlesResponse
+            val itemResponse = response.responseData as StockHistoryResponse
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyHistory(
@@ -145,10 +145,10 @@ class ApiConverterImpl @Inject constructor(
     }
 
     override fun fromNetworkResponseToAdaptiveCompanyDayData(
-        response: BaseResponse<CompanyQuoteResponse>
+        response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
         return if (response.responseCode == Api.RESPONSE_OK) {
-            val itemResponse = response.responseData as CompanyQuoteResponse
+            val itemResponse = response.responseData as StockPriceResponse
             RepositoryResponse.Success(
                 owner = response.additionalMessage,
                 data = AdaptiveCompanyDayData(

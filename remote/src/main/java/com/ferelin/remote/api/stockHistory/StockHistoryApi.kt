@@ -1,4 +1,4 @@
-package com.ferelin.remote.api.stockCandles
+package com.ferelin.remote.api.stockHistory
 
 /*
  * Copyright 2021 Leah Nichita
@@ -20,7 +20,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-internal interface StockCandlesApi {
+internal interface StockHistoryApi {
     @GET("stock/candle")
     fun getStockCandles(
         @Query("symbol") symbol: String,
@@ -28,5 +28,5 @@ internal interface StockCandlesApi {
         @Query("from") from: Long,
         @Query("to") to: Long,
         @Query("resolution") resolution: String,
-    ): Call<StockCandlesResponse>
+    ): Call<StockHistoryResponse>
 }

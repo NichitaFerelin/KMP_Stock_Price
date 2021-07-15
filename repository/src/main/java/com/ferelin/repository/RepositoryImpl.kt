@@ -94,9 +94,8 @@ open class RepositoryImpl @Inject constructor(
         mLocalManager.clearChats()
     }
 
-    override suspend fun getFirstTimeLaunchState(): RepositoryResponse<Boolean> {
-        val firstTimeLaunch = mLocalManager.getFirstTimeLaunchState()
-        return mConverterMediator.convertFirstTimeLaunchStateForUi(firstTimeLaunch)
+    override suspend fun getFirstTimeLaunchState(): Boolean {
+        return mLocalManager.getFirstTimeLaunchState() == true
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
@@ -140,13 +139,13 @@ open class RepositoryImpl @Inject constructor(
         mLocalManager.clearMessagesTable()
     }
 
-    override fun loadStockCandles(
+    override fun loadStockHistory(
         symbol: String,
         from: Long,
         to: Long,
         resolution: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
-        val remoteResponse = mRemoteMediator.loadStockCandles(symbol, from, to, resolution)
+        val remoteResponse = mRemoteMediator.loadStockHistory(symbol, from, to, resolution)
         return mConverterMediator.fromNetworkResponseToAdaptiveStockCandles(remoteResponse, symbol)
     }
 
@@ -172,14 +171,13 @@ open class RepositoryImpl @Inject constructor(
         return mConverterMediator.fromNetworkResponseToAdaptiveCompanyNews(remoteResponse, symbol)
     }
 
-    override fun loadCompanyQuote(
+    override fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRemoteMediator.loadCompanyQuote(symbol, position, isImportant).map {
-            mConverterMediator.fromNetworkResponseToAdaptiveCompanyDayData(it)
-        }
+    ): RepositoryResponse<AdaptiveCompanyDayData> {
+        val remoteResponse = mRemoteMediator.loadStockPrice(symbol, position, isImportant)
+        return mConverterMediator.fromNetworkResponseToAdaptiveCompanyDayData(remoteResponse)
     }
 
     override fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {

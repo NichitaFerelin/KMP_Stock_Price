@@ -27,7 +27,7 @@ interface StorePreferencesHelper {
 
     suspend fun cacheSearchRequestsHistoryToLocalDb(requests: List<AdaptiveSearchRequest>)
 
-    suspend fun getFirstTimeLaunchState(): RepositoryResponse<Boolean>
+    suspend fun getFirstTimeLaunchState(): Boolean
 
     suspend fun setFirstTimeLaunchState(state: Boolean)
 
