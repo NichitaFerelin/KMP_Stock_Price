@@ -73,7 +73,7 @@ class SearchRequestsWorker @Inject constructor(
             removeSearchRequestsDuplicates(newSearchRequest)
 
             mSearchRequests.add(0, newSearchRequest)
-            mSearchRequestsSynchronization.onNewItem(newSearchRequest)
+            mSearchRequestsSynchronization.onSearchRequestAdded(newSearchRequest)
 
             if (isSearchRequestsLimitExceeded()) {
                 reduceRequestsToLimit()
@@ -85,6 +85,11 @@ class SearchRequestsWorker @Inject constructor(
     }
 
 
+    fun onNetworkAvailable() {
+        if (mStateSearchRequests.value is DataNotificator.DataPrepared) {
+            mSearchRequestsSynchronization.onNetworkAvailable(mSearchRequests)
+        }
+    }
 
     fun onNetworkLost() {
         mSearchRequestsSynchronization.onNetworkLost()
@@ -139,7 +144,7 @@ class SearchRequestsWorker @Inject constructor(
             val searchRequestStr = mSearchRequests[listCursor].searchText.toLowerCase(Locale.ROOT)
             if (newSearchRequestStr.contains(searchRequestStr)) {
                 mSearchRequests.removeAt(listCursor)
-                mSearchRequestsSynchronization.onRemoveItem(mSearchRequests[listCursor])
+                mSearchRequestsSynchronization.onSearchRequestRemoved(mSearchRequests[listCursor])
                 endBorder--
             }
             listCursor++
@@ -147,7 +152,7 @@ class SearchRequestsWorker @Inject constructor(
     }
 
     private fun reduceRequestsToLimit() {
-        mSearchRequestsSynchronization.onRemoveItem(mSearchRequests.last())
+        mSearchRequestsSynchronization.onSearchRequestRemoved(mSearchRequests.last())
         mSearchRequests.removeLast()
     }
 

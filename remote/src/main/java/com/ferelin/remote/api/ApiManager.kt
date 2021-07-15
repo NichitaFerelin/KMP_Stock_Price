@@ -22,6 +22,7 @@ import com.ferelin.remote.api.stockHistory.StockHistoryResponse
 import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
+import kotlinx.coroutines.flow.Flow
 
 interface ApiManager {
 
@@ -72,5 +73,5 @@ interface ApiManager {
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): BaseResponse<StockPriceResponse>
+    ): Flow<BaseResponse<StockPriceResponse>>
 }

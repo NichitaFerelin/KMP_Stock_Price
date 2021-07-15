@@ -56,12 +56,12 @@ class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
     private suspend fun collectCompanyNews() {
         val selectedCompanySymbol = selectedCompany.companyProfile.symbol
-        mDataInteractor.loadCompanyNewsFromNetwork(selectedCompanySymbol).collect { company ->
-            mStateIsDataLoading.value = false
-            mIsNetworkResponded = true
-            withContext(mCoroutineContext.Main) {
-                newsRecyclerAdapter.setData(company.companyNews)
-            }
+        mDataInteractor.loadCompanyNews(selectedCompanySymbol)
+        mStateIsDataLoading.value = false
+        mIsNetworkResponded = true
+
+        withContext(mCoroutineContext.Main) {
+            newsRecyclerAdapter.setData(selectedCompany.companyNews)
         }
     }
 }

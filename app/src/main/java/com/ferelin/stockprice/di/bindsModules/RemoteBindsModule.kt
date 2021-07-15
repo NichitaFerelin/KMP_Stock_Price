@@ -26,16 +26,14 @@ import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.auth.AuthenticationManagerImpl
 import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.database.RealtimeDatabaseImpl
+import com.ferelin.remote.database.helpers.chats.ChatsHelper
+import com.ferelin.remote.database.helpers.chats.ChatsHelperImpl
 import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelper
 import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompaniesHelperImpl
 import com.ferelin.remote.database.helpers.messages.MessagesHelper
 import com.ferelin.remote.database.helpers.messages.MessagesHelperImpl
-import com.ferelin.remote.database.helpers.relations.RelationsHelper
-import com.ferelin.remote.database.helpers.relations.RelationsHelperImpl
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelperImpl
-import com.ferelin.remote.database.helpers.user.UsersHelper
-import com.ferelin.remote.database.helpers.user.UsersHelperImpl
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
@@ -66,13 +64,10 @@ abstract class RemoteBindsModule {
     ): SearchRequestsHelper
 
     @Binds
-    abstract fun provideUsersHelper(usersHelper: UsersHelperImpl): UsersHelper
-
-    @Binds
     abstract fun provideMessagesHelper(messagesHelper: MessagesHelperImpl): MessagesHelper
 
     @Binds
-    abstract fun provideRelationsHelper(relationsHelper: RelationsHelperImpl): RelationsHelper
+    abstract fun provideRelationsHelper(relationsHelper: ChatsHelperImpl): ChatsHelper
 
     @Binds
     abstract fun provideAuthenticationConverterHelper(
@@ -86,7 +81,5 @@ abstract class RemoteBindsModule {
     abstract fun provideWebSocketConnectorHelper(web: WebSocketConnectorImpl): WebSocketConnector
 
     @Binds
-    abstract fun provideAuthenticationManagerHelper(
-        auth: AuthenticationManagerImpl
-    ): AuthenticationManager
+    abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManagerImpl): AuthenticationManager
 }

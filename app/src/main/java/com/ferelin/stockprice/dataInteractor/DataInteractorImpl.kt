@@ -157,9 +157,10 @@ class DataInteractorImpl @Inject constructor(
             .onEach { isAvailable ->
                 if (isAvailable) {
                     mCompaniesMediator.onNetworkAvailable()
+                    mSearchRequestsWorker.onNetworkAvailable()
                 } else {
-                    mSearchRequestsWorker.onNetworkLost()
                     mCompaniesMediator.onNetworkLost()
+                    mSearchRequestsWorker.onNetworkLost()
                 }
             }
     }
@@ -168,11 +169,12 @@ class DataInteractorImpl @Inject constructor(
         holderActivity: Activity,
         phone: String
     ): Flow<RepositoryMessages> {
-        return mAuthenticationWorker.signIn(holderActivity, phone,
+        return mAuthenticationWorker.tryToSignIn(holderActivity, phone,
             onLogIn = {
-                /*
-                * TODO
-                * */
+                mMenuItemsWorker.onLogIn()
+                mCompaniesMediator.onLogIn()
+                mSearchRequestsWorker.onLogIn()
+                mChatsWorker.onLogIn()
             },
             onError = { message -> mErrorsWorker.onAuthenticationError(message) }
         )
@@ -206,8 +208,8 @@ class DataInteractorImpl @Inject constructor(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ) {
-        mCompaniesMediator.loadStockPrice(symbol, position, isImportant)
+    ) : Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+        return mCompaniesMediator.loadStockPrice(symbol, position, isImportant)
     }
 
     override fun createNewChat(associatedUserNumber: String) {

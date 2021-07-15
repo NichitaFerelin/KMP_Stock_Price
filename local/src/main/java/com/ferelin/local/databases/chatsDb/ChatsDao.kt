@@ -28,9 +28,9 @@ interface ChatsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChat(chat: Chat)
 
-    @Query("SELECT * FROM `stockprice.relations.db`")
+    @Query("SELECT * FROM `stockprice.chats.db`")
     suspend fun getAllChats(): List<Chat>?
 
-    @Query("DELETE FROM `stockprice.relations.db`")
+    @Query("DELETE FROM `stockprice.chats.db`")
     fun clearChats()
 }

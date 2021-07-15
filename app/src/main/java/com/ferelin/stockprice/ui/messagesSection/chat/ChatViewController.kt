@@ -16,7 +16,7 @@
 
 package com.ferelin.stockprice.ui.messagesSection.chat
 
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesItemDecoration
@@ -36,13 +36,13 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
 
     fun setArgumentsViewDependsOn(
         messagesRecyclerAdapter: MessagesRecyclerAdapter,
-        relation: AdaptiveRelation
+        chat: AdaptiveChat
     ) {
         viewBinding.recyclerViewMessages.apply {
             adapter = messagesRecyclerAdapter
             addItemDecoration(MessagesItemDecoration(context))
         }
-        viewBinding.textViewUserLogin.text = relation.associatedUserLogin
+        viewBinding.textViewUserLogin.text = chat.associatedUserNumber
     }
 
     fun onSendClicked() {

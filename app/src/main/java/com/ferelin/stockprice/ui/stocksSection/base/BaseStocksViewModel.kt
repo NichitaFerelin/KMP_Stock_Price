@@ -44,7 +44,7 @@ abstract class BaseStocksViewModel : BaseViewModel() {
     }
 
     fun onFavouriteIconClicked(company: AdaptiveCompany) {
-        mAppScope.launch {
+        viewModelScope.launch(mCoroutineContext.IO) {
             if (company.isFavourite) {
                 mDataInteractor.removeCompanyFromFavourites(company)
             } else mDataInteractor.addCompanyToFavourites(company)
@@ -53,7 +53,7 @@ abstract class BaseStocksViewModel : BaseViewModel() {
 
     private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.loadCompanyQuoteFromNetwork(
+            mDataInteractor.loadStockPrice(
                 symbol = company.companyProfile.symbol,
                 position = position,
                 isImportant = false

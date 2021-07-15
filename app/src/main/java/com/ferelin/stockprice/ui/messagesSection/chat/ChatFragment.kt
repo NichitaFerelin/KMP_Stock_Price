@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.viewModelFactories.LoginViewModelFactory
@@ -29,12 +29,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChatFragment(relation: AdaptiveRelation? = null) :
+class ChatFragment(chat: AdaptiveChat? = null) :
     BaseFragment<FragmentChatBinding, ChatViewModel, ChatViewController>() {
 
     override val mViewController = ChatViewController()
     override val mViewModel: ChatViewModel by viewModels {
-        LoginViewModelFactory(relation)
+        LoginViewModelFactory(chat)
     }
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChatBinding
@@ -44,7 +44,7 @@ class ChatFragment(relation: AdaptiveRelation? = null) :
         super.setUpViewComponents(savedInstanceState)
         mViewController.setArgumentsViewDependsOn(
             messagesRecyclerAdapter = mViewModel.messagesAdapter,
-            relation = mViewModel.relation
+            chat = mViewModel.chat
         )
         setUpClickListeners()
     }

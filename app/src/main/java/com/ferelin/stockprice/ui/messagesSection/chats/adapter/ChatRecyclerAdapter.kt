@@ -20,21 +20,21 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.databinding.ItemRelationBinding
 
 class ChatRecyclerAdapter(
     private var mChatClickListener: ChatClickListener? = null
 ) : RecyclerView.Adapter<ChatRecyclerAdapter.RelationsViewHolder>() {
 
-    private var mRelations = arrayListOf<AdaptiveRelation>()
+    private var mRelations = arrayListOf<AdaptiveChat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RelationsViewHolder {
         return RelationsViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: RelationsViewHolder, position: Int) {
-        holder.bind(mRelations[position].associatedUserLogin)
+        holder.bind(mRelations[position].associatedUserNumber)
         holder.binding.root.setOnClickListener {
             mChatClickListener?.onRelationClicked(position)
         }
@@ -48,18 +48,18 @@ class ChatRecyclerAdapter(
         return mRelations[position].id.toLong()
     }
 
-    fun getRelation(position: Int): AdaptiveRelation {
+    fun getRelation(position: Int): AdaptiveChat {
         return mRelations[position]
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(items: List<AdaptiveRelation>) {
+    fun setData(items: List<AdaptiveChat>) {
         mRelations = ArrayList(items)
         notifyDataSetChanged()
     }
 
-    fun addItem(relation: AdaptiveRelation) {
-        mRelations.add(relation)
+    fun addItem(chat: AdaptiveChat) {
+        mRelations.add(chat)
         notifyItemInserted(mRelations.size - 1)
     }
 

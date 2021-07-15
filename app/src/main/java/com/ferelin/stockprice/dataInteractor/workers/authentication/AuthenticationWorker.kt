@@ -34,8 +34,7 @@ class AuthenticationWorker @Inject constructor(
     private val mRepository: Repository,
     private val mAppScope: CoroutineScope
 ) {
-
-    suspend fun signIn(
+    suspend fun tryToSignIn(
         holderActivity: Activity,
         phoneNumber: String,
         onLogIn: suspend (Boolean) -> Unit,

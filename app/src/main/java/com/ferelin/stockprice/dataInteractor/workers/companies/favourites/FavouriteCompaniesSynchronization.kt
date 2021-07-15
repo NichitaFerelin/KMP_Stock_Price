@@ -109,8 +109,16 @@ class FavouriteCompaniesSynchronization @Inject constructor(
         }
     }
 
+    fun onNetworkAvailable() {
+        // init sync
+    }
+
     fun onNetworkLost() {
         invalidate()
+    }
+
+    fun onLogIn() {
+        // init sync
     }
 
     /**

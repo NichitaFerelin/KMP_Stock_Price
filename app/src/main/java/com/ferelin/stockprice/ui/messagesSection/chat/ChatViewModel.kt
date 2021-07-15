@@ -17,17 +17,16 @@
 package com.ferelin.stockprice.ui.messagesSection.chat
 
 import androidx.lifecycle.viewModelScope
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
-import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChatViewModel(val relation: AdaptiveRelation) : BaseViewModel() {
+class ChatViewModel(val chat: AdaptiveChat) : BaseViewModel() {
 
     val messagesAdapter = MessagesRecyclerAdapter().apply {
         setHasStableIds(true)
@@ -49,15 +48,15 @@ class ChatViewModel(val relation: AdaptiveRelation) : BaseViewModel() {
 
     fun onSendClicked(text: String) {
         if (text.isNotEmpty()) {
-            mAppScope.launch {
-                mDataInteractor.sendNewMessage(relation.associatedUserLogin, text)
+            viewModelScope.launch(mCoroutineContext.IO) {
+                mDataInteractor.sendMessageTo(chat.associatedUserNumber, text)
             }
         }
     }
 
     private suspend fun collectStateMessages() {
-        mDataInteractor.getMessagesStateForLogin(relation.associatedUserLogin)
-            .collect { notificator ->
+        mDataInteractor.loadMessagesFor(chat.associatedUserNumber)
+            /*.collect { notificator ->
                 when (notificator) {
                     is DataNotificator.DataPrepared -> {
                         withContext(mCoroutineContext.Main) {
@@ -67,16 +66,16 @@ class ChatViewModel(val relation: AdaptiveRelation) : BaseViewModel() {
                     }
                     is DataNotificator.NoData -> {
                         mDataInteractor.loadMessagesAssociatedWithLogin(
-                            relation.associatedUserLogin
+                            chat.associatedUserNumber
                         )
                     }
                     else -> Unit
                 }
-            }
+            }*/
     }
 
     private suspend fun findNewMessages() {
-        // mDataInteractor.findNewMessages(mDataInteractor.userLogin, relation.associatedUserLogin)
+        // mDataInteractor.findNewMessages(mDataInteractor.userLogin, chat.associatedUserLogin)
     }
 
     private suspend fun collectSharedMessagesUpdates() {

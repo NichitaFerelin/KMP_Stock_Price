@@ -63,7 +63,7 @@ class WelcomeViewModel : BaseViewModel() {
     fun onBtnClicked() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            mAppScope.launch { mDataInteractor.setFirstTimeLaunchState(false) }
+            viewModelScope.launch(mCoroutineContext.IO) { mDataInteractor.setFirstTimeLaunchState(false) }
 
             mBtnDoneVisible.postValue(false)
             delay(200)

@@ -175,9 +175,10 @@ open class RepositoryImpl @Inject constructor(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): RepositoryResponse<AdaptiveCompanyDayData> {
-        val remoteResponse = mRemoteMediator.loadStockPrice(symbol, position, isImportant)
-        return mConverterMediator.fromNetworkResponseToAdaptiveCompanyDayData(remoteResponse)
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+        return mRemoteMediator.loadStockPrice(symbol, position, isImportant).map { response ->
+            mConverterMediator.fromNetworkResponseToAdaptiveCompanyDayData(response)
+        }
     }
 
     override fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {

@@ -115,11 +115,11 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         } else showCloseIcon()
     }
 
-    fun onSearchRequestsChanged(notificator: DataNotificator<ArrayList<AdaptiveSearchRequest>>) {
+    fun onSearchRequestsChanged(notificator: DataNotificator<List<AdaptiveSearchRequest>>) {
         val adapterSearchesHistory = viewBinding.recyclerViewSearchedHistory.adapter
         if (adapterSearchesHistory is SearchRequestsAdapter) {
             val data = notificator.data!!
-            adapterSearchesHistory.setData(data)
+            adapterSearchesHistory.setData(ArrayList(data))
         }
     }
 

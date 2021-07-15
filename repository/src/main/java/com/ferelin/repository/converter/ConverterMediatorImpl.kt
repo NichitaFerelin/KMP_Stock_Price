@@ -145,7 +145,15 @@ class ConverterMediatorImpl @Inject constructor(
     }
 
     override fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>> {
-        mChatsConverter.convertLocalChatsForUi(chats)
+        return mChatsConverter.convertLocalChatsForUi(chats)
+    }
+
+    override fun convertCompaniesIdsForUi(response: BaseResponse<List<String>>?): RepositoryResponse<List<String>> {
+        return mCompaniesConverter.convertCompaniesIdsForUi(response)
+    }
+
+    override fun convertSearchRequestsTextForUi(response: BaseResponse<List<String>>?): RepositoryResponse<List<String>> {
+        return mSearchRequestsConverter.convertSearchRequestsTextForUi(response)
     }
 
     override fun convertRemoteChatResponseForUi(

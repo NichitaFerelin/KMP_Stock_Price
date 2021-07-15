@@ -42,14 +42,11 @@ class SearchViewModel : BaseStocksViewModel() {
     val stateSearchStockResults: StateFlow<ArrayList<AdaptiveCompany>?>
         get() = mStateSearchStockResults
 
-    val stateSearchRequests: StateFlow<DataNotificator<ArrayList<AdaptiveSearchRequest>>?>
+    val stateSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>?>
         get() = mDataInteractor.stateSearchRequests
 
-    val statePopularSearchRequests: Flow<ArrayList<AdaptiveSearchRequest>?>
+    val statePopularSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
         get() = mDataInteractor.statePopularSearchRequests
-            .filter { it.data != null }
-            .take(1)
-            .map { it.data!! }
 
     private var mLastSearchRequest = ""
     val lastSearchRequest: String
@@ -99,7 +96,7 @@ class SearchViewModel : BaseStocksViewModel() {
 
     private suspend fun onNewSearch(searchText: String, resultsSize: Int) {
         if (resultsSize in 1..5) {
-            mAppScope.launch {
+            viewModelScope.launch(mCoroutineContext.IO) {
                 mDataInteractor.cacheNewSearchRequest(searchText)
             }
         }

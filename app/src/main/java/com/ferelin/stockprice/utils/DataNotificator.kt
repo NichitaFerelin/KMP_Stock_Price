@@ -21,6 +21,8 @@ package com.ferelin.stockprice.utils
  */
 sealed class DataNotificator<out T>(val data: T? = null) {
 
+    class None<out T> : DataNotificator<T>()
+
     class DataPrepared<out T>(data: T) : DataNotificator<T>(data)
 
     class DataUpdated<out T>(data: T) : DataNotificator<T>(data)

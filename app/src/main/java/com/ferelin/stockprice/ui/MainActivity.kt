@@ -33,10 +33,10 @@ import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
-import com.ferelin.stockprice.utils.*
+import com.ferelin.stockprice.utils.showDefaultDialog
+import com.ferelin.stockprice.utils.showDialog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 
@@ -208,7 +208,7 @@ class MainActivity(
 
     private fun setUpFab() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.isUserLogged
+           /* mViewModel.isUserLogged
                 .filter { it != null }
                 .collect { isLogged ->
                     withContext(mCoroutineContext.Main) {
@@ -218,10 +218,10 @@ class MainActivity(
                             mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
                         }
                     }
-                }
+                }*/
         }
 
-        mViewBinding!!.mainFab.setOnClickListener {
+        /*mViewBinding!!.mainFab.setOnClickListener {
             lifecycleScope.launch(mCoroutineContext.IO) {
                 mViewModel.isUserLogged
                     .filter { it != null }
@@ -235,7 +235,7 @@ class MainActivity(
                         }
                     }
             }
-        }
+        }*/
     }
 
     private fun setStatusBarColor() {

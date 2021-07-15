@@ -28,9 +28,6 @@ class MainViewModel : BaseViewModel() {
         initObserversBlock()
     }
 
-    val isUserLogged: StateFlow<Boolean?>
-        get() = mDataInteractor.stateUserLogged
-
     private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged
@@ -72,8 +69,7 @@ class MainViewModel : BaseViewModel() {
 
     override fun initObserversBlock() {
         viewModelScope.launch(Dispatchers.IO) {
-            mPrepareDataJob = launch { mDataInteractor.prepareData() }
-            launch { collectCompanyUpdatesForObserver() }
+            collectCompanyUpdatesForObserver()
         }
     }
 

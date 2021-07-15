@@ -50,7 +50,51 @@ class SearchRequestsSynchronization @Inject constructor(
     private var mOnNewRemoteItemReceived: ((String) -> Unit)? = null
     private var mIsDataSynchronized: Boolean = false
 
-    fun initDataSync(localSearchRequests: List<AdaptiveSearchRequest>) {
+    fun addOnNewRemoteItemReceived(onReceived: (String) -> Unit) {
+        mOnNewRemoteItemReceived = onReceived
+    }
+
+    fun onDataPrepared(localSearchRequests: List<AdaptiveSearchRequest>) {
+        initDataSync(localSearchRequests)
+    }
+
+    fun onNetworkAvailable(localSearchRequests: List<AdaptiveSearchRequest>) {
+        initDataSync(localSearchRequests)
+    }
+
+    fun onNetworkLost() {
+        invalidate()
+    }
+
+    fun onLogOut() {
+        invalidate()
+    }
+
+    fun onSearchRequestAdded(request: AdaptiveSearchRequest) {
+        if (!mRemoteSearchRequestsContainer.contains(request.searchText)) {
+            mRemoteSearchRequestsContainer.add(request.searchText)
+
+            mAppScope.launch {
+                mRepository.getUserAuthenticationId()?.let { userToken ->
+                    mRepository.cacheSearchRequestToRealtimeDb(userToken, request.searchText)
+                }
+            }
+        }
+    }
+
+    fun onSearchRequestRemoved(request: AdaptiveSearchRequest) {
+        if (mRemoteSearchRequestsContainer.contains(request.searchText)) {
+            mRemoteSearchRequestsContainer.remove(request.searchText)
+
+            mAppScope.launch {
+                mRepository.getUserAuthenticationId()?.let { userToken ->
+                    mRepository.eraseSearchRequestFromRealtimeDb(userToken, request.searchText)
+                }
+            }
+        }
+    }
+
+    private fun initDataSync(localSearchRequests: List<AdaptiveSearchRequest>) {
         mAppScope.launch {
             if (mIsDataSynchronized) {
                 return@launch
@@ -67,42 +111,6 @@ class SearchRequestsSynchronization @Inject constructor(
                 }
             }
         }
-    }
-
-    fun addOnNewRemoteItemReceived(onReceived: (String) -> Unit) {
-        mOnNewRemoteItemReceived = onReceived
-    }
-
-    fun onNewItem(request: AdaptiveSearchRequest) {
-        if (!mRemoteSearchRequestsContainer.contains(request.searchText)) {
-            mRemoteSearchRequestsContainer.add(request.searchText)
-
-            mAppScope.launch {
-                mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.cacheSearchRequestToRealtimeDb(userToken, request.searchText)
-                }
-            }
-        }
-    }
-
-    fun onRemoveItem(request: AdaptiveSearchRequest) {
-        if (mRemoteSearchRequestsContainer.contains(request.searchText)) {
-            mRemoteSearchRequestsContainer.remove(request.searchText)
-
-            mAppScope.launch {
-                mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.eraseSearchRequestFromRealtimeDb(userToken, request.searchText)
-                }
-            }
-        }
-    }
-
-    fun onNetworkLost() {
-        invalidate()
-    }
-
-    fun onLogOut() {
-        invalidate()
     }
 
     private fun findAndFixMissingItems(

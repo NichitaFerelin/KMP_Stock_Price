@@ -16,6 +16,7 @@ package com.ferelin.stockprice.ui.aboutSection.aboutSection
  * limitations under the License.
  */
 
+import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.utils.DataNotificator
@@ -44,7 +45,7 @@ class AboutPagerViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel(
     }
 
     fun onFavouriteIconClicked() {
-        mAppScope.launch(mCoroutineContext.IO) {
+        viewModelScope.launch(mCoroutineContext.IO) {
             when (selectedCompany.isFavourite) {
                 true -> mDataInteractor.removeCompanyFromFavourites(selectedCompany)
                 false -> mDataInteractor.addCompanyToFavourites(selectedCompany)

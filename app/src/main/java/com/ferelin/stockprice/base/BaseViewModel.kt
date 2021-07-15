@@ -19,19 +19,12 @@ package com.ferelin.stockprice.base
 import androidx.lifecycle.ViewModel
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 /**
  * [BaseViewModel] contains all logic for data loading. [mDataInteractor] makes it possible.
  */
 abstract class BaseViewModel : ViewModel() {
-
-    /**
-     * Application scope that is not tied to activity/fragment lifecycle
-     * */
-    @Inject
-    protected lateinit var mAppScope: CoroutineScope
 
     @Inject
     protected lateinit var mDataInteractor: DataInteractor

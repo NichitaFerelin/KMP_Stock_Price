@@ -44,7 +44,7 @@ class ChatsViewModel : BaseViewModel() {
         viewModelScope.launch(mCoroutineContext.IO) {
             val addedUserLogin = arguments[DialogAddUser.USER_LOGIN_KEY]
             if (addedUserLogin is String && addedUserLogin.isNotEmpty()) {
-                mAppScope.launch {
+                viewModelScope.launch(mCoroutineContext.IO) {
                     /*mDataInteractor.createNewRelation(
                         sourceUserLogin = mDataInteractor.userLogin,
                         associatedUserLogin = addedUserLogin
@@ -55,7 +55,7 @@ class ChatsViewModel : BaseViewModel() {
     }
 
     private suspend fun collectStateUserRelations() {
-        mDataInteractor.stateUserRelations
+        mDataInteractor.stateUserChats
             .filter { it is DataNotificator.DataPrepared }
             .collect { notificator ->
                 withContext(mCoroutineContext.Main) {
@@ -65,7 +65,7 @@ class ChatsViewModel : BaseViewModel() {
     }
 
     private suspend fun collectSharedRelationUpdates() {
-        mDataInteractor.sharedUserRelationsUpdates.collect { notificator ->
+        mDataInteractor.sharedUserChatUpdates.collect { notificator ->
             when (notificator) {
                 is DataNotificator.ItemRemoved -> {
                     withContext(mCoroutineContext.Main) {

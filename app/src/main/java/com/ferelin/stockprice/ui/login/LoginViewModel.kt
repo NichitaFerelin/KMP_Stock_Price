@@ -52,7 +52,7 @@ class LoginViewModel : BaseViewModel() {
     fun onSendCodeClicked(holderActivity: Activity, text: String) {
         viewModelScope.launch(mCoroutineContext.IO) {
             mStateIsLoading.value = true
-            mDataInteractor.signIn(holderActivity, "+$text").collect { message ->
+            mDataInteractor.tryToSignIn(holderActivity, "+$text").collect { message ->
                 when (message) {
                     is RepositoryMessages.Ok -> mStateSignIn.emit(Unit)
                     is RepositoryMessages.CodeSent -> mStateCodeSent.value = true

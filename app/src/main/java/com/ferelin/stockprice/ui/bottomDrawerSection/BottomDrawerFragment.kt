@@ -98,11 +98,11 @@ class BottomDrawerFragment :
     }
 
     private suspend fun collectSharedLogOut() {
-        mViewModel.sharedLogOut.collect {
+        /*mViewModel.sharedLogOut.collect {
             withContext(mCoroutineContext.Main) {
                 mViewController.onLogOut()
             }
-        }
+        }*/
     }
 
     private fun setUpClickListeners() {

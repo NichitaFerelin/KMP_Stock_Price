@@ -28,7 +28,6 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -103,14 +102,14 @@ class SearchFragment :
     }
 
     private suspend fun collectStatePopularSearchRequests() {
-        mViewModel.statePopularSearchRequests
+       /* mViewModel.statePopularSearchRequests
             .filter { it != null }
             .take(1)
             .collect { results ->
                 withContext(mCoroutineContext.Main) {
                     mViewController.onPopularSearchRequestsChanged(results!!)
                 }
-            }
+            }*/
     }
 
     private suspend fun collectEventOnError() {

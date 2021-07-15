@@ -1,4 +1,4 @@
-package com.ferelin.local.typeConverters
+package com.ferelin.local.databases.typeConverters
 
 /*
  * Copyright 2021 Leah Nichita
@@ -17,7 +17,6 @@ package com.ferelin.local.typeConverters
  */
 
 import androidx.room.TypeConverter
-import com.ferelin.local.models.Message
 import com.ferelin.shared.MessageSide
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -44,35 +43,16 @@ internal class Converter {
     }
 
     @TypeConverter
-    fun listMessagesToJson(data: List<Message>): String {
-        val listStr = data.map { messageToString(it) }
-        val adapter = mMoshi.adapter<List<String>>(mTypeListString)
-        return adapter.toJson(listStr)
+    fun messageSideToString(messageSide: MessageSide): String {
+        return messageSide.key.toString()
     }
 
     @TypeConverter
-    fun jsonToListMessages(json: String): List<Message> {
-        val adapter = mMoshi.adapter<List<String>>(mTypeStringList)
-        val listStr = adapter.fromJson(json) ?: emptyList()
-        return listStr.map { stringToMessage(it) }
+    fun stringToMessageSide(string: String): MessageSide {
+        return when (string) {
+            MessageSide.Source.key.toString() -> MessageSide.Source
+            else -> MessageSide.Associated
+        }
     }
 
-    private fun messageToString(message: Message): String {
-        val side = message.side.key
-        val messageId = message.id
-        return "$side $messageId ${message.text}"
-    }
-
-    private fun stringToMessage(string: String): Message {
-        val data = string.split(" ")
-        val parsedSide = if (data[0][0] == MessageSide.Associated.key) {
-            MessageSide.Associated
-        } else MessageSide.Source
-
-        return Message(
-            id = data[1].toInt(),
-            side = parsedSide,
-            text = data[2]
-        )
-    }
 }

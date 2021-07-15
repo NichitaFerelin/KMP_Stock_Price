@@ -27,8 +27,10 @@ import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.Favour
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorkerStates
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -104,11 +106,13 @@ open class CompaniesMediator @Inject constructor(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ) {
-        val response = mRepository.loadStockPrice(symbol, position, isImportant)
-        if (response is RepositoryResponse.Success) {
-            onCompanyQuoteLoaded(response)
-        }
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+        return mRepository.loadStockPrice(symbol, position, isImportant)
+            .onEach { response ->
+                if (response is RepositoryResponse.Success) {
+                    onCompanyQuoteLoaded(response)
+                }
+            }
     }
 
     fun onLiveTimePriceChanged(
@@ -124,6 +128,10 @@ open class CompaniesMediator @Inject constructor(
 
     fun subscribeItemsOnLiveTimeUpdates() {
         mFavouriteCompaniesWorker.subscribeCompaniesOnLiveTimeUpdates()
+    }
+
+    fun onLogIn() {
+        mFavouriteCompaniesWorker.onLogIn()
     }
 
     fun onLogOut() {

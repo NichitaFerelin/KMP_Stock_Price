@@ -18,10 +18,12 @@ package com.ferelin.stockprice.di.bindsModules
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.RepositoryImpl
-import com.ferelin.repository.converter.ResponseMediator
-import com.ferelin.repository.converter.ResponseMediatorImpl
+import com.ferelin.repository.converter.ConverterMediator
+import com.ferelin.repository.converter.ConverterMediatorImpl
 import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.apiConverter.ApiConverterImpl
+import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
+import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverterImpl
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverterImpl
 import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
@@ -30,8 +32,6 @@ import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConver
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverterImpl
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverterImpl
-import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverter
-import com.ferelin.repository.converter.helpers.relationsConverter.RelationsConverterImpl
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverterImpl
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
@@ -46,7 +46,7 @@ abstract class RepositoryBindsModule {
     abstract fun provideRepositoryManagerHelper(repositoryImpl: RepositoryImpl): Repository
 
     @Binds
-    abstract fun provideResponseMediator(responseMediator: ResponseMediatorImpl): ResponseMediator
+    abstract fun provideResponseMediator(responseMediator: ConverterMediatorImpl): ConverterMediator
 
     @Binds
     abstract fun provideApiConverter(apiConverterImpl: ApiConverterImpl): ApiConverter
@@ -82,7 +82,7 @@ abstract class RepositoryBindsModule {
     ): WebSocketConverter
 
     @Binds
-    abstract fun provideRelationsConverter(
-        relationsConverterImpl: RelationsConverterImpl
-    ): RelationsConverter
+    abstract fun provideChatsConverter(
+        relationsConverterImpl: ChatsConverterImpl
+    ): ChatsConverter
 }

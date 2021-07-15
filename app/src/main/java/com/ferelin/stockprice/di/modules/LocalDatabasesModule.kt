@@ -18,12 +18,12 @@ package com.ferelin.stockprice.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import com.ferelin.local.databases.chatsDb.ChatsDao
+import com.ferelin.local.databases.chatsDb.ChatsDatabase
 import com.ferelin.local.databases.companiesDb.CompaniesDao
 import com.ferelin.local.databases.companiesDb.CompaniesDatabase
 import com.ferelin.local.databases.messagesDb.MessagesDao
 import com.ferelin.local.databases.messagesDb.MessagesDatabase
-import com.ferelin.local.databases.relationsDb.RelationsDao
-import com.ferelin.local.databases.relationsDb.RelationsDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -63,16 +63,16 @@ class LocalDatabasesModule {
 
     @Provides
     @Singleton
-    fun provideRelationsDatabase(context: Context): RelationsDatabase {
+    fun provideRelationsDatabase(context: Context): ChatsDatabase {
         return Room.databaseBuilder(
             context,
-            RelationsDatabase::class.java,
-            RelationsDatabase.DB_NAME
+            ChatsDatabase::class.java,
+            ChatsDatabase.DB_NAME
         ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
-    fun provideRelationsDao(database: RelationsDatabase): RelationsDao {
-        return database.relationsDao()
+    fun provideRelationsDao(database: ChatsDatabase): ChatsDao {
+        return database.chatsDao()
     }
 }

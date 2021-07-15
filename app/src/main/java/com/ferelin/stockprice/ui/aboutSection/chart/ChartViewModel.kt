@@ -78,10 +78,8 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     }
 
     private suspend fun collectStockCandles() {
-        val selectedCompanySymbol = selectedCompany.companyProfile.symbol
-        mDataInteractor.loadStockCandlesFromNetwork(selectedCompanySymbol).collect { responseCompany ->
-            onStockHistoryLoaded(responseCompany)
-        }
+        mDataInteractor.loadStockHistory(selectedCompany.companyProfile.symbol)
+        onStockHistoryLoaded(selectedCompany)
     }
 
     private suspend fun collectStateNetworkAvailable() {

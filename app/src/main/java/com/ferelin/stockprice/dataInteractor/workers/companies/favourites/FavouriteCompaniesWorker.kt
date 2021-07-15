@@ -142,6 +142,10 @@ class FavouriteCompaniesWorker @Inject constructor(
         mFavouriteCompanies.forEach { subscribeCompanyOnLiveTimeUpdates(it) }
     }
 
+    fun onLogIn() {
+        mFavouriteCompaniesSynchronization.onLogIn()
+    }
+
     fun onLogOut() {
         mFavouriteCompaniesSynchronization.onLogOut(
             localFavouriteCompanies = mFavouriteCompanies,

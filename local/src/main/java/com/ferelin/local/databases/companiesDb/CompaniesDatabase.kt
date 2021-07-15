@@ -19,8 +19,8 @@ package com.ferelin.local.databases.companiesDb
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.ferelin.local.databases.typeConverters.Converter
 import com.ferelin.local.models.Company
-import com.ferelin.local.typeConverters.Converter
 
 @Database(entities = [Company::class], version = 1)
 @TypeConverters(Converter::class)

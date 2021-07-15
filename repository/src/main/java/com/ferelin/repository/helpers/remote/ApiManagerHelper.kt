@@ -20,6 +20,7 @@ import com.ferelin.remote.api.ApiManager
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @see [ApiManager]
@@ -55,5 +56,5 @@ interface ApiManagerHelper {
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): RepositoryResponse<AdaptiveCompanyDayData>
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 }

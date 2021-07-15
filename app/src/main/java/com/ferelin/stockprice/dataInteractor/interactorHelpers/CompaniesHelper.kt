@@ -17,6 +17,9 @@
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyDayData
+import com.ferelin.repository.utils.RepositoryResponse
+import kotlinx.coroutines.flow.Flow
 
 interface CompaniesHelper {
 
@@ -28,5 +31,5 @@ interface CompaniesHelper {
 
     suspend fun loadCompanyNews(symbol: String)
 
-    suspend fun loadStockPrice(symbol: String, position: Int, isImportant: Boolean)
+    suspend fun loadStockPrice(symbol: String, position: Int, isImportant: Boolean): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 }

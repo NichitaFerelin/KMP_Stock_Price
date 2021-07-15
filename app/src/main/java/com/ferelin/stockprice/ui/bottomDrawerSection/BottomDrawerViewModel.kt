@@ -17,11 +17,11 @@
 package com.ferelin.stockprice.ui.bottomDrawerSection
 
 import android.view.View
+import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemsAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -33,20 +33,14 @@ class BottomDrawerViewModel : BaseViewModel() {
 
     var scrimVisibilityState: Int = View.GONE
 
-    val stateIsUserRegister: StateFlow<Boolean?>
-        get() = mDataInteractor.stateUserRegister
-
     val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
         get() = mDataInteractor.stateMenuItems
-
-    val sharedLogOut: SharedFlow<Unit>
-        get() = mDataInteractor.sharedLogOut
-
+    
     override fun initObserversBlock() {
         // Do nothing
     }
 
     fun onLogOut() {
-        mAppScope.launch { mDataInteractor.logOut() }
+        viewModelScope.launch(mCoroutineContext.IO) { mDataInteractor.logOut() }
     }
 }
