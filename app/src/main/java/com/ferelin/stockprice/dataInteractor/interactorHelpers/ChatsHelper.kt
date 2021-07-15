@@ -16,11 +16,6 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
-import com.ferelin.repository.adaptiveModels.AdaptiveRelation
-
 interface ChatsHelper {
-
-    suspend fun createNewRelation(sourceUserLogin: String, associatedUserLogin: String)
-
-    suspend fun removeRelation(sourceUserLogin: String, relation: AdaptiveRelation)
+    fun createNewChat(associatedUserNumber: String)
 }

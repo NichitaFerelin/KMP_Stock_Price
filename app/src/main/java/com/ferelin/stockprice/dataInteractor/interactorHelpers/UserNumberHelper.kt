@@ -16,13 +16,6 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
-
-interface WebSocketHelper {
-
-    suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
-
-    fun prepareForWebSocketReconnection()
+interface UserNumberHelper {
+    suspend fun getUserNumber() : String?
 }

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.utils
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
-
-interface WebSocketHelper {
-
-    suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
-
-    fun prepareForWebSocketReconnection()
+/**
+ * [SyncConflictMode] is a synchronization mode for [SynchronizationManager]
+ * */
+sealed class SyncConflictMode {
+    object Merge : SyncConflictMode()
+    object LocalPriority : SyncConflictMode()
+    object RemotePriority : SyncConflictMode()
 }

@@ -17,24 +17,16 @@
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import kotlinx.coroutines.flow.Flow
 
 interface CompaniesHelper {
 
-    suspend fun addCompanyToFavourites(
-        company: AdaptiveCompany,
-        ignoreError: Boolean = false
-    )
+    suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean = false)
 
     suspend fun removeCompanyFromFavourites(company: AdaptiveCompany)
 
-    suspend fun loadStockCandlesFromNetwork(symbol: String): Flow<AdaptiveCompany>
+    suspend fun loadStockHistory(symbol: String)
 
-    suspend fun loadCompanyNewsFromNetwork(symbol: String): Flow<AdaptiveCompany>
+    suspend fun loadCompanyNews(symbol: String)
 
-    suspend fun loadCompanyQuoteFromNetwork(
-        symbol: String,
-        position: Int,
-        isImportant: Boolean
-    ): Flow<AdaptiveCompany>
+    suspend fun loadStockPrice(symbol: String, position: Int, isImportant: Boolean)
 }

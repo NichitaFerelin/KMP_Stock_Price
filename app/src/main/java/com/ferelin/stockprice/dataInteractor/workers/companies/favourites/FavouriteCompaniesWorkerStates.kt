@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.workers.companies.favourites
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
-interface WebSocketHelper {
+interface FavouriteCompaniesWorkerStates {
 
-    suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+    val stateFavouriteCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
 
-    fun prepareForWebSocketReconnection()
+    val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
+
+    val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
 }

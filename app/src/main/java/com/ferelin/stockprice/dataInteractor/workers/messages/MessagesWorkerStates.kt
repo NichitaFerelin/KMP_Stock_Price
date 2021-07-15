@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.workers.messages
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
-interface WebSocketHelper {
+interface MessagesWorkerStates {
 
-    suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+    val stateMessages: StateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>
 
-    fun prepareForWebSocketReconnection()
+    val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
 }

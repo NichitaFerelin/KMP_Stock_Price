@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.workers.searchRequests
 
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.StateFlow
 
-interface WebSocketHelper {
+interface SearchRequestsWorkerStates {
 
-    suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>
+    val stateSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
 
-    fun prepareForWebSocketReconnection()
+    val statePopularSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
 }

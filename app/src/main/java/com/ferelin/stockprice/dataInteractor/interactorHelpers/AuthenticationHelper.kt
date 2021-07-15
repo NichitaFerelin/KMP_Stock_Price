@@ -22,10 +22,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationHelper {
 
-    suspend fun signIn(
-        holderActivity: Activity,
-        phone: String,
-    ): Flow<RepositoryMessages>
+    suspend fun tryToSignIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages>
 
     fun logInWithCode(code: String)
 

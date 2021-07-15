@@ -16,19 +16,9 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessagesHolder
-import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.StateFlow
-
 interface MessagesHelper {
 
-    suspend fun getMessagesStateForLogin(
-        associatedUserLogin: String,
-    ): StateFlow<DataNotificator<AdaptiveMessagesHolder>>
+    fun loadMessagesFor(associatedUserNumber: String)
 
-    suspend fun loadMessagesAssociatedWithLogin(associatedLogin: String)
-
-    suspend fun sendNewMessage(associatedUserLogin: String, text: String)
-
-    suspend fun findNewMessages(sourceUserLogin: String, associatedUserLogin: String)
+    suspend fun sendMessageTo(associatedUserNumber: String, messageText: String)
 }
