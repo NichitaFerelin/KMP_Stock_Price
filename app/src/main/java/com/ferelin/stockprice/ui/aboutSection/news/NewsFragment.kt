@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ class NewsFragment(
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateIsDataLoading() }
+            launch { collectStateCompanyNews() }
             launch { collectStateOnError() }
         }
     }
@@ -65,10 +66,18 @@ class NewsFragment(
         }
     }
 
-    private suspend fun collectStateIsDataLoading() {
-        mViewModel.stateIsDataLoading.collect { isDataLoading ->
+    private suspend fun collectStateCompanyNews() {
+        mViewModel.stateCompanyNews.collect { notificator ->
             withContext(mCoroutineContext.Main) {
-                mViewController.onDataLoadingStateChanged(isDataLoading)
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        mViewController.onNewsChanged(notificator.data!!)
+                    }
+                    is DataNotificator.Loading -> {
+                        mViewController.onDataLoadingStateChanged(true)
+                    }
+                    else -> mViewController.onDataLoadingStateChanged(false)
+                }
             }
         }
     }

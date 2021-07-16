@@ -54,6 +54,7 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
         val recyclerViewAdapter = viewBinding.recyclerViewNews.adapter
         if (recyclerViewAdapter is NewsRecyclerAdapter) {
             hideTextViewError()
+            // TODO меняется в viewModel
             recyclerViewAdapter.setData(news)
         }
     }

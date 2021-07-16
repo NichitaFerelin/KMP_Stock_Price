@@ -18,7 +18,9 @@ package com.ferelin.stockprice.ui.aboutSection.news
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,38 +32,51 @@ class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
     val newsRecyclerAdapter = NewsRecyclerAdapter()
 
-    private val mStateIsDataLoading = MutableStateFlow(false)
-    val stateIsDataLoading: StateFlow<Boolean>
-        get() = mStateIsDataLoading
-
-    private var mIsNetworkResponded = false
+    private val mStateCompanyNews =
+        MutableStateFlow<DataNotificator<AdaptiveCompanyNews>>(DataNotificator.None())
+    val stateCompanyNews: StateFlow<DataNotificator<AdaptiveCompanyNews>>
+        get() = mStateCompanyNews
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadCompanyNewsError
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            collectStateIsNetworkAvailable()
+            prepareInitialNewsState()
+            loadCompanyNews()
         }
     }
 
-    private suspend fun collectStateIsNetworkAvailable() {
-        mDataInteractor.stateIsNetworkAvailable.collect { isAvailable ->
-            if (isAvailable && !mIsNetworkResponded) {
-                mStateIsDataLoading.value = true
-                collectCompanyNews()
-            } else mStateIsDataLoading.value = false
+    private suspend fun prepareInitialNewsState() {
+        if (selectedCompany.companyNews.ids.isNotEmpty()) {
+            mStateCompanyNews.value = DataNotificator.DataPrepared(selectedCompany.companyNews)
+            withContext(mCoroutineContext.Main) {
+                newsRecyclerAdapter.setData(selectedCompany.companyNews)
+            }
         }
     }
 
-    private suspend fun collectCompanyNews() {
-        val selectedCompanySymbol = selectedCompany.companyProfile.symbol
-        mDataInteractor.loadCompanyNews(selectedCompanySymbol)
-        mStateIsDataLoading.value = false
-        mIsNetworkResponded = true
-
-        withContext(mCoroutineContext.Main) {
-            newsRecyclerAdapter.setData(selectedCompany.companyNews)
-        }
+    private suspend fun loadCompanyNews() {
+        mDataInteractor.loadCompanyNews(selectedCompany.companyProfile.symbol)
+            .collect { notificator ->
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        mStateCompanyNews.value = DataNotificator.DataPrepared(notificator.data!!)
+                        withContext(mCoroutineContext.Main) {
+                            newsRecyclerAdapter.setData(selectedCompany.companyNews)
+                        }
+                    }
+                    is DataNotificator.Loading -> {
+                        if (mStateCompanyNews.value !is DataNotificator.DataPrepared) {
+                            mStateCompanyNews.value = DataNotificator.Loading()
+                        }
+                    }
+                    else -> {
+                        if (mStateCompanyNews.value !is DataNotificator.DataPrepared) {
+                            mStateCompanyNews.value = DataNotificator.None()
+                        }
+                    }
+                }
+            }
     }
 }
