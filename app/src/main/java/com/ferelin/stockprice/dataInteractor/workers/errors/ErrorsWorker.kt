@@ -19,6 +19,7 @@ package com.ferelin.stockprice.dataInteractor.workers.errors
 import android.content.Context
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.dataInteractor.workers.network.NetworkConnectivityWorker
 import com.ferelin.stockprice.utils.getString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,8 +32,9 @@ import javax.inject.Singleton
 
 @Singleton
 open class ErrorsWorker @Inject constructor(
-    private val mContext: Context
-    ) : ErrorsWorkerStates {
+    private val mContext: Context,
+    networkConnectivityWorker: NetworkConnectivityWorker
+) : ErrorsWorkerStates {
 
     private val mSharedApiLimitError = MutableSharedFlow<String>()
     override val sharedApiLimitError: SharedFlow<String>

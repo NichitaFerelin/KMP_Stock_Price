@@ -17,5 +17,6 @@
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 interface UserNumberHelper {
+
     suspend fun getUserNumber() : String?
 }

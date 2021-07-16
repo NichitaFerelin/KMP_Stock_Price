@@ -27,13 +27,16 @@ import com.ferelin.stockprice.dataInteractor.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.workers.menuItems.MenuItemsWorker
 import com.ferelin.stockprice.dataInteractor.workers.messages.MessagesWorker
-import com.ferelin.stockprice.dataInteractor.workers.network.NetworkConnectivityWorker
+import com.ferelin.stockprice.dataInteractor.workers.network.NetworkConnectivityWorkerStates
 import com.ferelin.stockprice.dataInteractor.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.StockHistoryConverter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,15 +45,14 @@ import javax.inject.Singleton
  *   - Providing states of data and errors.
  *   - Sending network requests to Repository using [mRepository].
  *   - Sending local requests to Repository using [mLocalInteractor].
- *   - Sending errors to [mErrorsWorker].
+ *   - Sending errors to [mErrorsWorkerStates].
  *   - Providing states about data loading to [mDataMediator].
  */
 @Singleton
 class DataInteractorImpl @Inject constructor(
     private val mRepository: Repository,
-    private val mCompaniesMediator: CompaniesMediator,
-
-    // Workers
+    private val mAppScope: CoroutineScope,
+    private val mNetworkConnectivityStates: NetworkConnectivityWorkerStates,
     private val mSearchRequestsWorker: SearchRequestsWorker,
     private val mMenuItemsWorker: MenuItemsWorker,
     private val mErrorsWorker: ErrorsWorker,
@@ -58,7 +60,7 @@ class DataInteractorImpl @Inject constructor(
     private val mChatsWorker: ChatsWorker,
     private val mAuthenticationWorker: AuthenticationWorker,
     private val mWebSocketWorker: WebSocketWorker,
-    private val mNetworkConnectivityWorker: NetworkConnectivityWorker
+    private val mCompaniesMediator: CompaniesMediator
 ) : DataInteractor {
 
     /**
@@ -139,7 +141,6 @@ class DataInteractorImpl @Inject constructor(
     /**
      * Other states
      * */
-
     override val stateMessages: StateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>
         get() = mMessagesWorker.stateMessages
 
@@ -147,17 +148,35 @@ class DataInteractorImpl @Inject constructor(
         get() = mMessagesWorker.sharedMessagesHolderUpdates
 
     override val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
+        get() = mNetworkConnectivityStates.stateIsNetworkAvailable
+
+    override val isNetworkAvailable: Boolean
+        get() = mNetworkConnectivityStates.isNetworkAvailable
 
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
 
+    interface Task {
+        fun doTask()
+    }
+
+    private val mUnresolvedTasksContainer = hashMapOf(
+        sAuthenticationTaskKey to Stack<Task>(),
+        sChatsTaskKey to Stack<Task>(),
+        sCompaniesTaskKey to Stack<Task>(),
+    )
+
+    private companion object {
+        const val sAuthenticationTaskKey = "authentication"
+        const val sChatsTaskKey = "chats"
+        const val sCompaniesTaskKey = "companies"
+    }
+
     override fun provideNetworkStateFlow(): Flow<Boolean> {
-        return mNetworkConnectivityWorker.stateIsNetworkAvailable
+        return mNetworkConnectivityStates.stateIsNetworkAvailable
             .onEach { isAvailable ->
                 if (isAvailable) {
-                    mCompaniesMediator.onNetworkAvailable()
-                    mSearchRequestsWorker.onNetworkAvailable()
+                    onNetworkAvailable()
                 } else {
                     mCompaniesMediator.onNetworkLost()
                     mSearchRequestsWorker.onNetworkLost()
@@ -180,16 +199,44 @@ class DataInteractorImpl @Inject constructor(
         )
     }
 
-    override fun logInWithCode(code: String) {
-        mAuthenticationWorker.logInWithCode(code)
-    }
 
     override suspend fun logOut() {
         mAuthenticationWorker.logOut()
+        mCompaniesMediator.onLogOut()
+        mMenuItemsWorker.onLogOut()
+        mSearchRequestsWorker.onLogOut()
+        mChatsWorker.onLogOut()
+        mMessagesWorker.onLogOut()
+    }
+
+    override fun logInWithCode(code: String) {
+        if (mNetworkConnectivityStates.isNetworkAvailable) {
+            mAuthenticationWorker.logInWithCode(code)
+        } else {
+            // Clears previous task of logIn to avoid multiple calls
+            mUnresolvedTasksContainer[sAuthenticationTaskKey]!!.clear()
+            mUnresolvedTasksContainer[sAuthenticationTaskKey]!!.push(object : Task {
+                override fun doTask() {
+                    mAuthenticationWorker.logInWithCode(code)
+                }
+            })
+        }
+    }
+
+    override fun createNewChat(associatedUserNumber: String) {
+        if (mNetworkConnectivityStates.isNetworkAvailable) {
+            mChatsWorker.createNewChat(associatedUserNumber)
+        } else {
+            mUnresolvedTasksContainer[sChatsTaskKey]!!.push(object : Task {
+                override fun doTask() {
+                    mChatsWorker.createNewChat(associatedUserNumber)
+                }
+            })
+        }
     }
 
     override suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
-        mCompaniesMediator.addCompanyToFavourites(company, false)
+        mCompaniesMediator.addCompanyToFavourites(company, ignoreError)
     }
 
     override suspend fun removeCompanyFromFavourites(company: AdaptiveCompany) {
@@ -197,23 +244,57 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun loadStockHistory(symbol: String) {
-        mCompaniesMediator.loadStockHistory(symbol)
+        if (mNetworkConnectivityStates.isNetworkAvailable) {
+            mCompaniesMediator.loadStockHistory(symbol)
+        } else {
+            mUnresolvedTasksContainer[sCompaniesTaskKey]!!.push(object : Task {
+                override fun doTask() {
+                    mAppScope.launch { mCompaniesMediator.loadStockHistory(symbol) }
+                }
+            })
+        }
     }
 
     override suspend fun loadCompanyNews(symbol: String) {
-        mCompaniesMediator.loadCompanyNews(symbol)
+        if (mNetworkConnectivityStates.isNetworkAvailable) {
+            mCompaniesMediator.loadCompanyNews(symbol)
+        } else {
+            mUnresolvedTasksContainer[sCompaniesTaskKey]!!.push(object : Task {
+                override fun doTask() {
+                    mAppScope.launch { mCompaniesMediator.loadCompanyNews(symbol) }
+                }
+            })
+        }
     }
 
     override suspend fun loadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ) : Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
         return mCompaniesMediator.loadStockPrice(symbol, position, isImportant)
     }
 
-    override fun createNewChat(associatedUserNumber: String) {
-        mChatsWorker.createNewChat(associatedUserNumber)
+    override fun loadMessagesFor(associatedUserNumber: String) {
+        mMessagesWorker.prepareMessagesFor(associatedUserNumber)
+    }
+
+    override suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
+        if (mNetworkConnectivityStates.isNetworkAvailable) {
+            mMessagesWorker.sendMessageTo(associatedUserNumber, messageText)
+        } else {
+            mUnresolvedTasksContainer[sChatsTaskKey]!!.push(object : Task {
+                override fun doTask() {
+                    mAppScope.launch {
+                        mMessagesWorker.sendMessageTo(associatedUserNumber, messageText)
+                    }
+                }
+            })
+        }
+    }
+
+    override suspend fun cacheNewSearchRequest(searchText: String) {
+        mSearchRequestsWorker.cacheNewSearchRequest(searchText)
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
@@ -222,18 +303,6 @@ class DataInteractorImpl @Inject constructor(
 
     override suspend fun getFirstTimeLaunchState(): Boolean {
         return mRepository.getFirstTimeLaunchState()
-    }
-
-    override fun loadMessagesFor(associatedUserNumber: String) {
-        mMessagesWorker.prepareMessagesFor(associatedUserNumber)
-    }
-
-    override suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
-        mMessagesWorker.sendMessageTo(associatedUserNumber, messageText)
-    }
-
-    override suspend fun cacheNewSearchRequest(searchText: String) {
-        mSearchRequestsWorker.cacheNewSearchRequest(searchText)
     }
 
     override suspend fun getUserNumber(): String? {
@@ -246,5 +315,21 @@ class DataInteractorImpl @Inject constructor(
 
     override fun prepareForWebSocketReconnection() {
         mWebSocketWorker.prepareToWebSocketReconnection()
+    }
+
+    private fun onNetworkAvailable() {
+        mCompaniesMediator.onNetworkAvailable()
+        mSearchRequestsWorker.onNetworkAvailable()
+
+        while (mUnresolvedTasksContainer.isNotEmpty()
+            && mNetworkConnectivityStates.isNetworkAvailable
+        ) {
+            mUnresolvedTasksContainer.forEach { map ->
+                val tasksStack = map.value
+                while (tasksStack.isNotEmpty()) {
+                    tasksStack.pop().doTask()
+                }
+            }
+        }
     }
 }

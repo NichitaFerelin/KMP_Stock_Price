@@ -31,5 +31,9 @@ interface CompaniesHelper {
 
     suspend fun loadCompanyNews(symbol: String)
 
-    suspend fun loadStockPrice(symbol: String, position: Int, isImportant: Boolean): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
+    suspend fun loadStockPrice(
+        symbol: String,
+        position: Int,
+        isImportant: Boolean
+    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 }

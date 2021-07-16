@@ -22,9 +22,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompanyDayData
 import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorker
-import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorker
-import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorkerStates
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +43,7 @@ open class CompaniesMediator @Inject constructor(
     private val mAppScope: CoroutineScope,
     private val mCompaniesWorker: CompaniesWorker,
     private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
-) : CompaniesWorkerStates, FavouriteCompaniesWorkerStates {
+) : CompaniesMediatorStates {
 
     override val stateCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mCompaniesWorker.stateCompanies
@@ -177,7 +175,9 @@ open class CompaniesMediator @Inject constructor(
     ) {
         mCompaniesWorker.onCompanyChanged(notification)
 
-        // TODO is really need to notify ?
+        /*
+        TODO is really need to notify ?
         mFavouriteCompaniesWorker.onFavouriteCompanyChanged(company)
+        */
     }
 }

@@ -1,5 +1,3 @@
-package com.ferelin.shared
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,25 +14,9 @@ package com.ferelin.shared
  * limitations under the License.
  */
 
-// Saved for future example
-@Deprecated("Unused")
-open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
+package com.ferelin.stockprice.dataInteractor.workers.companies
 
-    private var mCreator: ((A) -> T)? = creator
+import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorkerStates
+import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorkerStates
 
-    @Volatile
-    private var mInstance: T? = null
-
-    fun getInstance(arg: A): T {
-        return mInstance ?: run {
-            synchronized(this) {
-                mInstance ?: run {
-                    mCreator!!(arg).also {
-                        mInstance = it
-                        mCreator = null
-                    }
-                }
-            }
-        }
-    }
-}
+interface CompaniesMediatorStates : CompaniesWorkerStates, FavouriteCompaniesWorkerStates

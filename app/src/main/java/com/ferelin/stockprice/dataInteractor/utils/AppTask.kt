@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.stockprice.dataInteractor.utils
 
-interface ChatsHelper {
-    
-    fun createNewChat(associatedUserNumber: String)
+interface AppTask {
+
+    val keyToResolveTask: String?
+
+    fun action(keyToResolveTask: String?)
 }

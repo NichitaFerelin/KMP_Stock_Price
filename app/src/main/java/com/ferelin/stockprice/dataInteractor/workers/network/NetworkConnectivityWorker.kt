@@ -39,6 +39,9 @@ open class NetworkConnectivityWorker @Inject constructor(
     override val stateIsNetworkAvailable: StateFlow<Boolean>
         get() = mStateIsNetworkAvailable
 
+    override val isNetworkAvailable: Boolean
+        get() = mStateIsNetworkAvailable.value
+
     init {
         service.registerNetworkCallback(
             networkRequest,

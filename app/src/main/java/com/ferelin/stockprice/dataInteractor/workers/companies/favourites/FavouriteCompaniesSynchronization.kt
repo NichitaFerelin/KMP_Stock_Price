@@ -38,7 +38,7 @@ class FavouriteCompaniesSynchronization @Inject constructor(
 
     /*
     * Synchronization mode to define how to sync data.
-    * Cannot be changed now.
+    * Will be available to select mode in future.
     */
     private val mSyncMode: SyncConflictMode = SyncConflictMode.Merge
 
@@ -109,28 +109,11 @@ class FavouriteCompaniesSynchronization @Inject constructor(
         }
     }
 
-    fun onNetworkAvailable() {
-        // init sync
-    }
-
     fun onNetworkLost() {
         invalidate()
     }
 
-    fun onLogIn() {
-        // init sync
-    }
-
-    /**
-     * When the user exits need to call this method to clear his data
-     */
-    fun onLogOut(
-        localFavouriteCompanies: List<AdaptiveCompany>,
-        onRemoveFromFavourites: (AdaptiveCompany) -> Unit
-    ) {
-        localFavouriteCompanies
-            .toList()
-            .forEach { onRemoveFromFavourites.invoke(it) }
+    fun onLogOut() {
         invalidate()
     }
 

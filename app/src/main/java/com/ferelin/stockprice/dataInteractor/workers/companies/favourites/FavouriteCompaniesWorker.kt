@@ -143,16 +143,18 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     fun onLogIn() {
-        mFavouriteCompaniesSynchronization.onLogIn()
+        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
+            syncData()
+        }
     }
 
     fun onLogOut() {
-        mFavouriteCompaniesSynchronization.onLogOut(
-            localFavouriteCompanies = mFavouriteCompanies,
-            onRemoveFromFavourites = { companyToRemove ->
-                mAppScope.launch { removeCompanyFromFavourites(companyToRemove) }
+        mFavouriteCompaniesSynchronization.onLogOut()
+        mAppScope.launch {
+            mFavouriteCompanies.toList().forEach { localCompany ->
+                removeCompanyFromFavourites(localCompany)
             }
-        )
+        }
     }
 
     fun onNetworkLost() {

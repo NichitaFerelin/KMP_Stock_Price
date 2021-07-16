@@ -20,5 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface NetworkConnectivityWorkerStates {
 
+    val isNetworkAvailable: Boolean
+
     val stateIsNetworkAvailable: StateFlow<Boolean>
 }

@@ -84,8 +84,8 @@ class CompaniesWorker @Inject constructor(
             .find { it.companyProfile.symbol == symbolCompanyOwner }
             ?.let { targetCompany ->
                 if (compareStrategy.invoke(targetCompany)) {
-                    targetCompany
-                } else null
+                    null
+                } else targetCompany
             }
     }
 

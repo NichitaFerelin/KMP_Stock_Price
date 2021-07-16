@@ -62,6 +62,8 @@ class SearchRequestsWorker @Inject constructor(
     private val mSearchRequestsLimit = 30
 
     init {
+        prepareSearchRequests()
+
         mSearchRequestsSynchronization.addOnNewRemoteItemReceived { searchRequestText ->
             cacheNewSearchRequest(searchRequestText)
         }
@@ -111,6 +113,7 @@ class SearchRequestsWorker @Inject constructor(
             val searchRequestsResponse = mRepository.getSearchesHistoryFromLocalDb()
             if (searchRequestsResponse is RepositoryResponse.Success) {
                 mSearchRequests = ArrayList(searchRequestsResponse.data)
+                mSearchRequestsSynchronization.onDataPrepared(searchRequestsResponse.data)
                 mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
                 mStatePopularSearchRequests.value =
                     DataNotificator.DataPrepared(PopularRequestsSource.popularSearchRequests)

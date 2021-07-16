@@ -51,19 +51,6 @@ class ChatsWorker @Inject constructor(
         prepareChats()
     }
 
-    fun onLogIn() {
-        prepareChats()
-    }
-
-    fun onLogOut() {
-        mAppScope.launch {
-            mChatsJob?.cancel()
-            mChatsJob = null
-            mChats.clear()
-            mStateUserChats.value = DataNotificator.None()
-        }
-    }
-
     fun createNewChat(associatedUserNumber: String) {
         mAppScope.launch {
             if (!mRepository.isUserAuthenticated()) {
@@ -82,9 +69,24 @@ class ChatsWorker @Inject constructor(
         }
     }
 
+    fun onLogIn() {
+        prepareChats()
+    }
+
+    fun onLogOut() {
+        mAppScope.launch {
+            mChatsJob?.cancel()
+            mChatsJob = null
+            mChats.clear()
+            mStateUserChats.value = DataNotificator.None()
+        }
+    }
+
     private fun prepareChats() {
         mAppScope.launch {
-            if (!mRepository.isUserAuthenticated()) {
+            if (!mRepository.isUserAuthenticated()
+                || mStateUserChats.value is DataNotificator.DataPrepared
+            ) {
                 return@launch
             }
 
