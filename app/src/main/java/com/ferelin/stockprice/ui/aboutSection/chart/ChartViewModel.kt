@@ -33,20 +33,16 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     */
     private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null
 
-    private val mStateStockHistory = MutableStateFlow<AdaptiveCompanyHistoryForChart?>(null)
-    val stateStockHistory: StateFlow<AdaptiveCompanyHistoryForChart?>
+    private val mStateStockHistory =
+        MutableStateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>(DataNotificator.None())
+    val stateStockHistory: StateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>
         get() = mStateStockHistory
-
-    private val mStateIsDataLoading = MutableStateFlow(false)
-    val stateIsDataLoading: StateFlow<Boolean>
-        get() = mStateIsDataLoading
-
-    private var mIsNetworkResponded = false
 
     val eventOnDayDataChanged: Flow<DataNotificator<AdaptiveCompany>>
         get() = mDataInteractor.sharedCompaniesUpdates.filter { filterSharedUpdate(it) }
 
     var chartViewMode: ChartViewMode = ChartViewMode.All
+
     var lastClickedMarker: Marker? = null
 
     val eventOnError: SharedFlow<String>
@@ -66,8 +62,8 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            prepareChart()
-            collectStateNetworkAvailable()
+            prepareInitialChartState()
+            loadStockHistory()
         }
     }
 
@@ -77,43 +73,42 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
         mOriginalStockHistory?.let { convertHistoryToSelectedType(selectedViewMode) }
     }
 
-    private suspend fun collectStockCandles() {
-        mDataInteractor.loadStockHistory(selectedCompany.companyProfile.symbol)
-        onStockHistoryLoaded(selectedCompany)
-    }
-
-    private suspend fun collectStateNetworkAvailable() {
-        mDataInteractor.stateIsNetworkAvailable.collect { onNetworkStateChanged(it) }
-    }
-
-    private fun prepareChart() {
+    private fun prepareInitialChartState() {
         if (isHistoryEmpty) {
             return
         }
 
+        onStockHistoryLoaded()
+        mStateStockHistory.value = DataNotificator.DataPrepared(mOriginalStockHistory!!)
+    }
+
+    private suspend fun loadStockHistory() {
+        mDataInteractor.loadStockHistory(selectedCompany.companyProfile.symbol)
+            .collect { notificator ->
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        onStockHistoryLoaded()
+                        mStateStockHistory.value =
+                            DataNotificator.DataPrepared(mOriginalStockHistory!!)
+                    }
+                    is DataNotificator.Loading -> {
+                        if (mStateStockHistory.value !is DataNotificator.DataPrepared) {
+                            mStateStockHistory.value = DataNotificator.Loading()
+                        }
+                    }
+                    else -> {
+                        if (mStateStockHistory.value !is DataNotificator.DataPrepared) {
+                            mStateStockHistory.value = DataNotificator.None()
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun onStockHistoryLoaded() {
         val adaptiveHistory = mDataInteractor.stockHistoryConverter
             .toCompanyHistoryForChart(selectedCompany.companyHistory)
         mOriginalStockHistory = adaptiveHistory
-        mStateStockHistory.value = adaptiveHistory
-    }
-
-    private suspend fun onNetworkStateChanged(isAvailable: Boolean) {
-        if (isAvailable && !mIsNetworkResponded) {
-            mStateIsDataLoading.value = true
-            collectStockCandles()
-        } else mStateIsDataLoading.value = false
-    }
-
-    private fun onStockHistoryLoaded(company: AdaptiveCompany) {
-        val adaptiveHistory = mDataInteractor.stockHistoryConverter
-            .toCompanyHistoryForChart(company.companyHistory)
-        mIsNetworkResponded = true
-        mStateIsDataLoading.value = false
-
-        if (isNewData(adaptiveHistory)) {
-            mOriginalStockHistory = adaptiveHistory
-            mStateStockHistory.value = adaptiveHistory
-        }
     }
 
     private fun convertHistoryToSelectedType(selectedViewMode: ChartViewMode) {
@@ -127,7 +122,7 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
                     is ChartViewMode.All -> mOriginalStockHistory
                     is ChartViewMode.Days -> mOriginalStockHistory
                 }
-                mStateStockHistory.value = convertedHistory!!
+                mStateStockHistory.value = DataNotificator.DataPrepared(convertedHistory!!)
             }
         }
     }

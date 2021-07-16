@@ -27,9 +27,9 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChartBinding
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -55,17 +55,8 @@ class ChartFragment(
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch { collectStateStockHistory() }
-            launch { collectStateIsDataLoading() }
             launch { collectStateOnDayDataChanged() }
             launch { collectEventOnError() }
-        }
-    }
-
-    private suspend fun collectStateIsDataLoading() {
-        mViewModel.stateIsDataLoading.collect { isDataLoading ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onDataLoadingStateChanged(isDataLoading)
-            }
         }
     }
 
@@ -83,13 +74,22 @@ class ChartFragment(
     }
 
     private suspend fun collectStateStockHistory() {
-        mViewModel.stateStockHistory
-            .filter { it != null }
-            .collect { history ->
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onStockHistoryChanged(history!!)
+        mViewModel.stateStockHistory.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        mViewController.onStockHistoryChanged(notificator.data!!)
+                    }
+                    is DataNotificator.Loading -> {
+                        mViewController.onDataLoadingStateChanged(true)
+                    }
+                    is DataNotificator.None -> {
+                        mViewController.onDataLoadingStateChanged(false)
+                    }
+                    else -> Unit
                 }
             }
+        }
     }
 
     private suspend fun collectEventOnError() {
