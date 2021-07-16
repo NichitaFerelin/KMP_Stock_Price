@@ -17,9 +17,7 @@ package com.ferelin.stockprice.dataInteractor.workers.companies
  */
 
 import com.ferelin.repository.Repository
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyDayData
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorker
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorker
@@ -76,28 +74,26 @@ open class CompaniesMediator @Inject constructor(
         mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updatedCompany))
     }
 
-    suspend fun loadStockHistory(symbol: String) {
+    suspend fun loadStockHistory(symbol: String): AdaptiveCompanyHistory? {
         val repositoryResponse = mRepository.loadStockHistory(symbol)
-        if (repositoryResponse is RepositoryResponse.Success) {
-            mCompaniesWorker.isDataChanged(
-                symbolCompanyOwner = repositoryResponse.owner ?: "",
+        return if (repositoryResponse is RepositoryResponse.Success) {
+            onResponse(
+                response = repositoryResponse,
                 compareStrategy = { it.companyHistory == repositoryResponse.data }
-            )?.let { changedCompany ->
-                onDataChanged(changedCompany)
-            }
-        }
+            )
+            repositoryResponse.data
+        } else null
     }
 
-    suspend fun loadCompanyNews(symbol: String) {
+    suspend fun loadCompanyNews(symbol: String): AdaptiveCompanyNews? {
         val repositoryResponse = mRepository.loadCompanyNews(symbol)
-        if (repositoryResponse is RepositoryResponse.Success) {
-            mCompaniesWorker.isDataChanged(
-                symbolCompanyOwner = repositoryResponse.owner ?: "",
+        return if (repositoryResponse is RepositoryResponse.Success) {
+            onResponse(
+                response = repositoryResponse,
                 compareStrategy = { it.companyNews == repositoryResponse.data }
-            )?.let { changedCompany ->
-                onDataChanged(changedCompany)
-            }
-        }
+            )
+            repositoryResponse.data
+        } else null
     }
 
     suspend fun loadStockPrice(
@@ -105,23 +101,23 @@ open class CompaniesMediator @Inject constructor(
         position: Int,
         isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRepository.loadStockPrice(symbol, position, isImportant)
-            .onEach { response ->
-                if (response is RepositoryResponse.Success) {
-                    onCompanyQuoteLoaded(response)
-                }
+        return mRepository.loadStockPrice(symbol, position, isImportant).onEach { response ->
+            if (response is RepositoryResponse.Success) {
+                onResponse(
+                    response = response,
+                    compareStrategy = { it.companyDayData.currentPrice == response.data.currentPrice }
+                )
             }
+        }
     }
 
-    fun onLiveTimePriceChanged(
+    suspend fun onLiveTimePriceChanged(
         repositoryResponse: RepositoryResponse.Success<AdaptiveWebSocketPrice>
     ) {
-        mCompaniesWorker.isDataChanged(
-            symbolCompanyOwner = repositoryResponse.owner ?: "",
+        onResponse(
+            response = repositoryResponse,
             compareStrategy = { it.companyDayData.currentPrice == repositoryResponse.data.price }
-        )?.let { changedCompany ->
-            mCompaniesWorker.onLiveTimePriceChanged(changedCompany, repositoryResponse.data)
-        }
+        )
     }
 
     fun subscribeItemsOnLiveTimeUpdates() {
@@ -144,17 +140,6 @@ open class CompaniesMediator @Inject constructor(
         mFavouriteCompaniesWorker.onNetworkAvailable()
     }
 
-    private suspend fun onCompanyQuoteLoaded(
-        response: RepositoryResponse.Success<AdaptiveCompanyDayData>
-    ) {
-        mCompaniesWorker.isDataChanged(
-            symbolCompanyOwner = response.owner ?: "",
-            compareStrategy = { it.companyDayData.currentPrice == response.data.currentPrice }
-        )?.let { changedCompany ->
-            onDataChanged(changedCompany)
-        }
-    }
-
     private fun prepareCompaniesData() {
         mAppScope.launch {
             val localCompaniesResponse = mRepository.getAllCompaniesFromLocalDb()
@@ -167,6 +152,18 @@ open class CompaniesMediator @Inject constructor(
     private fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         mCompaniesWorker.onCompaniesDataPrepared(companies)
         mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
+    }
+
+    private suspend fun <T> onResponse(
+        response: RepositoryResponse.Success<T>,
+        compareStrategy: (AdaptiveCompany) -> Boolean
+    ) {
+        mCompaniesWorker.isDataChanged(
+            symbolCompanyOwner = response.owner ?: "",
+            compareStrategy = compareStrategy
+        )?.let { updatedCompany ->
+            onDataChanged(updatedCompany)
+        }
     }
 
     private suspend fun onDataChanged(

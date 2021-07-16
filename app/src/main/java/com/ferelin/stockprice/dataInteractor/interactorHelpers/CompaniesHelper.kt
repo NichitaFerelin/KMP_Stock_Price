@@ -18,7 +18,10 @@ package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyDayData
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.Flow
 
 interface CompaniesHelper {
@@ -27,9 +30,9 @@ interface CompaniesHelper {
 
     suspend fun removeCompanyFromFavourites(company: AdaptiveCompany)
 
-    suspend fun loadStockHistory(symbol: String)
+    suspend fun loadStockHistory(symbol: String) : Flow<DataNotificator<AdaptiveCompanyHistory?>>
 
-    suspend fun loadCompanyNews(symbol: String)
+    suspend fun loadCompanyNews(symbol: String) : Flow<DataNotificator<AdaptiveCompanyNews?>>
 
     suspend fun loadStockPrice(
         symbol: String,

@@ -34,6 +34,7 @@ import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.StockHistoryConverter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -243,25 +244,51 @@ class DataInteractorImpl @Inject constructor(
         mCompaniesMediator.removeCompanyFromFavourites(company)
     }
 
-    override suspend fun loadStockHistory(symbol: String) {
-        if (mNetworkConnectivityStates.isNetworkAvailable) {
-            mCompaniesMediator.loadStockHistory(symbol)
-        } else {
-            mUnresolvedTasksContainer[sCompaniesTaskKey]!!.push(object : Task {
-                override fun doTask() {
-                    mAppScope.launch { mCompaniesMediator.loadStockHistory(symbol) }
-                }
-            })
-        }
+    override suspend fun loadStockHistory(symbol: String) = callbackFlow {
+        sendRequestForCompanyData(
+            request = { mCompaniesMediator.loadStockHistory(symbol) },
+            onNotificatorUpdated = { trySend(it) }
+        )
+        awaitClose()
     }
 
-    override suspend fun loadCompanyNews(symbol: String) {
+    override suspend fun loadCompanyNews(symbol: String) = callbackFlow {
+        sendRequestForCompanyData(
+            request = { mCompaniesMediator.loadCompanyNews(symbol) },
+            onNotificatorUpdated = { trySend(it) }
+        )
+        awaitClose()
+    }
+
+    private fun <T> sendRequestForCompanyData(
+        request: suspend () -> T,
+        onNotificatorUpdated: (DataNotificator<T>) -> Unit
+    ) {
+        var stateNotificator: DataNotificator<T> = DataNotificator.None()
+        onNotificatorUpdated.invoke(stateNotificator)
+
+        val sendRequest = {
+            stateNotificator = DataNotificator.Loading()
+            onNotificatorUpdated.invoke(stateNotificator)
+
+            mAppScope.launch {
+                val response = request.invoke()
+                if (response != null) {
+                    stateNotificator = DataNotificator.DataPrepared(response)
+                    onNotificatorUpdated.invoke(stateNotificator)
+                } else {
+                    stateNotificator = DataNotificator.None()
+                    onNotificatorUpdated.invoke(stateNotificator)
+                }
+            }
+        }
+
         if (mNetworkConnectivityStates.isNetworkAvailable) {
-            mCompaniesMediator.loadCompanyNews(symbol)
+            sendRequest.invoke()
         } else {
-            mUnresolvedTasksContainer[sCompaniesTaskKey]!!.push(object : Task {
+            mUnresolvedTasksContainer[sCompaniesTaskKey]?.push(object : Task {
                 override fun doTask() {
-                    mAppScope.launch { mCompaniesMediator.loadCompanyNews(symbol) }
+                    sendRequest.invoke()
                 }
             })
         }
