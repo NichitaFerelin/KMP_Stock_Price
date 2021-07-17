@@ -136,7 +136,7 @@ class RemoteMediatorImpl @Inject constructor(
         mRealtimeDatabaseManager.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>> {
         return mRealtimeDatabaseManager.readSearchRequestsFromDb(userId)
     }
 

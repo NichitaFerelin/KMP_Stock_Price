@@ -25,5 +25,5 @@ interface SearchRequestsRemoteHelper {
 
     fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: AdaptiveSearchRequest)
 
-    suspend fun getSearchRequestsFromRealtimeDb(userId: String): RepositoryResponse<List<String>>
+    suspend fun getSearchRequestsFromRealtimeDb(userId: String): RepositoryResponse<List<AdaptiveSearchRequest>>
 }

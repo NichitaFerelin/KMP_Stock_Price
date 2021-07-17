@@ -20,9 +20,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -40,27 +38,8 @@ open class StorePreferencesImpl @Inject constructor(
 
     private val Context.dataStorePreferences by preferencesDataStore(name = "stockspirce.preferences.db")
 
-    private val mSearchRequestsHistoryKey = stringSetPreferencesKey("history-key")
     private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
     private val mUserNumberKey = stringPreferencesKey("user-number-key")
-
-    override suspend fun getSearchRequestsHistory(): Set<String> {
-        return mContext.dataStorePreferences.data.map {
-            it[mSearchRequestsHistoryKey] ?: emptySet()
-        }.first()
-    }
-
-    override suspend fun setSearchRequestsHistory(requests: Set<String>) {
-        mContext.dataStorePreferences.edit {
-            it[mSearchRequestsHistoryKey] = requests
-        }
-    }
-
-    override suspend fun clearSearchRequestsHistory() {
-        mContext.dataStorePreferences.edit {
-            it[mSearchRequestsHistoryKey] = emptySet()
-        }
-    }
 
     override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
         mContext.dataStorePreferences.edit {

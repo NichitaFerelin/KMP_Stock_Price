@@ -16,10 +16,7 @@ package com.ferelin.repository
  * limitations under the License.
  */
 
-import com.ferelin.repository.helpers.local.ChatsLocalHelper
-import com.ferelin.repository.helpers.local.FavouriteCompaniesLocalHelper
-import com.ferelin.repository.helpers.local.MessagesLocalHelper
-import com.ferelin.repository.helpers.local.StorePreferencesHelper
+import com.ferelin.repository.helpers.local.*
 import com.ferelin.repository.helpers.remote.ApiManagerHelper
 import com.ferelin.repository.helpers.remote.AuthenticationHelper
 import com.ferelin.repository.helpers.remote.WebSocketHelper
@@ -33,6 +30,7 @@ interface Repository :
     MessagesLocalHelper,
     StorePreferencesHelper,
     ChatsLocalHelper,
+    SearchRequestsLocalHelper,
     ApiManagerHelper,
     AuthenticationHelper,
     FavouriteCompaniesRemoteHelper,

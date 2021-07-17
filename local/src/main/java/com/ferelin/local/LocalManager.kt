@@ -19,17 +19,16 @@ package com.ferelin.local
 import com.ferelin.local.databases.chatsDb.ChatsDao
 import com.ferelin.local.databases.companiesDb.CompaniesDao
 import com.ferelin.local.databases.messagesDb.MessagesDao
+import com.ferelin.local.databases.searchRequestsDb.SearchRequestsDao
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
 
 interface LocalManager :
     StorePreferences,
     CompaniesDao,
     MessagesDao,
-    ChatsDao {
+    ChatsDao,
+    SearchRequestsDao {
 
     suspend fun getAllCompaniesAsResponse(): CompaniesResponse
-
-    suspend fun getSearchesHistoryAsResponse(): SearchesResponse
 }

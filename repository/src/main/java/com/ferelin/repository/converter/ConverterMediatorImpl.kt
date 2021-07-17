@@ -19,8 +19,8 @@ package com.ferelin.repository.converter
 import com.ferelin.local.models.Chat
 import com.ferelin.local.models.Company
 import com.ferelin.local.models.Message
+import com.ferelin.local.models.SearchRequest
 import com.ferelin.local.responses.CompaniesResponse
-import com.ferelin.local.responses.SearchesResponse
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.api.stockHistory.StockHistoryResponse
@@ -124,14 +124,16 @@ class ConverterMediatorImpl @Inject constructor(
         return mRealtimeDatabaseConverter.convertRealtimeDatabaseResponseForUi(response)
     }
 
-    override fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
-        return mSearchRequestsConverter.convertSearchRequestsForLocal(search)
+    override fun convertSearchRequestForLocal(searchRequest: AdaptiveSearchRequest): SearchRequest {
+        return mSearchRequestsConverter.convertSearchRequestForLocal(searchRequest)
     }
 
-    override fun convertSearchRequestsForUi(
-        response: SearchesResponse
-    ): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        return mSearchRequestsConverter.convertSearchRequestsForUi(response)
+    override fun convertSearchRequestsForUi(searchRequests: List<SearchRequest>): List<AdaptiveSearchRequest> {
+        return mSearchRequestsConverter.convertSearchRequestsForUi(searchRequests)
+    }
+
+    override fun convertSearchRequestsTextForUi(response: BaseResponse<HashMap<Int, String>>?): RepositoryResponse<List<AdaptiveSearchRequest>> {
+        return mSearchRequestsConverter.convertSearchRequestsTextForUi(response)
     }
 
     override fun convertWebSocketResponseForUi(
@@ -150,10 +152,6 @@ class ConverterMediatorImpl @Inject constructor(
 
     override fun convertCompaniesIdsForUi(response: BaseResponse<List<String>>?): RepositoryResponse<List<String>> {
         return mCompaniesConverter.convertCompaniesIdsForUi(response)
-    }
-
-    override fun convertSearchRequestsTextForUi(response: BaseResponse<List<String>>?): RepositoryResponse<List<String>> {
-        return mSearchRequestsConverter.convertSearchRequestsTextForUi(response)
     }
 
     override fun convertRemoteChatResponseForUi(

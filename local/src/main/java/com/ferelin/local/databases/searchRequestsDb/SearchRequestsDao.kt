@@ -1,5 +1,3 @@
-package com.ferelin.local.preferences
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,13 +14,23 @@ package com.ferelin.local.preferences
  * limitations under the License.
  */
 
-interface StorePreferences {
+package com.ferelin.local.databases.searchRequestsDb
 
-    suspend fun getFirstTimeLaunchState(): Boolean?
+import androidx.room.*
+import com.ferelin.local.models.SearchRequest
 
-    suspend fun setFirstTimeLaunchState(boolean: Boolean)
+@Dao
+interface SearchRequestsDao {
 
-    suspend fun setUserNumber(number: String)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSearchRequest(searchRequest: SearchRequest)
 
-    suspend fun getUserNumber(): String?
+    @Query("SELECT * FROM `stockprice.searchrequests.db`")
+    suspend fun getAllSearchRequests(): List<SearchRequest>
+
+    @Delete
+    suspend fun eraseSearchRequest(searchRequest: SearchRequest)
+
+    @Query("DELETE FROM `stockprice.searchrequests.db`")
+    fun clearSearchRequestsTable()
 }

@@ -55,15 +55,17 @@ class SearchRequestsHelperImpl @Inject constructor(
 
     override fun readSearchRequestsFromDb(
         userId: String
-    ) = callbackFlow<BaseResponse<List<String>>> {
+    ) = callbackFlow<BaseResponse<HashMap<Int, String>>> {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
             .get()
             .addOnSuccessListener { searchRequestsSnapshot ->
-                val searchRequests = mutableListOf<String>()
+                val searchRequests = hashMapOf<Int, String>()
                 for (iteratorSearchSnapshot in searchRequestsSnapshot.children) {
-                    searchRequests.add(iteratorSearchSnapshot.value?.toString() ?: "")
+                    val searchRequestText = iteratorSearchSnapshot.value?.toString() ?: ""
+                    val searchRequestId = iteratorSearchSnapshot.key?.toInt() ?: 0
+                    searchRequests[searchRequestId] = searchRequestText
                 }
                 trySend(
                     BaseResponse(

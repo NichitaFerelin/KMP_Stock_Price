@@ -16,16 +16,7 @@
 
 package com.ferelin.repository.helpers.local
 
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.repository.utils.RepositoryResponse
-
 interface StorePreferencesHelper {
-
-    suspend fun clearLocalSearchRequestsHistory()
-
-    suspend fun getSearchesHistoryFromLocalDb(): RepositoryResponse<List<AdaptiveSearchRequest>>
-
-    suspend fun cacheSearchRequestsHistoryToLocalDb(requests: List<AdaptiveSearchRequest>)
 
     suspend fun getFirstTimeLaunchState(): Boolean
 

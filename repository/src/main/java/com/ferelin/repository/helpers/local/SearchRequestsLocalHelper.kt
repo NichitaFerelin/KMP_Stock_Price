@@ -1,5 +1,3 @@
-package com.ferelin.local.preferences
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,13 +14,17 @@ package com.ferelin.local.preferences
  * limitations under the License.
  */
 
-interface StorePreferences {
+package com.ferelin.repository.helpers.local
 
-    suspend fun getFirstTimeLaunchState(): Boolean?
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 
-    suspend fun setFirstTimeLaunchState(boolean: Boolean)
+interface SearchRequestsLocalHelper {
 
-    suspend fun setUserNumber(number: String)
+    suspend fun clearLocalSearchRequestsHistory()
 
-    suspend fun getUserNumber(): String?
+    suspend fun getSearchRequestsFromLocalDb(): List<AdaptiveSearchRequest>
+
+    suspend fun cacheSearchRequestToLocalDb(searchRequest: AdaptiveSearchRequest)
+
+    suspend fun eraseSearchRequestFromLocalDb(searchRequest: AdaptiveSearchRequest)
 }

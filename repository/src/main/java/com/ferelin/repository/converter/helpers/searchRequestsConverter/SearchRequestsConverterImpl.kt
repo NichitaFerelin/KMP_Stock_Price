@@ -16,7 +16,7 @@
 
 package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
-import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.local.models.SearchRequest
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
@@ -26,28 +26,41 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverter {
 
-    override fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String> {
-        val dataSet = mutableSetOf<String>()
-        search.forEach { dataSet.add(it.searchText) }
-        return dataSet
+    override fun convertSearchRequestForLocal(
+        searchRequest: AdaptiveSearchRequest
+    ): SearchRequest {
+        return SearchRequest(
+            id = searchRequest.id,
+            searchRequest = searchRequest.searchText
+        )
     }
 
     override fun convertSearchRequestsForUi(
-        response: SearchesResponse
-    ): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        return if (response is SearchesResponse.Success) {
-            val convertedData = response.data.map { AdaptiveSearchRequest(it) }
-            RepositoryResponse.Success(data = convertedData)
-        } else RepositoryResponse.Failed()
+        searchRequests: List<SearchRequest>
+    ): List<AdaptiveSearchRequest> {
+        return searchRequests
+            .map {
+                AdaptiveSearchRequest(
+                    id = it.id,
+                    searchText = it.searchRequest
+                )
+            }.sortedBy { it.id }
     }
 
     override fun convertSearchRequestsTextForUi(
-        response: BaseResponse<List<String>>?
-    ): RepositoryResponse<List<String>> {
+        response: BaseResponse<HashMap<Int, String>>?
+    ): RepositoryResponse<List<AdaptiveSearchRequest>> {
         return if (response != null) {
-            RepositoryResponse.Success(
-                data = response.responseData ?: emptyList()
-            )
+            val data = mutableListOf<AdaptiveSearchRequest>()
+            response.responseData!!.forEach { map ->
+                data.add(
+                    AdaptiveSearchRequest(
+                        id = map.key,
+                        searchText = map.value
+                    )
+                )
+            }
+            RepositoryResponse.Success(data = data)
         } else RepositoryResponse.Failed()
     }
 }

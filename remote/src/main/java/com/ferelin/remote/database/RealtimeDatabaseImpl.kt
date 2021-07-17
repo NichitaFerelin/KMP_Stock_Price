@@ -81,7 +81,7 @@ class RealtimeDatabaseImpl @Inject constructor(
         mSearchRequestsHelper.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
+    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>> {
         return mSearchRequestsHelper.readSearchRequestsFromDb(userId)
     }
 

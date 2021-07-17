@@ -1,5 +1,3 @@
-package com.ferelin.local.preferences
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,13 +14,18 @@ package com.ferelin.local.preferences
  * limitations under the License.
  */
 
-interface StorePreferences {
+package com.ferelin.local.databases.searchRequestsDb
 
-    suspend fun getFirstTimeLaunchState(): Boolean?
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.ferelin.local.models.SearchRequest
 
-    suspend fun setFirstTimeLaunchState(boolean: Boolean)
+@Database(entities = [SearchRequest::class], version = 1)
+abstract class SearchRequestsDatabase : RoomDatabase() {
 
-    suspend fun setUserNumber(number: String)
+    abstract fun searchRequestsDao(): SearchRequestsDao
 
-    suspend fun getUserNumber(): String?
+    companion object {
+        const val DB_NAME = "stockprice.searchRequests.db"
+    }
 }

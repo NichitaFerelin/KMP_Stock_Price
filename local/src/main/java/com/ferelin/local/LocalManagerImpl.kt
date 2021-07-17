@@ -19,14 +19,15 @@ package com.ferelin.local
 import com.ferelin.local.databases.chatsDb.ChatsDao
 import com.ferelin.local.databases.companiesDb.CompaniesDao
 import com.ferelin.local.databases.messagesDb.MessagesDao
+import com.ferelin.local.databases.searchRequestsDb.SearchRequestsDao
 import com.ferelin.local.json.JsonManager
 import com.ferelin.local.models.Chat
 import com.ferelin.local.models.Company
 import com.ferelin.local.models.Message
+import com.ferelin.local.models.SearchRequest
 import com.ferelin.local.preferences.StorePreferences
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
-import com.ferelin.local.responses.SearchesResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +37,8 @@ open class LocalManagerImpl @Inject constructor(
     private val mStorePreferences: StorePreferences,
     private val mCompaniesDao: CompaniesDao,
     private val mMessagesDao: MessagesDao,
-    private val mChatsDao: ChatsDao
+    private val mChatsDao: ChatsDao,
+    private val mSearchRequestsDao: SearchRequestsDao
 ) : LocalManager {
 
     override suspend fun insertCompany(company: Company) {
@@ -93,24 +95,6 @@ open class LocalManagerImpl @Inject constructor(
         mMessagesDao.clearMessagesTable()
     }
 
-    override suspend fun getSearchesHistoryAsResponse(): SearchesResponse {
-        return SearchesResponse.Success(
-            data = getSearchRequestsHistory()
-        )
-    }
-
-    override suspend fun getSearchRequestsHistory(): Set<String> {
-        return mStorePreferences.getSearchRequestsHistory()
-    }
-
-    override suspend fun setSearchRequestsHistory(requests: Set<String>) {
-        mStorePreferences.setSearchRequestsHistory(requests)
-    }
-
-    override suspend fun clearSearchRequestsHistory() {
-        mStorePreferences.clearSearchRequestsHistory()
-    }
-
     override suspend fun getFirstTimeLaunchState(): Boolean? {
         return mStorePreferences.getFirstTimeLaunchState()
     }
@@ -137,5 +121,21 @@ open class LocalManagerImpl @Inject constructor(
 
     override suspend fun getUserNumber(): String? {
         return mStorePreferences.getUserNumber()
+    }
+
+    override suspend fun insertSearchRequest(searchRequest: SearchRequest) {
+        mSearchRequestsDao.insertSearchRequest(searchRequest)
+    }
+
+    override suspend fun getAllSearchRequests(): List<SearchRequest> {
+        return mSearchRequestsDao.getAllSearchRequests()
+    }
+
+    override suspend fun eraseSearchRequest(searchRequest: SearchRequest) {
+        mSearchRequestsDao.eraseSearchRequest(searchRequest)
+    }
+
+    override fun clearSearchRequestsTable() {
+        mSearchRequestsDao.clearSearchRequestsTable()
     }
 }

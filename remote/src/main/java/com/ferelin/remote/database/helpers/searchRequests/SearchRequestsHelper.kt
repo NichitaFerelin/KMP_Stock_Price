@@ -41,5 +41,5 @@ interface SearchRequestsHelper {
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
      * @return [BaseResponse] with search request and [Api] response code as flow.
      */
-    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>>
+    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>>
 }

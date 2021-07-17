@@ -16,20 +16,20 @@
 
 package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
-import com.ferelin.local.responses.SearchesResponse
+import com.ferelin.local.models.SearchRequest
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 
 interface SearchRequestsConverter {
 
-    fun convertSearchRequestsForLocal(search: List<AdaptiveSearchRequest>): Set<String>
+    fun convertSearchRequestForLocal(searchRequest: AdaptiveSearchRequest) : SearchRequest
 
     fun convertSearchRequestsForUi(
-        response: SearchesResponse
-    ): RepositoryResponse<List<AdaptiveSearchRequest>>
+        searchRequests: List<SearchRequest>
+    ): List<AdaptiveSearchRequest>
 
     fun convertSearchRequestsTextForUi(
-        response: BaseResponse<List<String>>?
-    ): RepositoryResponse<List<String>>
+        response: BaseResponse<HashMap<Int, String>>?
+    ): RepositoryResponse<List<AdaptiveSearchRequest>>
 }

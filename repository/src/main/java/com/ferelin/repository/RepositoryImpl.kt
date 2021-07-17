@@ -62,22 +62,27 @@ open class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearLocalSearchRequestsHistory() {
-        mLocalManager.clearSearchRequestsHistory()
+        mLocalManager.clearSearchRequestsTable()
     }
 
-    override suspend fun getSearchesHistoryFromLocalDb(): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        val searchesHistory = mLocalManager.getSearchesHistoryAsResponse()
+    override suspend fun getSearchRequestsFromLocalDb(): List<AdaptiveSearchRequest> {
+        val searchesHistory = mLocalManager.getAllSearchRequests()
         return mConverterMediator.convertSearchRequestsForUi(searchesHistory)
     }
 
-    override suspend fun cacheSearchRequestsHistoryToLocalDb(requests: List<AdaptiveSearchRequest>) {
-        val preparedForInsert = mConverterMediator.convertSearchRequestsForLocal(requests)
-        mLocalManager.setSearchRequestsHistory(preparedForInsert)
+    override suspend fun cacheSearchRequestToLocalDb(searchRequest: AdaptiveSearchRequest) {
+        val preparedForLocal = mConverterMediator.convertSearchRequestForLocal(searchRequest)
+        mLocalManager.insertSearchRequest(preparedForLocal)
+    }
+
+    override suspend fun eraseSearchRequestFromLocalDb(searchRequest: AdaptiveSearchRequest) {
+        val preparedForLocal = mConverterMediator.convertSearchRequestForLocal(searchRequest)
+        mLocalManager.eraseSearchRequest(preparedForLocal)
     }
 
     override suspend fun getSearchRequestsFromRealtimeDb(
         userId: String
-    ): RepositoryResponse<List<String>> {
+    ): RepositoryResponse<List<AdaptiveSearchRequest>> {
         val remoteResponse = mRemoteMediator.readSearchRequestsFromDb(userId).firstOrNull()
         return mConverterMediator.convertSearchRequestsTextForUi(remoteResponse)
     }
