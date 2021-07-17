@@ -33,5 +33,5 @@ interface StorePreferencesHelper {
 
     suspend fun setUserNumber(number: String)
 
-    suspend fun getUserNumber(): String?
+    suspend fun getUserNumber(): String
 }

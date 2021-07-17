@@ -119,8 +119,8 @@ open class RepositoryImpl @Inject constructor(
         mLocalManager.setUserNumber(number)
     }
 
-    override suspend fun getUserNumber(): String? {
-        return mLocalManager.getUserNumber()
+    override suspend fun getUserNumber(): String {
+        return mLocalManager.getUserNumber() ?: ""
     }
 
     override fun tryToSignIn(
