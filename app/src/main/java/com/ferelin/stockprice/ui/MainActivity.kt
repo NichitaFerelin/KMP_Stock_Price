@@ -20,7 +20,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +35,7 @@ import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
 
 
 class MainActivity(
@@ -46,8 +46,6 @@ class MainActivity(
 
     private val mViewModel: MainViewModel by viewModels()
     private var mViewBinding: ActivityMainBinding? = null
-    val root: ViewGroup
-        get() = mViewBinding!!.root
 
     private val mBottomNavDrawer: BottomDrawerFragment by lazy(LazyThreadSafetyMode.NONE) {
         supportFragmentManager.findFragmentById(R.id.bottomNavFragment) as BottomDrawerFragment
@@ -150,6 +148,7 @@ class MainActivity(
 
     private fun initObservers() {
         lifecycleScope.launch(mCoroutineContext.IO) {
+            launch { mViewModel.stateIsNetworkAvailable.collect() }
             launch { collectEventCriticalError() }
             launch { collectFavouriteCompaniesLimitError() }
         }
@@ -201,25 +200,24 @@ class MainActivity(
 
     private fun setUpFab() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-            /* mViewModel.isUserLogged
-                 .filter { it != null }
-                 .collect { isLogged ->
-                     withContext(mCoroutineContext.Main) {
-                         if (isLogged!!) {
-                             mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
-                         } else {
-                             mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
-                         }
-                     }
-                 }*/
+            mViewModel.stateIsUserAuthenticated.collect { isLogged ->
+                withContext(mCoroutineContext.Main) {
+                    if (isLogged) {
+                        mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                    } else {
+                        mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                    }
+                }
+            }
         }
 
-        /*mViewBinding!!.mainFab.setOnClickListener {
+        // TODO
+        mViewBinding!!.mainFab.setOnClickListener {
             lifecycleScope.launch(mCoroutineContext.IO) {
-                mViewModel.isUserLogged
-                    .filter { it != null }
+                mViewModel.stateIsUserAuthenticated
+                    .take(1)
                     .collect {
-                        if (it!!) {
+                        if (it) {
                             // Do nothing
                         } else {
                             withContext(mCoroutineContext.Main) {
@@ -228,7 +226,7 @@ class MainActivity(
                         }
                     }
             }
-        }*/
+        }
     }
 
     private fun setStatusBarColor() {

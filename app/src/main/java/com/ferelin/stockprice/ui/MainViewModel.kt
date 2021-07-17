@@ -49,6 +49,9 @@ class MainViewModel : BaseViewModel() {
             }
         }
 
+    val stateIsUserAuthenticated: StateFlow<Boolean>
+        get() = mDataInteractor.stateIsUserAuthenticated
+
     var isServiceRunning = false
 
     var arrowState: Float = 0F
