@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChatBinding
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.LoginViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -52,7 +53,8 @@ class ChatFragment(chat: AdaptiveChat? = null) :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectEventNewItem() }
+            launch { collectStateMessages() }
+            launch { collectSharedMessagesUpdates() }
             launch { collectEventError() }
         }
     }
@@ -69,10 +71,28 @@ class ChatFragment(chat: AdaptiveChat? = null) :
         }
     }
 
-    private suspend fun collectEventNewItem() {
-        mViewModel.eventNewItem.collect {
+    private suspend fun collectStateMessages() {
+        mViewModel.stateMessages.collect { notificator ->
             withContext(mCoroutineContext.Main) {
-                mViewController.onNewItem()
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        mViewController.onDataPrepared(notificator.data!!)
+                    }
+                    is DataNotificator.Loading -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun collectSharedMessagesUpdates() {
+        mViewModel.sharedMessagesUpdates.collect { newMessage ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onNewMessage(newMessage)
             }
         }
     }

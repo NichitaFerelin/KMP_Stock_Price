@@ -18,13 +18,13 @@ package com.ferelin.stockprice.ui.messagesSection.chat
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ChatViewModel(val chat: AdaptiveChat) : BaseViewModel() {
 
@@ -32,58 +32,26 @@ class ChatViewModel(val chat: AdaptiveChat) : BaseViewModel() {
         setHasStableIds(true)
     }
 
-    private val mEventNewItem = MutableSharedFlow<Unit>()
-    val eventNewItem: SharedFlow<Unit>
-        get() = mEventNewItem
+    val stateMessages: StateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>
+        get() = mDataInteractor.stateMessages
+
+    val sharedMessagesUpdates: SharedFlow<AdaptiveMessage>
+        get() = mDataInteractor.sharedMessagesHolderUpdates
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadMessagesError
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectStateMessages() }
-            launch { collectSharedMessagesUpdates() }
+            mDataInteractor.loadMessagesFor(chat.associatedUserNumber)
         }
     }
 
     fun onSendClicked(text: String) {
-        if (text.isNotEmpty()) {
-            viewModelScope.launch(mCoroutineContext.IO) {
+        viewModelScope.launch(mCoroutineContext.IO) {
+            if (text.isNotEmpty()) {
                 mDataInteractor.sendMessageTo(chat.associatedUserNumber, text)
             }
-        }
-    }
-
-    private suspend fun collectStateMessages() {
-        mDataInteractor.loadMessagesFor(chat.associatedUserNumber)
-            /*.collect { notificator ->
-                when (notificator) {
-                    is DataNotificator.DataPrepared -> {
-                        withContext(mCoroutineContext.Main) {
-                            messagesAdapter.setData(notificator.data!!.messages)
-                        }
-                        findNewMessages()
-                    }
-                    is DataNotificator.NoData -> {
-                        mDataInteractor.loadMessagesAssociatedWithLogin(
-                            chat.associatedUserNumber
-                        )
-                    }
-                    else -> Unit
-                }
-            }*/
-    }
-
-    private suspend fun findNewMessages() {
-        // mDataInteractor.findNewMessages(mDataInteractor.userLogin, chat.associatedUserLogin)
-    }
-
-    private suspend fun collectSharedMessagesUpdates() {
-        mDataInteractor.sharedMessagesHolderUpdates.collect { adaptiveMessage ->
-            withContext(mCoroutineContext.Main) {
-                messagesAdapter.addItem(adaptiveMessage)
-            }
-            mEventNewItem.emit(Unit)
         }
     }
 }

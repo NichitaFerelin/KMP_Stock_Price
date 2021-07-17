@@ -24,11 +24,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
 import com.ferelin.stockprice.ui.login.LoginFragment
+import com.ferelin.stockprice.ui.messagesSection.chat.ChatFragment
 import com.ferelin.stockprice.ui.messagesSection.chats.ChatsFragment
 import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
@@ -52,6 +54,11 @@ class Navigator(private val mHostActivity: MainActivity) {
     fun navigateToLoginFragment() {
         mHostActivity.hideBottomBar()
         replaceMainContainerBy(LoginFragment(), addToBackStack = true)
+    }
+
+    fun navigateToChatFragment(chat: AdaptiveChat) {
+        mHostActivity.hideBottomBar()
+        replaceMainContainerBy(ChatFragment(chat))
     }
 
     fun navigateToChatsFragment() {

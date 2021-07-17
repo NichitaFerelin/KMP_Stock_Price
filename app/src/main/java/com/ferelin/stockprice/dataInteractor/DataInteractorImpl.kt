@@ -27,7 +27,7 @@ import com.ferelin.stockprice.dataInteractor.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.dataInteractor.workers.menuItems.MenuItemsWorker
 import com.ferelin.stockprice.dataInteractor.workers.messages.MessagesWorker
-import com.ferelin.stockprice.dataInteractor.workers.network.NetworkConnectivityWorkerStates
+import com.ferelin.stockprice.dataInteractor.workers.network.NetworkConnectivityWorker
 import com.ferelin.stockprice.dataInteractor.workers.searchRequests.SearchRequestsWorker
 import com.ferelin.stockprice.dataInteractor.workers.webSocket.WebSocketWorker
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
@@ -53,7 +53,7 @@ import javax.inject.Singleton
 class DataInteractorImpl @Inject constructor(
     private val mRepository: Repository,
     private val mAppScope: CoroutineScope,
-    private val mNetworkConnectivityStates: NetworkConnectivityWorkerStates,
+    private val mNetworkConnectivityWorker: NetworkConnectivityWorker,
     private val mSearchRequestsWorker: SearchRequestsWorker,
     private val mMenuItemsWorker: MenuItemsWorker,
     private val mErrorsWorker: ErrorsWorker,
@@ -149,10 +149,10 @@ class DataInteractorImpl @Inject constructor(
         get() = mMessagesWorker.sharedMessagesHolderUpdates
 
     override val stateIsNetworkAvailable: StateFlow<Boolean>
-        get() = mNetworkConnectivityStates.stateIsNetworkAvailable
+        get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
 
     override val isNetworkAvailable: Boolean
-        get() = mNetworkConnectivityStates.isNetworkAvailable
+        get() = mNetworkConnectivityWorker.isNetworkAvailable
 
     override val stockHistoryConverter: StockHistoryConverter
         get() = StockHistoryConverter
@@ -174,7 +174,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override fun provideNetworkStateFlow(): Flow<Boolean> {
-        return mNetworkConnectivityStates.stateIsNetworkAvailable
+        return mNetworkConnectivityWorker.stateIsNetworkAvailable
             .onEach { isAvailable ->
                 if (isAvailable) {
                     onNetworkAvailable()
@@ -211,7 +211,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override fun logInWithCode(code: String) {
-        if (mNetworkConnectivityStates.isNetworkAvailable) {
+        if (mNetworkConnectivityWorker.isNetworkAvailable) {
             mAuthenticationWorker.logInWithCode(code)
         } else {
             // Clears previous task of logIn to avoid multiple calls
@@ -225,7 +225,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override fun createNewChat(associatedUserNumber: String) {
-        if (mNetworkConnectivityStates.isNetworkAvailable) {
+        if (mNetworkConnectivityWorker.isNetworkAvailable) {
             mChatsWorker.createNewChat(associatedUserNumber)
         } else {
             mUnresolvedTasksContainer[sChatsTaskKey]!!.push(object : Task {
@@ -283,7 +283,7 @@ class DataInteractorImpl @Inject constructor(
             }
         }
 
-        if (mNetworkConnectivityStates.isNetworkAvailable) {
+        if (mNetworkConnectivityWorker.isNetworkAvailable) {
             sendRequest.invoke()
         } else {
             mUnresolvedTasksContainer[sCompaniesTaskKey]?.push(object : Task {
@@ -307,7 +307,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
-        if (mNetworkConnectivityStates.isNetworkAvailable) {
+        if (mNetworkConnectivityWorker.isNetworkAvailable) {
             mMessagesWorker.sendMessageTo(associatedUserNumber, messageText)
         } else {
             mUnresolvedTasksContainer[sChatsTaskKey]!!.push(object : Task {
@@ -349,7 +349,7 @@ class DataInteractorImpl @Inject constructor(
         mSearchRequestsWorker.onNetworkAvailable()
 
         while (mUnresolvedTasksContainer.isNotEmpty()
-            && mNetworkConnectivityStates.isNetworkAvailable
+            && mNetworkConnectivityWorker.isNetworkAvailable
         ) {
             mUnresolvedTasksContainer.forEach { map ->
                 val tasksStack = map.value

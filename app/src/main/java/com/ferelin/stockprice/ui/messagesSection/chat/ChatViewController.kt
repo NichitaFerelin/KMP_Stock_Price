@@ -17,6 +17,7 @@
 package com.ferelin.stockprice.ui.messagesSection.chat
 
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
+import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesItemDecoration
@@ -54,7 +55,19 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
         showDefaultDialog(context, message)
     }
 
-    fun onNewItem() {
+    // TODO array list to list
+    fun onDataPrepared(data: ArrayList<AdaptiveMessage>) {
+        val adapter = viewBinding.recyclerViewMessages.adapter
+        if (adapter is MessagesRecyclerAdapter) {
+            adapter.setData(data)
+        }
+    }
+
+    fun onNewMessage(message: AdaptiveMessage) {
+        val adapter = viewBinding.recyclerViewMessages.adapter
+        if (adapter is MessagesRecyclerAdapter) {
+            adapter.addItem(message)
+        }
         viewBinding.recyclerViewMessages.smoothScrollToPosition(
             viewBinding.recyclerViewMessages.adapter!!.itemCount
         )

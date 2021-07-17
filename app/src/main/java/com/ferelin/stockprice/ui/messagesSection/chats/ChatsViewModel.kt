@@ -18,12 +18,13 @@ package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,10 +34,12 @@ class ChatsViewModel : BaseViewModel() {
         setHasStableIds(true)
     }
 
+    val stateUserChats: StateFlow<DataNotificator<List<AdaptiveChat>>>
+        get() = mDataInteractor.stateUserChats
+
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            launch { collectStateUserRelations() }
-            launch { collectSharedRelationUpdates() }
+            collectSharedChatsUpdates()
         }
     }
 
@@ -44,27 +47,12 @@ class ChatsViewModel : BaseViewModel() {
         viewModelScope.launch(mCoroutineContext.IO) {
             val addedUserLogin = arguments[DialogAddUser.USER_LOGIN_KEY]
             if (addedUserLogin is String && addedUserLogin.isNotEmpty()) {
-                viewModelScope.launch(mCoroutineContext.IO) {
-                    /*mDataInteractor.createNewRelation(
-                        sourceUserLogin = mDataInteractor.userLogin,
-                        associatedUserLogin = addedUserLogin
-                    )*/
-                }
+                mDataInteractor.createNewChat(addedUserLogin)
             }
         }
     }
 
-    private suspend fun collectStateUserRelations() {
-        mDataInteractor.stateUserChats
-            .filter { it is DataNotificator.DataPrepared }
-            .collect { notificator ->
-                withContext(mCoroutineContext.Main) {
-                    relationsAdapter.setData((notificator as DataNotificator.DataPrepared).data!!)
-                }
-            }
-    }
-
-    private suspend fun collectSharedRelationUpdates() {
+    private suspend fun collectSharedChatsUpdates() {
         mDataInteractor.sharedUserChatUpdates.collect { notificator ->
             when (notificator) {
                 is DataNotificator.ItemRemoved -> {

@@ -18,7 +18,6 @@ package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -27,8 +26,11 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatClickListener
+import com.ferelin.stockprice.utils.DataNotificator
 import com.google.android.material.transition.MaterialFadeThrough
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChatsFragment :
     BaseFragment<FragmentChatsBinding, ChatsViewModel, ChatsViewController>(),
@@ -47,8 +49,8 @@ class ChatsFragment :
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setUpViewComponents(savedInstanceState: Bundle?) {
+        super.setUpViewComponents(savedInstanceState)
         setUpClickListeners()
         mViewController.setArgumentsViewDependsOn(mViewModel.relationsAdapter)
         mViewModel.relationsAdapter.setOnClickListener(this)
@@ -58,9 +60,31 @@ class ChatsFragment :
         }
     }
 
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewModel.stateUserChats.collect { notificator ->
+                withContext(mCoroutineContext.Main) {
+                    when (notificator) {
+                        is DataNotificator.DataPrepared -> {
+                            // set data in notificator
+                            mViewController.onDataChanged(notificator.data!!)
+                        }
+                        is DataNotificator.Loading -> {
+                            // show progress bar
+                        }
+                        else -> {
+                            // hide progress bar
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onRelationClicked(position: Int) {
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewController.onRelationClicked(this@ChatsFragment, position)
+            mViewController.onChatClicked(position)
         }
     }
 

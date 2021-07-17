@@ -27,7 +27,6 @@ import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -92,24 +91,31 @@ class SearchFragment :
     }
 
     private suspend fun collectStateSearchRequests() {
-        mViewModel.stateSearchRequests
-            .filter { it !is DataNotificator.Loading && it != null }
-            .collect { notificator ->
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onSearchRequestsChanged(notificator!!)
+        mViewModel.stateSearchRequests.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                when (notificator) {
+                    // TODO
+                    is DataNotificator.DataPrepared -> {
+                        mViewController.onSearchRequestsChanged(notificator)
+                    }
                 }
             }
+        }
     }
 
     private suspend fun collectStatePopularSearchRequests() {
-       /* mViewModel.statePopularSearchRequests
-            .filter { it != null }
-            .take(1)
-            .collect { results ->
+        mViewModel.statePopularSearchRequests
+            .collect { notificator ->
                 withContext(mCoroutineContext.Main) {
-                    mViewController.onPopularSearchRequestsChanged(results!!)
+                    when (notificator) {
+                        // TODO
+                        is DataNotificator.DataPrepared -> {
+                            // TODO array list in method
+                            mViewController.onPopularSearchRequestsChanged(ArrayList(notificator.data!!))
+                        }
+                    }
                 }
-            }*/
+            }
     }
 
     private suspend fun collectEventOnError() {

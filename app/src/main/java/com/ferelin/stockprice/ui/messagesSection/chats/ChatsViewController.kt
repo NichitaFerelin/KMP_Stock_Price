@@ -18,6 +18,7 @@ package com.ferelin.stockprice.ui.messagesSection.chats
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
@@ -41,6 +42,13 @@ class ChatsViewController :
         }
     }
 
+    fun onDataChanged(newData: List<AdaptiveChat>) {
+        val adapter = viewBinding.recyclerViewRelations.adapter
+        if (adapter is ChatRecyclerAdapter) {
+            adapter.setData(newData)
+        }
+    }
+
     fun setArgumentsViewDependsOn(adapter: ChatRecyclerAdapter) {
         viewBinding.recyclerViewRelations.adapter = adapter
     }
@@ -50,11 +58,11 @@ class ChatsViewController :
         DialogAddUser().show(currentFragment.parentFragmentManager, null)
     }
 
-    fun onRelationClicked(currentFragment: Fragment, position: Int) {
+    fun onChatClicked(position: Int) {
         val recyclerAdapter = viewBinding.recyclerViewRelations.adapter
         if (recyclerAdapter is ChatRecyclerAdapter) {
-            val targetRelation = recyclerAdapter.getRelation(position)
-            //Navigator.navigateToChatFragment(currentFragment, targetRelation)
+            val selectedChat = recyclerAdapter.getRelation(position)
+            mNavigator?.navigateToChatFragment(selectedChat)
         }
     }
 }
