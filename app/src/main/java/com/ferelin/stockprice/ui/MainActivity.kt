@@ -27,7 +27,6 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.dataInteractor.DataInteractorImpl
 import com.ferelin.stockprice.databinding.ActivityMainBinding
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
@@ -37,15 +36,11 @@ import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 
 class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : AppCompatActivity() {
-
-    @Inject
-    lateinit var dataInteractor: DataInteractorImpl
 
     val navigator: Navigator by lazy(LazyThreadSafetyMode.NONE) { Navigator(this) }
 
@@ -66,6 +61,7 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         mViewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mViewBinding!!.root)
+        mViewModel.initObservers()
 
         if (savedInstanceState == null) {
             hideBottomBar()
@@ -148,10 +144,7 @@ class MainActivity(
 
     private fun injectDependencies() {
         if (application is App) {
-            (application as App).run {
-                appComponent.inject(this@MainActivity)
-                appComponent.inject(mViewModel)
-            }
+            (application as App).appComponent.inject(mViewModel)
         }
     }
 
@@ -208,17 +201,17 @@ class MainActivity(
 
     private fun setUpFab() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-           /* mViewModel.isUserLogged
-                .filter { it != null }
-                .collect { isLogged ->
-                    withContext(mCoroutineContext.Main) {
-                        if (isLogged!!) {
-                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
-                        } else {
-                            mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
-                        }
-                    }
-                }*/
+            /* mViewModel.isUserLogged
+                 .filter { it != null }
+                 .collect { isLogged ->
+                     withContext(mCoroutineContext.Main) {
+                         if (isLogged!!) {
+                             mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                         } else {
+                             mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                         }
+                     }
+                 }*/
         }
 
         /*mViewBinding!!.mainFab.setOnClickListener {

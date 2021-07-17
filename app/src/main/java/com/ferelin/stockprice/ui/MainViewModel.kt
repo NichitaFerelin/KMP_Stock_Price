@@ -24,10 +24,6 @@ import kotlinx.coroutines.flow.*
 
 class MainViewModel : BaseViewModel() {
 
-    init {
-        initObserversBlock()
-    }
-
     private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
     val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
         get() = mEventObserverCompanyChanged

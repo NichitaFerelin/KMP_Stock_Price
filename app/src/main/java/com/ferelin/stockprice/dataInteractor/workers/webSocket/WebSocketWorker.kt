@@ -34,7 +34,7 @@ class WebSocketWorker @Inject constructor(
     fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
         return mRepository.openWebSocketConnection()
             .filter { it is RepositoryResponse.Success && it.owner != null }
-            .onEach { mCompaniesMediator.onLiveTimePriceChanged(it as RepositoryResponse.Success) }
+            .onEach { mCompaniesMediator.onLiveTimePriceResponse(it as RepositoryResponse.Success) }
     }
 
     fun prepareToWebSocketReconnection() {

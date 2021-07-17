@@ -16,6 +16,7 @@ package com.ferelin.stockprice.base
  * limitations under the License.
  */
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -86,9 +87,13 @@ abstract class BaseFragment<
      * */
     abstract val mBindingInflater: ((LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType)?
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        injectDependencies()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependencies()
         initNavigator()
         mViewController.onCreateFragment(this)
     }

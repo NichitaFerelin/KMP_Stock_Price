@@ -77,22 +77,14 @@ open class CompaniesMediator @Inject constructor(
     suspend fun loadStockHistory(symbol: String): AdaptiveCompanyHistory? {
         val repositoryResponse = mRepository.loadStockHistory(symbol)
         return if (repositoryResponse is RepositoryResponse.Success) {
-            onResponse(
-                response = repositoryResponse,
-                compareStrategy = { it.companyHistory == repositoryResponse.data }
-            )
-            repositoryResponse.data
+            mCompaniesWorker.onHistoryResponse(repositoryResponse)
         } else null
     }
 
     suspend fun loadCompanyNews(symbol: String): AdaptiveCompanyNews? {
         val repositoryResponse = mRepository.loadCompanyNews(symbol)
         return if (repositoryResponse is RepositoryResponse.Success) {
-            onResponse(
-                response = repositoryResponse,
-                compareStrategy = { it.companyNews == repositoryResponse.data }
-            )
-            repositoryResponse.data
+            mCompaniesWorker.onNewsResponse(repositoryResponse)
         } else null
     }
 
@@ -101,23 +93,18 @@ open class CompaniesMediator @Inject constructor(
         position: Int,
         isImportant: Boolean
     ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRepository.loadStockPrice(symbol, position, isImportant).onEach { response ->
-            if (response is RepositoryResponse.Success) {
-                onResponse(
-                    response = response,
-                    compareStrategy = { it.companyDayData.currentPrice == response.data.currentPrice }
-                )
+        return mRepository.loadStockPrice(symbol, position, isImportant)
+            .onEach { repositoryResponse ->
+                if (repositoryResponse is RepositoryResponse.Success) {
+                    mCompaniesWorker.onPriceResponse(repositoryResponse)
+                }
             }
-        }
     }
 
-    suspend fun onLiveTimePriceChanged(
+    suspend fun onLiveTimePriceResponse(
         repositoryResponse: RepositoryResponse.Success<AdaptiveWebSocketPrice>
     ) {
-        onResponse(
-            response = repositoryResponse,
-            compareStrategy = { it.companyDayData.currentPrice == repositoryResponse.data.price }
-        )
+        mCompaniesWorker.onLiveTimePriceResponse(repositoryResponse)
     }
 
     fun subscribeItemsOnLiveTimeUpdates() {
@@ -152,29 +139,5 @@ open class CompaniesMediator @Inject constructor(
     private fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         mCompaniesWorker.onCompaniesDataPrepared(companies)
         mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
-    }
-
-    private suspend fun <T> onResponse(
-        response: RepositoryResponse.Success<T>,
-        compareStrategy: (AdaptiveCompany) -> Boolean
-    ) {
-        mCompaniesWorker.isDataChanged(
-            symbolCompanyOwner = response.owner ?: "",
-            compareStrategy = compareStrategy
-        )?.let { updatedCompany ->
-            onDataChanged(updatedCompany)
-        }
-    }
-
-    private suspend fun onDataChanged(
-        company: AdaptiveCompany,
-        notification: DataNotificator<AdaptiveCompany> = DataNotificator.ItemUpdatedCommon(company)
-    ) {
-        mCompaniesWorker.onCompanyChanged(notification)
-
-        /*
-        TODO is really need to notify ?
-        mFavouriteCompaniesWorker.onFavouriteCompanyChanged(company)
-        */
     }
 }

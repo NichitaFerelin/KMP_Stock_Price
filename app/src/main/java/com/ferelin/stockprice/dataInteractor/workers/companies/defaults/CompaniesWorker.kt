@@ -17,8 +17,8 @@ package com.ferelin.stockprice.dataInteractor.workers.companies.defaults
  */
 
 import com.ferelin.repository.Repository
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.utils.CompanyStyleProvider
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
@@ -66,31 +66,85 @@ class CompaniesWorker @Inject constructor(
         mStateCompanies.value = DataNotificator.DataPrepared(mCompanies)
     }
 
-    fun onLiveTimePriceChanged(company: AdaptiveCompany, newData: AdaptiveWebSocketPrice) {
-        company.apply {
-            companyDayData.currentPrice = newData.price
-            companyDayData.profit = newData.profit
-            companyStyle.dayProfitBackground =
-                mCompanyStyleProvider.getProfitBackground(newData.profit)
-        }
-        mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
+    suspend fun onCompanyChanged(notification: DataNotificator<AdaptiveCompany>) {
+        mAppScope.launch { mRepository.cacheCompanyToLocalDb(notification.data!!) }
+        mSharedCompaniesUpdates.emit(notification)
     }
 
-    fun isDataChanged(
+    suspend fun onPriceResponse(
+        response: RepositoryResponse.Success<AdaptiveCompanyDayData>
+    ): AdaptiveCompanyDayData? {
+        return response.owner?.let { responseOwnerSymbol ->
+            isDataChanged(responseOwnerSymbol) { it.companyDayData == response.data }
+                ?.let { companyToUpdate ->
+                    companyToUpdate.apply {
+                        companyDayData.currentPrice = response.data.currentPrice
+                        companyDayData.profit = response.data.profit
+                        companyStyle.dayProfitBackground =
+                            mCompanyStyleProvider.getProfitBackground(response.data.profit)
+                    }
+                    onCompanyChanged(DataNotificator.ItemUpdatedPrice(companyToUpdate))
+
+                    companyToUpdate.companyDayData
+                }
+        }
+    }
+
+    suspend fun onNewsResponse(
+        response: RepositoryResponse.Success<AdaptiveCompanyNews>
+    ): AdaptiveCompanyNews? {
+        return response.owner?.let { responseOwnerSymbol ->
+            isDataChanged(responseOwnerSymbol) { it.companyNews == response.data }
+                ?.let { companyToUpdate ->
+                    companyToUpdate.companyNews = response.data
+                    onCompanyChanged(DataNotificator.ItemUpdatedCommon(companyToUpdate))
+
+                    companyToUpdate.companyNews
+                }
+        }
+    }
+
+    suspend fun onHistoryResponse(
+        response: RepositoryResponse.Success<AdaptiveCompanyHistory>
+    ): AdaptiveCompanyHistory? {
+        return response.owner?.let { responseOwnerSymbol ->
+            isDataChanged(responseOwnerSymbol) { it.companyHistory == response.data }
+                ?.let { companyToUpdate ->
+                    companyToUpdate.companyHistory = response.data
+                    onCompanyChanged(DataNotificator.ItemUpdatedCommon(companyToUpdate))
+
+                    companyToUpdate.companyHistory
+                }
+        }
+    }
+
+    suspend fun onLiveTimePriceResponse(
+        response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
+    ) {
+        isDataChanged(
+            symbolCompanyOwner = response.owner!!,
+            isDataNewCompare = { response.data.price == it.companyDayData.currentPrice }
+        )?.let { companyToUpdate ->
+            companyToUpdate.apply {
+                companyDayData.currentPrice = response.data.price
+                companyDayData.profit = response.data.profit
+                companyStyle.dayProfitBackground =
+                    mCompanyStyleProvider.getProfitBackground(response.data.profit)
+            }
+            onCompanyChanged(DataNotificator.ItemUpdatedPrice(companyToUpdate))
+        }
+    }
+
+    private fun isDataChanged(
         symbolCompanyOwner: String,
-        compareStrategy: (AdaptiveCompany) -> Boolean
+        isDataNewCompare: (AdaptiveCompany) -> Boolean
     ): AdaptiveCompany? {
         return mCompanies
             .find { it.companyProfile.symbol == symbolCompanyOwner }
             ?.let { targetCompany ->
-                if (compareStrategy.invoke(targetCompany)) {
+                if (isDataNewCompare.invoke(targetCompany)) {
                     null
                 } else targetCompany
             }
-    }
-
-    suspend fun onCompanyChanged(notification: DataNotificator<AdaptiveCompany>) {
-        mAppScope.launch { mRepository.cacheCompanyToLocalDb(notification.data!!) }
-        mSharedCompaniesUpdates.emit(notification)
     }
 }

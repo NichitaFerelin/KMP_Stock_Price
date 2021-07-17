@@ -133,7 +133,7 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
     private fun filterSharedUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {
         return (notificator is DataNotificator.ItemUpdatedLiveTime
-                || notificator is DataNotificator.ItemUpdatedQuote)
+                || notificator is DataNotificator.ItemUpdatedPrice)
                 && notificator.data != null
                 && notificator.data.companyProfile.symbol == selectedCompany.companyProfile.symbol
     }
