@@ -59,11 +59,11 @@ class ChatsWorker @Inject constructor(
 
             val itemAtContainer = mChats.find { it.associatedUserNumber == associatedUserNumber }
             if (itemAtContainer == null) {
-                mRepository.getUserNumber()?.let { userNumber ->
-                    mRepository.cacheChatToRealtimeDb(
-                        sourceUserNumber = userNumber,
-                        secondSideUserNumber = associatedUserNumber
-                    )
+                val chat = AdaptiveChat(mChats.lastIndex + 1, associatedUserNumber)
+                val userNumber = mRepository.getUserNumber()
+
+                if (userNumber.isNotEmpty()) {
+                    mRepository.cacheChatToRealtimeDb(userNumber, chat)
                 }
             }
         }
@@ -114,7 +114,8 @@ class ChatsWorker @Inject constructor(
     }
 
     private suspend fun loadItemsFromRemoteCache() {
-        mRepository.getUserNumber()?.let { userNumber ->
+        val userNumber = mRepository.getUserNumber()
+        if (userNumber.isNotEmpty()) {
             mRepository.getUserChatsFromRealtimeDb(userNumber).collect { response ->
                 if (response is RepositoryResponse.Success) {
                     onNewItem(response)
@@ -124,8 +125,6 @@ class ChatsWorker @Inject constructor(
     }
 
     private suspend fun onNewItem(response: RepositoryResponse.Success<AdaptiveChat>) {
-        // TODO check realtime database .push() generated id
-        // TODO messages worker also
         if (mChats.isNotEmpty()) {
             val responseItemAtContainerIndex = mChats.binarySearch(response.data.id - 1) { it.id }
             if (responseItemAtContainerIndex < 0) {

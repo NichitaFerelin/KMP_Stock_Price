@@ -18,7 +18,6 @@ package com.ferelin.stockprice.dataInteractor.workers.searchRequests
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,28 +63,35 @@ class SearchRequestsWorker @Inject constructor(
     init {
         prepareSearchRequests()
 
-        mSearchRequestsSynchronization.addOnNewRemoteItemReceived { searchRequestText ->
-            cacheNewSearchRequest(searchRequestText)
+        mSearchRequestsSynchronization.addOnNewRemoteItemReceived { searchRequest ->
+            mAppScope.launch { onNewSearchRequest(searchRequest) }
         }
+    }
+
+    private suspend fun onNewSearchRequest(newSearchRequest: AdaptiveSearchRequest) {
+        removeSearchRequestsDuplicates(newSearchRequest)
+
+        mSearchRequests.add(0, newSearchRequest)
+
+        mRepository.cacheSearchRequestToLocalDb(newSearchRequest)
+        mSearchRequestsSynchronization.onSearchRequestAdded(newSearchRequest)
+
+        if (isSearchRequestsLimitExceeded()) {
+            reduceRequestsToLimit()
+        }
+
+        mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
     }
 
     fun cacheNewSearchRequest(searchText: String) {
         mAppScope.launch {
-            val newSearchRequest = AdaptiveSearchRequest(searchText)
-            removeSearchRequestsDuplicates(newSearchRequest)
-
-            mSearchRequests.add(0, newSearchRequest)
-            mSearchRequestsSynchronization.onSearchRequestAdded(newSearchRequest)
-
-            if (isSearchRequestsLimitExceeded()) {
-                reduceRequestsToLimit()
-            }
-
-            mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
-            mRepository.cacheSearchRequestsHistoryToLocalDb(mSearchRequests)
+            val newSearchRequest = AdaptiveSearchRequest(
+                id = mSearchRequests.lastIndex + 1,
+                searchText = searchText
+            )
+            onNewSearchRequest(newSearchRequest)
         }
     }
-
 
     fun onNetworkAvailable() {
         if (mStateSearchRequests.value is DataNotificator.DataPrepared) {
@@ -98,7 +104,10 @@ class SearchRequestsWorker @Inject constructor(
     }
 
     fun onLogIn() {
-        mAppScope.launch { prepareSearchRequests() }
+        mSearchRequestsSynchronization
+        //
+        // Sync data
+        // mAppScope.launch { prepareSearchRequests() }
     }
 
     fun onLogOut() {
@@ -110,17 +119,13 @@ class SearchRequestsWorker @Inject constructor(
             mStateSearchRequests.value = DataNotificator.Loading()
             mStatePopularSearchRequests.value = DataNotificator.Loading()
 
-            val searchRequestsResponse = mRepository.getSearchesHistoryFromLocalDb()
-            if (searchRequestsResponse is RepositoryResponse.Success) {
-                mSearchRequests = ArrayList(searchRequestsResponse.data)
-                mSearchRequestsSynchronization.onDataPrepared(searchRequestsResponse.data)
-                mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
-                mStatePopularSearchRequests.value =
-                    DataNotificator.DataPrepared(PopularRequestsSource.popularSearchRequests)
-            } else {
-                mStateSearchRequests.value = DataNotificator.None()
-                mStatePopularSearchRequests.value = DataNotificator.None()
-            }
+            val searchRequestsResponse = mRepository.getSearchRequestsFromLocalDb()
+            mSearchRequests = ArrayList(searchRequestsResponse)
+            mSearchRequestsSynchronization.onDataPrepared(searchRequestsResponse)
+            mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
+            mStatePopularSearchRequests.value =
+                DataNotificator.DataPrepared(PopularRequestsSource.popularSearchRequests)
+
         }
     }
 
@@ -147,6 +152,11 @@ class SearchRequestsWorker @Inject constructor(
             val searchRequestStr = mSearchRequests[listCursor].searchText.toLowerCase(Locale.ROOT)
             if (newSearchRequestStr.contains(searchRequestStr)) {
                 mSearchRequests.removeAt(listCursor)
+
+                mAppScope.launch {
+                    mRepository.eraseSearchRequestFromLocalDb(mSearchRequests[listCursor])
+                }
+
                 mSearchRequestsSynchronization.onSearchRequestRemoved(mSearchRequests[listCursor])
                 endBorder--
             }

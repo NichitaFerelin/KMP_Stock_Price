@@ -66,13 +66,15 @@ class MessagesWorker @Inject constructor(
     }
 
     suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
-        mRepository.getUserNumber()?.let { userNumber ->
-            mRepository.cacheNewMessageToRealtimeDb(
-                currentUserNumber = userNumber,
+        val userNumber = mRepository.getUserNumber()
+        if (userNumber.isNotEmpty()) {
+            val newMessage = AdaptiveMessage(
+                id = mMessagesHolder[associatedUserNumber]!!.lastIndex + 1,
                 associatedUserNumber = associatedUserNumber,
-                messageSideKey = MessageSide.Source.key,
-                messageText = messageText
+                side = MessageSide.Source,
+                text = messageText
             )
+            mRepository.cacheNewMessageToRealtimeDb(userNumber, newMessage)
         }
     }
 
@@ -95,7 +97,8 @@ class MessagesWorker @Inject constructor(
     }
 
     private suspend fun loadMessagesFromRemoteCache(associatedUserNumber: String) {
-        mRepository.getUserNumber()?.let { userNumber ->
+        val userNumber = mRepository.getUserNumber()
+        if (userNumber.isNotEmpty()) {
             mRepository.getMessagesFromRealtimeDb(
                 currentUserNumber = userNumber,
                 associatedUserNumber = associatedUserNumber

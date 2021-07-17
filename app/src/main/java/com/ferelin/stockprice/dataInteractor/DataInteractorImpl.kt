@@ -194,6 +194,7 @@ class DataInteractorImpl @Inject constructor(
     ): Flow<RepositoryMessages> {
         return mAuthenticationWorker.tryToSignIn(holderActivity, phone,
             onLogIn = {
+                mAppScope.launch { mRepository.setUserNumber(phone) }
                 mMenuItemsWorker.onLogIn()
                 mCompaniesMediator.onLogIn()
                 mSearchRequestsWorker.onLogIn()
@@ -204,6 +205,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun logOut() {
+        mAppScope.launch { mRepository.setUserNumber("") }
         mAuthenticationWorker.logOut()
         mCompaniesMediator.onLogOut()
         mMenuItemsWorker.onLogOut()

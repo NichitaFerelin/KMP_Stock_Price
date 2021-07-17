@@ -39,7 +39,7 @@ class SearchRequestsSynchronization @Inject constructor(
     * Container for search requests which is at realtime database.
     * Directly is used to detect inconsistency between local and remote items.
     * */
-    private var mRemoteSearchRequestsContainer = mutableListOf<String>()
+    private var mRemoteSearchRequestsContainer = mutableListOf<AdaptiveSearchRequest>()
 
     /*
     * Synchronization mode to define how to sync data.
@@ -47,10 +47,10 @@ class SearchRequestsSynchronization @Inject constructor(
     */
     private val mSyncMode: SyncConflictMode = SyncConflictMode.Merge
 
-    private var mOnNewRemoteItemReceived: ((String) -> Unit)? = null
+    private var mOnNewRemoteItemReceived: ((AdaptiveSearchRequest) -> Unit)? = null
     private var mIsDataSynchronized: Boolean = false
 
-    fun addOnNewRemoteItemReceived(onReceived: (String) -> Unit) {
+    fun addOnNewRemoteItemReceived(onReceived: (AdaptiveSearchRequest) -> Unit) {
         mOnNewRemoteItemReceived = onReceived
     }
 
@@ -71,24 +71,24 @@ class SearchRequestsSynchronization @Inject constructor(
     }
 
     fun onSearchRequestAdded(request: AdaptiveSearchRequest) {
-        if (!mRemoteSearchRequestsContainer.contains(request.searchText)) {
-            mRemoteSearchRequestsContainer.add(request.searchText)
+        if (!mRemoteSearchRequestsContainer.contains(request)) {
+            mRemoteSearchRequestsContainer.add(request)
 
             mAppScope.launch {
                 mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.cacheSearchRequestToRealtimeDb(userToken, request.searchText)
+                    mRepository.cacheSearchRequestToRealtimeDb(userToken, request)
                 }
             }
         }
     }
 
     fun onSearchRequestRemoved(request: AdaptiveSearchRequest) {
-        if (mRemoteSearchRequestsContainer.contains(request.searchText)) {
-            mRemoteSearchRequestsContainer.remove(request.searchText)
+        if (mRemoteSearchRequestsContainer.contains(request)) {
+            mRemoteSearchRequestsContainer.remove(request)
 
             mAppScope.launch {
                 mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.eraseSearchRequestFromRealtimeDb(userToken, request.searchText)
+                    mRepository.eraseSearchRequestFromRealtimeDb(userToken, request)
                 }
             }
         }
@@ -115,11 +115,11 @@ class SearchRequestsSynchronization @Inject constructor(
 
     private fun findAndFixMissingItems(
         userToken: String,
-        remoteItems: List<String>,
+        remoteItems: List<AdaptiveSearchRequest>,
         localItems: List<AdaptiveSearchRequest>
     ) {
         remoteItems.forEach { remoteItem ->
-            val remoteItemAtLocal = localItems.find { it.searchText == remoteItem }
+            val remoteItemAtLocal = localItems.find { it.searchText == remoteItem.searchText }
             if (remoteItemAtLocal == null) {
                 when (mSyncMode) {
                     is SyncConflictMode.LocalPriority -> {
@@ -146,17 +146,17 @@ class SearchRequestsSynchronization @Inject constructor(
         when {
             mRemoteSearchRequestsContainer.isEmpty() -> {
                 localSearchRequests.forEach { localRequest ->
-                    mRepository.cacheSearchRequestToRealtimeDb(userToken, localRequest.searchText)
+                    mRepository.cacheSearchRequestToRealtimeDb(userToken, localRequest)
                 }
             }
             else -> {
                 localSearchRequests.forEach { localRequest ->
                     val localRequestAtRemoteContainer =
-                        mRemoteSearchRequestsContainer.find { it == localRequest.searchText }
+                        mRemoteSearchRequestsContainer.find { it == localRequest }
                     if (localRequestAtRemoteContainer == null) {
                         mRepository.cacheSearchRequestToRealtimeDb(
                             userToken,
-                            localRequest.searchText
+                            localRequest
                         )
                     }
                 }

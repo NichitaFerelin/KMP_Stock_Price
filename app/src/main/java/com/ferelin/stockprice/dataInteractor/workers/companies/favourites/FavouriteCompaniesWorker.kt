@@ -110,7 +110,6 @@ class FavouriteCompaniesWorker @Inject constructor(
 
         applyChangesToAddedFavouriteCompany(company)
 
-
         mFavouriteCompaniesSynchronization.onCompanyAddedToLocal(company)
         mFavouriteCompanies.add(0, company)
         subscribeCompanyOnLiveTimeUpdates(company)

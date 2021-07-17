@@ -16,7 +16,17 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveSearchRequest(
+data class AdaptiveSearchRequest(
     val id: Int,
     val searchText: String
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is AdaptiveSearchRequest) {
+            return other.id == id
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+}
