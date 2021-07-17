@@ -16,13 +16,14 @@
 
 package com.ferelin.repository.helpers.remote.realtimeDatabase
 
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 
 interface SearchRequestsRemoteHelper {
 
-    fun cacheSearchRequestToRealtimeDb(userId: String, searchRequest: String)
+    fun cacheSearchRequestToRealtimeDb(userId: String, searchRequest: AdaptiveSearchRequest)
 
-    fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: String)
+    fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: AdaptiveSearchRequest)
 
     suspend fun getSearchRequestsFromRealtimeDb(userId: String): RepositoryResponse<List<String>>
 }

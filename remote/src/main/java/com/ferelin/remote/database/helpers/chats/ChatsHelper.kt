@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatsHelper {
 
-    fun cacheChat(currentUserNumber: String, associatedUserNumber: String)
+    fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String)
 
     fun getUserChats(userNumber: String): Flow<BaseResponse<String>>
 }

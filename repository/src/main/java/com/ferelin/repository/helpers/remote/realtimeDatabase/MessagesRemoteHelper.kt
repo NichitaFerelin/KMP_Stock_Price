@@ -25,12 +25,7 @@ interface MessagesRemoteHelper {
     fun getMessagesFromRealtimeDb(
         currentUserNumber: String,
         associatedUserNumber: String
-    ) : Flow<RepositoryResponse<AdaptiveMessage>>
+    ): Flow<RepositoryResponse<AdaptiveMessage>>
 
-    fun cacheNewMessageToRealtimeDb(
-        currentUserNumber: String,
-        associatedUserNumber: String,
-        messageText: String,
-        messageSideKey: Char
-    )
+    fun cacheNewMessageToRealtimeDb(currentUserNumber: String, message: AdaptiveMessage)
 }

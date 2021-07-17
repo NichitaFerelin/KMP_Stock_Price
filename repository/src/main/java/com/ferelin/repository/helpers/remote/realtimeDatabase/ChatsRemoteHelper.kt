@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatsRemoteHelper {
 
-    fun cacheChatToRealtimeDb(sourceUserNumber: String, secondSideUserNumber: String)
+    fun cacheChatToRealtimeDb(currentUserNumber: String,chat: AdaptiveChat)
 
-    suspend fun getUserChatsFromRealtimeDb(userNumber: String): Flow<RepositoryResponse<AdaptiveChat>>
+    suspend fun getUserChatsFromRealtimeDb(
+        userNumber: String
+    ): Flow<RepositoryResponse<AdaptiveChat>>
 }

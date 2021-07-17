@@ -33,6 +33,7 @@ interface MessagesHelper {
     ): Flow<BaseResponse<HashMap<String, Any>>>
 
     fun cacheMessage(
+        id: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,

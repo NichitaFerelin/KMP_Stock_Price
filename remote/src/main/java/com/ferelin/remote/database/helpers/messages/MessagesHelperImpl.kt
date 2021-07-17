@@ -69,6 +69,7 @@ class MessagesHelperImpl @Inject constructor(
     }
 
     override fun cacheMessage(
+        id: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,
@@ -80,15 +81,15 @@ class MessagesHelperImpl @Inject constructor(
             .child(sMessagesReference)
             .child(currentUserNumber)
             .child(associatedUserNumber)
-            .child(messageWithSideKey)
-            .push()
+            .child(id)
+            .setValue(messageWithSideKey)
 
         mDatabaseReference
             .child(sMessagesReference)
             .child(associatedUserNumber)
             .child(currentUserNumber)
-            .child(messageWithSideKey)
-            .push()
+            .child(id)
+            .setValue(messageWithSideKey)
     }
 
 

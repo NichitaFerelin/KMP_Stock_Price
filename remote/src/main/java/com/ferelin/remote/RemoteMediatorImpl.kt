@@ -128,24 +128,24 @@ class RemoteMediatorImpl @Inject constructor(
         return mRealtimeDatabaseManager.readCompaniesIdsFromDb(userId)
     }
 
-    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
-        mRealtimeDatabaseManager.writeSearchRequestToDb(userId, searchRequest)
-    }
-
-    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
-        mRealtimeDatabaseManager.writeSearchRequestsToDb(userId, searchRequests)
+    override fun writeSearchRequestToDb(
+        userId: String,
+        searchRequestId: String,
+        searchRequest: String
+    ) {
+        mRealtimeDatabaseManager.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
     }
 
     override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mRealtimeDatabaseManager.readSearchRequestsFromDb(userId)
     }
 
-    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
-        mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequest)
+    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
+        mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequestId)
     }
 
-    override fun cacheChat(currentUserNumber: String, associatedUserNumber: String) {
-        mRealtimeDatabaseManager.cacheChat(currentUserNumber, associatedUserNumber)
+    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
+        mRealtimeDatabaseManager.cacheChat(id, currentUserNumber, associatedUserNumber)
     }
 
     override fun getUserChats(userNumber: String): Flow<BaseResponse<String>> {
@@ -160,12 +160,14 @@ class RemoteMediatorImpl @Inject constructor(
     }
 
     override fun cacheMessage(
+        id: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,
         messageSideKey: Char
     ) {
         mRealtimeDatabaseManager.cacheMessage(
+            id,
             currentUserNumber,
             associatedUserNumber,
             messageText,

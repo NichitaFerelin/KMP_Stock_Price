@@ -16,4 +16,7 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveSearchRequest(val searchText: String)
+class AdaptiveSearchRequest(
+    val id: Int,
+    val searchText: String
+)

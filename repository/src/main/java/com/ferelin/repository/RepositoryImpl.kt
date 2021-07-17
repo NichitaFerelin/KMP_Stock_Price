@@ -82,12 +82,25 @@ open class RepositoryImpl @Inject constructor(
         return mConverterMediator.convertSearchRequestsTextForUi(remoteResponse)
     }
 
-    override fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: String) {
-        mRemoteMediator.eraseSearchRequestFromDb(userId, searchRequest)
+    override fun cacheSearchRequestToRealtimeDb(
+        userId: String,
+        searchRequest: AdaptiveSearchRequest
+    ) {
+        mRemoteMediator.writeSearchRequestToDb(
+            userId = userId,
+            searchRequestId = searchRequest.id.toString(),
+            searchRequest = searchRequest.searchText
+        )
     }
 
-    override fun cacheSearchRequestToRealtimeDb(userId: String, searchRequest: String) {
-        mRemoteMediator.writeSearchRequestToDb(userId, searchRequest)
+    override fun eraseSearchRequestFromRealtimeDb(
+        userId: String,
+        searchRequest: AdaptiveSearchRequest
+    ) {
+        mRemoteMediator.eraseSearchRequestFromDb(
+            userId = userId,
+            searchRequestId = searchRequest.id.toString()
+        )
     }
 
     override fun clearChatsLocalDb() {
@@ -221,8 +234,12 @@ open class RepositoryImpl @Inject constructor(
         return mConverterMediator.convertLocalMessagesResponseForUi(localMessages)
     }
 
-    override fun cacheChatToRealtimeDb(sourceUserNumber: String, secondSideUserNumber: String) {
-        mRemoteMediator.cacheChat(sourceUserNumber, secondSideUserNumber)
+    override fun cacheChatToRealtimeDb(currentUserNumber: String, chat: AdaptiveChat) {
+        mRemoteMediator.cacheChat(
+            id = chat.id.toString(),
+            currentUserNumber = currentUserNumber,
+            associatedUserNumber = chat.associatedUserNumber
+        )
     }
 
     override suspend fun getUserChatsFromRealtimeDb(
@@ -241,17 +258,13 @@ open class RepositoryImpl @Inject constructor(
             .map { response -> mConverterMediator.convertRemoteMessageResponseForUi(response) }
     }
 
-    override fun cacheNewMessageToRealtimeDb(
-        currentUserNumber: String,
-        associatedUserNumber: String,
-        messageText: String,
-        messageSideKey: Char
-    ) {
+    override fun cacheNewMessageToRealtimeDb(currentUserNumber: String, message: AdaptiveMessage) {
         mRemoteMediator.cacheMessage(
-            currentUserNumber,
-            associatedUserNumber,
-            messageText,
-            messageSideKey
+            id = message.id.toString(),
+            currentUserNumber = currentUserNumber,
+            associatedUserNumber = message.associatedUserNumber,
+            messageText = message.text,
+            messageSideKey = message.side.key
         )
     }
 }

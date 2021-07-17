@@ -17,7 +17,6 @@
 package com.ferelin.remote.database.helpers.searchRequests
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
@@ -34,36 +33,33 @@ class SearchRequestsHelperImpl @Inject constructor(
         private const val sSearchesHistoryRef = "search-requests"
     }
 
-    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
-        val fixedRequest = RealtimeDatabase.encrypt(searchRequest)
+    override fun writeSearchRequestToDb(
+        userId: String,
+        searchRequestId: String,
+        searchRequest: String
+    ) {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
-            .child(fixedRequest)
-            .setValue(fixedRequest)
+            .child(searchRequestId)
+            .setValue(searchRequest)
     }
 
-    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
-        searchRequests.forEach { request -> writeSearchRequestToDb(userId, request) }
-    }
-
-    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
-        val fixedRequest = RealtimeDatabase.encrypt(searchRequest)
+    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
-            .child(fixedRequest)
+            .child(searchRequestId)
             .removeValue()
     }
 
     override fun readSearchRequestsFromDb(
         userId: String
     ) = callbackFlow<BaseResponse<List<String>>> {
-        val task = mDatabaseFirebase
+        mDatabaseFirebase
             .child(sSearchesHistoryRef)
             .child(userId)
             .get()
-            // TODO. Remove callback flow
             .addOnSuccessListener { searchRequestsSnapshot ->
                 val searchRequests = mutableListOf<String>()
                 for (iteratorSearchSnapshot in searchRequestsSnapshot.children) {

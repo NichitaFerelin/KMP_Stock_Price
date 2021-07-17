@@ -25,27 +25,4 @@ interface RealtimeDatabase :
     FavouriteCompaniesHelper,
     SearchRequestsHelper,
     MessagesHelper,
-    ChatsHelper {
-
-    companion object {
-
-        /**
-         * Firebase Database paths must not contain '.', '#', '$', '[', ']'.
-         */
-        private const val sUnavailableSymbolsPattern = "[.#$\\[\\]]"
-
-        /*
-        * Encrypts to avoid exceptions
-        * */
-        fun encrypt(str: String): String {
-            return str.replace(Regex(sUnavailableSymbolsPattern), "%")
-        }
-
-        /*
-        * Decrypts for repository
-        * */
-        fun decrypt(str: String?): String? {
-            return str?.replace('%', '.')
-        }
-    }
-}
+    ChatsHelper

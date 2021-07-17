@@ -27,21 +27,14 @@ interface SearchRequestsHelper {
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
      * @param searchRequest is a search requests that will be saved.
      */
-    fun writeSearchRequestToDb(userId: String, searchRequest: String)
-
-    /**
-     * Provides ability to save a list of search requests to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequests is a search requests list that will be saved.
-     */
-    fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>)
+    fun writeSearchRequestToDb(userId: String, searchRequestId: String, searchRequest: String)
 
     /**
      * Provides ability to erase a search request from cloud database.
      * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param searchRequest is a search request that will be erased.
+     * @param searchRequestId is a search request that will be erased.
      */
-    fun eraseSearchRequestFromDb(userId: String, searchRequest: String)
+    fun eraseSearchRequestFromDb(userId: String, searchRequestId: String)
 
     /**
      * Provides ability to read a search history from cloud database.

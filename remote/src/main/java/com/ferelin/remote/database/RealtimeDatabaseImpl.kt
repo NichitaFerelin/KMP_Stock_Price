@@ -73,24 +73,24 @@ class RealtimeDatabaseImpl @Inject constructor(
         return mFavouriteCompaniesHelper.readCompaniesIdsFromDb(userId)
     }
 
-    override fun writeSearchRequestToDb(userId: String, searchRequest: String) {
-        mSearchRequestsHelper.writeSearchRequestToDb(userId, searchRequest)
-    }
-
-    override fun writeSearchRequestsToDb(userId: String, searchRequests: List<String>) {
-        mSearchRequestsHelper.writeSearchRequestsToDb(userId, searchRequests)
+    override fun writeSearchRequestToDb(
+        userId: String,
+        searchRequestId: String,
+        searchRequest: String
+    ) {
+        mSearchRequestsHelper.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
     }
 
     override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
         return mSearchRequestsHelper.readSearchRequestsFromDb(userId)
     }
 
-    override fun eraseSearchRequestFromDb(userId: String, searchRequest: String) {
-        mSearchRequestsHelper.eraseSearchRequestFromDb(userId, searchRequest)
+    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
+        mSearchRequestsHelper.eraseSearchRequestFromDb(userId, searchRequestId)
     }
 
-    override fun cacheChat(currentUserNumber: String, associatedUserNumber: String) {
-        mChatsHelper.cacheChat(currentUserNumber, associatedUserNumber)
+    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
+        mChatsHelper.cacheChat(id, currentUserNumber, associatedUserNumber)
     }
 
     override fun getUserChats(userNumber: String): Flow<BaseResponse<String>> {
@@ -105,12 +105,14 @@ class RealtimeDatabaseImpl @Inject constructor(
     }
 
     override fun cacheMessage(
+        id: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,
         messageSideKey: Char
     ) {
         mMessagesHelper.cacheMessage(
+            id,
             currentUserNumber,
             associatedUserNumber,
             messageText,

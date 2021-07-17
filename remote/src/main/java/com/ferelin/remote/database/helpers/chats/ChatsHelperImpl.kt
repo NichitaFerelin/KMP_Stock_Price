@@ -35,12 +35,12 @@ class ChatsHelperImpl @Inject constructor(
         const val sChatsReference = "chats"
     }
 
-    override fun cacheChat(currentUserNumber: String, associatedUserNumber: String) {
+    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
         mDatabaseReference
             .child(sChatsReference)
             .child(currentUserNumber)
-            .child(associatedUserNumber)
-            .push()
+            .child(id)
+            .setValue(associatedUserNumber)
     }
 
     override fun getUserChats(userNumber: String) = callbackFlow<BaseResponse<String>> {
