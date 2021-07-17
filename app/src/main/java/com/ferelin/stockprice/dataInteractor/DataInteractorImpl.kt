@@ -148,6 +148,9 @@ class DataInteractorImpl @Inject constructor(
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
         get() = mMessagesWorker.sharedMessagesHolderUpdates
 
+    override val stateIsUserAuthenticated: StateFlow<Boolean>
+        get() = mAuthenticationWorker.stateIsUserAuthenticated
+
     override val stateIsNetworkAvailable: StateFlow<Boolean>
         get() = mNetworkConnectivityWorker.stateIsNetworkAvailable
 
@@ -199,7 +202,6 @@ class DataInteractorImpl @Inject constructor(
             onError = { message -> mErrorsWorker.onAuthenticationError(message) }
         )
     }
-
 
     override suspend fun logOut() {
         mAuthenticationWorker.logOut()

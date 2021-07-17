@@ -138,6 +138,6 @@ open class CompaniesMediator @Inject constructor(
 
     private fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         mCompaniesWorker.onCompaniesDataPrepared(companies)
-        mFavouriteCompaniesWorker.onFavouriteCompaniesDataPrepared(companies)
+        mFavouriteCompaniesWorker.onCompaniesDataPrepared(companies)
     }
 }

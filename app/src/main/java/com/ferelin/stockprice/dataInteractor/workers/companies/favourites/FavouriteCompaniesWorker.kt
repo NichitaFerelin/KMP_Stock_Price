@@ -79,9 +79,9 @@ class FavouriteCompaniesWorker @Inject constructor(
     * */
     private val mCompaniesLimit = 50
 
-    fun onFavouriteCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
+    fun onCompaniesDataPrepared(localCompanies: List<AdaptiveCompany>) {
         mFavouriteCompanies = ArrayList(
-            companies
+            localCompanies
                 .filter { it.isFavourite }
                 .sortedByDescending { it.favouriteOrderIndex }
         )
@@ -89,7 +89,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
         mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
 
-        syncData()
+        syncData(localCompanies)
     }
 
     suspend fun onFavouriteCompanyChanged(company: AdaptiveCompany) {
@@ -143,9 +143,10 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     fun onLogIn() {
-        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
+        // TODO
+        /*if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
             syncData()
-        }
+        }*/
     }
 
     fun onLogOut() {
@@ -162,14 +163,16 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     fun onNetworkAvailable() {
-        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
+        // TODO
+        /*if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
             syncData()
-        }
+        }*/
     }
 
-    private fun syncData() {
+    private fun syncData(localCompanies: List<AdaptiveCompany>) {
         mFavouriteCompaniesSynchronization.initDataSync(
-            mFavouriteCompanies,
+            localCompanies = localCompanies,
+            localFavouriteCompanies = mFavouriteCompanies,
             addCompanyToFavourites = { companyToAdd ->
                 addCompanyToFavourites(
                     company = companyToAdd,

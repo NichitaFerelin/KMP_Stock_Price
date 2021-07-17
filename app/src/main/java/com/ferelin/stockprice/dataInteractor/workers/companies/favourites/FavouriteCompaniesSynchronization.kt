@@ -45,6 +45,7 @@ class FavouriteCompaniesSynchronization @Inject constructor(
     private var mIsDataSynchronized: Boolean = false
 
     fun initDataSync(
+        localCompanies: List<AdaptiveCompany>,
         localFavouriteCompanies: List<AdaptiveCompany>,
         addCompanyToFavourites: suspend (AdaptiveCompany) -> AdaptiveCompany?
     ) {
@@ -58,7 +59,7 @@ class FavouriteCompaniesSynchronization @Inject constructor(
                 if (companiesIdsResponse is RepositoryResponse.Success) {
                     findAndFixMissingItems(
                         userToken,
-                        localFavouriteCompanies,
+                        localCompanies,
                         companiesIdsResponse.data,
                         addCompanyToFavourites
                     )
@@ -139,8 +140,8 @@ class FavouriteCompaniesSynchronization @Inject constructor(
     ) {
         remoteCompaniesIds.forEach { remoteCompanyId ->
             val currentRemoteId = remoteCompanyId.toInt()
-            val remoteItemAtLocal = localCompanies.binarySearchBy(currentRemoteId) { it.id }
-            if (remoteItemAtLocal < 0) {
+            val remoteItemAtLocal = localCompanies[currentRemoteId]
+            if (!remoteItemAtLocal.isFavourite) {
                 when (mSyncMode) {
                     is SyncConflictMode.LocalPriority -> {
                         mAppScope.launch {
@@ -149,8 +150,7 @@ class FavouriteCompaniesSynchronization @Inject constructor(
                     }
                     else -> {
                         mAppScope.launch {
-                            val addedCompany =
-                                addCompanyToFavourites.invoke(localCompanies[remoteItemAtLocal])
+                            val addedCompany = addCompanyToFavourites.invoke(remoteItemAtLocal)
                             if (addedCompany != null) {
                                 mRemoteCompaniesContainer.add(addedCompany)
                             }
@@ -168,17 +168,19 @@ class FavouriteCompaniesSynchronization @Inject constructor(
      * */
     private fun detectInconsistencyAndSync(
         userToken: String,
-        localCompanies: List<AdaptiveCompany>
+        localFavouriteCompanies: List<AdaptiveCompany>
     ) {
         if (mRemoteCompaniesContainer.isEmpty()) {
-            localCompanies
+            localFavouriteCompanies
                 .map { it.id.toString() }
                 .forEach { id -> mRepository.cacheCompanyIdToRealtimeDb(userToken, id) }
         } else {
-            localCompanies.forEach { localCompany ->
+            localFavouriteCompanies.forEach { localCompany ->
                 val localCompanyId = localCompany.id
-                val indexAtRemoteContainer =
-                    mRemoteCompaniesContainer.find { it.id == localCompanyId }
+                val indexAtRemoteContainer = mRemoteCompaniesContainer
+                    .toList()
+                    .find { it.id == localCompanyId }
+
                 if (indexAtRemoteContainer == null) {
                     mRepository.cacheCompanyIdToRealtimeDb(userToken, localCompanyId.toString())
                 }

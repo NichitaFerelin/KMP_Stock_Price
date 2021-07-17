@@ -17,6 +17,7 @@ package com.ferelin.stockprice.dataInteractor
  */
 
 import com.ferelin.stockprice.dataInteractor.interactorHelpers.*
+import com.ferelin.stockprice.dataInteractor.workers.AuthenticationWorkerStates
 import com.ferelin.stockprice.dataInteractor.workers.chats.ChatsWorkerStates
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorkerStates
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorkerStates
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface DataInteractor :
 // States
+    AuthenticationWorkerStates,
     CompaniesWorkerStates,
     FavouriteCompaniesWorkerStates,
     ErrorsWorkerStates,

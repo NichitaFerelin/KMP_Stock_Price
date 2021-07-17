@@ -20,11 +20,9 @@ import android.app.Activity
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.workers.AuthenticationWorkerStates
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,7 +31,12 @@ import javax.inject.Singleton
 class AuthenticationWorker @Inject constructor(
     private val mRepository: Repository,
     private val mAppScope: CoroutineScope
-) {
+) : AuthenticationWorkerStates {
+
+    private val mStateIsUserAuthenticated = MutableStateFlow(mRepository.isUserAuthenticated())
+    override val stateIsUserAuthenticated: StateFlow<Boolean>
+        get() = mStateIsUserAuthenticated
+
     suspend fun tryToSignIn(
         holderActivity: Activity,
         phoneNumber: String,
@@ -45,6 +48,7 @@ class AuthenticationWorker @Inject constructor(
                 when (response) {
                     is RepositoryResponse.Success -> {
                         if (response.data is RepositoryMessages.Ok) {
+                            mStateIsUserAuthenticated.value = true
                             onLogIn.invoke(mRepository.isUserAuthenticated())
                         }
                     }
@@ -60,6 +64,7 @@ class AuthenticationWorker @Inject constructor(
     }
 
     fun logOut() {
+        mStateIsUserAuthenticated.value = false
         mAppScope.launch { mRepository.logOut() }
     }
 }
