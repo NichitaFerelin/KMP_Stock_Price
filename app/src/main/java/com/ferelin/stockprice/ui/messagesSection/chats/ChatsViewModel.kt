@@ -37,6 +37,9 @@ class ChatsViewModel : BaseViewModel() {
     val stateUserChats: StateFlow<DataNotificator<List<AdaptiveChat>>>
         get() = mDataInteractor.stateUserChats
 
+    val isUserAuthorized: Boolean
+        get() = mDataInteractor.stateIsUserAuthenticated.value
+
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             collectSharedChatsUpdates()

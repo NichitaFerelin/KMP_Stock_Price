@@ -64,7 +64,7 @@ class AboutPagerFragment(
     }
 
     override fun onBackPressedHandle(): Boolean {
-        mViewController.onBackPressed()
+        mViewController.onBackSwiped()
         return true
     }
 

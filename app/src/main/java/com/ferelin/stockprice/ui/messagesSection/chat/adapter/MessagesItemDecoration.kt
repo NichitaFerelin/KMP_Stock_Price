@@ -18,9 +18,7 @@ package com.ferelin.stockprice.ui.messagesSection.chat.adapter
 
 import android.content.Context
 import android.graphics.Rect
-import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
 
@@ -33,20 +31,9 @@ class MessagesItemDecoration(private val mContext: Context) : RecyclerView.ItemD
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-
-        val itemPosition = parent.getChildAdapterPosition(view)
-        val sourceLayoutParams = view.layoutParams
-        if (view.layoutParams is FrameLayout.LayoutParams) {
-            val newLayoutParams = sourceLayoutParams as FrameLayout.LayoutParams
-            when (parent.adapter?.getItemViewType(itemPosition)) {
-                MessagesRecyclerAdapter.LEFT_SIDE_KEY -> newLayoutParams.gravity = Gravity.START
-                MessagesRecyclerAdapter.RIGHT_SIDE_KEY -> newLayoutParams.gravity = Gravity.END
-            }
-            view.layoutParams = newLayoutParams
-        }
-
         outRect.top = mContext.resources.getDimension(R.dimen.messageMarginTop).toInt()
         outRect.bottom = mContext.resources.getDimension(R.dimen.messageMarginTop).toInt()
         outRect.left = mContext.resources.getDimension(R.dimen.messageMarginStart).toInt()
+        outRect.right = mContext.resources.getDimension(R.dimen.messageMarginStart).toInt()
     }
 }

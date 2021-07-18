@@ -79,7 +79,11 @@ class FavouriteCompaniesWorker @Inject constructor(
     * */
     private val mCompaniesLimit = 50
 
+    private lateinit var mTEMP_TODO_LocalCompanies: List<AdaptiveCompany>
+
     fun onCompaniesDataPrepared(localCompanies: List<AdaptiveCompany>) {
+        mTEMP_TODO_LocalCompanies = localCompanies
+
         mFavouriteCompanies = ArrayList(
             localCompanies
                 .filter { it.isFavourite }
@@ -142,17 +146,17 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     fun onLogIn() {
-        // TODO
-        /*if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
-            syncData()
-        }*/
+        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
+            syncData(mTEMP_TODO_LocalCompanies)
+        }
     }
 
-    fun onLogOut() {
+    fun onLogOut(onCompanyRemoved: (AdaptiveCompany) -> Unit) {
         mFavouriteCompaniesSynchronization.onLogOut()
         mAppScope.launch {
             mFavouriteCompanies.toList().forEach { localCompany ->
                 removeCompanyFromFavourites(localCompany)
+                onCompanyRemoved.invoke(localCompany)
             }
         }
     }
@@ -162,10 +166,9 @@ class FavouriteCompaniesWorker @Inject constructor(
     }
 
     fun onNetworkAvailable() {
-        // TODO
-        /*if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
-            syncData()
-        }*/
+        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
+            syncData(mTEMP_TODO_LocalCompanies)
+        }
     }
 
     private fun syncData(localCompanies: List<AdaptiveCompany>) {

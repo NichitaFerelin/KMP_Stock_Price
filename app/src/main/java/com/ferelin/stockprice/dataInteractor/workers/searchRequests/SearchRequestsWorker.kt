@@ -80,7 +80,7 @@ class SearchRequestsWorker @Inject constructor(
             reduceRequestsToLimit()
         }
 
-        mStateSearchRequests.value = DataNotificator.DataUpdated(mSearchRequests)
+        mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
     }
 
     fun cacheNewSearchRequest(searchText: String) {
@@ -104,10 +104,7 @@ class SearchRequestsWorker @Inject constructor(
     }
 
     fun onLogIn() {
-        mSearchRequestsSynchronization
-        //
-        // Sync data
-        // mAppScope.launch { prepareSearchRequests() }
+        mSearchRequestsSynchronization.initDataSync(mSearchRequests)
     }
 
     fun onLogOut() {
@@ -151,13 +148,11 @@ class SearchRequestsWorker @Inject constructor(
         while (listCursor < endBorder) {
             val searchRequestStr = mSearchRequests[listCursor].searchText.toLowerCase(Locale.ROOT)
             if (newSearchRequestStr.contains(searchRequestStr)) {
+                val itemToRemove = mSearchRequests[listCursor]
+                mAppScope.launch { mRepository.eraseSearchRequestFromLocalDb(itemToRemove) }
+                mSearchRequestsSynchronization.onSearchRequestRemoved(itemToRemove)
                 mSearchRequests.removeAt(listCursor)
 
-                mAppScope.launch {
-                    mRepository.eraseSearchRequestFromLocalDb(mSearchRequests[listCursor])
-                }
-
-                mSearchRequestsSynchronization.onSearchRequestRemoved(mSearchRequests[listCursor])
                 endBorder--
             }
             listCursor++

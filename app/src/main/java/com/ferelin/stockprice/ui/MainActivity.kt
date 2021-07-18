@@ -99,6 +99,11 @@ class MainActivity(
 
     fun hideBottomBar() {
         with(mViewBinding!!) {
+            if (bottomAppBar.visibility != View.GONE) {
+                bottomAppBar.visibility = View.GONE
+                mainFab.visibility = View.GONE
+            }
+
             mainFab.hide()
             bottomAppBar.performHide()
         }

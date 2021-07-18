@@ -52,7 +52,10 @@ class ChatsFragment :
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpClickListeners()
-        mViewController.setArgumentsViewDependsOn(mViewModel.relationsAdapter)
+        mViewController.setArgumentsViewDependsOn(
+            mViewModel.relationsAdapter,
+            mViewModel.isUserAuthorized
+        )
         mViewModel.relationsAdapter.setOnClickListener(this)
 
         setFragmentResultListener(DialogAddUser.ADD_USER_REQUEST_KEY) { _, bundle ->

@@ -35,13 +35,17 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
         }
     }
 
+    fun onBackPressed() {
+        mNavigator?.navigateBackToHostFragment()
+    }
+
     fun setArgumentsViewDependsOn(
         messagesRecyclerAdapter: MessagesRecyclerAdapter,
-        chat: AdaptiveChat
+        chat: AdaptiveChat,
     ) {
         viewBinding.recyclerViewMessages.apply {
-            adapter = messagesRecyclerAdapter
             addItemDecoration(MessagesItemDecoration(context))
+            adapter = messagesRecyclerAdapter
         }
         viewBinding.textViewUserLogin.text = chat.associatedUserNumber
     }

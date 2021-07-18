@@ -53,6 +53,7 @@ abstract class BaseStocksViewModel : BaseViewModel() {
 
     private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
+            // TODO
             mDataInteractor.loadStockPrice(
                 symbol = company.companyProfile.symbol,
                 position = position,

@@ -22,27 +22,41 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.shared.MessageSide
-import com.ferelin.stockprice.databinding.ItemMessageBinding
+import com.ferelin.stockprice.databinding.ItemMessageReceiveBinding
+import com.ferelin.stockprice.databinding.ItemMessageSendBinding
 
 class MessagesRecyclerAdapter(
     private val mMessagesClickListener: MessageClickListener? = null
-) : RecyclerView.Adapter<MessagesRecyclerAdapter.MessageViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var mMessages = arrayListOf<AdaptiveMessage>()
 
-    companion object {
-        const val RIGHT_SIDE_KEY = 1
-        const val LEFT_SIDE_KEY = 0
+    private companion object {
+        const val VIEW_TYPE_RECEIVE = 1
+        const val VIEW_TYPE_SEND = 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        return MessageViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_RECEIVE -> MessageReceiveViewHolder.from(parent)
+            else -> MessageSendViewHolder.from(parent)
+        }
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(mMessages[position].text)
-        holder.binding.root.setOnClickListener {
-            mMessagesClickListener?.onMessageClicked(position)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MessageSendViewHolder -> {
+                holder.bind(mMessages[position])
+                holder.binding.root.setOnClickListener {
+                    mMessagesClickListener?.onMessageClicked(position)
+                }
+            }
+            is MessageReceiveViewHolder -> {
+                holder.bind(mMessages[position])
+                holder.binding.root.setOnClickListener {
+                    mMessagesClickListener?.onMessageClicked(position)
+                }
+            }
         }
     }
 
@@ -66,24 +80,41 @@ class MessagesRecyclerAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (mMessages[position].side is MessageSide.Source) {
-            RIGHT_SIDE_KEY
-        } else LEFT_SIDE_KEY
+        return if (mMessages[position].side is MessageSide.Associated) {
+            VIEW_TYPE_RECEIVE
+        } else VIEW_TYPE_SEND
     }
 
-    class MessageViewHolder(
-        val binding: ItemMessageBinding
+    class MessageReceiveViewHolder(
+        val binding: ItemMessageReceiveBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(text: String) {
-            binding.textViewMessage.text = text
+        fun bind(message: AdaptiveMessage) {
+            binding.textViewMessage.text = message.text
         }
 
         companion object {
-            fun from(parent: ViewGroup): MessageViewHolder {
+            fun from(parent: ViewGroup): MessageReceiveViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
-                val binding = ItemMessageBinding.inflate(inflater, parent, false)
-                return MessageViewHolder(binding)
+                val binding = ItemMessageReceiveBinding.inflate(inflater, parent, false)
+                return MessageReceiveViewHolder(binding)
+            }
+        }
+    }
+
+    class MessageSendViewHolder(
+        val binding: ItemMessageSendBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(message: AdaptiveMessage) {
+            binding.textViewMessage.text = message.text
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MessageSendViewHolder {
+                val inflater = LayoutInflater.from(parent.context)
+                val binding = ItemMessageSendBinding.inflate(inflater, parent, false)
+                return MessageSendViewHolder(binding)
             }
         }
     }

@@ -47,6 +47,7 @@ class ChatsWorker @Inject constructor(
     private var mChatsJob: Job? = null
 
     init {
+        // TODO remove from init
         prepareChats()
     }
 
@@ -117,7 +118,10 @@ class ChatsWorker @Inject constructor(
         if (userNumber.isNotEmpty()) {
             mRepository.getUserChatsFromRealtimeDb(userNumber).collect { response ->
                 if (response is RepositoryResponse.Success) {
-                    onNewItem(response)
+                    // TODO optimize contains
+                    if (!mChats.contains(response.data)) {
+                        onNewItem(response)
+                    }
                 }
             }
         }

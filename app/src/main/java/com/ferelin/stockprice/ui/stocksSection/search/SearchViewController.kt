@@ -130,7 +130,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         }
     }
 
-    fun onBackPressed(lastSearchRequest: String) {
+    fun onBackSwiped(lastSearchRequest: String) {
         when {
             viewBinding.root.progress == 0F -> mNavigator?.navigateBackToHostFragment()
             viewBinding.root.progress == 1F -> viewBinding.editTextSearch.setText("")
@@ -139,15 +139,24 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
                 mNavigator?.navigateBackToHostFragment()
             }
             else -> {
+                mNavigator?.navigateBackToHostFragment()
                 // Transition to start and popBackStack
-                viewBinding.root.apply {
-                    addTransitionListener(object : MotionManager() {
-                        override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                            mNavigator?.navigateBackToHostFragment()
-                        }
-                    })
-                    transitionToStart()
-                }
+
+            }
+        }
+    }
+
+    fun onBackPressed(lastSearchRequest: String) {
+        if (viewBinding.root.progress == 0F) {
+            mNavigator?.navigateBackToHostFragment()
+        } else {
+            viewBinding.root.apply {
+                addTransitionListener(object : MotionManager() {
+                    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                        mNavigator?.navigateBackToHostFragment()
+                    }
+                })
+                transitionToStart()
             }
         }
     }

@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
-import com.ferelin.stockprice.databinding.ItemRelationBinding
+import com.ferelin.stockprice.databinding.ItemChatBinding
 
 class ChatRecyclerAdapter(
     private var mChatClickListener: ChatClickListener? = null
@@ -68,7 +68,7 @@ class ChatRecyclerAdapter(
     }
 
     class RelationsViewHolder(
-        val binding: ItemRelationBinding
+        val binding: ItemChatBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(login: String) {
@@ -78,7 +78,7 @@ class ChatRecyclerAdapter(
         companion object {
             fun from(parent: ViewGroup): RelationsViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
-                val binding = ItemRelationBinding.inflate(inflater, parent, false)
+                val binding = ItemChatBinding.inflate(inflater, parent, false)
                 return RelationsViewHolder(binding)
             }
         }

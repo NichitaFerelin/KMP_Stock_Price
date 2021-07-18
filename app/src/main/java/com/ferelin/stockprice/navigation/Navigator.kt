@@ -58,7 +58,7 @@ class Navigator(private val mHostActivity: MainActivity) {
 
     fun navigateToChatFragment(chat: AdaptiveChat) {
         mHostActivity.hideBottomBar()
-        replaceMainContainerBy(ChatFragment(chat))
+        replaceMainContainerBy(ChatFragment(chat), addToBackStack = true)
     }
 
     fun navigateToChatsFragment() {

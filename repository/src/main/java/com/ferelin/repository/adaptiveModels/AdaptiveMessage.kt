@@ -18,9 +18,19 @@ package com.ferelin.repository.adaptiveModels
 
 import com.ferelin.shared.MessageSide
 
-class AdaptiveMessage(
+data class AdaptiveMessage(
     val id: Int,
     val associatedUserNumber: String,
     val side: MessageSide,
     val text: String
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is AdaptiveMessage) {
+            return other.id == id
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+}

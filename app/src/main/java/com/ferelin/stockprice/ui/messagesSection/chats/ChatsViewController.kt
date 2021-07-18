@@ -19,11 +19,13 @@ package com.ferelin.stockprice.ui.messagesSection.chats
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
+import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatItemDecoration
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatRecyclerAdapter
+import com.ferelin.stockprice.utils.showDefaultDialog
 
 class ChatsViewController :
     BaseViewController<ChatsViewAnimator, FragmentChatsBinding>() {
@@ -49,8 +51,12 @@ class ChatsViewController :
         }
     }
 
-    fun setArgumentsViewDependsOn(adapter: ChatRecyclerAdapter) {
+    fun setArgumentsViewDependsOn(adapter: ChatRecyclerAdapter, isUserAuthorized: Boolean) {
         viewBinding.recyclerViewRelations.adapter = adapter
+
+        if (!isUserAuthorized) {
+            showDefaultDialog(context, context.getString(R.string.errorNotAuthorized))
+        }
     }
 
     fun onAddPersonClicked(currentFragment: Fragment) {

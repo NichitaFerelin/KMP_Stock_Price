@@ -114,7 +114,7 @@ open class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFirstTimeLaunchState(): Boolean {
-        return mLocalManager.getFirstTimeLaunchState() == true
+        return mLocalManager.getFirstTimeLaunchState() ?: true
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {

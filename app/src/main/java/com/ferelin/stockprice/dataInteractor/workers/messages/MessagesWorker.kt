@@ -106,6 +106,7 @@ class MessagesWorker @Inject constructor(
             ).collect { response ->
                 if (response is RepositoryResponse.Success
                     && response.data.associatedUserNumber == associatedUserNumber
+                    && !mMessagesHolder[associatedUserNumber]!!.contains(response.data)
                 ) {
                     onNewItem(response)
                 }

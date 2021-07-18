@@ -19,7 +19,6 @@ package com.ferelin.stockprice.ui.stocksSection.search
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -49,7 +48,7 @@ class SearchFragment :
             fragmentManager = parentFragmentManager
         )
 
-        setUpBackPressedCallback()
+        // setUpBackPressedCallback()
         setUpClickListeners()
     }
 
@@ -94,7 +93,6 @@ class SearchFragment :
         mViewModel.stateSearchRequests.collect { notificator ->
             withContext(mCoroutineContext.Main) {
                 when (notificator) {
-                    // TODO
                     is DataNotificator.DataPrepared -> {
                         mViewController.onSearchRequestsChanged(notificator)
                     }
@@ -126,7 +124,12 @@ class SearchFragment :
         }
     }
 
-    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
+    override fun onBackPressedHandle(): Boolean {
+        mViewController.onBackSwiped(mViewModel.lastSearchRequest)
+        return true
+    }
+
+    /*private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             mViewController.onBackPressed(mViewModel.lastSearchRequest)
         }
@@ -137,5 +140,5 @@ class SearchFragment :
             viewLifecycleOwner,
             mOnBackPressedCallback
         )
-    }
+    }*/
 }

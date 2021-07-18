@@ -74,7 +74,7 @@
     <string name="menuLogOut">Log Out</string>
     <string name="menuNotes">Notes</string>
     <string name="menuStocks">Stocks</string>
-    <string name="menuMessages">Messages</string>
+    <string name="menuChats">Chats</string>
     <string name="menuSettings">Settings</string>
 
     <string name="transitionSearchFragment">searchContainer</string>
@@ -96,7 +96,7 @@
 
     <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
     <string name="titleChats">Chats</string>
-    <string name="hintUserLogin">Enter user login</string>
+    <string name="hintEnterNumber">Enter user number</string>
     <string name="hintRegistration">Registration</string>
     <string name="descriptionAddPerson">Add person to chat</string>
 
@@ -105,5 +105,8 @@
     <string name="descriptionSendMessage">Send message</string>
     <string name="hintAuthentication">Authentication by phone number</string>
     <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
+    <string name="hintEnterUserPhone">Enter the phone number of the user with whom you want to create a chat</string>
+
+    <string name="errorNotAuthorized">Before using chats you need to log in to identify</string>
 
 </resources>

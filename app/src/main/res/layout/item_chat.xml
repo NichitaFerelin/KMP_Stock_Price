@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    android:backgroundTint="@color/whiteDark"
     android:foreground="@drawable/ripple_dark"
-    app:cardElevation="0dp"
-    android:backgroundTint="@color/white"
-    app:cardCornerRadius="6dp">
+    app:cardCornerRadius="6dp"
+    app:cardElevation="0dp">
 
     <TextView
         android:id="@+id/textViewLogin"
         style="@style/textViewH3ConstrainedWidth"
         android:layout_width="wrap_content"
         android:layout_gravity="start|center_vertical"
-        android:layout_marginStart="20dp"
-        tools:text="Nikita3422" />
+        android:layout_marginHorizontal="20dp"
+        tools:text="165044444444" />
 
 </androidx.cardview.widget.CardView>

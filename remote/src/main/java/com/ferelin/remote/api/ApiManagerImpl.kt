@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Retrofit
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,13 +61,20 @@ open class ApiManagerImpl @Inject constructor(
     }
 
     override fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse> {
-        val retrofitResponse = mCompanyProfileService
-            .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
-            .execute()
-        return BaseResponse.createResponse(
-            responseBody = retrofitResponse.body(),
-            responseCode = retrofitResponse.code()
-        )
+        return try {
+            val retrofitResponse = mCompanyProfileService
+                .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
+                .execute()
+            BaseResponse.createResponse(
+                responseBody = retrofitResponse.body(),
+                responseCode = retrofitResponse.code()
+            )
+        } catch (exception: SocketTimeoutException) {
+            BaseResponse.createResponse(
+                null,
+                Api.RESPONSE_UNDEFINED
+            )
+        }
     }
 
     override fun loadStockHistory(
@@ -75,13 +83,20 @@ open class ApiManagerImpl @Inject constructor(
         to: Long,
         resolution: String
     ): BaseResponse<StockHistoryResponse> {
-        val retrofitResponse = mStockHistoryService
-            .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
-            .execute()
-        return BaseResponse.createResponse(
-            responseBody = retrofitResponse.body(),
-            responseCode = retrofitResponse.code()
-        )
+        return try {
+            val retrofitResponse = mStockHistoryService
+                .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
+                .execute()
+            BaseResponse.createResponse(
+                responseBody = retrofitResponse.body(),
+                responseCode = retrofitResponse.code()
+            )
+        } catch (exception: SocketTimeoutException) {
+            BaseResponse.createResponse(
+                null,
+                Api.RESPONSE_UNDEFINED
+            )
+        }
     }
 
     override fun loadCompanyNews(
@@ -89,13 +104,20 @@ open class ApiManagerImpl @Inject constructor(
         from: String,
         to: String
     ): BaseResponse<List<CompanyNewsResponse>> {
-        val retrofitResponse =  mCompanyNewsService
-            .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
-            .execute()
-        return BaseResponse.createResponse(
-            responseBody = retrofitResponse.body(),
-            responseCode = retrofitResponse.code()
-        )
+        return try {
+            val retrofitResponse = mCompanyNewsService
+                .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
+                .execute()
+            BaseResponse.createResponse(
+                responseBody = retrofitResponse.body(),
+                responseCode = retrofitResponse.code()
+            )
+        } catch (exception: SocketTimeoutException) {
+            BaseResponse.createResponse(
+                null,
+                Api.RESPONSE_UNDEFINED
+            )
+        }
     }
 
     override fun loadStockPrice(

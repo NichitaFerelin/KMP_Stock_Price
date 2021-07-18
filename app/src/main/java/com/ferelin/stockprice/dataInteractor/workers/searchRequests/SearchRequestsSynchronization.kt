@@ -94,7 +94,7 @@ class SearchRequestsSynchronization @Inject constructor(
         }
     }
 
-    private fun initDataSync(localSearchRequests: List<AdaptiveSearchRequest>) {
+    fun initDataSync(localSearchRequests: List<AdaptiveSearchRequest>) {
         mAppScope.launch {
             if (mIsDataSynchronized) {
                 return@launch

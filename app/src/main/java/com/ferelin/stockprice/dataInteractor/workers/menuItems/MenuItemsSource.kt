@@ -58,7 +58,7 @@ class MenuItemsSource @Inject constructor(context: Context) {
         id = 4,
         type = MenuItemType.Chats,
         iconResource = R.drawable.ic_message,
-        title = context.getString(R.string.menuMessages)
+        title = context.getString(R.string.menuChats)
     )
 
     val settingsItem = MenuItem(

@@ -52,7 +52,7 @@ class FavouriteViewModel : BaseStocksViewModel() {
 
     private suspend fun collectSharedFavouriteCompaniesUpdates() {
         mDataInteractor.sharedFavouriteCompaniesUpdates
-            .filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
+            //.filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
             .collect { onFavouriteCompanyUpdateShared(it) }
     }
 

@@ -62,7 +62,7 @@ class DialogAddUser : DialogFragment() {
             imageViewDone.setOnClickListener {
                 setFragmentResult(
                     ADD_USER_REQUEST_KEY, bundleOf(
-                        USER_LOGIN_KEY to mBinding!!.editTextUserLogin.text.toString()
+                        USER_LOGIN_KEY to mBinding!!.editTextPhone.text.toString()
                     )
                 )
                 dismiss()
