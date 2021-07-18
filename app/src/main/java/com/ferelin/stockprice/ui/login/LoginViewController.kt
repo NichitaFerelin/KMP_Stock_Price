@@ -147,6 +147,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
 
     fun onSignIn() {
         showDefaultDialog(context, getString(context, R.string.hintAuthorization))
+        mNavigator?.navigateBackToHostFragment()
     }
 
     private fun invalidateErrors() {

@@ -59,6 +59,13 @@ class ChatsViewController :
         }
     }
 
+    fun onNone() {
+        val adapter = viewBinding.recyclerViewRelations.adapter
+        if (adapter is ChatRecyclerAdapter) {
+            adapter.setData(emptyList())
+        }
+    }
+
     fun onAddPersonClicked(currentFragment: Fragment) {
         mViewAnimator.runScaleInOut(viewBinding.imageViewAdd)
         DialogAddUser().show(currentFragment.parentFragmentManager, null)

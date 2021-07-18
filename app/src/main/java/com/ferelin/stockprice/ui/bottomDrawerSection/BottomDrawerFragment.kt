@@ -56,8 +56,7 @@ class BottomDrawerFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateMenuItems() }
-            launch { collectSharedLogOut() }
+            collectStateMenuItems()
         }
     }
 
@@ -95,14 +94,6 @@ class BottomDrawerFragment :
                 mViewController.onMenuItemsPrepared(items)
             }
         }
-    }
-
-    private suspend fun collectSharedLogOut() {
-        /*mViewModel.sharedLogOut.collect {
-            withContext(mCoroutineContext.Main) {
-                mViewController.onLogOut()
-            }
-        }*/
     }
 
     private fun setUpClickListeners() {

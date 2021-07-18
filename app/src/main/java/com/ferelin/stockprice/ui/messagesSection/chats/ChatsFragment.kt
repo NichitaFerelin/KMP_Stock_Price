@@ -70,15 +70,16 @@ class ChatsFragment :
                 withContext(mCoroutineContext.Main) {
                     when (notificator) {
                         is DataNotificator.DataPrepared -> {
-                            // set data in notificator
                             mViewController.onDataChanged(notificator.data!!)
                         }
                         is DataNotificator.Loading -> {
                             // show progress bar
                         }
-                        else -> {
+                        is DataNotificator.None -> {
                             // hide progress bar
+                            mViewController.onNone()
                         }
+                        else -> Unit
                     }
                 }
             }

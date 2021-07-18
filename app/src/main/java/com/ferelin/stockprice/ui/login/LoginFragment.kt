@@ -105,7 +105,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
             withContext(mCoroutineContext.Main) {
                 setFragmentResult(LOGIN_REQUEST_KEY, bundleOf(LOGIN_LOG_STATE_KEY to true))
                 mViewController.onSignIn()
-                parentFragmentManager.popBackStack()
             }
         }
     }

@@ -101,7 +101,6 @@ class MainActivity(
         with(mViewBinding!!) {
             if (bottomAppBar.visibility != View.GONE) {
                 bottomAppBar.visibility = View.GONE
-                mainFab.visibility = View.GONE
             }
 
             mainFab.hide()
@@ -113,7 +112,6 @@ class MainActivity(
         with(mViewBinding!!) {
             if (bottomAppBar.visibility != View.VISIBLE) {
                 bottomAppBar.visibility = View.VISIBLE
-                mainFab.visibility = View.VISIBLE
             }
 
             bottomAppBar.performShow()
