@@ -23,6 +23,7 @@ import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.converter.ConverterMediator
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.shared.MessageSide
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -264,12 +265,23 @@ open class RepositoryImpl @Inject constructor(
     }
 
     override fun cacheNewMessageToRealtimeDb(currentUserNumber: String, message: AdaptiveMessage) {
+        val messageId = message.id.toString()
         mRemoteMediator.cacheMessage(
-            id = message.id.toString(),
+            id = messageId,
             currentUserNumber = currentUserNumber,
             associatedUserNumber = message.associatedUserNumber,
             messageText = message.text,
             messageSideKey = message.side.key
+        )
+
+        mRemoteMediator.cacheMessage(
+            id = messageId,
+            currentUserNumber = message.associatedUserNumber,
+            associatedUserNumber = currentUserNumber,
+            messageText = message.text,
+            messageSideKey = if (message.side is MessageSide.Source) {
+                MessageSide.Associated.key
+            } else MessageSide.Source.key
         )
     }
 }

@@ -18,6 +18,7 @@ package com.ferelin.repository.converter.helpers.searchRequestsConverter
 
 import com.ferelin.local.models.SearchRequest
 import com.ferelin.remote.base.BaseResponse
+import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
@@ -50,7 +51,7 @@ class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverte
     override fun convertSearchRequestsTextForUi(
         response: BaseResponse<HashMap<Int, String>>?
     ): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        return if (response != null) {
+        return if (response != null && response.responseCode == Api.RESPONSE_OK) {
             val data = mutableListOf<AdaptiveSearchRequest>()
             response.responseData!!.forEach { map ->
                 data.add(

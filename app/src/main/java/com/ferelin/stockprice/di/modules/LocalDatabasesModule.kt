@@ -24,6 +24,8 @@ import com.ferelin.local.databases.companiesDb.CompaniesDao
 import com.ferelin.local.databases.companiesDb.CompaniesDatabase
 import com.ferelin.local.databases.messagesDb.MessagesDao
 import com.ferelin.local.databases.messagesDb.MessagesDatabase
+import com.ferelin.local.databases.searchRequestsDb.SearchRequestsDao
+import com.ferelin.local.databases.searchRequestsDb.SearchRequestsDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -74,5 +76,20 @@ class LocalDatabasesModule {
     @Provides
     fun provideRelationsDao(database: ChatsDatabase): ChatsDao {
         return database.chatsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchRequestsDatabase(context: Context): SearchRequestsDatabase {
+        return Room.databaseBuilder(
+            context,
+            SearchRequestsDatabase::class.java,
+            SearchRequestsDatabase.DB_NAME
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun provideSearchRequestsDao(database: SearchRequestsDatabase): SearchRequestsDao {
+        return database.searchRequestsDao()
     }
 }

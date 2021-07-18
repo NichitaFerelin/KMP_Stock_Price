@@ -55,7 +55,6 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
         showDefaultDialog(context, message)
     }
 
-    // TODO array list to list
     fun onDataPrepared(data: ArrayList<AdaptiveMessage>) {
         val adapter = viewBinding.recyclerViewMessages.adapter
         if (adapter is MessagesRecyclerAdapter) {

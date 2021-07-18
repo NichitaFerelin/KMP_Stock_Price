@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.abs
 
 @Singleton
 class ChatsWorker @Inject constructor(
@@ -126,15 +125,13 @@ class ChatsWorker @Inject constructor(
 
     private suspend fun onNewItem(response: RepositoryResponse.Success<AdaptiveChat>) {
         if (mChats.isNotEmpty()) {
-            val responseItemAtContainerIndex = mChats.binarySearch(response.data.id - 1) { it.id }
-            if (responseItemAtContainerIndex < 0) {
-                val newIndex = abs(responseItemAtContainerIndex)
-                mChats.add(newIndex, response.data)
-                mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(response.data))
-                mAppScope.launch { mRepository.cacheChatToLocalDb(response.data) }
-            }
-        } else {
             mChats.add(response.data)
+            mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(response.data))
+            mAppScope.launch { mRepository.cacheChatToLocalDb(response.data) }
+        } else {
+            // TODO
+            mChats.add(response.data)
+            mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(response.data))
             mStateUserChats.value = DataNotificator.DataPrepared(listOf(response.data))
             mAppScope.launch { mRepository.cacheChatToLocalDb(response.data) }
         }

@@ -17,6 +17,7 @@
 package com.ferelin.stockprice.ui.messagesSection.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -91,6 +92,7 @@ class ChatFragment(chat: AdaptiveChat? = null) :
 
     private suspend fun collectSharedMessagesUpdates() {
         mViewModel.sharedMessagesUpdates.collect { newMessage ->
+            Log.d("Test", "onNewMessage")
             withContext(mCoroutineContext.Main) {
                 mViewController.onNewMessage(newMessage)
             }

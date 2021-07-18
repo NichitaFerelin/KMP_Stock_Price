@@ -83,9 +83,7 @@ class ChatsFragment :
     }
 
     override fun onRelationClicked(position: Int) {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewController.onChatClicked(position)
-        }
+        mViewController.onChatClicked(position)
     }
 
     private fun setUpClickListeners() {

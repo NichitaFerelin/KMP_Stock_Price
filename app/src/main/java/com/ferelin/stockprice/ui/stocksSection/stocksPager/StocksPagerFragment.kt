@@ -40,7 +40,9 @@ class StocksPagerFragment :
         enterTransition = MaterialFadeThrough().apply {
             duration = 300L
         }
-        exitTransition = null
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = 200L
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +64,6 @@ class StocksPagerFragment :
     private fun setUpClickListeners() {
         with(mViewController.viewBinding) {
             cardViewSearch.setOnClickListener {
-                exitTransition = MaterialElevationScale(false).apply {
-                    duration = 200L
-                }
                 mViewController.onCardSearchClicked()
             }
 

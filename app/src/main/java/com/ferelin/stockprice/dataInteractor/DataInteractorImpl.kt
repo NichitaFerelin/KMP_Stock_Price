@@ -194,7 +194,10 @@ class DataInteractorImpl @Inject constructor(
     ): Flow<RepositoryMessages> {
         return mAuthenticationWorker.tryToSignIn(holderActivity, phone,
             onLogIn = {
-                mAppScope.launch { mRepository.setUserNumber(phone) }
+                mAppScope.launch {
+                    // Cache user number without '+' symbol
+                    mRepository.setUserNumber(phone.substring(1))
+                }
                 mMenuItemsWorker.onLogIn()
                 mCompaniesMediator.onLogIn()
                 mSearchRequestsWorker.onLogIn()

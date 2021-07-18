@@ -20,6 +20,7 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
+import com.ferelin.stockprice.dataInteractor.workers.chats.ChatsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -27,12 +28,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.abs
 
 @Singleton
 class MessagesWorker @Inject constructor(
     private val mRepository: Repository,
-    private val mAppScope: CoroutineScope
+    private val mAppScope: CoroutineScope,
+    private val mChatsWorker: ChatsWorker
 ) : MessagesWorkerStates {
 
     private var mMessagesHolder = HashMap<String, ArrayList<AdaptiveMessage>>(20)
@@ -58,9 +59,9 @@ class MessagesWorker @Inject constructor(
             invalidatePreviousState()
             mMessagesJob = launch {
                 mStateMessages.value = DataNotificator.Loading()
+                mDataPreparedFor = associatedUserNumber
                 loadMessagesFromLocalCache(associatedUserNumber)
                 loadMessagesFromRemoteCache(associatedUserNumber)
-                mDataPreparedFor = associatedUserNumber
             }
         }
     }
@@ -115,18 +116,11 @@ class MessagesWorker @Inject constructor(
     private suspend fun onNewItem(response: RepositoryResponse.Success<AdaptiveMessage>) {
         val cachedContainer = mMessagesHolder[response.data.associatedUserNumber]
         if (cachedContainer != null) {
-
-            val indexToInsert = if (cachedContainer.isNotEmpty()) {
-                cachedContainer.binarySearch(response.data.id - 1) { it.id }
-            } else 0
-
-            if (indexToInsert < 0) {
-                val newIndex = abs(indexToInsert)
-                cachedContainer.add(newIndex, response.data)
-                mSharedMessagesUpdates.emit(response.data)
-                mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }
-            }
+            cachedContainer.add(response.data)
+            mSharedMessagesUpdates.emit(response.data)
+            mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }
         } else {
+            mChatsWorker.createNewChat(response.data.associatedUserNumber)
             mMessagesHolder[response.data.associatedUserNumber] = arrayListOf(response.data)
             mSharedMessagesUpdates.emit(response.data)
             mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }

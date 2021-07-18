@@ -47,7 +47,7 @@ class MessagesHelperImpl @Inject constructor(
             .addOnSuccessListener { dataSnapshot ->
                 for (messageSnapshot in dataSnapshot.children) {
                     trySend(
-                        element = createResponseBySnapshot(messageSnapshot)
+                        element = createResponseBySnapshot(associatedUserNumber, messageSnapshot)
                     )
                 }
             }
@@ -60,7 +60,7 @@ class MessagesHelperImpl @Inject constructor(
             .addChildEventListener(object : ChildChangedListener() {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     trySend(
-                        element = createResponseBySnapshot(snapshot)
+                        element = createResponseBySnapshot(associatedUserNumber, snapshot)
                     )
                 }
             })
@@ -83,17 +83,11 @@ class MessagesHelperImpl @Inject constructor(
             .child(associatedUserNumber)
             .child(id)
             .setValue(messageWithSideKey)
-
-        mDatabaseReference
-            .child(sMessagesReference)
-            .child(associatedUserNumber)
-            .child(currentUserNumber)
-            .child(id)
-            .setValue(messageWithSideKey)
     }
 
 
     private fun createResponseBySnapshot(
+        associatedUserNumber: String,
         messageSnapshot: DataSnapshot
     ): BaseResponse<HashMap<String, Any>> {
         return if (messageSnapshot.exists()) {
@@ -109,7 +103,8 @@ class MessagesHelperImpl @Inject constructor(
                         MessagesHelper.MESSAGE_ID_KEY to messageId,
                         MessagesHelper.MESSAGE_SIDE_KEY to messageSide,
                         MessagesHelper.MESSAGE_TEXT_KEY to mainMessage
-                    )
+                    ),
+                    additionalMessage = associatedUserNumber
                 )
             } ?: BaseResponse.failed()
         } else BaseResponse.failed()
