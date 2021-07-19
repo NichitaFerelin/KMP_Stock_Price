@@ -33,6 +33,7 @@ import kotlinx.coroutines.withContext
 
 class AboutPagerFragment(
     selectedCompany: AdaptiveCompany? = null,
+    private val mIsNavigatedFromMenu: Boolean? = null
 ) : BaseFragment<FragmentAboutPagerBinding, AboutPagerViewModel, AboutPagerViewController>() {
 
     override val mViewController = AboutPagerViewController()
@@ -54,6 +55,10 @@ class AboutPagerFragment(
         super.setUpViewComponents(savedInstanceState)
         setUpViewControllerArguments()
         setUpClickListeners()
+
+        if (savedInstanceState == null) {
+            mViewModel.isNavigatedFromMenu = mIsNavigatedFromMenu ?: false
+        }
     }
 
     override fun initObservers() {
@@ -64,7 +69,7 @@ class AboutPagerFragment(
     }
 
     override fun onBackPressedHandle(): Boolean {
-        mViewController.onBackSwiped()
+        mViewController.onBackSwiped(mViewModel.isNavigatedFromMenu)
         return true
     }
 
@@ -114,7 +119,7 @@ class AboutPagerFragment(
 
     private fun setUpImageClickListeners() {
         mViewController.viewBinding.imageViewBack.setOnClickListener {
-            mViewController.onBackPressed()
+            mViewController.onBackPressed(mViewModel.isNavigatedFromMenu)
         }
         mViewController.viewBinding.imageViewStar.setOnClickListener {
             mViewModel.onFavouriteIconClicked()

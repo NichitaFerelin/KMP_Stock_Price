@@ -112,6 +112,10 @@ class Navigator(private val mHostActivity: MainActivity) {
         return launchIntent(intent, context)
     }
 
+    fun navigateFromAboutPagerToSearch() {
+        mHostActivity.supportFragmentManager.popBackStack()
+    }
+
     fun navigateBackToHostFragment() {
         mHostActivity.supportFragmentManager.popBackStack()
         withTimerOnUi(250) { mHostActivity.showBottomBar() }

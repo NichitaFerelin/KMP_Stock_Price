@@ -39,6 +39,7 @@ class AboutPagerViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel(
         get() = selectedCompany.companyStyle.favouriteForegroundIconResource
 
     var selectedTabPagePosition: Int = 0
+    var isNavigatedFromMenu: Boolean = false
 
     override fun initObserversBlock() {
         // Do nothing
