@@ -20,7 +20,6 @@ import android.app.Activity
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
-import com.ferelin.stockprice.dataInteractor.workers.AuthenticationWorkerStates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

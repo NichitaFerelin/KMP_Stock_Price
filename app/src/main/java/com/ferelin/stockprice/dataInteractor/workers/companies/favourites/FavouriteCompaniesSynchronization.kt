@@ -176,13 +176,11 @@ class FavouriteCompaniesSynchronization @Inject constructor(
                 .forEach { id -> mRepository.cacheCompanyIdToRealtimeDb(userToken, id) }
         } else {
             localFavouriteCompanies.forEach { localCompany ->
-                val localCompanyId = localCompany.id
                 val indexAtRemoteContainer = mRemoteCompaniesContainer
-                    .toList()
-                    .find { it.id == localCompanyId }
+                    .binarySearchBy(localCompany.id) { it.id }
 
-                if (indexAtRemoteContainer == null) {
-                    mRepository.cacheCompanyIdToRealtimeDb(userToken, localCompanyId.toString())
+                if (indexAtRemoteContainer < 0) {
+                    mRepository.cacheCompanyIdToRealtimeDb(userToken, localCompany.id.toString())
                 }
             }
         }

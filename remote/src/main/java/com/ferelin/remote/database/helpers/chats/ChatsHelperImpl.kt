@@ -47,24 +47,19 @@ class ChatsHelperImpl @Inject constructor(
         mDatabaseReference
             .child(sChatsReference)
             .child(userNumber)
-            .get()
-            .addOnSuccessListener { dataSnapshot ->
-                for (chatSnapshot in dataSnapshot.children) {
-                    trySend(
-                        element = createResponseBySnapshot(chatSnapshot)
-                    )
-                }
-            }
-            .addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)) }
-
-        mDatabaseReference
-            .child(sChatsReference)
-            .child(userNumber)
             .addChildEventListener(object : ChildChangedListener() {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    trySend(
-                        element = createResponseBySnapshot(snapshot)
-                    )
+                    if (snapshot.hasChildren()) {
+                        for (chatSnapshot in snapshot.children) {
+                            trySend(
+                                element = createResponseBySnapshot(chatSnapshot)
+                            )
+                        }
+                    } else {
+                        trySend(
+                            element = createResponseBySnapshot(snapshot)
+                        )
+                    }
                 }
             })
 

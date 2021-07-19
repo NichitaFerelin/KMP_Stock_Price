@@ -74,7 +74,7 @@
     <string name="menuLogOut">Log Out</string>
     <string name="menuNotes">Notes</string>
     <string name="menuStocks">Stocks</string>
-    <string name="menuChats">Chats</string>
+    <string name="menuChats">Chats [Developing]</string>
     <string name="menuSettings">Settings</string>
 
     <string name="transitionSearchFragment">searchContainer</string>

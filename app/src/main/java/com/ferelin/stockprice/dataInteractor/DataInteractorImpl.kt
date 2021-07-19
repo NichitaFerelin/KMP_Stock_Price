@@ -339,7 +339,7 @@ class DataInteractorImpl @Inject constructor(
         return mRepository.getFirstTimeLaunchState()
     }
 
-    override suspend fun getUserNumber(): String? {
+    override suspend fun getUserNumber(): String {
         return mRepository.getUserNumber()
     }
 

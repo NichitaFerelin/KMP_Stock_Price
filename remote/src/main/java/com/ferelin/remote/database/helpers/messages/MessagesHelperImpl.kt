@@ -43,20 +43,6 @@ class MessagesHelperImpl @Inject constructor(
             .child(sMessagesReference)
             .child(currentUserNumber)
             .child(associatedUserNumber)
-            .get()
-            .addOnSuccessListener { dataSnapshot ->
-                for (messageSnapshot in dataSnapshot.children) {
-                    trySend(
-                        element = createResponseBySnapshot(associatedUserNumber, messageSnapshot)
-                    )
-                }
-            }
-            .addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
-
-        mDatabaseReference
-            .child(sMessagesReference)
-            .child(currentUserNumber)
-            .child(associatedUserNumber)
             .addChildEventListener(object : ChildChangedListener() {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     trySend(

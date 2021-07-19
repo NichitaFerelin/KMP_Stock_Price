@@ -33,6 +33,7 @@ import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
 import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
+import com.ferelin.stockprice.utils.withTimerOnUi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
@@ -63,8 +64,6 @@ class MainActivity(
 
         if (savedInstanceState == null) {
             hideBottomBar()
-            mViewBinding!!.bottomAppBar.visibility = View.GONE
-            mViewBinding!!.mainFab.visibility = View.GONE
         }
 
         initObservers()
@@ -98,24 +97,28 @@ class MainActivity(
     }
 
     fun hideBottomBar() {
-        with(mViewBinding!!) {
-            if (bottomAppBar.visibility != View.GONE) {
-                bottomAppBar.visibility = View.GONE
-            }
+        withTimerOnUi(200) {
+            with(mViewBinding!!) {
+                if (bottomAppBar.visibility != View.GONE) {
+                    bottomAppBar.visibility = View.GONE
+                }
 
-            mainFab.hide()
-            bottomAppBar.performHide()
+                mainFab.hide()
+                bottomAppBar.performHide()
+            }
         }
     }
 
     fun showBottomBar() {
-        with(mViewBinding!!) {
-            if (bottomAppBar.visibility != View.VISIBLE) {
-                bottomAppBar.visibility = View.VISIBLE
-            }
+        withTimerOnUi(200) {
+            with(mViewBinding!!) {
+                if (bottomAppBar.visibility != View.VISIBLE) {
+                    bottomAppBar.visibility = View.VISIBLE
+                }
 
-            bottomAppBar.performShow()
-            mainFab.show()
+                bottomAppBar.performShow()
+                mainFab.show()
+            }
         }
     }
 
@@ -224,7 +227,7 @@ class MainActivity(
                             // Do nothing
                         } else {
                             withContext(mCoroutineContext.Main) {
-                                navigator.navigateToLoginFragment()
+                                navigator.navigateToLoginFragment(false)
                             }
                         }
                     }

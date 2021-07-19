@@ -34,6 +34,7 @@ import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.bottomDrawer.BottomSheetManager
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
 import com.ferelin.stockprice.utils.themeColor
+import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.MaterialShapeDrawable
 
@@ -89,42 +90,30 @@ class BottomDrawerViewController :
     }
 
     fun onMenuItemClicked(item: MenuItem, onLogOut: () -> Unit) {
-        when (item.type) {
-            is MenuItemType.Stocks -> {
+        if (item.type !is MenuItemType.LogOut) {
+            withTimerOnUi(200) { closeDrawer() }
+        }
 
-                closeDrawer()
-                mNavigator?.navigateToStocksPagerFragment()
-            }
-            is MenuItemType.Chats -> {
-                closeDrawer()
-                mNavigator?.navigateToChatsFragment()
-            }
+        when (item.type) {
+            is MenuItemType.Stocks -> mNavigator?.navigateToStocksPagerFragment()
+            is MenuItemType.Chats -> mNavigator?.navigateToChatsFragment()
             is MenuItemType.Notes -> {
-                /*closeDrawer()
-                recyclerAdapter.setSelected(item)
-                Notes*/
             }
             is MenuItemType.Settings -> {
-                /*closeDrawer()
-                recyclerAdapter.setSelected(item)
-                Settings*/
             }
-            is MenuItemType.LogIn ->{
-                closeDrawer()
-                mNavigator?.navigateToLoginFragment()
-            }
+            is MenuItemType.LogIn -> mNavigator?.navigateToLoginFragment(true)
             is MenuItemType.LogOut -> showExitDialog(context, onLogOut)
         }
     }
 
-    fun onLogOut() {
+    /*fun onLogOut() {
         try {
             val recyclerViewAdapter = viewBinding.recyclerViewMenu.adapter
             if (recyclerViewAdapter is MenuItemsAdapter) {
                 recyclerViewAdapter.onLogOutNotify()
             }
         } catch (e: IllegalStateException) {
-            /*
+            *//*
             * viewBinding can be null at this moment.
             *
             * When user returns to the fragment that contains this menu, the view of this menu-fragment
@@ -132,9 +121,9 @@ class BottomDrawerViewController :
             * then is created on a new one from onCreateView.
             *
             * I don't understand why this is happening
-            * */
+            * *//*
         }
-    }
+    }*/
 
     fun addOnSlideAction(action: OnSlideAction) {
         mBottomSheetManager.addOnSlideAction(action)

@@ -27,6 +27,7 @@ import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatClickListener
 import com.ferelin.stockprice.utils.DataNotificator
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -45,6 +46,9 @@ class ChatsFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
+        }
+        exitTransition = MaterialElevationScale(false).apply {
             duration = 200L
         }
     }
@@ -75,11 +79,9 @@ class ChatsFragment :
                         is DataNotificator.Loading -> {
                             // show progress bar
                         }
-                        is DataNotificator.None -> {
-                            // hide progress bar
+                        else -> {
                             mViewController.onNone()
                         }
-                        else -> Unit
                     }
                 }
             }

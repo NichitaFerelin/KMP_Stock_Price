@@ -26,6 +26,7 @@ import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.LoginViewModelFactory
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,6 +41,13 @@ class ChatFragment(chat: AdaptiveChat? = null) :
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChatBinding
         get() = FragmentChatBinding::inflate
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
+        }
+    }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
@@ -57,6 +65,11 @@ class ChatFragment(chat: AdaptiveChat? = null) :
             launch { collectSharedMessagesUpdates() }
             launch { collectEventError() }
         }
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        mViewController.onBackPressed()
+        return true
     }
 
     private fun setUpClickListeners() {

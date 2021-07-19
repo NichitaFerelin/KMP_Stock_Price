@@ -38,7 +38,7 @@ class ChatsWorker @Inject constructor(
     private val mStateUserChats =
         MutableStateFlow<DataNotificator<List<AdaptiveChat>>>(DataNotificator.None())
     override val stateUserChats: StateFlow<DataNotificator<List<AdaptiveChat>>>
-        get() = mStateUserChats
+        get() = mStateUserChats.asStateFlow()
 
     private val mSharedUserChatsUpdates = MutableSharedFlow<DataNotificator<AdaptiveChat>>()
     override val sharedUserChatUpdates: SharedFlow<DataNotificator<AdaptiveChat>>
@@ -47,7 +47,6 @@ class ChatsWorker @Inject constructor(
     private var mChatsJob: Job? = null
 
     init {
-        // TODO remove from init
         prepareChats()
     }
 
@@ -57,14 +56,11 @@ class ChatsWorker @Inject constructor(
                 return@launch
             }
 
-            val itemAtContainer = mChats.find { it.associatedUserNumber == associatedUserNumber }
-            if (itemAtContainer == null) {
-                val chat = AdaptiveChat(mChats.lastIndex + 1, associatedUserNumber)
-                val userNumber = mRepository.getUserNumber()
-
-                if (userNumber.isNotEmpty()) {
-                    mRepository.cacheChatToRealtimeDb(userNumber, chat)
-                }
+            // Checks if chat is already exists
+            val chatAtContainer = mChats.find { it.associatedUserNumber == associatedUserNumber }
+            if (chatAtContainer == null) {
+                val newChat = AdaptiveChat(mChats.lastIndex + 1, associatedUserNumber)
+                mRepository.cacheChatToRealtimeDb(mRepository.getUserNumber(), newChat)
             }
         }
     }
@@ -74,12 +70,10 @@ class ChatsWorker @Inject constructor(
     }
 
     fun onLogOut() {
-        mAppScope.launch {
-            mChatsJob?.cancel()
-            mChatsJob = null
-            mChats.clear()
-            mStateUserChats.value = DataNotificator.None()
-        }
+        mChatsJob?.cancel()
+        mChatsJob = null
+        mChats.clear()
+        mStateUserChats.value = DataNotificator.None()
     }
 
     private fun prepareChats() {
@@ -114,30 +108,36 @@ class ChatsWorker @Inject constructor(
     }
 
     private suspend fun loadItemsFromRemoteCache() {
-        val userNumber = mRepository.getUserNumber()
-        if (userNumber.isNotEmpty()) {
-            mRepository.getUserChatsFromRealtimeDb(userNumber).collect { response ->
-                if (response is RepositoryResponse.Success) {
-                    // TODO optimize contains
-                    if (!mChats.contains(response.data)) {
-                        onNewItem(response)
-                    }
+        mRepository.getUserChatsFromRealtimeDb(mRepository.getUserNumber()).collect { response ->
+            if (response is RepositoryResponse.Success) {
+                val remoteChat = response.data
+
+                /*
+                * Chat IDs are created in order starting from zero and inserted with the same
+                * sorting. If such a chat already exists, then it can be found by the
+                * index equal to its id
+                * */
+                if (mChats.getOrNull(remoteChat.id)?.id != remoteChat.id) {
+                    onNewChatReceived(remoteChat)
                 }
             }
         }
     }
 
-    private suspend fun onNewItem(response: RepositoryResponse.Success<AdaptiveChat>) {
-        if (mChats.isNotEmpty()) {
-            mChats.add(response.data)
-            mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(response.data))
-            mAppScope.launch { mRepository.cacheChatToLocalDb(response.data) }
+    private suspend fun onNewChatReceived(newChat: AdaptiveChat) {
+        mAppScope.launch { mRepository.cacheChatToLocalDb(newChat) }
+
+        /**
+         * If chats container is empty that means that data was not prepared. The main
+         * state of chats needs to be updated by DataPrepared state.
+         * Otherwise just need to notify about the new item.
+         * */
+        if (mChats.isEmpty()) {
+            mChats.add(newChat)
+            mStateUserChats.value = DataNotificator.DataPrepared(mChats)
         } else {
-            // TODO
-            mChats.add(response.data)
-            mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(response.data))
-            mStateUserChats.value = DataNotificator.DataPrepared(listOf(response.data))
-            mAppScope.launch { mRepository.cacheChatToLocalDb(response.data) }
+            mChats.add(newChat.id, newChat)
+            mSharedUserChatsUpdates.emit(DataNotificator.NewItemAdded(newChat))
         }
     }
 }

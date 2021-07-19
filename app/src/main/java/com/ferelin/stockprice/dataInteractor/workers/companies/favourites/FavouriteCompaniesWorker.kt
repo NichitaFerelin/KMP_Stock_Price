@@ -53,7 +53,8 @@ class FavouriteCompaniesWorker @Inject constructor(
     private val mErrorsWorker: ErrorsWorker
 ) : FavouriteCompaniesWorkerStates {
 
-    private var mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
+    private val mCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
+    private val mFavouriteCompanies: ArrayList<AdaptiveCompany> = arrayListOf()
 
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<List<AdaptiveCompany>>>(DataNotificator.None())
@@ -79,25 +80,19 @@ class FavouriteCompaniesWorker @Inject constructor(
     * */
     private val mCompaniesLimit = 50
 
-    private lateinit var mTEMP_TODO_LocalCompanies: List<AdaptiveCompany>
-
     fun onCompaniesDataPrepared(localCompanies: List<AdaptiveCompany>) {
-        mTEMP_TODO_LocalCompanies = localCompanies
-
-        mFavouriteCompanies = ArrayList(
+        mCompanies.addAll(localCompanies)
+        mFavouriteCompanies.addAll(
             localCompanies
                 .filter { it.isFavourite }
                 .sortedByDescending { it.favouriteOrderIndex }
         )
+
         subscribeCompaniesOnLiveTimeUpdates()
         mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
         mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
 
-        syncData(localCompanies)
-    }
-
-    suspend fun onFavouriteCompanyChanged(company: AdaptiveCompany) {
-        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemUpdatedCommon(company))
+        syncData()
     }
 
     suspend fun addCompanyToFavourites(
@@ -112,31 +107,30 @@ class FavouriteCompaniesWorker @Inject constructor(
             return null
         }
 
-        applyChangesToAddedFavouriteCompany(company)
-
-        mFavouriteCompaniesSynchronization.onCompanyAddedToLocal(company)
+        changeAddedCompanyStyle(company)
         mFavouriteCompanies.add(0, company)
         subscribeCompanyOnLiveTimeUpdates(company)
+        mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
 
         mStateCompanyForObserver.value = company
+        mFavouriteCompaniesSynchronization.onCompanyAddedToLocal(company)
         mSharedFavouriteCompaniesUpdates.emit(DataNotificator.NewItemAdded(company))
-        mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
+
         return company
     }
 
     suspend fun removeCompanyFromFavourites(company: AdaptiveCompany): AdaptiveCompany {
-        applyChangesToRemovedFavouriteCompany(company)
-
+        changeRemovedCompanyStyle(company)
         mFavouriteCompanies.remove(company)
-        mFavouriteCompaniesSynchronization.onCompanyRemovedFromLocal(company)
+        mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
+
         mRepository.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
+        mFavouriteCompaniesSynchronization.onCompanyRemovedFromLocal(company)
+        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
 
         if (mStateCompanyForObserver.value == company) {
             mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
         }
-
-        mSharedFavouriteCompaniesUpdates.emit(DataNotificator.ItemRemoved(company))
-        mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
 
         return company
     }
@@ -147,12 +141,13 @@ class FavouriteCompaniesWorker @Inject constructor(
 
     fun onLogIn() {
         if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
-            syncData(mTEMP_TODO_LocalCompanies)
+            syncData()
         }
     }
 
     fun onLogOut(onCompanyRemoved: (AdaptiveCompany) -> Unit) {
         mFavouriteCompaniesSynchronization.onLogOut()
+
         mAppScope.launch {
             mFavouriteCompanies.toList().forEach { localCompany ->
                 removeCompanyFromFavourites(localCompany)
@@ -167,14 +162,12 @@ class FavouriteCompaniesWorker @Inject constructor(
 
     fun onNetworkAvailable() {
         if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
-            syncData(mTEMP_TODO_LocalCompanies)
+            syncData()
         }
     }
 
-    private fun syncData(localCompanies: List<AdaptiveCompany>) {
-        mFavouriteCompaniesSynchronization.initDataSync(
-            localCompanies = localCompanies,
-            localFavouriteCompanies = mFavouriteCompanies,
+    private fun syncData() {
+        mFavouriteCompaniesSynchronization.initDataSync(mCompanies, mFavouriteCompanies,
             addCompanyToFavourites = { companyToAdd ->
                 addCompanyToFavourites(
                     company = companyToAdd,
@@ -194,7 +187,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         )
     }
 
-    private fun applyChangesToRemovedFavouriteCompany(company: AdaptiveCompany) {
+    private fun changeRemovedCompanyStyle(company: AdaptiveCompany) {
         company.apply {
             isFavourite = false
             companyStyle.favouriteBackgroundIconResource =
@@ -204,7 +197,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         }
     }
 
-    private fun applyChangesToAddedFavouriteCompany(company: AdaptiveCompany) {
+    private fun changeAddedCompanyStyle(company: AdaptiveCompany) {
         company.apply {
             isFavourite = true
             companyStyle.favouriteBackgroundIconResource =

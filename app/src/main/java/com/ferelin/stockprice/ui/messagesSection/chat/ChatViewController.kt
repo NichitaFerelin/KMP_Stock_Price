@@ -22,6 +22,7 @@ import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesItemDecoration
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
+import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.showDefaultDialog
 
 class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBinding>() {
@@ -36,6 +37,7 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
     }
 
     fun onBackPressed() {
+        hideKeyboard(context, viewBinding.root)
         mNavigator?.navigateBackToHostFragment()
     }
 

@@ -31,11 +31,14 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginViewController>() {
+class LoginFragment(
+    private val mIsReplacedFromMenu: Boolean? = null
+) : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginViewController>() {
 
     override val mViewController = LoginViewController()
     override val mViewModel: LoginViewModel by viewModels()
@@ -45,12 +48,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel, LoginVi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialContainerTransform().apply {
-            startView = requireActivity().findViewById(R.id.mainFab)
-            endViewId = R.id.loginRoot
-            scrimColor = Color.TRANSPARENT
-            duration = 350L
+        enterTransition = if (mIsReplacedFromMenu == true) {
+            MaterialFadeThrough().apply {
+                duration = 200L
+            }
+        } else {
+            MaterialContainerTransform().apply {
+                startView = requireActivity().findViewById(R.id.mainFab)
+                endViewId = R.id.loginRoot
+                scrimColor = Color.TRANSPARENT
+                duration = 350L
+            }
         }
+
         returnTransition = Slide().apply {
             duration = 225L
             addTarget(R.id.loginRoot)

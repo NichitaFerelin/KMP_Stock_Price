@@ -51,9 +51,9 @@ class Navigator(private val mHostActivity: MainActivity) {
         replaceMainContainerBy(LoadingFragment())
     }
 
-    fun navigateToLoginFragment() {
+    fun navigateToLoginFragment(isReplacedFromMenu: Boolean) {
         mHostActivity.hideBottomBar()
-        replaceMainContainerBy(LoginFragment(), addToBackStack = true)
+        replaceMainContainerBy(LoginFragment(isReplacedFromMenu), addToBackStack = true)
     }
 
     fun navigateToChatFragment(chat: AdaptiveChat) {
@@ -114,7 +114,7 @@ class Navigator(private val mHostActivity: MainActivity) {
 
     fun navigateBackToHostFragment() {
         mHostActivity.supportFragmentManager.popBackStack()
-        withTimerOnUi(200) { mHostActivity.showBottomBar() }
+        withTimerOnUi(250) { mHostActivity.showBottomBar() }
     }
 
     private fun contains(tag: String): Boolean {

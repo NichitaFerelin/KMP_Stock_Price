@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.workers
+package com.ferelin.stockprice.dataInteractor.workers.authentication
 
 import kotlinx.coroutines.flow.StateFlow
 
