@@ -23,6 +23,7 @@ import android.view.View
 import android.view.animation.Animation
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
@@ -64,34 +65,43 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         outState.putFloat(sEnterCodeAlphaKey, mEnterCodeAlpha)
     }
 
-    fun onBackPressed() {
+    fun onBackPressed(): Boolean {
         mNavigator?.navigateBackToHostFragment()
+        return true
     }
 
     fun onPhoneNumberChanged(phone: String) {
-        with(viewBinding) {
-            if (phone == mLastInputPhone) {
-                return
+        if (phone == mLastInputPhone) {
+            return
+        }
+
+        mLastInputPhone = phone
+        viewBinding.editTextCode.setText("")
+
+        when {
+            phone.isNotEmpty() && !isBtnCheckEnabled() -> enableBtnCheck()
+            phone.isEmpty() && isBtnCheckEnabled() -> disableBtnCheck()
+        }
+    }
+
+    fun onAuthenticationStateChanged(notificator: DataNotificator<RepositoryMessages>) {
+        when (notificator) {
+            is DataNotificator.DataPrepared -> {
+                if (notificator.data is RepositoryMessages.Ok) {
+                    onSignIn()
+                } else if (notificator.data is RepositoryMessages.CodeSent) {
+                    onCodeSent()
+                }
             }
-
-            mLastInputPhone = phone
-            viewBinding.editTextCode.setText("")
-
-            when {
-                phone.isNotEmpty() && !isBtnCheckEnabled() -> enableBtnCheck()
-                phone.isEmpty() && isBtnCheckEnabled() -> disableBtnCheck()
+            is DataNotificator.Loading -> {
+                invalidateErrors()
+                showProgressBar()
+                hideBtnCheck()
             }
-
-            if (imageViewIconCheck.isOut) {
-                showBtnCheck()
-            }
-
-            if (!progressBar.isOut) {
+            else -> {
                 hideProgressBar()
-            }
-
-            if (!editTextCodeLayout.isOut) {
                 hideEditTextCode()
+                showBtnCheck()
             }
         }
     }
@@ -101,16 +111,12 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         hideBtnCheck()
     }
 
-    fun onCodeSentStateChanged(isCodeSent: Boolean) {
-        if (isCodeSent) {
-            hideBtnCheck()
-            showEditTextCode()
-            setFocus(viewBinding.editTextCode)
-            invalidateErrors()
-        } else {
-            hideEditTextCode()
-            showBtnCheck()
-        }
+    private fun onCodeSent() {
+        hideBtnCheck()
+        hideProgressBar()
+        showEditTextCode()
+        setFocus(viewBinding.editTextCode)
+        invalidateErrors()
     }
 
     fun onCodeChanged() {
@@ -127,17 +133,6 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         }
     }
 
-    fun onLoadingStateChanged(isLoading: Boolean) {
-        when {
-            isLoading -> {
-                invalidateErrors()
-                showProgressBar()
-                hideBtnCheck()
-            }
-            !isLoading -> hideProgressBar()
-        }
-    }
-
     fun onError(message: String) {
         when {
             viewBinding.editTextCode.isFocused -> viewBinding.editTextCode.error = message
@@ -145,7 +140,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
         }
     }
 
-    fun onSignIn() {
+    private fun onSignIn() {
         showDefaultDialog(context, getString(context, R.string.hintAuthorization))
         mNavigator?.navigateBackToHostFragment()
     }

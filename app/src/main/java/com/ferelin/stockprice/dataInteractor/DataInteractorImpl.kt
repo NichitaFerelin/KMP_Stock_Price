@@ -191,7 +191,7 @@ class DataInteractorImpl @Inject constructor(
     override suspend fun tryToSignIn(
         holderActivity: Activity,
         phone: String
-    ): Flow<RepositoryMessages> {
+    ): Flow<DataNotificator<RepositoryMessages>> {
         return mAuthenticationWorker.tryToSignIn(holderActivity, phone,
             onLogIn = {
                 mAppScope.launch {

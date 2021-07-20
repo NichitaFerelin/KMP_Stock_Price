@@ -20,30 +20,25 @@ import android.app.Activity
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.base.BaseViewModel
-import kotlinx.coroutines.flow.*
+import com.ferelin.stockprice.utils.DataNotificator
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel() {
 
-    private val mStateSignIn = MutableSharedFlow<Unit>()
-    val stateSignIn: SharedFlow<Unit>
-        get() = mStateSignIn
-
-    private val mStateCodeSent = MutableStateFlow(false)
-    val stateCodeSent: StateFlow<Boolean>
-        get() = mStateCodeSent
-
-    private val mStateIsLoading = MutableStateFlow(false)
-    val stateIsLoading: StateFlow<Boolean>
-        get() = mStateIsLoading
+    private val mStateAuthenticationProcess =
+        MutableStateFlow<DataNotificator<RepositoryMessages>>(DataNotificator.None())
+    val stateAuthenticationProcess: StateFlow<DataNotificator<RepositoryMessages>>
+        get() = mStateAuthenticationProcess.asStateFlow()
 
     private var mInputPhoneNumber = ""
     private var mInputCode = ""
 
-    val eventError: Flow<String>
-        get() = mDataInteractor.sharedAuthenticationError
-            .onEach { mStateIsLoading.value = false }
-
+    private var mSignInJob: Job? = null
 
     override fun initObserversBlock() {
         // Do nothing
@@ -51,14 +46,10 @@ class LoginViewModel : BaseViewModel() {
 
     fun onSendCodeClicked(holderActivity: Activity, text: String) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mStateIsLoading.value = true
-            mDataInteractor.tryToSignIn(holderActivity, "+$text").collect { message ->
-                when (message) {
-                    is RepositoryMessages.Ok -> mStateSignIn.emit(Unit)
-                    is RepositoryMessages.CodeSent -> mStateCodeSent.value = true
-                    else -> Unit
+            mSignInJob = launch {
+                mDataInteractor.tryToSignIn(holderActivity, "+$text").collect { notificator ->
+                    mStateAuthenticationProcess.value = notificator
                 }
-                mStateIsLoading.value = false
             }
         }
     }
@@ -66,7 +57,12 @@ class LoginViewModel : BaseViewModel() {
     fun onPhoneNumberChanged(number: String) {
         if (number != mInputPhoneNumber) {
             mInputPhoneNumber = number
-            mStateCodeSent.value = false
+
+            if (mStateAuthenticationProcess.value !is DataNotificator.None) {
+                mStateAuthenticationProcess.value = DataNotificator.None()
+                mSignInJob?.cancel()
+                mSignInJob = null
+            }
         }
     }
 
@@ -75,7 +71,6 @@ class LoginViewModel : BaseViewModel() {
             mInputCode = text
 
             if (text.length == 6) {
-                mStateIsLoading.value = true
                 mDataInteractor.logInWithCode(text)
             }
         }

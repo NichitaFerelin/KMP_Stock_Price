@@ -18,11 +18,21 @@ package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import android.app.Activity
 import com.ferelin.repository.utils.RepositoryMessages
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.workers.authentication.AuthenticationWorker
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Methods for interacting with authentication via [DataInteractor].
+ * @see [AuthenticationWorker] to get info about how methods works
+ * */
 interface AuthenticationHelper {
 
-    suspend fun tryToSignIn(holderActivity: Activity, phone: String): Flow<RepositoryMessages>
+    suspend fun tryToSignIn(
+        holderActivity: Activity,
+        phone: String
+    ): Flow<DataNotificator<RepositoryMessages>>
 
     fun logInWithCode(code: String)
 

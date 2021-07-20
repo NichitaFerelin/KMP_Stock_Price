@@ -20,10 +20,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Slide
@@ -48,6 +45,10 @@ class LoginFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        returnTransition = Slide().apply {
+            duration = 225L
+            addTarget(R.id.loginRoot)
+        }
         enterTransition = if (mIsReplacedFromMenu == true) {
             MaterialFadeThrough().apply {
                 duration = 200L
@@ -60,26 +61,31 @@ class LoginFragment(
                 duration = 350L
             }
         }
-
-        returnTransition = Slide().apply {
-            duration = 225L
-            addTarget(R.id.loginRoot)
-        }
     }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         setUpListeners()
-        setUpBackPressedCallback()
     }
 
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectSignInState() }
-            launch { collectCodeSentState() }
-            launch { collectLoadingState() }
-            launch { collectErrorState() }
+            collectAuthenticationState()
+        }
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        return mViewController.onBackPressed()
+    }
+
+    private fun collectAuthenticationState() {
+        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
+            mViewModel.stateAuthenticationProcess.collect { notificator ->
+                withContext(mCoroutineContext.Main) {
+                    mViewController.onAuthenticationStateChanged(notificator)
+                }
+            }
         }
     }
 
@@ -108,56 +114,5 @@ class LoginFragment(
                 mViewController.onBackPressed()
             }
         }
-    }
-
-    private suspend fun collectSignInState() {
-        mViewModel.stateSignIn.collect {
-            withContext(mCoroutineContext.Main) {
-                setFragmentResult(LOGIN_REQUEST_KEY, bundleOf(LOGIN_LOG_STATE_KEY to true))
-                mViewController.onSignIn()
-            }
-        }
-    }
-
-    private suspend fun collectCodeSentState() {
-        mViewModel.stateCodeSent.collect { isCodeSent ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onCodeSentStateChanged(isCodeSent)
-            }
-        }
-    }
-
-    private suspend fun collectLoadingState() {
-        mViewModel.stateIsLoading.collect { isLoading ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onLoadingStateChanged(isLoading)
-            }
-        }
-    }
-
-    private suspend fun collectErrorState() {
-        mViewModel.eventError.collect { error ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onError(error)
-            }
-        }
-    }
-
-    private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            mViewController.onBackPressed()
-        }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            mOnBackPressedCallback
-        )
-    }
-
-    companion object {
-        const val LOGIN_REQUEST_KEY = "login_request_key"
-        const val LOGIN_LOG_STATE_KEY = "log_state_key"
     }
 }

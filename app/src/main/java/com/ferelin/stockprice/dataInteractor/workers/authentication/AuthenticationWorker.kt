@@ -20,12 +20,17 @@ import android.app.Activity
 import com.ferelin.repository.Repository
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * [AuthenticationWorker] is an entity for interacting with repository authorization methods.
+ */
 @Singleton
 class AuthenticationWorker @Inject constructor(
     private val mRepository: Repository,
@@ -34,30 +39,52 @@ class AuthenticationWorker @Inject constructor(
 
     private val mStateIsUserAuthenticated = MutableStateFlow(mRepository.isUserAuthenticated())
     override val stateIsUserAuthenticated: StateFlow<Boolean>
-        get() = mStateIsUserAuthenticated
+        get() = mStateIsUserAuthenticated.asStateFlow()
 
+    /**
+     * Sends a request for an authorization attempt by the entered phone number.
+     * [holderActivity] is a host activity by which firebase will execute authorization
+     * [phoneNumber] is a phone number by which need to authorize user
+     * [onLogIn] is a callback that will be executed when authorization will be completed
+     * [onError] is a callback that will be executed when authorization will be failed
+     * @return flow with authorization messages
+     * */
     suspend fun tryToSignIn(
         holderActivity: Activity,
         phoneNumber: String,
         onLogIn: suspend (Boolean) -> Unit,
         onError: suspend (RepositoryMessages) -> Unit
-    ): Flow<RepositoryMessages> {
-        return mRepository.tryToSignIn(holderActivity, phoneNumber)
-            .onEach { response ->
-                when (response) {
-                    is RepositoryResponse.Success -> {
-                        if (response.data is RepositoryMessages.Ok) {
-                            mStateIsUserAuthenticated.value = true
-                            onLogIn.invoke(mRepository.isUserAuthenticated())
-                        }
+    ): Flow<DataNotificator<RepositoryMessages>> = callbackFlow {
+        var taskNotificator: DataNotificator<RepositoryMessages> = DataNotificator.Loading()
+        trySend(taskNotificator)
+
+        mRepository.tryToSignIn(holderActivity, phoneNumber).collect { response ->
+            when (response) {
+                is RepositoryResponse.Success -> {
+                    taskNotificator = DataNotificator.DataPrepared(response.data)
+                    trySend(taskNotificator)
+
+                    if (response.data is RepositoryMessages.Ok) {
+                        mStateIsUserAuthenticated.value = true
+                        onLogIn.invoke(mRepository.isUserAuthenticated())
                     }
-                    is RepositoryResponse.Failed -> onError.invoke(response.message)
+                }
+                is RepositoryResponse.Failed -> {
+                    taskNotificator = DataNotificator.Failed()
+                    trySend(taskNotificator)
+
+                    onError.invoke(response.message)
                 }
             }
-            .filter { it is RepositoryResponse.Success }
-            .map { (it as RepositoryResponse.Success).data }
+        }
+
+        awaitClose()
     }
 
+    /**
+     * After an authorization attempt, a code is sent to the phone,
+     * which must be entered and sent to the server
+     * */
     fun logInWithCode(code: String) {
         mRepository.logInWithCode(code)
     }
