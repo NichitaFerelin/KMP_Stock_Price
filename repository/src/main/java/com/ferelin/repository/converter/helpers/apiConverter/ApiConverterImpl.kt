@@ -37,7 +37,7 @@ class ApiConverterImpl @Inject constructor(
     private val mAdapter: DataAdapter
 ) : ApiConverter {
 
-    override fun fromNetworkResponseToAdaptiveStockCandles(
+    override fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
@@ -63,7 +63,7 @@ class ApiConverterImpl @Inject constructor(
         }
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyProfile(
+    override fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
     ): RepositoryResponse<AdaptiveCompanyProfile> {
@@ -86,7 +86,7 @@ class ApiConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun fromNetworkResponseToAdaptiveStockSymbols(
+    override fun convertApiResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
         return if (response.responseCode == Api.RESPONSE_OK) {
@@ -95,7 +95,7 @@ class ApiConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyNews(
+    override fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
@@ -123,9 +123,7 @@ class ApiConverterImpl @Inject constructor(
             RepositoryResponse.Success(
                 owner = symbol,
                 data = AdaptiveCompanyNews(
-                    ids.map {
-                        it.toString().substringBefore(".")
-                    }.toList(),
+                    ids.map { it.toString().substringBefore(".") }.toList(),
                     headlines.toList(),
                     summaries.toList(),
                     sources.toList(),
@@ -144,7 +142,7 @@ class ApiConverterImpl @Inject constructor(
         }
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyDayData(
+    override fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
         return if (response.responseCode == Api.RESPONSE_OK) {

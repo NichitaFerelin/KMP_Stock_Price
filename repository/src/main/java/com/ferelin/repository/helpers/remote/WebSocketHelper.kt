@@ -20,6 +20,9 @@ import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [WebSocketHelper] provides methods for network interacting with web-socket.
+ * */
 interface WebSocketHelper {
 
     fun openWebSocketConnection():Flow<RepositoryResponse<AdaptiveWebSocketPrice>>

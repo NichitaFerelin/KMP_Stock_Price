@@ -21,6 +21,9 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [AuthenticationHelper] provides methods for network interacting with authentication.
+ * */
 interface AuthenticationHelper {
 
     fun tryToSignIn(

@@ -29,7 +29,7 @@ import javax.inject.Singleton
 @Singleton
 class MessagesConverterImpl @Inject constructor() : MessagesConverter {
 
-    override fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message {
+    override fun convertAdaptiveMessageToMessage(adaptiveMessage: AdaptiveMessage): Message {
         return Message(
             id = adaptiveMessage.id,
             associatedUserNumber = adaptiveMessage.associatedUserNumber,
@@ -38,7 +38,7 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
         )
     }
 
-    override fun convertRemoteMessageResponseForUi(
+    override fun convertNetworkMessagesResponseToRepositoryResponse(
         response: BaseResponse<HashMap<String, Any>>
     ): RepositoryResponse<AdaptiveMessage> {
         return if (response.responseCode == Api.RESPONSE_OK) {
@@ -61,7 +61,7 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertLocalMessagesResponseForUi(
+    override fun convertLocalMessagesResponseToRepositoryResponse(
         messages: List<Message>?
     ): RepositoryResponse<List<AdaptiveMessage>> {
         return if (messages != null) {

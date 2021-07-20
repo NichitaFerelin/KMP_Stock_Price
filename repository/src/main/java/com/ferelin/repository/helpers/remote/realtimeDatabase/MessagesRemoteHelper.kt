@@ -20,6 +20,9 @@ import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [MessagesRemoteHelper] provides methods for network interacting with messages.
+ * */
 interface MessagesRemoteHelper {
 
     fun getMessagesFromRealtimeDb(

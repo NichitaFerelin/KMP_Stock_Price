@@ -18,11 +18,15 @@ package com.ferelin.repository.helpers.remote.realtimeDatabase
 
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [FavouriteCompaniesRemoteHelper] provides methods for network interacting with
+ * favourite companies.
+ * */
 interface FavouriteCompaniesRemoteHelper {
 
-    fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
+    fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String)
 
-    fun cacheCompanyIdToRealtimeDb(userId: String, companyId: String)
+    fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String)
 
-    suspend fun getCompaniesIdsFromRealtimeDb(userId: String): RepositoryResponse<List<String>>
+    suspend fun getCompaniesIdsFromRealtimeDb(userToken: String): RepositoryResponse<List<String>>
 }

@@ -21,15 +21,18 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [SearchRequestsConverter] provides converters for searchRequest model
+ * */
 interface SearchRequestsConverter {
 
-    fun convertSearchRequestForLocal(searchRequest: AdaptiveSearchRequest) : SearchRequest
+    fun convertAdaptiveRequestToRequest(searchRequest: AdaptiveSearchRequest) : SearchRequest
 
-    fun convertSearchRequestsForUi(
+    fun convertLocalRequestsResponseToAdaptiveRequests(
         searchRequests: List<SearchRequest>
     ): List<AdaptiveSearchRequest>
 
-    fun convertSearchRequestsTextForUi(
+    fun convertNetworkRequestsResponseToRepositoryResponse(
         response: BaseResponse<HashMap<Int, String>>?
     ): RepositoryResponse<List<AdaptiveSearchRequest>>
 }

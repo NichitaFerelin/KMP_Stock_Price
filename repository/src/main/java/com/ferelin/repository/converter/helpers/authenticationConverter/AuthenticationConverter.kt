@@ -20,13 +20,16 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [AuthenticationConverter] provides converters for responses based on authentication
+ * */
 interface AuthenticationConverter {
 
-    fun convertTryToRegisterResponseForUi(
+    fun convertTryToRegisterResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<Boolean>
 
-    fun convertAuthenticationResponseForUi(
+    fun convertAuthenticationResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<RepositoryMessages>
 }

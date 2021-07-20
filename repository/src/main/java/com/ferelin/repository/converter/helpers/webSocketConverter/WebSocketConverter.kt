@@ -21,8 +21,10 @@ import com.ferelin.remote.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [WebSocketConverter] provides converter for web-socket responses
+ * */
 interface WebSocketConverter {
-
     fun convertWebSocketResponseForUi(
         response: BaseResponse<WebSocketResponse>
     ): RepositoryResponse<AdaptiveWebSocketPrice>

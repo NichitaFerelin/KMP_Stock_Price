@@ -21,13 +21,16 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [ChatsConverter] provides converters for chats models
+ * */
 interface ChatsConverter {
 
-    fun convertAdaptiveChatForLocal(adaptiveChat: AdaptiveChat): Chat
+    fun convertAdaptiveChatToChat(adaptiveChat: AdaptiveChat): Chat
 
-    fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>>
+    fun convertChatsToAdaptiveChats(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>>
 
-    fun convertRemoteChatResponseForUi(
+    fun convertChatResponseToRepositoryResponse(
         response: BaseResponse<String>
     ): RepositoryResponse<AdaptiveChat>
 }

@@ -31,7 +31,7 @@ class CompaniesConverterImpl @Inject constructor(
     private val mAdapter: DataAdapter
 ) : CompaniesConverter {
 
-    override fun convertCompaniesResponseForUi(
+    override fun convertLocalCompaniesResponseToRepositoryResponse(
         response: CompaniesResponse
     ): RepositoryResponse<List<AdaptiveCompany>> {
         return if (response is CompaniesResponse.Success) {
@@ -45,7 +45,7 @@ class CompaniesConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertCompaniesIdsForUi(
+    override fun convertNetworkCompaniesResponseToRepositoryResponse(
         response: BaseResponse<List<String>>?
     ): RepositoryResponse<List<String>> {
         return if (response != null) {
@@ -55,7 +55,7 @@ class CompaniesConverterImpl @Inject constructor(
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertCompanyForLocal(company: AdaptiveCompany): Company {
+    override fun convertAdaptiveCompanyToCompany(company: AdaptiveCompany): Company {
         return mAdapter.toDatabaseCompany(company)
     }
 }

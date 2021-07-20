@@ -19,9 +19,11 @@ package com.ferelin.repository.converter.helpers.realtimeConverter
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [RealtimeDatabaseConverter] provides converters for realtime responses
+ * */
 interface RealtimeDatabaseConverter {
-
-    fun convertRealtimeDatabaseResponseForUi(
+    fun convertRealtimeResponseToRepositoryResponse(
         response: BaseResponse<String?>?
     ): RepositoryResponse<String>
 }

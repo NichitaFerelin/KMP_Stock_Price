@@ -20,6 +20,9 @@ import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.utils.RepositoryResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [ChatsRemoteHelper] provides methods for network interacting with chats.
+ * */
 interface ChatsRemoteHelper {
 
     fun cacheChatToRealtimeDb(currentUserNumber: String,chat: AdaptiveChat)

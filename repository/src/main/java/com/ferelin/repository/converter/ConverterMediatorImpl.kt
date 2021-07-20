@@ -33,7 +33,6 @@ import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
 import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
-import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
@@ -43,15 +42,11 @@ import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * [ConverterMediatorImpl] is used to convert responses for UI from local/remote modules.
- */
 @Singleton
 class ConverterMediatorImpl @Inject constructor(
     private val mApiConverter: ApiConverter,
     private val mAuthenticationConverter: AuthenticationConverter,
     private val mCompaniesConverter: CompaniesConverter,
-    private val mFirstTimeLaunchConverter: FirstTimeLaunchConverter,
     private val mMessagesConverter: MessagesConverter,
     private val mRealtimeDatabaseConverter: RealtimeDatabaseConverter,
     private val mSearchRequestsConverter: SearchRequestsConverter,
@@ -59,81 +54,85 @@ class ConverterMediatorImpl @Inject constructor(
     private val mChatsConverter: ChatsConverter
 ) : ConverterMediator {
 
-    override fun fromNetworkResponseToAdaptiveStockCandles(
+    override fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory> {
-        return mApiConverter.fromNetworkResponseToAdaptiveStockCandles(response, symbol)
+        return mApiConverter.convertApiResponseToAdaptiveStockCandles(response, symbol)
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyProfile(
+    override fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyProfile> {
-        return mApiConverter.fromNetworkResponseToAdaptiveCompanyProfile(response, symbol)
+        return mApiConverter.convertApiResponseToAdaptiveCompanyProfile(response, symbol)
     }
 
-    override fun fromNetworkResponseToAdaptiveStockSymbols(
+    override fun convertApiResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
-        return mApiConverter.fromNetworkResponseToAdaptiveStockSymbols(response)
+        return mApiConverter.convertApiResponseToAdaptiveStockSymbols(response)
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyNews(
+    override fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews> {
-        return mApiConverter.fromNetworkResponseToAdaptiveCompanyNews(response, symbol)
+        return mApiConverter.convertApiResponseToAdaptiveCompanyNews(response, symbol)
     }
 
-    override fun fromNetworkResponseToAdaptiveCompanyDayData(
+    override fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData> {
-        return mApiConverter.fromNetworkResponseToAdaptiveCompanyDayData(response)
+        return mApiConverter.convertApiResponseToAdaptiveCompanyDayData(response)
     }
 
-    override fun convertTryToRegisterResponseForUi(
+    override fun convertTryToRegisterResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<Boolean> {
-        return mAuthenticationConverter.convertTryToRegisterResponseForUi(response)
+        return mAuthenticationConverter.convertTryToRegisterResponseToRepositoryResponse(response)
     }
 
-    override fun convertAuthenticationResponseForUi(
+    override fun convertAuthenticationResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<RepositoryMessages> {
-        return mAuthenticationConverter.convertAuthenticationResponseForUi(response)
+        return mAuthenticationConverter.convertAuthenticationResponseToRepositoryResponse(response)
     }
 
-    override fun convertCompaniesResponseForUi(
+    override fun convertLocalCompaniesResponseToRepositoryResponse(
         response: CompaniesResponse
     ): RepositoryResponse<List<AdaptiveCompany>> {
-        return mCompaniesConverter.convertCompaniesResponseForUi(response)
+        return mCompaniesConverter.convertLocalCompaniesResponseToRepositoryResponse(response)
     }
 
-    override fun convertCompanyForLocal(company: AdaptiveCompany): Company {
-        return mCompaniesConverter.convertCompanyForLocal(company)
+    override fun convertAdaptiveCompanyToCompany(company: AdaptiveCompany): Company {
+        return mCompaniesConverter.convertAdaptiveCompanyToCompany(company)
     }
 
-    override fun convertFirstTimeLaunchStateForUi(state: Boolean?): RepositoryResponse<Boolean> {
-        return mFirstTimeLaunchConverter.convertFirstTimeLaunchStateForUi(state)
-    }
-
-    override fun convertRealtimeDatabaseResponseForUi(
+    override fun convertRealtimeResponseToRepositoryResponse(
         response: BaseResponse<String?>?
     ): RepositoryResponse<String> {
-        return mRealtimeDatabaseConverter.convertRealtimeDatabaseResponseForUi(response)
+        return mRealtimeDatabaseConverter.convertRealtimeResponseToRepositoryResponse(response)
     }
 
-    override fun convertSearchRequestForLocal(searchRequest: AdaptiveSearchRequest): SearchRequest {
-        return mSearchRequestsConverter.convertSearchRequestForLocal(searchRequest)
+    override fun convertAdaptiveRequestToRequest(
+        searchRequest: AdaptiveSearchRequest
+    ): SearchRequest {
+        return mSearchRequestsConverter.convertAdaptiveRequestToRequest(searchRequest)
     }
 
-    override fun convertSearchRequestsForUi(searchRequests: List<SearchRequest>): List<AdaptiveSearchRequest> {
-        return mSearchRequestsConverter.convertSearchRequestsForUi(searchRequests)
+    override fun convertLocalRequestsResponseToAdaptiveRequests(
+        searchRequests: List<SearchRequest>
+    ): List<AdaptiveSearchRequest> {
+        return mSearchRequestsConverter.convertLocalRequestsResponseToAdaptiveRequests(
+            searchRequests
+        )
     }
 
-    override fun convertSearchRequestsTextForUi(response: BaseResponse<HashMap<Int, String>>?): RepositoryResponse<List<AdaptiveSearchRequest>> {
-        return mSearchRequestsConverter.convertSearchRequestsTextForUi(response)
+    override fun convertNetworkRequestsResponseToRepositoryResponse(
+        response: BaseResponse<HashMap<Int, String>>?
+    ): RepositoryResponse<List<AdaptiveSearchRequest>> {
+        return mSearchRequestsConverter.convertNetworkRequestsResponseToRepositoryResponse(response)
     }
 
     override fun convertWebSocketResponseForUi(
@@ -142,37 +141,41 @@ class ConverterMediatorImpl @Inject constructor(
         return mWebSocketConverter.convertWebSocketResponseForUi(response)
     }
 
-    override fun convertAdaptiveChatForLocal(adaptiveChat: AdaptiveChat): Chat {
-        return mChatsConverter.convertAdaptiveChatForLocal(adaptiveChat)
+    override fun convertAdaptiveChatToChat(adaptiveChat: AdaptiveChat): Chat {
+        return mChatsConverter.convertAdaptiveChatToChat(adaptiveChat)
     }
 
-    override fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>> {
-        return mChatsConverter.convertLocalChatsForUi(chats)
+    override fun convertChatsToAdaptiveChats(
+        chats: List<Chat>?
+    ): RepositoryResponse<List<AdaptiveChat>> {
+        return mChatsConverter.convertChatsToAdaptiveChats(chats)
     }
 
-    override fun convertCompaniesIdsForUi(response: BaseResponse<List<String>>?): RepositoryResponse<List<String>> {
-        return mCompaniesConverter.convertCompaniesIdsForUi(response)
+    override fun convertNetworkCompaniesResponseToRepositoryResponse(
+        response: BaseResponse<List<String>>?
+    ): RepositoryResponse<List<String>> {
+        return mCompaniesConverter.convertNetworkCompaniesResponseToRepositoryResponse(response)
     }
 
-    override fun convertRemoteChatResponseForUi(
+    override fun convertChatResponseToRepositoryResponse(
         response: BaseResponse<String>
     ): RepositoryResponse<AdaptiveChat> {
-        return mChatsConverter.convertRemoteChatResponseForUi(response)
+        return mChatsConverter.convertChatResponseToRepositoryResponse(response)
     }
 
-    override fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message {
-        return mMessagesConverter.convertMessageForLocal(adaptiveMessage)
+    override fun convertAdaptiveMessageToMessage(adaptiveMessage: AdaptiveMessage): Message {
+        return mMessagesConverter.convertAdaptiveMessageToMessage(adaptiveMessage)
     }
 
-    override fun convertRemoteMessageResponseForUi(
+    override fun convertNetworkMessagesResponseToRepositoryResponse(
         response: BaseResponse<HashMap<String, Any>>
     ): RepositoryResponse<AdaptiveMessage> {
-        return mMessagesConverter.convertRemoteMessageResponseForUi(response)
+        return mMessagesConverter.convertNetworkMessagesResponseToRepositoryResponse(response)
     }
 
-    override fun convertLocalMessagesResponseForUi(
+    override fun convertLocalMessagesResponseToRepositoryResponse(
         messages: List<Message>?
     ): RepositoryResponse<List<AdaptiveMessage>> {
-        return mMessagesConverter.convertLocalMessagesResponseForUi(messages)
+        return mMessagesConverter.convertLocalMessagesResponseToRepositoryResponse(messages)
     }
 }

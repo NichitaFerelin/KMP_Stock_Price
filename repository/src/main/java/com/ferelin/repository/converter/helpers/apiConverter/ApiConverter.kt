@@ -25,28 +25,31 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [ApiConverter] provides converters for responses based on Retrofit
+ * */
 interface ApiConverter {
 
-    fun fromNetworkResponseToAdaptiveStockCandles(
+    fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyHistory>
 
-    fun fromNetworkResponseToAdaptiveCompanyProfile(
+    fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
     ): RepositoryResponse<AdaptiveCompanyProfile>
 
-    fun fromNetworkResponseToAdaptiveStockSymbols(
+    fun convertApiResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols>
 
-    fun fromNetworkResponseToAdaptiveCompanyNews(
+    fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
     ): RepositoryResponse<AdaptiveCompanyNews>
 
-    fun fromNetworkResponseToAdaptiveCompanyDayData(
+    fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
     ): RepositoryResponse<AdaptiveCompanyDayData>
 }

@@ -19,6 +19,9 @@ package com.ferelin.repository.helpers.local
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [ChatsLocalHelper] provides methods for local interacting with chats.
+ * */
 interface ChatsLocalHelper {
 
     suspend fun cacheChatToLocalDb(chat: AdaptiveChat)

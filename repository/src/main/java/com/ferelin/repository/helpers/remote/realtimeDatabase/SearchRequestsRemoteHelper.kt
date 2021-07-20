@@ -19,11 +19,16 @@ package com.ferelin.repository.helpers.remote.realtimeDatabase
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [SearchRequestsRemoteHelper] provides methods for network interacting with search requests.
+ * */
 interface SearchRequestsRemoteHelper {
 
-    fun cacheSearchRequestToRealtimeDb(userId: String, searchRequest: AdaptiveSearchRequest)
+    fun cacheSearchRequestToRealtimeDb(userToken: String, searchRequest: AdaptiveSearchRequest)
 
-    fun eraseSearchRequestFromRealtimeDb(userId: String, searchRequest: AdaptiveSearchRequest)
+    fun eraseSearchRequestFromRealtimeDb(userToken: String, searchRequest: AdaptiveSearchRequest)
 
-    suspend fun getSearchRequestsFromRealtimeDb(userId: String): RepositoryResponse<List<AdaptiveSearchRequest>>
+    suspend fun getSearchRequestsFromRealtimeDb(
+        userToken: String
+    ): RepositoryResponse<List<AdaptiveSearchRequest>>
 }

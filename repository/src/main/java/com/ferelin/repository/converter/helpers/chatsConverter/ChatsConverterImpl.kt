@@ -27,7 +27,7 @@ import javax.inject.Singleton
 @Singleton
 class ChatsConverterImpl @Inject constructor() : ChatsConverter {
 
-    override fun convertAdaptiveChatForLocal(adaptiveChat: AdaptiveChat): Chat {
+    override fun convertAdaptiveChatToChat(adaptiveChat: AdaptiveChat): Chat {
         return Chat(
             id = adaptiveChat.id,
             associatedUserNumber = adaptiveChat.associatedUserNumber,
@@ -35,7 +35,9 @@ class ChatsConverterImpl @Inject constructor() : ChatsConverter {
         )
     }
 
-    override fun convertLocalChatsForUi(chats: List<Chat>?): RepositoryResponse<List<AdaptiveChat>> {
+    override fun convertChatsToAdaptiveChats(
+        chats: List<Chat>?
+    ): RepositoryResponse<List<AdaptiveChat>> {
         return if (chats != null) {
             RepositoryResponse.Success(
                 data = chats.map { chat ->
@@ -49,7 +51,7 @@ class ChatsConverterImpl @Inject constructor() : ChatsConverter {
         } else RepositoryResponse.Failed()
     }
 
-    override fun convertRemoteChatResponseForUi(
+    override fun convertChatResponseToRepositoryResponse(
         response: BaseResponse<String>
     ): RepositoryResponse<AdaptiveChat> {
         return if (response.responseCode == Api.RESPONSE_OK) {

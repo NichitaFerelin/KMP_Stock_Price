@@ -19,7 +19,10 @@ package com.ferelin.repository.helpers.local
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.utils.RepositoryResponse
 
-interface FavouriteCompaniesLocalHelper {
+/**
+ * [CompaniesLocalHelper] provides methods for local interacting with favourite companies.
+ * */
+interface CompaniesLocalHelper {
 
     suspend fun getAllCompaniesFromLocalDb(): RepositoryResponse<List<AdaptiveCompany>>
 

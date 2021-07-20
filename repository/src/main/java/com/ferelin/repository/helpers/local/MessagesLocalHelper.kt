@@ -19,6 +19,9 @@ package com.ferelin.repository.helpers.local
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [MessagesLocalHelper] provides methods for local interacting with messages.
+ * */
 interface MessagesLocalHelper {
 
     suspend fun cacheMessageToLocalDb(message: AdaptiveMessage)

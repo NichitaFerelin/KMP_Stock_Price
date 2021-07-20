@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class RealtimeDatabaseConverterImpl @Inject constructor() : RealtimeDatabaseConverter {
 
-    override fun convertRealtimeDatabaseResponseForUi(
+    override fun convertRealtimeResponseToRepositoryResponse(
         response: BaseResponse<String?>?
     ): RepositoryResponse<String> {
         if (response == null) {

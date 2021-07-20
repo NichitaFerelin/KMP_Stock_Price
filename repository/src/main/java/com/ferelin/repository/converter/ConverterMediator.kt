@@ -20,19 +20,20 @@ import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
 import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
-import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
 import com.ferelin.repository.converter.helpers.searchRequestsConverter.SearchRequestsConverter
 import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConverter
 
+/**
+ * [ConverterMediator] is used to convert models between modules.
+ */
 interface ConverterMediator :
-        ApiConverter,
-        AuthenticationConverter,
-        CompaniesConverter,
-        FirstTimeLaunchConverter,
-        MessagesConverter,
-        RealtimeDatabaseConverter,
-        SearchRequestsConverter,
-        WebSocketConverter,
-        ChatsConverter
+    ApiConverter,
+    AuthenticationConverter,
+    CompaniesConverter,
+    MessagesConverter,
+    RealtimeDatabaseConverter,
+    SearchRequestsConverter,
+    WebSocketConverter,
+    ChatsConverter

@@ -21,15 +21,18 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 
+/**
+ * [MessagesConverter] provides converters for message model
+ * */
 interface MessagesConverter {
 
-    fun convertMessageForLocal(adaptiveMessage: AdaptiveMessage): Message
+    fun convertAdaptiveMessageToMessage(adaptiveMessage: AdaptiveMessage): Message
 
-    fun convertRemoteMessageResponseForUi(
+    fun convertNetworkMessagesResponseToRepositoryResponse(
         response: BaseResponse<HashMap<String, Any>>
     ): RepositoryResponse<AdaptiveMessage>
 
-    fun convertLocalMessagesResponseForUi(
+    fun convertLocalMessagesResponseToRepositoryResponse(
         messages: List<Message>?
     ): RepositoryResponse<List<AdaptiveMessage>>
 }

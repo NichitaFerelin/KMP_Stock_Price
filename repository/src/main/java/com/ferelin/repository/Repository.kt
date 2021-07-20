@@ -25,8 +25,11 @@ import com.ferelin.repository.helpers.remote.realtimeDatabase.FavouriteCompanies
 import com.ferelin.repository.helpers.remote.realtimeDatabase.MessagesRemoteHelper
 import com.ferelin.repository.helpers.remote.realtimeDatabase.SearchRequestsRemoteHelper
 
+/**
+ * [Repository] is a main entity for interacting with application data.
+ * */
 interface Repository :
-    FavouriteCompaniesLocalHelper,
+    CompaniesLocalHelper,
     MessagesLocalHelper,
     StorePreferencesHelper,
     ChatsLocalHelper,

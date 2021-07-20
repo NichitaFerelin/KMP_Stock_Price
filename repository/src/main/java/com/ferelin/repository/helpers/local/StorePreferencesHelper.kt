@@ -16,13 +16,16 @@
 
 package com.ferelin.repository.helpers.local
 
+/**
+ * [StorePreferencesHelper] provides methods for local interacting with store preferences.
+ * */
 interface StorePreferencesHelper {
 
     suspend fun getFirstTimeLaunchState(): Boolean
 
-    suspend fun setFirstTimeLaunchState(state: Boolean)
-
-    suspend fun setUserNumber(number: String)
+    suspend fun cacheFirstTimeLaunchState(state: Boolean)
 
     suspend fun getUserNumber(): String
+
+    suspend fun cacheUserNumber(number: String)
 }

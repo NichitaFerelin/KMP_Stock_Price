@@ -26,24 +26,32 @@ import javax.inject.Singleton
 @Singleton
 class AuthenticationConverterImpl @Inject constructor() : AuthenticationConverter {
 
-    override fun convertTryToRegisterResponseForUi(
+    override fun convertTryToRegisterResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<Boolean> {
         return when (response.responseCode) {
             Api.RESPONSE_OK -> RepositoryResponse.Success(data = true)
-            Api.RESPONSE_LOGIN_EXISTS -> RepositoryResponse.Failed(message = RepositoryMessages.AlreadyExists)
-            Api.RESPONSE_BAD_LOGIN -> RepositoryResponse.Failed(message = RepositoryMessages.BadLogin)
+            Api.RESPONSE_LOGIN_EXISTS -> {
+                RepositoryResponse.Failed(message = RepositoryMessages.AlreadyExists)
+            }
+            Api.RESPONSE_BAD_LOGIN -> {
+                RepositoryResponse.Failed(message = RepositoryMessages.BadLogin)
+            }
             else -> RepositoryResponse.Failed()
         }
     }
 
-    override fun convertAuthenticationResponseForUi(
+    override fun convertAuthenticationResponseToRepositoryResponse(
         response: BaseResponse<Boolean>
     ): RepositoryResponse<RepositoryMessages> {
         return when (response.responseCode) {
             Api.VERIFICATION_COMPLETED -> RepositoryResponse.Success(data = RepositoryMessages.Ok)
-            Api.VERIFICATION_CODE_SENT -> RepositoryResponse.Success(data = RepositoryMessages.CodeSent)
-            Api.VERIFICATION_TOO_MANY_REQUESTS -> RepositoryResponse.Failed(message = RepositoryMessages.Limit)
+            Api.VERIFICATION_CODE_SENT -> {
+                RepositoryResponse.Success(data = RepositoryMessages.CodeSent)
+            }
+            Api.VERIFICATION_TOO_MANY_REQUESTS -> {
+                RepositoryResponse.Failed(message = RepositoryMessages.Limit)
+            }
             else -> RepositoryResponse.Failed()
         }
     }

@@ -18,9 +18,12 @@ package com.ferelin.repository.helpers.local
 
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 
+/**
+ * [SearchRequestsLocalHelper] provides methods for local interacting with search requests.
+ * */
 interface SearchRequestsLocalHelper {
 
-    suspend fun clearLocalSearchRequestsHistory()
+    suspend fun clearSearchRequestsLocalDb()
 
     suspend fun getSearchRequestsFromLocalDb(): List<AdaptiveSearchRequest>
 

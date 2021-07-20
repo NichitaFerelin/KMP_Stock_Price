@@ -27,7 +27,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverter {
 
-    override fun convertSearchRequestForLocal(
+    override fun convertAdaptiveRequestToRequest(
         searchRequest: AdaptiveSearchRequest
     ): SearchRequest {
         return SearchRequest(
@@ -36,7 +36,7 @@ class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverte
         )
     }
 
-    override fun convertSearchRequestsForUi(
+    override fun convertLocalRequestsResponseToAdaptiveRequests(
         searchRequests: List<SearchRequest>
     ): List<AdaptiveSearchRequest> {
         return searchRequests
@@ -48,7 +48,7 @@ class SearchRequestsConverterImpl @Inject constructor() : SearchRequestsConverte
             }.sortedBy { it.id }
     }
 
-    override fun convertSearchRequestsTextForUi(
+    override fun convertNetworkRequestsResponseToRepositoryResponse(
         response: BaseResponse<HashMap<Int, String>>?
     ): RepositoryResponse<List<AdaptiveSearchRequest>> {
         return if (response != null && response.responseCode == Api.RESPONSE_OK) {
