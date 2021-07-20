@@ -16,7 +16,14 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.workers.chats.ChatsWorker
+
+/**
+ * Methods for interacting with chats via [DataInteractor].
+ * @see [ChatsWorker] to get info about how methods works
+ * */
 interface ChatsHelper {
-    
+
     fun createNewChat(associatedUserNumber: String)
 }

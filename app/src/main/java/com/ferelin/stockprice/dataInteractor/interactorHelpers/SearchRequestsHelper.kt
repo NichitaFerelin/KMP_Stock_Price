@@ -16,7 +16,14 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.workers.searchRequests.SearchRequestsWorker
+
+/**
+ * Methods for interacting with search requests via [DataInteractor].
+ * @see [SearchRequestsWorker] to get info about how methods works
+ * */
 interface SearchRequestsHelper {
 
-    suspend fun cacheNewSearchRequest(searchText: String)
+    suspend fun cacheSearchRequest(searchText: String)
 }

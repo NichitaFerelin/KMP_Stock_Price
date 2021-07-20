@@ -16,6 +16,13 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.workers.messages.MessagesWorker
+
+/**
+ * Methods for interacting with messages via [DataInteractor].
+ * @see [MessagesWorker] to get info about how methods works
+ * */
 interface MessagesHelper {
 
     fun loadMessagesFor(associatedUserNumber: String)

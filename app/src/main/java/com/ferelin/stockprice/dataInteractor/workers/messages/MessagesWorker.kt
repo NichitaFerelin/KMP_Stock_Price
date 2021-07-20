@@ -41,11 +41,11 @@ class MessagesWorker @Inject constructor(
     private val mStateMessages =
         MutableStateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>(DataNotificator.None())
     override val stateMessages: StateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>
-        get() = mStateMessages
+        get() = mStateMessages.asStateFlow()
 
     private val mSharedMessagesUpdates = MutableSharedFlow<AdaptiveMessage>()
     override val sharedMessagesHolderUpdates: SharedFlow<AdaptiveMessage>
-        get() = mSharedMessagesUpdates
+        get() = mSharedMessagesUpdates.asSharedFlow()
 
     private var mMessagesJob: Job? = null
     private var mDataPreparedFor: String? = null
@@ -87,6 +87,7 @@ class MessagesWorker @Inject constructor(
     private suspend fun loadMessagesFromLocalCache(associatedUserNumber: String) {
         if (mMessagesHolder[associatedUserNumber] == null) {
             val localMessagesResponse = mRepository.getMessagesFromLocalDb(associatedUserNumber)
+
             val newHolderValue = if (localMessagesResponse is RepositoryResponse.Success) {
                 ArrayList(localMessagesResponse.data)
             } else arrayListOf()
@@ -117,15 +118,14 @@ class MessagesWorker @Inject constructor(
     private suspend fun onNewItem(response: RepositoryResponse.Success<AdaptiveMessage>) {
         val cachedContainer = mMessagesHolder[response.data.associatedUserNumber]
         if (cachedContainer != null) {
-            cachedContainer.add(response.data)
-            mSharedMessagesUpdates.emit(response.data)
-            mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }
+            cachedContainer.add(response.data.id, response.data)
         } else {
             mChatsWorker.createNewChat(response.data.associatedUserNumber)
             mMessagesHolder[response.data.associatedUserNumber] = arrayListOf(response.data)
-            mSharedMessagesUpdates.emit(response.data)
-            mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }
         }
+
+        mSharedMessagesUpdates.emit(response.data)
+        mAppScope.launch { mRepository.cacheMessageToLocalDb(response.data) }
     }
 
     private fun invalidatePreviousState() {

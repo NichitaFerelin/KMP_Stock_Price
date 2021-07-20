@@ -104,7 +104,7 @@ class SearchRequestsSynchronization @Inject constructor(
                 val requestsResponse = mRepository.getSearchRequestsFromRealtimeDb(userToken)
                 if (requestsResponse is RepositoryResponse.Success) {
                     findAndFixMissingItems(userToken, requestsResponse.data, localSearchRequests)
-                    if (mSyncMode !is SyncConflictMode.RemotePriority) {
+                    if (mSyncMode != SyncConflictMode.RemotePriority) {
                         detectInconsistencyAndSync(userToken, localSearchRequests)
                     }
                     mIsDataSynchronized = true
@@ -122,7 +122,7 @@ class SearchRequestsSynchronization @Inject constructor(
             val remoteItemAtLocal = localItems.find { it.searchText == remoteItem.searchText }
             if (remoteItemAtLocal == null) {
                 when (mSyncMode) {
-                    is SyncConflictMode.LocalPriority -> {
+                    SyncConflictMode.LocalPriority -> {
                         mRepository.eraseSearchRequestFromRealtimeDb(userToken, remoteItem)
                     }
                     else -> {

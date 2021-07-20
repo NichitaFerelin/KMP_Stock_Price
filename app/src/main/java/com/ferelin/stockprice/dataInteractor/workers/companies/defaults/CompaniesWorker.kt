@@ -22,10 +22,7 @@ import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.utils.CompanyStyleProvider
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,7 +36,6 @@ import javax.inject.Singleton
  *   - Using [mRepository] to data caching.
  *   - Using [mCompanyStyleProvider] to change some stock fields that will be affect on stock's appearance.
  */
-
 @Singleton
 class CompaniesWorker @Inject constructor(
     private val mRepository: Repository,
@@ -52,11 +48,11 @@ class CompaniesWorker @Inject constructor(
     private val mStateCompanies =
         MutableStateFlow<DataNotificator<List<AdaptiveCompany>>>(DataNotificator.None())
     override val stateCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mStateCompanies
+        get() = mStateCompanies.asStateFlow()
 
     private val mSharedCompaniesUpdates = MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
     override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mSharedCompaniesUpdates
+        get() = mSharedCompaniesUpdates.asSharedFlow()
 
     fun onCompaniesDataPrepared(companies: List<AdaptiveCompany>) {
         companies.forEachIndexed { index, company ->
@@ -121,18 +117,16 @@ class CompaniesWorker @Inject constructor(
     suspend fun onLiveTimePriceResponse(
         response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
     ) {
-        isDataChanged(
-            symbolCompanyOwner = response.owner!!,
-            isDataNewCompare = { response.data.price == it.companyDayData.currentPrice }
-        )?.let { companyToUpdate ->
-            companyToUpdate.apply {
-                companyDayData.currentPrice = response.data.price
-                companyDayData.profit = response.data.profit
-                companyStyle.dayProfitBackground =
-                    mCompanyStyleProvider.getProfitBackground(response.data.profit)
+        isDataChanged(response.owner!!) { response.data.price == it.companyDayData.currentPrice }
+            ?.let { companyToUpdate ->
+                companyToUpdate.apply {
+                    companyDayData.currentPrice = response.data.price
+                    companyDayData.profit = response.data.profit
+                    companyStyle.dayProfitBackground =
+                        mCompanyStyleProvider.getProfitBackground(response.data.profit)
+                }
+                onCompanyChanged(DataNotificator.ItemUpdatedPrice(companyToUpdate))
             }
-            onCompanyChanged(DataNotificator.ItemUpdatedPrice(companyToUpdate))
-        }
     }
 
     private fun isDataChanged(

@@ -17,10 +17,10 @@
 package com.ferelin.stockprice.dataInteractor.utils
 
 /**
- * [SyncConflictMode] is a synchronization mode for [SynchronizationManager]
+ * [SyncConflictMode] presents sync options.
  * */
-sealed class SyncConflictMode {
-    object Merge : SyncConflictMode()
-    object LocalPriority : SyncConflictMode()
-    object RemotePriority : SyncConflictMode()
+enum class SyncConflictMode {
+    Merge,
+    LocalPriority,
+    RemotePriority
 }

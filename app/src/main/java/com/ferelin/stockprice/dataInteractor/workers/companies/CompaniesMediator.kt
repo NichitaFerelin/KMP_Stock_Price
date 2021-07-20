@@ -116,11 +116,9 @@ open class CompaniesMediator @Inject constructor(
     }
 
     fun onLogOut() {
-        mFavouriteCompaniesWorker.onLogOut {
-            mAppScope.launch {
-                mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(it))
-            }
-        }
+        mFavouriteCompaniesWorker.onLogOut(onCompanyRemoved = {
+            mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(it))
+        })
     }
 
     fun onNetworkLost() {

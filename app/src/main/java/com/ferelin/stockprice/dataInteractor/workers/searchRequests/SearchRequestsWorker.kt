@@ -68,21 +68,6 @@ class SearchRequestsWorker @Inject constructor(
         }
     }
 
-    private suspend fun onNewSearchRequest(newSearchRequest: AdaptiveSearchRequest) {
-        removeSearchRequestsDuplicates(newSearchRequest)
-
-        mSearchRequests.add(0, newSearchRequest)
-
-        mRepository.cacheSearchRequestToLocalDb(newSearchRequest)
-        mSearchRequestsSynchronization.onSearchRequestAdded(newSearchRequest)
-
-        if (isSearchRequestsLimitExceeded()) {
-            reduceRequestsToLimit()
-        }
-
-        mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
-    }
-
     fun cacheNewSearchRequest(searchText: String) {
         mAppScope.launch {
             val newSearchRequest = AdaptiveSearchRequest(
@@ -122,8 +107,22 @@ class SearchRequestsWorker @Inject constructor(
             mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
             mStatePopularSearchRequests.value =
                 DataNotificator.DataPrepared(PopularRequestsSource.popularSearchRequests)
-
         }
+    }
+
+    private suspend fun onNewSearchRequest(newSearchRequest: AdaptiveSearchRequest) {
+        removeSearchRequestsDuplicates(newSearchRequest)
+
+        mSearchRequests.add(0, newSearchRequest)
+
+        mRepository.cacheSearchRequestToLocalDb(newSearchRequest)
+        mSearchRequestsSynchronization.onSearchRequestAdded(newSearchRequest)
+
+        if (isSearchRequestsLimitExceeded()) {
+            reduceRequestsToLimit()
+        }
+
+        mStateSearchRequests.value = DataNotificator.DataPrepared(mSearchRequests)
     }
 
     private fun clearSearchRequests() {

@@ -27,6 +27,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * [ChatsWorker] is an entity for interacting with repository chats methods.
+ */
 @Singleton
 class ChatsWorker @Inject constructor(
     private val mRepository: Repository,
@@ -42,14 +45,21 @@ class ChatsWorker @Inject constructor(
 
     private val mSharedUserChatsUpdates = MutableSharedFlow<DataNotificator<AdaptiveChat>>()
     override val sharedUserChatUpdates: SharedFlow<DataNotificator<AdaptiveChat>>
-        get() = mSharedUserChatsUpdates
+        get() = mSharedUserChatsUpdates.asSharedFlow()
 
+    /**
+     * To control collecting of new chats
+     * */
     private var mChatsJob: Job? = null
 
     init {
         prepareChats()
     }
 
+    /**
+     * Creates new chat.
+     * [associatedUserNumber] is an user number with which need to create chat.
+     * */
     fun createNewChat(associatedUserNumber: String) {
         mAppScope.launch {
             if (!mRepository.isUserAuthenticated()) {

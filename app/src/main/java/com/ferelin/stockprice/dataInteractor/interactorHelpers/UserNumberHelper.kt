@@ -16,6 +16,12 @@
 
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+
+/**
+ * Methods for interacting with user number via [DataInteractor]
+ * @see [DataInteractor] to get info about how methods works
+ * */
 interface UserNumberHelper {
 
     suspend fun getUserNumber() : String?

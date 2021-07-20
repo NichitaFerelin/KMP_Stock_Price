@@ -66,7 +66,7 @@ class MenuItemsWorker @Inject constructor(
         mAppScope.launch {
             if (mRepository.isUserAuthenticated()) {
                 mMenuItems.add(mMenuItemsSource.logOutItem)
-            } else mMenuItems.add(mMenuItemsSource.logInItem)
+            } else mMenuItems.add(0, mMenuItemsSource.logInItem)
         }
     }
 }

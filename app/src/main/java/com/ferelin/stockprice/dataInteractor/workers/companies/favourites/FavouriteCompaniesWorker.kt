@@ -23,10 +23,7 @@ import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.parseDoubleFromStr
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -59,19 +56,19 @@ class FavouriteCompaniesWorker @Inject constructor(
     private val mStateFavouriteCompanies =
         MutableStateFlow<DataNotificator<List<AdaptiveCompany>>>(DataNotificator.None())
     override val stateFavouriteCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
-        get() = mStateFavouriteCompanies
+        get() = mStateFavouriteCompanies.asStateFlow()
 
     private val mSharedFavouriteCompaniesUpdates =
         MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
     override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
-        get() = mSharedFavouriteCompaniesUpdates
+        get() = mSharedFavouriteCompaniesUpdates.asSharedFlow()
 
     /*
     * To observe company by foreground service
     * */
     private val mStateCompanyForObserver = MutableStateFlow<AdaptiveCompany?>(null)
     override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
-        get() = mStateCompanyForObserver
+        get() = mStateCompanyForObserver.asStateFlow()
 
     /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
@@ -121,7 +118,9 @@ class FavouriteCompaniesWorker @Inject constructor(
 
     suspend fun removeCompanyFromFavourites(company: AdaptiveCompany): AdaptiveCompany {
         changeRemovedCompanyStyle(company)
-        mFavouriteCompanies.remove(company)
+
+        val targetCompanyIndex = mFavouriteCompanies.indexOf(company)
+        mFavouriteCompanies.removeAt(targetCompanyIndex)
         mAppScope.launch { mRepository.cacheCompanyToLocalDb(company) }
 
         mRepository.unsubscribeItemFromLiveTimeUpdates(company.companyProfile.symbol)
@@ -145,7 +144,7 @@ class FavouriteCompaniesWorker @Inject constructor(
         }
     }
 
-    fun onLogOut(onCompanyRemoved: (AdaptiveCompany) -> Unit) {
+    fun onLogOut(onCompanyRemoved: suspend (AdaptiveCompany) -> Unit) {
         mFavouriteCompaniesSynchronization.onLogOut()
 
         mAppScope.launch {

@@ -18,8 +18,14 @@ package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
+import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.dataInteractor.workers.webSocket.WebSocketWorker
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Methods for interacting with web-socket via [DataInteractor].
+ * @see [WebSocketWorker] to get info about how methods works
+ * */
 interface WebSocketHelper {
 
     suspend fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>>

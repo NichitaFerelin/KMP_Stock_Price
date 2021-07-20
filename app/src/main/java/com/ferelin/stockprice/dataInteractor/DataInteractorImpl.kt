@@ -327,7 +327,7 @@ class DataInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun cacheNewSearchRequest(searchText: String) {
+    override suspend fun cacheSearchRequest(searchText: String) {
         mSearchRequestsWorker.cacheNewSearchRequest(searchText)
     }
 
