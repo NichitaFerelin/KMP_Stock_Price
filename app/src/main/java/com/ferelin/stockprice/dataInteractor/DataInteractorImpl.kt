@@ -301,12 +301,12 @@ class DataInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun loadStockPrice(
+    override suspend fun sendRequestToLoadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mCompaniesMediator.loadStockPrice(symbol, position, isImportant)
+    ) {
+        mCompaniesMediator.sendRequestToLoadStockPrice(symbol, position, isImportant)
     }
 
     override fun loadMessagesFor(associatedUserNumber: String) {

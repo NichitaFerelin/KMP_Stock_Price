@@ -22,6 +22,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
@@ -142,21 +143,21 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
     }
 
     private fun showTextViewError() {
-        if (viewBinding.textViewError.visibility != View.VISIBLE) {
-            viewBinding.textViewError.visibility = View.VISIBLE
+        if (!viewBinding.textViewError.isVisible) {
+            viewBinding.textViewError.isVisible = true
         }
     }
 
     private fun hideTextViewError() {
-        if (viewBinding.textViewError.visibility != View.GONE) {
-            viewBinding.textViewError.visibility = View.GONE
+        if (viewBinding.textViewError.isVisible) {
+            viewBinding.textViewError.isVisible = false
         }
     }
 
     private fun showChart() {
-        if (viewBinding.groupChartWidgets.visibility != View.VISIBLE) {
+        if (!viewBinding.groupChartWidgets.isVisible) {
             TransitionManager.beginDelayedTransition(viewBinding.root)
-            viewBinding.groupChartWidgets.visibility = View.VISIBLE
+            viewBinding.groupChartWidgets.isVisible = true
         }
     }
 
@@ -212,14 +213,14 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
     }
 
     private fun showProgressBar() {
-        if (viewBinding.progressBar.visibility != View.VISIBLE) {
-            viewBinding.progressBar.visibility = View.VISIBLE
+        if (!viewBinding.progressBar.isVisible) {
+            viewBinding.progressBar.isVisible = true
         }
     }
 
     private fun hideProgressBar() {
-        if (viewBinding.progressBar.visibility != View.GONE) {
-            viewBinding.progressBar.visibility = View.GONE
+        if (viewBinding.progressBar.isVisible) {
+            viewBinding.progressBar.isVisible = false
         }
     }
 
@@ -236,12 +237,12 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
     private fun getAttachedViewsByMode(mode: ChartViewMode): Array<View> {
         with(viewBinding) {
             return when (mode) {
-                is ChartViewMode.Year -> arrayOf(cardViewYear, textViewYear)
-                is ChartViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
-                is ChartViewMode.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
-                is ChartViewMode.Days -> arrayOf(cardViewDay, textViewDays)
-                is ChartViewMode.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
-                is ChartViewMode.All -> arrayOf(cardViewAll, textViewAll)
+                ChartViewMode.Year -> arrayOf(cardViewYear, textViewYear)
+                ChartViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
+                ChartViewMode.Weeks -> arrayOf(cardViewWeek, textViewWeeks)
+                ChartViewMode.Days -> arrayOf(cardViewDay, textViewDays)
+                ChartViewMode.SixMonths -> arrayOf(cardViewHalfYear, textViewSixMonths)
+                ChartViewMode.All -> arrayOf(cardViewAll, textViewAll)
             }
         }
     }

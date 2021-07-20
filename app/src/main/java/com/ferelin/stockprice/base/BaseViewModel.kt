@@ -22,7 +22,8 @@ import com.ferelin.stockprice.dataInteractor.DataInteractor
 import javax.inject.Inject
 
 /**
- * [BaseViewModel] contains all logic for data loading. [mDataInteractor] makes it possible.
+ * [BaseViewModel] contains all logic for data loading.
+ * [mDataInteractor] makes it possible.
  */
 abstract class BaseViewModel : ViewModel() {
 

@@ -84,12 +84,16 @@ class RemoteMediatorImpl @Inject constructor(
         return mApiManager.loadCompanyNews(symbol, from, to)
     }
 
-    override fun loadStockPrice(
+    override fun sendRequestToLoadPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<StockPriceResponse>> {
-        return mApiManager.loadStockPrice(symbol, position, isImportant)
+    ) {
+        return mApiManager.sendRequestToLoadPrice(symbol, position, isImportant)
+    }
+
+    override fun getStockPriceResponseState(): Flow<BaseResponse<StockPriceResponse>> {
+        return mApiManager.getStockPriceResponseState()
     }
 
     override fun tryToLogIn(holderActivity: Activity, phone: String): Flow<BaseResponse<Boolean>> {

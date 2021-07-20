@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.aboutSection.news
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.stockprice.ui.aboutSection.news
  * limitations under the License.
  */
 
-interface NewsClickListener {
-    fun onNewsUrlClicked(position: Int)
+package com.ferelin.stockprice.utils.bottomDrawer
+
+interface OnStateAction {
+    fun onBottomDrawerStateChanged(newState: Int)
 }

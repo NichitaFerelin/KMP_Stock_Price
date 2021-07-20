@@ -24,7 +24,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksFragment
-import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,15 +47,12 @@ class SearchFragment :
             fragmentManager = parentFragmentManager
         )
 
-        // setUpBackPressedCallback()
         setUpClickListeners()
     }
 
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { collectStateSearchRequests() }
-            launch { collectStatePopularSearchRequests() }
             launch { collectStateSearchResults() }
             launch { collectEventOnError() }
         }
@@ -65,6 +61,10 @@ class SearchFragment :
     override fun onStop() {
         super.onStop()
         mViewController.onStop()
+    }
+
+    override fun onBackPressedHandle(): Boolean {
+        return mViewController.onBackSwiped(mViewModel.lastSearchRequest)
     }
 
     private fun setUpClickListeners() {
@@ -89,33 +89,6 @@ class SearchFragment :
         }
     }
 
-    private suspend fun collectStateSearchRequests() {
-        mViewModel.stateSearchRequests.collect { notificator ->
-            withContext(mCoroutineContext.Main) {
-                when (notificator) {
-                    is DataNotificator.DataPrepared -> {
-                        mViewController.onSearchRequestsChanged(notificator)
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun collectStatePopularSearchRequests() {
-        mViewModel.statePopularSearchRequests
-            .collect { notificator ->
-                withContext(mCoroutineContext.Main) {
-                    when (notificator) {
-                        // TODO
-                        is DataNotificator.DataPrepared -> {
-                            // TODO array list in method
-                            mViewController.onPopularSearchRequestsChanged(ArrayList(notificator.data!!))
-                        }
-                    }
-                }
-            }
-    }
-
     private suspend fun collectEventOnError() {
         mViewModel.eventOnError.collect {
             withContext(mCoroutineContext.Main) {
@@ -123,22 +96,4 @@ class SearchFragment :
             }
         }
     }
-
-    override fun onBackPressedHandle(): Boolean {
-        mViewController.onBackSwiped(mViewModel.lastSearchRequest)
-        return true
-    }
-
-    /*private val mOnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            mViewController.onBackPressed(mViewModel.lastSearchRequest)
-        }
-    }
-
-    private fun setUpBackPressedCallback() {
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            mOnBackPressedCallback
-        )
-    }*/
 }

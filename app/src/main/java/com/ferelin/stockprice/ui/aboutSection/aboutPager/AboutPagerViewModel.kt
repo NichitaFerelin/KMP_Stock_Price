@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutSection
+package com.ferelin.stockprice.ui.aboutSection.aboutPager
 
 /*
  * Copyright 2021 Leah Nichita
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 class AboutPagerViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
 
-    val eventOnDataChanged: Flow<DataNotificator<AdaptiveCompany>>
+    val eventOnCompanyDataChanged: Flow<DataNotificator<AdaptiveCompany>>
         get() = mDataInteractor.sharedCompaniesUpdates.filter { filterUpdate(it) }
 
     val companySymbol: String

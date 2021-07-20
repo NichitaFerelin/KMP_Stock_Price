@@ -19,11 +19,11 @@ package com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter
 /**
  * Items in the bottom menu that can be installed in it.
  * */
-sealed class MenuItemType {
-    object LogIn : MenuItemType()
-    object LogOut : MenuItemType()
-    object Stocks : MenuItemType()
-    object Notes : MenuItemType()
-    object Chats : MenuItemType()
-    object Settings : MenuItemType()
+enum class MenuItemType {
+    LogIn,
+    LogOut,
+    Stocks,
+    Notes,
+    Chats,
+    Settings
 }

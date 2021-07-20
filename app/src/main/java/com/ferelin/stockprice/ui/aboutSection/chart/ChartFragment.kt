@@ -55,12 +55,12 @@ class ChartFragment(
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch { collectStateStockHistory() }
-            launch { collectStateOnDayDataChanged() }
+            launch { collectEventOnCompanyDataChanged() }
             launch { collectEventOnError() }
         }
     }
 
-    private suspend fun collectStateOnDayDataChanged() {
+    private suspend fun collectEventOnCompanyDataChanged() {
         mViewModel.eventOnDayDataChanged.collect {
             withContext(mCoroutineContext.Main) {
                 mViewController.onDayDataChanged(
@@ -129,11 +129,13 @@ class ChartFragment(
     }
 
     private fun onCardClicked(card: View) {
-        mViewController.onCardClicked(
-            card = card as CardView,
-            onNewCardClicked = { selectedChartViewMode ->
-                mViewModel.onChartControlButtonClicked(selectedChartViewMode)
-            }
-        )
+        if (card is CardView) {
+            mViewController.onCardClicked(
+                card,
+                onNewCardClicked = { selectedChartViewMode ->
+                    mViewModel.onChartControlButtonClicked(selectedChartViewMode)
+                }
+            )
+        }
     }
 }

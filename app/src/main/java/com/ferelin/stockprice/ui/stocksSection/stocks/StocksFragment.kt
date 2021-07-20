@@ -39,8 +39,8 @@ class StocksFragment :
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         mViewController.setArgumentsViewDependsOn(
-            stocksAdapter = mViewModel.stocksRecyclerAdapter,
-            fragmentManager = requireParentFragment().parentFragmentManager
+            mViewModel.stocksRecyclerAdapter,
+            requireParentFragment().parentFragmentManager
         )
         mViewController.viewBinding.recyclerViewStocks.addOnScrollListener(mOnScrollListener)
     }

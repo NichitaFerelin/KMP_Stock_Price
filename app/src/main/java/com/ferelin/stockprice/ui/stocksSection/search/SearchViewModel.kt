@@ -18,13 +18,13 @@ package com.ferelin.stockprice.ui.stocksSection.search
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.filterCompanies
 import com.ferelin.stockprice.utils.withTimer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel : BaseStocksViewModel() {
 
@@ -35,13 +35,7 @@ class SearchViewModel : BaseStocksViewModel() {
 
     private val mStateSearchStockResults = MutableStateFlow<ArrayList<AdaptiveCompany>?>(null)
     val stateSearchStockResults: StateFlow<ArrayList<AdaptiveCompany>?>
-        get() = mStateSearchStockResults
-
-    val stateSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>?>
-        get() = mDataInteractor.stateSearchRequests
-
-    val statePopularSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>
-        get() = mDataInteractor.statePopularSearchRequests
+        get() = mStateSearchStockResults.asStateFlow()
 
     private var mLastSearchRequest = ""
     val lastSearchRequest: String
@@ -55,7 +49,9 @@ class SearchViewModel : BaseStocksViewModel() {
     override fun initObserversBlock() {
         super.initObserversBlock()
         viewModelScope.launch(mCoroutineContext.IO) {
-            collectStateCompanies()
+            launch { collectStateCompanies() }
+            launch { collectStateSearchRequests() }
+            launch { collectStatePopularSearchRequests() }
         }
     }
 
@@ -89,15 +85,35 @@ class SearchViewModel : BaseStocksViewModel() {
             .collect { mCompanies = ArrayList(it.data!!) }
     }
 
+    private suspend fun collectStateSearchRequests() {
+        mDataInteractor.stateSearchRequests.collect { notificator ->
+            if (notificator is DataNotificator.DataPrepared) {
+                withContext(mCoroutineContext.Main) {
+                    searchRequestAdapter.setData(notificator.data!!)
+                }
+            }
+        }
+    }
+
+    private suspend fun collectStatePopularSearchRequests() {
+        mDataInteractor.statePopularSearchRequests.collect { notificator ->
+            if (notificator is DataNotificator.DataPrepared) {
+                withContext(mCoroutineContext.Main) {
+                    popularRequestsAdapter.setData(notificator.data!!)
+                }
+            }
+        }
+    }
+
     private suspend fun onNewSearch(searchText: String, resultsSize: Int) {
         if (resultsSize in 1..5) {
-            mDataInteractor.cacheNewSearchRequest(searchText)
+            mDataInteractor.cacheSearchRequest(searchText)
         }
     }
 
     private fun search(searchText: String): MutableList<AdaptiveCompany> {
         val itemsToSearchIn = if (searchText.length > mLastSearchRequest.length) {
-            mStocksRecyclerAdapter.companies
+            stocksRecyclerAdapter.companies
         } else mCompanies
 
         val results = mutableListOf<AdaptiveCompany>()

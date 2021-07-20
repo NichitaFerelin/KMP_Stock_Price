@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.aboutSection
+package com.ferelin.stockprice.ui.aboutSection.aboutPager
 
 /*
  * Copyright 2021 Leah Nichita
@@ -28,6 +28,7 @@ import com.ferelin.stockprice.custom.OrderedTextView
 import com.ferelin.stockprice.databinding.FragmentAboutPagerBinding
 import com.google.android.material.transition.Hold
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 
 class AboutPagerViewController :
     BaseViewController<AboutPagerViewAnimator, FragmentAboutPagerBinding>() {
@@ -36,11 +37,13 @@ class AboutPagerViewController :
 
     private var mSelectedTabPagePosition = 0
 
-    private val mViewPagerCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            super.onPageSelected(position)
-            val selectedTab = getTabByPosition(position)
-            onTabClicked(selectedTab)
+    private val mViewPagerCallback: ViewPager2.OnPageChangeCallback by lazy(LazyThreadSafetyMode.NONE) {
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val selectedTab = getTabByPosition(position)
+                onTabClicked(selectedTab)
+            }
         }
     }
 
@@ -89,18 +92,16 @@ class AboutPagerViewController :
         mViewAnimator.runScaleInOut(viewBinding.imageViewStar)
     }
 
-    fun onBackSwiped(isNavigatedFromMenu: Boolean) {
+    fun onBackSwiped(isNavigatedFromMenu: Boolean): Boolean {
         if (isNotFirstPageSelected()) {
             viewBinding.viewPager.setCurrentItem(0, true)
-        } else {
-            onBackPressed(isNavigatedFromMenu)
-        }
+        } else navigateBack(isNavigatedFromMenu)
+
+        return true
     }
 
-    fun onBackPressed(isNavigatedFromMenu: Boolean) {
-        if (!isNavigatedFromMenu) {
-            mNavigator?.navigateFromAboutPagerToSearch()
-        } else mNavigator?.navigateBackToHostFragment()
+    fun onBackBtnPressed(isNavigatedFromMenu: Boolean) {
+        navigateBack(isNavigatedFromMenu)
     }
 
     fun onDataChanged(companyName: String, companySymbol: String, favouriteIconResource: Int) {
@@ -120,6 +121,7 @@ class AboutPagerViewController :
         TextViewCompat.setTextAppearance(previousTab, R.style.textViewBodyShadowedTab)
         TextViewCompat.setTextAppearance(newTab, R.style.textViewH3Tab)
         mViewAnimator.runScaleInOut(newTab)
+        scrollByTab(newTab)
     }
 
     private fun restoreSelectedTab(lastSelectedTabPosition: Int) {
@@ -142,11 +144,30 @@ class AboutPagerViewController :
         }
     }
 
+    private fun scrollByTab(tab: OrderedTextView) {
+        val scrollByX = if (tab.orderNumber != 0) {
+            val x = tab.x
+            val width = tab.width
+            (x + (width / 2)).toInt()
+        } else 0
+
+        viewBinding.horizontalTabsContainer.smoothScrollTo(scrollByX, 0)
+    }
+
     private fun setUpTransitions(fragment: Fragment) {
-        fragment.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            scrimColor = Color.TRANSPARENT
+        fragment.apply {
+            sharedElementEnterTransition = MaterialContainerTransform().apply {
+                scrimColor = Color.TRANSPARENT
+            }
+            exitTransition = Hold()
+            enterTransition = MaterialFadeThrough().apply { duration = 200L }
         }
-        fragment.exitTransition = Hold()
+    }
+
+    private fun navigateBack(isNavigatedFromMenu: Boolean) {
+        if (!isNavigatedFromMenu) {
+            mNavigator?.navigateFromAboutPagerToSearch()
+        } else mNavigator?.navigateBackToHostFragment()
     }
 
     private fun isCorrectTabSelected(selectedPosition: Int, mustBeSelected: Int): Boolean {

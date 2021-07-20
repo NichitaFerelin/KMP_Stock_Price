@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
+import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsClickListener
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 import kotlinx.coroutines.flow.collect
@@ -70,9 +71,6 @@ class NewsFragment(
         mViewModel.stateCompanyNews.collect { notificator ->
             withContext(mCoroutineContext.Main) {
                 when (notificator) {
-                    is DataNotificator.DataPrepared -> {
-                        mViewController.onNewsChanged(notificator.data!!)
-                    }
                     is DataNotificator.Loading -> {
                         mViewController.onDataLoadingStateChanged(true)
                     }
@@ -83,17 +81,15 @@ class NewsFragment(
     }
 
     private suspend fun collectStateOnError() {
-        mViewModel.eventOnError.collect { message ->
+        mViewModel.eventOnError.collect {
             withContext(mCoroutineContext.Main) {
-                mViewController.onError(message)
+                mViewController.onError()
             }
         }
     }
 
     private fun setUpViewControllerArguments() {
         mViewModel.newsRecyclerAdapter.setOnNewsClickListener(this)
-        mViewController.setArgumentsViewDependsOn(
-            newsAdapter = mViewModel.newsRecyclerAdapter
-        )
+        mViewController.setArgumentsViewDependsOn(mViewModel.newsRecyclerAdapter)
     }
 }

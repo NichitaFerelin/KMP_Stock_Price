@@ -19,7 +19,7 @@ package com.ferelin.stockprice.viewModelFactories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerViewModel
+import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
 import com.ferelin.stockprice.ui.aboutSection.profile.ProfileViewModel

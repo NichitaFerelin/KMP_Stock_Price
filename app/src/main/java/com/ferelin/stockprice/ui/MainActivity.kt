@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
@@ -31,12 +32,14 @@ import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
 import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
+import com.ferelin.stockprice.utils.bottomDrawer.OnStateAction
 import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
 import com.ferelin.stockprice.utils.withTimerOnUi
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.firstOrNull
 
 
 class MainActivity(
@@ -60,16 +63,13 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         mViewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mViewBinding!!.root)
+
+        initObservers()
+        setUpViewComponents()
         mViewModel.initObservers()
 
         if (savedInstanceState == null) {
             hideBottomBar()
-        }
-
-        initObservers()
-        setUpViewComponents()
-
-        if (savedInstanceState == null) {
             navigator.navigateToLoadingFragment()
         }
     }
@@ -126,8 +126,8 @@ class MainActivity(
         return mBottomNavDrawer.handleOnBackPressed()
     }
 
-    fun showFab() {
-        mViewBinding!!.mainFab.show()
+    private fun showFab() {
+        // mViewBinding!!.mainFab.show()
     }
 
     private fun saveState() {
@@ -198,39 +198,42 @@ class MainActivity(
         mViewBinding!!.run {
             bottomAppBarImageViewArrowUp.rotation = mViewModel.arrowState
             bottomAppBarLinearRoot.setOnClickListener { onControlButtonPressed() }
-            mBottomNavDrawer.addOnSlideAction(
-                ArrowUpAction(bottomAppBarImageViewArrowUp)
-            )
+            mBottomNavDrawer.addOnSlideAction(ArrowUpAction(bottomAppBarImageViewArrowUp))
+            mBottomNavDrawer.addOnStateAction(object : OnStateAction {
+                override fun onBottomDrawerStateChanged(newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN && bottomAppBar.isVisible) {
+                        mViewBinding!!.mainFab.show()
+                    }
+                }
+            })
         }
     }
 
     private fun setUpFab() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.stateIsUserAuthenticated.collect { isLogged ->
-                withContext(mCoroutineContext.Main) {
-                    if (isLogged) {
-                        mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
-                    } else {
-                        mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+            collectStateUserAuthenticated()
+        }
+
+        mViewBinding!!.mainFab.setOnClickListener {
+            lifecycleScope.launch(mCoroutineContext.IO) {
+                val isUserAuthenticated = mViewModel.stateIsUserAuthenticated.firstOrNull() ?: false
+                if (!isUserAuthenticated) {
+                    withContext(mCoroutineContext.Main) {
+                        navigator.navigateToLoginFragment(false)
                     }
                 }
             }
         }
+    }
 
-        // TODO
-        mViewBinding!!.mainFab.setOnClickListener {
-            lifecycleScope.launch(mCoroutineContext.IO) {
-                mViewModel.stateIsUserAuthenticated
-                    .take(1)
-                    .collect {
-                        if (it) {
-                            // Do nothing
-                        } else {
-                            withContext(mCoroutineContext.Main) {
-                                navigator.navigateToLoginFragment(false)
-                            }
-                        }
-                    }
+    private suspend fun collectStateUserAuthenticated() {
+        mViewModel.stateIsUserAuthenticated.collect { isLogged ->
+            withContext(mCoroutineContext.Main) {
+                if (isLogged) {
+                    mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                } else {
+                    mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                }
             }
         }
     }

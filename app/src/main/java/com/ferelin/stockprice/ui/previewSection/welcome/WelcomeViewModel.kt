@@ -24,13 +24,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class WelcomeViewModel : BaseViewModel() {
 
     private val mActionMoveToNextScreen = MutableStateFlow(false)
     val actionMoveToNextScreen: StateFlow<Boolean>
-        get() = mActionMoveToNextScreen
+        get() = mActionMoveToNextScreen.asStateFlow()
 
     private val mMainTitleVisible = MutableLiveData(false)
     val mainTitleVisible: LiveData<Boolean>

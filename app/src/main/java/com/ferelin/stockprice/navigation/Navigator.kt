@@ -28,7 +28,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.MainActivity
-import com.ferelin.stockprice.ui.aboutSection.aboutSection.AboutPagerFragment
+import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerFragment
 import com.ferelin.stockprice.ui.login.LoginFragment
 import com.ferelin.stockprice.ui.messagesSection.chat.ChatFragment
 import com.ferelin.stockprice.ui.messagesSection.chats.ChatsFragment
@@ -47,23 +47,27 @@ class Navigator(private val mHostActivity: MainActivity) {
     private val mChatsTag = "chats"
     private val mStocksPagerTag = "stocksPager"
 
+    private var mIsOnScreenWithMenu = false
+
     fun navigateToLoadingFragment() {
         replaceMainContainerBy(LoadingFragment())
     }
 
     fun navigateToLoginFragment(isReplacedFromMenu: Boolean) {
+        mIsOnScreenWithMenu = false
         mHostActivity.hideBottomBar()
         replaceMainContainerBy(LoginFragment(isReplacedFromMenu), addToBackStack = true)
     }
 
     fun navigateToChatFragment(chat: AdaptiveChat) {
+        mIsOnScreenWithMenu = false
         mHostActivity.hideBottomBar()
         replaceMainContainerBy(ChatFragment(chat), addToBackStack = true)
     }
 
     fun navigateToChatsFragment() {
-        mHostActivity.showFab()
         if (!contains(mChatsTag)) {
+            mIsOnScreenWithMenu = true
             replaceMainContainerBy(ChatsFragment(), mChatsTag)
         }
     }
@@ -73,18 +77,20 @@ class Navigator(private val mHostActivity: MainActivity) {
     }
 
     fun navigateToStocksPagerFragment() {
-        mHostActivity.showFab()
         if (!contains(mStocksPagerTag)) {
+            mIsOnScreenWithMenu = true
             replaceMainContainerBy(StocksPagerFragment(), mStocksPagerTag)
         }
     }
 
     fun navigateToDrawerHostFragment() {
+        mIsOnScreenWithMenu = true
         withTimerOnUi(500) { mHostActivity.showBottomBar() }
-        replaceMainContainerBy(StocksPagerFragment(),  mStocksPagerTag)
+        replaceMainContainerBy(StocksPagerFragment(), mStocksPagerTag)
     }
 
     fun navigateToSearchFragment(onCommit: ((FragmentTransaction) -> Unit)? = null) {
+        mIsOnScreenWithMenu = false
         mHostActivity.hideBottomBar()
         replaceMainContainerBy(SearchFragment(), addToBackStack = true, onCommit = onCommit)
     }
@@ -96,9 +102,13 @@ class Navigator(private val mHostActivity: MainActivity) {
         mHostActivity.hideBottomBar()
         fragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.fragmentContainer, AboutPagerFragment(selectedCompany))
+            replace(
+                R.id.fragmentContainer,
+                AboutPagerFragment(selectedCompany, mIsOnScreenWithMenu)
+            )
             addToBackStack(null)
         }
+        mIsOnScreenWithMenu = false
     }
 
     fun navigateToUrl(context: Context, url: String): Boolean {
@@ -117,6 +127,7 @@ class Navigator(private val mHostActivity: MainActivity) {
     }
 
     fun navigateBackToHostFragment() {
+        mIsOnScreenWithMenu = true
         mHostActivity.supportFragmentManager.popBackStack()
         withTimerOnUi(250) { mHostActivity.showBottomBar() }
     }

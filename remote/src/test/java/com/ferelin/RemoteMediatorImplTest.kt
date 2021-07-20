@@ -104,7 +104,7 @@ class RemoteMediatorImplTest {
     fun loadCompanyQuote() {
         val symbol = "symbol"
         val position = 1
-        mRemoteMediator.loadStockPrice(symbol, position, false)
-        verify(mApiManager, times(1)).loadStockPrice(symbol, position, false)
+        mRemoteMediator.sendRequestToLoadPrice(symbol, position, false)
+        verify(mApiManager, times(1)).sendRequestToLoadPrice(symbol, position, false)
     }
 }

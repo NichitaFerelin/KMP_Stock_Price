@@ -26,11 +26,25 @@ import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatItemDecoration
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatRecyclerAdapter
 import com.ferelin.stockprice.utils.showDefaultDialog
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
 
 class ChatsViewController :
     BaseViewController<ChatsViewAnimator, FragmentChatsBinding>() {
 
     override val mViewAnimator = ChatsViewAnimator()
+
+    override fun onCreateFragment(fragment: Fragment) {
+        super.onCreateFragment(fragment)
+        fragment.apply {
+            enterTransition = MaterialFadeThrough().apply {
+                duration = 200L
+            }
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = 200L
+            }
+        }
+    }
 
     override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
         super.onViewCreated(savedInstanceState, fragment)
@@ -59,7 +73,7 @@ class ChatsViewController :
         }
     }
 
-    fun onNone() {
+    fun onNotificatorNoneState() {
         val adapter = viewBinding.recyclerViewRelations.adapter
         if (adapter is ChatRecyclerAdapter) {
             adapter.setData(emptyList())

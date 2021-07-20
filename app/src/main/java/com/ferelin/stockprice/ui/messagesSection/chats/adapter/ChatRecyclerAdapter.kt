@@ -25,49 +25,49 @@ import com.ferelin.stockprice.databinding.ItemChatBinding
 
 class ChatRecyclerAdapter(
     private var mChatClickListener: ChatClickListener? = null
-) : RecyclerView.Adapter<ChatRecyclerAdapter.RelationsViewHolder>() {
+) : RecyclerView.Adapter<ChatRecyclerAdapter.ChatViewHolder>() {
 
-    private var mRelations = arrayListOf<AdaptiveChat>()
+    private var mChats = arrayListOf<AdaptiveChat>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RelationsViewHolder {
-        return RelationsViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+        return ChatViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: RelationsViewHolder, position: Int) {
-        holder.bind(mRelations[position].associatedUserNumber)
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        holder.bind(mChats[position].associatedUserNumber)
         holder.binding.root.setOnClickListener {
-            mChatClickListener?.onRelationClicked(position)
+            mChatClickListener?.onChatClicked(position)
         }
     }
 
     override fun getItemCount(): Int {
-        return mRelations.size
+        return mChats.size
     }
 
     override fun getItemId(position: Int): Long {
-        return mRelations[position].id.toLong()
+        return mChats[position].id.toLong()
     }
 
     fun getRelation(position: Int): AdaptiveChat {
-        return mRelations[position]
+        return mChats[position]
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(items: List<AdaptiveChat>) {
-        mRelations = ArrayList(items)
+        mChats = ArrayList(items)
         notifyDataSetChanged()
     }
 
     fun addItem(chat: AdaptiveChat) {
-        mRelations.add(chat)
-        notifyItemInserted(mRelations.size - 1)
+        mChats.add(chat)
+        notifyItemInserted(mChats.size - 1)
     }
 
     fun setOnClickListener(listener: ChatClickListener) {
         mChatClickListener = listener
     }
 
-    class RelationsViewHolder(
+    class ChatViewHolder(
         val binding: ItemChatBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -76,10 +76,10 @@ class ChatRecyclerAdapter(
         }
 
         companion object {
-            fun from(parent: ViewGroup): RelationsViewHolder {
+            fun from(parent: ViewGroup): ChatViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = ItemChatBinding.inflate(inflater, parent, false)
-                return RelationsViewHolder(binding)
+                return ChatViewHolder(binding)
             }
         }
     }

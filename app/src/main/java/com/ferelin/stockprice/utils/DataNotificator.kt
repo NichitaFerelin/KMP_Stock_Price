@@ -40,4 +40,6 @@ sealed class DataNotificator<out T>(val data: T? = null) {
     class NoData<out T> : DataNotificator<T>()
 
     class Loading<out T> : DataNotificator<T>()
+
+    class Failed<out T> : DataNotificator<T>()
 }

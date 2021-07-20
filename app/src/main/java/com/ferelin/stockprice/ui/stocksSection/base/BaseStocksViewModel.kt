@@ -22,19 +22,15 @@ import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 abstract class BaseStocksViewModel : BaseViewModel() {
 
-    protected val mStocksRecyclerAdapter = StocksRecyclerAdapter().apply {
-        setHasStableIds(true)
+    val stocksRecyclerAdapter = StocksRecyclerAdapter().apply {
         setOnBindCallback { _, company, position ->
             onItemBind(company, position)
         }
     }
-    val stocksRecyclerAdapter: StocksRecyclerAdapter
-        get() = mStocksRecyclerAdapter
 
     val eventCompanyChanged: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mDataInteractor.sharedCompaniesUpdates
@@ -53,12 +49,11 @@ abstract class BaseStocksViewModel : BaseViewModel() {
 
     private fun onItemBind(company: AdaptiveCompany, position: Int) {
         viewModelScope.launch(mCoroutineContext.IO) {
-            // TODO
-            mDataInteractor.loadStockPrice(
-                symbol = company.companyProfile.symbol,
-                position = position,
-                isImportant = false
-            ).collect()
+            mDataInteractor.sendRequestToLoadStockPrice(
+                company.companyProfile.symbol,
+                position,
+                false
+            )
         }
     }
 }

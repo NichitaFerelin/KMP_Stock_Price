@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.news
+package com.ferelin.stockprice.ui.aboutSection.news.adapter
 
 /*
  * Copyright 2021 Leah Nichita

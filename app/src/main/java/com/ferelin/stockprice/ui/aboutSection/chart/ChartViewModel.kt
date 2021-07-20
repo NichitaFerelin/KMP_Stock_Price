@@ -36,7 +36,7 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     private val mStateStockHistory =
         MutableStateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>(DataNotificator.None())
     val stateStockHistory: StateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>
-        get() = mStateStockHistory
+        get() = mStateStockHistory.asStateFlow()
 
     val eventOnDayDataChanged: Flow<DataNotificator<AdaptiveCompany>>
         get() = mDataInteractor.sharedCompaniesUpdates.filter { filterSharedUpdate(it) }
@@ -115,20 +115,16 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
         viewModelScope.launch(mCoroutineContext.IO) {
             with(mDataInteractor.stockHistoryConverter) {
                 val convertedHistory = when (selectedViewMode) {
-                    is ChartViewMode.SixMonths -> toSixMonths(mOriginalStockHistory!!)
-                    is ChartViewMode.Months -> toMonths(mOriginalStockHistory!!)
-                    is ChartViewMode.Weeks -> toWeeks(mOriginalStockHistory!!)
-                    is ChartViewMode.Year -> toOneYear(mOriginalStockHistory!!)
-                    is ChartViewMode.All -> mOriginalStockHistory
-                    is ChartViewMode.Days -> mOriginalStockHistory
+                    ChartViewMode.SixMonths -> toSixMonths(mOriginalStockHistory!!)
+                    ChartViewMode.Months -> toMonths(mOriginalStockHistory!!)
+                    ChartViewMode.Weeks -> toWeeks(mOriginalStockHistory!!)
+                    ChartViewMode.Year -> toOneYear(mOriginalStockHistory!!)
+                    ChartViewMode.All -> mOriginalStockHistory
+                    ChartViewMode.Days -> mOriginalStockHistory
                 }
                 mStateStockHistory.value = DataNotificator.DataPrepared(convertedHistory!!)
             }
         }
-    }
-
-    private fun isNewData(loadedHistory: AdaptiveCompanyHistoryForChart): Boolean {
-        return loadedHistory != mOriginalStockHistory
     }
 
     private fun filterSharedUpdate(notificator: DataNotificator<AdaptiveCompany>): Boolean {

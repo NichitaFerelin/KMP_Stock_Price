@@ -23,10 +23,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentBottomDrawerBinding
-import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemClickListener
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
+import com.ferelin.stockprice.utils.bottomDrawer.OnStateAction
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,8 +47,8 @@ class BottomDrawerFragment :
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         mViewController.setArgumentsViewDependsOn(
-            menuItemsAdapter = mViewModel.menuAdapter,
-            scrimVisibility = mViewModel.scrimVisibilityState
+            mViewModel.menuAdapter,
+            mViewModel.scrimVisibilityState
         )
         setUpClickListeners()
     }
@@ -62,7 +62,7 @@ class BottomDrawerFragment :
 
     override fun onMenuItemClicked(item: MenuItem) {
         mViewController.onMenuItemClicked(
-            item = item,
+            item,
             onLogOut = { mViewModel.onLogOut() }
         )
     }
@@ -74,6 +74,10 @@ class BottomDrawerFragment :
 
     fun addOnSlideAction(action: OnSlideAction) {
         mViewController.addOnSlideAction(action)
+    }
+
+    fun addOnStateAction(action: OnStateAction) {
+        mViewController.addOnStateAction(action)
     }
 
     fun openDrawer() {
@@ -99,7 +103,6 @@ class BottomDrawerFragment :
     private fun setUpClickListeners() {
         mViewModel.menuAdapter.setOnDrawerMenuClickListener(this)
         mViewController.viewBinding.viewScrim.setOnClickListener {
-            (requireActivity() as MainActivity).showFab()
             closeDrawer()
         }
     }

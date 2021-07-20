@@ -120,12 +120,11 @@ open class ApiManagerImpl @Inject constructor(
         }
     }
 
-    override fun loadStockPrice(
+    override fun sendRequestToLoadPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<StockPriceResponse>> = callbackFlow {
-
+    ) {
         // Add message(request) to throttle manager
         mThrottleManager.addRequestToOrder(
             companyOwnerSymbol = symbol,
@@ -134,15 +133,18 @@ open class ApiManagerImpl @Inject constructor(
             eraseIfNotActual = !isImportant,
             ignoreDuplicates = isImportant
         )
-
-        mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
-            mStockPriceService
-                .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
-                .enqueue(BaseManager<StockPriceResponse> {
-                    it.additionalMessage = symbolToRequest
-                    trySend(it)
-                })
-        }
-        awaitClose { mThrottleManager.invalidate() }
     }
+
+    override fun getStockPriceResponseState(): Flow<BaseResponse<StockPriceResponse>> =
+        callbackFlow {
+            mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
+                mStockPriceService
+                    .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
+                    .enqueue(BaseManager<StockPriceResponse> {
+                        it.additionalMessage = symbolToRequest
+                        trySend(it)
+                    })
+            }
+            awaitClose { mThrottleManager.invalidate() }
+        }
 }

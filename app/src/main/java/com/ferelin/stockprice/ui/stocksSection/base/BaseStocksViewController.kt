@@ -42,9 +42,10 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
 
     abstract val stocksRecyclerView: RecyclerView
 
-    // TODO as check
-    protected val mStocksRecyclerAdapter: StocksRecyclerAdapter
-        get() = stocksRecyclerView.adapter as StocksRecyclerAdapter
+    protected val mStocksRecyclerAdapter: StocksRecyclerAdapter?
+        get() = if (stocksRecyclerView.adapter is StocksRecyclerAdapter) {
+            stocksRecyclerView.adapter as StocksRecyclerAdapter
+        } else null
 
     /*
     * To use common "replace fragment" logic at different fragments
@@ -87,9 +88,10 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
 
     fun onCompanyChanged(notificator: DataNotificator<AdaptiveCompany>) {
         val company = notificator.data!!
-        val actualCompanyIndex = mStocksRecyclerAdapter.companies.indexOf(company)
-        if (actualCompanyIndex != NULL_INDEX) {
-            mStocksRecyclerAdapter.notifyUpdated(actualCompanyIndex)
+        mStocksRecyclerAdapter?.companies?.indexOf(company)?.let { actualCompanyIndex ->
+            if (actualCompanyIndex != NULL_INDEX) {
+                mStocksRecyclerAdapter?.notifyUpdated(actualCompanyIndex)
+            }
         }
     }
 
@@ -118,7 +120,7 @@ abstract class BaseStocksViewController<ViewBindingType : ViewBinding> :
     private fun findCompanyByHolder(stockViewHolder: StockViewHolder): AdaptiveCompany {
         val layoutManager = stocksRecyclerView.layoutManager as LinearLayoutManager
         val viewHolderPosition = layoutManager.getPosition(stockViewHolder.itemView)
-        return mStocksRecyclerAdapter.getCompanyByAdapterPosition(viewHolderPosition)
+        return mStocksRecyclerAdapter!!.getCompanyByAdapterPosition(viewHolderPosition)
     }
 
     private fun scrollToTopWithAnimation() {

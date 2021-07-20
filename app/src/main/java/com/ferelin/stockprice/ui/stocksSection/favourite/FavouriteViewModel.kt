@@ -29,7 +29,7 @@ class FavouriteViewModel : BaseStocksViewModel() {
 
     private val mEventOnNewItem = MutableSharedFlow<Unit>()
     val eventOnNewItem: SharedFlow<Unit>
-        get() = mEventOnNewItem
+        get() = mEventOnNewItem.asSharedFlow()
 
     override fun initObserversBlock() {
         super.initObserversBlock()
@@ -51,13 +51,11 @@ class FavouriteViewModel : BaseStocksViewModel() {
     }
 
     private suspend fun collectSharedFavouriteCompaniesUpdates() {
-        mDataInteractor.sharedFavouriteCompaniesUpdates
-            //.filter { it is DataNotificator.NewItemAdded || it is DataNotificator.ItemRemoved }
-            .collect { onFavouriteCompanyUpdateShared(it) }
+        mDataInteractor.sharedFavouriteCompaniesUpdates.collect { onFavouriteCompanyUpdateShared(it) }
     }
 
     private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
-        mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
+        stocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
     }
 
     /**
@@ -69,15 +67,15 @@ class FavouriteViewModel : BaseStocksViewModel() {
                 when (notificator) {
                     is DataNotificator.NewItemAdded -> {
                         withContext(mCoroutineContext.Main) {
-                            mStocksRecyclerAdapter.addCompany(notificator.data)
+                            stocksRecyclerAdapter.addCompany(notificator.data)
                             mEventOnNewItem.emit(Unit)
                         }
                     }
                     is DataNotificator.ItemRemoved -> {
-                        val index = mStocksRecyclerAdapter.companies.indexOf(notificator.data)
+                        val index = stocksRecyclerAdapter.companies.indexOf(notificator.data)
                         if (index != NULL_INDEX) {
                             withContext(mCoroutineContext.Main) {
-                                mStocksRecyclerAdapter.removeCompany(index)
+                                stocksRecyclerAdapter.removeCompany(index)
                             }
                         }
                     }

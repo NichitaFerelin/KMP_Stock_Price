@@ -22,7 +22,6 @@ import android.view.animation.Animation
 import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
-import androidx.transition.Fade
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
@@ -30,7 +29,8 @@ import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
 import com.ferelin.stockprice.ui.stocksSection.favourite.FavouriteFragment
 import com.ferelin.stockprice.ui.stocksSection.stocks.StocksFragment
 import com.ferelin.stockprice.utils.anim.AnimationManager
-import com.google.android.material.transition.Hold
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
 
 class StocksPagerViewController :
     BaseViewController<StocksPagerViewAnimator, FragmentStocksPagerBinding>() {
@@ -41,8 +41,14 @@ class StocksPagerViewController :
 
     override fun onCreateFragment(fragment: Fragment) {
         super.onCreateFragment(fragment)
-        fragment.exitTransition = Hold()
-        fragment.enterTransition = Fade(Fade.IN)
+        fragment.apply {
+            enterTransition = MaterialFadeThrough().apply {
+                duration = 300L
+            }
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = 200L
+            }
+        }
     }
 
     override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {

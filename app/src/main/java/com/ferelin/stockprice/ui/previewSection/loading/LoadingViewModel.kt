@@ -20,13 +20,14 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoadingViewModel : BaseViewModel() {
 
     private val mIsFirstTimeLaunchState = MutableStateFlow<Boolean?>(null)
     val isFirstTimeLaunchState: StateFlow<Boolean?>
-        get() = mIsFirstTimeLaunchState
+        get() = mIsFirstTimeLaunchState.asStateFlow()
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {

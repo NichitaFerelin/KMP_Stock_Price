@@ -61,6 +61,11 @@ abstract class BaseFragment<
 
     protected val mCoroutineContext = CoroutineContextProvider()
 
+    protected val mHostActivity: MainActivity?
+        get() = if (requireActivity() is MainActivity) {
+            requireActivity() as MainActivity
+        } else null
+
     // Hides bottom bar on scroll
     protected val mOnScrollListener: RecyclerView.OnScrollListener by lazy(LazyThreadSafetyMode.NONE) {
         object : RecyclerView.OnScrollListener() {
@@ -105,7 +110,7 @@ abstract class BaseFragment<
     ): View? {
         return mBindingInflater?.let { bindingInflater ->
             val viewBinding = bindingInflater.invoke(inflater, container, false)
-            mViewController.setViewBinding(viewBinding)
+            mViewController.attachViewBinding(viewBinding)
             return@let viewBinding.root
         }
     }
@@ -115,9 +120,9 @@ abstract class BaseFragment<
 
         mViewModel.triggerCreate()
 
+        setUpBackPressedCallback()
         setUpViewComponents(savedInstanceState)
         initObservers()
-        setUpBackPressedCallback()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -135,7 +140,7 @@ abstract class BaseFragment<
 
     /**
      * Fragments with custom 'BackPressed' logic or bottom app-bar can override this method to avoid
-     * bottom app bar state inconsistency
+     * bottom app bar state inconsistency.
      * */
     protected open fun onBackPressedHandle(): Boolean {
         return false
@@ -151,10 +156,17 @@ abstract class BaseFragment<
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    /**
+                     * First need to check that onBack was not pressed to close the bottom
+                     * drawer fragment.
+                     * */
                     if (handleBottomDrawerOnBack()) {
                         return
                     }
 
+                    /**
+                     * Then the fragment gets ability to handle onBack press
+                     * */
                     if (onBackPressedHandle()) {
                         return
                     }
@@ -166,10 +178,7 @@ abstract class BaseFragment<
     }
 
     private fun handleBottomDrawerOnBack(): Boolean {
-        val hostActivity = requireActivity()
-        return if (hostActivity is MainActivity) {
-            hostActivity.handleOnBackPressed()
-        } else false
+        return mHostActivity?.handleOnBackPressed() ?: false
     }
 
     private fun injectDependencies() {
@@ -180,23 +189,14 @@ abstract class BaseFragment<
     }
 
     private fun initNavigator() {
-        val hostActivity = requireActivity()
-        if (hostActivity is MainActivity) {
-            mViewController.setNavigator(hostActivity.navigator)
-        }
+        mHostActivity?.let { mViewController.setNavigator(it.navigator) }
     }
 
     private fun hideBottomBar() {
-        val hostActivity = requireActivity()
-        if (hostActivity is MainActivity) {
-            hostActivity.hideBottomBar()
-        }
+        mHostActivity?.hideBottomBar()
     }
 
     private fun showBottomBar() {
-        val hostActivity = requireActivity()
-        if (hostActivity is MainActivity) {
-            hostActivity.showBottomBar()
-        }
+        mHostActivity?.showBottomBar()
     }
 }

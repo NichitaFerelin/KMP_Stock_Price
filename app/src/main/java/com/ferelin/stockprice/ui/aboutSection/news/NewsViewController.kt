@@ -19,14 +19,16 @@ package com.ferelin.stockprice.ui.aboutSection.news
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.common.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
+import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsItemDecoration
+import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsRecyclerAdapter
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.showDefaultDialog
 
@@ -50,15 +52,6 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
         viewBinding.recyclerViewNews.adapter = newsAdapter
     }
 
-    fun onNewsChanged(news: AdaptiveCompanyNews) {
-        val recyclerViewAdapter = viewBinding.recyclerViewNews.adapter
-        if (recyclerViewAdapter is NewsRecyclerAdapter) {
-            hideTextViewError()
-            // TODO меняется в viewModel
-            recyclerViewAdapter.setData(news)
-        }
-    }
-
     fun onNewsUrlClicked(company: AdaptiveCompany, position: Int) {
         val url = company.companyNews.browserUrls[position]
         val isNavigated = mNavigator?.navigateToUrl(context, url)
@@ -68,31 +61,15 @@ class NewsViewController : BaseViewController<ViewAnimatorScrollable, FragmentNe
     }
 
     fun onDataLoadingStateChanged(isDataLoading: Boolean) {
-        if (isDataLoading) {
-            viewBinding.progressBar.visibility = View.VISIBLE
-        } else viewBinding.progressBar.visibility = View.GONE
+        viewBinding.progressBar.isVisible = isDataLoading
     }
 
     fun onFabClicked() {
         scrollToTop()
     }
 
-    fun onError(message: String) {
-        viewBinding.textViewError.text = message
-        showTextViewError()
-        viewBinding.progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun showTextViewError() {
-        if (viewBinding.textViewError.visibility != View.VISIBLE) {
-            viewBinding.textViewError.visibility = View.VISIBLE
-        }
-    }
-
-    private fun hideTextViewError() {
-        if (viewBinding.textViewError.visibility != View.GONE) {
-            viewBinding.textViewError.visibility = View.GONE
-        }
+    fun onError() {
+        viewBinding.progressBar.isVisible = false
     }
 
     private fun setUpRecyclerView() {

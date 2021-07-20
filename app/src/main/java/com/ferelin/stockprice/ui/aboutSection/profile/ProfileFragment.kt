@@ -36,7 +36,6 @@ import com.ferelin.stockprice.viewModelFactories.CompanyViewModelFactory
 class ProfileFragment(private val mSelectedCompany: AdaptiveCompany? = null) : Fragment() {
 
     private var mBinding: FragmentProfileBinding? = null
-
     private val mViewModel: ProfileViewModel by viewModels {
         CompanyViewModelFactory(mSelectedCompany)
     }

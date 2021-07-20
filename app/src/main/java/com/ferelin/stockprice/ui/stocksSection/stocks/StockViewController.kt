@@ -45,8 +45,6 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
             stocksRecyclerView.adapter = null
             super.onDestroyView()
         }
-
-
     }
 
     fun setArgumentsViewDependsOn(
@@ -58,9 +56,10 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
     }
 
     fun onCompaniesLoaded(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
-        mStocksRecyclerAdapter.setCompanies(ArrayList(notificator.data!!))
+        mStocksRecyclerAdapter?.setCompanies(ArrayList(notificator.data!!))
     }
 
+    // TODO
     fun onLimitReachedError(message: String) {
         showDefaultDialog(context, message)
     }

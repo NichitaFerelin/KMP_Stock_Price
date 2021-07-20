@@ -69,9 +69,11 @@ interface ApiManager {
      * @param position is a position on UI list. Required by ThrottleManagerImpl
      * @param isImportant forces the request to be executed ignoring ThrottleManagerImpl
      * */
-    fun loadStockPrice(
+    fun sendRequestToLoadPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<BaseResponse<StockPriceResponse>>
+    )
+
+    fun getStockPriceResponseState() : Flow<BaseResponse<StockPriceResponse>>
 }

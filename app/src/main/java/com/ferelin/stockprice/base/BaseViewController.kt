@@ -71,7 +71,7 @@ abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewB
         // Do nothing
     }
 
-    fun setViewBinding(viewBinding: ViewBindingType) {
+    fun attachViewBinding(viewBinding: ViewBindingType) {
         mViewBinding = viewBinding
     }
 

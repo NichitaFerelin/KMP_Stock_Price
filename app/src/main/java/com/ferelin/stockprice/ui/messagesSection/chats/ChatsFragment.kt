@@ -27,8 +27,6 @@ import com.ferelin.stockprice.databinding.FragmentChatsBinding
 import com.ferelin.stockprice.ui.messagesSection.addUser.DialogAddUser
 import com.ferelin.stockprice.ui.messagesSection.chats.adapter.ChatClickListener
 import com.ferelin.stockprice.utils.DataNotificator
-import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,16 +40,6 @@ class ChatsFragment :
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChatsBinding
         get() = FragmentChatsBinding::inflate
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enterTransition = MaterialFadeThrough().apply {
-            duration = 200L
-        }
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = 200L
-        }
-    }
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
@@ -70,25 +58,27 @@ class ChatsFragment :
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.stateUserChats.collect { notificator ->
-                withContext(mCoroutineContext.Main) {
-                    when (notificator) {
-                        is DataNotificator.DataPrepared -> {
-                            mViewController.onDataChanged(notificator.data!!)
-                        }
-                        is DataNotificator.Loading -> {
-                            // show progress bar
-                        }
-                        else -> {
-                            mViewController.onNone()
-                        }
+            collectStateUserChats()
+        }
+    }
+
+    private suspend fun collectStateUserChats() {
+        mViewModel.stateUserChats.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                when (notificator) {
+                    is DataNotificator.DataPrepared -> {
+                        mViewController.onDataChanged(notificator.data!!)
                     }
+                    is DataNotificator.Loading -> {
+                        // show progress bar
+                    }
+                    else -> mViewController.onNotificatorNoneState()
                 }
             }
         }
     }
 
-    override fun onRelationClicked(position: Int) {
+    override fun onChatClicked(position: Int) {
         mViewController.onChatClicked(position)
     }
 

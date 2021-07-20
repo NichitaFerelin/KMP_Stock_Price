@@ -20,11 +20,9 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
 import com.ferelin.stockprice.base.BaseViewModel
+import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -35,7 +33,7 @@ class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     private val mStateCompanyNews =
         MutableStateFlow<DataNotificator<AdaptiveCompanyNews>>(DataNotificator.None())
     val stateCompanyNews: StateFlow<DataNotificator<AdaptiveCompanyNews>>
-        get() = mStateCompanyNews
+        get() = mStateCompanyNews.asStateFlow()
 
     val eventOnError: SharedFlow<String>
         get() = mDataInteractor.sharedLoadCompanyNewsError

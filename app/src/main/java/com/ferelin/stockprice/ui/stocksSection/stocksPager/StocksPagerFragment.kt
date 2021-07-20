@@ -23,8 +23,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.ferelin.stockprice.base.BaseFragment
 import com.ferelin.stockprice.databinding.FragmentStocksPagerBinding
-import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialFadeThrough
 
 class StocksPagerFragment :
     BaseFragment<FragmentStocksPagerBinding, StocksPagerViewModel, StocksPagerViewController>() {
@@ -35,20 +33,10 @@ class StocksPagerFragment :
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
         get() = FragmentStocksPagerBinding::inflate
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enterTransition = MaterialFadeThrough().apply {
-            duration = 300L
-        }
-        exitTransition = MaterialElevationScale(false).apply {
-            duration = 200L
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewController.setUpArgumentsViewDependsOn(
-            viewPagerAdapter = StocksPagerAdapter(
+            StocksPagerAdapter(
                 childFragmentManager,
                 viewLifecycleOwner.lifecycle
             )

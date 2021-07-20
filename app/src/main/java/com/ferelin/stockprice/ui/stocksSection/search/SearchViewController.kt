@@ -103,7 +103,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
             viewBinding.root.transitionToStart()
             0
         } else {
-            mStocksRecyclerAdapter.setCompanies(results)
+            mStocksRecyclerAdapter?.setCompanies(results)
             viewBinding.root.transitionToEnd()
             1
         }
@@ -130,7 +130,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         }
     }
 
-    fun onBackSwiped(lastSearchRequest: String) {
+    fun onBackSwiped(lastSearchRequest: String) : Boolean {
         when {
             viewBinding.root.progress == 0F -> mNavigator?.navigateBackToHostFragment()
             viewBinding.root.progress == 1F -> viewBinding.editTextSearch.setText("")
@@ -138,12 +138,9 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
                 hideKeyboard(context, viewBinding.root)
                 mNavigator?.navigateBackToHostFragment()
             }
-            else -> {
-                mNavigator?.navigateBackToHostFragment()
-                // Transition to start and popBackStack
-
-            }
+            else -> mNavigator?.navigateBackToHostFragment()
         }
+        return true
     }
 
     fun onBackPressed(lastSearchRequest: String) {

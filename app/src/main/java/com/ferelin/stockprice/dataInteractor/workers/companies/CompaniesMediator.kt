@@ -17,16 +17,19 @@ package com.ferelin.stockprice.dataInteractor.workers.companies
  */
 
 import com.ferelin.repository.Repository
-import com.ferelin.repository.adaptiveModels.*
+import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
+import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
+import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorker
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -58,6 +61,8 @@ open class CompaniesMediator @Inject constructor(
     override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
         get() = mFavouriteCompaniesWorker.stateCompanyForObserver
 
+    private var mResponseStockPriceJob: Job? = null
+
     init {
         prepareCompaniesData()
     }
@@ -88,17 +93,27 @@ open class CompaniesMediator @Inject constructor(
         } else null
     }
 
-    suspend fun loadStockPrice(
+    fun sendRequestToLoadStockPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRepository.loadStockPrice(symbol, position, isImportant)
-            .onEach { repositoryResponse ->
-                if (repositoryResponse is RepositoryResponse.Success) {
-                    mCompaniesWorker.onPriceResponse(repositoryResponse)
+    ) {
+        collectResponseStockPrice()
+        return mRepository.sendRequestToLoadPrice(symbol, position, isImportant)
+    }
+
+    private fun collectResponseStockPrice() {
+        if (mResponseStockPriceJob == null) {
+            mAppScope.launch {
+                mResponseStockPriceJob = launch {
+                    mRepository.getStockPriceResponseState().collect { response ->
+                        if (response is RepositoryResponse.Success) {
+                            mCompaniesWorker.onPriceResponse(response)
+                        }
+                    }
                 }
             }
+        }
     }
 
     suspend fun onLiveTimePriceResponse(

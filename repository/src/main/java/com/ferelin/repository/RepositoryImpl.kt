@@ -190,12 +190,16 @@ open class RepositoryImpl @Inject constructor(
         return mConverterMediator.fromNetworkResponseToAdaptiveCompanyNews(remoteResponse, symbol)
     }
 
-    override fun loadStockPrice(
+    override fun sendRequestToLoadPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
-        return mRemoteMediator.loadStockPrice(symbol, position, isImportant).map { response ->
+    ) {
+        return mRemoteMediator.sendRequestToLoadPrice(symbol, position, isImportant)
+    }
+
+    override fun getStockPriceResponseState(): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+        return mRemoteMediator.getStockPriceResponseState().map { response ->
             mConverterMediator.fromNetworkResponseToAdaptiveCompanyDayData(response)
         }
     }

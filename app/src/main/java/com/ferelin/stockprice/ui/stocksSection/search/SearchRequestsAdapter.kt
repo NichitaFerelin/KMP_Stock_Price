@@ -54,8 +54,8 @@ class SearchRequestsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(items: ArrayList<AdaptiveSearchRequest>) {
-        mSearches = items
+    fun setData(items: List<AdaptiveSearchRequest>) {
+        mSearches = ArrayList(items)
         notifyDataSetChanged()
     }
 

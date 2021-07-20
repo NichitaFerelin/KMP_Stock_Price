@@ -16,6 +16,7 @@
 
 package com.ferelin.stockprice.ui.messagesSection.chat
 
+import androidx.fragment.app.Fragment
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.stockprice.base.BaseViewController
@@ -24,10 +25,20 @@ import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesItemDecora
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.showDefaultDialog
+import com.google.android.material.transition.MaterialFadeThrough
 
 class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBinding>() {
 
     override val mViewAnimator = ChatViewAnimator()
+
+    override fun onCreateFragment(fragment: Fragment) {
+        super.onCreateFragment(fragment)
+        fragment.apply {
+            enterTransition = MaterialFadeThrough().apply {
+                duration = 200L
+            }
+        }
+    }
 
     override fun onDestroyView() {
         postponeReferencesRemove {
@@ -36,9 +47,10 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
         }
     }
 
-    fun onBackPressed() {
+    fun onBackPressed() : Boolean {
         hideKeyboard(context, viewBinding.root)
         mNavigator?.navigateBackToHostFragment()
+        return true
     }
 
     fun setArgumentsViewDependsOn(

@@ -1,3 +1,5 @@
+package com.ferelin.stockprice.ui.aboutSection.news.adapter
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,11 +16,6 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.utils
-
-interface AppTask {
-
-    val keyToResolveTask: String?
-
-    fun action(keyToResolveTask: String?)
+interface NewsClickListener {
+    fun onNewsUrlClicked(position: Int)
 }

@@ -52,9 +52,11 @@ interface ApiManagerHelper {
         to: String = Time.getCurrentDateForRequest()
     ): RepositoryResponse<AdaptiveCompanyNews>
 
-    fun loadStockPrice(
+    fun sendRequestToLoadPrice(
         symbol: String,
         position: Int,
         isImportant: Boolean
-    ): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
+    )
+
+    fun getStockPriceResponseState(): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
 }

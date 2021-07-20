@@ -17,5 +17,5 @@
 package com.ferelin.stockprice.ui.messagesSection.chats.adapter
 
 interface ChatClickListener {
-    fun onRelationClicked(position: Int)
+    fun onChatClicked(position: Int)
 }

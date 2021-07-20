@@ -17,6 +17,7 @@
 package com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
 import com.ferelin.stockprice.utils.normalize
 
@@ -32,10 +33,10 @@ class AlphaSlideAction(
         val alpha = slideOffset.normalize(-1F, 0F, 0F, 1F)
         view.alpha = if (!reverse) alpha else 1F - alpha
 
-        if (view.alpha == 0F && view.visibility == View.VISIBLE) {
-            view.visibility = View.GONE
-        } else if (view.alpha != 0F && view.visibility == View.GONE) {
-            view.visibility = View.VISIBLE
+        if (view.alpha == 0F && view.isVisible) {
+            view.isVisible = false
+        } else if (view.alpha != 0F && !view.isVisible) {
+            view.isVisible = true
         }
     }
 }

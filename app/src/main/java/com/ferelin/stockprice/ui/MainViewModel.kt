@@ -32,8 +32,6 @@ class MainViewModel : BaseViewModel() {
 
     private var mNetworkWasLost: Boolean = false
 
-    private var mPrepareDataJob: Job? = null
-
     val stateIsNetworkAvailable: Flow<Boolean>
         get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
             viewModelScope.launch(mCoroutineContext.IO) {

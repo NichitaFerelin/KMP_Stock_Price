@@ -39,8 +39,8 @@ class FavouriteFragment :
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
         mViewController.setArgumentsViewDependsOn(
-            stocksRecyclerAdapter = mViewModel.stocksRecyclerAdapter,
-            fragmentManager = requireParentFragment().parentFragmentManager
+            mViewModel.stocksRecyclerAdapter,
+            requireParentFragment().parentFragmentManager
         )
         mViewController.viewBinding.recyclerViewFavourites.addOnScrollListener(mOnScrollListener)
     }
