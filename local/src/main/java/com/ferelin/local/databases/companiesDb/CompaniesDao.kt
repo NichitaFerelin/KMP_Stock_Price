@@ -23,10 +23,10 @@ import com.ferelin.local.models.Company
 interface CompaniesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCompany(company: Company)
+    suspend fun cacheCompany(company: Company)
 
     @Insert
-    suspend fun insertAllCompanies(list: List<Company>)
+    suspend fun cacheAllCompanies(list: List<Company>)
 
     @Update
     suspend fun updateCompany(company: Company)

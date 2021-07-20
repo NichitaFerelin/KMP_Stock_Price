@@ -25,6 +25,7 @@ import com.ferelin.shared.MessageSide
 class Message(
     @PrimaryKey
     val id: Int,
+    // Second side user of message
     val associatedUserNumber: String,
     val text: String,
     val side: MessageSide

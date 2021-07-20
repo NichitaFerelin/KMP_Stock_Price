@@ -18,6 +18,10 @@ package com.ferelin.local.json
 
 import com.ferelin.local.models.Company
 
+/**
+ * There is a json file in the application with the initial data of the companies,
+ * which is parsed through [JsonManager]
+ * */
 interface JsonManager {
     fun getCompaniesFromJson(): List<Company>
 }

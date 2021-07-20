@@ -23,7 +23,7 @@ import com.ferelin.local.models.SearchRequest
 interface SearchRequestsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSearchRequest(searchRequest: SearchRequest)
+    suspend fun cacheSearchRequest(searchRequest: SearchRequest)
 
     @Query("SELECT * FROM `stockprice.searchrequests.db`")
     suspend fun getAllSearchRequests(): List<SearchRequest>
@@ -32,5 +32,5 @@ interface SearchRequestsDao {
     suspend fun eraseSearchRequest(searchRequest: SearchRequest)
 
     @Query("DELETE FROM `stockprice.searchrequests.db`")
-    fun clearSearchRequestsTable()
+    fun clearSearchRequests()
 }

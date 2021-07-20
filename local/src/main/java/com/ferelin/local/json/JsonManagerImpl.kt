@@ -30,24 +30,26 @@ open class JsonManagerImpl @Inject constructor(
     private val mContext: Context
 ) : JsonManager {
 
+    private val mMoshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+    private companion object {
+        const val sCompaniesJsonFileName = "companies.json"
+    }
+
     override fun getCompaniesFromJson(): List<Company> {
         return readCompanies()
     }
-
-    private val mMoshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
     /*
     * Parsing companies data from json
     * */
     private fun readCompanies(): List<Company> {
-        val json =
-            mContext.assets.open(sCompaniesJsonFileName).bufferedReader().use { it.readText() }
+        val json = mContext.assets
+            .open(sCompaniesJsonFileName)
+            .bufferedReader()
+            .use { it.readText() }
         val type = Types.newParameterizedType(List::class.java, Company::class.java)
         val adapter: JsonAdapter<List<Company>> = mMoshi.adapter(type)
         return adapter.fromJson(json) ?: emptyList()
-    }
-
-    private companion object {
-        const val sCompaniesJsonFileName = "companies.json"
     }
 }

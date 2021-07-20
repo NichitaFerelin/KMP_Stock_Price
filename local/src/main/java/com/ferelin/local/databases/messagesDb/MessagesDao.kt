@@ -26,11 +26,11 @@ import com.ferelin.local.models.Message
 interface MessagesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: Message)
+    suspend fun cacheMessage(message: Message)
 
     @Query("SELECT * FROM `stockprice.messages.db` WHERE associatedUserNumber=:associatedUserNumber")
     suspend fun getMessages(associatedUserNumber: String): List<Message>?
 
     @Query("DELETE FROM `stockprice.messages.db`")
-    fun clearMessagesTable()
+    fun clearMessages()
 }

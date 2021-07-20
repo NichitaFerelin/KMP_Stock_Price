@@ -41,12 +41,12 @@ open class LocalManagerImpl @Inject constructor(
     private val mSearchRequestsDao: SearchRequestsDao
 ) : LocalManager {
 
-    override suspend fun insertCompany(company: Company) {
-        mCompaniesDao.insertCompany(company)
+    override suspend fun cacheCompany(company: Company) {
+        mCompaniesDao.cacheCompany(company)
     }
 
-    override suspend fun insertAllCompanies(list: List<Company>) {
-        mCompaniesDao.insertAllCompanies(list)
+    override suspend fun cacheAllCompanies(list: List<Company>) {
+        mCompaniesDao.cacheAllCompanies(list)
     }
 
     override suspend fun updateCompany(company: Company) {
@@ -70,7 +70,7 @@ open class LocalManagerImpl @Inject constructor(
             companiesFromJson.forEachIndexed { index, company -> company.id = index }
 
             // Save to database
-            insertAllCompanies(companiesFromJson)
+            cacheAllCompanies(companiesFromJson)
 
             CompaniesResponse.Success(
                 code = Responses.LOADED_FROM_JSON,
@@ -83,28 +83,28 @@ open class LocalManagerImpl @Inject constructor(
         return mCompaniesDao.getAllCompanies()
     }
 
-    override suspend fun insertMessage(message: Message) {
-        mMessagesDao.insertMessage(message)
+    override suspend fun cacheMessage(message: Message) {
+        mMessagesDao.cacheMessage(message)
     }
 
     override suspend fun getMessages(associatedUserNumber: String): List<Message>? {
         return mMessagesDao.getMessages(associatedUserNumber)
     }
 
-    override fun clearMessagesTable() {
-        mMessagesDao.clearMessagesTable()
+    override fun clearMessages() {
+        mMessagesDao.clearMessages()
     }
 
     override suspend fun getFirstTimeLaunchState(): Boolean? {
         return mStorePreferences.getFirstTimeLaunchState()
     }
 
-    override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
-        mStorePreferences.setFirstTimeLaunchState(boolean)
+    override suspend fun cacheFirstTimeLaunchState(boolean: Boolean) {
+        mStorePreferences.cacheFirstTimeLaunchState(boolean)
     }
 
-    override suspend fun insertChat(chat: Chat) {
-        mChatsDao.insertChat(chat)
+    override suspend fun cacheChat(chat: Chat) {
+        mChatsDao.cacheChat(chat)
     }
 
     override suspend fun getAllChats(): List<Chat>? {
@@ -115,16 +115,16 @@ open class LocalManagerImpl @Inject constructor(
         mChatsDao.clearChats()
     }
 
-    override suspend fun setUserNumber(number: String) {
-        mStorePreferences.setUserNumber(number)
+    override suspend fun cacheUserNumber(number: String) {
+        mStorePreferences.cacheUserNumber(number)
     }
 
     override suspend fun getUserNumber(): String? {
         return mStorePreferences.getUserNumber()
     }
 
-    override suspend fun insertSearchRequest(searchRequest: SearchRequest) {
-        mSearchRequestsDao.insertSearchRequest(searchRequest)
+    override suspend fun cacheSearchRequest(searchRequest: SearchRequest) {
+        mSearchRequestsDao.cacheSearchRequest(searchRequest)
     }
 
     override suspend fun getAllSearchRequests(): List<SearchRequest> {
@@ -135,7 +135,7 @@ open class LocalManagerImpl @Inject constructor(
         mSearchRequestsDao.eraseSearchRequest(searchRequest)
     }
 
-    override fun clearSearchRequestsTable() {
-        mSearchRequestsDao.clearSearchRequestsTable()
+    override fun clearSearchRequests() {
+        mSearchRequestsDao.clearSearchRequests()
     }
 }

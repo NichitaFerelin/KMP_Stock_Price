@@ -20,9 +20,9 @@ interface StorePreferences {
 
     suspend fun getFirstTimeLaunchState(): Boolean?
 
-    suspend fun setFirstTimeLaunchState(boolean: Boolean)
-
-    suspend fun setUserNumber(number: String)
+    suspend fun cacheFirstTimeLaunchState(boolean: Boolean)
 
     suspend fun getUserNumber(): String?
+
+    suspend fun cacheUserNumber(number: String)
 }

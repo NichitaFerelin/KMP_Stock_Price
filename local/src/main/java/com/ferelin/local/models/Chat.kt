@@ -24,6 +24,7 @@ import com.ferelin.local.databases.chatsDb.ChatsDatabase
 class Chat(
     @PrimaryKey
     val id: Int,
+    // Second side user of chat
     val associatedUserNumber: String,
     val previewText: String = ""
 )

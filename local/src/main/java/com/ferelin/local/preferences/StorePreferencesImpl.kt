@@ -41,7 +41,7 @@ open class StorePreferencesImpl @Inject constructor(
     private val mFirstTimeLaunchKey = booleanPreferencesKey("welcome-key")
     private val mUserNumberKey = stringPreferencesKey("user-number-key")
 
-    override suspend fun setFirstTimeLaunchState(boolean: Boolean) {
+    override suspend fun cacheFirstTimeLaunchState(boolean: Boolean) {
         mContext.dataStorePreferences.edit {
             it[mFirstTimeLaunchKey] = boolean
         }
@@ -53,7 +53,7 @@ open class StorePreferencesImpl @Inject constructor(
         }.firstOrNull()
     }
 
-    override suspend fun setUserNumber(number: String) {
+    override suspend fun cacheUserNumber(number: String) {
         mContext.dataStorePreferences.edit {
             it[mUserNumberKey] = number
         }

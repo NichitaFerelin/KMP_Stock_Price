@@ -26,7 +26,7 @@ import com.ferelin.local.models.Chat
 interface ChatsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertChat(chat: Chat)
+    suspend fun cacheChat(chat: Chat)
 
     @Query("SELECT * FROM `stockprice.chats.db`")
     suspend fun getAllChats(): List<Chat>?
