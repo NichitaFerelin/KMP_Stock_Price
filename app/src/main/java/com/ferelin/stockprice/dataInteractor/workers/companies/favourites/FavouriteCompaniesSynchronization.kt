@@ -45,8 +45,8 @@ class FavouriteCompaniesSynchronization @Inject constructor(
     private var mIsDataSynchronized: Boolean = false
 
     fun initDataSync(
-        localCompanies: List<AdaptiveCompany>,
-        localFavouriteCompanies: List<AdaptiveCompany>,
+        companies: List<AdaptiveCompany>,
+        favouriteCompanies: List<AdaptiveCompany>,
         addCompanyToFavourites: suspend (AdaptiveCompany) -> AdaptiveCompany?
     ) {
         mAppScope.launch {
@@ -59,12 +59,12 @@ class FavouriteCompaniesSynchronization @Inject constructor(
                 if (companiesIdsResponse is RepositoryResponse.Success) {
                     findAndFixMissingItems(
                         userToken,
-                        localCompanies,
+                        companies,
                         companiesIdsResponse.data,
                         addCompanyToFavourites
                     )
-                    if (mSyncMode !is SyncConflictMode.RemotePriority) {
-                        detectInconsistencyAndSync(userToken, localFavouriteCompanies)
+                    if (mSyncMode != SyncConflictMode.RemotePriority) {
+                        detectInconsistencyAndSync(userToken, favouriteCompanies)
                     }
                     mIsDataSynchronized = true
                 }
@@ -143,7 +143,7 @@ class FavouriteCompaniesSynchronization @Inject constructor(
             val remoteItemAtLocal = localCompanies[currentRemoteId]
             if (!remoteItemAtLocal.isFavourite) {
                 when (mSyncMode) {
-                    is SyncConflictMode.LocalPriority -> {
+                    SyncConflictMode.LocalPriority -> {
                         mAppScope.launch {
                             mRepository.eraseCompanyIdFromRealtimeDb(userToken, remoteCompanyId)
                         }
@@ -168,17 +168,17 @@ class FavouriteCompaniesSynchronization @Inject constructor(
      * */
     private fun detectInconsistencyAndSync(
         userToken: String,
-        localFavouriteCompanies: List<AdaptiveCompany>
+        favouriteCompanies: List<AdaptiveCompany>
     ) {
         if (mRemoteCompaniesContainer.isEmpty()) {
-            localFavouriteCompanies
+            favouriteCompanies
+                .toList()
                 .map { it.id.toString() }
                 .forEach { id -> mRepository.cacheCompanyIdToRealtimeDb(userToken, id) }
         } else {
-            localFavouriteCompanies.forEach { localCompany ->
+            favouriteCompanies.toList().forEach { localCompany ->
                 val indexAtRemoteContainer = mRemoteCompaniesContainer
                     .binarySearchBy(localCompany.id) { it.id }
-
                 if (indexAtRemoteContainer < 0) {
                     mRepository.cacheCompanyIdToRealtimeDb(userToken, localCompany.id.toString())
                 }
