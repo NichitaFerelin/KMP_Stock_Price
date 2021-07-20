@@ -20,33 +20,29 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [FavouriteCompaniesHelper] provides methods for interacting with database companies
+ * */
 interface FavouriteCompaniesHelper {
 
     /**
      * Provides ability to erase a database id from cloud database
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @param companyId is a company id at local database that will be erased.
      */
-    fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String)
+    fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String)
 
     /**
      * Provides ability to write a company id to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @param companyId is a company id at local database that will be saved.
      */
-    fun writeCompanyIdToRealtimeDb(userId: String, companyId: String)
-
-    /**
-     * Provides ability to write a list of ids to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
-     * @param companiesId is a list of ids that will be saved.
-     */
-    fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>)
+    fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String)
 
     /**
      * Provides ability to read user favourite companies ids from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @return [BaseResponse] with company ID and [Api] response code as flow.
      */
-    fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>>
+    fun getCompaniesIdsFromDb(userToken: String): Flow<BaseResponse<List<String>>>
 }

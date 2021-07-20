@@ -55,8 +55,8 @@ open class ApiManagerImpl @Inject constructor(
             .getStockSymbolList(Api.FINNHUB_TOKEN)
             .execute()
         return BaseResponse.createResponse(
-            responseBody = retrofitResponse.body(),
-            responseCode = retrofitResponse.code()
+            retrofitResponse.body(),
+            retrofitResponse.code()
         )
     }
 
@@ -66,8 +66,8 @@ open class ApiManagerImpl @Inject constructor(
                 .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
                 .execute()
             BaseResponse.createResponse(
-                responseBody = retrofitResponse.body(),
-                responseCode = retrofitResponse.code()
+                retrofitResponse.body(),
+                retrofitResponse.code()
             )
         } catch (exception: SocketTimeoutException) {
             BaseResponse.createResponse(

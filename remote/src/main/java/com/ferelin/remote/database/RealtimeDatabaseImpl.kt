@@ -25,30 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * [RealtimeDatabaseImpl] is Firebase-Realtime-Database and is used to save
- * user data(such as favourite companies) in cloud.
- *
- *
- * Fore more info about methods look at [RealtimeDatabase]
- *
- * Data at cloud looks like:
- *
- *
- *      -FAVOURITE_COMPANIES
- *          -[userId1]
- *              -[companyId1]
- *              -[companyId2]
- *              -[companyId3]
- *          -[userId2]
- *              - ...
- *      -SEARCH_REQUESTS
- *          -[userId1]
- *              -[searchRequest1]
- *              -[searchRequest2]
- *              -[searchRequest3]
- */
-
 @Singleton
 class RealtimeDatabaseImpl @Inject constructor(
     private val mFavouriteCompaniesHelper: FavouriteCompaniesHelper,
@@ -57,44 +33,44 @@ class RealtimeDatabaseImpl @Inject constructor(
     private val mChatsHelper: ChatsHelper
 ) : RealtimeDatabase {
 
-    override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
-        mFavouriteCompaniesHelper.eraseCompanyIdFromRealtimeDb(userId, companyId)
+    override fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String) {
+        mFavouriteCompaniesHelper.eraseCompanyIdFromRealtimeDb(userToken, companyId)
     }
 
-    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
-        mFavouriteCompaniesHelper.writeCompanyIdToRealtimeDb(userId, companyId)
+    override fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String) {
+        mFavouriteCompaniesHelper.cacheCompanyIdToRealtimeDb(userToken, companyId)
     }
 
-    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
-        mFavouriteCompaniesHelper.writeCompaniesIdsToDb(userId, companiesId)
+    override fun getCompaniesIdsFromDb(userToken: String): Flow<BaseResponse<List<String>>> {
+        return mFavouriteCompaniesHelper.getCompaniesIdsFromDb(userToken)
     }
 
-    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
-        return mFavouriteCompaniesHelper.readCompaniesIdsFromDb(userId)
-    }
-
-    override fun writeSearchRequestToDb(
-        userId: String,
+    override fun cacheSearchRequestToDb(
+        userToken: String,
         searchRequestId: String,
         searchRequest: String
     ) {
-        mSearchRequestsHelper.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
+        mSearchRequestsHelper.cacheSearchRequestToDb(userToken, searchRequestId, searchRequest)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>> {
-        return mSearchRequestsHelper.readSearchRequestsFromDb(userId)
+    override fun getSearchRequestsFromDb(userToken: String): Flow<BaseResponse<HashMap<Int, String>>> {
+        return mSearchRequestsHelper.getSearchRequestsFromDb(userToken)
     }
 
-    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
-        mSearchRequestsHelper.eraseSearchRequestFromDb(userId, searchRequestId)
+    override fun eraseSearchRequestFromDb(userToken: String, searchRequestId: String) {
+        mSearchRequestsHelper.eraseSearchRequestFromDb(userToken, searchRequestId)
     }
 
-    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
-        mChatsHelper.cacheChat(id, currentUserNumber, associatedUserNumber)
+    override fun cacheChat(
+        chatId: String,
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ) {
+        mChatsHelper.cacheChat(chatId, currentUserNumber, associatedUserNumber)
     }
 
-    override fun getUserChats(userNumber: String): Flow<BaseResponse<String>> {
-        return mChatsHelper.getUserChats(userNumber)
+    override fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>> {
+        return mChatsHelper.getChatsByUserNumber(userNumber)
     }
 
     override fun getMessagesForChat(
@@ -105,14 +81,14 @@ class RealtimeDatabaseImpl @Inject constructor(
     }
 
     override fun cacheMessage(
-        id: String,
+        messageId: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,
         messageSideKey: Char
     ) {
         mMessagesHelper.cacheMessage(
-            id,
+            messageId,
             currentUserNumber,
             associatedUserNumber,
             messageText,

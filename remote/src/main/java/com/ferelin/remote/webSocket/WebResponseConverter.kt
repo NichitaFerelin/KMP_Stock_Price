@@ -23,6 +23,9 @@ import com.ferelin.remote.webSocket.response.WebSocketSubResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
+/**
+ * [WebResponseConverter] can convert response from web-socket for repository module.
+ * */
 class WebResponseConverter {
 
     private val mConverter = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()

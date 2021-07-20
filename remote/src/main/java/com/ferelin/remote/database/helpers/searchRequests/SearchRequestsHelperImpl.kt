@@ -29,36 +29,36 @@ class SearchRequestsHelperImpl @Inject constructor(
     private val mDatabaseFirebase: DatabaseReference
 ) : SearchRequestsHelper {
 
-    companion object {
-        private const val sSearchesHistoryRef = "search-requests"
+    private companion object {
+        const val sSearchesHistoryRef = "search-requests"
     }
 
-    override fun writeSearchRequestToDb(
-        userId: String,
+    override fun cacheSearchRequestToDb(
+        userToken: String,
         searchRequestId: String,
         searchRequest: String
     ) {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
-            .child(userId)
+            .child(userToken)
             .child(searchRequestId)
             .setValue(searchRequest)
     }
 
-    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
+    override fun eraseSearchRequestFromDb(userToken: String, searchRequestId: String) {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
-            .child(userId)
+            .child(userToken)
             .child(searchRequestId)
             .removeValue()
     }
 
-    override fun readSearchRequestsFromDb(
-        userId: String
+    override fun getSearchRequestsFromDb(
+        userToken: String
     ) = callbackFlow<BaseResponse<HashMap<Int, String>>> {
         mDatabaseFirebase
             .child(sSearchesHistoryRef)
-            .child(userId)
+            .child(userToken)
             .get()
             .addOnSuccessListener { searchRequestsSnapshot ->
                 val searchRequests = hashMapOf<Int, String>()

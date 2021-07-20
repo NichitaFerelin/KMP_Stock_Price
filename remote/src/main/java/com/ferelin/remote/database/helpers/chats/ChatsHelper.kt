@@ -19,9 +19,15 @@ package com.ferelin.remote.database.helpers.chats
 import com.ferelin.remote.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [ChatsHelper] provides methods for interacting with database chats
+ * */
 interface ChatsHelper {
 
-    fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String)
+    fun cacheChat(chatId: String, currentUserNumber: String, associatedUserNumber: String)
 
-    fun getUserChats(userNumber: String): Flow<BaseResponse<String>>
+    /**
+     * @return chats by one associated with [userNumber]
+     * */
+    fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>>
 }

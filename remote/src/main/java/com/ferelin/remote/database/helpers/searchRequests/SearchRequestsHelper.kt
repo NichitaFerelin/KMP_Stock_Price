@@ -20,26 +20,29 @@ import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [SearchRequestsHelper] provides methods for interacting with database search requests
+ * */
 interface SearchRequestsHelper {
 
     /**
      * Provides ability to save search requests to cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @param searchRequest is a search requests that will be saved.
      */
-    fun writeSearchRequestToDb(userId: String, searchRequestId: String, searchRequest: String)
+    fun cacheSearchRequestToDb(userToken: String, searchRequestId: String, searchRequest: String)
 
     /**
      * Provides ability to erase a search request from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @param searchRequestId is a search request that will be erased.
      */
-    fun eraseSearchRequestFromDb(userId: String, searchRequestId: String)
+    fun eraseSearchRequestFromDb(userToken: String, searchRequestId: String)
 
     /**
      * Provides ability to read a search history from cloud database.
-     * @param userId is a user verification id that is used to access to correct node of cloud datastore.
+     * @param userToken is a user verification id that is used to access to correct node of cloud datastore.
      * @return [BaseResponse] with search request and [Api] response code as flow.
      */
-    fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>>
+    fun getSearchRequestsFromDb(userToken: String): Flow<BaseResponse<HashMap<Int, String>>>
 }

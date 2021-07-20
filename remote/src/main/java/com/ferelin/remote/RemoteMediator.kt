@@ -21,6 +21,10 @@ import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.database.RealtimeDatabase
 import com.ferelin.remote.webSocket.connector.WebSocketConnector
 
+/**
+ * [RemoteMediator] is the only entity for the application interact with the network.
+ * It provides various methods for communication with network-abilities.
+ * */
 interface RemoteMediator :
     ApiManager,
     WebSocketConnector,

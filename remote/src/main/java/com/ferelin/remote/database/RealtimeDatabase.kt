@@ -21,6 +21,27 @@ import com.ferelin.remote.database.helpers.favouriteCompanies.FavouriteCompanies
 import com.ferelin.remote.database.helpers.messages.MessagesHelper
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
 
+/**
+ * [RealtimeDatabase] provides ability to interact with realtime-database components.
+ * [RealtimeDatabase] is Firebase-Realtime-Database and is used to save user
+ * data(such as favourite companies) in cloud.
+ *
+ *  Data at cloud looks like:
+ *
+ *
+ *      -FAVOURITE_COMPANIES
+ *          -[userId1]
+ *              -[companyId1]
+ *              -[companyId2]
+ *              -[companyId3]
+ *          -[userId2]
+ *              - ...
+ *      -SEARCH_REQUESTS
+ *          -[userId1]
+ *              -[searchRequest1]
+ *              -[searchRequest2]
+ *              -[searchRequest3]
+ * */
 interface RealtimeDatabase :
     FavouriteCompaniesHelper,
     SearchRequestsHelper,

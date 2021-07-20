@@ -44,7 +44,8 @@ open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
     private var mWebSocket: WebSocket? = null
 
     /*
-    * If the web socket has not yet been initialized, then incoming tasks are inserted into this queue.
+    * If the web socket has not yet been initialized,
+    * then incoming tasks are inserted into this queue.
     * */
     private var mMessagesQueue: Queue<String> = LinkedList()
 

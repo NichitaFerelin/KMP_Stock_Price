@@ -75,5 +75,8 @@ interface ApiManager {
         isImportant: Boolean
     )
 
+    /**
+     * @return flow by which responses to the request will come
+     * */
     fun getStockPriceResponseState() : Flow<BaseResponse<StockPriceResponse>>
 }

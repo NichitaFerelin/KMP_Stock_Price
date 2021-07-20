@@ -144,13 +144,15 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
         lastPosition: Int,
         eraseIfNotActual: Boolean
     ): Boolean {
-        return abs(currentPosition - lastPosition) >= 13 && eraseIfNotActual
+        return abs(currentPosition - lastPosition) >= sAlreadyNotActualValue && eraseIfNotActual
     }
 
-    companion object {
-        private const val sSymbol = "symbol"
-        private const val sApi = "api"
-        private const val sPosition = "position"
-        private const val sEraseState = "erase"
+    private companion object {
+        const val sAlreadyNotActualValue = 13
+
+        const val sSymbol = "symbol"
+        const val sApi = "api"
+        const val sPosition = "position"
+        const val sEraseState = "erase"
     }
 }

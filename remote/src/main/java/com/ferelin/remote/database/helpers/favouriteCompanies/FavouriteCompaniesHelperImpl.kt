@@ -33,30 +33,28 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
         const val sFavouriteCompaniesRef = "favourite-companies"
     }
 
-    override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
+    override fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String) {
         mDatabaseReference
             .child(sFavouriteCompaniesRef)
-            .child(userId)
+            .child(userToken)
             .child(companyId)
             .removeValue()
     }
 
-    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
+    override fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String) {
         mDatabaseReference
             .child(sFavouriteCompaniesRef)
-            .child(userId)
+            .child(userToken)
             .child(companyId)
             .setValue(companyId)
     }
 
-    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
-        companiesId.forEach { companyId -> writeCompanyIdToRealtimeDb(userId, companyId) }
-    }
-
-    override fun readCompaniesIdsFromDb(userId: String) = callbackFlow<BaseResponse<List<String>>> {
+    override fun getCompaniesIdsFromDb(
+        userToken: String
+    ) = callbackFlow<BaseResponse<List<String>>> {
         mDatabaseReference
             .child(sFavouriteCompaniesRef)
-            .child(userId)
+            .child(userToken)
             .get()
             .addOnSuccessListener { idsSnapshot ->
                 val ids = mutableListOf<String>()
@@ -69,8 +67,8 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
                         responseData = ids
                     )
                 )
-            }.addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
-
+            }
+            .addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
         awaitClose()
     }
 }

@@ -21,6 +21,10 @@ import com.ferelin.remote.utils.Api
 import com.ferelin.remote.webSocket.response.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [WebSocketConnector] provides ability to open connection with server and
+ * get data about live-time stock's prices.
+ * */
 interface WebSocketConnector {
 
     /**

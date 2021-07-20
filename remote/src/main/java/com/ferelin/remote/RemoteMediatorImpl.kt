@@ -32,9 +32,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/*
-* Providing requests to right entity
-* */
 @Singleton
 class RemoteMediatorImpl @Inject constructor(
     private val mApiManager: ApiManager,
@@ -116,44 +113,44 @@ class RemoteMediatorImpl @Inject constructor(
         return mAuthenticationManager.provideIsUserLogged()
     }
 
-    override fun eraseCompanyIdFromRealtimeDb(userId: String, companyId: String) {
-        mRealtimeDatabaseManager.eraseCompanyIdFromRealtimeDb(userId, companyId)
+    override fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String) {
+        mRealtimeDatabaseManager.eraseCompanyIdFromRealtimeDb(userToken, companyId)
     }
 
-    override fun writeCompanyIdToRealtimeDb(userId: String, companyId: String) {
-        mRealtimeDatabaseManager.writeCompanyIdToRealtimeDb(userId, companyId)
+    override fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String) {
+        mRealtimeDatabaseManager.cacheCompanyIdToRealtimeDb(userToken, companyId)
     }
 
-    override fun writeCompaniesIdsToDb(userId: String, companiesId: List<String>) {
-        mRealtimeDatabaseManager.writeCompaniesIdsToDb(userId, companiesId)
+    override fun getCompaniesIdsFromDb(userToken: String): Flow<BaseResponse<List<String>>> {
+        return mRealtimeDatabaseManager.getCompaniesIdsFromDb(userToken)
     }
 
-    override fun readCompaniesIdsFromDb(userId: String): Flow<BaseResponse<List<String>>> {
-        return mRealtimeDatabaseManager.readCompaniesIdsFromDb(userId)
-    }
-
-    override fun writeSearchRequestToDb(
-        userId: String,
+    override fun cacheSearchRequestToDb(
+        userToken: String,
         searchRequestId: String,
         searchRequest: String
     ) {
-        mRealtimeDatabaseManager.writeSearchRequestToDb(userId, searchRequestId, searchRequest)
+        mRealtimeDatabaseManager.cacheSearchRequestToDb(userToken, searchRequestId, searchRequest)
     }
 
-    override fun readSearchRequestsFromDb(userId: String): Flow<BaseResponse<HashMap<Int, String>>> {
-        return mRealtimeDatabaseManager.readSearchRequestsFromDb(userId)
+    override fun getSearchRequestsFromDb(userToken: String): Flow<BaseResponse<HashMap<Int, String>>> {
+        return mRealtimeDatabaseManager.getSearchRequestsFromDb(userToken)
     }
 
-    override fun eraseSearchRequestFromDb(userId: String, searchRequestId: String) {
-        mRealtimeDatabaseManager.eraseSearchRequestFromDb(userId, searchRequestId)
+    override fun eraseSearchRequestFromDb(userToken: String, searchRequestId: String) {
+        mRealtimeDatabaseManager.eraseSearchRequestFromDb(userToken, searchRequestId)
     }
 
-    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
-        mRealtimeDatabaseManager.cacheChat(id, currentUserNumber, associatedUserNumber)
+    override fun cacheChat(
+        chatId: String,
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ) {
+        mRealtimeDatabaseManager.cacheChat(chatId, currentUserNumber, associatedUserNumber)
     }
 
-    override fun getUserChats(userNumber: String): Flow<BaseResponse<String>> {
-        return mRealtimeDatabaseManager.getUserChats(userNumber)
+    override fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>> {
+        return mRealtimeDatabaseManager.getChatsByUserNumber(userNumber)
     }
 
     override fun getMessagesForChat(
@@ -164,14 +161,14 @@ class RemoteMediatorImpl @Inject constructor(
     }
 
     override fun cacheMessage(
-        id: String,
+        messageId: String,
         currentUserNumber: String,
         associatedUserNumber: String,
         messageText: String,
         messageSideKey: Char
     ) {
         mRealtimeDatabaseManager.cacheMessage(
-            id,
+            messageId,
             currentUserNumber,
             associatedUserNumber,
             messageText,

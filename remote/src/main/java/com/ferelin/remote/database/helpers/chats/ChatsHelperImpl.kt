@@ -22,6 +22,7 @@ import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,15 +36,15 @@ class ChatsHelperImpl @Inject constructor(
         const val sChatsReference = "chats"
     }
 
-    override fun cacheChat(id: String, currentUserNumber: String, associatedUserNumber: String) {
+    override fun cacheChat(chatId: String, currentUserNumber: String, associatedUserNumber: String) {
         mDatabaseReference
             .child(sChatsReference)
             .child(currentUserNumber)
-            .child(id)
+            .child(chatId)
             .setValue(associatedUserNumber)
     }
 
-    override fun getUserChats(userNumber: String) = callbackFlow<BaseResponse<String>> {
+    override fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>> = callbackFlow {
         mDatabaseReference
             .child(sChatsReference)
             .child(userNumber)
@@ -62,7 +63,6 @@ class ChatsHelperImpl @Inject constructor(
                     }
                 }
             })
-
         awaitClose()
     }
 
