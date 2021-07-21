@@ -27,7 +27,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.debounce
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -82,9 +81,7 @@ open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
             okHttp.dispatcher.executorService.shutdown()
 
             awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }
-        }
-            .debounce(100)
-            .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        }.buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override fun closeWebSocketConnection() {
         mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)
