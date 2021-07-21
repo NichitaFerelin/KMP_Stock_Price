@@ -53,14 +53,6 @@ class SearchRequestsSynchronization @Inject constructor(
         mOnNewRemoteItemReceived = onReceived
     }
 
-    fun onDataPrepared(localSearchRequests: List<AdaptiveSearchRequest>) {
-        initDataSync(localSearchRequests)
-    }
-
-    fun onNetworkAvailable(localSearchRequests: List<AdaptiveSearchRequest>) {
-        initDataSync(localSearchRequests)
-    }
-
     fun onNetworkLost() {
         invalidate()
     }
@@ -70,26 +62,14 @@ class SearchRequestsSynchronization @Inject constructor(
     }
 
     fun onSearchRequestAdded(request: AdaptiveSearchRequest) {
-        if (!mRemoteSearchRequestsContainer.contains(request)) {
-            mRemoteSearchRequestsContainer.add(request)
-
-            mAppScope.launch {
-                mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.cacheSearchRequestToRealtimeDb(userToken, request)
-                }
-            }
+        mRepository.getUserAuthenticationId()?.let { userToken ->
+            mRepository.cacheSearchRequestToRealtimeDb(userToken, request)
         }
     }
 
     fun onSearchRequestRemoved(request: AdaptiveSearchRequest) {
-        if (mRemoteSearchRequestsContainer.contains(request)) {
-            mRemoteSearchRequestsContainer.remove(request)
-
-            mAppScope.launch {
-                mRepository.getUserAuthenticationId()?.let { userToken ->
-                    mRepository.eraseSearchRequestFromRealtimeDb(userToken, request)
-                }
-            }
+        mRepository.getUserAuthenticationId()?.let { userToken ->
+            mRepository.eraseSearchRequestFromRealtimeDb(userToken, request)
         }
     }
 
