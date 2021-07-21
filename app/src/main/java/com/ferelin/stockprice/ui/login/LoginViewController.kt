@@ -101,11 +101,12 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
                 showProgressBar()
                 hideBtnCheck()
             }
-            else -> {
+            is DataNotificator.None -> {
                 hideProgressBar()
                 hideEditTextCode()
                 showBtnCheck()
             }
+            else -> Unit
         }
     }
 

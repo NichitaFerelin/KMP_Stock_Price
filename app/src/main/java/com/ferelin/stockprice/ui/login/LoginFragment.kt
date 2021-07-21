@@ -71,7 +71,8 @@ class LoginFragment(
     override fun initObservers() {
         super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            collectAuthenticationState()
+            launch { collectAuthenticationState() }
+            launch { collectEventError() }
         }
     }
 
@@ -79,12 +80,18 @@ class LoginFragment(
         return mViewController.onBackPressed()
     }
 
-    private fun collectAuthenticationState() {
-        viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.stateAuthenticationProcess.collect { notificator ->
-                withContext(mCoroutineContext.Main) {
-                    mViewController.onAuthenticationStateChanged(notificator)
-                }
+    private suspend fun collectAuthenticationState() {
+        mViewModel.stateAuthenticationProcess.collect { notificator ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onAuthenticationStateChanged(notificator)
+            }
+        }
+    }
+
+    private suspend fun collectEventError() {
+        mViewModel.eventOnError.collect { message ->
+            withContext(mCoroutineContext.Main) {
+                mViewController.onError(message)
             }
         }
     }

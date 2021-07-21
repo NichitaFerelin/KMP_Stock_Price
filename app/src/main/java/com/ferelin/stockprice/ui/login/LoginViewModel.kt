@@ -22,10 +22,7 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel() {
@@ -34,6 +31,9 @@ class LoginViewModel : BaseViewModel() {
         MutableStateFlow<DataNotificator<RepositoryMessages>>(DataNotificator.None())
     val stateAuthenticationProcess: StateFlow<DataNotificator<RepositoryMessages>>
         get() = mStateAuthenticationProcess.asStateFlow()
+
+    val eventOnError: SharedFlow<String>
+        get() = mDataInteractor.sharedAuthenticationError
 
     private var mInputPhoneNumber = ""
     private var mInputCode = ""
@@ -45,11 +45,9 @@ class LoginViewModel : BaseViewModel() {
     }
 
     fun onSendCodeClicked(holderActivity: Activity, text: String) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            mSignInJob = launch {
-                mDataInteractor.tryToSignIn(holderActivity, "+$text").collect { notificator ->
-                    mStateAuthenticationProcess.value = notificator
-                }
+        mSignInJob = viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.tryToSignIn(holderActivity, "+$text").collect { notificator ->
+                mStateAuthenticationProcess.value = notificator
             }
         }
     }
