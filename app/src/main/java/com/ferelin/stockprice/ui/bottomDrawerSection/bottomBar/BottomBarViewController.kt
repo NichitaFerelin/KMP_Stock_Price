@@ -41,13 +41,13 @@ class BottomBarViewController :
         isBottomBarFabVisible: Boolean,
         arrowState: Float
     ) {
-        if (isBottomBarFabVisible) {
-            viewBinding.mainFab.show()
-        } else viewBinding.mainFab.hide()
-
         if (isBottomBarVisible) {
             showBottomBar()
         } else hideBottomBar()
+
+        if (isBottomBarFabVisible) {
+            viewBinding.mainFab.show()
+        } else viewBinding.mainFab.hide()
 
         viewBinding.bottomAppBarImageViewArrowUp.rotation = arrowState
     }
