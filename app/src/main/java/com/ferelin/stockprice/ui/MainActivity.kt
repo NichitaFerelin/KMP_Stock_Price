@@ -21,7 +21,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
@@ -29,14 +28,10 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.ActivityMainBinding
 import com.ferelin.stockprice.navigation.Navigator
 import com.ferelin.stockprice.services.observer.StockObserverController
-import com.ferelin.stockprice.ui.bottomDrawerSection.BottomDrawerFragment
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
-import com.ferelin.stockprice.utils.bottomDrawer.OnStateAction
+import com.ferelin.stockprice.ui.bottomDrawerSection.bottomBar.BottomBarFragment
 import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -49,8 +44,9 @@ class MainActivity(
     private val mViewModel: MainViewModel by viewModels()
     private var mViewBinding: ActivityMainBinding? = null
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy(LazyThreadSafetyMode.NONE) {
-        supportFragmentManager.findFragmentById(R.id.bottomNavFragment) as BottomDrawerFragment
+
+    private val mBottomBar: BottomBarFragment by lazy(LazyThreadSafetyMode.NONE) {
+        supportFragmentManager.findFragmentById(R.id.bottomBarFragment) as BottomBarFragment
     }
 
     @Inject
@@ -68,13 +64,12 @@ class MainActivity(
         navigator.attachHostActivity(this)
 
         initObservers()
-        setUpViewComponents()
+        setStatusBarColor()
         mViewModel.initObservers()
 
         if (savedInstanceState == null) {
-            hideBottomBar()
             navigator.navigateToLoadingFragment()
-        } else restoreState()
+        }
     }
 
     override fun onResume() {
@@ -90,8 +85,6 @@ class MainActivity(
     }
 
     override fun onDestroy() {
-        saveState()
-
         if (isFinishing) {
             mStockObserverController.onActivityFinishingDestroy(this)
         }
@@ -101,45 +94,16 @@ class MainActivity(
         super.onDestroy()
     }
 
-    fun hideBottomBar() {
-        with(mViewBinding!!) {
-            if (bottomAppBar.isVisible) {
-                bottomAppBar.isVisible = false
-            }
+    fun handleOnBackPressed(): Boolean {
+        return mBottomBar.handleOnBackPressed()
+    }
 
-            mainFab.hide()
-            bottomAppBar.performHide()
-        }
+    fun hideBottomBar() {
+        mBottomBar.hideBottomBar()
     }
 
     fun showBottomBar() {
-        with(mViewBinding!!) {
-            if (!bottomAppBar.isVisible) {
-                bottomAppBar.isVisible = true
-            }
-
-            mainFab.show()
-            bottomAppBar.performShow()
-        }
-    }
-
-    fun handleOnBackPressed(): Boolean {
-        return mBottomNavDrawer.handleOnBackPressed()
-    }
-
-    private fun saveState() {
-        mViewModel.arrowState = if (mViewBinding!!.bottomAppBarImageViewArrowUp.rotation > 90F) {
-            180F
-        } else 0F
-
-        mViewModel.isBottomBarFabVisible = mViewBinding!!.mainFab.isVisible
-        mViewModel.isBottomBarVisible = mViewBinding!!.bottomAppBar.isVisible
-    }
-
-    private fun onControlButtonPressed() {
-        if (mBottomNavDrawer.isDrawerHidden) {
-            mBottomNavDrawer.openDrawer()
-        } else mBottomNavDrawer.closeDrawer()
+        mBottomBar.showBottomBar()
     }
 
     private fun injectDependencies() {
@@ -168,72 +132,6 @@ class MainActivity(
 
     private suspend fun collectEventCriticalError() {
         mViewModel.eventCriticalError.collect { showDialog(it, supportFragmentManager) }
-    }
-
-    private fun setUpViewComponents() {
-        setStatusBarColor()
-        setUpFab()
-
-        mViewBinding!!.run {
-            bottomAppBarImageViewArrowUp.rotation = mViewModel.arrowState
-            bottomAppBarLinearRoot.setOnClickListener { onControlButtonPressed() }
-            mBottomNavDrawer.addOnSlideAction(ArrowUpAction(bottomAppBarImageViewArrowUp))
-            mBottomNavDrawer.addOnStateAction(object : OnStateAction {
-                override fun onBottomDrawerStateChanged(newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN && bottomAppBar.isVisible) {
-                        mViewBinding!!.mainFab.show()
-                    } else if (newState != BottomSheetBehavior.STATE_HIDDEN) {
-                        mViewBinding!!.mainFab.hide()
-                    }
-                }
-            })
-        }
-    }
-
-    private fun setUpFab() {
-        lifecycleScope.launch(mCoroutineContext.IO) {
-            collectStateUserAuthenticated()
-        }
-
-        mViewBinding!!.mainFab.setOnClickListener {
-            lifecycleScope.launch(mCoroutineContext.IO) {
-                val isUserAuthenticated = mViewModel.stateIsUserAuthenticated.firstOrNull() ?: false
-                if (!isUserAuthenticated) {
-                    withContext(mCoroutineContext.Main) {
-                        navigator.navigateToLoginFragment(false)
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun collectStateUserAuthenticated() {
-        mViewModel.stateIsUserAuthenticated.collect { isLogged ->
-            withContext(mCoroutineContext.Main) {
-                /**
-                 * Changes the icon depending on the authentication state.
-                 * */
-                if (isLogged) {
-                    mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
-                    mViewBinding!!.mainFab.contentDescription =
-                        getString(R.string.descriptionFabProfile)
-                } else {
-                    mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
-                    mViewBinding!!.mainFab.contentDescription =
-                        getString(R.string.descriptionFabLogIn)
-                }
-            }
-        }
-    }
-
-    private fun restoreState() {
-        if (mViewModel.isBottomBarFabVisible) {
-            mViewBinding!!.mainFab.show()
-        } else mViewBinding!!.mainFab.hide()
-
-        if (mViewModel.isBottomBarVisible) {
-            showBottomBar()
-        } else hideBottomBar()
     }
 
     private fun setStatusBarColor() {
