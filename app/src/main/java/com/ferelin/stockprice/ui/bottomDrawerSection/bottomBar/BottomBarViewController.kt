@@ -83,10 +83,6 @@ class BottomBarViewController :
 
     fun hideBottomBar() {
         with(viewBinding) {
-            if (bottomAppBar.isVisible) {
-                bottomAppBar.isVisible = false
-            }
-
             mainFab.hide()
             bottomAppBar.performHide()
         }
