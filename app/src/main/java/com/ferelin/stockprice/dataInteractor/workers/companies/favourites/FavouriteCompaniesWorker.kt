@@ -22,6 +22,7 @@ import com.ferelin.stockprice.dataInteractor.utils.CompanyStyleProvider
 import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,6 +72,9 @@ class FavouriteCompaniesWorker @Inject constructor(
     override val stateCompanyForObserver: StateFlow<AdaptiveCompany?>
         get() = mStateCompanyForObserver.asStateFlow()
 
+    private var mOnCompanyRemoved: ((AdaptiveCompany) -> Unit)? = null
+    private var mOnCompanyAdded: ((AdaptiveCompany) -> Unit)? = null
+
     /*
     * Subscribing over 50 items to live-time updates exceeds the limit of
     * web socket => over-limit-companies will not receive updates (or all companies depending
@@ -78,19 +82,21 @@ class FavouriteCompaniesWorker @Inject constructor(
     * */
     private val mCompaniesLimit = 50
 
+    private var mPrepareCompaniesJob: Job? = null
+
     fun onCompaniesDataPrepared(localCompanies: List<AdaptiveCompany>) {
-        mCompanies.addAll(localCompanies)
-        mFavouriteCompanies.addAll(
-            localCompanies
-                .filter { it.isFavourite }
-                .sortedByDescending { it.favouriteOrderIndex }
-        )
+        mPrepareCompaniesJob = mAppScope.launch {
+            mCompanies.addAll(localCompanies)
+            mFavouriteCompanies.addAll(
+                localCompanies
+                    .filter { it.isFavourite }
+                    .sortedByDescending { it.favouriteOrderIndex }
+            )
 
-        subscribeCompaniesOnLiveTimeUpdates()
-        mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
-        mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
-
-        syncData()
+            subscribeCompaniesOnLiveTimeUpdates()
+            mStateCompanyForObserver.value = mFavouriteCompanies.firstOrNull()
+            mStateFavouriteCompanies.value = DataNotificator.DataPrepared(mFavouriteCompanies)
+        }
     }
 
     suspend fun addCompanyToFavourites(
@@ -145,13 +151,13 @@ class FavouriteCompaniesWorker @Inject constructor(
         }
     }
 
-    fun onLogOut(onCompanyRemoved: suspend (AdaptiveCompany) -> Unit) {
+    fun onLogOut() {
         mFavouriteCompaniesSynchronization.onLogOut()
 
         mAppScope.launch {
             mFavouriteCompanies.toList().forEach { localCompany ->
                 removeCompanyFromFavourites(localCompany)
-                onCompanyRemoved.invoke(localCompany)
+                mOnCompanyRemoved?.invoke(localCompany)
             }
         }
     }
@@ -160,19 +166,24 @@ class FavouriteCompaniesWorker @Inject constructor(
         mFavouriteCompaniesSynchronization.onNetworkLost()
     }
 
-    fun onNetworkAvailable() {
-        if (mStateFavouriteCompanies.value is DataNotificator.DataPrepared) {
-            syncData()
-        }
+    fun setOnCompanyRemovedCallback(action: (AdaptiveCompany) -> Unit) {
+        mOnCompanyRemoved = action
+    }
+
+    fun setOnCompanyAddedCallback(action: (AdaptiveCompany) -> Unit) {
+        mOnCompanyAdded = action
+    }
+
+    suspend fun onNetworkAvailable() {
+        mPrepareCompaniesJob?.join()
+        syncData()
     }
 
     private fun syncData() {
         mFavouriteCompaniesSynchronization.initDataSync(mCompanies, mFavouriteCompanies,
             addCompanyToFavourites = { companyToAdd ->
-                addCompanyToFavourites(
-                    company = companyToAdd,
-                    ignoreError = true
-                )
+                mOnCompanyAdded?.invoke(companyToAdd)
+                addCompanyToFavourites(companyToAdd, true)
             })
     }
 

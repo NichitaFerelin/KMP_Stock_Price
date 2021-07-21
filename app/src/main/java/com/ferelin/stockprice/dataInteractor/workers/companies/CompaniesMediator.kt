@@ -67,6 +67,18 @@ open class CompaniesMediator @Inject constructor(
 
     init {
         prepareCompaniesData()
+
+        mFavouriteCompaniesWorker.setOnCompanyAddedCallback {
+            mAppScope.launch {
+                mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(it))
+            }
+        }
+
+        mFavouriteCompaniesWorker.setOnCompanyRemovedCallback {
+            mAppScope.launch {
+                mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(it))
+            }
+        }
     }
 
     suspend fun addCompanyToFavourites(company: AdaptiveCompany, ignoreError: Boolean) {
@@ -139,16 +151,14 @@ open class CompaniesMediator @Inject constructor(
     }
 
     fun onLogOut() {
-        mFavouriteCompaniesWorker.onLogOut(onCompanyRemoved = {
-            mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(it))
-        })
+        mFavouriteCompaniesWorker.onLogOut()
     }
 
     fun onNetworkLost() {
         mFavouriteCompaniesWorker.onNetworkLost()
     }
 
-    fun onNetworkAvailable() {
+    suspend fun onNetworkAvailable() {
         mFavouriteCompaniesWorker.onNetworkAvailable()
     }
 

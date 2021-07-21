@@ -347,7 +347,7 @@ class DataInteractorImpl @Inject constructor(
         mWebSocketWorker.prepareToWebSocketReconnection()
     }
 
-    private fun onNetworkAvailable() {
+    private suspend fun onNetworkAvailable() {
         mCompaniesMediator.onNetworkAvailable()
         mSearchRequestsWorker.onNetworkAvailable()
 
