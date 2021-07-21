@@ -53,7 +53,9 @@ class MainViewModel : BaseViewModel() {
         get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
 
     override fun initObserversBlock() {
-        // Do nothing
+        viewModelScope.launch(mCoroutineContext.IO) {
+            mDataInteractor.openWebSocketConnection().collect()
+        }
     }
 
     private fun restartWebSocket() {
