@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 abstract class BaseStocksViewModel : BaseViewModel() {
 
     val stocksRecyclerAdapter = StocksRecyclerAdapter().apply {
+        setHasStableIds(true)
         setOnBindCallback { _, company, position ->
             onItemBind(company, position)
         }

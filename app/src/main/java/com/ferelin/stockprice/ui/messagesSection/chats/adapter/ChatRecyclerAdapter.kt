@@ -48,7 +48,7 @@ class ChatRecyclerAdapter(
         return mChats[position].id.toLong()
     }
 
-    fun getRelation(position: Int): AdaptiveChat {
+    fun getChat(position: Int): AdaptiveChat {
         return mChats[position]
     }
 

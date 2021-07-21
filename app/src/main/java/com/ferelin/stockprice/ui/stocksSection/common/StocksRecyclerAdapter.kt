@@ -66,10 +66,6 @@ class StocksRecyclerAdapter(
         return mCompanies.size + mOffsetWithHeader
     }
 
-    override fun setHasStableIds(hasStableIds: Boolean) {
-        super.setHasStableIds(true)
-    }
-
     override fun getItemId(position: Int): Long {
         return when {
             position == 0 && mHeader != null -> mHeader.hashCode().toLong()

@@ -45,10 +45,6 @@ class SearchRequestsAdapter(
 
     override fun getItemCount(): Int = mSearches.size
 
-    override fun setHasStableIds(hasStableIds: Boolean) {
-        super.setHasStableIds(true)
-    }
-
     override fun getItemId(position: Int): Long {
         return mSearches[position].id.toLong()
     }

@@ -88,7 +88,7 @@ class ChatsViewController :
     fun onChatClicked(position: Int) {
         val recyclerAdapter = viewBinding.recyclerViewRelations.adapter
         if (recyclerAdapter is ChatRecyclerAdapter) {
-            val selectedChat = recyclerAdapter.getRelation(position)
+            val selectedChat = recyclerAdapter.getChat(position)
             mNavigator?.navigateToChatFragment(selectedChat)
         }
     }

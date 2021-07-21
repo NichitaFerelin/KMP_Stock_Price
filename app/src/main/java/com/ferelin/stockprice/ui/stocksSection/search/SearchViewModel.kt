@@ -30,8 +30,12 @@ class SearchViewModel : BaseStocksViewModel() {
 
     private var mCompanies: ArrayList<AdaptiveCompany>? = null
 
-    val searchRequestAdapter = SearchRequestsAdapter()
-    val popularRequestsAdapter = SearchRequestsAdapter()
+    val searchRequestAdapter = SearchRequestsAdapter().apply {
+        setHasStableIds(true)
+    }
+    val popularRequestsAdapter = SearchRequestsAdapter().apply {
+        setHasStableIds(true)
+    }
 
     private val mStateSearchStockResults = MutableStateFlow<ArrayList<AdaptiveCompany>?>(null)
     val stateSearchStockResults: StateFlow<ArrayList<AdaptiveCompany>?>
