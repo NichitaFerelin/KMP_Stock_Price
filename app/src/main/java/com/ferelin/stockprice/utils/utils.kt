@@ -21,8 +21,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
@@ -88,12 +86,6 @@ fun withTimer(time: Long = 200L, body: () -> Unit) {
     }, time)
 }
 
-fun withTimerOnUi(time: Long = 200L, body: () -> Unit) {
-    Handler(Looper.getMainLooper()).postDelayed({
-        body.invoke()
-    }, time)
-}
-
 @SuppressLint("Recycle")
 fun Context.themeColor(
     @AttrRes themeAttrId: Int
@@ -139,10 +131,10 @@ fun showDefaultDialog(context: Context, message: String) {
         .show()
 }
 
-fun BottomSheetBehavior<FrameLayout>.isHidden() : Boolean {
+fun BottomSheetBehavior<FrameLayout>.isHidden(): Boolean {
     return state == STATE_HIDDEN
 }
 
-fun BottomSheetBehavior<FrameLayout>.isExpanded() : Boolean {
+fun BottomSheetBehavior<FrameLayout>.isExpanded(): Boolean {
     return state == STATE_EXPANDED
 }

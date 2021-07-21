@@ -103,32 +103,17 @@ class DataInteractorImpl @Inject constructor(
     /**
      * Errors states
      * */
-    override val sharedLoadMessagesError: SharedFlow<String>
-        get() = mErrorsWorker.sharedLoadMessagesError
-
     override val sharedApiLimitError: SharedFlow<String>
         get() = mErrorsWorker.sharedApiLimitError
 
     override val sharedPrepareCompaniesError: SharedFlow<String>
         get() = mErrorsWorker.sharedPrepareCompaniesError
 
-    override val sharedLoadStockCandlesError: SharedFlow<String>
-        get() = mErrorsWorker.sharedLoadStockCandlesError
-
-    override val sharedLoadCompanyNewsError: SharedFlow<String>
-        get() = mErrorsWorker.sharedLoadCompanyNewsError
-
-    override val sharedLoadSearchRequestsError: SharedFlow<String>
-        get() = mErrorsWorker.sharedLoadSearchRequestsError
-
     override val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
         get() = mErrorsWorker.sharedFavouriteCompaniesLimitReached
 
     override val sharedAuthenticationError: SharedFlow<String>
         get() = mErrorsWorker.sharedAuthenticationError
-
-    override val sharedRegisterError: SharedFlow<String>
-        get() = mErrorsWorker.sharedRegisterError
 
     /**
      * Chats states
@@ -196,7 +181,7 @@ class DataInteractorImpl @Inject constructor(
             onLogIn = {
                 mAppScope.launch {
                     // Cache user number without '+' symbol
-                    mRepository.setUserNumber(phone.substring(1))
+                    mRepository.cacheUserNumber(phone.substring(1))
                 }
                 mMenuItemsWorker.onLogIn()
                 mCompaniesMediator.onLogIn()
@@ -208,13 +193,13 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun logOut() {
-        mAppScope.launch { mRepository.setUserNumber("") }
-        mAuthenticationWorker.logOut()
+        mAppScope.launch { mRepository.cacheUserNumber("") }
         mCompaniesMediator.onLogOut()
         mMenuItemsWorker.onLogOut()
         mSearchRequestsWorker.onLogOut()
         mChatsWorker.onLogOut()
         mMessagesWorker.onLogOut()
+        mAuthenticationWorker.logOut()
     }
 
     override fun logInWithCode(code: String) {
@@ -332,7 +317,7 @@ class DataInteractorImpl @Inject constructor(
     }
 
     override suspend fun setFirstTimeLaunchState(state: Boolean) {
-        mRepository.setFirstTimeLaunchState(state)
+        mRepository.cacheFirstTimeLaunchState(state)
     }
 
     override suspend fun getFirstTimeLaunchState(): Boolean {

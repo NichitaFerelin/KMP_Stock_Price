@@ -1,3 +1,8 @@
+package com.ferelin.stockprice.utils
+
+import android.os.Handler
+import android.os.Looper
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,11 +19,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.converter.helpers.firstTimeLaunchConverter
+object TimerTasks {
 
-import com.ferelin.repository.utils.RepositoryResponse
+    private var mMainThreadHandler = Handler(Looper.getMainLooper())
 
-interface FirstTimeLaunchConverter {
-
-    fun convertFirstTimeLaunchStateForUi(state: Boolean?): RepositoryResponse<Boolean>
+    fun withTimerOnUi(time: Long = 200L, body: () -> Unit) {
+        mMainThreadHandler.postDelayed({
+            body.invoke()
+        }, time)
+    }
 }

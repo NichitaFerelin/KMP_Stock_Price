@@ -24,12 +24,6 @@ import kotlinx.coroutines.flow.*
 
 class MainViewModel : BaseViewModel() {
 
-    private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
-    val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
-        get() = mEventObserverCompanyChanged
-
-    private var mObserverCompanyCollectorJob: Job? = null
-
     private var mNetworkWasLost: Boolean = false
 
     val stateIsNetworkAvailable: Flow<Boolean>
@@ -50,11 +44,6 @@ class MainViewModel : BaseViewModel() {
     val stateIsUserAuthenticated: StateFlow<Boolean>
         get() = mDataInteractor.stateIsUserAuthenticated
 
-    var isServiceRunning = false
-
-    var arrowState: Float = 0F
-    var bottomAppBarState: Float = 0F
-
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
 
@@ -64,28 +53,24 @@ class MainViewModel : BaseViewModel() {
     val eventOnFavouriteCompaniesLimitError: SharedFlow<String>
         get() = mDataInteractor.sharedFavouriteCompaniesLimitReached
 
+    private val mEventObserverCompanyChanged = MutableSharedFlow<AdaptiveCompany?>(1)
+    val eventObserverCompanyChanged: SharedFlow<AdaptiveCompany?>
+        get() = mEventObserverCompanyChanged.asSharedFlow()
+
+    private var mObserverCompanyCollectorJob: Job? = null
+    var isServiceRunning = false
+
+    var arrowState: Float = 0F
+    var isBottomBarFabVisible = false
+    var isBottomBarVisible = false
+
     override fun initObserversBlock() {
         viewModelScope.launch(Dispatchers.IO) {
             collectCompanyUpdatesForObserver()
         }
     }
 
-    private suspend fun collectCompanyUpdatesForObserver() {
-        mDataInteractor.stateCompanyForObserver.collect { onCompanyForObserverChanged(it) }
-    }
-
-    private suspend fun onCompanyForObserverChanged(company: AdaptiveCompany?) {
-        if (company == null) {
-            mObserverCompanyCollectorJob?.cancel()
-            mEventObserverCompanyChanged.emit(null)
-            return
-        }
-
-        mEventObserverCompanyChanged.emit(company)
-        collectObserverCompanyUpdates(company)
-    }
-
-    private fun collectObserverCompanyUpdates(target: AdaptiveCompany) {
+    private fun collectCompanyUpdatedForService(target: AdaptiveCompany) {
         mObserverCompanyCollectorJob?.cancel()
         mObserverCompanyCollectorJob = viewModelScope.launch(Dispatchers.IO) {
             mDataInteractor.sharedCompaniesUpdates
@@ -96,6 +81,21 @@ class MainViewModel : BaseViewModel() {
                     } else mEventObserverCompanyChanged.emit(target)
                 }
         }
+    }
+
+    private suspend fun collectCompanyUpdatesForObserver() {
+        mDataInteractor.stateCompanyForObserver.collect { onCompanyDataForServiceChanged(it) }
+    }
+
+    private suspend fun onCompanyDataForServiceChanged(company: AdaptiveCompany?) {
+        if (company == null) {
+            mObserverCompanyCollectorJob?.cancel()
+            mEventObserverCompanyChanged.emit(null)
+            return
+        }
+
+        mEventObserverCompanyChanged.emit(company)
+        collectCompanyUpdatedForService(company)
     }
 
     private fun restartWebSocket() {

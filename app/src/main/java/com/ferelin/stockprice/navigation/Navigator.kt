@@ -36,18 +36,31 @@ import com.ferelin.stockprice.ui.previewSection.loading.LoadingFragment
 import com.ferelin.stockprice.ui.previewSection.welcome.WelcomeFragment
 import com.ferelin.stockprice.ui.stocksSection.search.SearchFragment
 import com.ferelin.stockprice.ui.stocksSection.stocksPager.StocksPagerFragment
-import com.ferelin.stockprice.utils.withTimerOnUi
+import com.ferelin.stockprice.utils.TimerTasks
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * [Navigator] represents a class that provides ability to navigate between fragments.
  *  Controls bottom app bar visibility state.
  */
-class Navigator(private val mHostActivity: MainActivity) {
+@Singleton
+class Navigator @Inject constructor() {
+
+    private var mHostActivity: MainActivity? = null
 
     private val mChatsTag = "chats"
     private val mStocksPagerTag = "stocksPager"
 
     private var mIsOnScreenWithMenu = false
+
+    fun attachHostActivity(activity: MainActivity) {
+        mHostActivity = activity
+    }
+
+    fun detachHostActivity() {
+        mHostActivity = null
+    }
 
     fun navigateToLoadingFragment() {
         replaceMainContainerBy(LoadingFragment())
@@ -55,13 +68,13 @@ class Navigator(private val mHostActivity: MainActivity) {
 
     fun navigateToLoginFragment(isReplacedFromMenu: Boolean) {
         mIsOnScreenWithMenu = false
-        mHostActivity.hideBottomBar()
+        hideBottomBar()
         replaceMainContainerBy(LoginFragment(isReplacedFromMenu), addToBackStack = true)
     }
 
     fun navigateToChatFragment(chat: AdaptiveChat) {
         mIsOnScreenWithMenu = false
-        mHostActivity.hideBottomBar()
+        hideBottomBar()
         replaceMainContainerBy(ChatFragment(chat), addToBackStack = true)
     }
 
@@ -85,13 +98,13 @@ class Navigator(private val mHostActivity: MainActivity) {
 
     fun navigateToDrawerHostFragment() {
         mIsOnScreenWithMenu = true
-        withTimerOnUi(500) { mHostActivity.showBottomBar() }
+        TimerTasks.withTimerOnUi(500) { mHostActivity?.showBottomBar() }
         replaceMainContainerBy(StocksPagerFragment(), mStocksPagerTag)
     }
 
     fun navigateToSearchFragment(onCommit: ((FragmentTransaction) -> Unit)? = null) {
         mIsOnScreenWithMenu = false
-        mHostActivity.hideBottomBar()
+        hideBottomBar()
         replaceMainContainerBy(SearchFragment(), addToBackStack = true, onCommit = onCommit)
     }
 
@@ -99,7 +112,7 @@ class Navigator(private val mHostActivity: MainActivity) {
         selectedCompany: AdaptiveCompany,
         fragmentManager: FragmentManager
     ) {
-        mHostActivity.hideBottomBar()
+        hideBottomBar()
         fragmentManager.commit {
             setReorderingAllowed(true)
             replace(
@@ -123,20 +136,20 @@ class Navigator(private val mHostActivity: MainActivity) {
     }
 
     fun navigateFromAboutPagerToSearch() {
-        mHostActivity.supportFragmentManager.popBackStack()
+        mHostActivity?.supportFragmentManager?.popBackStack()
     }
 
     fun navigateBackToHostFragment() {
         mIsOnScreenWithMenu = true
-        mHostActivity.supportFragmentManager.popBackStack()
-        withTimerOnUi(250) { mHostActivity.showBottomBar() }
+        mHostActivity?.supportFragmentManager?.popBackStack()
+        TimerTasks.withTimerOnUi(250) { mHostActivity?.showBottomBar() }
     }
 
     private fun contains(tag: String): Boolean {
         return mHostActivity
-            .supportFragmentManager
-            .fragments
-            .find { it.tag == tag } != null
+            ?.supportFragmentManager
+            ?.fragments
+            ?.find { it.tag == tag } != null
     }
 
     private fun replaceMainContainerBy(
@@ -145,7 +158,7 @@ class Navigator(private val mHostActivity: MainActivity) {
         addToBackStack: Boolean = false,
         onCommit: ((FragmentTransaction) -> Unit)? = null
     ) {
-        mHostActivity.supportFragmentManager.commit {
+        mHostActivity?.supportFragmentManager?.commit {
             setReorderingAllowed(true)
             replace(R.id.fragmentContainer, fragment, tag)
             if (addToBackStack) addToBackStack(null)
@@ -159,6 +172,12 @@ class Navigator(private val mHostActivity: MainActivity) {
             true
         } catch (e: ActivityNotFoundException) {
             false
+        }
+    }
+
+    private fun hideBottomBar() {
+        TimerTasks.withTimerOnUi(200) {
+            mHostActivity?.hideBottomBar()
         }
     }
 }

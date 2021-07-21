@@ -51,7 +51,9 @@ class FavouriteViewModel : BaseStocksViewModel() {
     }
 
     private suspend fun collectSharedFavouriteCompaniesUpdates() {
-        mDataInteractor.sharedFavouriteCompaniesUpdates.collect { onFavouriteCompanyUpdateShared(it) }
+        mDataInteractor.sharedFavouriteCompaniesUpdates.collect { notificator ->
+            onFavouriteCompanyUpdateShared(notificator)
+        }
     }
 
     private fun onFavouriteCompaniesPrepared(notificator: DataNotificator<List<AdaptiveCompany>>) {
@@ -61,26 +63,24 @@ class FavouriteViewModel : BaseStocksViewModel() {
     /**
      * Is important to modify adapter items based on view model lifecycle but not on view.
      * */
-    private fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
-        viewModelScope.launch(mCoroutineContext.IO) {
-            notificator.data?.let {
-                when (notificator) {
-                    is DataNotificator.NewItemAdded -> {
-                        withContext(mCoroutineContext.Main) {
-                            stocksRecyclerAdapter.addCompany(notificator.data)
-                            mEventOnNewItem.emit(Unit)
-                        }
+    private suspend fun onFavouriteCompanyUpdateShared(notificator: DataNotificator<AdaptiveCompany>) {
+        notificator.data?.let {
+            when (notificator) {
+                is DataNotificator.NewItemAdded -> {
+                    withContext(mCoroutineContext.Main) {
+                        stocksRecyclerAdapter.addCompany(notificator.data)
+                        mEventOnNewItem.emit(Unit)
                     }
-                    is DataNotificator.ItemRemoved -> {
-                        val index = stocksRecyclerAdapter.companies.indexOf(notificator.data)
-                        if (index != NULL_INDEX) {
-                            withContext(mCoroutineContext.Main) {
-                                stocksRecyclerAdapter.removeCompany(index)
-                            }
-                        }
-                    }
-                    else -> Unit
                 }
+                is DataNotificator.ItemRemoved -> {
+                    val index = stocksRecyclerAdapter.companies.indexOf(notificator.data)
+                    if (index != NULL_INDEX) {
+                        withContext(mCoroutineContext.Main) {
+                            stocksRecyclerAdapter.removeCompany(index)
+                        }
+                    }
+                }
+                else -> Unit
             }
         }
     }

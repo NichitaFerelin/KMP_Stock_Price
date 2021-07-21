@@ -29,6 +29,7 @@ import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
+import com.ferelin.stockprice.utils.TimerTasks
 
 /**
  * [BaseFragment] is the fundament for fragments.
@@ -193,10 +194,14 @@ abstract class BaseFragment<
     }
 
     private fun hideBottomBar() {
-        mHostActivity?.hideBottomBar()
+        TimerTasks.withTimerOnUi(200) {
+            mHostActivity?.hideBottomBar()
+        }
     }
 
     private fun showBottomBar() {
-        mHostActivity?.showBottomBar()
+        TimerTasks.withTimerOnUi(200) {
+            mHostActivity?.showBottomBar()
+        }
     }
 }

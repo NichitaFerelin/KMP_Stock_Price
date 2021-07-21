@@ -109,4 +109,7 @@
 
     <string name="errorNotAuthorized">Before using chats you need to log in to identify</string>
 
+    <string name="descriptionFabProfile">Profile</string>
+    <string name="descriptionFabLogIn">Log in</string>
+
 </resources>

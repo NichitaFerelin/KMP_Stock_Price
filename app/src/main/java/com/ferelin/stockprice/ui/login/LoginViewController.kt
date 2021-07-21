@@ -87,9 +87,9 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     fun onAuthenticationStateChanged(notificator: DataNotificator<RepositoryMessages>) {
         when (notificator) {
             is DataNotificator.DataPrepared -> {
-                if (notificator.data is RepositoryMessages.Ok) {
+                if (notificator.data == RepositoryMessages.Ok) {
                     onSignIn()
-                } else if (notificator.data is RepositoryMessages.CodeSent) {
+                } else if (notificator.data == RepositoryMessages.CodeSent) {
                     onCodeSent()
                 }
             }

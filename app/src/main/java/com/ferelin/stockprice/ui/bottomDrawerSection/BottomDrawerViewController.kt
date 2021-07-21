@@ -31,12 +31,12 @@ import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemsAdapter
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.TimerTasks
 import com.ferelin.stockprice.utils.bottomDrawer.BottomSheetManager
 import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
 import com.ferelin.stockprice.utils.bottomDrawer.OnStateAction
 import com.ferelin.stockprice.utils.isHidden
 import com.ferelin.stockprice.utils.themeColor
-import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.MaterialShapeDrawable
 
@@ -82,7 +82,7 @@ class BottomDrawerViewController :
 
     fun onMenuItemClicked(item: MenuItem, onLogOut: () -> Unit) {
         if (item.type != MenuItemType.LogOut) {
-            withTimerOnUi(200) { closeDrawer() }
+            TimerTasks.withTimerOnUi(200) { closeDrawer() }
         }
 
         when (item.type) {

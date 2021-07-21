@@ -29,9 +29,7 @@ data class AdaptiveCompany(
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is AdaptiveCompany) {
-            companyProfile.name == other.companyProfile.name &&
-                    companyProfile.symbol == other.companyProfile.symbol &&
-                    companyDayData.currentPrice == other.companyDayData.currentPrice
+            companyProfile.symbol == other.companyProfile.symbol
         } else false
     }
 
@@ -41,5 +39,9 @@ data class AdaptiveCompany(
         result = 31 * result + companyProfile.symbol.hashCode()
         result = 31 * result + companyDayData.currentPrice.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return companyProfile.symbol
     }
 }

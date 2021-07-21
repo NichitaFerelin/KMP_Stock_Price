@@ -19,7 +19,6 @@ package com.ferelin.stockprice.ui
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -35,18 +34,17 @@ import com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions.ArrowUpAction
 import com.ferelin.stockprice.utils.bottomDrawer.OnStateAction
 import com.ferelin.stockprice.utils.showDefaultDialog
 import com.ferelin.stockprice.utils.showDialog
-import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
 class MainActivity(
     private val mCoroutineContext: CoroutineContextProvider = CoroutineContextProvider()
 ) : AppCompatActivity() {
-
-    val navigator: Navigator by lazy(LazyThreadSafetyMode.NONE) { Navigator(this) }
 
     private val mViewModel: MainViewModel by viewModels()
     private var mViewBinding: ActivityMainBinding? = null
@@ -55,7 +53,11 @@ class MainActivity(
         supportFragmentManager.findFragmentById(R.id.bottomNavFragment) as BottomDrawerFragment
     }
 
-    private var mMessagesForServiceCollectorJob: Job? = null
+    @Inject
+    lateinit var navigator: Navigator
+
+    @Inject
+    lateinit var mStockObserverController: StockObserverController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -63,6 +65,7 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         mViewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mViewBinding!!.root)
+        navigator.attachHostActivity(this)
 
         initObservers()
         setUpViewComponents()
@@ -71,54 +74,52 @@ class MainActivity(
         if (savedInstanceState == null) {
             hideBottomBar()
             navigator.navigateToLoadingFragment()
-        }
+        } else restoreState()
     }
 
     override fun onResume() {
         super.onResume()
-        if (mViewModel.isServiceRunning) {
-            mMessagesForServiceCollectorJob?.cancel()
-            StockObserverController.stopService(this@MainActivity)
-        }
+        mStockObserverController.onActivityResume(this)
     }
 
     override fun onPause() {
         super.onPause()
         if (!isFinishing) {
-            collectMessagesForService()
+            mStockObserverController.onActivityNotFinishingPause()
         }
     }
 
     override fun onDestroy() {
         saveState()
-        StockObserverController.stopService(this@MainActivity)
+
+        if (isFinishing) {
+            mStockObserverController.onActivityFinishingDestroy(this)
+        }
+
+        navigator.detachHostActivity()
         mViewBinding = null
         super.onDestroy()
     }
 
     fun hideBottomBar() {
-        withTimerOnUi(200) {
-            with(mViewBinding!!) {
-                if (bottomAppBar.visibility != View.GONE) {
-                    bottomAppBar.visibility = View.GONE
-                }
-
-                mainFab.hide()
-                bottomAppBar.performHide()
+        with(mViewBinding!!) {
+            if (bottomAppBar.isVisible) {
+                bottomAppBar.isVisible = false
             }
+
+            mainFab.hide()
+            bottomAppBar.performHide()
         }
     }
 
     fun showBottomBar() {
-        withTimerOnUi(200) {
-            with(mViewBinding!!) {
-                if (bottomAppBar.visibility != View.VISIBLE) {
-                    bottomAppBar.visibility = View.VISIBLE
-                }
-
-                bottomAppBar.performShow()
-                mainFab.show()
+        with(mViewBinding!!) {
+            if (!bottomAppBar.isVisible) {
+                bottomAppBar.isVisible = true
             }
+
+            mainFab.show()
+            bottomAppBar.performShow()
         }
     }
 
@@ -126,29 +127,26 @@ class MainActivity(
         return mBottomNavDrawer.handleOnBackPressed()
     }
 
-    private fun showFab() {
-        // mViewBinding!!.mainFab.show()
-    }
-
     private fun saveState() {
         mViewModel.arrowState = if (mViewBinding!!.bottomAppBarImageViewArrowUp.rotation > 90F) {
             180F
         } else 0F
+
+        mViewModel.isBottomBarFabVisible = mViewBinding!!.mainFab.isVisible
+        mViewModel.isBottomBarVisible = mViewBinding!!.bottomAppBar.isVisible
     }
 
     private fun onControlButtonPressed() {
         if (mBottomNavDrawer.isDrawerHidden) {
             mBottomNavDrawer.openDrawer()
-            mViewBinding!!.mainFab.hide()
-        } else {
-            mViewBinding!!.mainFab.show()
-            mBottomNavDrawer.closeDrawer()
-        }
+        } else mBottomNavDrawer.closeDrawer()
     }
 
     private fun injectDependencies() {
+        val application = application
         if (application is App) {
-            (application as App).appComponent.inject(mViewModel)
+            application.appComponent.inject(this)
+            application.appComponent.inject(mViewModel)
         }
     }
 
@@ -172,25 +170,6 @@ class MainActivity(
         mViewModel.eventCriticalError.collect { showDialog(it, supportFragmentManager) }
     }
 
-    private fun collectMessagesForService() {
-        mMessagesForServiceCollectorJob = lifecycleScope.launch(mCoroutineContext.IO) {
-            mViewModel.eventObserverCompanyChanged.collect {
-                when {
-                    !isActive -> cancel()
-                    it == null -> {
-                        if (mViewModel.isServiceRunning) {
-                            StockObserverController.stopService(this@MainActivity)
-                        }
-                    }
-                    else -> {
-                        StockObserverController.updateService(this@MainActivity, it)
-                        mViewModel.isServiceRunning = true
-                    }
-                }
-            }
-        }
-    }
-
     private fun setUpViewComponents() {
         setStatusBarColor()
         setUpFab()
@@ -203,6 +182,8 @@ class MainActivity(
                 override fun onBottomDrawerStateChanged(newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN && bottomAppBar.isVisible) {
                         mViewBinding!!.mainFab.show()
+                    } else if (newState != BottomSheetBehavior.STATE_HIDDEN) {
+                        mViewBinding!!.mainFab.hide()
                     }
                 }
             })
@@ -229,13 +210,30 @@ class MainActivity(
     private suspend fun collectStateUserAuthenticated() {
         mViewModel.stateIsUserAuthenticated.collect { isLogged ->
             withContext(mCoroutineContext.Main) {
+                /**
+                 * Changes the icon depending on the authentication state.
+                 * */
                 if (isLogged) {
                     mViewBinding!!.mainFab.setImageResource(R.drawable.ic_user_photo)
+                    mViewBinding!!.mainFab.contentDescription =
+                        getString(R.string.descriptionFabProfile)
                 } else {
                     mViewBinding!!.mainFab.setImageResource(R.drawable.ic_key)
+                    mViewBinding!!.mainFab.contentDescription =
+                        getString(R.string.descriptionFabLogIn)
                 }
             }
         }
+    }
+
+    private fun restoreState() {
+        if (mViewModel.isBottomBarFabVisible) {
+            mViewBinding!!.mainFab.show()
+        } else mViewBinding!!.mainFab.hide()
+
+        if (mViewModel.isBottomBarVisible) {
+            showBottomBar()
+        } else hideBottomBar()
     }
 
     private fun setStatusBarColor() {

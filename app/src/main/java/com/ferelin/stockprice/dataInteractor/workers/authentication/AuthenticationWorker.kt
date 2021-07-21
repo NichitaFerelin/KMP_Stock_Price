@@ -64,7 +64,7 @@ class AuthenticationWorker @Inject constructor(
                     taskNotificator = DataNotificator.DataPrepared(response.data)
                     trySend(taskNotificator)
 
-                    if (response.data is RepositoryMessages.Ok) {
+                    if (response.data == RepositoryMessages.Ok) {
                         mStateIsUserAuthenticated.value = true
                         onLogIn.invoke(mRepository.isUserAuthenticated())
                     }

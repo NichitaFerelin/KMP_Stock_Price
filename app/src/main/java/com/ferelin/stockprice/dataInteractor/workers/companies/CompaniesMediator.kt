@@ -24,6 +24,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorker
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorker
+import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -44,6 +45,7 @@ open class CompaniesMediator @Inject constructor(
     private val mAppScope: CoroutineScope,
     private val mCompaniesWorker: CompaniesWorker,
     private val mFavouriteCompaniesWorker: FavouriteCompaniesWorker,
+    private val mErrorsWorker: ErrorsWorker
 ) : CompaniesMediatorStates {
 
     override val stateCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
@@ -149,7 +151,7 @@ open class CompaniesMediator @Inject constructor(
             val localCompaniesResponse = mRepository.getAllCompaniesFromLocalDb()
             if (localCompaniesResponse is RepositoryResponse.Success) {
                 onCompaniesDataPrepared(localCompaniesResponse.data)
-            }
+            } else mErrorsWorker.onPrepareCompaniesError()
         }
     }
 

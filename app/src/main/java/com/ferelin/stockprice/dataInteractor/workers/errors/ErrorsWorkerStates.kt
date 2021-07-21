@@ -24,17 +24,7 @@ interface ErrorsWorkerStates {
 
     val sharedPrepareCompaniesError: SharedFlow<String>
 
-    val sharedLoadStockCandlesError: SharedFlow<String>
-
-    val sharedLoadCompanyNewsError: SharedFlow<String>
-
-    val sharedLoadSearchRequestsError: SharedFlow<String>
-
     val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
 
     val sharedAuthenticationError: SharedFlow<String>
-
-    val sharedRegisterError: SharedFlow<String>
-
-    val sharedLoadMessagesError: SharedFlow<String>
 }

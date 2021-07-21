@@ -22,7 +22,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.ferelin.stockprice.navigation.Navigator
-import com.ferelin.stockprice.utils.withTimerOnUi
+import com.ferelin.stockprice.utils.TimerTasks
 
 /**
  * [BaseViewController] represents a class that controls the behavior of the view and all
@@ -79,7 +79,7 @@ abstract class BaseViewController<out ViewAnimatorType : BaseViewAnimator, ViewB
     * To avoid breaks of shared transition at the exit of the fragment
     *  */
     fun postponeReferencesRemove(finally: () -> Unit) {
-        withTimerOnUi { finally.invoke() }
+        TimerTasks.withTimerOnUi { finally.invoke() }
     }
 
     fun postponeTransitions(fragment: Fragment) {

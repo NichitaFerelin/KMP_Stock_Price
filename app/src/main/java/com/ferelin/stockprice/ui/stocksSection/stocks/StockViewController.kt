@@ -56,7 +56,7 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
     }
 
     fun onCompaniesLoaded(notificator: DataNotificator.DataPrepared<List<AdaptiveCompany>>) {
-        mStocksRecyclerAdapter?.setCompanies(ArrayList(notificator.data!!))
+        mStocksRecyclerAdapter?.setCompanies(notificator.data!!)
     }
 
     // TODO

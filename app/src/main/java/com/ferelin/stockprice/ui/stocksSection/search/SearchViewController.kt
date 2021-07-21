@@ -34,11 +34,11 @@ import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
 import com.ferelin.stockprice.utils.DataNotificator
+import com.ferelin.stockprice.utils.TimerTasks
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.MotionManager
 import com.ferelin.stockprice.utils.hideKeyboard
 import com.ferelin.stockprice.utils.openKeyboard
-import com.ferelin.stockprice.utils.withTimerOnUi
 import com.google.android.material.transition.MaterialContainerTransform
 
 class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
@@ -176,7 +176,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
 
     private fun setFocus() {
         // Wait animation
-        withTimerOnUi {
+        TimerTasks.withTimerOnUi {
             viewBinding.editTextSearch.requestFocus()
             openKeyboard(context, viewBinding.editTextSearch)
         }

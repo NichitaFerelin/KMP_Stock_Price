@@ -129,7 +129,7 @@ class SearchRequestsWorker @Inject constructor(
         mAppScope.launch {
             mSearchRequests.clear()
             mStateSearchRequests.value = DataNotificator.Loading()
-            mRepository.clearLocalSearchRequestsHistory()
+            mRepository.clearSearchRequestsLocalDb()
         }
     }
 

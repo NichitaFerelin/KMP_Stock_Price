@@ -26,8 +26,6 @@ import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverter
 import com.ferelin.repository.converter.helpers.chatsConverter.ChatsConverterImpl
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverter
 import com.ferelin.repository.converter.helpers.companiesConverter.CompaniesConverterImpl
-import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverter
-import com.ferelin.repository.converter.helpers.firstTimeLaunchConverter.FirstTimeLaunchConverterImpl
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverter
 import com.ferelin.repository.converter.helpers.messagesConverter.MessagesConverterImpl
 import com.ferelin.repository.converter.helpers.realtimeConverter.RealtimeDatabaseConverter
@@ -55,11 +53,6 @@ abstract class RepositoryBindsModule {
     abstract fun provideCompaniesConverter(
         companiesConverterImpl: CompaniesConverterImpl
     ): CompaniesConverter
-
-    @Binds
-    abstract fun provideFirstTimeLaunchConverter(
-        firstTimeLaunchConverter: FirstTimeLaunchConverterImpl
-    ): FirstTimeLaunchConverter
 
     @Binds
     abstract fun provideMessagesConverter(

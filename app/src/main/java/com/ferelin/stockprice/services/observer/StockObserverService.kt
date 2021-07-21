@@ -29,7 +29,7 @@ import com.ferelin.stockprice.notification.Notification
  * [StockObserverService] is a foreground service that shows the price of a
  * favourite company in real time
  */
-class StockObserverService : Service() {
+internal class StockObserverService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.getStringExtra(KEY_STOP) != null) {

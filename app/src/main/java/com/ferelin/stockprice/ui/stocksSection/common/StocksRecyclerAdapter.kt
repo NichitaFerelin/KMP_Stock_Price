@@ -93,8 +93,8 @@ class StocksRecyclerAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setCompanies(companies: ArrayList<AdaptiveCompany>) {
-        mCompanies = companies
+    fun setCompanies(companies: List<AdaptiveCompany>) {
+        mCompanies = ArrayList(companies)
         notifyDataSetChanged()
     }
 
