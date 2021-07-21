@@ -139,8 +139,8 @@ class FavouriteCompaniesSynchronization @Inject constructor(
     ) {
         remoteCompaniesIds.forEach { remoteCompanyId ->
             val currentRemoteId = remoteCompanyId.toInt()
-            val remoteItemAtLocal = localCompanies[currentRemoteId]
-            if (!remoteItemAtLocal.isFavourite) {
+            val remoteItemAtLocal = localCompanies.find { it.id == currentRemoteId }
+            if (remoteItemAtLocal != null && !remoteItemAtLocal.isFavourite) {
                 when (mSyncMode) {
                     SyncConflictMode.LocalPriority -> {
                         mAppScope.launch {
