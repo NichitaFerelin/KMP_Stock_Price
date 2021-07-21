@@ -17,9 +17,13 @@
 package com.ferelin.stockprice.dataInteractor.workers.searchRequests
 
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface SearchRequestsWorkerStates {
 
     val stateSearchRequests: StateFlow<DataNotificator<List<AdaptiveSearchRequest>>>

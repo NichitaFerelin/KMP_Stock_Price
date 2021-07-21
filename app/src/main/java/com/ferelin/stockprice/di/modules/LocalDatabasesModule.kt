@@ -18,6 +18,7 @@ package com.ferelin.stockprice.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.ferelin.local.databases.chatsDb.ChatsDao
 import com.ferelin.local.databases.chatsDb.ChatsDatabase
 import com.ferelin.local.databases.companiesDb.CompaniesDao
@@ -30,17 +31,16 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
+/**
+ * [LocalDatabasesModule] contains providers for local databases
+ * */
 @Module
 class LocalDatabasesModule {
 
     @Provides
     @Singleton
     fun provideCompaniesDatabase(context: Context): CompaniesDatabase {
-        return Room.databaseBuilder(
-            context,
-            CompaniesDatabase::class.java,
-            CompaniesDatabase.DB_NAME
-        ).fallbackToDestructiveMigration().build()
+        return buildDatabase(context, CompaniesDatabase::class.java, CompaniesDatabase.DB_NAME)
     }
 
     @Provides
@@ -51,11 +51,7 @@ class LocalDatabasesModule {
     @Provides
     @Singleton
     fun provideMessagesDatabase(context: Context): MessagesDatabase {
-        return Room.databaseBuilder(
-            context,
-            MessagesDatabase::class.java,
-            MessagesDatabase.DB_NAME
-        ).fallbackToDestructiveMigration().build()
+        return buildDatabase(context, MessagesDatabase::class.java, MessagesDatabase.DB_NAME)
     }
 
     @Provides
@@ -66,11 +62,7 @@ class LocalDatabasesModule {
     @Provides
     @Singleton
     fun provideRelationsDatabase(context: Context): ChatsDatabase {
-        return Room.databaseBuilder(
-            context,
-            ChatsDatabase::class.java,
-            ChatsDatabase.DB_NAME
-        ).fallbackToDestructiveMigration().build()
+        return buildDatabase(context, ChatsDatabase::class.java, ChatsDatabase.DB_NAME)
     }
 
     @Provides
@@ -81,15 +73,27 @@ class LocalDatabasesModule {
     @Provides
     @Singleton
     fun provideSearchRequestsDatabase(context: Context): SearchRequestsDatabase {
-        return Room.databaseBuilder(
+        return buildDatabase(
             context,
             SearchRequestsDatabase::class.java,
             SearchRequestsDatabase.DB_NAME
-        ).fallbackToDestructiveMigration().build()
+        )
     }
 
     @Provides
     fun provideSearchRequestsDao(database: SearchRequestsDatabase): SearchRequestsDao {
         return database.searchRequestsDao()
+    }
+
+    private fun <T : RoomDatabase> buildDatabase(
+        context: Context,
+        klass: Class<T>,
+        dbName: String
+    ): T {
+        return Room.databaseBuilder(
+            context,
+            klass,
+            dbName
+        ).fallbackToDestructiveMigration().build()
     }
 }

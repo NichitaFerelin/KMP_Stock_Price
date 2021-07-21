@@ -41,14 +41,6 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * [DataInteractorImpl] is MAIN and SINGLE entity for the UI layer interaction with data.
- *   - Providing states of data and errors.
- *   - Sending network requests to Repository using [mRepository].
- *   - Sending local requests to Repository using [mLocalInteractor].
- *   - Sending errors to [mErrorsWorkerStates].
- *   - Providing states about data loading to [mDataMediator].
- */
 @Singleton
 class DataInteractorImpl @Inject constructor(
     private val mRepository: Repository,
@@ -115,6 +107,15 @@ class DataInteractorImpl @Inject constructor(
     override val sharedAuthenticationError: SharedFlow<String>
         get() = mErrorsWorker.sharedAuthenticationError
 
+    override val sharedLoadStockHistoryError: SharedFlow<String>
+        get() = mErrorsWorker.sharedLoadStockHistoryError
+
+    override val sharedLoadCompanyNewsError: SharedFlow<String>
+        get() = mErrorsWorker.sharedLoadCompanyNewsError
+
+    override val sharedLoadSearchRequestsError: SharedFlow<String>
+        get() = mErrorsWorker.sharedLoadSearchRequestsError
+
     /**
      * Chats states
      * */
@@ -149,6 +150,9 @@ class DataInteractorImpl @Inject constructor(
         fun doTask()
     }
 
+    /**
+     * Container for unresolved tasks when network was not available.
+     * */
     private val mUnresolvedTasksContainer = hashMapOf(
         sAuthenticationTaskKey to Stack<Task>(),
         sChatsTaskKey to Stack<Task>(),
@@ -156,6 +160,9 @@ class DataInteractorImpl @Inject constructor(
     )
 
     private companion object {
+        /**
+         * Keys for unresolved tasks when network was not available
+         * */
         const val sAuthenticationTaskKey = "authentication"
         const val sChatsTaskKey = "chats"
         const val sCompaniesTaskKey = "companies"
@@ -298,6 +305,10 @@ class DataInteractorImpl @Inject constructor(
         mMessagesWorker.prepareMessagesFor(associatedUserNumber)
     }
 
+    override fun invalidatePreparedMessages() {
+        mMessagesWorker.invalidateState()
+    }
+
     override suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
         if (mNetworkConnectivityWorker.isNetworkAvailable) {
             mMessagesWorker.sendMessageTo(associatedUserNumber, messageText)
@@ -340,6 +351,9 @@ class DataInteractorImpl @Inject constructor(
         mCompaniesMediator.onNetworkAvailable()
         mSearchRequestsWorker.onNetworkAvailable()
 
+        /**
+         * Invokes all unresolved tasks when network was not available
+         * */
         while (mUnresolvedTasksContainer.isNotEmpty()
             && mNetworkConnectivityWorker.isNetworkAvailable
         ) {

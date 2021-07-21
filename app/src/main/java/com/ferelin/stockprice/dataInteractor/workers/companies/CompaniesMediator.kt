@@ -82,17 +82,23 @@ open class CompaniesMediator @Inject constructor(
     }
 
     suspend fun loadStockHistory(symbol: String): AdaptiveCompanyHistory? {
-        val repositoryResponse = mRepository.loadStockHistory(symbol)
-        return if (repositoryResponse is RepositoryResponse.Success) {
-            mCompaniesWorker.onHistoryResponse(repositoryResponse)
-        } else null
+        return when (val repositoryResponse = mRepository.loadStockHistory(symbol)) {
+            is RepositoryResponse.Success -> mCompaniesWorker.onHistoryResponse(repositoryResponse)
+            is RepositoryResponse.Failed -> {
+                mErrorsWorker.onLoadStockHistoryError(repositoryResponse.message, symbol)
+                null
+            }
+        }
     }
 
     suspend fun loadCompanyNews(symbol: String): AdaptiveCompanyNews? {
-        val repositoryResponse = mRepository.loadCompanyNews(symbol)
-        return if (repositoryResponse is RepositoryResponse.Success) {
-            mCompaniesWorker.onNewsResponse(repositoryResponse)
-        } else null
+        return when (val repositoryResponse = mRepository.loadCompanyNews(symbol)) {
+            is RepositoryResponse.Success -> mCompaniesWorker.onNewsResponse(repositoryResponse)
+            is RepositoryResponse.Failed -> {
+                mErrorsWorker.onLoadCompanyNewsError(repositoryResponse.message, symbol)
+                null
+            }
+        }
     }
 
     fun sendRequestToLoadStockPrice(

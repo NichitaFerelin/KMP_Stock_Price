@@ -16,8 +16,12 @@
 
 package com.ferelin.stockprice.dataInteractor.workers.authentication
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface AuthenticationWorkerStates {
 
     val stateIsUserAuthenticated: StateFlow<Boolean>

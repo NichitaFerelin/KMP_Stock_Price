@@ -55,11 +55,6 @@ class MenuItemsAdapter(
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun onLogOutNotify() {
-        notifyDataSetChanged()
-    }
-
     fun setOnDrawerMenuClickListener(listenerItem: MenuItemClickListener) {
         mMenuItemClickListener = listenerItem
     }

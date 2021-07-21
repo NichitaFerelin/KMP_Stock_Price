@@ -29,6 +29,11 @@ import com.ferelin.stockprice.dataInteractor.workers.searchRequests.SearchReques
 import com.ferelin.stockprice.utils.StockHistoryConverter
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * DataInteractor is an entity with which the UI layer can interact with data,
+ * execute requests to the network, receive information about errors from data states
+ * and etc.
+ * */
 interface DataInteractor :
 // States
     AuthenticationWorkerStates,

@@ -59,7 +59,6 @@ class StockViewController : BaseStocksViewController<FragmentStocksBinding>() {
         mStocksRecyclerAdapter?.setCompanies(notificator.data!!)
     }
 
-    // TODO
     fun onLimitReachedError(message: String) {
         showDefaultDialog(context, message)
     }

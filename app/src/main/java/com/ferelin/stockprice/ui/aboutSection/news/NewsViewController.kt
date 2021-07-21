@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
-import com.ferelin.stockprice.common.ViewAnimatorScrollable
+import com.ferelin.stockprice.base.ViewAnimatorScrollable
 import com.ferelin.stockprice.databinding.FragmentNewsBinding
 import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsItemDecoration
 import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsRecyclerAdapter

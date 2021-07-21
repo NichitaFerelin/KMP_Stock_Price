@@ -66,6 +66,11 @@ class MessagesWorker @Inject constructor(
         }
     }
 
+    fun invalidateState() {
+        mDataPreparedFor = null
+        mStateMessages.value = DataNotificator.None()
+    }
+
     suspend fun sendMessageTo(associatedUserNumber: String, messageText: String) {
         val userNumber = mRepository.getUserNumber()
         if (userNumber.isNotEmpty()) {

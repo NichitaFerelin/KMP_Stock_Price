@@ -56,7 +56,6 @@ class ChatFragment(chat: AdaptiveChat? = null) :
         viewLifecycleOwner.lifecycleScope.launch(mCoroutineContext.IO) {
             launch { collectStateMessages() }
             launch { collectSharedMessagesUpdates() }
-            launch { collectEventError() }
         }
     }
 
@@ -92,14 +91,6 @@ class ChatFragment(chat: AdaptiveChat? = null) :
         mViewModel.sharedMessagesUpdates.collect { newMessage ->
             withContext(mCoroutineContext.Main) {
                 mViewController.onNewMessage(newMessage)
-            }
-        }
-    }
-
-    private suspend fun collectEventError() {
-        mViewModel.eventOnError.collect { message ->
-            withContext(mCoroutineContext.Main) {
-                mViewController.onError(message)
             }
         }
     }

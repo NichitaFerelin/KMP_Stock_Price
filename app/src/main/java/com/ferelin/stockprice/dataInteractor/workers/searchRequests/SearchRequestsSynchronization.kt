@@ -20,15 +20,14 @@ import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.utils.SyncConflictMode
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * [SearchRequestsSynchronization] holds logic about search requests synchronization
  * with realtime database.
- * @param mDataMediator is used to notify about new search requests.
- * @param mRepository is used to work with realtime database
  * */
 @Singleton
 class SearchRequestsSynchronization @Inject constructor(

@@ -24,7 +24,6 @@ import com.ferelin.stockprice.databinding.FragmentChatBinding
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesItemDecoration
 import com.ferelin.stockprice.ui.messagesSection.chat.adapter.MessagesRecyclerAdapter
 import com.ferelin.stockprice.utils.hideKeyboard
-import com.ferelin.stockprice.utils.showDefaultDialog
 import com.google.android.material.transition.MaterialFadeThrough
 
 class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBinding>() {
@@ -47,7 +46,7 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
         }
     }
 
-    fun onBackPressed() : Boolean {
+    fun onBackPressed(): Boolean {
         hideKeyboard(context, viewBinding.root)
         mNavigator?.navigateBackToHostFragment()
         return true
@@ -67,10 +66,6 @@ class ChatViewController : BaseViewController<ChatViewAnimator, FragmentChatBind
     fun onSendClicked() {
         viewBinding.editTextMessage.setText("")
         mViewAnimator.runScaleInOut(viewBinding.imageViewSend)
-    }
-
-    fun onError(message: String) {
-        showDefaultDialog(context, message)
     }
 
     fun onDataPrepared(data: ArrayList<AdaptiveMessage>) {

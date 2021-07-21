@@ -16,8 +16,12 @@
 
 package com.ferelin.stockprice.dataInteractor.workers.errors
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import kotlinx.coroutines.flow.SharedFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface ErrorsWorkerStates {
 
     val sharedApiLimitError: SharedFlow<String>
@@ -27,4 +31,10 @@ interface ErrorsWorkerStates {
     val sharedFavouriteCompaniesLimitReached: SharedFlow<String>
 
     val sharedAuthenticationError: SharedFlow<String>
+
+    val sharedLoadStockHistoryError: SharedFlow<String>
+
+    val sharedLoadCompanyNewsError: SharedFlow<String>
+
+    val sharedLoadSearchRequestsError: SharedFlow<String>
 }

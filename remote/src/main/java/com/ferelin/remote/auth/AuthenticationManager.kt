@@ -22,7 +22,7 @@ import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
 /**
- * [AuthenticationManager] interface of [AuthenticationManagerImpl]
+ * [AuthenticationManager] provides methods for login / logout by phone number.
  */
 interface AuthenticationManager {
 

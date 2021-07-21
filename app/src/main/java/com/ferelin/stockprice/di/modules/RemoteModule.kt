@@ -29,6 +29,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
+/**
+ * [RemoteModule] contains providers for remote entities
+ * */
 @Module
 class RemoteModule {
 

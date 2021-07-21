@@ -33,7 +33,6 @@ import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
-import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.TimerTasks
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.MotionManager
@@ -115,21 +114,6 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         } else showCloseIcon()
     }
 
-    fun onSearchRequestsChanged(notificator: DataNotificator<List<AdaptiveSearchRequest>>) {
-        val adapterSearchesHistory = viewBinding.recyclerViewSearchedHistory.adapter
-        if (adapterSearchesHistory is SearchRequestsAdapter) {
-            val data = notificator.data!!
-            adapterSearchesHistory.setData(ArrayList(data))
-        }
-    }
-
-    fun onPopularSearchRequestsChanged(results: ArrayList<AdaptiveSearchRequest>) {
-        val adapterPopularRequests = viewBinding.recyclerViewPopularRequests.adapter
-        if (adapterPopularRequests is SearchRequestsAdapter) {
-            adapterPopularRequests.setData(results)
-        }
-    }
-
     fun onBackSwiped(lastSearchRequest: String) : Boolean {
         when {
             viewBinding.root.progress == 0F -> mNavigator?.navigateBackToHostFragment()
@@ -143,7 +127,7 @@ class SearchViewController : BaseStocksViewController<FragmentSearchBinding>() {
         return true
     }
 
-    fun onBackPressed(lastSearchRequest: String) {
+    fun onBackPressed() {
         if (viewBinding.root.progress == 0F) {
             mNavigator?.navigateBackToHostFragment()
         } else {

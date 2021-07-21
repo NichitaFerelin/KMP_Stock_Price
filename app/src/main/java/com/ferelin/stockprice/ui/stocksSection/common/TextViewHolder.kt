@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.aboutSection.summary
+package com.ferelin.stockprice.ui.stocksSection.common
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,20 +16,24 @@ package com.ferelin.stockprice.ui.aboutSection.summary
  * limitations under the License.
  */
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.ferelin.stockprice.databinding.FragmentSummaryBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.ferelin.stockprice.databinding.ItemTextBinding
 
-class SummaryFragment : Fragment() {
+class TextViewHolder private constructor(
+    private val mBinding: ItemTextBinding
+) : RecyclerView.ViewHolder(mBinding.root) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return FragmentSummaryBinding.inflate(inflater, container, false).root
+    fun bind(text: String) {
+        mBinding.root.text = text
+    }
+
+    companion object {
+        fun from(parent: ViewGroup): TextViewHolder {
+            val inflater = LayoutInflater.from(parent.context)
+            val binding = ItemTextBinding.inflate(inflater, parent, false)
+            return TextViewHolder(binding)
+        }
     }
 }

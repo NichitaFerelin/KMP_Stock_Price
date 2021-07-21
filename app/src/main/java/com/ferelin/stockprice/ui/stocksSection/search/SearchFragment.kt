@@ -69,7 +69,7 @@ class SearchFragment :
 
     private fun setUpClickListeners() {
         mViewController.viewBinding.imageViewBack.setOnClickListener {
-            mViewController.onBackPressed(mViewModel.lastSearchRequest)
+            mViewController.onBackPressed()
         }
         mViewController.viewBinding.editTextSearch.doAfterTextChanged {
             mViewModel.onSearchTextChanged(it?.toString() ?: "")

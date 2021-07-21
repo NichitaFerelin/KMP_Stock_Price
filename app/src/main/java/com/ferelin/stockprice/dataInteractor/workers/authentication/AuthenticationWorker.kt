@@ -43,10 +43,10 @@ class AuthenticationWorker @Inject constructor(
 
     /**
      * Sends a request for an authorization attempt by the entered phone number.
-     * [holderActivity] is a host activity by which firebase will execute authorization
-     * [phoneNumber] is a phone number by which need to authorize user
-     * [onLogIn] is a callback that will be executed when authorization will be completed
-     * [onError] is a callback that will be executed when authorization will be failed
+     * @param holderActivity is a host activity by which firebase will execute authorization
+     * @param phoneNumber is a phone number by which need to authorize user
+     * @param onLogIn is a callback that will be executed when authorization will be completed
+     * @param onError is a callback that will be executed when authorization will be failed
      * @return flow with authorization messages
      * */
     suspend fun tryToSignIn(

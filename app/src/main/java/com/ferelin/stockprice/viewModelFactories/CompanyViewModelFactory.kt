@@ -23,12 +23,9 @@ import com.ferelin.stockprice.ui.aboutSection.aboutPager.AboutPagerViewModel
 import com.ferelin.stockprice.ui.aboutSection.chart.ChartViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.NewsViewModel
 import com.ferelin.stockprice.ui.aboutSection.profile.ProfileViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 @Suppress("UNCHECKED_CAST")
-open class CompanyViewModelFactory @Inject constructor(
+open class CompanyViewModelFactory (
     private val mSelectedCompany: AdaptiveCompany?
 ) : ViewModelProvider.Factory {
 

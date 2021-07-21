@@ -17,10 +17,14 @@
 package com.ferelin.stockprice.dataInteractor.workers.messages
 
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface MessagesWorkerStates {
 
     val stateMessages: StateFlow<DataNotificator<ArrayList<AdaptiveMessage>>>

@@ -31,8 +31,8 @@ class ChatItemDecoration(private val mContext: Context) : RecyclerView.ItemDecor
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        val horizontalMargin = mContext.resources.getDimension(R.dimen.relationMarginHorizontal).toInt()
-        val verticalMargin = mContext.resources.getDimension(R.dimen.relationMarginBetween).toInt()
+        val horizontalMargin = mContext.resources.getDimension(R.dimen.chatMarginHorizontal).toInt()
+        val verticalMargin = mContext.resources.getDimension(R.dimen.chatMarginBetween).toInt()
         outRect.left = horizontalMargin
         outRect.right = horizontalMargin
         outRect.top = verticalMargin

@@ -62,7 +62,7 @@ abstract class BaseFragment<
 
     protected val mCoroutineContext = CoroutineContextProvider()
 
-    protected val mHostActivity: MainActivity?
+    private val mHostActivity: MainActivity?
         get() = if (requireActivity() is MainActivity) {
             requireActivity() as MainActivity
         } else null

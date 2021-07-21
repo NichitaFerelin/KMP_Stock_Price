@@ -130,7 +130,6 @@ class FavouriteCompaniesSynchronization @Inject constructor(
      * This synchronization step searches for a remote favourite company among local companies ->
      * depending on the 'isFavourite' field and [mSyncMode], the remote company
      * can be removed from real-time database or added to local database.
-     * @param companyIdStr is a favourite company ID that was loaded and read from response.
      * */
     private fun findAndFixMissingItems(
         userToken: String,

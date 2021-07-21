@@ -47,8 +47,14 @@ import javax.inject.Singleton
 @Singleton
 class Navigator @Inject constructor() {
 
+    /**
+     * To resolve fragment replace
+     * */
     private var mHostActivity: MainActivity? = null
 
+    /**
+     * Fragment tags
+     * */
     private val mChatsTag = "chats"
     private val mStocksPagerTag = "stocksPager"
 

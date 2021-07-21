@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = "1.4.32"
+        kotlin_version = "1.5.10"
         room_version = "2.3.0"
         dagger_version = "2.36"
     }

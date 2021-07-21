@@ -41,14 +41,17 @@ import com.ferelin.repository.converter.helpers.authenticationConverter.Authenti
 import dagger.Binds
 import dagger.Module
 
+/**
+ * [RemoteBindsModule] contains providers for remote entities
+ * */
 @Module
 abstract class RemoteBindsModule {
 
     @Binds
-    abstract fun provideRemoteMediatorHelper(remote: RemoteMediatorImpl): RemoteMediator
+    abstract fun provideRemoteMediator(remote: RemoteMediatorImpl): RemoteMediator
 
     @Binds
-    abstract fun provideRealtimeDatabaseManager(database: RealtimeDatabaseImpl): RealtimeDatabase
+    abstract fun provideRealtimeDatabase(database: RealtimeDatabaseImpl): RealtimeDatabase
 
     @Binds
     abstract fun provideThrottleManager(throttleManagerImpl: ThrottleManagerImpl): ThrottleManager
@@ -81,5 +84,7 @@ abstract class RemoteBindsModule {
     abstract fun provideWebSocketConnectorHelper(web: WebSocketConnectorImpl): WebSocketConnector
 
     @Binds
-    abstract fun provideAuthenticationManagerHelper(auth: AuthenticationManagerImpl): AuthenticationManager
+    abstract fun provideAuthenticationManagerHelper(
+        auth: AuthenticationManagerImpl
+    ): AuthenticationManager
 }

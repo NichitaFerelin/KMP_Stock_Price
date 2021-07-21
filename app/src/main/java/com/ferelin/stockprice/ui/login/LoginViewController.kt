@@ -27,9 +27,12 @@ import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentLoginBinding
-import com.ferelin.stockprice.utils.*
+import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.anim.AnimatorManager
+import com.ferelin.stockprice.utils.hideKeyboard
+import com.ferelin.stockprice.utils.openKeyboard
+import com.ferelin.stockprice.utils.showDefaultDialog
 
 class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginBinding>() {
 
@@ -141,7 +144,7 @@ class LoginViewController : BaseViewController<LoginViewAnimator, FragmentLoginB
     }
 
     private fun onSignIn() {
-        showDefaultDialog(context, getString(context, R.string.hintAuthorization))
+        showDefaultDialog(context, context.getString(R.string.hintAuthorization))
         mNavigator?.navigateBackToHostFragment()
     }
 

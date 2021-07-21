@@ -41,8 +41,8 @@
     <dimen name="dialogHeight">300dp</dimen>
     <dimen name="dialogWidth">350dp</dimen>
 
-    <dimen name="relationMarginHorizontal">30dp</dimen>
-    <dimen name="relationMarginBetween">8dp</dimen>
+    <dimen name="chatMarginHorizontal">30dp</dimen>
+    <dimen name="chatMarginBetween">8dp</dimen>
     <dimen name="bottomAppBarHeight">56dp</dimen>
 
     <dimen name="messageMarginTop">8dp</dimen>

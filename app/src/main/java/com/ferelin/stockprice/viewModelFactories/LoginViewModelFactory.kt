@@ -20,14 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.stockprice.ui.messagesSection.chat.ChatViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 @Suppress("UNCHECKED_CAST")
-class LoginViewModelFactory @Inject constructor(
-    private val mChat: AdaptiveChat?
-) : ViewModelProvider.Factory {
+class LoginViewModelFactory(private val mChat: AdaptiveChat?) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {

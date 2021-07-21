@@ -38,13 +38,15 @@ class ChatViewModel(val chat: AdaptiveChat) : BaseViewModel() {
     val sharedMessagesUpdates: SharedFlow<AdaptiveMessage>
         get() = mDataInteractor.sharedMessagesHolderUpdates
 
-    val eventOnError: SharedFlow<String>
-        get() = mDataInteractor.sharedLoadMessagesError
-
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
             mDataInteractor.loadMessagesFor(chat.associatedUserNumber)
         }
+    }
+
+    override fun onCleared() {
+        mDataInteractor.invalidatePreparedMessages()
+        super.onCleared()
     }
 
     fun onSendClicked(text: String) {

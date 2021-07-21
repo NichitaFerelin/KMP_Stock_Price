@@ -20,13 +20,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import com.ferelin.repository.Repository
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 
+/**
+ * [NetworkModule] contains providers for network
+ * */
 @Module
-class DataInteractorModule {
+class NetworkModule {
 
     @Provides
     fun provideConnectivityManager(context: Context): ConnectivityManager {
@@ -39,11 +40,5 @@ class DataInteractorModule {
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
-    }
-
-    @Provides
-    @Named("isUserLogged")
-    fun provideUserLogState(repository: Repository): Boolean {
-        return repository.isUserAuthenticated()
     }
 }

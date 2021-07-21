@@ -20,11 +20,11 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewModel
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.filterCompanies
 import com.ferelin.stockprice.utils.withTimer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class SearchViewModel : BaseStocksViewModel() {
 
@@ -123,5 +123,14 @@ class SearchViewModel : BaseStocksViewModel() {
             }
         }
         return results
+    }
+
+    private fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
+        return item.companyProfile.name
+            .lowercase(Locale.ROOT)
+            .contains(text.lowercase(Locale.ROOT))
+                || item.companyProfile.symbol
+            .lowercase(Locale.ROOT)
+            .contains(text.lowercase(Locale.ROOT))
     }
 }

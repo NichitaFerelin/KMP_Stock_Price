@@ -50,6 +50,9 @@ class CompaniesWorker @Inject constructor(
     override val stateCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mStateCompanies.asStateFlow()
 
+    /**
+     * SharedFlow to receive notifications about company data updates such a stock price.
+     * */
     private val mSharedCompaniesUpdates = MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
     override val sharedCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
         get() = mSharedCompaniesUpdates.asSharedFlow()

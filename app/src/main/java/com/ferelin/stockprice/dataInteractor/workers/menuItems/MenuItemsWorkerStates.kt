@@ -16,10 +16,15 @@
 
 package com.ferelin.stockprice.dataInteractor.workers.menuItems
 
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface MenuItemsWorkerStates {
+
     val stateMenuItems: StateFlow<DataNotificator<List<MenuItem>>>
 }

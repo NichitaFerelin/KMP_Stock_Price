@@ -27,18 +27,21 @@ import com.ferelin.stockprice.dataInteractor.DataInteractorImpl
 import dagger.Binds
 import dagger.Module
 
+/**
+ * [LocalBindsModule] contains providers for local entities
+ * */
 @Module
 abstract class LocalBindsModule {
 
     @Binds
-    abstract fun provideDataInteractor(dataInteractor: DataInteractorImpl) : DataInteractor
+    abstract fun provideDataInteractor(dataInteractor: DataInteractorImpl): DataInteractor
 
     @Binds
-    abstract fun provideLocalManagerHelper(local: LocalManagerImpl): LocalManager
+    abstract fun provideLocalManager(local: LocalManagerImpl): LocalManager
 
     @Binds
-    abstract fun provideJsonManagerHelper(json: JsonManagerImpl): JsonManager
+    abstract fun provideJsonManager(json: JsonManagerImpl): JsonManager
 
     @Binds
-    abstract fun provideStorePreferencesHelper(store: StorePreferencesImpl): StorePreferences
+    abstract fun provideStorePreferences(store: StorePreferencesImpl): StorePreferences
 }

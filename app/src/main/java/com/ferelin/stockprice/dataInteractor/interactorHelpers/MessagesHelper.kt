@@ -25,6 +25,8 @@ import com.ferelin.stockprice.dataInteractor.workers.messages.MessagesWorker
  * */
 interface MessagesHelper {
 
+    fun invalidatePreparedMessages()
+
     fun loadMessagesFor(associatedUserNumber: String)
 
     suspend fun sendMessageTo(associatedUserNumber: String, messageText: String)

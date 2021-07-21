@@ -122,12 +122,11 @@
 
         <ImageView
             android:id="@+id/imageViewIconCheck"
+            style="@style/clickableImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:layout_marginBottom="6dp"
             android:contentDescription="@string/descriptionApply"
-            android:padding="6dp"
             android:src="@drawable/ic_check_circle"
             app:layout_constraintBottom_toBottomOf="@id/editTextPhoneLayout"
             app:layout_constraintStart_toEndOf="@id/editTextPhoneLayout"

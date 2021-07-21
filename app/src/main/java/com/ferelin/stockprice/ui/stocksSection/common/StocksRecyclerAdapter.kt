@@ -20,7 +20,6 @@ import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.stockprice.common.TextViewHolder
 
 class StocksRecyclerAdapter(
     private var mStockClickListener: StockClickListener? = null

@@ -21,7 +21,6 @@ import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.dataInteractor.utils.CompanyStyleProvider
 import com.ferelin.stockprice.dataInteractor.workers.errors.ErrorsWorker
 import com.ferelin.stockprice.utils.DataNotificator
-import com.ferelin.stockprice.utils.parseDoubleFromStr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -29,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * [FavouriteCompaniesWorker] providing an ability to:
+ * [FavouriteCompaniesWorker] provides an ability to:
  *   - Observing [mStateFavouriteCompanies] to display a list of favourite companies.
  *   - Observing [mSharedFavouriteCompaniesUpdates] to add/remove item from list of favourite companies.
  *
@@ -37,10 +36,9 @@ import javax.inject.Singleton
  *   - Subscribing favourite companies for live-time updates using [mRepository].
  *   - Unsubscribing companies from live-time updates when it was removed from favourites using [mRepository].
  *   - Control the limit of favourite companies @see [mCompaniesLimit] notifying with [mErrorsWorker].
- *   - Using [mLocalInteractor] to data caching.
+ *   - Using [mRepository] to data caching.
  *   - Using [mCompanyStyleProvider] to change some stock fields that will be affect on stock's appearance.
  */
-
 @Singleton
 class FavouriteCompaniesWorker @Inject constructor(
     private val mRepository: Repository,
@@ -58,6 +56,9 @@ class FavouriteCompaniesWorker @Inject constructor(
     override val stateFavouriteCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>
         get() = mStateFavouriteCompanies.asStateFlow()
 
+    /**
+     * SharedFlow to receive notifications about company data updates.
+     * */
     private val mSharedFavouriteCompaniesUpdates =
         MutableSharedFlow<DataNotificator<AdaptiveCompany>>()
     override val sharedFavouriteCompaniesUpdates: SharedFlow<DataNotificator<AdaptiveCompany>>
@@ -207,5 +208,9 @@ class FavouriteCompaniesWorker @Inject constructor(
             val orderIndex = mFavouriteCompanies.firstOrNull()?.favouriteOrderIndex?.plus(1) ?: 0
             favouriteOrderIndex = orderIndex
         }
+    }
+
+    private fun parseDoubleFromStr(str: String): Double {
+        return str.filter { it.isDigit() || it == '.' }.toDoubleOrNull() ?: 0.0
     }
 }

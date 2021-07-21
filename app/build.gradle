@@ -38,8 +38,7 @@ android {
         ]
     }
     composeOptions {
-        kotlinCompilerVersion = "1.4.32"
-        kotlinCompilerExtensionVersion = "1.0.0-beta07"
+        kotlinCompilerExtensionVersion '1.0.0-rc02'
     }
 }
 
@@ -48,12 +47,12 @@ dependencies {
     implementation project(path: ':shared')
 
     // Base
-    implementation "androidx.core:core-ktx:1.5.0"
-    implementation "androidx.fragment:fragment-ktx:1.3.3"
+    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "androidx.fragment:fragment-ktx:1.3.5"
     implementation "androidx.appcompat:appcompat:1.3.0-rc01"
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.browser:browser:1.3.0'
 
     // DI
@@ -65,7 +64,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
     // Compose
-    def compose = '1.0.0-beta08'
+    def compose = '1.0.0-rc02'
     implementation "androidx.compose.ui:ui:$compose"
     implementation "androidx.compose.ui:ui-tooling:$compose"
     implementation "androidx.compose.foundation:foundation:$compose"

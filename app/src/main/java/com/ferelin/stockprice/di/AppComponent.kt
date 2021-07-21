@@ -6,8 +6,8 @@ import com.ferelin.stockprice.di.bindsModules.LocalBindsModule
 import com.ferelin.stockprice.di.bindsModules.RemoteBindsModule
 import com.ferelin.stockprice.di.bindsModules.RepositoryBindsModule
 import com.ferelin.stockprice.di.modules.CoroutineModule
-import com.ferelin.stockprice.di.modules.DataInteractorModule
 import com.ferelin.stockprice.di.modules.LocalDatabasesModule
+import com.ferelin.stockprice.di.modules.NetworkModule
 import com.ferelin.stockprice.di.modules.RemoteModule
 import com.ferelin.stockprice.ui.MainActivity
 import com.ferelin.stockprice.ui.MainViewModel
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         CoroutineModule::class,
-        DataInteractorModule::class,
+        NetworkModule::class,
         LocalDatabasesModule::class,
         RemoteModule::class,
         LocalBindsModule::class,

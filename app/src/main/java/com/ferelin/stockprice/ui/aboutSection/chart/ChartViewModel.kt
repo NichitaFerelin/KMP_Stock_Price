@@ -46,7 +46,7 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     var lastClickedMarker: Marker? = null
 
     val eventOnError: SharedFlow<String>
-        get() = mDataInteractor.sharedLoadStockCandlesError
+        get() = mDataInteractor.sharedLoadStockHistoryError
 
     val stockPrice: String
         get() = selectedCompany.companyDayData.currentPrice

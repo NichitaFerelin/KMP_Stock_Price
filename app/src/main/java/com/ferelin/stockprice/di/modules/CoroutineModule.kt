@@ -23,6 +23,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
+/**
+ * [CoroutineModule] contains providers for coroutines
+ * */
 @Module
 class CoroutineModule {
 

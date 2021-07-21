@@ -17,7 +17,6 @@ package com.ferelin.stockprice.utils
  */
 
 import android.animation.Animator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
@@ -29,11 +28,9 @@ import androidx.annotation.AttrRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.use
 import androidx.fragment.app.FragmentManager
-import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -43,31 +40,10 @@ const val NULL_INDEX = -1
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-val View.isOut
-    get() = scaleX == 0F
-
-fun filterCompanies(item: AdaptiveCompany, text: String): Boolean {
-    return item.companyProfile.name.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
-            || item.companyProfile.symbol.toLowerCase(Locale.ROOT)
-        .contains(text.toLowerCase(Locale.ROOT))
-}
-
-fun parseDoubleFromStr(str: String): Double {
-    return str.filter { it.isDigit() || it == '.' }.toDoubleOrNull() ?: 0.0
-}
-
 fun showDialog(text: String, fragmentManager: FragmentManager) {
     DialogErrorFragment
         .newInstance(text)
         .show(fragmentManager, null)
-}
-
-fun findCompany(data: List<AdaptiveCompany>, symbol: String?): AdaptiveCompany? {
-    return data.find { it.companyProfile.symbol == symbol }
-}
-
-fun getString(context: Context, resource: Int): String {
-    return context.resources.getString(resource)
 }
 
 fun openKeyboard(context: Context, view: View) {
@@ -86,15 +62,9 @@ fun withTimer(time: Long = 200L, body: () -> Unit) {
     }, time)
 }
 
-@SuppressLint("Recycle")
-fun Context.themeColor(
-    @AttrRes themeAttrId: Int
-): Int {
-    return obtainStyledAttributes(
-        intArrayOf(themeAttrId)
-    ).use {
-        it.getColor(0, Color.MAGENTA)
-    }
+fun Context.themeColor(@AttrRes themeAttrId: Int): Int {
+    return obtainStyledAttributes(intArrayOf(themeAttrId))
+        .use { it.getColor(0, Color.MAGENTA) }
 }
 
 fun Float.normalize(
@@ -133,8 +103,4 @@ fun showDefaultDialog(context: Context, message: String) {
 
 fun BottomSheetBehavior<FrameLayout>.isHidden(): Boolean {
     return state == STATE_HIDDEN
-}
-
-fun BottomSheetBehavior<FrameLayout>.isExpanded(): Boolean {
-    return state == STATE_EXPANDED
 }

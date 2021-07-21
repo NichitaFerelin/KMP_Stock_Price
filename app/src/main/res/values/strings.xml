@@ -20,6 +20,9 @@
     <string name="titleStockPriceObserver">Stock price live-time updater</string>
     <string name="titleChannelStockPrice">Price live time updater</string>
     <string name="titleProfile">Profile</string>
+    <string name="titleChats">Chats</string>
+    <string name="titleAuthorized">Authorized</string>
+    <string name="titleNotAuthorized">Not authorized</string>
 
     <!-- Errors -->
     <string name="errorLoadingData">Error loading data</string>
@@ -36,6 +39,11 @@
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorSmthWentWrong">Something went wrong</string>
     <string name="errorDefault">Error</string>
+    <string name="errorBadLogin">Login must not contain ".#$[]"</string>
+    <string name="errorLoginExists">Login is already exists</string>
+    <string name="errorUndefined">Undefined error</string>
+    <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
+    <string name="errorNotAuthorized">Before using chats you need to log in to identify</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
@@ -45,6 +53,12 @@
     <string name="descriptionIconClose">Clear search request</string>
     <string name="descriptionImageSearch">Search company or ticker</string>
     <string name="descriptionUserPhoto">User photo</string>
+    <string name="descriptionAttach">Attach file</string>
+    <string name="descriptionApply">Apply</string>
+    <string name="descriptionAddPerson">Add person to chat</string>
+    <string name="descriptionSendMessage">Send message</string>
+    <string name="descriptionFabProfile">Profile</string>
+    <string name="descriptionFabLogIn">Log in</string>
 
     <!-- Hints -->
     <string name="hintBuyFor">Buy for %s</string>
@@ -68,6 +82,16 @@
     <string name="hintOk">OK</string>
     <string name="hintAuthorization">Successful authorization. From now, all your favorite
         stocks and search requests will be synced from the cloud.</string>
+    <string name="hintEnterMessage">Enter message</string>
+    <string name="hintEnterLogin">Enter login</string>
+    <string name="hintLogin">Login</string>
+    <string name="hintMessages">Messages</string>
+    <string name="hintWithLogin">With this login users will be able to find you</string>
+    <string name="hintEnterNumber">Enter user number</string>
+    <string name="hintRegistration">Registration</string>
+    <string name="hintAuthentication">Authentication by phone number</string>
+    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
+    <string name="hintEnterUserPhone">Enter the phone number of the user with whom you want to create a chat</string>
 
     <!-- Menu -->
     <string name="menuLogIn">Log In</string>
@@ -82,34 +106,5 @@
     <string name="transitionStocksPager">Transition container stock fragment pager</string>
 
     <string name="notificationNewItems">New items loaded</string>
-    <string name="hintMessages">Messages</string>
-    <string name="descriptionAttach">Attach file</string>
-    <string name="hintEnterMessage">Enter message</string>
-    <string name="hintEnterLogin">Enter login</string>
-    <string name="hintLogin">Login</string>
-    <string name="hintWithLogin">With this login users will be able to find you</string>
-    <string name="descriptionApply">Apply</string>
-
-    <string name="errorBadLogin">Login must not contain ".#$[]"</string>
-    <string name="errorLoginExists">Login is already exists</string>
-    <string name="errorUndefined">Undefined error</string>
-
-    <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
-    <string name="titleChats">Chats</string>
-    <string name="hintEnterNumber">Enter user number</string>
-    <string name="hintRegistration">Registration</string>
-    <string name="descriptionAddPerson">Add person to chat</string>
-
-    <string name="titleAuthorized">Authorized</string>
-    <string name="titleNotAuthorized">Not authorized</string>
-    <string name="descriptionSendMessage">Send message</string>
-    <string name="hintAuthentication">Authentication by phone number</string>
-    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
-    <string name="hintEnterUserPhone">Enter the phone number of the user with whom you want to create a chat</string>
-
-    <string name="errorNotAuthorized">Before using chats you need to log in to identify</string>
-
-    <string name="descriptionFabProfile">Profile</string>
-    <string name="descriptionFabLogIn">Log in</string>
 
 </resources>

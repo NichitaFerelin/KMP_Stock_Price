@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.common
+package com.ferelin.stockprice.base
 
 /*
  * Copyright 2021 Leah Nichita
@@ -21,7 +21,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.base.BaseViewAnimator
 import com.ferelin.stockprice.utils.invalidate
 
 /**

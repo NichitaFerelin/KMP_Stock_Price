@@ -37,14 +37,18 @@ import com.ferelin.repository.converter.helpers.webSocketConverter.WebSocketConv
 import dagger.Binds
 import dagger.Module
 
+
+/**
+ * [RepositoryBindsModule] contains providers for repository entities
+ * */
 @Module
 abstract class RepositoryBindsModule {
 
     @Binds
-    abstract fun provideRepositoryManagerHelper(repositoryImpl: RepositoryImpl): Repository
+    abstract fun provideRepository(repositoryImpl: RepositoryImpl): Repository
 
     @Binds
-    abstract fun provideResponseMediator(responseMediator: ConverterMediatorImpl): ConverterMediator
+    abstract fun provideConverterMediator(responseMediator: ConverterMediatorImpl): ConverterMediator
 
     @Binds
     abstract fun provideApiConverter(apiConverterImpl: ApiConverterImpl): ApiConverter

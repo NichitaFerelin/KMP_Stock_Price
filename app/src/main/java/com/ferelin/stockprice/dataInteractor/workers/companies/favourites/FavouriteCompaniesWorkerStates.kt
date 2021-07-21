@@ -17,10 +17,14 @@
 package com.ferelin.stockprice.dataInteractor.workers.companies.favourites
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
+import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ *  States for [DataInteractor]
+ */
 interface FavouriteCompaniesWorkerStates {
 
     val stateFavouriteCompanies: StateFlow<DataNotificator<List<AdaptiveCompany>>>

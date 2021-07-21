@@ -21,7 +21,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.ferelin.stockprice.R
-import com.ferelin.stockprice.common.ViewAnimatorScrollable
+import com.ferelin.stockprice.base.ViewAnimatorScrollable
 import com.ferelin.stockprice.utils.invalidate
 
 open class BaseStocksViewAnimator : ViewAnimatorScrollable() {

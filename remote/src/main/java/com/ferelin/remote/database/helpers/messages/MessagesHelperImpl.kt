@@ -22,6 +22,7 @@ import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +39,7 @@ class MessagesHelperImpl @Inject constructor(
     override fun getMessagesForChat(
         currentUserNumber: String,
         associatedUserNumber: String
-    ) = callbackFlow<BaseResponse<HashMap<String, Any>>> {
+    ): Flow<BaseResponse<HashMap<String, Any>>> = callbackFlow {
         mDatabaseReference
             .child(sMessagesReference)
             .child(currentUserNumber)
