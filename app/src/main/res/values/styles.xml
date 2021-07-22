@@ -162,7 +162,7 @@
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
     </style>
 
-    <style name="recyclerSearches">
+    <style name="recyclerViewSearchRequests">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/recyclerSearchesHeight</item>
         <item name="android:layout_marginTop">11dp</item>
@@ -171,16 +171,18 @@
         <item name="spanCount">2</item>
     </style>
 
-    <style name="recyclerSearchesLandscape" parent="recyclerSearches">
+    <style name="recyclerViewSearchRequestsLandscape" parent="recyclerViewSearchRequests">
         <item name="spanCount">1</item>
         <item name="android:layout_height">@dimen/recyclerSearchesHeightLandscape</item>
     </style>
 
-    <style name="recyclerStocks">
+    <style name="recyclerView">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:transitionGroup">true</item>
         <item name="fastScrollEnabled">true</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:paddingBottom">50dp</item>
         <item name="fastScrollHorizontalThumbDrawable">@drawable/scroller_drawable</item>
         <item name="fastScrollHorizontalTrackDrawable">@drawable/scroller_line_drawable</item>
         <item name="fastScrollVerticalThumbDrawable">@drawable/scroller_drawable</item>

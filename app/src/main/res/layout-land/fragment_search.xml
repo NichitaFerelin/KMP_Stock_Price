@@ -77,7 +77,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPopularRequests"
-        style="@style/recyclerSearchesLandscape"
+        style="@style/recyclerViewSearchRequestsLandscape"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewRequests" />
 
@@ -93,13 +93,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchedHistory"
-        style="@style/recyclerSearchesLandscape"
+        style="@style/recyclerViewSearchRequestsLandscape"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewSearched" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearchResults"
-        style="@style/recyclerStocks"
+        style="@style/recyclerView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
