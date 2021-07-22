@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.ui.stocksSection.common
+package com.ferelin.stockprice.ui.stocksSection.common.adapter
 
 /*
  * Copyright 2021 Leah Nichita
@@ -64,14 +64,9 @@ class StockViewHolder private constructor(
             imageViewFavourite.setImageResource(item.companyStyle.favouriteBackgroundIconResource)
             imageViewBoundedIcon.setImageResource(item.companyStyle.favouriteForegroundIconResource)
 
-            // TODO
-            // Tag to identify image for animation at BaseStocksFragment
-            imageViewBoundedIcon.tag = item.companyStyle.favouriteForegroundIconResource
-
             root.setCardBackgroundColor(item.companyStyle.holderBackground)
             root.foreground =
                 ContextCompat.getDrawable(root.context, item.companyStyle.rippleForeground)
-            root.transitionName = "root_${item.id}"
         }
     }
 

@@ -30,7 +30,7 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.FragmentSearchBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecoration
 import com.ferelin.stockprice.ui.stocksSection.search.itemDecoration.SearchItemDecorationLandscape
 import com.ferelin.stockprice.utils.TimerTasks

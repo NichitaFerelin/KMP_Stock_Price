@@ -21,8 +21,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseFragment
-import com.ferelin.stockprice.ui.stocksSection.common.StockClickListener
-import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockClickListener
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

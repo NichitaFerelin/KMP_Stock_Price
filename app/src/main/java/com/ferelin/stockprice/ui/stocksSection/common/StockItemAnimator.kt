@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
 import com.ferelin.stockprice.utils.anim.AnimationManager
 import com.ferelin.stockprice.utils.invalidate
 

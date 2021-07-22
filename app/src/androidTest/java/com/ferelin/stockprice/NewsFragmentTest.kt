@@ -25,7 +25,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ferelin.stockprice.ui.MainActivity
-import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

@@ -19,7 +19,7 @@ package com.ferelin.stockprice.ui.stocksSection.base
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
 import com.ferelin.stockprice.base.BaseViewModel
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch

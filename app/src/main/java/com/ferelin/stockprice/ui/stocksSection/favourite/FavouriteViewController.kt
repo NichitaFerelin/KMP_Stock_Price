@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.databinding.FragmentFavouriteBinding
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewAnimator
 import com.ferelin.stockprice.ui.stocksSection.base.BaseStocksViewController
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 
 class FavouriteViewController : BaseStocksViewController<FragmentFavouriteBinding>() {
 

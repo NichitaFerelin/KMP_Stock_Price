@@ -20,8 +20,8 @@ import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 import kotlin.math.abs
 import kotlin.math.ln
 

@@ -29,8 +29,8 @@ import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemAnimator
 import com.ferelin.stockprice.ui.stocksSection.common.StockItemDecoration
-import com.ferelin.stockprice.ui.stocksSection.common.StockViewHolder
-import com.ferelin.stockprice.ui.stocksSection.common.StocksRecyclerAdapter
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
 import com.ferelin.stockprice.utils.NULL_INDEX
 import com.ferelin.stockprice.utils.anim.AnimationManager

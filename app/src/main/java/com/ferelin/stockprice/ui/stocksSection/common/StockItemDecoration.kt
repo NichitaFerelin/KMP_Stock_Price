@@ -21,6 +21,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
 
 class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
