@@ -90,7 +90,8 @@ fun Welcome(viewModel: WelcomeViewModel = WelcomeViewModel()) {
                         title = hintApiTitle,
                         content = hintApiContent,
                         imageSource = painterResource(id = R.drawable.ic_favourite),
-                        contentDescription = hintApiContentDescription
+                        contentDescription = hintApiContentDescription,
+                        isLastAtList = true
                     )
                 }
             }
@@ -123,13 +124,21 @@ fun Hint(
     title: String,
     content: String,
     imageSource: Painter,
-    contentDescription: String
+    contentDescription: String,
+    isLastAtList: Boolean = false
 ) {
-    Card(
-        modifier = Modifier
+    val cardModifier = if (isLastAtList) {
+        Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(24.dp),
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 80.dp)
+    } else Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(24.dp)
+
+    Card(
+        modifier = cardModifier,
         shape = StockPriceShapes.large,
         elevation = 8.dp
     ) {
