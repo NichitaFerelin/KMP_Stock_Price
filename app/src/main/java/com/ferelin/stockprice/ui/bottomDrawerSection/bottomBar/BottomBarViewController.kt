@@ -16,9 +16,7 @@
 
 package com.ferelin.stockprice.ui.bottomDrawerSection.bottomBar
 
-import android.os.Bundle
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.databinding.FragmentBottomBarBinding
@@ -28,13 +26,6 @@ class BottomBarViewController :
     BaseViewController<BottomBarViewAnimator, FragmentBottomBarBinding>() {
 
     override val mViewAnimator = BottomBarViewAnimator()
-
-    override fun onViewCreated(savedInstanceState: Bundle?, fragment: Fragment) {
-        super.onViewCreated(savedInstanceState, fragment)
-        if (savedInstanceState == null) {
-            hideBottomBar()
-        }
-    }
 
     fun setArgumentsViewDependsOn(
         isBottomBarVisible: Boolean,
@@ -53,7 +44,7 @@ class BottomBarViewController :
     }
 
     fun onBottomDrawerStateChanged(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_HIDDEN && viewBinding.bottomAppBar.isVisible) {
+        if (newState == BottomSheetBehavior.STATE_HIDDEN && mNavigator?.isOnScreenWithMenu == true) {
             viewBinding.mainFab.show()
         } else if (newState != BottomSheetBehavior.STATE_HIDDEN) {
             viewBinding.mainFab.hide()
@@ -90,10 +81,9 @@ class BottomBarViewController :
 
     fun showBottomBar() {
         with(viewBinding) {
-            if (!bottomAppBar.isVisible) {
-                bottomAppBar.isVisible = true
+            if (!viewBinding.root.isVisible) {
+                viewBinding.root.isVisible = true
             }
-
             mainFab.show()
             bottomAppBar.performShow()
         }

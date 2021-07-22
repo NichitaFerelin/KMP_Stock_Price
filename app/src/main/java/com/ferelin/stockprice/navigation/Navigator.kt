@@ -59,6 +59,8 @@ class Navigator @Inject constructor() {
     private val mStocksPagerTag = "stocksPager"
 
     private var mIsOnScreenWithMenu = false
+    val isOnScreenWithMenu: Boolean
+        get() = mIsOnScreenWithMenu
 
     fun attachHostActivity(activity: MainActivity) {
         mHostActivity = activity
