@@ -42,14 +42,11 @@ class BottomBarFragment :
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentBottomBarBinding
         get() = FragmentBottomBarBinding::inflate
 
-    private val mBottomNavDrawer: BottomDrawerFragment by lazy(LazyThreadSafetyMode.NONE) {
-        requireActivity()
-            .supportFragmentManager
-            .findFragmentById(R.id.bottomNavFragment) as BottomDrawerFragment
-    }
+    private var mBottomNavDrawer: BottomDrawerFragment? = null
 
     override fun setUpViewComponents(savedInstanceState: Bundle?) {
         super.setUpViewComponents(savedInstanceState)
+        findBottomDrawer()
         setUpViewComponents()
         mViewController.setArgumentsViewDependsOn(
             mViewModel.isBottomBarVisible,
@@ -59,12 +56,13 @@ class BottomBarFragment :
     }
 
     override fun onDestroyView() {
+        mBottomNavDrawer = null
         saveState()
         super.onDestroyView()
     }
 
-    fun handleOnBackPressed() : Boolean {
-        return mBottomNavDrawer.handleOnBackPressed()
+    fun handleOnBackPressed(): Boolean {
+        return mBottomNavDrawer?.handleOnBackPressed() ?: false
     }
 
     fun hideBottomBar() {
@@ -83,16 +81,18 @@ class BottomBarFragment :
     }
 
     private fun onControlButtonPressed() {
-        if (mBottomNavDrawer.isDrawerHidden) {
-            mBottomNavDrawer.openDrawer()
-        } else mBottomNavDrawer.closeDrawer()
+        mBottomNavDrawer?.let { bottomDrawerFragment ->
+            if (bottomDrawerFragment.isDrawerHidden) {
+                bottomDrawerFragment.openDrawer()
+            } else bottomDrawerFragment.closeDrawer()
+        }
     }
 
     private fun setUpBottomBar() {
         mViewController.viewBinding.run {
             bottomAppBarLinearRoot.setOnClickListener { onControlButtonPressed() }
-            mBottomNavDrawer.addOnSlideAction(ArrowUpAction(bottomAppBarImageViewArrowUp))
-            mBottomNavDrawer.addOnStateAction(object : OnStateAction {
+            mBottomNavDrawer?.addOnSlideAction(ArrowUpAction(bottomAppBarImageViewArrowUp))
+            mBottomNavDrawer?.addOnStateAction(object : OnStateAction {
                 override fun onBottomDrawerStateChanged(newState: Int) {
                     mViewController.onBottomDrawerStateChanged(newState)
                 }
@@ -121,6 +121,12 @@ class BottomBarFragment :
                 }
             }
         }
+    }
+
+    private fun findBottomDrawer() {
+        mBottomNavDrawer = requireActivity()
+            .supportFragmentManager
+            .findFragmentById(R.id.bottomNavFragment) as BottomDrawerFragment
     }
 
     private fun saveState() {

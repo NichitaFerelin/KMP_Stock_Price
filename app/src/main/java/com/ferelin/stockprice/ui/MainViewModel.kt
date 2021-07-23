@@ -18,30 +18,16 @@ package com.ferelin.stockprice.ui
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.stockprice.base.BaseViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainViewModel : BaseViewModel() {
 
     private var mNetworkWasLost: Boolean = false
 
-    val stateIsNetworkAvailable: Flow<Boolean>
-        get() = mDataInteractor.provideNetworkStateFlow().onEach { isAvailable ->
-            viewModelScope.launch(mCoroutineContext.IO) {
-                if (isAvailable) {
-                    /*
-                    * When the network is lost -> web socket breaks.
-                    * */
-                    if (mNetworkWasLost) {
-                        restartWebSocket()
-                    }
-                    launch { mDataInteractor.openWebSocketConnection().collect() }
-                } else mNetworkWasLost = true
-            }
-        }
+    private var mWebSocketJob: Job? = null
 
     val eventCriticalError: SharedFlow<String>
         get() = mDataInteractor.sharedPrepareCompaniesError
@@ -54,7 +40,25 @@ class MainViewModel : BaseViewModel() {
 
     override fun initObserversBlock() {
         viewModelScope.launch(mCoroutineContext.IO) {
-            mDataInteractor.openWebSocketConnection().collect()
+            launch { mDataInteractor.openWebSocketConnection().collect() }
+            launch { collectStateNetwork() }
+        }
+    }
+
+    private suspend fun collectStateNetwork() {
+        mDataInteractor.provideNetworkStateFlow().collect { isAvailable ->
+            if (isAvailable) {
+                /*
+                * When the network is lost -> web socket breaks.
+                * */
+                if (mNetworkWasLost) {
+                    restartWebSocket()
+                }
+                mWebSocketJob?.cancel()
+                mWebSocketJob = viewModelScope.launch(mCoroutineContext.IO) {
+                    mDataInteractor.openWebSocketConnection().collect()
+                }
+            } else mNetworkWasLost = true
         }
     }
 

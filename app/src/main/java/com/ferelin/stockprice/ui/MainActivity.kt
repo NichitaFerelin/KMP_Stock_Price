@@ -44,10 +44,7 @@ class MainActivity(
     private val mViewModel: MainViewModel by viewModels()
     private var mViewBinding: ActivityMainBinding? = null
 
-
-    private val mBottomBar: BottomBarFragment by lazy(LazyThreadSafetyMode.NONE) {
-        supportFragmentManager.findFragmentById(R.id.bottomBarFragment) as BottomBarFragment
-    }
+    private var mBottomBar: BottomBarFragment? = null
 
     @Inject
     lateinit var navigator: Navigator
@@ -63,9 +60,10 @@ class MainActivity(
         setContentView(mViewBinding!!.root)
         navigator.attachHostActivity(this)
 
-        initObservers()
         setStatusBarColor()
+        initObservers()
         mViewModel.initObservers()
+        findBottomBar()
 
         if (savedInstanceState == null) {
             navigator.navigateToLoadingFragment()
@@ -90,20 +88,21 @@ class MainActivity(
         }
 
         navigator.detachHostActivity()
+        mBottomBar = null
         mViewBinding = null
         super.onDestroy()
     }
 
     fun handleOnBackPressed(): Boolean {
-        return mBottomBar.handleOnBackPressed()
+        return mBottomBar?.handleOnBackPressed() ?: false
     }
 
     fun hideBottomBar() {
-        mBottomBar.hideBottomBar()
+        mBottomBar?.hideBottomBar()
     }
 
     fun showBottomBar() {
-        mBottomBar.showBottomBar()
+        mBottomBar?.showBottomBar()
     }
 
     private fun injectDependencies() {
@@ -116,7 +115,6 @@ class MainActivity(
 
     private fun initObservers() {
         lifecycleScope.launch(mCoroutineContext.IO) {
-            launch { mViewModel.stateIsNetworkAvailable.collect() }
             launch { collectEventCriticalError() }
             launch { collectFavouriteCompaniesLimitError() }
         }
@@ -132,6 +130,11 @@ class MainActivity(
 
     private suspend fun collectEventCriticalError() {
         mViewModel.eventCriticalError.collect { showDialog(it, supportFragmentManager) }
+    }
+
+    private fun findBottomBar() {
+        mBottomBar = supportFragmentManager
+            .findFragmentById(R.id.bottomBarFragment) as BottomBarFragment
     }
 
     private fun setStatusBarColor() {
