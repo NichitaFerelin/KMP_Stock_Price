@@ -97,8 +97,13 @@ class SearchRequestsSynchronization @Inject constructor(
         remoteItems: List<AdaptiveSearchRequest>,
         localItems: List<AdaptiveSearchRequest>
     ) {
+        // ConcurrentModException
+        val localItemsDuplicate = localItems.toList()
+
         remoteItems.forEach { remoteItem ->
-            val remoteItemAtLocal = localItems.find { it.searchText == remoteItem.searchText }
+            val remoteItemAtLocal = localItemsDuplicate.find {
+                it.searchText == remoteItem.searchText
+            }
             if (remoteItemAtLocal == null) {
                 when (mSyncMode) {
                     SyncConflictMode.LocalPriority -> {
@@ -122,14 +127,17 @@ class SearchRequestsSynchronization @Inject constructor(
         userToken: String,
         localSearchRequests: List<AdaptiveSearchRequest>
     ) {
+        // ConcurrentModException
+        val localSearchRequestsDuplicate = localSearchRequests.toList()
+
         when {
             mRemoteSearchRequestsContainer.isEmpty() -> {
-                localSearchRequests.forEach { localRequest ->
+                localSearchRequestsDuplicate.forEach { localRequest ->
                     mRepository.cacheSearchRequestToRealtimeDb(userToken, localRequest)
                 }
             }
             else -> {
-                localSearchRequests.forEach { localRequest ->
+                localSearchRequestsDuplicate.forEach { localRequest ->
                     val localRequestAtRemoteContainer =
                         mRemoteSearchRequestsContainer.find { it == localRequest }
                     if (localRequestAtRemoteContainer == null) {
