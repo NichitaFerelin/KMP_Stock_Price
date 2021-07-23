@@ -69,10 +69,12 @@ class BottomBarFragment :
 
     fun hideBottomBar() {
         mViewController.hideBottomBar()
+        mViewModel.isBottomBarVisible = false
     }
 
     fun showBottomBar() {
         mViewController.showBottomBar()
+        mViewModel.isBottomBarVisible = true
     }
 
     private fun setUpViewComponents() {
@@ -128,7 +130,6 @@ class BottomBarFragment :
             } else 0F
 
             mViewModel.isBottomBarFabVisible = mainFab.isVisible
-            mViewModel.isBottomBarVisible = bottomAppBar.isVisible
         }
     }
 }
