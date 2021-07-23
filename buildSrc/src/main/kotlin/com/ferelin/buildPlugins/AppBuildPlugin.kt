@@ -52,8 +52,8 @@ class AppBuildPlugin : Plugin<Project> {
             applicationId = "com.ferelin.stockprice"
             minSdk = 21
             targetSdk = 30
-            versionCode = 7
-            versionName = "2.1"
+            versionCode = 8
+            versionName = "3.0"
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
