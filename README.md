@@ -31,11 +31,17 @@ GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.fere
 </p>
 
 
+## Phones for tests
+- +16505555555 . Code [123456]
+- +16504444444 . Code [123456]
+- +16503333333 . Code [123456]
+
+
 ## Visual architecture guide
 ![Alt Text](https://user-images.githubusercontent.com/68856530/112752494-0be3fd00-8fdc-11eb-8c54-d0c3412e44e7.png)
 
 
-# License
+## License
 
 ```
    Copyright 2021 Leah Nichita
