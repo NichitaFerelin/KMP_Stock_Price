@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,20 +14,23 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-data class AdaptiveCompanyHistory(
-    var openPrices: List<String>,
-    var highPrices: List<String>,
-    var lowPrices: List<String>,
-    var closePrices: List<String>,
-    var datePrices: List<String>
+package com.ferelin.repository.adaptiveModels
+
+data class StockPrice(
+    var currentPrice: String,
+    var previousClosePrice: String,
+    var openPrice: String,
+    var highPrice: String,
+    var lowPrice: String,
+    var profit: String,
 ) {
     override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveCompanyHistory) {
-            datePrices.firstOrNull() == other.datePrices.firstOrNull()
+        return if (other is StockPrice) {
+            other.currentPrice == currentPrice
         } else false
     }
 
     override fun hashCode(): Int {
-        return datePrices.firstOrNull().hashCode()
+        return currentPrice.hashCode()
     }
 }

@@ -35,9 +35,9 @@ interface ApiManagerHelper {
         to: Long = Time.convertMillisForRequest(System.currentTimeMillis()),
         // Time format
         resolution: String = "D"
-    ): RepositoryResponse<AdaptiveCompanyHistory>
+    ): RepositoryResponse<StockHistory>
 
-    fun loadCompanyProfile(symbol: String): RepositoryResponse<AdaptiveCompanyProfile>
+    fun loadCompanyProfile(symbol: String): RepositoryResponse<CompanyProfile>
 
     fun loadStockSymbols(): RepositoryResponse<AdaptiveStocksSymbols>
 
@@ -48,7 +48,7 @@ interface ApiManagerHelper {
         * */
         from: String = Time.getYearAgoDateForRequest(),
         to: String = Time.getCurrentDateForRequest()
-    ): RepositoryResponse<AdaptiveCompanyNews>
+    ): RepositoryResponse<CompanyNews>
 
     fun sendRequestToLoadPrice(
         symbol: String,
@@ -56,5 +56,5 @@ interface ApiManagerHelper {
         isImportant: Boolean
     )
 
-    fun getStockPriceResponseState(): Flow<RepositoryResponse<AdaptiveCompanyDayData>>
+    fun getStockPriceResponseState(): Flow<RepositoryResponse<StockPrice>>
 }

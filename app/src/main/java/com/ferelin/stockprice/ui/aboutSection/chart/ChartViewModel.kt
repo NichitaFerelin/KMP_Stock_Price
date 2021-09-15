@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.aboutSection.chart
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,9 +14,11 @@ package com.ferelin.stockprice.ui.aboutSection.chart
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.ui.aboutSection.chart
+
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
+import com.ferelin.repository.adaptiveModels.ChartStockHistory
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.custom.utils.Marker
 import com.ferelin.stockprice.utils.DataNotificator
@@ -31,11 +31,11 @@ class ChartViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     * There are different modes of displaying data.
     * For each of them, need to convert the data. This is the original list that can be used for it.
     */
-    private var mOriginalStockHistory: AdaptiveCompanyHistoryForChart? = null
+    private var mOriginalStockHistory: ChartStockHistory? = null
 
     private val mStateStockHistory =
-        MutableStateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>(DataNotificator.None())
-    val stateStockHistory: StateFlow<DataNotificator<AdaptiveCompanyHistoryForChart>>
+        MutableStateFlow<DataNotificator<ChartStockHistory>>(DataNotificator.None())
+    val stateStockHistory: StateFlow<DataNotificator<ChartStockHistory>>
         get() = mStateStockHistory.asStateFlow()
 
     val eventOnDayDataChanged: Flow<DataNotificator<AdaptiveCompany>>

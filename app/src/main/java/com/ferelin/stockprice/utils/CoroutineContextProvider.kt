@@ -1,4 +1,4 @@
-package com.ferelin.remote.webSocket.response
+@file:Suppress("PropertyName", "PropertyName", "PropertyName")
 
 /*
  * Copyright 2021 Leah Nichita
@@ -16,11 +16,19 @@ package com.ferelin.remote.webSocket.response
  * limitations under the License.
  */
 
-import com.squareup.moshi.Json
+package com.ferelin.stockprice.utils
 
-/**
- * Base response from network
- * */
-class WebSocketSubResponse(
-    @Json(name = "data") val data: List<Any>
-)
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
+
+open class CoroutineContextProvider {
+
+    open val Main: CoroutineContext
+        get() = Dispatchers.Main
+
+    open val IO: CoroutineContext
+        get() = Dispatchers.IO
+
+    open val Default: CoroutineContext
+        get() = Dispatchers.Default
+}

@@ -1,5 +1,3 @@
-package com.ferelin.dependencies
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.dependencies
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.dependencies
 
 object Modules {
     const val app = ":app"

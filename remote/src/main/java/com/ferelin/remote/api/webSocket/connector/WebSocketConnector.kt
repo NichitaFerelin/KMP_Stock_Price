@@ -1,5 +1,3 @@
-package com.ferelin.remote.webSocket.connector
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,9 +14,10 @@ package com.ferelin.remote.webSocket.connector
  * limitations under the License.
  */
 
+package com.ferelin.remote.api.webSocket.connector
+
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
-import com.ferelin.remote.webSocket.response.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -30,7 +29,7 @@ interface WebSocketConnector {
     /**
      * Opens web socket and start returns responses on this flow
      * */
-    fun openWebSocketConnection(token: String = Api.FINNHUB_TOKEN): Flow<BaseResponse<WebSocketResponse>>
+    fun openWebSocketConnection(): Flow<BaseResponse<WebSocketResponse>>
 
     fun closeWebSocketConnection()
 

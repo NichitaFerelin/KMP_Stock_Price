@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.aboutSection.news
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,9 +14,11 @@ package com.ferelin.stockprice.ui.aboutSection.news
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.ui.aboutSection.news
+
 import androidx.lifecycle.viewModelScope
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
+import com.ferelin.repository.adaptiveModels.CompanyNews
 import com.ferelin.stockprice.base.BaseViewModel
 import com.ferelin.stockprice.ui.aboutSection.news.adapter.NewsRecyclerAdapter
 import com.ferelin.stockprice.utils.DataNotificator
@@ -31,8 +31,8 @@ class NewsViewModel(val selectedCompany: AdaptiveCompany) : BaseViewModel() {
     val newsRecyclerAdapter = NewsRecyclerAdapter()
 
     private val mStateCompanyNews =
-        MutableStateFlow<DataNotificator<AdaptiveCompanyNews>>(DataNotificator.None())
-    val stateCompanyNews: StateFlow<DataNotificator<AdaptiveCompanyNews>>
+        MutableStateFlow<DataNotificator<CompanyNews>>(DataNotificator.None())
+    val stateCompanyNews: StateFlow<DataNotificator<CompanyNews>>
         get() = mStateCompanyNews.asStateFlow()
 
     val eventOnError: SharedFlow<String>

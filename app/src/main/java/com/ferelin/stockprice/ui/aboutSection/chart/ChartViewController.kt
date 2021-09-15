@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.aboutSection.chart
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.stockprice.ui.aboutSection.chart
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.ui.aboutSection.chart
+
 import android.animation.Animator
 import android.os.Bundle
 import android.view.View
@@ -26,7 +26,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
+import com.ferelin.repository.adaptiveModels.ChartStockHistory
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.base.BaseViewController
 import com.ferelin.stockprice.custom.utils.Marker
@@ -123,7 +123,7 @@ class ChartViewController : BaseViewController<ChartViewAnimator, FragmentChartB
             })
     }
 
-    fun onStockHistoryChanged(history: AdaptiveCompanyHistoryForChart) {
+    fun onStockHistoryChanged(history: ChartStockHistory) {
         if (history.isNotEmpty()) {
             viewBinding.chartView.setData(history)
             showChart()

@@ -1,5 +1,3 @@
-package com.ferelin.local.databases.companiesDb
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,14 +14,16 @@ package com.ferelin.local.databases.companiesDb
  * limitations under the License.
  */
 
+package com.ferelin.local.databases.companiesDb
+
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ferelin.local.databases.typeConverters.Converter
+import com.ferelin.local.databases.DbTypesConverter
 import com.ferelin.local.models.Company
 
 @Database(entities = [Company::class], version = 1)
-@TypeConverters(Converter::class)
+@TypeConverters(DbTypesConverter::class)
 abstract class CompaniesDatabase : RoomDatabase() {
 
     abstract fun companiesDao(): CompaniesDao

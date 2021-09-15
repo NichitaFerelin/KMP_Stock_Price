@@ -1,5 +1,3 @@
-package com.ferelin.stockprice
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice
 
 import android.app.Application
 import com.ferelin.stockprice.di.AppComponent

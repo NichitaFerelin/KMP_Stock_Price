@@ -1,5 +1,3 @@
-package com.ferelin.buildPlugins
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,20 +14,29 @@ package com.ferelin.buildPlugins
  * limitations under the License.
  */
 
+package com.ferelin.buildPlugins
+
 import com.android.build.gradle.BaseExtension
 import com.ferelin.dependencies.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.dependencies
+import java.io.FileInputStream
+import java.util.*
 
 class AppBuildPlugin : Plugin<Project> {
+
+    private val mProperties = Properties()
 
     override fun apply(project: Project) {
         project.applyPlugins()
 
+        mProperties.load(FileInputStream(project.rootProject.file("local.properties")))
+
         val androidExtension = project.extensions.getByName("android")
         if (androidExtension is BaseExtension) {
+
             androidExtension.apply { applyAndroidConfigure() }
         }
 
@@ -41,28 +48,31 @@ class AppBuildPlugin : Plugin<Project> {
             apply(Plugins.androidApplication)
             apply(Plugins.kotlinAndroid)
             apply(Plugins.kotlinKapt)
+            apply(Plugins.googleServices)
         }
     }
 
     private fun BaseExtension.applyAndroidConfigure() {
-
         applyDefaultConfigure()
 
         defaultConfig {
             applicationId = "com.ferelin.stockprice"
             minSdk = 21
-            targetSdk = 30
+            targetSdk = 31
             versionCode = 8
             versionName = "3.0"
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
-
+         buildTypes {
+             getByName("debug") {
+                 resValue("string", "api_key", mProperties["apiKey"] as String)
+             }
+         }
         buildFeatures.apply {
             viewBinding = true
             compose = true
         }
-
         composeOptions {
             kotlinCompilerExtensionVersion = Versions.compose
         }
@@ -88,7 +98,7 @@ class AppBuildPlugin : Plugin<Project> {
         kapt(Dependencies.glideCompilerKapt)
 
         /**
-         * NEXT DEPENDENCIES IS FOR DI AND TESTS
+         * FOR DI AND TESTS
          * */
         addProjectImpl(Modules.local)
         addProjectImpl(Modules.remote)

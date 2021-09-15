@@ -1,5 +1,3 @@
-package com.ferelin.remote.webSocket
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,7 +14,9 @@ package com.ferelin.remote.webSocket
  * limitations under the License.
  */
 
-import com.ferelin.remote.utils.Api
+package com.ferelin.remote.api.webSocket
+
+import com.ferelin.remote.RESPONSE_WEB_SOCKET_CLOSED
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -36,7 +36,7 @@ class WebSocketManager(private val mOnResponse: (response: String) -> Unit) : We
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
         webSocket.apply {
-            close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)
+            close(RESPONSE_WEB_SOCKET_CLOSED, null)
             cancel()
         }
     }

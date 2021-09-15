@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.aboutSection.news.adapter
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,11 +14,13 @@ package com.ferelin.stockprice.ui.aboutSection.news.adapter
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.ui.aboutSection.news.adapter
+
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
+import com.ferelin.repository.adaptiveModels.CompanyNews
 import com.ferelin.stockprice.databinding.ItemNewsBinding
 
 class NewsRecyclerAdapter(
@@ -56,7 +56,7 @@ class NewsRecyclerAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(news: AdaptiveCompanyNews) {
+    fun setData(news: CompanyNews) {
         mNewsIds = ArrayList(news.ids)
         mNewsHeadlines = ArrayList(news.headlines)
         mNewsSummaries = ArrayList(news.summaries)

@@ -1,7 +1,3 @@
-package com.ferelin.remote.base
-
-import com.ferelin.remote.utils.Api
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -18,6 +14,13 @@ import com.ferelin.remote.utils.Api
  * limitations under the License.
  */
 
+package com.ferelin.remote.base
+
+import com.ferelin.remote.RESPONSE_LIMIT
+import com.ferelin.remote.RESPONSE_NO_DATA
+import com.ferelin.remote.RESPONSE_OK
+import com.ferelin.remote.RESPONSE_UNDEFINED
+
 /**
  * [BaseResponse] for all networks responses.
  */
@@ -28,19 +31,19 @@ class BaseResponse<T>(
 ) {
     companion object {
         fun <T> failed(): BaseResponse<T> {
-            return BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)
+            return BaseResponse(responseCode = RESPONSE_UNDEFINED)
         }
 
         fun <T> createResponse(responseBody: T?, responseCode: Int): BaseResponse<T> {
             return when {
-                responseCode == 429 -> BaseResponse(Api.RESPONSE_LIMIT)
-                responseBody == null -> BaseResponse(Api.RESPONSE_NO_DATA)
-                responseCode == 200 -> {
-                        BaseResponse(
-                            responseCode = Api.RESPONSE_OK,
-                            additionalMessage = null,
-                            responseData = responseBody
-                        )
+                responseCode == RESPONSE_LIMIT -> BaseResponse(RESPONSE_LIMIT)
+                responseBody == null -> BaseResponse(RESPONSE_NO_DATA)
+                responseCode == RESPONSE_OK -> {
+                    BaseResponse(
+                        responseCode = RESPONSE_OK,
+                        additionalMessage = null,
+                        responseData = responseBody
+                    )
                 }
                 else -> failed()
             }

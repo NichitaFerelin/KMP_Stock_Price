@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.errors
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.dataInteractor.workers.errors
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.dataInteractor.workers.errors
 
 import android.content.Context
 import com.ferelin.repository.utils.RepositoryMessages

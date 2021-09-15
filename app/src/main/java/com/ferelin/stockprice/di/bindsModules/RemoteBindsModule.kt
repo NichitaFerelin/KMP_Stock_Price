@@ -34,8 +34,8 @@ import com.ferelin.remote.database.helpers.messages.MessagesHelper
 import com.ferelin.remote.database.helpers.messages.MessagesHelperImpl
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelper
 import com.ferelin.remote.database.helpers.searchRequests.SearchRequestsHelperImpl
-import com.ferelin.remote.webSocket.connector.WebSocketConnector
-import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnectorImpl
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverterImpl
 import dagger.Binds

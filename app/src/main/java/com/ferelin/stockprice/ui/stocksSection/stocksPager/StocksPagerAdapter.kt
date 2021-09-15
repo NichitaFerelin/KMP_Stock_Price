@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.stocksSection.stocksPager
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.ui.stocksSection.stocksPager
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.ui.stocksSection.stocksPager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -33,7 +33,6 @@ class StocksPagerAdapter(
         return 2
     }
 
-    @FlowPreview
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> StocksFragment()

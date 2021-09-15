@@ -17,8 +17,8 @@
 package com.ferelin.repository.converter.helpers.chatsConverter
 
 import com.ferelin.local.models.Chat
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveChat
 import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class ChatsConverterImpl @Inject constructor() : ChatsConverter {
     override fun convertChatResponseToRepositoryResponse(
         response: BaseResponse<String>
     ): RepositoryResponse<AdaptiveChat> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+        return if (response.responseCode == RESPONSE_OK) {
             RepositoryResponse.Success(
                 data = AdaptiveChat(
                     id = response.additionalMessage!!.toInt(),

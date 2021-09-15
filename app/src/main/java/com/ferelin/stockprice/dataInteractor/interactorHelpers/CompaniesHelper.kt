@@ -17,8 +17,8 @@
 package com.ferelin.stockprice.dataInteractor.interactorHelpers
 
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
+import com.ferelin.repository.adaptiveModels.StockHistory
+import com.ferelin.repository.adaptiveModels.CompanyNews
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.dataInteractor.workers.companies.CompaniesMediator
 import com.ferelin.stockprice.utils.DataNotificator
@@ -34,9 +34,9 @@ interface CompaniesHelper {
 
     suspend fun removeCompanyFromFavourites(company: AdaptiveCompany)
 
-    suspend fun loadStockHistory(symbol: String): Flow<DataNotificator<AdaptiveCompanyHistory?>>
+    suspend fun loadStockHistory(symbol: String): Flow<DataNotificator<StockHistory?>>
 
-    suspend fun loadCompanyNews(symbol: String): Flow<DataNotificator<AdaptiveCompanyNews?>>
+    suspend fun loadCompanyNews(symbol: String): Flow<DataNotificator<CompanyNews?>>
 
     suspend fun sendRequestToLoadStockPrice(
         symbol: String,

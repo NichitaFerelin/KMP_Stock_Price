@@ -16,9 +16,11 @@
 
 package com.ferelin.remote.database.helpers.searchRequests
 
+import com.ferelin.remote.RESPONSE_OK
+import com.ferelin.remote.RESPONSE_UNDEFINED
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
@@ -26,7 +28,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchRequestsHelperImpl @Inject constructor(
-    private val mDatabaseFirebase: DatabaseReference
+    private val mFirebaseReference: DatabaseReference
 ) : SearchRequestsHelper {
 
     private companion object {
@@ -38,7 +40,7 @@ class SearchRequestsHelperImpl @Inject constructor(
         searchRequestId: String,
         searchRequest: String
     ) {
-        mDatabaseFirebase
+        mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
             .child(searchRequestId)
@@ -46,7 +48,7 @@ class SearchRequestsHelperImpl @Inject constructor(
     }
 
     override fun eraseSearchRequestFromDb(userToken: String, searchRequestId: String) {
-        mDatabaseFirebase
+        mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
             .child(searchRequestId)
@@ -56,7 +58,7 @@ class SearchRequestsHelperImpl @Inject constructor(
     override fun getSearchRequestsFromDb(
         userToken: String
     ) = callbackFlow<BaseResponse<HashMap<Int, String>>> {
-        mDatabaseFirebase
+        mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
             .get()
@@ -69,11 +71,11 @@ class SearchRequestsHelperImpl @Inject constructor(
                 }
                 trySend(
                     BaseResponse(
-                        responseCode = Api.RESPONSE_OK,
+                        responseCode = RESPONSE_OK,
                         responseData = searchRequests
                     )
                 )
-            }.addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED)) }
+            }.addOnFailureListener { trySend(BaseResponse(responseCode = RESPONSE_UNDEFINED)) }
 
         awaitClose()
     }

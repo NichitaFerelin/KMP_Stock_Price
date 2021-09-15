@@ -1,5 +1,3 @@
-package com.ferelin.remote
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.remote
  * limitations under the License.
  */
 
+package com.ferelin.remote
+
 import android.app.Activity
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
@@ -23,11 +23,11 @@ import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.api.stockHistory.StockHistoryResponse
 import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
 import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.webSocket.connector.WebSocketConnector
-import com.ferelin.remote.webSocket.response.WebSocketResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,8 +40,8 @@ class RemoteMediatorImpl @Inject constructor(
     private val mRealtimeDatabaseManager: RealtimeDatabase,
 ) : RemoteMediator {
 
-    override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> {
-        return mWebSocketConnector.openWebSocketConnection(token)
+    override fun openWebSocketConnection(): Flow<BaseResponse<WebSocketResponse>> {
+        return mWebSocketConnector.openWebSocketConnection()
     }
 
     override fun closeWebSocketConnection() {

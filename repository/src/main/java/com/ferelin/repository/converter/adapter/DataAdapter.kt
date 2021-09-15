@@ -1,5 +1,3 @@
-package com.ferelin.repository.converter.adapter
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,9 +14,11 @@ package com.ferelin.repository.converter.adapter
  * limitations under the License.
  */
 
+package com.ferelin.repository.converter.adapter
+
 import com.ferelin.local.models.Company
 import com.ferelin.repository.adaptiveModels.*
-import com.ferelin.shared.formatPrice
+import com.ferelin.repository.utils.formatPrice
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -111,7 +111,7 @@ class DataAdapter @Inject constructor() {
     fun toAdaptiveCompany(company: Company): AdaptiveCompany {
         return AdaptiveCompany(
             id = company.id,
-            companyProfile = AdaptiveCompanyProfile(
+            companyProfile = CompanyProfile(
                 name = company.name,
                 symbol = company.symbol,
                 logoUrl = company.logoUrl,
@@ -122,7 +122,7 @@ class DataAdapter @Inject constructor() {
                 currency = company.currency,
                 capitalization = company.capitalization
             ),
-            companyDayData = AdaptiveCompanyDayData(
+            companyDayData = StockPrice(
                 currentPrice = company.dayCurrentPrice,
                 previousClosePrice = company.dayPreviousClosePrice,
                 openPrice = company.dayOpenPrice,
@@ -130,14 +130,14 @@ class DataAdapter @Inject constructor() {
                 lowPrice = company.dayLowPrice,
                 profit = company.dayProfit
             ),
-            companyHistory = AdaptiveCompanyHistory(
+            companyHistory = StockHistory(
                 openPrices = company.historyOpenPrices,
                 highPrices = company.historyHighPrices,
                 lowPrices = company.historyLowPrices,
                 closePrices = company.historyClosePrices,
                 datePrices = company.historyDatePrices
             ),
-            companyNews = AdaptiveCompanyNews(
+            companyNews = CompanyNews(
                 dates = company.newsDates,
                 headlines = company.newsHeadlines,
                 ids = company.newsIds,
@@ -146,7 +146,7 @@ class DataAdapter @Inject constructor() {
                 summaries = company.newsSummaries,
                 browserUrls = company.newsUrls
             ),
-            companyStyle = AdaptiveCompanyStyle(),
+            companyStyle = UiStockStyle(),
             isFavourite = company.isFavourite,
             favouriteOrderIndex = company.favouriteOrderIndex
         )

@@ -1,5 +1,3 @@
-package com.ferelin.local.databases.typeConverters
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,12 +14,14 @@ package com.ferelin.local.databases.typeConverters
  * limitations under the License.
  */
 
+package com.ferelin.local.databases
+
 import androidx.room.TypeConverter
 import com.ferelin.shared.MessageSide
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
-internal class Converter {
+internal class DbTypesConverter {
 
     private val mMoshi = Moshi.Builder().build()
 
@@ -54,5 +54,4 @@ internal class Converter {
             else -> MessageSide.Associated
         }
     }
-
 }

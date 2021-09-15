@@ -18,7 +18,6 @@ package com.ferelin.remote.auth
 
 import android.app.Activity
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.flow.Flow
 
 /**

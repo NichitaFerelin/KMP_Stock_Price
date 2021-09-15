@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.previewSection.loading
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.ui.previewSection.loading
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.ui.previewSection.loading
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

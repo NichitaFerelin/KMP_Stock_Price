@@ -1,5 +1,3 @@
-package com.ferelin.remote.webSocket.response
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,13 +14,22 @@ package com.ferelin.remote.webSocket.response
  * limitations under the License.
  */
 
-import com.squareup.moshi.Json
+package com.ferelin.repository.adaptiveModels
 
-/**
- * Base response of web socket for repository
- * */
-class WebSocketResponse(
-    @Json(name = "s") val symbol: String,
-    @Json(name = "p") val lastPrice: Double,
-    @Json(name = "v") val volume: Double
-)
+data class StockHistory(
+    var openPrices: List<String>,
+    var highPrices: List<String>,
+    var lowPrices: List<String>,
+    var closePrices: List<String>,
+    var datePrices: List<String>
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is StockHistory) {
+            datePrices.firstOrNull() == other.datePrices.firstOrNull()
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return datePrices.firstOrNull().hashCode()
+    }
+}

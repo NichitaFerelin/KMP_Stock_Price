@@ -17,8 +17,8 @@
 package com.ferelin.repository.converter.helpers.webSocketConverter
 
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.webSocket.response.WebSocketResponse
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
+import com.ferelin.repository.adaptiveModels.LiveTimePrice
 import com.ferelin.repository.utils.RepositoryResponse
 
 /**
@@ -27,5 +27,5 @@ import com.ferelin.repository.utils.RepositoryResponse
 interface WebSocketConverter {
     fun convertWebSocketResponseForUi(
         response: BaseResponse<WebSocketResponse>
-    ): RepositoryResponse<AdaptiveWebSocketPrice>
+    ): RepositoryResponse<LiveTimePrice>
 }

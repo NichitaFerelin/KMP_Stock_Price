@@ -1,11 +1,3 @@
-package com.ferelin.stockprice.notification
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
-import com.ferelin.stockprice.R
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -21,6 +13,14 @@ import com.ferelin.stockprice.R
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.notification
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+import com.ferelin.stockprice.R
 
 object Notification {
 

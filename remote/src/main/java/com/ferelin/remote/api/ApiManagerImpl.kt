@@ -1,5 +1,3 @@
-package com.ferelin.remote.api
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,10 @@ package com.ferelin.remote.api
  * limitations under the License.
  */
 
+package com.ferelin.remote.api
+
+import com.ferelin.remote.COMPANY_QUOTE
+import com.ferelin.remote.RESPONSE_UNDEFINED
 import com.ferelin.remote.api.companyNews.CompanyNewsApi
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileApi
@@ -29,30 +31,31 @@ import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.api.throttleManager.ThrottleManager
 import com.ferelin.remote.base.BaseManager
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Retrofit
 import java.net.SocketTimeoutException
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 open class ApiManagerImpl @Inject constructor(
     private val mThrottleManager: ThrottleManager,
+    @Named("FinnhubToken") private val mToken: String,
     retrofit: Retrofit
 ) : ApiManager {
 
-    private val mCompanyProfileService by lazy { retrofit.create(CompanyProfileApi::class.java) }
-    private val mCompanyNewsService by lazy { retrofit.create(CompanyNewsApi::class.java) }
-    private val mStockPriceService by lazy { retrofit.create(StockPriceApi::class.java) }
-    private val mStockHistoryService by lazy { retrofit.create(StockHistoryApi::class.java) }
-    private val mStockSymbolsService by lazy { retrofit.create(StockSymbolApi::class.java) }
+    private val mCompanyProfileApi by lazy { retrofit.create(CompanyProfileApi::class.java) }
+    private val mCompanyNewsApi by lazy { retrofit.create(CompanyNewsApi::class.java) }
+    private val mStockPriceApi by lazy { retrofit.create(StockPriceApi::class.java) }
+    private val mStockHistoryApi by lazy { retrofit.create(StockHistoryApi::class.java) }
+    private val mStockSymbolsApi by lazy { retrofit.create(StockSymbolApi::class.java) }
 
     override fun loadStockSymbols(): BaseResponse<StockSymbolResponse> {
-        val retrofitResponse = mStockSymbolsService
-            .getStockSymbolList(Api.FINNHUB_TOKEN)
+        val retrofitResponse = mStockSymbolsApi
+            .getStockSymbolList(mToken)
             .execute()
         return BaseResponse.createResponse(
             retrofitResponse.body(),
@@ -62,8 +65,8 @@ open class ApiManagerImpl @Inject constructor(
 
     override fun loadCompanyProfile(symbol: String): BaseResponse<CompanyProfileResponse> {
         return try {
-            val retrofitResponse = mCompanyProfileService
-                .getCompanyProfile(symbol, Api.FINNHUB_TOKEN)
+            val retrofitResponse = mCompanyProfileApi
+                .getCompanyProfile(symbol, mToken)
                 .execute()
             BaseResponse.createResponse(
                 retrofitResponse.body(),
@@ -72,7 +75,7 @@ open class ApiManagerImpl @Inject constructor(
         } catch (exception: SocketTimeoutException) {
             BaseResponse.createResponse(
                 null,
-                Api.RESPONSE_UNDEFINED
+                RESPONSE_UNDEFINED
             )
         }
     }
@@ -84,8 +87,8 @@ open class ApiManagerImpl @Inject constructor(
         resolution: String
     ): BaseResponse<StockHistoryResponse> {
         return try {
-            val retrofitResponse = mStockHistoryService
-                .getStockCandles(symbol, Api.FINNHUB_TOKEN, from, to, resolution)
+            val retrofitResponse = mStockHistoryApi
+                .getStockCandles(symbol, mToken, from, to, resolution)
                 .execute()
             BaseResponse.createResponse(
                 responseBody = retrofitResponse.body(),
@@ -94,7 +97,7 @@ open class ApiManagerImpl @Inject constructor(
         } catch (exception: SocketTimeoutException) {
             BaseResponse.createResponse(
                 null,
-                Api.RESPONSE_UNDEFINED
+                RESPONSE_UNDEFINED
             )
         }
     }
@@ -105,8 +108,8 @@ open class ApiManagerImpl @Inject constructor(
         to: String
     ): BaseResponse<List<CompanyNewsResponse>> {
         return try {
-            val retrofitResponse = mCompanyNewsService
-                .getCompanyNews(symbol, Api.FINNHUB_TOKEN, from, to)
+            val retrofitResponse = mCompanyNewsApi
+                .getCompanyNews(symbol, mToken, from, to)
                 .execute()
             BaseResponse.createResponse(
                 responseBody = retrofitResponse.body(),
@@ -115,7 +118,7 @@ open class ApiManagerImpl @Inject constructor(
         } catch (exception: SocketTimeoutException) {
             BaseResponse.createResponse(
                 null,
-                Api.RESPONSE_UNDEFINED
+                RESPONSE_UNDEFINED
             )
         }
     }
@@ -128,7 +131,7 @@ open class ApiManagerImpl @Inject constructor(
         // Add message(request) to throttle manager
         mThrottleManager.addRequestToOrder(
             companyOwnerSymbol = symbol,
-            apiTag = Api.COMPANY_QUOTE,
+            apiTag = COMPANY_QUOTE,
             messageNumber = position,
             eraseIfNotActual = !isImportant,
             ignoreDuplicates = isImportant
@@ -137,9 +140,9 @@ open class ApiManagerImpl @Inject constructor(
 
     override fun getStockPriceResponseState(): Flow<BaseResponse<StockPriceResponse>> =
         callbackFlow {
-            mThrottleManager.setUpApi(Api.COMPANY_QUOTE) { symbolToRequest ->
-                mStockPriceService
-                    .getCompanyQuote(symbolToRequest, Api.FINNHUB_TOKEN)
+            mThrottleManager.setUpApi(COMPANY_QUOTE) { symbolToRequest ->
+                mStockPriceApi
+                    .getCompanyQuote(symbolToRequest, mToken)
                     .enqueue(BaseManager<StockPriceResponse> {
                         it.additionalMessage = symbolToRequest
                         trySend(it)

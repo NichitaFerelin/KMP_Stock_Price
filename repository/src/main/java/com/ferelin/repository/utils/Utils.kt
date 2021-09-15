@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.repository.utils
 
 fun parseMonthFromDate(date: String): String {
     return date.filter { it.isLetter() }

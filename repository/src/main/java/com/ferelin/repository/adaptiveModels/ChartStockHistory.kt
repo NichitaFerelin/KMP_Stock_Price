@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,21 +14,28 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-data class AdaptiveCompanyDayData(
-    var currentPrice: String,
-    var previousClosePrice: String,
-    var openPrice: String,
-    var highPrice: String,
-    var lowPrice: String,
-    var profit: String,
+package com.ferelin.repository.adaptiveModels
+
+class ChartStockHistory(
+    val price: List<Double>,
+    val priceStr: List<String>,
+    val dates: List<String>
 ) {
     override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveCompanyDayData) {
-            other.currentPrice == currentPrice
+        return if (other is ChartStockHistory) {
+            return dates.firstOrNull() == other.dates.firstOrNull()
         } else false
     }
 
     override fun hashCode(): Int {
-        return currentPrice.hashCode()
+        return dates.firstOrNull().hashCode()
+    }
+
+    fun isNotEmpty(): Boolean {
+        return price.isNotEmpty()
+    }
+
+    fun isEmpty(): Boolean {
+        return price.isEmpty()
     }
 }

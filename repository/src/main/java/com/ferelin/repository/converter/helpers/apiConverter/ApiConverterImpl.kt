@@ -16,19 +16,20 @@
 
 package com.ferelin.repository.converter.helpers.apiConverter
 
+import com.ferelin.remote.RESPONSE_LIMIT
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.api.companyNews.CompanyNewsResponse
 import com.ferelin.remote.api.companyProfile.CompanyProfileResponse
 import com.ferelin.remote.api.stockHistory.StockHistoryResponse
 import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.converter.adapter.DataAdapter
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.repository.utils.Time
-import com.ferelin.shared.formatPrice
+import com.ferelin.repository.utils.formatPrice
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -40,12 +41,12 @@ class ApiConverterImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyHistory> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+    ): RepositoryResponse<StockHistory> {
+        return if (response.responseCode == RESPONSE_OK) {
             val itemResponse = response.responseData as StockHistoryResponse
             RepositoryResponse.Success(
                 owner = symbol,
-                data = AdaptiveCompanyHistory(
+                data = StockHistory(
                     itemResponse.openPrices.map { formatPrice(it) },
                     itemResponse.highPrices.map { formatPrice(it) },
                     itemResponse.lowPrices.map { formatPrice(it) },
@@ -57,7 +58,7 @@ class ApiConverterImpl @Inject constructor(
             )
         } else {
             when (response.responseCode) {
-                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
                 else -> RepositoryResponse.Failed()
             }
         }
@@ -66,12 +67,12 @@ class ApiConverterImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
-    ): RepositoryResponse<AdaptiveCompanyProfile> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+    ): RepositoryResponse<CompanyProfile> {
+        return if (response.responseCode == RESPONSE_OK) {
             val itemResponse = response.responseData as CompanyProfileResponse
             RepositoryResponse.Success(
                 owner = symbol,
-                data = AdaptiveCompanyProfile(
+                data = CompanyProfile(
                     mAdapter.adaptName(itemResponse.name),
                     symbol,
                     itemResponse.logoUrl,
@@ -89,7 +90,7 @@ class ApiConverterImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
     ): RepositoryResponse<AdaptiveStocksSymbols> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+        return if (response.responseCode == RESPONSE_OK) {
             val itemResponse = response.responseData as StockSymbolResponse
             RepositoryResponse.Success(data = AdaptiveStocksSymbols(itemResponse.stockSymbols))
         } else RepositoryResponse.Failed()
@@ -98,8 +99,8 @@ class ApiConverterImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyNews> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+    ): RepositoryResponse<CompanyNews> {
+        return if (response.responseCode == RESPONSE_OK) {
             val itemResponse = response.responseData as List<CompanyNewsResponse>
 
             val ids = mutableListOf<Double>()
@@ -122,7 +123,7 @@ class ApiConverterImpl @Inject constructor(
 
             RepositoryResponse.Success(
                 owner = symbol,
-                data = AdaptiveCompanyNews(
+                data = CompanyNews(
                     ids.map { it.toString().substringBefore(".") }.toList(),
                     headlines.toList(),
                     summaries.toList(),
@@ -136,7 +137,7 @@ class ApiConverterImpl @Inject constructor(
             )
         } else {
             when (response.responseCode) {
-                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
                 else -> RepositoryResponse.Failed()
             }
         }
@@ -144,12 +145,12 @@ class ApiConverterImpl @Inject constructor(
 
     override fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
-    ): RepositoryResponse<AdaptiveCompanyDayData> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+    ): RepositoryResponse<StockPrice> {
+        return if (response.responseCode == RESPONSE_OK) {
             val itemResponse = response.responseData as StockPriceResponse
             RepositoryResponse.Success(
                 owner = response.additionalMessage,
-                data = AdaptiveCompanyDayData(
+                data = StockPrice(
                     formatPrice(itemResponse.currentPrice),
                     formatPrice(itemResponse.previousClosePrice),
                     formatPrice(itemResponse.openPrice),
@@ -160,7 +161,7 @@ class ApiConverterImpl @Inject constructor(
             )
         } else {
             when (response.responseCode) {
-                Api.RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
+                RESPONSE_LIMIT -> RepositoryResponse.Failed(RepositoryMessages.Limit)
                 else -> RepositoryResponse.Failed(owner = response.additionalMessage)
             }
         }

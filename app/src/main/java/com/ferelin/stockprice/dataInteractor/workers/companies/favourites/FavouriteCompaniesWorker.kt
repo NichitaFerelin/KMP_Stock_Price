@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.companies.favourites
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.dataInteractor.workers.companies.favourites
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.dataInteractor.workers.companies.favourites
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany

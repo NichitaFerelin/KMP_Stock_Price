@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.base
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,9 +14,11 @@ package com.ferelin.stockprice.base
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.base
+
 import androidx.lifecycle.ViewModel
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.dataInteractor.DataInteractor
+import com.ferelin.stockprice.utils.CoroutineContextProvider
 import javax.inject.Inject
 
 /**

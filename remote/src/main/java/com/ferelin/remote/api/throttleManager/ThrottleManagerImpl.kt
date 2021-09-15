@@ -1,5 +1,3 @@
-package com.ferelin.remote.api.throttleManager
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,7 +14,9 @@ package com.ferelin.remote.api.throttleManager
  * limitations under the License.
  */
 
-import com.ferelin.remote.utils.Api
+package com.ferelin.remote.api.throttleManager
+
+import com.ferelin.remote.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -72,11 +72,11 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
 
     override fun setUpApi(apiTag: String, onResponse: (String) -> Unit) {
         when (apiTag) {
-            Api.COMPANY_PROFILE -> if (mCompanyProfileApi == null) mCompanyProfileApi = onResponse
-            Api.COMPANY_NEWS -> if (mCompanyNewsApi == null) mCompanyNewsApi = onResponse
-            Api.COMPANY_QUOTE -> if (mStockPriceApi == null) mStockPriceApi = onResponse
-            Api.STOCK_CANDLES -> if (mStockHistoryApi == null) mStockHistoryApi = onResponse
-            Api.STOCK_SYMBOLS -> if (mStockSymbolsApi == null) mStockSymbolsApi = onResponse
+            COMPANY_PROFILE -> if (mCompanyProfileApi == null) mCompanyProfileApi = onResponse
+            COMPANY_NEWS -> if (mCompanyNewsApi == null) mCompanyNewsApi = onResponse
+            COMPANY_QUOTE -> if (mStockPriceApi == null) mStockPriceApi = onResponse
+            STOCK_CANDLES -> if (mStockHistoryApi == null) mStockHistoryApi = onResponse
+            STOCK_SYMBOLS -> if (mStockSymbolsApi == null) mStockSymbolsApi = onResponse
             else -> throw IllegalStateException("Unknown api for throttleManager: $apiTag")
         }
     }
@@ -104,11 +104,11 @@ class ThrottleManagerImpl @Inject constructor(appScope: CoroutineScope) : Thrott
                     }
 
                     when (api) {
-                        Api.COMPANY_PROFILE -> mCompanyProfileApi?.invoke(symbol)
-                        Api.COMPANY_NEWS -> mCompanyNewsApi?.invoke(symbol)
-                        Api.COMPANY_QUOTE -> mStockPriceApi?.invoke(symbol)
-                        Api.STOCK_CANDLES -> mStockHistoryApi?.invoke(symbol)
-                        Api.STOCK_SYMBOLS -> mStockSymbolsApi?.invoke(symbol)
+                        COMPANY_PROFILE -> mCompanyProfileApi?.invoke(symbol)
+                        COMPANY_NEWS -> mCompanyNewsApi?.invoke(symbol)
+                        COMPANY_QUOTE -> mStockPriceApi?.invoke(symbol)
+                        STOCK_CANDLES -> mStockHistoryApi?.invoke(symbol)
+                        STOCK_SYMBOLS -> mStockSymbolsApi?.invoke(symbol)
                     }
                     mMessagesHistory[symbol] = null
                     delay(mPerSecondRequestLimit)

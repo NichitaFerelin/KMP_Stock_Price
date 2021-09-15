@@ -16,9 +16,11 @@
 
 package com.ferelin.remote.database.helpers.favouriteCompanies
 
+import com.ferelin.remote.RESPONSE_NO_DATA
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
@@ -26,7 +28,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FavouriteCompaniesHelperImpl @Inject constructor(
-    private val mDatabaseReference: DatabaseReference
+    private val mFirebaseReference: DatabaseReference
 ) : FavouriteCompaniesHelper {
 
     private companion object {
@@ -34,7 +36,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
     }
 
     override fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String) {
-        mDatabaseReference
+        mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
             .child(companyId)
@@ -42,7 +44,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
     }
 
     override fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String) {
-        mDatabaseReference
+        mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
             .child(companyId)
@@ -52,7 +54,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
     override fun getCompaniesIdsFromDb(
         userToken: String
     ) = callbackFlow<BaseResponse<List<String>>> {
-        mDatabaseReference
+        mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
             .get()
@@ -63,12 +65,12 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
                 }
                 trySend(
                     BaseResponse(
-                        responseCode = Api.RESPONSE_OK,
+                        responseCode = RESPONSE_OK,
                         responseData = ids
                     )
                 )
             }
-            .addOnFailureListener { trySend(BaseResponse(responseCode = Api.RESPONSE_NO_DATA)) }
+            .addOnFailureListener { trySend(BaseResponse(responseCode = RESPONSE_NO_DATA)) }
         awaitClose()
     }
 }

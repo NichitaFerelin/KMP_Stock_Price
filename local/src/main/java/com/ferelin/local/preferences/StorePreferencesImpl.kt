@@ -1,5 +1,3 @@
-package com.ferelin.local.preferences
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.local.preferences
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.local.preferences
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey

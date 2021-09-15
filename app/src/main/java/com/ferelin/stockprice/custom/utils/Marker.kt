@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.custom.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.custom.utils
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.custom.utils
 
 /**
  * [Marker] represents model of chart "advanced" point with data.

@@ -1,5 +1,3 @@
-package com.ferelin.repository.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.repository.utils
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.repository.utils
 
 enum class RepositoryMessages {
     Ok,

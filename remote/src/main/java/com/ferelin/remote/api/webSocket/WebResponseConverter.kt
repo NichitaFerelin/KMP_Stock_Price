@@ -1,5 +1,3 @@
-package com.ferelin.remote.webSocket
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,10 +14,13 @@ package com.ferelin.remote.webSocket
  * limitations under the License.
  */
 
+package com.ferelin.remote.api.webSocket
+
+import com.ferelin.remote.RESPONSE_OK
+import com.ferelin.remote.RESPONSE_UNDEFINED
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
-import com.ferelin.remote.webSocket.response.WebSocketResponse
-import com.ferelin.remote.webSocket.response.WebSocketSubResponse
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
+import com.ferelin.remote.api.webSocket.response.WebSocketSubResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
@@ -46,11 +47,11 @@ class WebResponseConverter {
         val responseBody = mResponseAdapter.fromJson(parsedJsonListStr)!!
 
         BaseResponse(
-            responseCode = Api.RESPONSE_OK,
+            responseCode = RESPONSE_OK,
             responseData = responseBody,
             additionalMessage = openPricesHolder[responseBody.symbol].toString()
         )
     } catch (e: Exception) {
-        BaseResponse(Api.RESPONSE_UNDEFINED)
+        BaseResponse(RESPONSE_UNDEFINED)
     }
 }

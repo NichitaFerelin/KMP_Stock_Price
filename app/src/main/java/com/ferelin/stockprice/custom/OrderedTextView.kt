@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.custom
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,26 +14,27 @@ package com.ferelin.stockprice.custom
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.custom
+
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.ferelin.stockprice.R
 
 /**
- *TextView with "orderNumber" attribute, which is easier to find in code.
+ *  TextView with "orderNumber" attribute, which is easier to find in code.
  */
 class OrderedTextView(
     context: Context,
     attrs: AttributeSet? = null
 ) : AppCompatTextView(context, attrs) {
 
-    private var mOrderNumber: Int
-    val orderNumber: Int
-        get() = mOrderNumber
+    var orderNumber: Int
+        private set
 
     init {
         val typedArr = context.obtainStyledAttributes(attrs, R.styleable.OrderedTextView)
-        mOrderNumber = typedArr.getInt(R.styleable.OrderedTextView_orderNumber, 0)
+        orderNumber = typedArr.getInt(R.styleable.OrderedTextView_orderNumber, 0)
         typedArr.recycle()
     }
 }

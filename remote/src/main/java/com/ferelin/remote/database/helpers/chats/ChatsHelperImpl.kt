@@ -16,9 +16,10 @@
 
 package com.ferelin.remote.database.helpers.chats
 
+import com.ferelin.remote.RESPONSE_NO_DATA
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.utils.ChildChangedListener
-import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
@@ -29,52 +30,57 @@ import javax.inject.Singleton
 
 @Singleton
 class ChatsHelperImpl @Inject constructor(
-    private val mDatabaseReference: DatabaseReference
+    private val mFirebaseReference: DatabaseReference
 ) : ChatsHelper {
 
     private companion object {
         const val sChatsReference = "chats"
     }
 
-    override fun cacheChat(chatId: String, currentUserNumber: String, associatedUserNumber: String) {
-        mDatabaseReference
+    override fun cacheChat(
+        chatId: String,
+        currentUserNumber: String,
+        associatedUserNumber: String
+    ) {
+        mFirebaseReference
             .child(sChatsReference)
             .child(currentUserNumber)
             .child(chatId)
             .setValue(associatedUserNumber)
     }
 
-    override fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>> = callbackFlow {
-        mDatabaseReference
-            .child(sChatsReference)
-            .child(userNumber)
-            .addChildEventListener(object : ChildChangedListener() {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    if (snapshot.hasChildren()) {
-                        for (chatSnapshot in snapshot.children) {
+    override fun getChatsByUserNumber(userNumber: String): Flow<BaseResponse<String>> =
+        callbackFlow {
+            mFirebaseReference
+                .child(sChatsReference)
+                .child(userNumber)
+                .addChildEventListener(object : ChildChangedListener() {
+                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                        if (snapshot.hasChildren()) {
+                            for (chatSnapshot in snapshot.children) {
+                                trySend(
+                                    element = createResponseBySnapshot(chatSnapshot)
+                                )
+                            }
+                        } else {
                             trySend(
-                                element = createResponseBySnapshot(chatSnapshot)
+                                element = createResponseBySnapshot(snapshot)
                             )
                         }
-                    } else {
-                        trySend(
-                            element = createResponseBySnapshot(snapshot)
-                        )
                     }
-                }
-            })
-        awaitClose()
-    }
+                })
+            awaitClose()
+        }
 
     private fun createResponseBySnapshot(chatSnapshot: DataSnapshot): BaseResponse<String> {
         return if (chatSnapshot.exists()) {
             val associatedUserNumber = chatSnapshot.value?.toString() ?: ""
             val chatId = chatSnapshot.key ?: "0"
             BaseResponse(
-                responseCode = Api.RESPONSE_OK,
+                responseCode = RESPONSE_OK,
                 additionalMessage = chatId,
                 responseData = associatedUserNumber
             )
-        } else BaseResponse(responseCode = Api.RESPONSE_NO_DATA)
+        } else BaseResponse(responseCode = RESPONSE_NO_DATA)
     }
 }

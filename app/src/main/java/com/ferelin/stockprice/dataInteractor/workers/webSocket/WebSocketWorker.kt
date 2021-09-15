@@ -17,7 +17,7 @@
 package com.ferelin.stockprice.dataInteractor.workers.webSocket
 
 import com.ferelin.repository.Repository
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.adaptiveModels.LiveTimePrice
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.CompaniesMediator
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +31,7 @@ class WebSocketWorker @Inject constructor(
     private val mRepository: Repository,
     private val mCompaniesMediator: CompaniesMediator
 ) {
-    fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
+    fun openWebSocketConnection(): Flow<RepositoryResponse<LiveTimePrice>> {
         return mRepository.openWebSocketConnection()
             .filter { it is RepositoryResponse.Success && it.owner != null }
             .onEach { mCompaniesMediator.onLiveTimePriceResponse(it as RepositoryResponse.Success) }

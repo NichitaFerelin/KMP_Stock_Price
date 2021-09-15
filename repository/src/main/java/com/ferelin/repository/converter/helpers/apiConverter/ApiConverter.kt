@@ -33,12 +33,12 @@ interface ApiConverter {
     fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyHistory>
+    ): RepositoryResponse<StockHistory>
 
     fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String,
-    ): RepositoryResponse<AdaptiveCompanyProfile>
+    ): RepositoryResponse<CompanyProfile>
 
     fun convertApiResponseToAdaptiveStockSymbols(
         response: BaseResponse<StockSymbolResponse>
@@ -47,9 +47,9 @@ interface ApiConverter {
     fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyNews>
+    ): RepositoryResponse<CompanyNews>
 
     fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
-    ): RepositoryResponse<AdaptiveCompanyDayData>
+    ): RepositoryResponse<StockPrice>
 }

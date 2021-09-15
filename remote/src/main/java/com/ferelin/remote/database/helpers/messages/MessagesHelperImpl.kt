@@ -16,11 +16,12 @@
 
 package com.ferelin.remote.database.helpers.messages
 
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.utils.ChildChangedListener
-import com.ferelin.remote.utils.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -29,7 +30,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MessagesHelperImpl @Inject constructor(
-    private val mDatabaseReference: DatabaseReference
+    private val mFirebaseReference: DatabaseReference
 ) : MessagesHelper {
 
     private companion object {
@@ -40,7 +41,7 @@ class MessagesHelperImpl @Inject constructor(
         currentUserNumber: String,
         associatedUserNumber: String
     ): Flow<BaseResponse<HashMap<String, Any>>> = callbackFlow {
-        mDatabaseReference
+        mFirebaseReference
             .child(sMessagesReference)
             .child(currentUserNumber)
             .child(associatedUserNumber)
@@ -64,7 +65,7 @@ class MessagesHelperImpl @Inject constructor(
     ) {
         val messageWithSideKey = "$messageSideKey $messageText"
 
-        mDatabaseReference
+        mFirebaseReference
             .child(sMessagesReference)
             .child(currentUserNumber)
             .child(associatedUserNumber)
@@ -85,7 +86,7 @@ class MessagesHelperImpl @Inject constructor(
                 val messageId = messageSnapshot.key?.toInt() ?: 0
 
                 BaseResponse(
-                    responseCode = Api.RESPONSE_OK,
+                    responseCode = RESPONSE_OK,
                     responseData = hashMapOf(
                         MessagesHelper.MESSAGE_ID_KEY to messageId,
                         MessagesHelper.MESSAGE_SIDE_KEY to messageSide,

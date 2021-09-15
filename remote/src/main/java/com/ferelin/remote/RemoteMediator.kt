@@ -1,5 +1,3 @@
-package com.ferelin.remote
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,10 +14,12 @@ package com.ferelin.remote
  * limitations under the License.
  */
 
+package com.ferelin.remote
+
 import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.auth.AuthenticationManager
 import com.ferelin.remote.database.RealtimeDatabase
-import com.ferelin.remote.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnector
 
 /**
  * [RemoteMediator] is the only entity for the application interact with the network.

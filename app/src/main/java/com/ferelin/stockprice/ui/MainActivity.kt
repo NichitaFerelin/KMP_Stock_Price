@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,13 +14,15 @@ package com.ferelin.stockprice.ui
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.ui
+
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.stockprice.utils.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.databinding.ActivityMainBinding

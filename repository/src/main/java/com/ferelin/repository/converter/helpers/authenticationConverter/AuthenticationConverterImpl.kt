@@ -16,8 +16,8 @@
 
 package com.ferelin.repository.converter.helpers.authenticationConverter
 
+import com.ferelin.remote.*
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
@@ -30,11 +30,11 @@ class AuthenticationConverterImpl @Inject constructor() : AuthenticationConverte
         response: BaseResponse<Boolean>
     ): RepositoryResponse<Boolean> {
         return when (response.responseCode) {
-            Api.RESPONSE_OK -> RepositoryResponse.Success(data = true)
-            Api.RESPONSE_LOGIN_EXISTS -> {
+            RESPONSE_OK -> RepositoryResponse.Success(data = true)
+            RESPONSE_LOGIN_EXISTS -> {
                 RepositoryResponse.Failed(message = RepositoryMessages.AlreadyExists)
             }
-            Api.RESPONSE_BAD_LOGIN -> {
+            RESPONSE_BAD_LOGIN -> {
                 RepositoryResponse.Failed(message = RepositoryMessages.BadLogin)
             }
             else -> RepositoryResponse.Failed()
@@ -45,11 +45,11 @@ class AuthenticationConverterImpl @Inject constructor() : AuthenticationConverte
         response: BaseResponse<Boolean>
     ): RepositoryResponse<RepositoryMessages> {
         return when (response.responseCode) {
-            Api.VERIFICATION_COMPLETED -> RepositoryResponse.Success(data = RepositoryMessages.Ok)
-            Api.VERIFICATION_CODE_SENT -> {
+            VERIFICATION_COMPLETED -> RepositoryResponse.Success(data = RepositoryMessages.Ok)
+            VERIFICATION_CODE_SENT -> {
                 RepositoryResponse.Success(data = RepositoryMessages.CodeSent)
             }
-            Api.VERIFICATION_TOO_MANY_REQUESTS -> {
+            VERIFICATION_TOO_MANY_REQUESTS -> {
                 RepositoryResponse.Failed(message = RepositoryMessages.Limit)
             }
             else -> RepositoryResponse.Failed()

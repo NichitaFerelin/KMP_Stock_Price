@@ -27,7 +27,7 @@ import com.ferelin.remote.api.stockHistory.StockHistoryResponse
 import com.ferelin.remote.api.stockPrice.StockPriceResponse
 import com.ferelin.remote.api.stockSymbols.StockSymbolResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.webSocket.response.WebSocketResponse
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
 import com.ferelin.repository.adaptiveModels.*
 import com.ferelin.repository.converter.helpers.apiConverter.ApiConverter
 import com.ferelin.repository.converter.helpers.authenticationConverter.AuthenticationConverter
@@ -57,14 +57,14 @@ class ConverterMediatorImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveStockCandles(
         response: BaseResponse<StockHistoryResponse>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyHistory> {
+    ): RepositoryResponse<StockHistory> {
         return mApiConverter.convertApiResponseToAdaptiveStockCandles(response, symbol)
     }
 
     override fun convertApiResponseToAdaptiveCompanyProfile(
         response: BaseResponse<CompanyProfileResponse>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyProfile> {
+    ): RepositoryResponse<CompanyProfile> {
         return mApiConverter.convertApiResponseToAdaptiveCompanyProfile(response, symbol)
     }
 
@@ -77,13 +77,13 @@ class ConverterMediatorImpl @Inject constructor(
     override fun convertApiResponseToAdaptiveCompanyNews(
         response: BaseResponse<List<CompanyNewsResponse>>,
         symbol: String
-    ): RepositoryResponse<AdaptiveCompanyNews> {
+    ): RepositoryResponse<CompanyNews> {
         return mApiConverter.convertApiResponseToAdaptiveCompanyNews(response, symbol)
     }
 
     override fun convertApiResponseToAdaptiveCompanyDayData(
         response: BaseResponse<StockPriceResponse>
-    ): RepositoryResponse<AdaptiveCompanyDayData> {
+    ): RepositoryResponse<StockPrice> {
         return mApiConverter.convertApiResponseToAdaptiveCompanyDayData(response)
     }
 
@@ -137,7 +137,7 @@ class ConverterMediatorImpl @Inject constructor(
 
     override fun convertWebSocketResponseForUi(
         response: BaseResponse<WebSocketResponse>
-    ): RepositoryResponse<AdaptiveWebSocketPrice> {
+    ): RepositoryResponse<LiveTimePrice> {
         return mWebSocketConverter.convertWebSocketResponseForUi(response)
     }
 

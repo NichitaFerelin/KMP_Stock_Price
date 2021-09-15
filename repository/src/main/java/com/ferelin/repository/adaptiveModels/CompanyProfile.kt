@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,22 +14,16 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveCompanyNews(
-    var ids: List<String>,
-    var headlines: List<String>,
-    var summaries: List<String>,
-    var sources: List<String>,
-    var dates: List<String>,
-    var browserUrls: List<String>,
-    var previewImagesUrls: List<String>
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveCompanyNews) {
-            ids.firstOrNull() == other.ids.firstOrNull()
-        } else false
-    }
+package com.ferelin.repository.adaptiveModels
 
-    override fun hashCode(): Int {
-        return ids.firstOrNull().hashCode()
-    }
-}
+class CompanyProfile(
+    val name: String,
+    val symbol: String,
+    val logoUrl: String,
+    val country: String,
+    val phone: String,
+    val webUrl: String,
+    val industry: String,
+    val currency: String,
+    var capitalization: String
+)

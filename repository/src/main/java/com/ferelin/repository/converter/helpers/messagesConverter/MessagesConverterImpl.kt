@@ -17,9 +17,9 @@
 package com.ferelin.repository.converter.helpers.messagesConverter
 
 import com.ferelin.local.models.Message
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
 import com.ferelin.remote.database.helpers.messages.MessagesHelper
-import com.ferelin.remote.utils.Api
 import com.ferelin.repository.adaptiveModels.AdaptiveMessage
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.shared.MessageSide
@@ -41,7 +41,7 @@ class MessagesConverterImpl @Inject constructor() : MessagesConverter {
     override fun convertNetworkMessagesResponseToRepositoryResponse(
         response: BaseResponse<HashMap<String, Any>>
     ): RepositoryResponse<AdaptiveMessage> {
-        return if (response.responseCode == Api.RESPONSE_OK) {
+        return if (response.responseCode == RESPONSE_OK) {
             response.responseData!!.let { responseArgs ->
                 val messageId = responseArgs[MessagesHelper.MESSAGE_ID_KEY] as Int
                 val messageAssociatedUserNumber = response.additionalMessage!!

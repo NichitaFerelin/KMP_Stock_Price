@@ -7,8 +7,8 @@ import com.ferelin.remote.api.ApiManager
 import com.ferelin.remote.api.ApiManagerImpl
 import com.ferelin.remote.auth.AuthenticationManagerImpl
 import com.ferelin.remote.database.RealtimeDatabaseImpl
-import com.ferelin.remote.webSocket.connector.WebSocketConnector
-import com.ferelin.remote.webSocket.connector.WebSocketConnectorImpl
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnector
+import com.ferelin.remote.api.webSocket.connector.WebSocketConnectorImpl
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

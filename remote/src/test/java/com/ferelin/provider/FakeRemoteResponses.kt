@@ -1,6 +1,6 @@
 package com.ferelin.provider
 
-import com.ferelin.remote.webSocket.response.WebSocketResponse
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
 
 /*
 * Mocked data

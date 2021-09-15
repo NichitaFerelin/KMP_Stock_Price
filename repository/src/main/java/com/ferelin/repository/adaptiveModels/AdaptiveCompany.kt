@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,14 +14,16 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
+package com.ferelin.repository.adaptiveModels
+
 data class AdaptiveCompany(
     val id: Int,
 
-    var companyProfile: AdaptiveCompanyProfile,
-    var companyDayData: AdaptiveCompanyDayData,
-    var companyHistory: AdaptiveCompanyHistory,
-    var companyNews: AdaptiveCompanyNews,
-    var companyStyle: AdaptiveCompanyStyle,
+    var companyProfile: CompanyProfile,
+    var companyDayData: StockPrice,
+    var companyHistory: StockHistory,
+    var companyNews: CompanyNews,
+    var companyStyle: UiStockStyle,
     var isFavourite: Boolean = false,
     var favouriteOrderIndex: Int = 0
 ) {

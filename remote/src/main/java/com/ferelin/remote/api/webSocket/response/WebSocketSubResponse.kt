@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,14 +14,13 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveCompanyProfile(
-    val name: String,
-    val symbol: String,
-    val logoUrl: String,
-    val country: String,
-    val phone: String,
-    val webUrl: String,
-    val industry: String,
-    val currency: String,
-    var capitalization: String
+package com.ferelin.remote.api.webSocket.response
+
+import com.squareup.moshi.Json
+
+/**
+ * Base response from network
+ * */
+class WebSocketSubResponse(
+    @Json(name = "data") val data: List<Any>
 )

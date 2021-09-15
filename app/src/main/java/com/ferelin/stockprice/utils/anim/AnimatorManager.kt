@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.utils.anim
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.utils.anim
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.utils.anim
 
 import android.animation.Animator
 

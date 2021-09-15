@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.custom
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.stockprice.custom
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.custom
+
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -23,7 +23,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
+import com.ferelin.repository.adaptiveModels.ChartStockHistory
 import com.ferelin.stockprice.R
 import com.ferelin.stockprice.custom.utils.BezierPoint
 import com.ferelin.stockprice.custom.utils.Marker
@@ -136,7 +136,7 @@ class ChartView @JvmOverloads constructor(
         return true
     }
 
-    fun setData(history: AdaptiveCompanyHistoryForChart) {
+    fun setData(history: ChartStockHistory) {
         if (history.isEmpty()) {
             return
         }
@@ -375,7 +375,10 @@ class ChartView @JvmOverloads constructor(
         for (index in startIndex until endIndex) {
             val item = mMarkers[index]
             val itemPosition = item.position
-            if (nearestPoint == null || abs(event.x - itemPosition.x) < abs(event.x - nearestPoint.position.x)) {
+            if (
+                nearestPoint == null || abs(event.x - itemPosition.x)
+                < abs(event.x - nearestPoint.position.x)
+            ) {
                 nearestPoint = item
             }
         }

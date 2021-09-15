@@ -1,12 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.menuItems
-
-import android.content.Context
-import com.ferelin.stockprice.R
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
-import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
-import javax.inject.Inject
-import javax.inject.Singleton
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -22,6 +13,15 @@ import javax.inject.Singleton
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.dataInteractor.workers.menuItems
+
+import android.content.Context
+import com.ferelin.stockprice.R
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItem
+import com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter.MenuItemType
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class MenuItemsSource @Inject constructor(context: Context) {

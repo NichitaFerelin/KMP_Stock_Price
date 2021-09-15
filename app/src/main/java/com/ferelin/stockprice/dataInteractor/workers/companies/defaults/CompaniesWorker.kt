@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.companies.defaults
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.dataInteractor.workers.companies.defaults
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.dataInteractor.workers.companies.defaults
 
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.*
@@ -71,8 +71,8 @@ class CompaniesWorker @Inject constructor(
     }
 
     suspend fun onPriceResponse(
-        response: RepositoryResponse.Success<AdaptiveCompanyDayData>
-    ): AdaptiveCompanyDayData? {
+        response: RepositoryResponse.Success<StockPrice>
+    ): StockPrice? {
         return response.owner?.let { responseOwnerSymbol ->
             isDataChanged(responseOwnerSymbol) { it.companyDayData == response.data }
                 ?.let { companyToUpdate ->
@@ -90,8 +90,8 @@ class CompaniesWorker @Inject constructor(
     }
 
     suspend fun onNewsResponse(
-        response: RepositoryResponse.Success<AdaptiveCompanyNews>
-    ): AdaptiveCompanyNews? {
+        response: RepositoryResponse.Success<CompanyNews>
+    ): CompanyNews? {
         return response.owner?.let { responseOwnerSymbol ->
             isDataChanged(responseOwnerSymbol) { it.companyNews == response.data }
                 ?.let { companyToUpdate ->
@@ -104,8 +104,8 @@ class CompaniesWorker @Inject constructor(
     }
 
     suspend fun onHistoryResponse(
-        response: RepositoryResponse.Success<AdaptiveCompanyHistory>
-    ): AdaptiveCompanyHistory? {
+        response: RepositoryResponse.Success<StockHistory>
+    ): StockHistory? {
         return response.owner?.let { responseOwnerSymbol ->
             isDataChanged(responseOwnerSymbol) { it.companyHistory == response.data }
                 ?.let { companyToUpdate ->
@@ -118,7 +118,7 @@ class CompaniesWorker @Inject constructor(
     }
 
     suspend fun onLiveTimePriceResponse(
-        response: RepositoryResponse.Success<AdaptiveWebSocketPrice>
+        response: RepositoryResponse.Success<LiveTimePrice>
     ) {
         isDataChanged(response.owner!!) { response.data.price == it.companyDayData.currentPrice }
             ?.let { companyToUpdate ->

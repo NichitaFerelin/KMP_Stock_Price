@@ -1,5 +1,3 @@
-package com.ferelin.repository
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.repository
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.repository
 
 import android.app.Activity
 import com.ferelin.local.LocalManager
@@ -163,12 +163,12 @@ open class RepositoryImpl @Inject constructor(
         from: Long,
         to: Long,
         resolution: String
-    ): RepositoryResponse<AdaptiveCompanyHistory> {
+    ): RepositoryResponse<StockHistory> {
         val remoteResponse = mRemoteMediator.loadStockHistory(symbol, from, to, resolution)
         return mConverterMediator.convertApiResponseToAdaptiveStockCandles(remoteResponse, symbol)
     }
 
-    override fun loadCompanyProfile(symbol: String): RepositoryResponse<AdaptiveCompanyProfile> {
+    override fun loadCompanyProfile(symbol: String): RepositoryResponse<CompanyProfile> {
         val remoteResponse = mRemoteMediator.loadCompanyProfile(symbol)
         return mConverterMediator.convertApiResponseToAdaptiveCompanyProfile(
             remoteResponse,
@@ -185,7 +185,7 @@ open class RepositoryImpl @Inject constructor(
         symbol: String,
         from: String,
         to: String
-    ): RepositoryResponse<AdaptiveCompanyNews> {
+    ): RepositoryResponse<CompanyNews> {
         val remoteResponse = mRemoteMediator.loadCompanyNews(symbol, from, to)
         return mConverterMediator.convertApiResponseToAdaptiveCompanyNews(remoteResponse, symbol)
     }
@@ -198,13 +198,13 @@ open class RepositoryImpl @Inject constructor(
         return mRemoteMediator.sendRequestToLoadPrice(symbol, position, isImportant)
     }
 
-    override fun getStockPriceResponseState(): Flow<RepositoryResponse<AdaptiveCompanyDayData>> {
+    override fun getStockPriceResponseState(): Flow<RepositoryResponse<StockPrice>> {
         return mRemoteMediator.getStockPriceResponseState().map { response ->
             mConverterMediator.convertApiResponseToAdaptiveCompanyDayData(response)
         }
     }
 
-    override fun openWebSocketConnection(): Flow<RepositoryResponse<AdaptiveWebSocketPrice>> {
+    override fun openWebSocketConnection(): Flow<RepositoryResponse<LiveTimePrice>> {
         return mRemoteMediator.openWebSocketConnection().map {
             mConverterMediator.convertWebSocketResponseForUi(it)
         }

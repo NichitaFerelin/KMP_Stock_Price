@@ -1,8 +1,9 @@
 package com.ferelin
 
 import com.ferelin.provider.FakeRemoteResponses
-import com.ferelin.remote.utils.Api
-import com.ferelin.remote.webSocket.WebResponseConverter
+import com.ferelin.remote.RESPONSE_OK
+import com.ferelin.remote.RESPONSE_UNDEFINED
+import com.ferelin.remote.api.webSocket.WebResponseConverter
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -39,7 +40,7 @@ class WebResponseConverterTest {
             FakeRemoteResponses.webSocketSuccessStr,
             FakeRemoteResponses.wabSocketOpenPriceHolder
         )
-        Assert.assertTrue(response.responseCode == Api.RESPONSE_OK)
+        Assert.assertTrue(response.responseCode == RESPONSE_OK)
     }
 
     @Test
@@ -48,6 +49,6 @@ class WebResponseConverterTest {
             FakeRemoteResponses.webSocketUndefinedStr,
             FakeRemoteResponses.wabSocketOpenPriceHolder
         )
-        Assert.assertTrue(response.responseCode == Api.RESPONSE_UNDEFINED)
+        Assert.assertTrue(response.responseCode == RESPONSE_UNDEFINED)
     }
 }

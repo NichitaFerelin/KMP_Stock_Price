@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.stocksSection.common
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.ui.stocksSection.common
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.ui.stocksSection.common
 
 import android.animation.AnimatorInflater
 import android.view.animation.Animation

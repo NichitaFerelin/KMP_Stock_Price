@@ -17,8 +17,12 @@
 package com.ferelin.remote.auth
 
 import android.app.Activity
+import com.ferelin.remote.RESPONSE_UNDEFINED
+import com.ferelin.remote.VERIFICATION_CODE_SENT
+import com.ferelin.remote.VERIFICATION_COMPLETED
+import com.ferelin.remote.VERIFICATION_TOO_MANY_REQUESTS
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
+import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -57,14 +61,16 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
         mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 mUserVerificationId = p0
-                trySend(BaseResponse(responseCode = Api.VERIFICATION_CODE_SENT))
+                trySend(BaseResponse(responseCode = VERIFICATION_CODE_SENT))
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     when {
-                        task.isSuccessful -> trySend(BaseResponse(responseCode = Api.VERIFICATION_COMPLETED))
-                        else -> trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
+                        task.isSuccessful -> trySend(
+                            BaseResponse(responseCode = VERIFICATION_COMPLETED)
+                        )
+                        else -> trySend(BaseResponse(responseCode = RESPONSE_UNDEFINED))
                     }
                 }
             }
@@ -74,11 +80,11 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
                     is FirebaseTooManyRequestsException -> {
                         trySend(
                             BaseResponse(
-                                responseCode = Api.VERIFICATION_TOO_MANY_REQUESTS
+                                responseCode = VERIFICATION_TOO_MANY_REQUESTS
                             )
                         )
                     }
-                    else -> trySend(BaseResponse(responseCode = Api.RESPONSE_UNDEFINED))
+                    else -> trySend(BaseResponse(responseCode = RESPONSE_UNDEFINED))
                 }
             }
         }

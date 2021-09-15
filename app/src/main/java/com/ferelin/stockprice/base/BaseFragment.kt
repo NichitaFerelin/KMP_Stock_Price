@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.base
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,6 +14,8 @@ package com.ferelin.stockprice.base
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.base
+
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,10 +25,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.ferelin.shared.CoroutineContextProvider
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.dataInteractor.DataInteractor
 import com.ferelin.stockprice.ui.MainActivity
+import com.ferelin.stockprice.utils.CoroutineContextProvider
 import com.ferelin.stockprice.utils.TimerTasks
 
 /**

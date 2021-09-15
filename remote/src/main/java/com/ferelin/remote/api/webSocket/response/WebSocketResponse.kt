@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,4 +14,15 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveWebSocketPrice(val price: String, val profit: String)
+package com.ferelin.remote.api.webSocket.response
+
+import com.squareup.moshi.Json
+
+/**
+ * Base response of web socket for repository
+ * */
+class WebSocketResponse(
+    @Json(name = "s") val symbol: String,
+    @Json(name = "p") val lastPrice: Double,
+    @Json(name = "v") val volume: Double
+)

@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,51 +14,18 @@ package com.ferelin.stockprice.utils
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.utils
+
 import android.animation.Animator
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.view.View
 import android.view.animation.Animation
-import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import androidx.annotation.AttrRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.use
-import androidx.fragment.app.FragmentManager
-import com.ferelin.stockprice.R
-import com.ferelin.stockprice.ui.dialogs.DialogErrorFragment
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
-import java.util.*
-import kotlin.concurrent.timerTask
-
-const val NULL_INDEX = -1
 
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
-
-fun showDialog(text: String, fragmentManager: FragmentManager) {
-    DialogErrorFragment
-        .newInstance(text)
-        .show(fragmentManager, null)
-}
-
-fun openKeyboard(context: Context, view: View) {
-    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-}
-
-fun hideKeyboard(context: Context, view: View) {
-    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(view.windowToken, 0)
-}
-
-fun withTimer(time: Long = 200L, body: () -> Unit) {
-    Timer().schedule(timerTask {
-        body.invoke()
-    }, time)
-}
 
 fun Context.themeColor(@AttrRes themeAttrId: Int): Int {
     return obtainStyledAttributes(intArrayOf(themeAttrId))
@@ -91,16 +56,4 @@ fun Animation.invalidate() {
 fun Animator.invalidate() {
     removeAllListeners()
     cancel()
-}
-
-fun showDefaultDialog(context: Context, message: String) {
-    AlertDialog.Builder(context)
-        .setMessage(message)
-        .setCancelable(true)
-        .setPositiveButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
-        .show()
-}
-
-fun BottomSheetBehavior<FrameLayout>.isHidden(): Boolean {
-    return state == STATE_HIDDEN
 }

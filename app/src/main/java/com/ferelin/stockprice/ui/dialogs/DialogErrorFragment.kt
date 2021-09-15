@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.ui.dialogs
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.stockprice.ui.dialogs
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.ui.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog

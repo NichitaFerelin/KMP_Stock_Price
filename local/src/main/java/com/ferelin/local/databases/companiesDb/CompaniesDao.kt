@@ -1,5 +1,3 @@
-package com.ferelin.local.databases.companiesDb
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.local.databases.companiesDb
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.local.databases.companiesDb
 
 import androidx.room.*
 import com.ferelin.local.models.Company

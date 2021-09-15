@@ -1,5 +1,3 @@
-package com.ferelin.remote.api.companyProfile
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.remote.api.companyProfile
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.remote.api.companyProfile
 
 import com.squareup.moshi.Json
 

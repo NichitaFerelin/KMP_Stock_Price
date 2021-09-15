@@ -1,8 +1,3 @@
-package com.ferelin.stockprice.utils
-
-import android.os.Handler
-import android.os.Looper
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -18,6 +13,11 @@ import android.os.Looper
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.utils
+
+import android.os.Handler
+import android.os.Looper
 
 object TimerTasks {
 

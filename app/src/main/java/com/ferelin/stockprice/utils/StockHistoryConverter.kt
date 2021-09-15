@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.utils
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,28 +14,29 @@ package com.ferelin.stockprice.utils
  * limitations under the License.
  */
 
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistoryForChart
-import com.ferelin.shared.formatPrice
-import com.ferelin.shared.parseMonthFromDate
-import com.ferelin.shared.parseYearFromDate
+package com.ferelin.stockprice.utils
+
+import com.ferelin.repository.adaptiveModels.StockHistory
+import com.ferelin.repository.adaptiveModels.ChartStockHistory
+import com.ferelin.repository.utils.formatPrice
+import com.ferelin.repository.utils.parseMonthFromDate
+import com.ferelin.repository.utils.parseYearFromDate
 
 /**
  * [StockHistoryConverter] is used to convert history for UI with
  *  special view mode(OneYearMode,SixMonths, etc.)
  */
-
 object StockHistoryConverter {
 
-    fun toCompanyHistoryForChart(history: AdaptiveCompanyHistory): AdaptiveCompanyHistoryForChart {
-        return AdaptiveCompanyHistoryForChart(
+    fun toCompanyHistoryForChart(history: StockHistory): ChartStockHistory {
+        return ChartStockHistory(
             price = history.closePrices.map { parsePrice(it) ?: 0.0 },
             priceStr = history.closePrices,
             dates = history.datePrices
         )
     }
 
-    fun toOneYear(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
+    fun toOneYear(history: ChartStockHistory): ChartStockHistory {
         val startMonth = parseMonthFromDate(history.dates.firstOrNull() ?: "")
         val startYear = parseYearFromDate(history.dates.firstOrNull() ?: "")
         val startPrice = history.price.firstOrNull() ?: 0.0
@@ -50,14 +49,14 @@ object StockHistoryConverter {
         val endPriceStr = formatPrice(endPrice)
         val endDate = "$endMonth $endYear"
 
-        return AdaptiveCompanyHistoryForChart(
+        return ChartStockHistory(
             listOf(startPrice, endPrice),
             listOf(startPriceStr, endPriceStr),
             listOf(startDate, endDate)
         )
     }
 
-    fun toSixMonths(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
+    fun toSixMonths(history: ChartStockHistory): ChartStockHistory {
         val resultsDouble = mutableListOf<Double>()
         val resultsStr = mutableListOf<String>()
         val resultsDates = mutableListOf<String>()
@@ -84,14 +83,14 @@ object StockHistoryConverter {
         resultsStr.add(formatPrice(average))
         resultsDates.add("$from - $to")
 
-        return AdaptiveCompanyHistoryForChart(
+        return ChartStockHistory(
             resultsDouble.reversed(),
             resultsStr.reversed(),
             resultsDates
         )
     }
 
-    fun toMonths(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
+    fun toMonths(history: ChartStockHistory): ChartStockHistory {
         val resultsDouble = mutableListOf<Double>()
         val resultsStr = mutableListOf<String>()
         val resultsDates = mutableListOf<String>()
@@ -114,14 +113,14 @@ object StockHistoryConverter {
             }
         }
 
-        return AdaptiveCompanyHistoryForChart(
+        return ChartStockHistory(
             resultsDouble,
             resultsStr,
             resultsDates
         )
     }
 
-    fun toWeeks(history: AdaptiveCompanyHistoryForChart): AdaptiveCompanyHistoryForChart {
+    fun toWeeks(history: ChartStockHistory): ChartStockHistory {
         val resultsDouble = mutableListOf<Double>()
         val resultsStr = mutableListOf<String>()
         val resultsDates = mutableListOf<String>()
@@ -144,7 +143,7 @@ object StockHistoryConverter {
             }
         }
 
-        return AdaptiveCompanyHistoryForChart(
+        return ChartStockHistory(
             resultsDouble,
             resultsStr,
             resultsDates

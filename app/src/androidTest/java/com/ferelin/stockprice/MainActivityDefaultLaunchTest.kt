@@ -29,10 +29,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/*
- * TODO The test will only work if the application has already been launched before.
- * TODO Can't set the "first run" flag before the test
- * */
 @RunWith(AndroidJUnit4::class)
 class MainActivityDefaultLaunchTest {
 

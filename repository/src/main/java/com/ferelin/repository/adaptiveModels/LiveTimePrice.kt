@@ -1,5 +1,3 @@
-package com.ferelin.repository.adaptiveModels
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,10 +14,6 @@ package com.ferelin.repository.adaptiveModels
  * limitations under the License.
  */
 
-class AdaptiveCompanyStyle(
-    var holderBackground: Int = 0,
-    var favouriteBackgroundIconResource: Int = 0,
-    var favouriteForegroundIconResource: Int = 0,
-    var dayProfitBackground: Int = 0,
-    var rippleForeground: Int = 0
-)
+package com.ferelin.repository.adaptiveModels
+
+class LiveTimePrice(val price: String, val profit: String)

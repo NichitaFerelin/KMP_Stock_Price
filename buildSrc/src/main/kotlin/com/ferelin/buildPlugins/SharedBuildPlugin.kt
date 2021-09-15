@@ -52,6 +52,5 @@ class SharedBuildPlugin : Plugin<Project> {
 
     private fun DependencyHandlerScope.implDependencies() {
         addImpl(Dependencies.kotlinLib)
-        addImpl(Dependencies.kotlinCoroutines)
     }
 }

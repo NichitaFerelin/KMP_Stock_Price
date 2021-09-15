@@ -1,5 +1,3 @@
-package com.ferelin.remote.webSocket.connector
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,12 +14,13 @@ package com.ferelin.remote.webSocket.connector
  * limitations under the License.
  */
 
+package com.ferelin.remote.api.webSocket.connector
+
+import com.ferelin.remote.RESPONSE_WEB_SOCKET_CLOSED
+import com.ferelin.remote.api.webSocket.WebResponseConverter
+import com.ferelin.remote.api.webSocket.WebSocketManager
+import com.ferelin.remote.api.webSocket.response.WebSocketResponse
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
-import com.ferelin.remote.webSocket.WebResponseConverter
-import com.ferelin.remote.webSocket.WebSocketManager
-import com.ferelin.remote.webSocket.response.WebSocketResponse
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -32,10 +31,13 @@ import okhttp3.Request
 import okhttp3.WebSocket
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
+open class WebSocketConnectorImpl @Inject constructor(
+    @Named("FinnhubToken") private val mToken: String
+) : WebSocketConnector {
 
     private val mBaseApiUrl = "wss://ws.finnhub.io?token="
     private val mResponseConverter = WebResponseConverter()
@@ -64,10 +66,9 @@ open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
         mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
     }
 
-    @FlowPreview
-    override fun openWebSocketConnection(token: String): Flow<BaseResponse<WebSocketResponse>> =
+    override fun openWebSocketConnection(): Flow<BaseResponse<WebSocketResponse>> =
         callbackFlow {
-            val request = Request.Builder().url("$mBaseApiUrl$token").build()
+            val request = Request.Builder().url("$mBaseApiUrl$mToken").build()
             val okHttp = OkHttpClient()
 
             mWebSocket = okHttp.newWebSocket(request, WebSocketManager {
@@ -80,11 +81,11 @@ open class WebSocketConnectorImpl @Inject constructor() : WebSocketConnector {
             }
             okHttp.dispatcher.executorService.shutdown()
 
-            awaitClose { mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null) }
+            awaitClose { mWebSocket?.close(RESPONSE_WEB_SOCKET_CLOSED, null) }
         }.buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override fun closeWebSocketConnection() {
-        mWebSocket?.close(Api.RESPONSE_WEB_SOCKET_CLOSED, null)
+        mWebSocket?.close(RESPONSE_WEB_SOCKET_CLOSED, null)
         mWebSocket = null
     }
 

@@ -1,5 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.companies
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,11 +14,13 @@ package com.ferelin.stockprice.dataInteractor.workers.companies
  * limitations under the License.
  */
 
+package com.ferelin.stockprice.dataInteractor.workers.companies
+
 import com.ferelin.repository.Repository
 import com.ferelin.repository.adaptiveModels.AdaptiveCompany
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyHistory
-import com.ferelin.repository.adaptiveModels.AdaptiveCompanyNews
-import com.ferelin.repository.adaptiveModels.AdaptiveWebSocketPrice
+import com.ferelin.repository.adaptiveModels.StockHistory
+import com.ferelin.repository.adaptiveModels.CompanyNews
+import com.ferelin.repository.adaptiveModels.LiveTimePrice
 import com.ferelin.repository.utils.RepositoryResponse
 import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorker
 import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorker
@@ -93,7 +93,7 @@ open class CompaniesMediator @Inject constructor(
         mCompaniesWorker.onCompanyChanged(DataNotificator.ItemUpdatedCommon(updatedCompany))
     }
 
-    suspend fun loadStockHistory(symbol: String): AdaptiveCompanyHistory? {
+    suspend fun loadStockHistory(symbol: String): StockHistory? {
         return when (val repositoryResponse = mRepository.loadStockHistory(symbol)) {
             is RepositoryResponse.Success -> mCompaniesWorker.onHistoryResponse(repositoryResponse)
             is RepositoryResponse.Failed -> {
@@ -103,7 +103,7 @@ open class CompaniesMediator @Inject constructor(
         }
     }
 
-    suspend fun loadCompanyNews(symbol: String): AdaptiveCompanyNews? {
+    suspend fun loadCompanyNews(symbol: String): CompanyNews? {
         return when (val repositoryResponse = mRepository.loadCompanyNews(symbol)) {
             is RepositoryResponse.Success -> mCompaniesWorker.onNewsResponse(repositoryResponse)
             is RepositoryResponse.Failed -> {
@@ -137,7 +137,7 @@ open class CompaniesMediator @Inject constructor(
     }
 
     suspend fun onLiveTimePriceResponse(
-        repositoryResponse: RepositoryResponse.Success<AdaptiveWebSocketPrice>
+        repositoryResponse: RepositoryResponse.Success<LiveTimePrice>
     ) {
         mCompaniesWorker.onLiveTimePriceResponse(repositoryResponse)
     }

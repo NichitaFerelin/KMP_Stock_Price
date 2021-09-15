@@ -16,7 +16,7 @@
 
 package com.ferelin.stockprice.di.modules
 
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.stockprice.utils.CoroutineContextProvider
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope

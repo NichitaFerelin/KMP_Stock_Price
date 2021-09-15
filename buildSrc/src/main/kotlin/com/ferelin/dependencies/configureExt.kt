@@ -17,11 +17,12 @@
 package com.ferelin.dependencies
 
 import com.android.build.gradle.BaseExtension
+import groovyjarjarantlr4.v4.runtime.atn.ParserATNSimulator.debug
 import org.gradle.api.JavaVersion
 
 fun BaseExtension.applyDefaultConfigure() {
 
-    compileSdkVersion(30)
+    compileSdkVersion(31)
 
     buildTypes {
         getByName("release") {

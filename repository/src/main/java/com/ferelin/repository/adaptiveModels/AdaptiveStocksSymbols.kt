@@ -1,6 +1,4 @@
-@file:Suppress("unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused"
-)
+@file:Suppress("unused")
 
 package com.ferelin.repository.adaptiveModels
 

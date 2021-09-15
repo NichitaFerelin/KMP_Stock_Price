@@ -16,7 +16,10 @@
 
 package com.ferelin.stockprice.di.modules
 
-import com.ferelin.remote.utils.Api
+import android.content.Context
+import com.ferelin.remote.FINNHUB_BASE_URL
+import com.ferelin.stockprice.R
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.moshi.Moshi
@@ -27,6 +30,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -36,8 +40,16 @@ import javax.inject.Singleton
 class RemoteModule {
 
     @Provides
-    fun provideDatabaseReference(): DatabaseReference {
+    @Singleton
+    fun provideFirebaseReference(): DatabaseReference {
         return FirebaseDatabase.getInstance().reference
+    }
+
+    @Provides
+    @Named("FinnhubToken")
+    fun provideToken(context: Context): String {
+        // Set your own api key to local.properties root file. Name value as 'apiKey'.
+        return context.resources.getString(R.string.api_key)
     }
 
     @Provides
@@ -50,7 +62,7 @@ class RemoteModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(Api.FINNHUB_BASE_URL)
+            .baseUrl(FINNHUB_BASE_URL)
             .client(httpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

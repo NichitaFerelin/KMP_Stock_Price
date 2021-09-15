@@ -1,5 +1,3 @@
-package com.ferelin.local
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -15,6 +13,8 @@ package com.ferelin.local
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.local
 
 import com.ferelin.local.databases.chatsDb.ChatsDao
 import com.ferelin.local.databases.companiesDb.CompaniesDao

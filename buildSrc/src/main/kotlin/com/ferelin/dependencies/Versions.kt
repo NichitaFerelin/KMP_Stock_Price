@@ -22,26 +22,26 @@ object Versions {
      * Base
      * */
     const val androidCore = "1.6.0"
-    const val kotlinLib = "1.5.10"
-    const val kotlinCoroutines = "1.5.0"
+    const val kotlinLib = "1.5.21"
+    const val kotlinCoroutines = "1.5.2"
     const val gradleTools = "7.1.0-alpha03"
 
     /**
      * UI
      * */
-    const val appCompat = "1.3.0-rc01"
+    const val appCompat = "1.3.1"
     const val fragments = "1.3.6"
     const val browser = "1.3.0"
     const val viewPager = "1.0.0"
-    const val constraintLayout = "2.0.4"
+    const val constraintLayout = "2.1.0"
     const val material = "1.4.0"
-    const val compose = "1.0.0-rc02"
+    const val compose = "1.0.2"
     const val glide = "4.12.0"
 
     /**
      * Network
      * */
-    const val googleServices = "4.3.8"
+    const val googleServices = "4.3.10"
     const val firebase = "28.0.1"
     const val retrofit = "2.9.0"
     const val okHttp = "4.9.1"
@@ -51,7 +51,7 @@ object Versions {
      * Local
      * */
     const val room = "2.3.0"
-    const val dataStorePreferences = "1.0.0-rc02"
+    const val dataStorePreferences = "1.0.0"
 
     /**
      * DI

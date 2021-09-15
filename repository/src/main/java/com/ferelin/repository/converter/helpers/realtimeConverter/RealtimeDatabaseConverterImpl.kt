@@ -16,8 +16,10 @@
 
 package com.ferelin.repository.converter.helpers.realtimeConverter
 
+import com.ferelin.remote.RESPONSE_END
+import com.ferelin.remote.RESPONSE_NO_DATA
+import com.ferelin.remote.RESPONSE_OK
 import com.ferelin.remote.base.BaseResponse
-import com.ferelin.remote.utils.Api
 import com.ferelin.repository.utils.RepositoryMessages
 import com.ferelin.repository.utils.RepositoryResponse
 import javax.inject.Inject
@@ -34,9 +36,9 @@ class RealtimeDatabaseConverterImpl @Inject constructor() : RealtimeDatabaseConv
         }
 
         return when (response.responseCode) {
-            Api.RESPONSE_OK -> RepositoryResponse.Success(data = response.responseData!!)
-            Api.RESPONSE_END -> RepositoryResponse.Failed(message = RepositoryMessages.End)
-            Api.RESPONSE_NO_DATA -> RepositoryResponse.Failed(message = RepositoryMessages.Empty)
+            RESPONSE_OK -> RepositoryResponse.Success(data = response.responseData!!)
+            RESPONSE_END -> RepositoryResponse.Failed(message = RepositoryMessages.End)
+            RESPONSE_NO_DATA -> RepositoryResponse.Failed(message = RepositoryMessages.Empty)
             else -> RepositoryResponse.Failed()
         }
     }

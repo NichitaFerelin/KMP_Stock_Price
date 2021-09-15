@@ -1,7 +1,3 @@
-package com.ferelin.stockprice.dataInteractor.workers.searchRequests
-
-import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -17,6 +13,10 @@ import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ferelin.stockprice.dataInteractor.workers.searchRequests
+
+import com.ferelin.repository.adaptiveModels.AdaptiveSearchRequest
 
 object PopularRequestsSource {
 

@@ -1,7 +1,3 @@
-@file:Suppress("PropertyName", "PropertyName", "PropertyName")
-
-package com.ferelin.shared
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -18,17 +14,24 @@ package com.ferelin.shared
  * limitations under the License.
  */
 
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
+package com.ferelin.repository.adaptiveModels
 
-open class CoroutineContextProvider {
+class CompanyNews(
+    var ids: List<String>,
+    var headlines: List<String>,
+    var summaries: List<String>,
+    var sources: List<String>,
+    var dates: List<String>,
+    var browserUrls: List<String>,
+    var previewImagesUrls: List<String>
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is CompanyNews) {
+            ids.firstOrNull() == other.ids.firstOrNull()
+        } else false
+    }
 
-    open val Main: CoroutineContext
-        get() = Dispatchers.Main
-
-    open val IO: CoroutineContext
-        get() = Dispatchers.IO
-
-    open val Default: CoroutineContext
-        get() = Dispatchers.Default
+    override fun hashCode(): Int {
+        return ids.firstOrNull().hashCode()
+    }
 }
