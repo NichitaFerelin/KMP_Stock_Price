@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.models
+package com.ferelin.local.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ferelin.local.databases.companiesDb.CompaniesDatabase
 import com.squareup.moshi.Json
 
 @Entity(tableName = CompaniesDatabase.DB_NAME)
@@ -58,5 +57,8 @@ data class Company(
     var newsUrls: List<String> = emptyList(),
 
     var isFavourite: Boolean = false,
-    var favouriteOrderIndex: Int = 0
+    var favouriteOrderIndex: Int = 0,
+
+    var isBought: Boolean = false,
+    var boughtPrice: Double = 0.0
 )

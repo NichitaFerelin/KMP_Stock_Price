@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.json
+package com.ferelin.local.jsonReader
 
 import android.content.Context
-import com.ferelin.local.models.Company
+import com.ferelin.local.database.Company
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -26,11 +26,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class JsonManagerImpl @Inject constructor(
+open class AppJsonReaderImpl @Inject constructor(
     private val mContext: Context
-) : JsonManager {
+) : AppJsonReader {
 
-    private val mMoshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val mMoshi = Moshi
+        .Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
 
     private companion object {
         const val sCompaniesJsonFileName = "companies.json"
@@ -40,16 +43,15 @@ open class JsonManagerImpl @Inject constructor(
         return readCompanies()
     }
 
-    /*
-    * Parsing companies data from json
-    * */
     private fun readCompanies(): List<Company> {
         val json = mContext.assets
             .open(sCompaniesJsonFileName)
             .bufferedReader()
             .use { it.readText() }
+
         val type = Types.newParameterizedType(List::class.java, Company::class.java)
         val adapter: JsonAdapter<List<Company>> = mMoshi.adapter(type)
+
         return adapter.fromJson(json) ?: emptyList()
     }
 }

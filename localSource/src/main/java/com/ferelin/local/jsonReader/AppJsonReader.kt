@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.companiesDb
+package com.ferelin.local.jsonReader
 
-import androidx.room.*
-import com.ferelin.local.models.Company
+import com.ferelin.local.database.Company
 
-@Dao
-interface CompaniesDao {
+/**
+ * Reads json files from assets
+ * */
+interface AppJsonReader {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cacheCompany(company: Company)
-
-    @Insert
-    suspend fun cacheAllCompanies(list: List<Company>)
-
-    @Update
-    suspend fun updateCompany(company: Company)
-
-    @Query("SELECT * FROM `stockprice.companies.db`")
-    suspend fun getAllCompanies(): List<Company>
+    /**
+     * Reads companies data from json
+     *
+     * @return list of [Company] objects parsed from json file
+     * */
+    fun getCompaniesFromJson(): List<Company>
 }

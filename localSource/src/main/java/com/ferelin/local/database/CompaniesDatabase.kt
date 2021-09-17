@@ -14,21 +14,45 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases
+package com.ferelin.local.database
 
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
-import com.ferelin.shared.MessageSide
+import androidx.room.TypeConverters
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
-internal class DbTypesConverter {
+/**
+ * Represents a room database for caching companies
+ * */
+@Database(entities = [Company::class], version = 1)
+@TypeConverters(TypesConverter::class)
+abstract class CompaniesDatabase : RoomDatabase() {
+
+    abstract fun companiesDao(): CompaniesDao
+
+    companion object {
+        const val DB_NAME = "stockprice.companies.db"
+    }
+}
+
+/**
+ * Types converter for [CompaniesDatabase]
+ * */
+internal class TypesConverter {
 
     private val mMoshi = Moshi.Builder().build()
 
-    private val mTypeListString =
-        Types.newParameterizedType(List::class.java, String::class.javaObjectType)
-    private val mTypeStringList =
-        Types.newParameterizedType(List::class.java, String::class.javaObjectType)
+    private val mTypeListString = Types.newParameterizedType(
+        List::class.java,
+        String::class.javaObjectType
+    )
+
+    private val mTypeStringList = Types.newParameterizedType(
+        String::class.java,
+        List::class.javaObjectType
+    )
 
     @TypeConverter
     fun listStringToJson(data: List<String>): String {
@@ -40,18 +64,5 @@ internal class DbTypesConverter {
     fun jsonToListString(json: String): List<String> {
         val adapter = mMoshi.adapter<List<String>>(mTypeStringList)
         return adapter.fromJson(json) ?: emptyList()
-    }
-
-    @TypeConverter
-    fun messageSideToString(messageSide: MessageSide): String {
-        return messageSide.key.toString()
-    }
-
-    @TypeConverter
-    fun stringToMessageSide(string: String): MessageSide {
-        return when (string) {
-            MessageSide.Source.key.toString() -> MessageSide.Source
-            else -> MessageSide.Associated
-        }
     }
 }

@@ -15,9 +15,9 @@ gradlePlugin {
             implementationClass = "com.ferelin.buildPlugins.RemoteBuildPlugin"
         }
 
-        register("local-module-build") {
-            id = "local-module-build"
-            implementationClass = "com.ferelin.buildPlugins.LocalBuildPlugin"
+        register("localSource-module-build") {
+            id = "localSource-module-build"
+            implementationClass = "com.ferelin.buildPlugins.LocalSourceBuildPlugin"
         }
 
         register("repository-module-build") {

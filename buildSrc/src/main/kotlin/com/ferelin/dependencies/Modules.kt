@@ -18,7 +18,7 @@ package com.ferelin.dependencies
 
 object Modules {
     const val app = ":app"
-    const val local = ":local"
+    const val local = ":localSource"
     const val remote = ":remote"
     const val repository = ":repository"
     const val shared = ":shared"

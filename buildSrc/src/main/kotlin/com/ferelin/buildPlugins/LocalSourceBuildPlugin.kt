@@ -23,7 +23,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.dependencies
 
-class LocalBuildPlugin : Plugin<Project> {
+class LocalSourceBuildPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.applyPlugins()
