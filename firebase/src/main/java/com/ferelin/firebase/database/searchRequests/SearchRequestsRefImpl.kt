@@ -29,7 +29,7 @@ class SearchRequestsRefImpl @Inject constructor(
         const val sSearchesHistoryRef = "search-requests"
     }
 
-    override fun cacheSearchRequest(userToken: String, searchRequest: String) {
+    override suspend fun cacheSearchRequest(userToken: String, searchRequest: String) {
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
@@ -37,7 +37,7 @@ class SearchRequestsRefImpl @Inject constructor(
             .push()
     }
 
-    override fun eraseSearchRequest(userToken: String, searchRequest: String) {
+    override suspend fun eraseSearchRequest(userToken: String, searchRequest: String) {
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
@@ -45,7 +45,7 @@ class SearchRequestsRefImpl @Inject constructor(
             .removeValue()
     }
 
-    override fun getSearchRequests(userToken: String): List<String> {
+    override suspend fun loadSearchRequests(userToken: String): List<String> {
         val resultSnapshot = mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)

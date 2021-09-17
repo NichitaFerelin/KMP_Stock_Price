@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.repository.useCaseModels
 
-class ChartStockHistory(
-    val price: List<Double>,
-    val priceStr: List<String>,
-    val dates: List<String>
+data class StockHistory(
+    var openPrices: List<String>,
+    var highPrices: List<String>,
+    var lowPrices: List<String>,
+    var closePrices: List<String>,
+    var datePrices: List<String>
 ) {
     override fun equals(other: Any?): Boolean {
-        return if (other is ChartStockHistory) {
-            return dates.firstOrNull() == other.dates.firstOrNull()
+        return if (other is StockHistory) {
+            datePrices.firstOrNull() == other.datePrices.firstOrNull()
         } else false
     }
 
     override fun hashCode(): Int {
-        return dates.firstOrNull().hashCode()
-    }
-
-    fun isNotEmpty(): Boolean {
-        return price.isNotEmpty()
-    }
-
-    fun isEmpty(): Boolean {
-        return price.isEmpty()
+        return datePrices.firstOrNull().hashCode()
     }
 }

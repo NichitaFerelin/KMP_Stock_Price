@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote
+package com.ferelin.repository.useCaseModels
 
-import com.ferelin.repository.adaptiveModels.LiveTimePrice
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
+class CompanyNews(
+    var ids: List<String>,
+    var headlines: List<String>,
+    var summaries: List<String>,
+    var sources: List<String>,
+    var dates: List<String>,
+    var browserUrls: List<String>,
+    var previewImagesUrls: List<String>
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is CompanyNews) {
+            ids.firstOrNull() == other.ids.firstOrNull()
+        } else false
+    }
 
-/**
- * [WebSocketHelper] provides methods for network interacting with web-socket.
- * */
-interface WebSocketHelper {
-
-    fun openWebSocketConnection():Flow<RepositoryResponse<LiveTimePrice>>
-
-    fun closeWebSocketConnection()
-
-    fun subscribeItemOnLiveTimeUpdates(symbol: String, previousPrice: Double)
-
-    fun unsubscribeItemFromLiveTimeUpdates(symbol: String)
+    override fun hashCode(): Int {
+        return ids.firstOrNull().hashCode()
+    }
 }

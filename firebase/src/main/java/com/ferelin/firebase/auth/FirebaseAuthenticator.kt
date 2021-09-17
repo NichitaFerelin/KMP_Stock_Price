@@ -22,12 +22,12 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Types of [FirebaseAuthenticator] responses
  * */
-sealed class AuthenticationResponse {
-    object CodeSent : AuthenticationResponse()
-    object Complete : AuthenticationResponse()
-    object EmptyPhone : AuthenticationResponse()
-    object TooManyRequests : AuthenticationResponse()
-    object Error : AuthenticationResponse()
+enum class AuthenticationResponse {
+    CodeSent,
+    Complete,
+    EmptyPhone,
+    TooManyRequests,
+    Error
 }
 
 /**
@@ -36,11 +36,11 @@ sealed class AuthenticationResponse {
 interface FirebaseAuthenticator {
 
     /**
-     * Provides authenticated user ID
+     * Provides authenticated user token
      *
      * @return current user identifier if user is logged, otherwise null
      * */
-    val userId: String?
+    val userToken: String?
 
     /**
      * Provides user authentication state
@@ -63,10 +63,10 @@ interface FirebaseAuthenticator {
      *
      * @param code is a code that was sent to the entered phone number
      */
-    fun completeAuthentication(code: String)
+    suspend fun completeAuthentication(code: String)
 
     /**
      * Logs out from firebase
      * */
-    fun logOut()
+    suspend fun logOut()
 }

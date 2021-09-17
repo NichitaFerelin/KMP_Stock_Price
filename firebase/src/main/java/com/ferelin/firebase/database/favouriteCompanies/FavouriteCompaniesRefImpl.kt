@@ -29,7 +29,7 @@ class FavouriteCompaniesRefImpl @Inject constructor(
         const val sFavouriteCompaniesRef = "favourite-companies"
     }
 
-    override fun eraseFromFavourites(userToken: String, companyId: String) {
+    override suspend fun eraseFromFavourites(userToken: String, companyId: String) {
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
@@ -37,7 +37,7 @@ class FavouriteCompaniesRefImpl @Inject constructor(
             .removeValue()
     }
 
-    override fun cacheToFavourites(userToken: String, companyId: String) {
+    override suspend fun cacheToFavourites(userToken: String, companyId: String) {
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
@@ -45,7 +45,7 @@ class FavouriteCompaniesRefImpl @Inject constructor(
             .setValue(companyId)
     }
 
-    override fun getFavourites(userToken: String): List<String> {
+    override suspend fun loadFavourites(userToken: String): List<String> {
         val resultSnapshot = mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)

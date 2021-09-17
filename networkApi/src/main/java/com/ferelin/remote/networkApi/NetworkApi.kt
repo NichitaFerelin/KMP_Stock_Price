@@ -36,7 +36,7 @@ interface NetworkApi {
      * @param resolution is type in which need to return data. By day / week / month, etc.
      * @return server response as [BaseResponse] object with [StockPriceHistoryResponse] data
      * */
-    fun loadPriceChangesHistory(
+    suspend fun loadPriceChangesHistory(
         symbol: String,
         from: Long,
         to: Long,
@@ -51,7 +51,7 @@ interface NetworkApi {
      * @param to represents time-millis string ending to which need to return company news
      * @return server response as [BaseResponse] object with [CompanyNewsResponse] data-list
      * */
-    fun loadCompanyNews(
+    suspend fun loadCompanyNews(
         symbol: String,
         from: String,
         to: String
@@ -65,7 +65,7 @@ interface NetworkApi {
      *  execute the request or not
      * @param isImportant forces the request to be executed ignoring limiter restrictions
      * */
-    fun loadActualStockPriceWithLimiter(
+    suspend fun loadActualStockPriceWithLimiter(
         symbol: String,
         keyPosition: Int,
         isImportant: Boolean

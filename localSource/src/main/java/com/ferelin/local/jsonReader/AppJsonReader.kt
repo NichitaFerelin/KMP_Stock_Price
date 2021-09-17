@@ -28,5 +28,5 @@ interface AppJsonReader {
      *
      * @return list of [Company] objects parsed from json file
      * */
-    fun getCompaniesFromJson(): List<Company>
+    suspend fun getCompaniesFromJson(): List<Company>
 }

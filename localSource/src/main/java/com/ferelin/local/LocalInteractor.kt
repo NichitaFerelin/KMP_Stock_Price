@@ -18,28 +18,26 @@ package com.ferelin.local
 
 import com.ferelin.local.dataStorage.DataStorage
 import com.ferelin.local.database.CompaniesDao
+import com.ferelin.local.database.CompaniesDatabase
 import com.ferelin.local.jsonReader.AppJsonReader
 
 /**
- * [LocalTasks] represents an interface for accessing to local data of application
+ * [LocalInteractor] represents an interface with variables that allows access to local data
  * */
-interface LocalTasks :
-    DataStorage,
-    CompaniesDao,
-    AppJsonReader {
+interface LocalInteractor {
 
     /**
-     * Provides methods for implementing [CompaniesDao] interface
+     * Provides methods for interacting with [CompaniesDatabase]
      * */
     val companiesDao: CompaniesDao
 
     /**
-     * Provides methods for implementing [DataStorage] interface
+     * Provides methods for interacting with [DataStorage]
      * */
     val dataStorage: DataStorage
 
     /**
-     * Provides methods for implementing [AppJsonReader] interface
+     * Provides methods for interacting with [AppJsonReader]
      * */
     val jsonReader: AppJsonReader
 }

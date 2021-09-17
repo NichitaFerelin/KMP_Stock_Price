@@ -28,7 +28,7 @@ interface FavouriteCompaniesRef {
      * correct node of cloud datastore.
      * @param companyId is a company id at local database that will be erased.
      */
-    fun eraseFromFavourites(userToken: String, companyId: String)
+    suspend fun eraseFromFavourites(userToken: String, companyId: String)
 
     /**
      * Provides ability to write a company id to cloud database.
@@ -37,7 +37,7 @@ interface FavouriteCompaniesRef {
      * node of cloud datastore.
      * @param companyId is a company id at local database that will be saved.
      */
-    fun cacheToFavourites(userToken: String, companyId: String)
+    suspend fun cacheToFavourites(userToken: String, companyId: String)
 
     /**
      * Provides ability to read user favourite companies ids from cloud database.
@@ -46,5 +46,5 @@ interface FavouriteCompaniesRef {
      * node of cloud datastore.
      * @return list of companies IDs and response code
      */
-    fun getFavourites(userToken: String): List<String>
+    suspend fun loadFavourites(userToken: String): List<String>
 }

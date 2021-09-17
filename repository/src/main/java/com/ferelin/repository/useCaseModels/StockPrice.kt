@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.responses
+package com.ferelin.repository.useCaseModels
 
-object Responses {
-    const val LOADED_FROM_DB = 200
-    const val LOADED_FROM_JSON = 201
+data class StockPrice(
+    var currentPrice: String,
+    var previousClosePrice: String,
+    var openPrice: String,
+    var highPrice: String,
+    var lowPrice: String,
+    var profit: String,
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is StockPrice) {
+            other.currentPrice == currentPrice
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        return currentPrice.hashCode()
+    }
 }

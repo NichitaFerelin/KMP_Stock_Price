@@ -39,7 +39,7 @@ class FirebaseAuthenticatorImpl @Inject constructor(
 
     private var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
-    override val userId: String?
+    override val userToken: String?
         get() = mFirebaseAuth.uid
 
     override val isUserAuthenticated: Boolean
@@ -95,14 +95,14 @@ class FirebaseAuthenticatorImpl @Inject constructor(
         awaitClose()
     }
 
-    override fun completeAuthentication(code: String) {
+    override suspend fun completeAuthentication(code: String) {
         mUserVerificationId?.let { userVerificationId ->
             val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
             mAuthCallbacks?.onVerificationCompleted(credential)
         }
     }
 
-    override fun logOut() {
+    override suspend fun logOut() {
         mFirebaseAuth.signOut()
     }
 }

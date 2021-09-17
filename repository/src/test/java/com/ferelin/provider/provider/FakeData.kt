@@ -1,6 +1,6 @@
 package com.ferelin.provider.provider
 
-import com.ferelin.local.models.Company
+import com.ferelin.local.database.Company
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 import com.ferelin.repository.converter.adapter.DataAdapter

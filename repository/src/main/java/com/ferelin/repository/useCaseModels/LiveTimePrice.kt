@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote
+package com.ferelin.repository.useCaseModels
 
-import com.ferelin.remote.networkApi.NetworkApi
-import com.ferelin.remote.webSocket.connector.WebSocketConnector
-
-/**
- * [ApiInteractor] represents an interface for accessing to network api
- * */
-interface ApiInteractor :
-    NetworkApi,
-    WebSocketConnector {
-
-    /**
-     * Provides methods for implementing [NetworkApi] interface
-     * */
-    val networkApi: NetworkApi
-
-    /**
-     * Provides methods for implementing [WebSocketConnector] interface
-     * */
-    val webSocketConnector: WebSocketConnector
-}
+class LiveTimePrice(
+    val owner: String,
+    val price: String,
+    val profit: String
+)

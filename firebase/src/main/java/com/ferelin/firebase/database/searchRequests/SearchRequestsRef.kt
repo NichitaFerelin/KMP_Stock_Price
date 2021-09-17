@@ -28,7 +28,7 @@ interface SearchRequestsRef {
      * to correct node of cloud datastore.
      * @param searchRequest is a search requests that will be saved.
      */
-    fun cacheSearchRequest(userToken: String, searchRequest: String)
+    suspend fun cacheSearchRequest(userToken: String, searchRequest: String)
 
     /**
      * Provides ability to erase a search request from cloud database.
@@ -37,7 +37,7 @@ interface SearchRequestsRef {
      * to correct node of cloud datastore.
      * @param searchRequest is a search request that will be erased.
      */
-    fun eraseSearchRequest(userToken: String, searchRequest: String)
+    suspend fun eraseSearchRequest(userToken: String, searchRequest: String)
 
     /**
      * Provides ability to read a search history from cloud database.
@@ -46,5 +46,5 @@ interface SearchRequestsRef {
      * to correct node of cloud datastore.
      * @return list of search requests
      */
-    fun getSearchRequests(userToken: String): List<String>
+    suspend fun loadSearchRequests(userToken: String): List<String>
 }

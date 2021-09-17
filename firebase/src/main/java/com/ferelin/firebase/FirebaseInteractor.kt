@@ -21,15 +21,13 @@ import com.ferelin.firebase.database.favouriteCompanies.FavouriteCompaniesRef
 import com.ferelin.firebase.database.searchRequests.SearchRequestsRef
 
 /**
- * [FirebaseTasks] represents an interface for accessing to firebase methods
+ * [FirebaseInteractor] represents an interface with variables that allows access firebase
+ * services
  * */
-interface FirebaseTasks :
-    FirebaseAuthenticator,
-    FavouriteCompaniesRef,
-    SearchRequestsRef {
+interface FirebaseInteractor {
 
     /**
-     * Provides firebase authentication methods
+     * Provides methods for interacting with [FirebaseAuthenticator]
      * */
     val firebaseAuthenticator: FirebaseAuthenticator
 

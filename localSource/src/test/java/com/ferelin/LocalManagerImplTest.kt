@@ -1,6 +1,6 @@
 package com.ferelin
 
-import com.ferelin.local.LocalTasks
+import com.ferelin.local.LocalInteractor
 import com.ferelin.local.LocalManagerImpl
 import com.ferelin.local.jsonReader.AppJsonReader
 import com.ferelin.local.jsonReader.AppJsonReaderImpl
@@ -18,7 +18,7 @@ import org.mockito.Spy
 
 class LocalManagerImplTest {
 
-    private lateinit var mLocalManager: LocalTasks
+    private lateinit var mLocalManager: LocalInteractor
 
     @Spy
     private lateinit var mJsonReader: AppJsonReader

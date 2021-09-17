@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.helpers.remote.realtimeDatabase
+package com.ferelin.repository.useCaseModels
 
-import com.ferelin.repository.adaptiveModels.AdaptiveMessage
-import com.ferelin.repository.utils.RepositoryResponse
-import kotlinx.coroutines.flow.Flow
-
-/**
- * [MessagesRemoteHelper] provides methods for network interacting with messages.
- * */
-interface MessagesRemoteHelper {
-
-    fun getMessagesFromRealtimeDb(
-        currentUserNumber: String,
-        associatedUserNumber: String
-    ): Flow<RepositoryResponse<AdaptiveMessage>>
-
-    fun cacheNewMessageToRealtimeDb(currentUserNumber: String, message: AdaptiveMessage)
-}
+class UiStockStyle(
+    var holderBackground: Int = 0,
+    var favouriteBackgroundIconResource: Int = 0,
+    var favouriteForegroundIconResource: Int = 0,
+    var dayProfitBackground: Int = 0,
+    var rippleForeground: Int = 0
+)

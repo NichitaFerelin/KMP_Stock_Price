@@ -9,25 +9,17 @@ gradlePlugin {
             id = "app-module-build"
             implementationClass = "com.ferelin.buildPlugins.AppBuildPlugin"
         }
-
         register("remote-module-build") {
             id = "remote-module-build"
             implementationClass = "com.ferelin.buildPlugins.RemoteBuildPlugin"
         }
-
         register("localSource-module-build") {
             id = "localSource-module-build"
             implementationClass = "com.ferelin.buildPlugins.LocalSourceBuildPlugin"
         }
-
         register("repository-module-build") {
             id = "repository-module-build"
             implementationClass = "com.ferelin.buildPlugins.RepositoryBuildPlugin"
-        }
-
-        register("shared-module-build") {
-            id = "shared-module-build"
-            implementationClass = "com.ferelin.buildPlugins.SharedBuildPlugin"
         }
     }
 }

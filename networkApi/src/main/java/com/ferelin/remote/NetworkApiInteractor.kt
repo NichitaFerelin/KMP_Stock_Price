@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.remote
 
-class AdaptiveChat(
-    val id: Int,
-    val associatedUserNumber: String,
-    val previewText: String = ""
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveChat) {
-            other.id == id
-        } else false
-    }
+import com.ferelin.remote.networkApi.NetworkApi
+import com.ferelin.remote.webSocket.connector.WebSocketConnector
 
-    override fun hashCode(): Int {
-        return id
-    }
+/**
+ * [NetworkApiInteractor] represents an interface with variables that allows access to work
+ * with network api
+ * */
+interface NetworkApiInteractor {
+
+    /**
+     * Provides methods for interacting with [NetworkApi]
+     * */
+    val networkApi: NetworkApi
+
+    /**
+     * Provides methods for interacting with [WebSocketConnector]
+     * */
+    val webSocketConnector: WebSocketConnector
 }

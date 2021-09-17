@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.converter.helpers.realtimeConverter
+package com.ferelin.repository.useCaseModels
 
-import com.ferelin.remote.base.BaseResponse
-import com.ferelin.repository.utils.RepositoryResponse
-
-/**
- * [RealtimeDatabaseConverter] provides converters for realtime responses
- * */
-interface RealtimeDatabaseConverter {
-    fun convertRealtimeResponseToRepositoryResponse(
-        response: BaseResponse<String?>?
-    ): RepositoryResponse<String>
-}
+class CompanyProfile(
+    val name: String,
+    val symbol: String,
+    val logoUrl: String,
+    val country: String,
+    val phone: String,
+    val webUrl: String,
+    val industry: String,
+    val currency: String,
+    var capitalization: String
+)

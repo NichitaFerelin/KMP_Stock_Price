@@ -36,7 +36,7 @@ open class NetworkApiImpl @Inject constructor(
     private val mPriceChangesHistoryApi: PriceChangesHistoryApi
 ) : NetworkApi {
 
-    override fun loadPriceChangesHistory(
+    override suspend fun loadPriceChangesHistory(
         symbol: String,
         from: Long,
         to: Long,
@@ -52,7 +52,7 @@ open class NetworkApiImpl @Inject constructor(
         )
     }
 
-    override fun loadCompanyNews(
+    override suspend fun loadCompanyNews(
         symbol: String,
         from: String,
         to: String
@@ -67,7 +67,7 @@ open class NetworkApiImpl @Inject constructor(
         )
     }
 
-    override fun loadActualStockPriceWithLimiter(
+    override suspend fun loadActualStockPriceWithLimiter(
         symbol: String,
         keyPosition: Int,
         isImportant: Boolean

@@ -49,9 +49,9 @@ class RepositoryBuildPlugin : Plugin<Project> {
     }
 
     private fun DependencyHandlerScope.implDependencies() {
-        addProjectImpl(Modules.shared)
-        addProjectImpl(Modules.remote)
-        addProjectImpl(Modules.local)
+        addProjectImpl(Modules.networkApi)
+        addProjectImpl(Modules.firebase)
+        addProjectImpl(Modules.localSource)
 
         addImpl(Dependencies.kotlinLib)
         addImpl(Dependencies.kotlinCoroutines)

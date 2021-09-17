@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package com.ferelin.repository.adaptiveModels
+package com.ferelin.repository.useCaseModels
 
-data class AdaptiveSearchRequest(
-    val id: Int,
-    val searchText: String
+class ChartStockHistory(
+    val price: List<Double>,
+    val priceStr: List<String>,
+    val dates: List<String>
 ) {
     override fun equals(other: Any?): Boolean {
-        return if (other is AdaptiveSearchRequest) {
-            return other.id == id
+        return if (other is ChartStockHistory) {
+            return dates.firstOrNull() == other.dates.firstOrNull()
         } else false
     }
 
     override fun hashCode(): Int {
-        return id
+        return dates.firstOrNull().hashCode()
+    }
+
+    fun isNotEmpty(): Boolean {
+        return price.isNotEmpty()
+    }
+
+    fun isEmpty(): Boolean {
+        return price.isEmpty()
     }
 }

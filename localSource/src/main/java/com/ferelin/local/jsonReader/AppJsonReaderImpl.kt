@@ -39,7 +39,7 @@ open class AppJsonReaderImpl @Inject constructor(
         const val sCompaniesJsonFileName = "companies.json"
     }
 
-    override fun getCompaniesFromJson(): List<Company> {
+    override suspend fun getCompaniesFromJson(): List<Company> {
         return readCompanies()
     }
 

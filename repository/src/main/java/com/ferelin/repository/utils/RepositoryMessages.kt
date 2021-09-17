@@ -18,15 +18,11 @@ package com.ferelin.repository.utils
 
 enum class RepositoryMessages {
     Ok,
-    End,
-    Empty,
+    ReachedLimit,
     Error,
-    Limit,
 
-    // Represent a message that can notify that AuthenticationManagerImpl send code
+    // Authentication Messages
     CodeSent,
-
-    // Represent a message that can notify that user choose bad login to register
-    BadLogin,
-    AlreadyExists,
+    Complete,
+    TooManyRequests,
 }

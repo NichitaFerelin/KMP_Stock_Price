@@ -55,8 +55,6 @@ class LocalSourceBuildPlugin : Plugin<Project> {
     }
 
     private fun DependencyHandlerScope.implDependencies() {
-        addProjectImpl(Modules.shared)
-
         addImpl(Dependencies.kotlinLib)
 
         addImpl(Dependencies.dagger)

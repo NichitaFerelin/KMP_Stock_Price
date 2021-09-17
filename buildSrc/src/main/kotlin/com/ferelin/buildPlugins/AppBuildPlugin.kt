@@ -80,7 +80,6 @@ class AppBuildPlugin : Plugin<Project> {
 
     private fun DependencyHandlerScope.implDependencies() {
         addProjectImpl(Modules.repository)
-        addProjectImpl(Modules.shared)
 
         addImpl(Dependencies.kotlinLib)
         addImpl(Dependencies.kotlinCoroutines)
@@ -100,8 +99,8 @@ class AppBuildPlugin : Plugin<Project> {
         /**
          * FOR DI AND TESTS
          * */
-        addProjectImpl(Modules.local)
-        addProjectImpl(Modules.remote)
+        addProjectImpl(Modules.localSource)
+        addProjectImpl(Modules.networkApi)
 
         addImpl(Dependencies.roomKtx)
         addImpl(Dependencies.roomRuntime)

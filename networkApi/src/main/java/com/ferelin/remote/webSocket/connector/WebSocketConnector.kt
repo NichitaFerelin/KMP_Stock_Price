@@ -35,19 +35,19 @@ interface WebSocketConnector {
     /**
      * Closes web socket connection with server
      * */
-    fun closeConnection()
+    suspend fun closeConnection()
 
     /**
      * Subscribes new item for live time updates.
      *
      * @param symbol is a company symbol that must be subscribed for updates
      * */
-    fun subscribe(symbol: String)
+    suspend fun subscribe(symbol: String)
 
     /**
      * Unsubscribes items from live time updates.
      *
      * @param symbol is a company symbol that must be unsubscribed from updates
      * */
-    fun unsubscribe(symbol: String)
+    suspend fun unsubscribe(symbol: String)
 }
