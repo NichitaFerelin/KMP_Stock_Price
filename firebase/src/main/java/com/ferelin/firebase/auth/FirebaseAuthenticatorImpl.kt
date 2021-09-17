@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.auth
+package com.ferelin.firebase.auth
 
 import android.app.Activity
-import com.ferelin.remote.RESPONSE_UNDEFINED
-import com.ferelin.remote.VERIFICATION_CODE_SENT
-import com.ferelin.remote.VERIFICATION_COMPLETED
-import com.ferelin.remote.VERIFICATION_TOO_MANY_REQUESTS
-import com.ferelin.remote.base.BaseResponse
-import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -36,56 +30,56 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
-
-    private val mFirebaseAuth: FirebaseAuth by lazy {
-        FirebaseAuth.getInstance().apply {
-            useAppLanguage()
-        }
-    }
+class FirebaseAuthenticatorImpl @Inject constructor(
+    private val mFirebaseAuth: FirebaseAuth
+) : FirebaseAuthenticator {
 
     // User ID is used to complete verification
     private var mUserVerificationId: String? = null
+
     private var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
+
+    override val userId: String?
+        get() = mFirebaseAuth.uid
+
+    override val isUserAuthenticated: Boolean
+        get() = mFirebaseAuth.currentUser != null
 
     override fun tryToLogIn(
         holderActivity: Activity,
         phone: String
-    ) = callbackFlow<BaseResponse<Boolean>> {
+    ) = callbackFlow<AuthenticationResponse> {
 
         // Empty phone number causes exception
         if (phone.isEmpty()) {
+            trySend(AuthenticationResponse.EmptyPhone)
             return@callbackFlow
         }
 
         mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 mUserVerificationId = p0
-                trySend(BaseResponse(responseCode = VERIFICATION_CODE_SENT))
+                trySend(AuthenticationResponse.CodeSent)
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
-                    when {
-                        task.isSuccessful -> trySend(
-                            BaseResponse(responseCode = VERIFICATION_COMPLETED)
-                        )
-                        else -> trySend(BaseResponse(responseCode = RESPONSE_UNDEFINED))
+                    val response = if (task.isSuccessful) {
+                        AuthenticationResponse.Complete
+                    } else {
+                        AuthenticationResponse.Error
                     }
+                    trySend(response)
                 }
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
-                when (p0) {
-                    is FirebaseTooManyRequestsException -> {
-                        trySend(
-                            BaseResponse(
-                                responseCode = VERIFICATION_TOO_MANY_REQUESTS
-                            )
-                        )
-                    }
-                    else -> trySend(BaseResponse(responseCode = RESPONSE_UNDEFINED))
+                val response = if (p0 is FirebaseTooManyRequestsException) {
+                    AuthenticationResponse.TooManyRequests
+                } else {
+                    AuthenticationResponse.Error
                 }
+                trySend(response)
             }
         }
 
@@ -101,7 +95,7 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
         awaitClose()
     }
 
-    override fun logInWithCode(code: String) {
+    override fun completeAuthentication(code: String) {
         mUserVerificationId?.let { userVerificationId ->
             val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
             mAuthCallbacks?.onVerificationCompleted(credential)
@@ -110,13 +104,5 @@ class AuthenticationManagerImpl @Inject constructor() : AuthenticationManager {
 
     override fun logOut() {
         mFirebaseAuth.signOut()
-    }
-
-    override fun provideUserId(): String? {
-        return mFirebaseAuth.uid
-    }
-
-    override fun provideIsUserLogged(): Boolean {
-        return mFirebaseAuth.currentUser != null
     }
 }

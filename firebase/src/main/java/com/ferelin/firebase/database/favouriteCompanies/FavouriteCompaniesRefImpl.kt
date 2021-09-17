@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.database.helpers.favouriteCompanies
+package com.ferelin.firebase.database.favouriteCompanies
 
-import com.ferelin.remote.RESPONSE_NO_DATA
-import com.ferelin.remote.RESPONSE_OK
-import com.ferelin.remote.base.BaseResponse
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FavouriteCompaniesHelperImpl @Inject constructor(
+class FavouriteCompaniesRefImpl @Inject constructor(
     private val mFirebaseReference: DatabaseReference
-) : FavouriteCompaniesHelper {
+) : FavouriteCompaniesRef {
 
     private companion object {
         const val sFavouriteCompaniesRef = "favourite-companies"
     }
 
-    override fun eraseCompanyIdFromRealtimeDb(userToken: String, companyId: String) {
+    override fun eraseFromFavourites(userToken: String, companyId: String) {
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
@@ -43,7 +37,7 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
             .removeValue()
     }
 
-    override fun cacheCompanyIdToRealtimeDb(userToken: String, companyId: String) {
+    override fun cacheToFavourites(userToken: String, companyId: String) {
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
@@ -51,26 +45,23 @@ class FavouriteCompaniesHelperImpl @Inject constructor(
             .setValue(companyId)
     }
 
-    override fun getCompaniesIdsFromDb(
-        userToken: String
-    ) = callbackFlow<BaseResponse<List<String>>> {
-        mFirebaseReference
+    override fun getFavourites(userToken: String): List<String> {
+        val resultSnapshot = mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
             .get()
-            .addOnSuccessListener { idsSnapshot ->
-                val ids = mutableListOf<String>()
-                for (iteratorIdSnapshot in idsSnapshot.children) {
-                    ids.add(iteratorIdSnapshot.key ?: "0")
-                }
-                trySend(
-                    BaseResponse(
-                        responseCode = RESPONSE_OK,
-                        responseData = ids
-                    )
-                )
+
+        return if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
+            val favouriteCompaniesIds = mutableListOf<String>()
+            val idsSnapshot = resultSnapshot.result!!
+
+            for (idSnapshot in idsSnapshot.children) {
+                favouriteCompaniesIds.add(idSnapshot.key ?: "0")
             }
-            .addOnFailureListener { trySend(BaseResponse(responseCode = RESPONSE_NO_DATA)) }
-        awaitClose()
+
+            favouriteCompaniesIds
+        } else {
+            emptyList()
+        }
     }
 }
