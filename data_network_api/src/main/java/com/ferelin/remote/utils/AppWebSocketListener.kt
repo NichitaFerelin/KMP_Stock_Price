@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.webSocket
+package com.ferelin.remote.utils
 
-import com.ferelin.remote.utils.RESPONSE_WEB_SOCKET_CLOSED
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -38,7 +37,7 @@ class AppWebSocketListener(
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
         webSocket.apply {
-            close(RESPONSE_WEB_SOCKET_CLOSED, null)
+            close(0, null)
             cancel()
         }
     }

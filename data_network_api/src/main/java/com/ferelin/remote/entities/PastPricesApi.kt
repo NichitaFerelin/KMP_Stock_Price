@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.networkApi.entities
+package com.ferelin.remote.entities
 
 import com.squareup.moshi.Json
 import retrofit2.Call
@@ -24,29 +24,29 @@ import retrofit2.http.Query
 /**
  * Represents api that returns stock price history
  * */
-interface PriceChangesHistoryApi {
+interface PastPricesApi {
 
     /**
      * Requests stock price history data
      *
-     * @param symbol is a company symbol for which stock history is need
+     * @param companyTicker is a company symbol for which stock history is need
      * @param token is an api token required to access the server
      * @param from represents time-millis string starting from which need to return stock history
      * @param to represents time-millis string ending to which need to return stock history
      * @param resolution is type in which need to return data. By day / week / month, etc.
-     * @return server response as [StockPriceHistoryResponse] object
+     * @return server response as [PastPricesResponse] object
      * */
     @GET("stock/candle")
-    fun getPriceChangesHistory(
-        @Query("symbol") symbol: String,
+    fun getPastPrices(
+        @Query("symbol") companyTicker: String,
         @Query("token") token: String,
         @Query("from") from: Long,
         @Query("to") to: Long,
         @Query("resolution") resolution: String,
-    ): Call<StockPriceHistoryResponse>
+    ): Call<PastPricesResponse>
 }
 
-class StockPriceHistoryResponse(
+data class PastPricesResponse(
     @Json(name = "o") val openPrices: List<Double>,
     @Json(name = "h") val highPrices: List<Double>,
     @Json(name = "l") val lowPrices: List<Double>,

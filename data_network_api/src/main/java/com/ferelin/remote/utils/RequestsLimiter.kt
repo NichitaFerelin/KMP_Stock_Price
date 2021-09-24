@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.networkApi.requestsLimiter
+package com.ferelin.remote.utils
 
-import com.ferelin.remote.utils.COMPANY_ACTUAL_PRICE
-import com.ferelin.remote.utils.COMPANY_NEWS
-import com.ferelin.remote.utils.PRICE_CHANGES_HISTORY
+import com.ferelin.shared.CoroutineContextProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,13 +26,11 @@ import javax.inject.Singleton
 import kotlin.math.abs
 
 @Singleton
-class RequestsLimiterImpl @Inject constructor(
-    appScope: CoroutineScope
-) : RequestsLimiter {
-
-    private var mCompanyNewsApi: ((String) -> Unit)? = null
-    private var mActualStockPriceApi: ((String) -> Unit)? = null
-    private var mPriceChangesHistoryApi: ((String) -> Unit)? = null
+class RequestsLimiter @Inject constructor(
+    externalScope: CoroutineScope,
+    coroutineContextProvider: CoroutineContextProvider
+) {
+    private var mStockPriceApi: ((String) -> Unit)? = null
 
     private val mMessagesQueue = LinkedHashSet<HashMap<String, Any>>(100)
     private var mMessagesHistory = HashMap<String, Any?>(300, 0.5F)
@@ -45,43 +41,27 @@ class RequestsLimiterImpl @Inject constructor(
     private var mJob: Job? = null
 
     init {
-        mJob = appScope.launch { start() }
+        mJob = externalScope.launch(coroutineContextProvider.IO) {
+            start()
+        }
     }
 
-    override fun addRequestToOrder(
-        companyOwnerSymbol: String,
-        apiTag: String,
+    fun addRequestToOrder(
+        companyTicker: String,
         keyPosition: Int,
         eraseIfNotActual: Boolean,
         ignoreDuplicates: Boolean
     ) {
-        if (ignoreDuplicates || isNotDuplicatedMessage(companyOwnerSymbol)) {
-            acceptMessage(companyOwnerSymbol, apiTag, keyPosition, eraseIfNotActual)
+        if (ignoreDuplicates || isNotDuplicatedMessage(companyTicker)) {
+            acceptMessage(companyTicker, keyPosition, eraseIfNotActual)
         }
     }
 
-    override fun setUpApi(apiTag: String, onResponse: (String) -> Unit) {
-        when (apiTag) {
-            COMPANY_NEWS -> {
-                if (mCompanyNewsApi == null) {
-                    mCompanyNewsApi = onResponse
-                }
-            }
-            COMPANY_ACTUAL_PRICE -> {
-                if (mActualStockPriceApi == null) {
-                    mActualStockPriceApi = onResponse
-                }
-            }
-            PRICE_CHANGES_HISTORY -> {
-                if (mPriceChangesHistoryApi == null) {
-                    mPriceChangesHistoryApi = onResponse
-                }
-            }
-            else -> throw IllegalStateException("Unknown api tag for [RequestLimiter]: $apiTag")
-        }
+    fun onExecuteRequest(onExecute: (String) -> Unit) {
+        mStockPriceApi = onExecute
     }
 
-    override fun invalidate() {
+    fun invalidate() {
         mJob?.cancel()
         mJob = null
         mMessagesQueue.clear()
@@ -95,7 +75,6 @@ class RequestsLimiterImpl @Inject constructor(
                     val lastPosition = mMessagesQueue.last()[sPosition] as Int
                     val currentPosition = it[sPosition] as Int
                     val symbol = it[sSymbol] as String
-                    val api = it[sApi] as String
                     val eraseIfNotActual = it[sEraseState] as Boolean
                     mMessagesQueue.remove(it)
 
@@ -103,12 +82,8 @@ class RequestsLimiterImpl @Inject constructor(
                         return@let
                     }
 
-                    // TODO check if api null and do not reset message
-                    when (api) {
-                        COMPANY_NEWS -> mCompanyNewsApi?.invoke(symbol)
-                        COMPANY_ACTUAL_PRICE -> mActualStockPriceApi?.invoke(symbol)
-                        PRICE_CHANGES_HISTORY -> mPriceChangesHistoryApi?.invoke(symbol)
-                    }
+                    mStockPriceApi?.invoke(symbol)
+
                     mMessagesHistory[symbol] = null
                     delay(mPerSecondRequestLimit)
                 }
@@ -120,14 +95,12 @@ class RequestsLimiterImpl @Inject constructor(
 
     private fun acceptMessage(
         symbol: String,
-        api: String,
         position: Int,
         eraseIfNotActual: Boolean
     ) {
         mMessagesQueue.add(
             hashMapOf(
                 sSymbol to symbol,
-                sApi to api,
                 sPosition to position,
                 sEraseState to eraseIfNotActual
             )
@@ -150,7 +123,6 @@ class RequestsLimiterImpl @Inject constructor(
         const val sAlreadyNotActualValue = 13
 
         const val sSymbol = "symbol"
-        const val sApi = "api"
         const val sPosition = "position"
         const val sEraseState = "erase"
     }

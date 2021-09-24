@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.bottomDrawerSection.utils.actions
+package com.ferelin.remote.mappers
 
-import android.view.View
-import com.ferelin.stockprice.utils.bottomDrawer.OnSlideAction
-import com.ferelin.stockprice.utils.normalize
+import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.remote.entities.LivePricePojo
+import com.ferelin.remote.utils.buildProfitString
+import com.ferelin.remote.utils.toStrPrice
 
-/**
- * A slide action which rotates a view counterclockwise by 180 degrees between the hidden state
- * and the half expanded state.
- */
-class ArrowUpAction(
-    private val view: View
-) : OnSlideAction {
+class LivePriceMapper {
 
-    override fun onSlide(sheet: View, slideOffset: Float) {
-        view.rotation = slideOffset.normalize(
-            -1F,
-            0F,
-            0F,
-            180F
-        )
+    fun map(pojo: LivePricePojo?): LiveTimePrice? {
+        return pojo?.let {
+            LiveTimePrice(
+                companyTicker = pojo.companyTicker,
+                price = pojo.lastPrice.toStrPrice(),
+                profit = buildProfitString(pojo.lastPrice, /*TODO*/0.0)
+            )
+        }
     }
 }

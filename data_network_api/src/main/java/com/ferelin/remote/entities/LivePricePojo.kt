@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.webSocket.response
+package com.ferelin.remote.entities
 
 import com.squareup.moshi.Json
 
-// TODO
-/**
- * Base response of web socket for repository
- * */
-class WebSocketResponse(
-    @Json(name = "s") val symbol: String,
+data class LivePricePojo(
+    @Json(name = "s") val companyTicker: String,
     @Json(name = "p") val lastPrice: Double,
     @Json(name = "v") val volume: Double
 )

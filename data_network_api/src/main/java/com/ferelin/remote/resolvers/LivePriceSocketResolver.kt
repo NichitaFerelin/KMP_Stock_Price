@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.webSocket.connector
+package com.ferelin.remote.resolvers
 
-import com.ferelin.remote.RESPONSE_WEB_SOCKET_CLOSED
-import com.ferelin.remote.utils.BaseResponse
-import com.ferelin.remote.webSocket.AppWebSocketListener
-import com.ferelin.remote.webSocket.WebResponseConverter
-import com.ferelin.remote.webSocket.response.WebSocketResponse
+import com.ferelin.remote.entities.LivePricePojo
+import com.ferelin.remote.utils.AppWebSocketListener
+import com.ferelin.shared.CoroutineContextProvider
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -34,13 +34,12 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-open class WebSocketConnectorImpl @Inject constructor(
+class LivePriceSocketResolver @Inject constructor(
+    private val mLivePriceJsonResolver: LivePriceJsonResolver,
+    private val mCoroutineContextProvider: CoroutineContextProvider,
     @Named("FinnhubWebSocketUrl") private val mBaseUrl: String,
     @Named("FinnhubToken") private val mToken: String
-) : WebSocketConnector {
-
-    private val mResponseConverter = WebResponseConverter()
-
+) {
     private var mWebSocket: WebSocket? = null
 
     /*
@@ -49,17 +48,19 @@ open class WebSocketConnectorImpl @Inject constructor(
     * */
     private var mMessagesQueue: Queue<String> = LinkedList()
 
-    override fun subscribe(symbol: String) {
-        mWebSocket?.let {
-            subscribe(it, symbol)
-        } ?: mMessagesQueue.offer(symbol)
-    }
+    suspend fun subscribe(companyTicker: String) =
+        withContext(mCoroutineContextProvider.IO) {
+            mWebSocket?.let {
+                subscribe(it, companyTicker)
+            } ?: mMessagesQueue.offer(companyTicker)
+        }
 
-    override fun unsubscribe(symbol: String) {
-        mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
-    }
+    suspend fun unsubscribe(companyTicker: String) =
+        withContext(mCoroutineContextProvider.IO) {
+            mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
+        }
 
-    override fun openConnection(): Flow<BaseResponse<WebSocketResponse>> = callbackFlow {
+    fun openConnection(): Flow<LivePricePojo?> = callbackFlow {
         val request = Request
             .Builder()
             .url("$mBaseUrl$mToken")
@@ -70,7 +71,7 @@ open class WebSocketConnectorImpl @Inject constructor(
         mWebSocket = okHttp.newWebSocket(
             request = request,
             listener = AppWebSocketListener { response ->
-                val converted = mResponseConverter.fromJson(response)
+                val converted = mLivePriceJsonResolver.fromJson(response)
                 this.trySend(converted).isSuccess
             })
             .also { webSocket ->
@@ -80,12 +81,12 @@ open class WebSocketConnectorImpl @Inject constructor(
             }
         okHttp.dispatcher.executorService.shutdown()
 
-        awaitClose { mWebSocket?.close(RESPONSE_WEB_SOCKET_CLOSED, null) }
+        awaitClose { closeConnection() }
     }
         .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override fun closeConnection() {
-        mWebSocket?.close(RESPONSE_WEB_SOCKET_CLOSED, null)
+    private fun closeConnection() {
+        mWebSocket?.close(0, null)
         mWebSocket = null
     }
 

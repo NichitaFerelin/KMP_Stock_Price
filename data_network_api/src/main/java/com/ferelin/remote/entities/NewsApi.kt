@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.networkApi.entities
+package com.ferelin.remote.entities
 
 import com.squareup.moshi.Json
 import retrofit2.Call
@@ -24,7 +24,7 @@ import retrofit2.http.Query
 /**
  * Represents api that returns company news
  * */
-interface CompanyNewsApi {
+interface NewsApi {
 
     /**
      * Requests company news data
@@ -33,23 +33,23 @@ interface CompanyNewsApi {
      * @param token is an api token required to access the server
      * @param from represents time-millis string starting from which need to return news
      * @param to represents time-millis string ending to which need to return news
-     * @return server response as [CompanyNewsResponse] object
+     * @return server response as [NewsResponse] object
      * */
     @GET("company-news")
-    fun getCompanyNews(
+    fun getNews(
         @Query("symbol") symbol: String,
         @Query("token") token: String,
         @Query("from") from: String,
         @Query("to") to: String
-    ): Call<List<CompanyNewsResponse>>
+    ): Call<List<NewsResponse>>
 }
 
-class CompanyNewsResponse(
+data class NewsResponse(
     @Json(name = "datetime") val dateTime: Double,
     @Json(name = "headline") val headline: String,
-    @Json(name = "id") val newsId: Double,
+    @Json(name = "id") val id: Double,
     @Json(name = "image") val previewImageUrl: String,
-    @Json(name = "source") val newsSource: String,
-    @Json(name = "summary") val newsSummary: String,
-    @Json(name = "url") val newsBrowserUrl: String
+    @Json(name = "source") val source: String,
+    @Json(name = "url") val sourceUrl: String,
+    @Json(name = "summary") val summary: String
 )

@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.utils.anim
+package com.ferelin.remote.mappers
 
-import android.view.animation.Animation
+import com.ferelin.domain.entities.News
+import com.ferelin.remote.entities.NewsResponse
+import com.ferelin.remote.utils.toDateStr
 
-abstract class AnimationManager : Animation.AnimationListener {
+class NewsMapper {
 
-    override fun onAnimationStart(animation: Animation?) {
-    }
-
-    override fun onAnimationEnd(animation: Animation?) {
-    }
-
-    override fun onAnimationRepeat(animation: Animation?) {
+    fun map(response: NewsResponse): News {
+        return News(
+            cloudId = response.id.toString().substringBefore('.'),
+            headline = response.headline,
+            date = response.dateTime.toLong().toDateStr(),
+            previewImageUrl = response.previewImageUrl,
+            source = response.source,
+            sourceUrl = response.source,
+            summary = response.summary
+        )
     }
 }

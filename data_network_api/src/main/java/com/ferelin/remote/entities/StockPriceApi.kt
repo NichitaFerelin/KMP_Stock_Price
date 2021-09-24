@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.remote.networkApi.entities
+package com.ferelin.remote.entities
 
 import com.squareup.moshi.Json
 import retrofit2.Call
@@ -24,23 +24,23 @@ import retrofit2.http.Query
 /**
  * Represents api that returns stock price
  * */
-interface ActualStockPriceApi {
+interface StockPriceApi {
 
     /**
      * Requests actual stock price
      *
      * @param symbol is a company symbol for which stock history is need
      * @param token is an api token required to access the server
-     * @return server response as [ActualStockPriceResponse] object
+     * @return server response as [StockPriceResponse] object
      * */
     @GET("quote")
-    fun getActualStockPrice(
+    fun getStockPrice(
         @Query("symbol") symbol: String,
         @Query("token") token: String
-    ): Call<ActualStockPriceResponse>
+    ): Call<StockPriceResponse>
 }
 
-class ActualStockPriceResponse(
+data class StockPriceResponse(
     @Json(name = "o") val openPrice: Double,
     @Json(name = "h") val highPrice: Double,
     @Json(name = "l") val lowPrice: Double,

@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.aboutSection.forecasts
+package com.ferelin.remote.resolvers
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.ferelin.stockprice.databinding.FragmentForecastsBinding
+import com.ferelin.remote.entities.LivePricePojo
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class ForecastsFragment : Fragment() {
+class LivePriceJsonResolver {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return FragmentForecastsBinding.inflate(inflater, container, false).root
+    private val mConverter = Moshi
+        .Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
+    private val mResponseAdapter = mConverter.adapter(LivePricePojo::class.java).lenient()
+
+    fun fromJson(jsonResponse: String): LivePricePojo? = try {
+        mResponseAdapter.fromJson(jsonResponse)
+    } catch (e: Exception) {
+        null
     }
 }
