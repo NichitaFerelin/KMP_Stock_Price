@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.firebase.auth
+package com.ferelin.authentication.sources
 
 import android.app.Activity
+import com.ferelin.domain.sources.AuthenticationSource
+import com.ferelin.domain.sources.AuthenticationState
+import com.ferelin.shared.CoroutineContextProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -25,49 +28,43 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class FirebaseAuthenticatorImpl @Inject constructor(
-    private val mFirebaseAuth: FirebaseAuth
-) : FirebaseAuthenticator {
+class AuthenticationSourceImpl @Inject constructor(
+    private val mFirebaseAuth: FirebaseAuth,
+    private val mCoroutineContextProvider: CoroutineContextProvider
+) : AuthenticationSource {
 
     // User ID is used to complete verification
     private var mUserVerificationId: String? = null
 
     private var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
-    override val userToken: String?
-        get() = mFirebaseAuth.uid
-
-    override val isUserAuthenticated: Boolean
-        get() = mFirebaseAuth.currentUser != null
-
     override fun tryToLogIn(
         holderActivity: Activity,
         phone: String
-    ) = callbackFlow<AuthenticationResponse> {
+    ) = callbackFlow<AuthenticationState> {
 
         // Empty phone number causes exception
         if (phone.isEmpty()) {
-            trySend(AuthenticationResponse.EmptyPhone)
+            trySend(AuthenticationState.EmptyPhone)
             return@callbackFlow
         }
 
         mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 mUserVerificationId = p0
-                trySend(AuthenticationResponse.CodeSent)
+                trySend(AuthenticationState.CodeSent)
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     val response = if (task.isSuccessful) {
-                        AuthenticationResponse.Complete
+                        AuthenticationState.Complete
                     } else {
-                        AuthenticationResponse.Error
+                        AuthenticationState.Error
                     }
                     trySend(response)
                 }
@@ -75,9 +72,9 @@ class FirebaseAuthenticatorImpl @Inject constructor(
 
             override fun onVerificationFailed(p0: FirebaseException) {
                 val response = if (p0 is FirebaseTooManyRequestsException) {
-                    AuthenticationResponse.TooManyRequests
+                    AuthenticationState.TooManyRequests
                 } else {
-                    AuthenticationResponse.Error
+                    AuthenticationState.Error
                 }
                 trySend(response)
             }
@@ -95,14 +92,26 @@ class FirebaseAuthenticatorImpl @Inject constructor(
         awaitClose()
     }
 
-    override suspend fun completeAuthentication(code: String) {
-        mUserVerificationId?.let { userVerificationId ->
-            val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
-            mAuthCallbacks?.onVerificationCompleted(credential)
+    override suspend fun completeAuthentication(code: String): Unit =
+        withContext(mCoroutineContextProvider.IO) {
+            mUserVerificationId?.let { userVerificationId ->
+                val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
+                mAuthCallbacks?.onVerificationCompleted(credential)
+            }
         }
-    }
 
-    override suspend fun logOut() {
-        mFirebaseAuth.signOut()
-    }
+    override suspend fun logOut(): Unit =
+        withContext(mCoroutineContextProvider.IO) {
+            mFirebaseAuth.signOut()
+        }
+
+    override suspend fun isUserAuthenticated(): Boolean =
+        withContext(mCoroutineContextProvider.IO) {
+            mFirebaseAuth.currentUser != null
+        }
+
+    override suspend fun getUserToken(): String? =
+        withContext(mCoroutineContextProvider.IO) {
+            mFirebaseAuth.uid
+        }
 }
