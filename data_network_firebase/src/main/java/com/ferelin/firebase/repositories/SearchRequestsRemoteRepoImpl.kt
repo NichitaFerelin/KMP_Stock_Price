@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package com.ferelin.firebase.database.searchRequests
+package com.ferelin.firebase.repositories
 
+import com.ferelin.domain.repositories.searchRequests.SearchRequestsLoadState
+import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
+import com.ferelin.shared.CoroutineContextProvider
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SearchRequestsRefImpl @Inject constructor(
-    private val mFirebaseReference: DatabaseReference
-) : SearchRequestsRef {
+class SearchRequestsRemoteRepoImpl @Inject constructor(
+    private val mFirebaseReference: DatabaseReference,
+    private val mCoroutineContextProvider: CoroutineContextProvider
+) : SearchRequestsRemoteRepo {
 
     private companion object {
         const val sSearchesHistoryRef = "search-requests"
     }
 
-    override suspend fun cacheSearchRequest(userToken: String, searchRequest: String) {
+    override suspend fun cacheSearchRequest(
+        userToken: String,
+        searchRequest: String
+    ): Unit = withContext(mCoroutineContextProvider.IO) {
+
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
@@ -37,7 +44,11 @@ class SearchRequestsRefImpl @Inject constructor(
             .push()
     }
 
-    override suspend fun eraseSearchRequest(userToken: String, searchRequest: String) {
+    override suspend fun eraseSearchRequest(
+        userToken: String,
+        searchRequest: String
+    ): Unit = withContext(mCoroutineContextProvider.IO) {
+
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
@@ -45,13 +56,16 @@ class SearchRequestsRefImpl @Inject constructor(
             .removeValue()
     }
 
-    override suspend fun loadSearchRequests(userToken: String): List<String> {
+    override suspend fun loadSearchRequests(
+        userToken: String
+    ): SearchRequestsLoadState = withContext(mCoroutineContextProvider.IO) {
+
         val resultSnapshot = mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
             .get()
 
-        return if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
+        return@withContext if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
             val searchRequestsSnapshot = resultSnapshot.result!!
             val searchRequests = mutableListOf<String>()
 
@@ -60,9 +74,9 @@ class SearchRequestsRefImpl @Inject constructor(
                 searchRequests.add(request)
             }
 
-            searchRequests
+            SearchRequestsLoadState.Loaded(searchRequests)
         } else {
-            emptyList()
+            SearchRequestsLoadState.Error
         }
     }
 }

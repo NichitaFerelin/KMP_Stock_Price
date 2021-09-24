@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.stocksSection.stocksPager
+package com.ferelin.firebase.utils
 
-import com.ferelin.stockprice.base.BaseViewModel
+fun <T> List<T>.itemsNotIn(source: List<T>): List<T> {
+    val itemsNotIn = mutableListOf<T>()
 
-class StocksPagerViewModel : BaseViewModel() {
-
-    override fun initObserversBlock() {
-        // Do nothing.
+    this.forEach { item ->
+        if (!source.contains(item)) {
+            itemsNotIn.add(item)
+        }
     }
+
+    return itemsNotIn
 }
