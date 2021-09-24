@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.dependencies
+package com.ferelin.shared
 
-object Plugins {
-    const val androidApplication = "com.android.application"
-    const val androidLibrary = "com.android.library"
-    const val kotlinAndroid = "kotlin-android"
-    const val kotlinKapt = "kotlin-kapt"
-    const val googleServices = "com.google.gms.google-services"
+interface AuthenticationListener {
+
+    suspend fun onLogIn()
+
+    suspend fun onLogOut()
 }

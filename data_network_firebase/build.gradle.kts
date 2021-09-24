@@ -1,49 +1,34 @@
-plugins {
-    id("remote-module-build")
-    // TODO
-}
+import com.ferelin.Base
+import com.ferelin.Dependencies
+import com.ferelin.Plugins
+import com.ferelin.Projects
 
-/*
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
-    compileSdk = 31
+    compileSdk = Base.currentSDK
 
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
 dependencies {
+    implementation(project(Projects.domain))
+    implementation(project(Projects.shared))
 
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-}*/
+    implementation(Dependencies.kotlinLib)
+    implementation(Dependencies.kotlinCoroutines)
+
+    implementation(Dependencies.dagger)
+    kapt(Dependencies.daggerCompilerKapt)
+
+    implementation(platform(Dependencies.firebasePlatform))
+    implementation(Dependencies.firebaseAnalyticsKtx)
+    implementation(Dependencies.firebaseDatabaseKtx)
+}

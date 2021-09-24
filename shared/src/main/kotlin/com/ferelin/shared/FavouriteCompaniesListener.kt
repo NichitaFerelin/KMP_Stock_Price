@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter
+package com.ferelin.shared
 
-/**
- * Items in the bottom menu that can be installed in it.
- * */
-enum class MenuItemType {
-    LogIn,
-    LogOut,
-    Stocks,
-    Notes,
-    Chats,
-    Settings
+interface FavouriteCompaniesListener {
+
+    suspend fun onAddedToFavourites(companyId: Int, companyTicker: String)
+
+    suspend fun onRemovedFromFavourites(companyId: Int, companyTicker: String)
 }

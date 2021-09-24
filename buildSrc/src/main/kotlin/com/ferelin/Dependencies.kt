@@ -1,20 +1,4 @@
-/*
- * Copyright 2021 Leah Nichita
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.ferelin.dependencies
+package com.ferelin
 
 object Dependencies {
 
@@ -25,13 +9,6 @@ object Dependencies {
     const val kotlinLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinLib}"
     const val kotlinCoroutines =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinCoroutines}"
-
-    /**
-     * Classpath
-     * */
-    const val gradleTools = "com.android.tools.build:gradle:${Versions.gradleTools}"
-    const val gradleKotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinLib}"
-    const val googleServices = "com.google.gms:google-services:${Versions.googleServices}"
 
     /**
      * UI

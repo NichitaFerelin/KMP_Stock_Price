@@ -4,9 +4,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath(com.ferelin.dependencies.Dependencies.gradleTools)
-        classpath(com.ferelin.dependencies.Dependencies.gradleKotlinPlugin)
-        classpath(com.ferelin.dependencies.Dependencies.googleServices)
+        classpath(com.ferelin.BuildPlugins.gradleTools)
+        classpath(com.ferelin.BuildPlugins.kotlin)
+        classpath(com.ferelin.BuildPlugins.googleServices)
     }
 }
 allprojects {

@@ -1,5 +1,3 @@
-@file:Suppress("PropertyName", "PropertyName", "PropertyName")
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,19 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.utils
+package com.ferelin
 
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
-
-open class CoroutineContextProvider {
-
-    open val Main: CoroutineContext
-        get() = Dispatchers.Main
-
-    open val IO: CoroutineContext
-        get() = Dispatchers.IO
-
-    open val Default: CoroutineContext
-        get() = Dispatchers.Default
+object Projects {
+    const val mobile = ":mobile"
+    const val localSource = ":data_local"
+    const val networkApi = ":data_network_api"
+    const val firebase = ":data_network_firebase"
+    const val domain = ":domain"
+    const val shared = ":shared"
 }

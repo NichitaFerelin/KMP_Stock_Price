@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName", "PropertyName", "PropertyName")
+
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -14,8 +16,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.messagesSection.chats.adapter
+package com.ferelin.shared
 
-interface ChatClickListener {
-    fun onChatClicked(position: Int)
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
+
+open class CoroutineContextProvider {
+
+    open val Main: CoroutineContext
+        get() = Dispatchers.Main
+
+    open val IO: CoroutineContext
+        get() = Dispatchers.IO
+
+    open val Default: CoroutineContext
+        get() = Dispatchers.Default
 }

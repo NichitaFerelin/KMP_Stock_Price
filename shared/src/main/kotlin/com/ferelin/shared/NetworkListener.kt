@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.aboutSection.chart
+package com.ferelin.shared
 
-/**
- * [ChartViewMode] represents view-modes of chart that can be
- */
-enum class ChartViewMode {
-    All,
-    Year,
-    SixMonths,
-    Months,
-    Weeks,
-    Days
+interface NetworkListener {
+
+    suspend fun onNetworkAvailable()
+
+    suspend fun onNetworkLost()
 }
