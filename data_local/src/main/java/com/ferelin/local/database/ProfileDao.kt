@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.searchRequestsDb
+package com.ferelin.local.database
 
-import androidx.room.*
-import com.ferelin.local.models.SearchRequest
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.ferelin.local.entities.ProfileDBO
 
 @Dao
-interface SearchRequestsDao {
+interface ProfileDao {
+
+    @Query("SELECT 1 FROM `companies_profile` WHERE id = :companyId")
+    suspend fun getProfile(companyId: Int): ProfileDBO
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cacheSearchRequest(searchRequest: SearchRequest)
-
-    @Query("SELECT * FROM `stockprice.searchrequests.db`")
-    suspend fun getAllSearchRequests(): List<SearchRequest>
-
-    @Delete
-    suspend fun eraseSearchRequest(searchRequest: SearchRequest)
-
-    @Query("DELETE FROM `stockprice.searchrequests.db`")
-    fun clearSearchRequests()
+    suspend fun insertProfile(profileDBO: ProfileDBO)
 }

@@ -20,32 +20,21 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.ferelin.local.entities.StockPriceDBO
 
-/**
- * Represents methods for interacting with companies database
- * */
 @Dao
-interface CompaniesDao {
+interface StockPriceDao {
 
-    /**
-     * Caches updated/new company to database
-     *
-     * @param company is an updated/new company that must be cached
-     * */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cacheCompany(company: Company)
+    suspend fun insertStockPrice(dbo: StockPriceDBO)
 
-    /**
-     * Caches list of companies to database
-     *
-     * @param list is a list of companies that must be cached
-     * */
-    @Insert
-    suspend fun cacheAllCompanies(list: List<Company>)
+    @Query("SELECT 1 FROM `companies_stock_price` WHERE id = :companyId")
+    suspend fun getStockPrice(companyId: Int): StockPriceDBO?
 
-    /**
-     * @return cached companies from database
-     * */
-    @Query("SELECT * FROM `stockprice.companies.db`")
-    suspend fun getAllCompanies(): List<Company>
+    @Query(
+        "UPDATE `companies_stock_price` " +
+                "SET current_price = :price ,profit = :profit " +
+                "WHERE id = :companyId"
+    )
+    suspend fun updateStockPrice(companyId: Int, price: String, profit: String)
 }

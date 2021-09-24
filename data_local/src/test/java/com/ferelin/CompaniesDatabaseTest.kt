@@ -3,8 +3,8 @@ package com.ferelin
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.ferelin.local.database.CompaniesDao
-import com.ferelin.local.database.CompaniesDatabase
+import com.ferelin.local.database.CompanyDao
+import com.ferelin.local.database.AppDatabase
 import com.ferelin.provider.FakeLocalResponses
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
@@ -21,15 +21,15 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class CompaniesDatabaseTest {
 
-    private lateinit var mDatabase: CompaniesDatabase
-    private lateinit var mDatabaseDao: CompaniesDao
+    private lateinit var mDatabase: AppDatabase
+    private lateinit var mDatabaseDao: CompanyDao
 
     private val mTestDispatcher = TestCoroutineDispatcher()
 
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        mDatabase = Room.inMemoryDatabaseBuilder(context, CompaniesDatabase::class.java)
+        mDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .setTransactionExecutor(mTestDispatcher.asExecutor())
             .setQueryExecutor(mTestDispatcher.asExecutor())
             .allowMainThreadQueries()

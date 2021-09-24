@@ -14,23 +14,34 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.messagesDb
+package com.ferelin.local.utils
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.ferelin.local.models.Message
+object PopularRequestsSource {
 
-@Dao
-interface MessagesDao {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cacheMessage(message: Message)
-
-    @Query("SELECT * FROM `stockprice.messages.db` WHERE associatedUserNumber=:associatedUserNumber")
-    suspend fun getMessages(associatedUserNumber: String): List<Message>?
-
-    @Query("DELETE FROM `stockprice.messages.db`")
-    fun clearMessages()
+    /*
+    * Mocked data
+    * */
+    val popularSearchRequests: List<String> = listOf(
+        "Apple",
+        "Microsoft Corp",
+        "Amazon.com",
+        "Alphabet",
+        "JD.com",
+        "Tesla",
+        "Facebook",
+        "Telefonaktiebolaget",
+        "NVIDIA",
+        "Beigene",
+        "Intel",
+        "Netflix",
+        "Adobe",
+        "Cisco",
+        "Yandex",
+        "Zoom",
+        "Starbucks",
+        "Charter",
+        "Sanofi",
+        "Amgen",
+        "Pepsi"
+    )
 }

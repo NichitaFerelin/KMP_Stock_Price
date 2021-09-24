@@ -14,19 +14,34 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.models
+package com.ferelin.local.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ferelin.local.databases.messagesDb.MessagesDatabase
-import com.ferelin.shared.MessageSide
 
-@Entity(tableName = MessagesDatabase.DB_NAME)
-class Message(
+@Entity(tableName = "companies")
+data class CompanyDBO(
     @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
     val id: Int,
-    // Second side user of message
-    val associatedUserNumber: String,
-    val text: String,
-    val side: MessageSide
-)
+
+    @ColumnInfo(name = "name")
+    val name: String,
+
+    @ColumnInfo(name = "ticker")
+    val ticker: String,
+
+    @ColumnInfo(name = "logo_url")
+    val logoUrl: String,
+
+    @ColumnInfo(name = "is_favourite")
+    var isFavourite: Boolean = false,
+
+    @ColumnInfo(name = "added_by_index")
+    var addedByIndex: Int = 0
+) {
+    companion object {
+        const val ID_COLUMN = "company_id"
+    }
+}

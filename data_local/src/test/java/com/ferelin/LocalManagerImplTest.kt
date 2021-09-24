@@ -1,9 +1,8 @@
 package com.ferelin
 
-import com.ferelin.local.LocalInteractor
 import com.ferelin.local.LocalManagerImpl
-import com.ferelin.local.jsonReader.AppJsonReader
-import com.ferelin.local.jsonReader.AppJsonReaderImpl
+import com.ferelin.local.jsonParser.CompaniesParser
+import com.ferelin.local.jsonParser.CompaniesParserImpl
 import com.ferelin.local.dataStorage.DataStorage
 import com.ferelin.local.dataStorage.DataStorageImpl
 import com.ferelin.local.responses.CompaniesResponse
@@ -21,7 +20,7 @@ class LocalManagerImplTest {
     private lateinit var mLocalManager: LocalInteractor
 
     @Spy
-    private lateinit var mJsonReader: AppJsonReader
+    private lateinit var mJsonReader: CompaniesParser
 
     @Spy
     private lateinit var mCompaniesManager: CompaniesManager
@@ -31,7 +30,7 @@ class LocalManagerImplTest {
 
     @Before
     fun setUp() {
-        mJsonReader = mock(AppJsonReaderImpl::class.java)
+        mJsonReader = mock(CompaniesParserImpl::class.java)
         mCompaniesManager = mock(CompaniesManagerImpl::class.java)
         mDataStorage = mock(DataStorageImpl::class.java)
         mLocalManager = LocalManagerImpl(mJsonReader, mCompaniesManager, mDataStorage)

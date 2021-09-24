@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.messagesDb
+package com.ferelin.local.utils
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.ferelin.local.databases.DbTypesConverter
-import com.ferelin.local.models.Message
-
-@Database(entities = [Message::class], version = 1)
-@TypeConverters(DbTypesConverter::class)
-abstract class MessagesDatabase : RoomDatabase() {
-
-    abstract fun messagedDao(): MessagesDao
-
-    companion object {
-        const val DB_NAME = "stockprice.messages.db"
-    }
-}
+data class CompanyPojo(
+    val name: String,
+    val symbol: String,
+    val logo: String,
+    val country: String,
+    val phone: String,
+    val weburl: String,
+    val finnhubIndustry: String,
+    val currency: String,
+    val marketCapitalization: String
+)

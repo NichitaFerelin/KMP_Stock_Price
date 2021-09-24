@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.databases.chatsDb
+package com.ferelin.local.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.ferelin.local.models.Chat
+import com.ferelin.local.entities.NewsDBO
 
 @Dao
-interface ChatsDao {
+interface NewsDao {
+
+    @Query("SELECT * FROM `companies_news` WHERE relation_id = :companyId")
+    suspend fun getAllNews(companyId: Int): List<NewsDBO>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun cacheChat(chat: Chat)
-
-    @Query("SELECT * FROM `stockprice.chats.db`")
-    suspend fun getAllChats(): List<Chat>?
-
-    @Query("DELETE FROM `stockprice.chats.db`")
-    fun clearChats()
+    suspend fun insertNews(newsDBO: NewsDBO)
 }

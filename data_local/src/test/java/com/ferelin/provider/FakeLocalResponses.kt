@@ -1,6 +1,6 @@
 package com.ferelin.provider
 
-import com.ferelin.local.database.Company
+import com.ferelin.local.entities.ProfileDBO
 import com.ferelin.local.responses.CompaniesResponse
 import com.ferelin.local.responses.Responses
 
@@ -9,10 +9,10 @@ import com.ferelin.local.responses.Responses
 * */
 object FakeLocalResponses {
 
-    val company = Company(
+    val company = ProfileDBO(
         id = 1,
         name = "Apple",
-        symbol = "AAPL",
+        ticker = "AAPL",
         logoUrl = "https://finnhub.io/api/logo?symbol=AAPL",
         country = "US",
         phone = "14089961010",
@@ -25,10 +25,10 @@ object FakeLocalResponses {
     val companiesResponseSuccessFromJson = CompaniesResponse.Success(
         code = Responses.LOADED_FROM_JSON,
         companies = listOf(
-            Company(
+            ProfileDBO(
                 id = 1,
                 name = "Apple",
-                symbol = "AAPL",
+                ticker = "AAPL",
                 logoUrl = "https://finnhub.io/api/logo?symbol=AAPL",
                 country = "US",
                 phone = "14089961010",
@@ -42,12 +42,12 @@ object FakeLocalResponses {
     val companiesResponseSuccessFromDatabase = CompaniesResponse.Success(
         code = Responses.LOADED_FROM_DB,
         companies = listOf(
-            Company(
+            ProfileDBO(
                 id = 1,
 
                 name = "Microsoft Corp",
 
-                symbol = "MSFT",
+                ticker = "MSFT",
                 logoUrl = "https://finnhub.io/api/logo?symbol=MSFT",
                 country = "US",
                 phone = "14258828080",
