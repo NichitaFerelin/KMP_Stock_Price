@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.authentication.di
 
-import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.dataInteractor.workers.messages.MessagesWorker
+import com.google.firebase.auth.FirebaseAuth
+import dagger.Module
+import dagger.Provides
 
-/**
- * Methods for interacting with messages via [DataInteractor].
- * @see [MessagesWorker] to get info about how methods works
- * */
-interface MessagesHelper {
+@Module
+class AuthenticationModule {
 
-    fun invalidatePreparedMessages()
-
-    fun loadMessagesFor(associatedUserNumber: String)
-
-    suspend fun sendMessageTo(associatedUserNumber: String, messageText: String)
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth
+            .getInstance()
+            .apply { useAppLanguage() }
+    }
 }

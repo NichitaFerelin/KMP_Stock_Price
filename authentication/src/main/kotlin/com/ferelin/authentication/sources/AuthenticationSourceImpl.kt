@@ -31,7 +31,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthenticationSourceImpl @Inject constructor(
     private val mFirebaseAuth: FirebaseAuth,
     private val mCoroutineContextProvider: CoroutineContextProvider
