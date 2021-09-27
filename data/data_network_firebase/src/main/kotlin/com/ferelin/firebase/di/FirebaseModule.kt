@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.workers.companies
+package com.ferelin.firebase.di
 
-import com.ferelin.stockprice.dataInteractor.workers.companies.defaults.CompaniesWorkerStates
-import com.ferelin.stockprice.dataInteractor.workers.companies.favourites.FavouriteCompaniesWorkerStates
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
-interface CompaniesMediatorStates : CompaniesWorkerStates, FavouriteCompaniesWorkerStates
+@Module
+class FirebaseModule {
+
+    @Provides
+    @Singleton
+    fun provideFirebaseReference() : DatabaseReference {
+        return FirebaseDatabase.getInstance().reference
+    }
+}
