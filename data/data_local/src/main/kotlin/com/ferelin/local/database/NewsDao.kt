@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.utils.bottomDrawer
+package com.ferelin.local.database
 
-import android.view.View
-import androidx.annotation.FloatRange
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.ferelin.local.entities.NewsDBO
 
-/**
- * [OnSlideAction] provides method to control bottom sheet view
- * */
-interface OnSlideAction {
-    fun onSlide(
-        sheet: View,
-        @FloatRange(
-            from = -1.0,
-            fromInclusive = true,
-            to = 1.0,
-            toInclusive = true
-        ) slideOffset: Float
-    )
+@Dao
+interface NewsDao {
+
+    @Query("SELECT * FROM `companies_news` WHERE relation_id = :companyId")
+    suspend fun getAllNews(companyId: Int): List<NewsDBO>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNews(newsDBO: NewsDBO)
 }

@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.utils.anim
+package com.ferelin.local.utils
 
-import android.animation.Animator
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
-abstract class AnimatorManager : Animator.AnimatorListener {
-    override fun onAnimationStart(animation: Animator?) {
-    }
+@Singleton
+class PreferencesProvider @Inject constructor(
+    @Named("PreferencesName") preferencesName: String
+) {
+    private val Context.dataStore by preferencesDataStore(preferencesName)
 
-    override fun onAnimationEnd(animation: Animator?) {
-    }
-
-    override fun onAnimationCancel(animation: Animator?) {
-    }
-
-    override fun onAnimationRepeat(animation: Animator?) {
+    fun get(context: Context): DataStore<Preferences> {
+        return context.dataStore
     }
 }

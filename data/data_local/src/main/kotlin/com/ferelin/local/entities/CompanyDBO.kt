@@ -14,24 +14,34 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.bottomDrawerSection.utils.adapter
+package com.ferelin.local.entities
 
-/**
- * [MenuItem] represents a model for adapter which is set to bottom menu
- */
-data class MenuItem(
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "companies")
+data class CompanyDBO(
+    @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
     val id: Int,
-    val type: MenuItemType,
-    val iconResource: Int,
-    val title: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is MenuItem) {
-            return other.id == id
-        } else false
-    }
 
-    override fun hashCode(): Int {
-        return 31 * id.hashCode()
+    @ColumnInfo(name = "name")
+    val name: String,
+
+    @ColumnInfo(name = "ticker")
+    val ticker: String,
+
+    @ColumnInfo(name = "logo_url")
+    val logoUrl: String,
+
+    @ColumnInfo(name = "is_favourite")
+    var isFavourite: Boolean = false,
+
+    @ColumnInfo(name = "added_by_index")
+    var addedByIndex: Int = 0
+) {
+    companion object {
+        const val ID_COLUMN = "company_id"
     }
 }

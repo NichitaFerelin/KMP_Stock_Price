@@ -14,16 +14,34 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.local.utils
 
-import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.dataInteractor.workers.chats.ChatsWorker
+object PopularRequestsSource {
 
-/**
- * Methods for interacting with chats via [DataInteractor].
- * @see [ChatsWorker] to get info about how methods works
- * */
-interface ChatsHelper {
-
-    fun createNewChat(associatedUserNumber: String)
+    /*
+    * Mocked data
+    * */
+    val popularSearchRequests: List<String> = listOf(
+        "Apple",
+        "Microsoft Corp",
+        "Amazon.com",
+        "Alphabet",
+        "JD.com",
+        "Tesla",
+        "Facebook",
+        "Telefonaktiebolaget",
+        "NVIDIA",
+        "Beigene",
+        "Intel",
+        "Netflix",
+        "Adobe",
+        "Cisco",
+        "Yandex",
+        "Zoom",
+        "Starbucks",
+        "Charter",
+        "Sanofi",
+        "Amgen",
+        "Pepsi"
+    )
 }
