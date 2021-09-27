@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.aboutSection.ideas
+package com.ferelin.remote.mappers
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.ferelin.stockprice.databinding.FragmentIdeasBinding
+import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.remote.entities.LivePricePojo
+import com.ferelin.remote.utils.buildProfitString
+import com.ferelin.shared.toStrPrice
+import javax.inject.Inject
 
-class IdeasFragment : Fragment() {
+class LivePriceMapper @Inject constructor() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return FragmentIdeasBinding.inflate(inflater, container, false).root
+    fun map(pojo: LivePricePojo?): LiveTimePrice? {
+        return pojo?.let {
+            LiveTimePrice(
+                companyTicker = pojo.companyTicker,
+                price = pojo.lastPrice.toStrPrice(),
+                profit = buildProfitString(pojo.lastPrice, /*TODO*/0.0)
+            )
+        }
     }
 }

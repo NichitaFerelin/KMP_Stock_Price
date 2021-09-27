@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.stocksSection.search.itemDecoration
+package com.ferelin.remote.entities
 
-import android.content.Context
+import com.squareup.moshi.Json
 
-class SearchItemDecorationLandscape(context: Context) : SearchItemDecoration(context) {
-    override val twoColumns: Boolean = false
-}
+data class LivePricePojo(
+    @Json(name = "s") val companyTicker: String,
+    @Json(name = "p") val lastPrice: Double,
+    @Json(name = "v") val volume: Double
+)

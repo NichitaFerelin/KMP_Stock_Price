@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.dataInteractor.interactorHelpers
+package com.ferelin.remote.utils
 
-import com.ferelin.stockprice.dataInteractor.DataInteractor
-import com.ferelin.stockprice.dataInteractor.workers.searchRequests.SearchRequestsWorker
+import java.text.SimpleDateFormat
+import java.util.*
 
-/**
- * Methods for interacting with search requests via [DataInteractor].
- * @see [SearchRequestsWorker] to get info about how methods works
- * */
-interface SearchRequestsHelper {
+/*
+    * API used not basic millis-time
+    * Example:
+    *   Before from response: 12345678
+    *   After:  12345678000
+    * */
+fun Long.toBasicMillisTime(): Long {
+    val timeStr = this.toString()
+    val resultStr = "${timeStr}000"
+    return resultStr.toLong()
+}
 
-    suspend fun cacheSearchRequest(searchText: String)
+fun Long.toDateStr(): String {
+    val datePattern = "dd MMM yyyy"
+    val dateFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
+    return dateFormat.format(Date(this)).filter { it != ',' }
 }
