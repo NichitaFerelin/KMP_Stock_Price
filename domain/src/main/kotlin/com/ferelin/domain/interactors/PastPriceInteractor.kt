@@ -31,7 +31,6 @@ sealed class PastPriceState {
     object Error : PastPriceState()
 }
 
-@Singleton
 class PastPriceInteractor @Inject constructor(
     private val mPastPriceRepo: PastPriceRepo,
     private val mPastPriceSource: PastPriceSource,

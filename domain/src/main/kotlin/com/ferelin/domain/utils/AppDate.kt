@@ -1,6 +1,5 @@
 package com.ferelin.domain.utils
 
-import com.ferelin.repository.utils.Time
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,7 +23,7 @@ object AppDate {
     fun getYearAgoDateForRequest(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
         val currentTimeMillis = System.currentTimeMillis()
-        val yearAgoTimeMillis = currentTimeMillis - Time.ONE_YEAR
+        val yearAgoTimeMillis = currentTimeMillis - ONE_YEAR
         val yearAgoDate = Date(yearAgoTimeMillis)
         return dateFormat.format(yearAgoDate)
     }

@@ -19,9 +19,11 @@ package com.ferelin.domain.entities
 data class PastPrice(
     val id: Long = 0L,
     val relationId: Int = 0,
-    val openPrice: String,
+    val openPrice: Double,
+    val openPriceStr: String,
     val highPrice: String,
     val lowPrice: String,
-    val closePrice: String,
+    val closePrice: Double,
+    val closePriceStr: String,
     val date: String
 )

@@ -24,7 +24,6 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Singleton
 class FirstLaunchInteractor @Inject constructor(
     private val mFirstLaunchRepo: FirstLaunchRepo,
     private val mCoroutineContextProvider: CoroutineContextProvider,

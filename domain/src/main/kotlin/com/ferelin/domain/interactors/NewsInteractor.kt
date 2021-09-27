@@ -31,7 +31,6 @@ sealed class NewsState {
     object Error : NewsState()
 }
 
-@Singleton
 class NewsInteractor @Inject constructor(
     private val mNewsRepo: NewsRepo,
     private val mNewsSource: NewsSource,

@@ -17,7 +17,7 @@
 package com.ferelin.local.di
 
 import com.ferelin.domain.repositories.*
-import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
+import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.sources.CompaniesSource
 import com.ferelin.local.reposirotires.*
@@ -29,7 +29,7 @@ import dagger.Module
 interface DataLocalModuleBinds {
 
     @Binds
-    fun provideCompaniesRepo(companiesRepoImpl: CompaniesRepoImpl): CompaniesRemoteRepo
+    fun provideCompaniesRepo(companiesRepoImpl: CompaniesRepoImpl): CompaniesLocalRepo
 
     @Binds
     fun provideFirstLaunchRepo(firstLaunchRepoImpl: FirstLaunchRepoImpl): FirstLaunchRepo

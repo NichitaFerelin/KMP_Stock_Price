@@ -26,14 +26,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
 sealed class StockPriceState {
     class Loaded(val stockPrice: StockPrice) : StockPriceState()
     object Error : StockPriceState()
 }
 
-@Singleton
 class StockPriceInteractor @Inject constructor(
     private val mStockPriceRepo: StockPriceRepo,
     private val mStockPriceSource: StockPriceSource,

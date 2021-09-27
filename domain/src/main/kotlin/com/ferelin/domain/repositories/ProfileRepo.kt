@@ -16,10 +16,7 @@
 
 package com.ferelin.domain.repositories
 
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import com.ferelin.domain.entities.Profile
-import com.ferelin.local.entities.ProfileDBO
 
 interface ProfileRepo {
 

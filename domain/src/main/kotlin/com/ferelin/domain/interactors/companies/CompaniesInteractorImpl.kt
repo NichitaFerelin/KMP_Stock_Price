@@ -71,6 +71,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         return mCompaniesLocalRepo.getAll()
             .ifEmpty {
+                // TODO try/catch
                 val fromJson = mCompaniesSource.getCompaniesWithProfileFromJson()
                 val companies = fromJson.first
 

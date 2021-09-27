@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.interactors.authentication
+package com.ferelin.domain.interactors
 
 import android.app.Activity
-import com.ferelin.domain.internals.AuthenticationInternal
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.AuthenticationState
 import com.ferelin.shared.AuthenticationListener
@@ -28,30 +27,27 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
-@Singleton
-class AuthenticationInteractorImpl @Inject constructor(
+class AuthenticationInteractor @Inject constructor(
     private val mAuthenticationSource: AuthenticationSource,
     private val mAuthenticationListeners: List<AuthenticationListener>,
     private val mCoroutineContextProvider: CoroutineContextProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
-) : AuthenticationInteractor, AuthenticationInternal {
-
-    override fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState> {
+) {
+    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState> {
         return mAuthenticationSource.tryToLogIn(holderActivity, phone)
             .onEach { notifyIfCompleted(it) }
     }
 
-    override suspend fun isUserAuthenticated(): Boolean {
+    suspend fun isUserAuthenticated(): Boolean {
         return mAuthenticationSource.isUserAuthenticated()
     }
 
-    override suspend fun completeAuthentication(code: String) {
+    suspend fun completeAuthentication(code: String) {
         mAuthenticationSource.completeAuthentication(code)
     }
 
-    override suspend fun logOut() {
+    suspend fun logOut() {
         mExternalScope.launch(mCoroutineContextProvider.IO) {
             mAuthenticationSource.logOut()
 
@@ -61,7 +57,7 @@ class AuthenticationInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserToken(): String? {
+    suspend fun getUserToken(): String? {
         return mAuthenticationSource.getUserToken()
     }
 

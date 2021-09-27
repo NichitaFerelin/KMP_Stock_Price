@@ -19,11 +19,9 @@ package com.ferelin.domain.interactors
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.repositories.ProfileRepo
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class ProfileInteractor @Inject constructor(
-    private val mProfileRepo: ProfileRepo,
+    private val mProfileRepo: ProfileRepo
 ) {
     suspend fun getProfile(companyId: Int): Profile {
         return mProfileRepo.getProfile(companyId)
