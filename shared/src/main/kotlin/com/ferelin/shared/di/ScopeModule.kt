@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.di.modules
+package com.ferelin.shared.di
 
-import com.ferelin.stockprice.utils.CoroutineContextProvider
+import com.ferelin.shared.CoroutineContextProvider
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Named
 import javax.inject.Singleton
 
-/**
- * [CoroutineModule] contains providers for coroutines
- * */
 @Module
-class CoroutineModule {
+class ScopeModule {
 
     @Provides
     @Singleton
-    fun provideCoroutineContext(): CoroutineContextProvider {
-        return CoroutineContextProvider()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAppScope(coroutineContextProvider: CoroutineContextProvider): CoroutineScope {
+    @Named("ExternalScope")
+    fun provideExternalScope(coroutineContextProvider: CoroutineContextProvider): CoroutineScope {
         return CoroutineScope(SupervisorJob() + coroutineContextProvider.IO)
     }
 }

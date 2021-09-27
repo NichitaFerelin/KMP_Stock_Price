@@ -19,9 +19,10 @@
 package com.ferelin.shared
 
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-open class CoroutineContextProvider {
+open class CoroutineContextProvider @Inject constructor() {
 
     open val Main: CoroutineContext
         get() = Dispatchers.Main

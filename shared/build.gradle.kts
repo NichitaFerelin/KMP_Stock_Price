@@ -1,10 +1,10 @@
 import com.ferelin.Base
 import com.ferelin.Dependencies
-import com.ferelin.Plugins
 
 plugins {
     id("com.android.library")
     id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -18,4 +18,7 @@ android {
 dependencies {
     implementation(Dependencies.kotlinLib)
     implementation(Dependencies.kotlinCoroutines)
+
+    api(Dependencies.dagger)
+    kapt(Dependencies.daggerCompilerKapt)
 }
