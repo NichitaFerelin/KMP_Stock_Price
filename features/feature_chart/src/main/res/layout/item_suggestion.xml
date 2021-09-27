@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/suggestionLayoutWidth"
+    android:layout_height="@dimen/suggestionLayoutHeight"
+    android:alpha="0.0"
+    android:background="@color/whiteTransparent"
+    tools:alpha="1">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewSuggestion"
+        android:layout_width="@dimen/suggestionWidth"
+        android:layout_height="@dimen/suggestionHeight"
+        android:layout_marginTop="6dp"
+        app:cardBackgroundColor="@color/black"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewPlug"
+        android:layout_width="5dp"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/viewArrow"
+        app:layout_constraintEnd_toEndOf="@id/viewArrow"
+        app:layout_constraintStart_toStartOf="@id/viewArrow"
+        app:layout_constraintTop_toBottomOf="@id/cardViewSuggestion" />
+
+    <View
+        android:id="@+id/viewArrow"
+        android:layout_width="13dp"
+        android:layout_height="6dp"
+        android:background="@drawable/ic_triangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardViewSuggestion" />
+
+    <TextView
+        android:id="@+id/textViewPrice"
+        style="@style/textViewBodyConstrainedWidth"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="12dp"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/cardViewSuggestion"
+        app:layout_constraintStart_toStartOf="@id/cardViewSuggestion"
+        app:layout_constraintTop_toTopOf="@id/cardViewSuggestion"
+        tools:text="$124.53" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        style="@style/textViewBodyConstrainedWidth"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="8dp"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:textColor="@color/grey"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/cardViewSuggestion"
+        app:layout_constraintStart_toStartOf="@id/cardViewSuggestion"
+        app:layout_constraintTop_toBottomOf="@id/textViewPrice"
+        tools:text="3 nov 2020" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,7 @@ package com.ferelin.domain.di
 
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
+import com.ferelin.domain.interactors.livePrice.LiveTimePriceInteractor
 import com.ferelin.domain.interactors.livePrice.LiveTimePriceInteractorImpl
 import com.ferelin.domain.internals.LiveTimePriceInternal
 import dagger.Binds
@@ -35,4 +36,9 @@ interface DomainBindsModule {
     fun provideLiveTimePriceInternal(
         liveTimePriceInteractorImpl: LiveTimePriceInteractorImpl
     ): LiveTimePriceInternal
+
+    @Binds
+    fun provideLiveTimePriceInteractor(
+        liveTimePriceInteractorImpl: LiveTimePriceInteractorImpl
+    ) : LiveTimePriceInteractor
 }

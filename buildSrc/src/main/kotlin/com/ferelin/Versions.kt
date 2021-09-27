@@ -22,6 +22,11 @@ object Versions {
     const val compose = "1.0.2"
     const val glide = "4.12.0"
 
+    /*
+    * Navigation
+    * */
+    const val navigation = "2.3.5"
+
     /**
      * Network
      * */
