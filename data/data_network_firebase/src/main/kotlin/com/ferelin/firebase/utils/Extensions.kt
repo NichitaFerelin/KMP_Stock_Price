@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.ui.previewSection.loading
+package com.ferelin.firebase.utils
 
-import android.content.Context
-import com.ferelin.stockprice.base.BaseViewAnimator
+fun <T> List<T>.itemsNotIn(source: List<T>): List<T> {
+    val itemsNotIn = mutableListOf<T>()
 
-class LoadingViewAnimator : BaseViewAnimator() {
-
-    override fun loadAnimations(context: Context) {
-        // Do nothing
+    this.forEach { item ->
+        if (!source.contains(item)) {
+            itemsNotIn.add(item)
+        }
     }
-    override fun invalidateAnimations() {
-        // Do nothing
-    }
+
+    return itemsNotIn
 }
