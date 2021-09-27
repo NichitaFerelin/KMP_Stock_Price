@@ -30,8 +30,8 @@ import javax.inject.Named
 
 class AuthenticationInteractor @Inject constructor(
     private val mAuthenticationSource: AuthenticationSource,
-    private val mAuthenticationListeners: List<AuthenticationListener>,
     private val mCoroutineContextProvider: CoroutineContextProvider,
+    @Named("AuthDeps") private val mAuthenticationListeners: List<AuthenticationListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState> {

@@ -7,6 +7,7 @@ buildscript {
         classpath(com.ferelin.BuildPlugins.gradleTools)
         classpath(com.ferelin.BuildPlugins.kotlin)
         classpath(com.ferelin.BuildPlugins.googleServices)
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
     }
 }
 allprojects {

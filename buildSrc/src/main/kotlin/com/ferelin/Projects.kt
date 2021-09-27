@@ -17,10 +17,29 @@
 package com.ferelin
 
 object Projects {
-    const val mobile = ":mobile"
-    const val localSource = ":data_local"
-    const val networkApi = ":data_network_api"
-    const val firebase = ":data_network_firebase"
+    const val app = ":app"
+    const val core = ":core"
     const val domain = ":domain"
     const val shared = ":shared"
+    const val auth = ":authentication"
+
+    const val dataLocal = ":data:data_local"
+    const val dataNetworkApi = ":data:data_network_api"
+    const val dataFirebase = ":data:data_network_firebase"
+
+    const val featureChart = ":features:feature_chart"
+    const val featureForecasts = ":features:feature_forecasts"
+    const val featureIdeas = ":features:feature_ideas"
+    const val featureLoading = ":features:feature_loading"
+    const val featureLogin = ":features:feature_login"
+    const val featureNews = ":features:feature_news"
+    const val featureProfile = ":features:feature_profile"
+    const val featureSearch = ":features:feature_search"
+    const val featureWelcome = ":features:feature_welcome"
+
+    const val featureSectionAbout = ":features:feature_section_about"
+    const val featureSectionStocks = ":features:feature_section_stocks"
+
+    const val featureStocksDefault = ":features:feature_stocks_default"
+    const val featureStocksFavourite = ":features:feature_stocks_favourite"
 }
