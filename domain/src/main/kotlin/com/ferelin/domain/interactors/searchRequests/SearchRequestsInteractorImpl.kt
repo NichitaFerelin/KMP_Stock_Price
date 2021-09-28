@@ -21,7 +21,7 @@ import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +45,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     private val mSearchRequestsRemoteRepo: SearchRequestsRemoteRepo,
     private val mSearchRequestsSyncer: SearchRequestsSyncer,
     private val mAuthenticationSource: AuthenticationSource,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
@@ -84,7 +84,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     override suspend fun cacheSearchRequest(searchRequest: String) {
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
 
             mSearchRequestsState.value.let { requestsState ->
                 if (requestsState is SearchRequestsState.Prepared) {
@@ -112,7 +112,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     private suspend fun reduceRequestsToLimit(requests: MutableList<String>) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
 
             while (requests.size > sCachedRequestsLimit) {
                 val removedRequest = requests.removeLast()
@@ -124,7 +124,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     private suspend fun removeDuplicates(
         sourceRequests: List<String>,
         newSearchRequest: String
-    ): MutableList<String> = withContext(mCoroutineContextProvider.IO) {
+    ): MutableList<String> = withContext(mDispatchersProvider.IO) {
 
         val noDuplicatesRequests = sourceRequests.toMutableList()
         val newRequestLower = newSearchRequest.lowercase()
@@ -151,7 +151,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     override suspend fun onLogOut() {
         mSearchRequestsState.value = SearchRequestsState.Prepared(emptyList())
 
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             mSearchRequestsLocalRepo.clearSearchRequests()
         }
     }

@@ -21,7 +21,7 @@ import com.ferelin.domain.sources.PastPriceSource
 import com.ferelin.remote.entities.PastPricesApi
 import com.ferelin.remote.mappers.PastPriceMapper
 import com.ferelin.remote.utils.withExceptionHandle
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
@@ -29,7 +29,7 @@ import javax.inject.Named
 class PastPriceSourceImpl @Inject constructor(
     private val mPastPricesApi: PastPricesApi,
     private val mPastPriceMapper: PastPriceMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("FinnhubToken") private val mApiToken: String
 ) : PastPriceSource {
 
@@ -38,7 +38,7 @@ class PastPriceSourceImpl @Inject constructor(
         from: Long,
         to: Long,
         resolution: String
-    ): PastPriceState = withContext(mCoroutineContextProvider.IO) {
+    ): PastPriceState = withContext(mDispatchersProvider.IO) {
         withExceptionHandle(
             request = {
                 mPastPricesApi

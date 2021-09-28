@@ -20,7 +20,7 @@ import android.app.Activity
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.AuthenticationState
 import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -30,7 +30,7 @@ import javax.inject.Named
 
 class AuthenticationInteractor @Inject constructor(
     private val mAuthenticationSource: AuthenticationSource,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("AuthDeps") private val mAuthenticationListeners: List<AuthenticationListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
@@ -48,7 +48,7 @@ class AuthenticationInteractor @Inject constructor(
     }
 
     suspend fun logOut() {
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             mAuthenticationSource.logOut()
 
             mAuthenticationListeners.forEach {
@@ -63,7 +63,7 @@ class AuthenticationInteractor @Inject constructor(
 
     private fun notifyIfCompleted(authenticationState: AuthenticationState) {
         if (authenticationState == AuthenticationState.Complete) {
-            mExternalScope.launch(mCoroutineContextProvider.IO) {
+            mExternalScope.launch(mDispatchersProvider.IO) {
                 mAuthenticationListeners.forEach {
                     it.onLogIn()
                 }

@@ -19,7 +19,7 @@ package com.ferelin.domain.interactors
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.sources.StockPriceSource
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -35,7 +35,7 @@ sealed class StockPriceState {
 class StockPriceInteractor @Inject constructor(
     private val mStockPriceRepo: StockPriceRepo,
     private val mStockPriceSource: StockPriceSource,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     fun observeActualStockPriceResponses(): Flow<StockPriceState> {
@@ -57,7 +57,7 @@ class StockPriceInteractor @Inject constructor(
 
     private fun cacheIfLoaded(responseState: StockPriceState) {
         if (responseState is StockPriceState.Loaded) {
-            mExternalScope.launch(mCoroutineContextProvider.IO) {
+            mExternalScope.launch(mDispatchersProvider.IO) {
                 mStockPriceRepo.cacheStockPrice(responseState.stockPrice)
             }
         }

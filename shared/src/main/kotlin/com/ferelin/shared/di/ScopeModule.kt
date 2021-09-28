@@ -16,7 +16,7 @@
 
 package com.ferelin.shared.di
 
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +30,7 @@ class ScopeModule {
     @Provides
     @Singleton
     @Named("ExternalScope")
-    fun provideExternalScope(coroutineContextProvider: CoroutineContextProvider): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + coroutineContextProvider.IO)
+    fun provideExternalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + dispatchersProvider.IO)
     }
 }

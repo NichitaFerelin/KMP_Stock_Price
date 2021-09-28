@@ -20,7 +20,7 @@ import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.domain.internals.LiveTimePriceInternal
 import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.sources.LivePriceSource
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -35,7 +35,7 @@ import javax.inject.Singleton
 class LiveTimePriceInteractorImpl @Inject constructor(
     private val mLivePriceSource: LivePriceSource,
     private val mStockPriceRepo: StockPriceRepo,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : LiveTimePriceInteractor, LiveTimePriceInternal {
 
@@ -57,7 +57,7 @@ class LiveTimePriceInteractorImpl @Inject constructor(
     }
 
     private fun cacheContainerChanges() {
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             for ((companyId, liveTimePrice) in mChangedPricesContainer) {
                 mStockPriceRepo.updateStockPrice(
                     companyId = companyId,

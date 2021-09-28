@@ -26,7 +26,7 @@ import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.CompaniesSource
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.domain.utils.NULL_INDEX
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -52,7 +52,7 @@ class CompaniesInteractorImpl @Inject constructor(
     private val mProfileRepo: ProfileRepo,
     private val mAuthenticationSource: AuthenticationSource,
     private val mLiveTimePriceInternal: LiveTimePriceInternal,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
 
@@ -74,7 +74,7 @@ class CompaniesInteractorImpl @Inject constructor(
                 val fromJson = mCompaniesSource.getCompaniesWithProfileFromJson()
                 val companies = fromJson.first
 
-                mExternalScope.launch(mCoroutineContextProvider.IO) {
+                mExternalScope.launch(mDispatchersProvider.IO) {
                     mCompaniesLocalRepo.cache(companies)
                     mProfileRepo.cacheProfiles(fromJson.second)
                 }
@@ -125,7 +125,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         mLiveTimePriceInternal.subscribeCompanyOnUpdates(company.ticker)
 
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             launch {
                 mCompaniesLocalRepo.updateIsFavourite(
                     companyId = company.id,
@@ -153,7 +153,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         mLiveTimePriceInternal.unsubscribeCompanyFromUpdates(company.ticker)
 
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             launch {
                 mCompaniesLocalRepo.updateIsFavourite(
                     companyId = company.id,
@@ -192,7 +192,7 @@ class CompaniesInteractorImpl @Inject constructor(
     override suspend fun onLogOut() {
         mFavouriteCompaniesState = CompaniesState.Prepared(emptyList())
 
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             mCompaniesLocalRepo.setToDefault()
         }
     }

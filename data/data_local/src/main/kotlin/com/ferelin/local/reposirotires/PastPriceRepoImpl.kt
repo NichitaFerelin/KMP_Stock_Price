@@ -20,32 +20,32 @@ import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.repositories.PastPriceRepo
 import com.ferelin.local.database.PastPriceDao
 import com.ferelin.local.mappers.PastPriceMapper
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PastPriceRepoImpl @Inject constructor(
     private val mPastPriceDao: PastPriceDao,
     private val mPastPriceMapper: PastPriceMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : PastPriceRepo {
 
     override suspend fun getAllPastPrices(companyId: Int): List<PastPrice> =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mPastPriceDao
                 .getAllPastPrices(companyId)
                 .map(mPastPriceMapper::map)
         }
 
     override suspend fun cacheAllPastPrices(list: List<PastPrice>) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mPastPriceDao.insertAllPastPrices(
                 list = list.map(mPastPriceMapper::map)
             )
         }
 
     override suspend fun cachePastPrice(pastPrice: PastPrice) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mPastPriceDao.insertPastPrice(
                 pastPriceDBO = mPastPriceMapper.map(pastPrice)
             )

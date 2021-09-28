@@ -18,14 +18,14 @@ package com.ferelin.firebase.repositories
 
 import com.ferelin.domain.repositories.companies.CompaniesLoadState
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CompaniesRemoteRepoImpl @Inject constructor(
     private val mFirebaseReference: DatabaseReference,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : CompaniesRemoteRepo {
 
     private companion object {
@@ -35,7 +35,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
     override suspend fun cacheCompanyIdToFavourites(
         userToken: String,
         companyId: Int
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
@@ -47,7 +47,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
     override suspend fun eraseCompanyIdFromFavourites(
         userToken: String,
         companyId: Int
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
@@ -58,7 +58,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
 
     override suspend fun getFavouriteCompaniesIds(
         userToken: String
-    ): CompaniesLoadState = withContext(mCoroutineContextProvider.IO) {
+    ): CompaniesLoadState = withContext(mDispatchersProvider.IO) {
 
         val resultSnapshot = mFirebaseReference
             .child(sFavouriteCompaniesRef)

@@ -1,5 +1,3 @@
-@file:Suppress("PropertyName", "PropertyName", "PropertyName")
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,20 +14,25 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.feature_news.mapper
 
-import kotlinx.coroutines.Dispatchers
+import com.ferelin.domain.entities.News
+import com.ferelin.feature_news.viewData.NewsViewData
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-open class CoroutineContextProvider @Inject constructor() {
+class NewsMapper @Inject constructor() {
 
-    open val Main: CoroutineContext
-        get() = Dispatchers.Main
-
-    open val IO: CoroutineContext
-        get() = Dispatchers.IO
-
-    open val Default: CoroutineContext
-        get() = Dispatchers.Default
+    fun map(news: News): NewsViewData {
+        return NewsViewData(
+            id = news.id,
+            relationId = news.relationId,
+            cloudId = news.cloudId,
+            headline = news.headline,
+            date = news.date,
+            previewImageUrl = news.previewImageUrl,
+            source = news.source,
+            sourceUrl = news.sourceUrl,
+            summary = news.summary
+        )
+    }
 }

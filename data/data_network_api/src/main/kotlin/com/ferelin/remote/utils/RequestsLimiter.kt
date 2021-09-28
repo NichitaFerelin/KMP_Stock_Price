@@ -16,7 +16,7 @@
 
 package com.ferelin.remote.utils
 
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -29,7 +29,7 @@ import kotlin.math.abs
 @Singleton
 class RequestsLimiter @Inject constructor(
     @Named("ExternalScope") externalScope: CoroutineScope,
-    coroutineContextProvider: CoroutineContextProvider
+    dispatchersProvider: DispatchersProvider
 ) {
     private var mStockPriceApi: ((String) -> Unit)? = null
 
@@ -42,7 +42,7 @@ class RequestsLimiter @Inject constructor(
     private var mJob: Job? = null
 
     init {
-        mJob = externalScope.launch(coroutineContextProvider.IO) {
+        mJob = externalScope.launch(dispatchersProvider.IO) {
             start()
         }
     }

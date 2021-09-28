@@ -19,7 +19,7 @@ package com.ferelin.authentication.sources
 import android.app.Activity
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.AuthenticationState
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -36,7 +36,7 @@ import javax.inject.Singleton
 @Singleton
 class AuthenticationSourceImpl @Inject constructor(
     private val mFirebaseAuth: FirebaseAuth,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : AuthenticationSource {
 
     // User ID is used to complete verification
@@ -95,7 +95,7 @@ class AuthenticationSourceImpl @Inject constructor(
     }
 
     override suspend fun completeAuthentication(code: String): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mUserVerificationId?.let { userVerificationId ->
                 val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
                 mAuthCallbacks?.onVerificationCompleted(credential)
@@ -103,17 +103,17 @@ class AuthenticationSourceImpl @Inject constructor(
         }
 
     override suspend fun logOut(): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mFirebaseAuth.signOut()
         }
 
     override suspend fun isUserAuthenticated(): Boolean =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mFirebaseAuth.currentUser != null
         }
 
     override suspend fun getUserToken(): String? =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mFirebaseAuth.uid
         }
 }

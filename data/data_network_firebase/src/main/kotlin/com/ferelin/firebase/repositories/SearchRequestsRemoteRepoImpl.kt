@@ -18,14 +18,14 @@ package com.ferelin.firebase.repositories
 
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLoadState
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchRequestsRemoteRepoImpl @Inject constructor(
     private val mFirebaseReference: DatabaseReference,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : SearchRequestsRemoteRepo {
 
     private companion object {
@@ -35,7 +35,7 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
     override suspend fun cacheSearchRequest(
         userToken: String,
         searchRequest: String
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
@@ -47,7 +47,7 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
     override suspend fun eraseSearchRequest(
         userToken: String,
         searchRequest: String
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
@@ -58,7 +58,7 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
 
     override suspend fun loadSearchRequests(
         userToken: String
-    ): SearchRequestsLoadState = withContext(mCoroutineContextProvider.IO) {
+    ): SearchRequestsLoadState = withContext(mDispatchersProvider.IO) {
 
         val resultSnapshot = mFirebaseReference
             .child(sSearchesHistoryRef)

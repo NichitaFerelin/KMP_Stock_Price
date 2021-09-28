@@ -20,25 +20,25 @@ import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.repositories.ProfileRepo
 import com.ferelin.local.database.ProfileDao
 import com.ferelin.local.mappers.ProfileMapper
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ProfileRepoImpl @Inject constructor(
     private val mProfileDao: ProfileDao,
     private val mProfileMapper: ProfileMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : ProfileRepo {
 
     override suspend fun getProfile(companyId: Int): Profile =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mProfileMapper.map(
                 profileDBO = mProfileDao.getProfile(companyId)
             )
         }
 
     override suspend fun cacheProfiles(profiles: List<Profile>) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mProfileDao.insertProfiles(profiles.map(mProfileMapper::map))
         }
 }

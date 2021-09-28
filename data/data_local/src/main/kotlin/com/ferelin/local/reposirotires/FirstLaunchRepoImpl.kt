@@ -21,16 +21,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.ferelin.domain.repositories.FirstLaunchRepo
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class FirstLaunchRepoImpl @Inject constructor(
     private val mDataStore: DataStore<Preferences>,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : FirstLaunchRepo {
 
     private companion object {
@@ -38,14 +37,14 @@ class FirstLaunchRepoImpl @Inject constructor(
     }
 
     override suspend fun getFirstTimeLaunch(): Boolean =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mDataStore.data.map {
                 it[sFirstTimeLaunchKey]
             }.firstOrNull() ?: true
         }
 
     override suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mDataStore.edit {
                 it[sFirstTimeLaunchKey] = isFirstLaunch
             }

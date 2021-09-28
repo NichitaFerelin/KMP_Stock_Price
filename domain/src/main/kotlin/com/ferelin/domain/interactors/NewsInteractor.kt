@@ -19,12 +19,11 @@ package com.ferelin.domain.interactors
 import com.ferelin.domain.entities.News
 import com.ferelin.domain.repositories.NewsRepo
 import com.ferelin.domain.sources.NewsSource
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
 sealed class NewsState {
     class Loaded(val news: List<News>) : NewsState()
@@ -34,7 +33,7 @@ sealed class NewsState {
 class NewsInteractor @Inject constructor(
     private val mNewsRepo: NewsRepo,
     private val mNewsSource: NewsSource,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     suspend fun getNews(companyId: Int): List<News> {
@@ -47,7 +46,7 @@ class NewsInteractor @Inject constructor(
     }
 
     private fun cacheIfLoaded(responseState: NewsState) {
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             if (responseState is NewsState.Loaded) {
                 for (news in responseState.news) {
                     mNewsRepo.cacheNews(news)

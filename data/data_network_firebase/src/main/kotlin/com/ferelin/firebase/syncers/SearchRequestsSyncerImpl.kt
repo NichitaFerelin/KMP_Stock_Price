@@ -20,7 +20,7 @@ import com.ferelin.domain.repositories.searchRequests.SearchRequestsLoadState
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.firebase.utils.itemsNotIn
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsSyncerImpl @Inject constructor(
     private val mSearchRequestsRemoteRepo: SearchRequestsRemoteRepo,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : SearchRequestsSyncer {
 
     private var mIsDataSynchronized: Boolean = false
@@ -42,7 +42,7 @@ class SearchRequestsSyncerImpl @Inject constructor(
             return emptyList()
         }
 
-        val remoteRequestsState = withContext(mCoroutineContextProvider.IO) {
+        val remoteRequestsState = withContext(mDispatchersProvider.IO) {
             mSearchRequestsRemoteRepo.loadSearchRequests(userToken)
         }
 
@@ -64,7 +64,7 @@ class SearchRequestsSyncerImpl @Inject constructor(
         userToken: String,
         sourceRequests: List<String>,
         remoteRequests: List<String>
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         sourceRequests
             .itemsNotIn(remoteRequests)

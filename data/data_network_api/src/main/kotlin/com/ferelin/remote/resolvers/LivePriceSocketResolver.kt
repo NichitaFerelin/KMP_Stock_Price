@@ -18,11 +18,10 @@ package com.ferelin.remote.resolvers
 
 import com.ferelin.remote.entities.LivePricePojo
 import com.ferelin.remote.utils.AppWebSocketListener
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -36,7 +35,7 @@ import javax.inject.Singleton
 @Singleton
 class LivePriceSocketResolver @Inject constructor(
     private val mLivePriceJsonResolver: LivePriceJsonResolver,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("FinnhubWebSocketUrl") private val mBaseUrl: String,
     @Named("FinnhubToken") private val mToken: String
 ) {
@@ -49,14 +48,14 @@ class LivePriceSocketResolver @Inject constructor(
     private var mMessagesQueue: Queue<String> = LinkedList()
 
     suspend fun subscribe(companyTicker: String) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mWebSocket?.let {
                 subscribe(it, companyTicker)
             } ?: mMessagesQueue.offer(companyTicker)
         }
 
     suspend fun unsubscribe(companyTicker: String) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
         }
 

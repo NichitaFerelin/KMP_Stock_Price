@@ -20,26 +20,25 @@ import com.ferelin.domain.entities.News
 import com.ferelin.domain.repositories.NewsRepo
 import com.ferelin.local.database.NewsDao
 import com.ferelin.local.mappers.NewsMapper
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class NewsRepoImpl @Inject constructor(
     private val mNewsDao: NewsDao,
     private val mNewsMapper: NewsMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : NewsRepo {
 
     override suspend fun getNews(companyId: Int): List<News> =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mNewsDao
                 .getAllNews(companyId)
                 .map(mNewsMapper::map)
         }
 
     override suspend fun cacheNews(news: News) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mNewsDao.insertNews(
                 newsDBO = mNewsMapper.map(news)
             )

@@ -17,16 +17,15 @@
 package com.ferelin.domain.interactors
 
 import com.ferelin.domain.repositories.FirstLaunchRepo
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
 class FirstLaunchInteractor @Inject constructor(
     private val mFirstLaunchRepo: FirstLaunchRepo,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     suspend fun getFirstTimeLaunch(): Boolean {
@@ -34,7 +33,7 @@ class FirstLaunchInteractor @Inject constructor(
     }
 
     suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean) {
-        mExternalScope.launch(mCoroutineContextProvider.IO) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
             mFirstLaunchRepo.cacheFirstTimeLaunch(isFirstLaunch)
         }
     }

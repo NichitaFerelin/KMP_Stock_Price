@@ -22,7 +22,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.local.utils.PopularRequestsSource
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class SearchRequestsRepoImpl @Inject constructor(
     private val mDataStore: DataStore<Preferences>,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : SearchRequestsLocalRepo {
 
     private companion object {
@@ -38,7 +38,7 @@ class SearchRequestsRepoImpl @Inject constructor(
     }
 
     override suspend fun cacheSearchRequest(searchRequest: String): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mDataStore.edit {
                 val source = it[sSearchRequestsKey]?.toMutableSet() ?: mutableSetOf()
                 source.add(searchRequest)
@@ -47,7 +47,7 @@ class SearchRequestsRepoImpl @Inject constructor(
         }
 
     override suspend fun eraseSearchRequest(searchRequest: String): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mDataStore.edit {
                 it[sSearchRequestsKey]?.toMutableSet()?.let { sourceRequests ->
                     sourceRequests.remove(searchRequest)
@@ -57,7 +57,7 @@ class SearchRequestsRepoImpl @Inject constructor(
         }
 
     override suspend fun getSearchRequests(): List<String> =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mDataStore.data.map {
                 it[sSearchRequestsKey]?.toList()
             }.firstOrNull() ?: emptyList()
@@ -68,7 +68,7 @@ class SearchRequestsRepoImpl @Inject constructor(
     }
 
     override suspend fun clearSearchRequests(): Unit =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mDataStore.edit {
                 it[sSearchRequestsKey] = emptySet()
             }

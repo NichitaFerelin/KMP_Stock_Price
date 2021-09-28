@@ -20,25 +20,25 @@ import com.ferelin.domain.entities.Company
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.local.database.CompaniesDao
 import com.ferelin.local.mappers.CompanyMapper
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CompaniesRepoImpl @Inject constructor(
     private val mCompaniesDao: CompaniesDao,
     private val mCompanyMapper: CompanyMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : CompaniesLocalRepo {
 
     override suspend fun getAll(): List<Company> =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mCompaniesDao
                 .getAllCompanies()
                 .map(mCompanyMapper::map)
         }
 
     override suspend fun getAllFavourites(): List<Company> =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             return@withContext mCompaniesDao
                 .getAllFavourites()
                 .map(mCompanyMapper::map)
@@ -46,14 +46,14 @@ class CompaniesRepoImpl @Inject constructor(
 
 
     override suspend fun cache(companies: List<Company>) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mCompaniesDao.insertAllCompanies(
                 list = companies.map(mCompanyMapper::map)
             )
         }
 
     override suspend fun setToDefault() =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mCompaniesDao.setToDefault()
         }
 
@@ -61,7 +61,7 @@ class CompaniesRepoImpl @Inject constructor(
         companyId: Int,
         isFavourite: Boolean,
         addedByIndex: Int
-    ) = withContext(mCoroutineContextProvider.IO) {
+    ) = withContext(mDispatchersProvider.IO) {
         mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }
 }

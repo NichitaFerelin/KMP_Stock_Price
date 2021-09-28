@@ -19,12 +19,11 @@ package com.ferelin.domain.interactors
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.repositories.PastPriceRepo
 import com.ferelin.domain.sources.PastPriceSource
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
 sealed class PastPriceState {
     class Loaded(val pastPrices: List<PastPrice>) : PastPriceState()
@@ -34,7 +33,7 @@ sealed class PastPriceState {
 class PastPriceInteractor @Inject constructor(
     private val mPastPriceRepo: PastPriceRepo,
     private val mPastPriceSource: PastPriceSource,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     suspend fun getAllPastPrices(companyId: Int): List<PastPrice> {
@@ -48,7 +47,7 @@ class PastPriceInteractor @Inject constructor(
 
     private fun cacheIfLoaded(responseState: PastPriceState) {
         if (responseState is PastPriceState.Loaded) {
-            mExternalScope.launch(mCoroutineContextProvider.IO) {
+            mExternalScope.launch(mDispatchersProvider.IO) {
                 for (news in responseState.pastPrices) {
                     mPastPriceRepo.cacheAllPastPrices(responseState.pastPrices)
                 }

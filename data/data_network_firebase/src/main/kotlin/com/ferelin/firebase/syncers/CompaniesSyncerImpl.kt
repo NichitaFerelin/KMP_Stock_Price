@@ -20,7 +20,7 @@ import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.repositories.companies.CompaniesLoadState
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.firebase.utils.itemsNotIn
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class CompaniesSyncerImpl @Inject constructor(
     private val mCompaniesRemoteRepo: CompaniesRemoteRepo,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
 ) : CompaniesSyncer {
 
     private var mIsDataSynchronized: Boolean = false
@@ -42,7 +42,7 @@ class CompaniesSyncerImpl @Inject constructor(
             return emptyList()
         }
 
-        val remoteCompaniesState = withContext(mCoroutineContextProvider.IO) {
+        val remoteCompaniesState = withContext(mDispatchersProvider.IO) {
             mCompaniesRemoteRepo.getFavouriteCompaniesIds(userToken)
         }
 
@@ -64,7 +64,7 @@ class CompaniesSyncerImpl @Inject constructor(
         userToken: String,
         sourceCompaniesIds: List<Int>,
         remoteCompaniesIds: List<Int>
-    ): Unit = withContext(mCoroutineContextProvider.IO) {
+    ): Unit = withContext(mDispatchersProvider.IO) {
 
         sourceCompaniesIds
             .itemsNotIn(remoteCompaniesIds)

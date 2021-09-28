@@ -27,7 +27,7 @@ import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.domain.interactors.livePrice.LiveTimePriceInteractor
 import com.ferelin.feature_chart.viewData.PastPriceLoadState
 import com.ferelin.feature_chart.viewData.StockPriceLoadState
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,7 +36,7 @@ class ChartViewModel @Inject constructor(
     private val mPastPriceInteractor: PastPriceInteractor,
     private val mLiveTimePriceInteractor: LiveTimePriceInteractor,
     private val mStockPriceInteractor: StockPriceInteractor,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     private val mPastPriceLoad = MutableStateFlow<PastPriceLoadState>(PastPriceLoadState.None)
@@ -48,7 +48,7 @@ class ChartViewModel @Inject constructor(
         get() = mStockPriceLoad.asStateFlow()
 
     fun loadPastPrices(companyId: Int, companyTicker: String) {
-        viewModelScope.launch(mCoroutineContextProvider.IO) {
+        viewModelScope.launch(mDispatchersProvider.IO) {
             mPastPriceLoad.value = PastPriceLoadState.Loading
 
             mPastPriceInteractor
@@ -68,7 +68,7 @@ class ChartViewModel @Inject constructor(
     }
 
     fun loadActualStockPrice(companyId: Int) {
-        viewModelScope.launch(mCoroutineContextProvider.IO) {
+        viewModelScope.launch(mDispatchersProvider.IO) {
             mStockPriceLoad.value = StockPriceLoadState.Loading
 
             mStockPriceInteractor

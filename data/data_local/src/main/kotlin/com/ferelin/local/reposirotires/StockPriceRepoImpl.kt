@@ -20,31 +20,31 @@ import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.local.database.StockPriceDao
 import com.ferelin.local.mappers.StockPriceMapper
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StockPriceRepoImpl @Inject constructor(
     private val mStockPriceDao: StockPriceDao,
     private val mStockPriceMapper: StockPriceMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : StockPriceRepo {
 
     override suspend fun getStockPrice(companyId: Int): StockPrice? =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             val dbo = mStockPriceDao.getStockPrice(companyId)
             return@withContext dbo?.let { mStockPriceMapper.map(it) }
         }
 
     override suspend fun cacheStockPrice(stockPrice: StockPrice) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mStockPriceDao.insertStockPrice(
                 dbo = mStockPriceMapper.map(stockPrice)
             )
         }
 
     override suspend fun updateStockPrice(companyId: Int, price: String, profit: String) =
-        withContext(mCoroutineContextProvider.IO) {
+        withContext(mDispatchersProvider.IO) {
             mStockPriceDao.updateStockPrice(companyId, price, profit)
         }
 }

@@ -19,7 +19,7 @@ package com.ferelin.stockprice.resolvers
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ import javax.inject.Singleton
 class NetworkResolver @Inject constructor(
     @Named("NetworkDeps") private val mNetworkDeps: List<NetworkListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     service: ConnectivityManager,
     networkRequest: NetworkRequest
 ) {
@@ -40,19 +40,19 @@ class NetworkResolver @Inject constructor(
             networkRequest,
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    mExternalScope.launch(mCoroutineContextProvider.IO) {
+                    mExternalScope.launch(mDispatchersProvider.IO) {
                         mNetworkDeps.forEach { it.onNetworkAvailable() }
                     }
                 }
 
                 override fun onLost(network: Network) {
-                    mExternalScope.launch(mCoroutineContextProvider.IO) {
+                    mExternalScope.launch(mDispatchersProvider.IO) {
                         mNetworkDeps.forEach { it.onNetworkLost() }
                     }
                 }
 
                 override fun onUnavailable() {
-                    mExternalScope.launch(mCoroutineContextProvider.IO) {
+                    mExternalScope.launch(mDispatchersProvider.IO) {
                         mNetworkDeps.forEach { it.onNetworkLost() }
                     }
                 }

@@ -21,7 +21,7 @@ import com.ferelin.domain.sources.NewsSource
 import com.ferelin.remote.entities.NewsApi
 import com.ferelin.remote.mappers.NewsMapper
 import com.ferelin.remote.utils.withExceptionHandle
-import com.ferelin.shared.CoroutineContextProvider
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
@@ -30,7 +30,7 @@ import javax.inject.Named
 class NewsSourceImpl @Inject constructor(
     private val mNewsApi: NewsApi,
     private val mNewsMapper: NewsMapper,
-    private val mCoroutineContextProvider: CoroutineContextProvider,
+    private val mDispatchersProvider: DispatchersProvider,
     @Named("FinnhubToken") private val mApiToken: String
 ) : NewsSource {
 
@@ -38,7 +38,7 @@ class NewsSourceImpl @Inject constructor(
         companyTicker: String,
         from: String,
         to: String
-    ): NewsState = withContext(mCoroutineContextProvider.IO) {
+    ): NewsState = withContext(mDispatchersProvider.IO) {
         withExceptionHandle(
             request = {
                 mNewsApi
