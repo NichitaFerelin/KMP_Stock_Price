@@ -32,6 +32,9 @@ android {
 dependencies {
     implementation(Dependencies.androidCore)
 
+    implementation(Dependencies.navFragment)
+    implementation(Dependencies.navUi)
+
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 

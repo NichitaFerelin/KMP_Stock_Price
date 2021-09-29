@@ -20,23 +20,30 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.ferelin.navigation.Router
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     private var mViewBinding: ActivityMainBinding? = null
+
+    @Inject
+    lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
 
         super.onCreate(savedInstanceState)
         mViewBinding = ActivityMainBinding.inflate(layoutInflater)
+        router.bind(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mViewBinding = null
+        router.unbind()
     }
 
     private fun injectDependencies() {

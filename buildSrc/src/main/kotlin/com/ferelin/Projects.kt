@@ -22,6 +22,7 @@ object Projects {
     const val domain = ":domain"
     const val shared = ":shared"
     const val auth = ":authentication"
+    const val navigation = ":navigation"
 
     const val dataLocal = ":data:data_local"
     const val dataNetworkApi = ":data:data_network_api"

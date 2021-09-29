@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loadingFragment">
+
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.ferelin.feature_loading.view.LoadingFragment"
+        android:label="LoadingFragment">
+        <action
+            android:id="@+id/action_loadingFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_loadingFragment_to_stocksPagerFragment"
+            app:destination="@id/stocksPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.ferelin.feature_welcome.WelcomeFragment"
+        android:label="WelcomeFragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_stocksPagerFragment"
+            app:destination="@id/stocksPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/stocksPagerFragment"
+        android:name="com.ferelin.feature_section_stocks.view.StocksPagerFragment"
+        android:label="StocksPagerFragment">
+        <action
+            android:id="@+id/action_stocksPagerFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ferelin.feature_search.view.SearchFragment"
+        android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/stocksFragment"
+        android:name="com.ferelin.feature_stocks_default.view.StocksFragment"
+        android:label="StocksFragment">
+        <action
+            android:id="@+id/action_stocksFragment_to_aboutPagerFragment"
+            app:destination="@id/aboutPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.ferelin.feature_stocks_favourite.view.FavouriteFragment"
+        android:label="FavouriteFragment">
+        <action
+            android:id="@+id/action_favouriteFragment_to_aboutPagerFragment"
+            app:destination="@id/aboutPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutPagerFragment"
+        android:name="com.ferelin.feature_section_about.view.AboutPagerFragment"
+        android:label="AboutPagerFragment">
+        <argument
+            android:name="companyId"
+            app:argType="integer" />
+    </fragment>
+</navigation>
