@@ -38,7 +38,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 sealed class CompaniesState {
-    class Prepared(val companies: List<Company>) : CompaniesState()
+    class Prepared(val companiesWithStockPrice: List<CompanyWithStockPrice>) : CompaniesState()
     object Loading : CompaniesState()
     object None : CompaniesState()
     object Error : CompaniesState()
@@ -60,13 +60,11 @@ class CompaniesInteractorImpl @Inject constructor(
     private var mCompaniesState: CompaniesState = CompaniesState.None
     private var mFavouriteCompaniesState: CompaniesState = CompaniesState.None
 
-    private var mCompaniesWithStockPrice: List<CompanyWithStockPrice> = emptyList()
-
     private val mFavouriteCompanyUpdates = MutableSharedFlow<Company>()
 
-    override suspend fun getAllCompanies(): List<Company> {
+    override suspend fun getAll(): List<CompanyWithStockPrice> {
         if (mCompaniesState is CompaniesState.Prepared) {
-            return (mCompaniesState as CompaniesState.Prepared).companies
+            return (mCompaniesState as CompaniesState.Prepared).companiesWithStockPrice
         }
 
         mCompaniesState = CompaniesState.Loading
@@ -81,21 +79,22 @@ class CompaniesInteractorImpl @Inject constructor(
                     mCompaniesLocalRepo.cache(companies)
                     mProfileRepo.cacheProfiles(fromJson.second)
                 }
-                companies
+
+                companies.map { CompanyWithStockPrice(it) }
             }
             .also { loadedCompanies ->
                 mCompaniesState = CompaniesState.Prepared(loadedCompanies)
                 mFavouriteCompaniesState = CompaniesState.Prepared(
-                    companies = loadedCompanies.filter { it.isFavourite }
+                    companiesWithStockPrice = loadedCompanies.filter { it.company.isFavourite }
                 )
 
                 tryToSync()
             }
     }
 
-    override suspend fun getAllFavouriteCompanies(): List<Company> {
+    override suspend fun getAllFavourites(): List<CompanyWithStockPrice> {
         if (mFavouriteCompaniesState is CompaniesState.Prepared) {
-            return (mFavouriteCompaniesState as CompaniesState.Prepared).companies
+            return (mFavouriteCompaniesState as CompaniesState.Prepared).companiesWithStockPrice
         }
 
         mFavouriteCompaniesState = CompaniesState.Loading
@@ -103,21 +102,11 @@ class CompaniesInteractorImpl @Inject constructor(
         return mCompaniesLocalRepo.getAllFavourites()
             .also { loadedCompanies ->
                 val favouriteCompanies = loadedCompanies
-                    .filter { it.isFavourite }
-                    .onEach { mLiveTimePriceInternal.subscribeCompanyOnUpdates(it.ticker) }
+                    .filter { it.company.isFavourite }
+                    .onEach { mLiveTimePriceInternal.subscribeCompanyOnUpdates(it.company.ticker) }
 
                 mFavouriteCompaniesState = CompaniesState.Prepared(favouriteCompanies)
             }
-    }
-
-    override suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice> {
-        if (mCompaniesWithStockPrice.isNotEmpty()) {
-            return mCompaniesWithStockPrice
-        }
-
-        val dbCompaniesWithStockPrice = mCompaniesLocalRepo.getCompaniesWithStocksPrice()
-        mCompaniesWithStockPrice = dbCompaniesWithStockPrice
-        return mCompaniesWithStockPrice
     }
 
     override suspend fun addCompanyToFavourites(company: Company) {
@@ -128,8 +117,11 @@ class CompaniesInteractorImpl @Inject constructor(
             )
         }
 
-        val favouriteCompanies = (mFavouriteCompaniesState as CompaniesState.Prepared).companies
-        val orderIndex = favouriteCompanies.firstOrNull()?.addedByIndex?.plus(1) ?: 0
+        val favouriteCompanies =
+            (mFavouriteCompaniesState as CompaniesState.Prepared).companiesWithStockPrice
+        val orderIndex = favouriteCompanies
+            .firstOrNull()
+            ?.let { it.company.addedByIndex + 1 } ?: 0
 
         company.isFavourite = true
         company.addedByIndex = orderIndex
@@ -218,8 +210,8 @@ class CompaniesInteractorImpl @Inject constructor(
 
             mAuthenticationSource.getUserToken()?.let { userToken ->
                 val favouriteIds = favouriteCompaniesState
-                    .companies
-                    .map(Company::id)
+                    .companiesWithStockPrice
+                    .map { it.company.id }
 
                 val receivedCompaniesIds = mCompaniesSyncer.initDataSync(userToken, favouriteIds)
                 applyRemoteCompaniesIds(receivedCompaniesIds)
@@ -233,11 +225,11 @@ class CompaniesInteractorImpl @Inject constructor(
                 return
             }
 
-            val sourceCompanies = companiesState.companies
+            val sourceCompanies = companiesState.companiesWithStockPrice
             remoteIds.forEach { id ->
-                val targetCompanyIndex = sourceCompanies.indexOfFirst { it.id == id }
+                val targetCompanyIndex = sourceCompanies.indexOfFirst { it.company.id == id }
                 if (targetCompanyIndex != NULL_INDEX) {
-                    addCompanyToFavourites(sourceCompanies[targetCompanyIndex])
+                    addCompanyToFavourites(sourceCompanies[targetCompanyIndex].company)
                 }
             }
         }

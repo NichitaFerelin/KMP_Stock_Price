@@ -31,20 +31,19 @@ class CompaniesRepoImpl @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : CompaniesLocalRepo {
 
-    override suspend fun getAll(): List<Company> =
+    override suspend fun getAll(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
-            return@withContext mCompaniesDao
-                .getAllCompanies()
+            mCompaniesDao
+                .getCompaniesWithStocksPrice()
                 .map(mCompanyMapper::map)
         }
 
-    override suspend fun getAllFavourites(): List<Company> =
+    override suspend fun getAllFavourites(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
-            return@withContext mCompaniesDao
-                .getAllFavourites()
+            mCompaniesDao
+                .getFavouriteCompaniesWithStockPrice()
                 .map(mCompanyMapper::map)
         }
-
 
     override suspend fun cache(companies: List<Company>) =
         withContext(mDispatchersProvider.IO) {
@@ -65,11 +64,4 @@ class CompaniesRepoImpl @Inject constructor(
     ) = withContext(mDispatchersProvider.IO) {
         mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }
-
-    override suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice> =
-        withContext(mDispatchersProvider.IO) {
-            mCompaniesDao
-                .getCompaniesWithStocksPrice()
-                .map(mCompanyMapper::map)
-        }
 }

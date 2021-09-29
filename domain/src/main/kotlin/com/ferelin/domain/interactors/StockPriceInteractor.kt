@@ -50,7 +50,7 @@ class StockPriceInteractor @Inject constructor(
     suspend fun addRequestToGetStockPrice(
         companyTicker: String,
         keyPosition: Int,
-        isImportant: Boolean
+        isImportant: Boolean = false
     ) {
         mStockPriceSource.addRequestToGetStockPrice(companyTicker, keyPosition, isImportant)
     }

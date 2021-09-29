@@ -32,6 +32,16 @@ interface CompaniesDao {
     @Query("SELECT * FROM `companies` WHERE is_favourite = :condition")
     suspend fun getAllFavourites(condition: Boolean = true): List<CompanyDBO>
 
+    @Transaction
+    @Query("SELECT * FROM `companies`")
+    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPriceDBO>
+
+    @Transaction
+    @Query("SELECT * FROM `companies` WHERE is_favourite = :condition")
+    suspend fun getFavouriteCompaniesWithStockPrice(
+        condition: Boolean = true
+    ): List<CompanyWithStockPriceDBO>
+
     @Query(
         "UPDATE `companies` " +
                 "SET is_favourite = :condition ,added_by_index = :param " +
@@ -49,8 +59,4 @@ interface CompaniesDao {
         isFavourite: Boolean,
         addedByIndex: Int
     )
-
-    @Transaction
-    @Query("SELECT * FROM `companies_stock_price`")
-    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPriceDBO>
 }

@@ -23,11 +23,9 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface CompaniesInteractor : NetworkListener {
 
-    suspend fun getAllCompanies(): List<Company>
+    suspend fun getAll(): List<CompanyWithStockPrice>
 
-    suspend fun getAllFavouriteCompanies(): List<Company>
-
-    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice>
+    suspend fun getAllFavourites(): List<CompanyWithStockPrice>
 
     suspend fun addCompanyToFavourites(company: Company)
 
