@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_login.mapper
+package com.ferelin.feature_login.viewData
 
 import com.ferelin.domain.sources.AuthenticationState
-import com.ferelin.feature_login.viewModel.AuthenticationLoadState
-import javax.inject.Inject
 
-class AuthenticationMapper @Inject constructor() {
-
-    fun map(authenticationState: AuthenticationState): AuthenticationLoadState {
-        return when (authenticationState) {
-            AuthenticationState.Complete -> AuthenticationLoadState.Authenticated
-            AuthenticationState.CodeSent -> AuthenticationLoadState.Loading(
-                state = authenticationState
-            )
-            else -> AuthenticationLoadState.Error(
-                error = authenticationState
-            )
-        }
-    }
+sealed class AuthProcessingState {
+    class Processing(val state: AuthenticationState) : AuthProcessingState()
+    class Error(val error: AuthenticationState) : AuthProcessingState()
+    class None(val state: AuthenticationState? = null) : AuthProcessingState()
+    object Complete : AuthProcessingState()
 }

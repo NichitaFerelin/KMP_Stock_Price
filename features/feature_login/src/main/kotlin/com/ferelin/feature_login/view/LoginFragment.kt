@@ -16,21 +16,21 @@
 
 package com.ferelin.feature_login.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Slide
 import com.ferelin.core.base.BaseFragment
 import com.ferelin.core.base.BaseViewModelFactory
-import com.ferelin.domain.sources.AuthenticationState
+import com.ferelin.core.utils.setOnClick
 import com.ferelin.feature_login.R
 import com.ferelin.feature_login.databinding.FragmentLoginBinding
-import com.ferelin.feature_login.viewModel.AuthenticationLoadState
+import com.ferelin.feature_login.viewData.AuthProcessingState
 import com.ferelin.feature_login.viewModel.LoginViewModel
-import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
@@ -52,17 +52,25 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             duration = 225L
             addTarget(R.id.loginRoot)
         }
-        enterTransition = MaterialContainerTransform().apply {
-            // TODO startView = requireActivity().findViewById(R.id.mainFab)
-            endViewId = R.id.loginRoot
-            scrimColor = Color.TRANSPARENT
-            duration = 350L
+        enterTransition = MaterialFadeThrough().apply {
+            duration = 200L
         }
     }
 
     override fun initUx() {
-        // set listeners for phone input
-        // mViewModel.tryToLogIn(requireActivity(), "")
+        with(mViewBinding) {
+            editTextCode.addTextChangedListener { charSequence ->
+                charSequence?.let { mViewModel.onCodeChanged(it.toString()) }
+            }
+
+            imageViewBack.setOnClick(mViewModel::onBackClicked)
+            imageViewIconCheck.setOnClickListener {
+                mViewModel.tryToLogIn(
+                    holder = requireActivity(),
+                    phone = mViewBinding.editTextPhone.text?.toString() ?: ""
+                )
+            }
+        }
     }
 
     override fun initObservers() {
@@ -72,23 +80,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private suspend fun observeAuthenticationState() {
-        mViewModel.authenticationState.collect { loadState ->
+        mViewModel.authProcessingState.collect { loadState ->
             when (loadState) {
-                is AuthenticationLoadState.Authenticated -> {
-                    // replace fragment
+                is AuthProcessingState.None -> {
+
                 }
-                is AuthenticationLoadState.Loading -> {
-                    if (loadState.state == AuthenticationState.CodeSent) {
-                        // show field for text input
-                    } else {
-                        // show progress bar
-                    }
+                is AuthProcessingState.Processing -> {
+
                 }
-                is AuthenticationLoadState.Error -> {
-                    // show
+                is AuthProcessingState.Complete -> {
+
                 }
-                is AuthenticationLoadState.None -> {
-                    // update ui
+                is AuthProcessingState.Error -> {
+
                 }
             }
         }
