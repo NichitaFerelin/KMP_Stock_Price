@@ -36,7 +36,6 @@ object Projects {
     const val featureNews = ":features:feature_news"
     const val featureProfile = ":features:feature_profile"
     const val featureSearch = ":features:feature_search"
-    const val featureWelcome = ":features:feature_welcome"
 
     const val featureSectionAbout = ":features:feature_section_about"
     const val featureSectionStocks = ":features:feature_section_stocks"

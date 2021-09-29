@@ -22,10 +22,6 @@ android {
     }
     buildFeatures.apply {
         viewBinding = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = Versions.compose
     }
 }
 
@@ -55,7 +51,6 @@ dependencies {
     implementation(project(Projects.featureNews))
     implementation(project(Projects.featureSearch))
     implementation(project(Projects.featureProfile))
-    implementation(project(Projects.featureWelcome))
 
     implementation(project(Projects.featureSectionAbout))
     implementation(project(Projects.featureSectionStocks))
