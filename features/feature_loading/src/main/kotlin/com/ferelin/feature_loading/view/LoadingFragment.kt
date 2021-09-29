@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_loading
+package com.ferelin.feature_loading.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.base.BaseFragment
 import com.ferelin.core.base.BaseViewModelFactory
+import com.ferelin.core.utils.anim.MotionManager
+import com.ferelin.feature_loading.R
 import com.ferelin.feature_loading.databinding.FragmentLoadingBinding
+import com.ferelin.feature_loading.viewModel.LoadingViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
@@ -46,44 +52,29 @@ class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
     }
 
     private suspend fun observeFirstTimeLaunch() {
-        mViewModel.firstTimeLaunch.collect { loadState ->
-            when(loadState) {
-                is FirstTimeLoadState.Loaded -> {
-                    // update ui
-                }
-                is FirstTimeLoadState.Loading -> {
-                    // update ui
-                }
-                is FirstTimeLoadState.None -> {
-                    mViewModel.loadFirstTimeLaunch()
+        mViewModel.loadPreparedState.collect { loadPrepared ->
+            if (loadPrepared) {
+                withContext(mDispatchersProvider.Main) {
+                    initiateAnimationsStops()
                 }
             }
         }
     }
 
-    /*
-    * private fun initFragmentReplace(isFirstTimeLaunch: Boolean) {
-        viewBinding.root.setTransitionListener(object : MotionManager() {
+    private fun initiateAnimationsStops() {
+        mViewBinding.root.setTransitionListener(object : MotionManager() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 super.onTransitionCompleted(p0, p1)
                 removeAutoTransition()
-                replaceFragment(isFirstTimeLaunch)
+                mViewModel.onAnimationsStopped()
             }
         })
     }
 
-    // Stops transition cycle
     private fun removeAutoTransition() {
-        viewBinding.root.getTransition(R.id.transitionMain).autoTransition =
+        mViewBinding.root.getTransition(R.id.transitionMain).autoTransition =
             MotionScene.Transition.AUTO_NONE
-        viewBinding.root.getTransition(R.id.transitionJump).autoTransition =
+        mViewBinding.root.getTransition(R.id.transitionJump).autoTransition =
             MotionScene.Transition.AUTO_NONE
     }
-
-    private fun replaceFragment(isFirstTimeLaunch: Boolean) {
-        if (isFirstTimeLaunch) {
-            mNavigator?.navigateToWelcomeFragment()
-        } else mNavigator?.navigateToDrawerHostFragment()
-    }
-    * */
 }

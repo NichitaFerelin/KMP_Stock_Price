@@ -14,45 +14,46 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_loading
+package com.ferelin.feature_loading.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.domain.interactors.FirstLaunchInteractor
+import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class FirstTimeLoadState {
-    class Loaded(val value: Boolean) : FirstTimeLoadState()
-    object Loading : FirstTimeLoadState()
-    object None : FirstTimeLoadState()
-}
-
 class LoadingViewModel @Inject constructor(
     private val mFirstLaunchInteractor: FirstLaunchInteractor,
-    private val mDispatchersProvider: DispatchersProvider
+    private val mRouter: Router,
+    mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val mFirstTimeLaunch = MutableStateFlow<FirstTimeLoadState>(FirstTimeLoadState.None)
-    val firstTimeLaunch: StateFlow<FirstTimeLoadState>
-        get() = mFirstTimeLaunch
+    private val mLoadPreparedState = MutableStateFlow(false)
+    val loadPreparedState: StateFlow<Boolean>
+        get() = mLoadPreparedState
 
-    fun loadFirstTimeLaunch() {
+    private var mIsFirstTimeLaunch = false
+
+    init {
         viewModelScope.launch(mDispatchersProvider.IO) {
-            mFirstTimeLaunch.value = FirstTimeLoadState.Loading
-
-            val dbFirstTimeLaunch = mFirstLaunchInteractor.getFirstTimeLaunch()
-            mFirstTimeLaunch.value = FirstTimeLoadState.Loaded(dbFirstTimeLaunch)
+            prepareLaunch()
         }
     }
 
-    fun launched() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mFirstTimeLaunch.value = FirstTimeLoadState.Loaded(true)
-            mFirstLaunchInteractor.cacheFirstTimeLaunch(true)
+    fun onAnimationsStopped() {
+        if (mIsFirstTimeLaunch) {
+            mRouter.fromLoadingToWelcome()
+        } else {
+            mRouter.fromLoadingToStocksPager()
         }
+    }
+
+    private suspend fun prepareLaunch() {
+        mIsFirstTimeLaunch = mFirstLaunchInteractor.getFirstTimeLaunch()
+        mLoadPreparedState.value = true
     }
 }
