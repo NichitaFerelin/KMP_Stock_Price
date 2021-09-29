@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.companies
+package com.ferelin.local.entities
 
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.CompanyWithStockPrice
+import androidx.room.Embedded
+import androidx.room.Relation
 
-interface CompaniesLocalRepo {
+data class CompanyWithStockPriceDBO(
+    @Embedded
+    val companyDBO: CompanyDBO,
 
-    suspend fun getAll(): List<Company>
-
-    suspend fun getAllFavourites(): List<Company>
-
-    suspend fun cache(companies: List<Company>)
-
-    suspend fun setToDefault()
-
-    suspend fun updateIsFavourite(companyId: Int, isFavourite: Boolean, addedByIndex: Int = 0)
-
-    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice>
-}
+    @Relation(
+        parentColumn = CompanyDBO.ID_COLUMN,
+        entityColumn = "id"
+    )
+    val stockPriceDBO: StockPriceDBO? = null
+)

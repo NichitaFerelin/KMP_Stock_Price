@@ -17,6 +17,7 @@
 package com.ferelin.domain.interactors.companies
 
 import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -25,6 +26,8 @@ interface CompaniesInteractor : NetworkListener {
     suspend fun getAllCompanies(): List<Company>
 
     suspend fun getAllFavouriteCompanies(): List<Company>
+
+    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice>
 
     suspend fun addCompanyToFavourites(company: Company)
 

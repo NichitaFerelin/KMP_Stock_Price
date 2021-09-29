@@ -17,11 +17,15 @@
 package com.ferelin.local.mappers
 
 import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.local.entities.CompanyDBO
+import com.ferelin.local.entities.CompanyWithStockPriceDBO
 import com.ferelin.local.utils.CompanyPojo
 import javax.inject.Inject
 
-class CompanyMapper @Inject constructor() {
+class CompanyMapper @Inject constructor(
+    private val mStockPriceMapper: StockPriceMapper
+) {
 
     fun map(dbo: CompanyDBO): Company {
         return Company(
@@ -51,6 +55,15 @@ class CompanyMapper @Inject constructor() {
             name = pojo.name,
             ticker = pojo.symbol,
             logoUrl = pojo.logo,
+        )
+    }
+
+    fun map(companyWithStockPriceDBO: CompanyWithStockPriceDBO): CompanyWithStockPrice {
+        return CompanyWithStockPrice(
+            company = map(companyWithStockPriceDBO.companyDBO),
+            stockPrice = companyWithStockPriceDBO
+                .stockPriceDBO
+                ?.let { mStockPriceMapper.map(it) }
         )
     }
 }

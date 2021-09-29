@@ -16,11 +16,9 @@
 
 package com.ferelin.local.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.ferelin.local.entities.CompanyDBO
+import com.ferelin.local.entities.CompanyWithStockPriceDBO
 
 @Dao
 interface CompaniesDao {
@@ -51,4 +49,8 @@ interface CompaniesDao {
         isFavourite: Boolean,
         addedByIndex: Int
     )
+
+    @Transaction
+    @Query("SELECT * FROM `companies_stock_price`")
+    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPriceDBO>
 }

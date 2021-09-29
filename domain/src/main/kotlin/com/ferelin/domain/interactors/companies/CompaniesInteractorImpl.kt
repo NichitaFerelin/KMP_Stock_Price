@@ -17,6 +17,7 @@
 package com.ferelin.domain.interactors.companies
 
 import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.internals.CompaniesInternal
 import com.ferelin.domain.internals.LiveTimePriceInternal
 import com.ferelin.domain.repositories.ProfileRepo
@@ -58,6 +59,8 @@ class CompaniesInteractorImpl @Inject constructor(
 
     private var mCompaniesState: CompaniesState = CompaniesState.None
     private var mFavouriteCompaniesState: CompaniesState = CompaniesState.None
+
+    private var mCompaniesWithStockPrice: List<CompanyWithStockPrice> = emptyList()
 
     private val mFavouriteCompanyUpdates = MutableSharedFlow<Company>()
 
@@ -105,6 +108,16 @@ class CompaniesInteractorImpl @Inject constructor(
 
                 mFavouriteCompaniesState = CompaniesState.Prepared(favouriteCompanies)
             }
+    }
+
+    override suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice> {
+        if (mCompaniesWithStockPrice.isNotEmpty()) {
+            return mCompaniesWithStockPrice
+        }
+
+        val dbCompaniesWithStockPrice = mCompaniesLocalRepo.getCompaniesWithStocksPrice()
+        mCompaniesWithStockPrice = dbCompaniesWithStockPrice
+        return mCompaniesWithStockPrice
     }
 
     override suspend fun addCompanyToFavourites(company: Company) {

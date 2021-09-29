@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.companies
+package com.ferelin.domain.entities
 
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.CompanyWithStockPrice
-
-interface CompaniesLocalRepo {
-
-    suspend fun getAll(): List<Company>
-
-    suspend fun getAllFavourites(): List<Company>
-
-    suspend fun cache(companies: List<Company>)
-
-    suspend fun setToDefault()
-
-    suspend fun updateIsFavourite(companyId: Int, isFavourite: Boolean, addedByIndex: Int = 0)
-
-    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice>
-}
+data class CompanyWithStockPrice(
+    val company: Company,
+    val stockPrice: StockPrice? = null
+)

@@ -17,6 +17,7 @@
 package com.ferelin.local.reposirotires
 
 import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.local.database.CompaniesDao
 import com.ferelin.local.mappers.CompanyMapper
@@ -64,4 +65,11 @@ class CompaniesRepoImpl @Inject constructor(
     ) = withContext(mDispatchersProvider.IO) {
         mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }
+
+    override suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPrice> =
+        withContext(mDispatchersProvider.IO) {
+            mCompaniesDao
+                .getCompaniesWithStocksPrice()
+                .map(mCompanyMapper::map)
+        }
 }
