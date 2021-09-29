@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="chartView, flowButtons,textViewAll,textViewDays,textViewMonths,textViewSixMonths,textViewWeeks,textViewYear" />
 
-        <com.ferelin.core.views.ChartView
+        <com.ferelin.feature_chart.view.ChartView
             android:id="@+id/chartView"
             android:layout_width="0dp"
             android:layout_height="@dimen/chartHeight"

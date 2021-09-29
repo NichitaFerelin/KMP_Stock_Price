@@ -20,11 +20,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.interactors.PastPriceInteractor
 import com.ferelin.domain.interactors.PastPriceState
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.domain.interactors.livePrice.LiveTimePriceInteractor
+import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
+import com.ferelin.feature_chart.utils.points.Marker
+import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.feature_chart.viewData.PastPriceLoadState
 import com.ferelin.feature_chart.viewData.StockPriceLoadState
 import com.ferelin.shared.DispatchersProvider
@@ -36,8 +40,11 @@ class ChartViewModel @Inject constructor(
     private val mPastPriceInteractor: PastPriceInteractor,
     private val mLiveTimePriceInteractor: LiveTimePriceInteractor,
     private val mStockPriceInteractor: StockPriceInteractor,
+    private val mPastPriceTypeMapper: PastPriceTypeMapper,
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
+
+    private var mPastPrices: List<PastPrice> = emptyList()
 
     private val mPastPriceLoad = MutableStateFlow<PastPriceLoadState>(PastPriceLoadState.None)
     val pastPriceLoadState: StateFlow<PastPriceLoadState>
@@ -47,19 +54,32 @@ class ChartViewModel @Inject constructor(
     val stockPriceLoad: StateFlow<StockPriceLoadState>
         get() = mStockPriceLoad.asStateFlow()
 
-    fun loadPastPrices(companyId: Int, companyTicker: String) {
+    val liveTimePrice: SharedFlow<LiveTimePrice>
+        get() = mLiveTimePriceInteractor.observeLiveTimeUpdates()
+            .filter { it != null && it.companyId == companyId }
+            .map { it!! }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+    var chartMode: ChartViewMode = ChartViewMode.All
+        private set
+
+    var selectedMarker: Marker? = null
+    var companyId: Int = 0
+    var companyTicker = ""
+
+    fun loadPastPrices() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mPastPriceLoad.value = PastPriceLoadState.Loading
 
             mPastPriceInteractor
                 .getAllPastPrices(companyId)
-                .ifNotEmpty { mPastPriceLoad.value = PastPriceLoadState.Loaded(it) }
+                .ifNotEmpty { dbPrices -> onNewsPastPrices(dbPrices) }
 
             mPastPriceInteractor
                 .loadPastPrices(companyTicker)
                 .let { responseState ->
                     if (responseState is PastPriceState.Loaded) {
-                        mPastPriceLoad.value = PastPriceLoadState.Loaded(responseState.pastPrices)
+                        onNewsPastPrices(responseState.pastPrices)
                     } else if (mPastPriceLoad.value !is PastPriceLoadState.Loaded) {
                         mPastPriceLoad.value = PastPriceLoadState.Error
                     }
@@ -67,7 +87,7 @@ class ChartViewModel @Inject constructor(
         }
     }
 
-    fun loadActualStockPrice(companyId: Int) {
+    fun loadActualStockPrice() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mStockPriceLoad.value = StockPriceLoadState.Loading
 
@@ -83,10 +103,18 @@ class ChartViewModel @Inject constructor(
         }
     }
 
-    fun observeLiveTimePrice(companyId: Int): SharedFlow<LiveTimePrice> {
-        return mLiveTimePriceInteractor.observeLiveTimeUpdates()
-            .filter { it != null && it.companyId == companyId }
-            .map { it!! }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+    fun onNewChartMode(chartViewMode: ChartViewMode) {
+        this.chartMode = chartViewMode
+        onNewsPastPrices(mPastPrices)
+    }
+
+    private fun onNewsPastPrices(pastPrices: List<PastPrice>) {
+        mPastPrices = pastPrices
+
+        mPastPriceTypeMapper
+            .mapByViewMode(chartMode, pastPrices)
+            ?.let { chartPastPrices ->
+                mPastPriceLoad.value = PastPriceLoadState.Loaded(chartPastPrices)
+            }
     }
 }

@@ -16,16 +16,7 @@
 
 package com.ferelin.feature_chart.viewData
 
-enum class ChartViewMode {
-    All,
-    Year,
-    SixMonths,
-    Months,
-    Weeks,
-    Days
-}
-
-data class ChartPastPrice(
+data class ChartPastPrices(
     val prices: List<Double>,
     val pricesStr: List<String>,
     val dates: List<String>
