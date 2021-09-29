@@ -3,6 +3,7 @@ package com.ferelin.stockprice.di
 import android.content.Context
 import com.ferelin.authentication.di.AuthenticationBindsModule
 import com.ferelin.authentication.di.AuthenticationModule
+import com.ferelin.core.di.StockStyleModule
 import com.ferelin.domain.di.DomainBindsModule
 import com.ferelin.firebase.di.FirebaseBindsModule
 import com.ferelin.firebase.di.FirebaseModule
@@ -34,7 +35,8 @@ import javax.inject.Singleton
         ScopeModule::class,
         NetworkModule::class,
         InteractorDependenciesModule::class,
-        NavigationBindsModule::class
+        NavigationBindsModule::class,
+        StockStyleModule::class
     ]
 )
 interface AppComponent {
