@@ -16,6 +16,7 @@
 
 package com.ferelin.feature_news.view
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -26,15 +27,10 @@ import com.ferelin.core.base.recyclerAdapter.BaseRecyclerAdapter
 import com.ferelin.feature_news.adapter.NewsItemDecoration
 import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.databinding.FragmentNewsBinding
-import com.ferelin.feature_news.viewData.NewsViewData
 import com.ferelin.feature_news.viewModel.NewsLoadState
 import com.ferelin.feature_news.viewModel.NewsViewModel
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
-
-// TODO temp values
-val companyId = 1
-val companyTicker = "MSFT"
 
 class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
@@ -49,8 +45,13 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     )
     private val mNewsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
-            createNewsAdapter(this::onNewsClicked)
+            createNewsAdapter(mViewModel::onNewsClicked)
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let { unpackArgs(it) }
     }
 
     override fun initUi() {
@@ -65,23 +66,44 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
             mViewModel.newsLoadState.collect { loadState ->
                 when (loadState) {
                     is NewsLoadState.None -> {
-                        mViewModel.loadData(companyId, companyTicker)
+                        mViewModel.loadData()
                     }
                     is NewsLoadState.Loaded -> {
                         mNewsAdapter.replaceAsNew(loadState.news)
                     }
                     is NewsLoadState.Loading -> {
-                        // update ui
+
                     }
                     is NewsLoadState.Error -> {
-                        // update ui
+
                     }
                 }
             }
         }
     }
 
-    private fun onNewsClicked(newsViewData: NewsViewData) {
+    private fun unpackArgs(args: Bundle) {
+        args[ARGS_COMPANY_ID_KEY]?.let { companyId ->
+            if (companyId is Int) {
+                mViewModel.companyId = companyId
+            }
+        }
+        args[ARGS_COMPANY_TICKER_KEY]?.let { companyTicker ->
+            if (companyTicker is String) {
+                mViewModel.companyTicker = companyTicker
+            }
+        }
+    }
 
+    companion object {
+
+        const val ARGS_COMPANY_ID_KEY = "id"
+        const val ARGS_COMPANY_TICKER_KEY = "ticker"
+
+        fun newInstance(args: Bundle): NewsFragment {
+            return NewsFragment().apply {
+                arguments = args
+            }
+        }
     }
 }

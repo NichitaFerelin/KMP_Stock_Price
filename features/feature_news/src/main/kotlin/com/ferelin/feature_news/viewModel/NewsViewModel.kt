@@ -47,7 +47,10 @@ class NewsViewModel @Inject constructor(
     val newsLoadState: StateFlow<NewsLoadState>
         get() = mNewLoadState.asStateFlow()
 
-    fun loadData(companyId: Int, companyTicker: String) {
+    var companyId = 0
+    var companyTicker = ""
+
+    fun loadData() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mNewLoadState.value = NewsLoadState.Loading
 
@@ -71,5 +74,9 @@ class NewsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun onNewsClicked(newsViewData: NewsViewData) {
+        // open url
     }
 }
