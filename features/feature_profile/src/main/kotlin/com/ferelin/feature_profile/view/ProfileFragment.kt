@@ -16,6 +16,7 @@
 
 package com.ferelin.feature_profile.view
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -49,12 +50,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         factoryProducer = { viewModelFactory }
     )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let { unpackArgs(it) }
+    }
+
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
             mViewModel.profileLoadState.collect { loadState ->
                 when (loadState) {
                     is ProfileLoadState.None -> {
-                        mViewModel.loadProfile(companyId)
+                        mViewModel.loadProfile()
                     }
                     is ProfileLoadState.Loaded -> {
                         setUi(loadState.profile)
@@ -82,6 +88,37 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 .load(companyLogoUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imageViewIcon)
+        }
+    }
+
+    private fun unpackArgs(args: Bundle) {
+        args[ARGS_COMPANY_ID_KEY]?.let { companyId ->
+            if (companyId is Int) {
+                mViewModel.companyId = companyId
+            }
+        }
+        args[ARGS_COMPANY_TICKER_KEY]?.let { companyTicker ->
+            if (companyTicker is String) {
+                mViewModel.companyTicker = companyTicker
+            }
+        }
+        args[ARGS_COMPANY_LOGO_URL_KEY]?.let { logoUrl ->
+            if (logoUrl is String) {
+                mViewModel.companyLogoUrl = logoUrl
+            }
+        }
+    }
+
+    companion object {
+
+        const val ARGS_COMPANY_ID_KEY = "id"
+        const val ARGS_COMPANY_TICKER_KEY = "ticker"
+        const val ARGS_COMPANY_LOGO_URL_KEY = "logo"
+
+        fun newInstance(args: Bundle): ProfileFragment {
+            return ProfileFragment().apply {
+                arguments = args
+            }
         }
     }
 }

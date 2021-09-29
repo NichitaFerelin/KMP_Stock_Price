@@ -38,11 +38,15 @@ class ProfileViewModel @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
+    var companyId = 0
+    var companyTicker = ""
+    var companyLogoUrl = ""
+
     private val mProfileLoadState = MutableStateFlow<ProfileLoadState>(ProfileLoadState.None)
     val profileLoadState: StateFlow<ProfileLoadState>
         get() = mProfileLoadState.asStateFlow()
 
-    fun loadProfile(companyId: Int) {
+    fun loadProfile() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mProfileLoadState.value = ProfileLoadState.Loading
 
