@@ -20,9 +20,11 @@ import android.app.Activity
 import kotlinx.coroutines.flow.Flow
 
 enum class AuthenticationState {
-    CodeSent,
-    Complete,
     EmptyPhone,
+    PhoneProcessing,
+    CodeSent,
+    CodeProcessing,
+    Complete,
     TooManyRequests,
     Error
 }
@@ -32,6 +34,8 @@ interface AuthenticationSource {
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState>
 
     suspend fun isUserAuthenticated() : Boolean
+
+    suspend fun getCodeRequiredSize() : Int
 
     suspend fun getUserToken() : String?
 

@@ -39,10 +39,6 @@ class AuthenticationInteractor @Inject constructor(
             .onEach { notifyIfCompleted(it) }
     }
 
-    suspend fun isUserAuthenticated(): Boolean {
-        return mAuthenticationSource.isUserAuthenticated()
-    }
-
     suspend fun completeAuthentication(code: String) {
         mAuthenticationSource.completeAuthentication(code)
     }
@@ -57,8 +53,16 @@ class AuthenticationInteractor @Inject constructor(
         }
     }
 
+    suspend fun getCodeRequiredSize(): Int {
+        return mAuthenticationSource.getCodeRequiredSize()
+    }
+
     suspend fun getUserToken(): String? {
         return mAuthenticationSource.getUserToken()
+    }
+
+    suspend fun isUserAuthenticated(): Boolean {
+        return mAuthenticationSource.isUserAuthenticated()
     }
 
     private fun notifyIfCompleted(authenticationState: AuthenticationState) {

@@ -39,6 +39,10 @@ class AuthenticationSourceImpl @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : AuthenticationSource {
 
+    private companion object {
+        const val sCodeRequiredSize = 6
+    }
+
     // User ID is used to complete verification
     private var mUserVerificationId: String? = null
 
@@ -48,6 +52,7 @@ class AuthenticationSourceImpl @Inject constructor(
         holderActivity: Activity,
         phone: String
     ) = callbackFlow<AuthenticationState> {
+        trySend(AuthenticationState.PhoneProcessing)
 
         // Empty phone number causes exception
         if (phone.isEmpty()) {
@@ -62,6 +67,8 @@ class AuthenticationSourceImpl @Inject constructor(
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                trySend(AuthenticationState.CodeProcessing)
+
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     val response = if (task.isSuccessful) {
                         AuthenticationState.Complete
@@ -115,5 +122,10 @@ class AuthenticationSourceImpl @Inject constructor(
     override suspend fun getUserToken(): String? =
         withContext(mDispatchersProvider.IO) {
             mFirebaseAuth.uid
+        }
+
+    override suspend fun getCodeRequiredSize(): Int =
+        withContext(mDispatchersProvider.IO) {
+            sCodeRequiredSize
         }
 }
