@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package com.ferelin
+package com.ferelin.core.utils
 
-object Plugins {
-    const val androidApplication = "com.android.application"
-    const val androidLibrary = "com.android.library"
-    const val kotlinAndroid = "kotlin-android"
-    const val kotlinKapt = "kotlin-kapt"
-    const val googleServices = "com.google.gms.google-services"
+sealed class LoadState<T> {
+    class Prepared<T>(val data: T) : LoadState<T>()
+    class Loading<T> : LoadState<T>()
+    class None<T> : LoadState<T>()
+}
+
+inline fun <T> LoadState<T>.ifPrepared(action: (LoadState.Prepared<T>) -> Unit): Unit? {
+    return if (this is LoadState.Prepared) {
+        action.invoke(this)
+    } else {
+        null
+    }
 }

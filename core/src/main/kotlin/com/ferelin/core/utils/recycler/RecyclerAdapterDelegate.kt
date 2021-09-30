@@ -24,7 +24,7 @@ import androidx.viewbinding.ViewBinding
 
 inline fun <reified T : ViewHolderType, VB : ViewBinding> createRecyclerAdapter(
     noinline inflater: (LayoutInflater, ViewGroup?, Boolean) -> VB,
-    noinline onBind: (VB, ViewHolderType) -> Unit
+    noinline onBind: (VB, ViewHolderType, Boolean) -> Unit
 ) = object : RecyclerAdapterDelegate {
 
     override fun isForValidType(check: ViewHolderType): Boolean {
@@ -54,16 +54,16 @@ interface RecyclerAdapterDelegate {
 
 abstract class BaseRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    abstract fun bind(item: ViewHolderType)
+    abstract fun bind(item: ViewHolderType, withPayloads: Boolean)
 }
 
 open class BaseRecyclerBindingViewHolder<VB : ViewBinding>(
     val binding: VB,
-    private val onBind: (VB, ViewHolderType) -> Unit
+    private val onBind: (VB, ViewHolderType, Boolean) -> Unit,
 ) : BaseRecyclerViewHolder(binding.root) {
 
-    override fun bind(item: ViewHolderType) {
-        onBind(binding, item)
+    override fun bind(item: ViewHolderType, withPayloads: Boolean) {
+        onBind(binding, item, withPayloads)
     }
 }
 

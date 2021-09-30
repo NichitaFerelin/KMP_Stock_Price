@@ -23,7 +23,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.R
 import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.utils.recycler.createRecyclerAdapter
-import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.viewData.StockViewData
 
 const val ITEM_STOCK_TYPE = 0
@@ -35,7 +34,7 @@ fun createStocksAdapter(
     onBindCallback: (StockViewData) -> Unit
 ) = createRecyclerAdapter<StockViewData, ItemStockBinding>(
     ItemStockBinding::inflate
-) { viewBinding, item ->
+) { viewBinding, item, withPayloads ->
 
     item as StockViewData
 
@@ -50,20 +49,22 @@ fun createStocksAdapter(
         imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
         imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
 
-        root.setCardBackgroundColor(item.style.holderBackground)
-        root.foreground =
-            ContextCompat.getDrawable(root.context, item.style.rippleForeground)
+        if (!withPayloads) {
+            root.setCardBackgroundColor(item.style.holderBackground)
+            root.foreground =
+                ContextCompat.getDrawable(root.context, item.style.rippleForeground)
 
+            root.setOnClickListener { onStockClick.invoke(item) }
+            imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
 
-        val context = rootLayout.context
-        val errorIcon = AppCompatResources.getDrawable(context, R.drawable.ic_load_error)
-
-
-        Glide
-            .with(root)
-            .load(item.logoUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .error(errorIcon)
-            .into(imageViewIcon)
+            Glide
+                .with(root)
+                .load(item.logoUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .error(
+                    AppCompatResources.getDrawable(rootLayout.context, R.drawable.ic_load_error)
+                )
+                .into(imageViewIcon)
+        }
     }
 }

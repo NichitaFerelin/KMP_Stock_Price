@@ -20,7 +20,6 @@ import android.animation.Animator
 import android.view.animation.Animation
 import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.utils.recycler.BaseRecyclerBindingViewHolder
-import com.ferelin.core.utils.recycler.BaseRecyclerViewHolder
 import com.ferelin.core.utils.recycler.ViewHolderType
 
 class StockViewHolder(
@@ -29,5 +28,5 @@ class StockViewHolder(
     var attachedPriceFadeAnimation: Animation? = null,
     var attachedStartAnimator: Animator? = null,
     binding: ItemStockBinding,
-    onBind: (ItemStockBinding, ViewHolderType) -> Unit
+    onBind: (ItemStockBinding, ViewHolderType, Boolean) -> Unit
 ) : BaseRecyclerBindingViewHolder<ItemStockBinding>(binding, onBind)

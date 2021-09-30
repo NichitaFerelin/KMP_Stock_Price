@@ -18,7 +18,9 @@ package com.ferelin.core.mapper
 
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
+import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
+import com.ferelin.domain.entities.LiveTimePrice
 import javax.inject.Inject
 
 class StockMapper @Inject constructor(
@@ -37,6 +39,17 @@ class StockMapper @Inject constructor(
             stockPrice = companyWithStockPrice.stockPrice,
             isFavourite = companyWithStockPrice.company.isFavourite,
             addedByIndex = companyWithStockPrice.company.addedByIndex
+        )
+    }
+
+    fun map(stockViewData: StockViewData): Company {
+        return Company(
+            id = stockViewData.id,
+            name = stockViewData.name,
+            ticker = stockViewData.ticker,
+            logoUrl = stockViewData.logoUrl,
+            isFavourite = stockViewData.isFavourite,
+            addedByIndex = stockViewData.addedByIndex
         )
     }
 }

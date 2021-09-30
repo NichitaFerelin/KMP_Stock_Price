@@ -28,24 +28,32 @@ class BaseRecyclerAdapter(
     diffUtilCallback: DiffUtilCallback = DiffUtilCallback(),
 ) : ListAdapter<ViewHolderType, BaseRecyclerViewHolder>(diffUtilCallback) {
 
-    private val delegates: List<RecyclerAdapterDelegate> = delegatesList.toList()
+    private val mDelegates: List<RecyclerAdapterDelegate> = delegatesList.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRecyclerViewHolder {
-        return delegates[viewType].onCreateViewHolder(parent)
+        return mDelegates[viewType].onCreateViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: BaseRecyclerViewHolder, position: Int) {
-        holder.bind(currentList[position])
+        holder.bind(currentList[position], false)
+    }
+
+    override fun onBindViewHolder(
+        holder: BaseRecyclerViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        holder.bind(currentList[position], true)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return delegates.indexOfFirst {
+        return mDelegates.indexOfFirst {
             it.isForValidType(currentList[position])
         }
     }
 
-    fun getItemByPosition(position: Int): ViewHolderType? {
-        return currentList.getOrNull(position)
+    fun getItemByPosition(position: Int): ViewHolderType {
+        return currentList[position]
     }
 
     fun replace(newItems: List<ViewHolderType>) {
