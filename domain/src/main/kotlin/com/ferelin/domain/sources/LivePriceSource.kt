@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface LivePriceSource {
 
-    fun observeLiveTimeUpdates(): Flow<LiveTimePrice?>
+    fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?>
+
+    suspend fun cancelLiveTimeUpdates()
 
     suspend fun subscribeCompanyOnUpdates(companyTicker: String)
 

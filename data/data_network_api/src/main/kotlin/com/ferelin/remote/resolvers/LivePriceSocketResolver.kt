@@ -61,6 +61,7 @@ class LivePriceSocketResolver @Inject constructor(
         }
 
     fun openConnection(): Flow<LivePricePojo?> = callbackFlow {
+
         val request = Request
             .Builder()
             .url("$mBaseUrl$mToken")
@@ -85,7 +86,7 @@ class LivePriceSocketResolver @Inject constructor(
     }
         .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    private fun closeConnection() {
+    fun closeConnection() {
         mWebSocket?.close(0, null)
         mWebSocket = null
     }

@@ -16,10 +16,6 @@
 
 package com.ferelin.domain.interactors.livePrice
 
-import com.ferelin.domain.entities.LiveTimePrice
-import kotlinx.coroutines.flow.Flow
+import com.ferelin.shared.NetworkListener
 
-interface LiveTimePriceInteractor {
-
-    fun observeLiveTimeUpdates(): Flow<LiveTimePrice?>
-}
+interface LiveTimePriceInteractor : NetworkListener

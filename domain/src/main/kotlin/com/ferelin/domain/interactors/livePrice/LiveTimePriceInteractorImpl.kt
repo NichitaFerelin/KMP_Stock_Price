@@ -23,9 +23,9 @@ import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,19 +43,27 @@ class LiveTimePriceInteractorImpl @Inject constructor(
 
     private val mChangedPricesContainer = HashMap<Int, LiveTimePrice>(30, 0.5f)
 
-    override fun observeLiveTimeUpdates(): Flow<LiveTimePrice?> {
-        return mLivePriceSource.observeLiveTimeUpdates()
-            .filter { it != null }
-            .onEach { onLiveTimePrice(it!!) }
-            .onCompletion { cacheContainerChanges() }
-    }
-
     override suspend fun subscribeCompanyOnUpdates(companyTicker: String) {
         mLivePriceSource.subscribeCompanyOnUpdates(companyTicker)
     }
 
     override suspend fun unsubscribeCompanyFromUpdates(companyTicker: String) {
         mLivePriceSource.unsubscribeCompanyFromUpdates(companyTicker)
+    }
+
+    override suspend fun onNetworkAvailable() {
+        mExternalScope.launch(mDispatchersProvider.IO) {
+            mLivePriceSource.observeLiveTimePriceUpdates()
+                .filter { it != null }
+                .map { it!! }
+                .onEach { onLiveTimePrice(it) }
+                .collect()
+        }
+    }
+
+    override suspend fun onNetworkLost() {
+        mLivePriceSource.cancelLiveTimeUpdates()
+        cacheContainerChanges()
     }
 
     private suspend fun onLiveTimePrice(liveTimePrice: LiveTimePrice) {

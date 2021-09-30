@@ -29,11 +29,14 @@ class LivePriceSourceImpl @Inject constructor(
     private val mLivePriceMapper: LivePriceMapper,
 ) : LivePriceSource {
 
-    // TODO
-    override fun observeLiveTimeUpdates(): Flow<LiveTimePrice?> {
+    override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
         return mLivePriceSocketResolver
             .openConnection()
             .map(mLivePriceMapper::map)
+    }
+
+    override suspend fun cancelLiveTimeUpdates() {
+        mLivePriceSocketResolver.closeConnection()
     }
 
     override suspend fun subscribeCompanyOnUpdates(companyTicker: String) {
