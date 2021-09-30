@@ -60,15 +60,15 @@ class RouterImpl @Inject constructor(
         mScreenResolver.fromLoadingToStocksPager(mNavController)
     }
 
-    override fun fromStocksPagerToSearch(navDirections: NavDirections) {
+    override fun fromStocksPagerToSearch() {
         mScreenResolver.fromStocksPagerToSearch(mNavController)
     }
 
-    override fun fromDefaultStocksToAbout(navDirections: NavDirections, args: Bundle) {
+    override fun fromDefaultStocksToAbout(args: Bundle) {
         mScreenResolver.fromDefaultStocksToAbout(mNavController, args)
     }
 
-    override fun fromFavouriteStocksToAbout(navDirections: NavDirections, args: Bundle) {
+    override fun fromFavouriteStocksToAbout(args: Bundle) {
         mScreenResolver.fromFavouriteStocksToAbout(mNavController, args)
     }
 }

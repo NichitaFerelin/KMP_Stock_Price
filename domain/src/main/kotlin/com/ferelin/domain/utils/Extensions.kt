@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.internals
+package com.ferelin.domain.utils
 
-import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.NetworkListener
+import com.ferelin.domain.interactors.companies.CompaniesState
 
-interface CompaniesInternal : AuthenticationListener, StockPriceListener
+// TODO add for all
+inline fun CompaniesState.ifPrepared(action: (CompaniesState.Prepared) -> Unit): Unit? {
+    return if (this is CompaniesState.Prepared) {
+        action.invoke(this)
+    } else {
+        null
+    }
+}

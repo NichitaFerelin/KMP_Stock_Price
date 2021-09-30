@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.internals
+package com.ferelin.domain.utils
 
-import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.NetworkListener
+import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.domain.entities.StockPrice
 
-interface CompaniesInternal : AuthenticationListener, StockPriceListener
+interface StockPriceListener {
+
+    suspend fun onStockPriceChanged(stockPrice: StockPrice)
+
+    suspend fun onStockPriceChanged(liveTimePrice: LiveTimePrice)
+}

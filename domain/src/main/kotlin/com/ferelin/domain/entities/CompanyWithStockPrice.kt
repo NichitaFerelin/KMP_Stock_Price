@@ -18,5 +18,5 @@ package com.ferelin.domain.entities
 
 data class CompanyWithStockPrice(
     val company: Company,
-    val stockPrice: StockPrice? = null
+    var stockPrice: StockPrice? = null
 )

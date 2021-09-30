@@ -20,6 +20,7 @@ import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.domain.internals.LiveTimePriceInternal
 import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.sources.LivePriceSource
+import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,7 @@ class LiveTimePriceInteractorImpl @Inject constructor(
     private val mLivePriceSource: LivePriceSource,
     private val mStockPriceRepo: StockPriceRepo,
     private val mDispatchersProvider: DispatchersProvider,
+    @Named("PriceDeps") private val mPriceListeners: List<StockPriceListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : LiveTimePriceInteractor, LiveTimePriceInternal {
 
@@ -44,7 +46,7 @@ class LiveTimePriceInteractorImpl @Inject constructor(
     override fun observeLiveTimeUpdates(): Flow<LiveTimePrice?> {
         return mLivePriceSource.observeLiveTimeUpdates()
             .filter { it != null }
-            .onEach { mChangedPricesContainer[it!!.companyId] = it }
+            .onEach { onLiveTimePrice(it!!) }
             .onCompletion { cacheContainerChanges() }
     }
 
@@ -54,6 +56,12 @@ class LiveTimePriceInteractorImpl @Inject constructor(
 
     override suspend fun unsubscribeCompanyFromUpdates(companyTicker: String) {
         mLivePriceSource.unsubscribeCompanyFromUpdates(companyTicker)
+    }
+
+    private suspend fun onLiveTimePrice(liveTimePrice: LiveTimePrice) {
+        mChangedPricesContainer[liveTimePrice.companyId] = liveTimePrice
+
+        mPriceListeners.forEach { it.onStockPriceChanged(liveTimePrice) }
     }
 
     private fun cacheContainerChanges() {

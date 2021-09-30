@@ -20,8 +20,11 @@ import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface CompaniesInteractor : NetworkListener {
+
+    val companyWithStockPriceChanged: SharedFlow<CompanyWithStockPrice>
 
     suspend fun getAll(): List<CompanyWithStockPrice>
 

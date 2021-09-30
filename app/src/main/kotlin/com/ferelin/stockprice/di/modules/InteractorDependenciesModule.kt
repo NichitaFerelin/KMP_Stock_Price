@@ -18,6 +18,7 @@ package com.ferelin.stockprice.di.modules
 
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
+import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.AuthenticationListener
 import com.ferelin.shared.NetworkListener
 import dagger.Module
@@ -37,6 +38,14 @@ class InteractorDependenciesModule {
             companiesInteractorImpl,
             searchRequestsInteractorImpl
         )
+    }
+
+    @Provides
+    @Named("PriceDeps")
+    fun providePriceDeps(
+        companiesInteractorImpl: CompaniesInteractorImpl
+    ): List<StockPriceListener> {
+        return listOf(companiesInteractorImpl)
     }
 
     @Provides

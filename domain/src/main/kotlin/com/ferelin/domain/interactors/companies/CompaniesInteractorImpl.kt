@@ -18,6 +18,8 @@ package com.ferelin.domain.interactors.companies
 
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
+import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.internals.CompaniesInternal
 import com.ferelin.domain.internals.LiveTimePriceInternal
 import com.ferelin.domain.repositories.ProfileRepo
@@ -27,6 +29,7 @@ import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.CompaniesSource
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.domain.utils.NULL_INDEX
+import com.ferelin.domain.utils.ifPrepared
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,7 +41,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 sealed class CompaniesState {
-    class Prepared(val companiesWithStockPrice: List<CompanyWithStockPrice>) : CompaniesState()
+    class Prepared(var companiesWithStockPrice: List<CompanyWithStockPrice>) : CompaniesState()
     object Loading : CompaniesState()
     object None : CompaniesState()
     object Error : CompaniesState()
@@ -56,6 +59,10 @@ class CompaniesInteractorImpl @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
+
+    private val mCompanyWithStockPriceChanged = MutableSharedFlow<CompanyWithStockPrice>()
+    override val companyWithStockPriceChanged: SharedFlow<CompanyWithStockPrice>
+        get() = mCompanyWithStockPriceChanged.asSharedFlow()
 
     private var mCompaniesState: CompaniesState = CompaniesState.None
     private var mFavouriteCompaniesState: CompaniesState = CompaniesState.None
@@ -182,6 +189,18 @@ class CompaniesInteractorImpl @Inject constructor(
         return mFavouriteCompanyUpdates.asSharedFlow()
     }
 
+    override suspend fun onStockPriceChanged(stockPrice: StockPrice) {
+        updateCachedCompany(stockPrice.id) { itemToUpdate ->
+            itemToUpdate.stockPrice = stockPrice
+        }
+    }
+
+    override suspend fun onStockPriceChanged(liveTimePrice: LiveTimePrice) {
+        updateCachedCompany(liveTimePrice.companyId) { itemToUpdate ->
+            itemToUpdate.stockPrice?.currentPrice = liveTimePrice.price
+        }
+    }
+
     override suspend fun onNetworkAvailable() {
         tryToSync()
     }
@@ -199,6 +218,34 @@ class CompaniesInteractorImpl @Inject constructor(
 
         mExternalScope.launch(mDispatchersProvider.IO) {
             mCompaniesLocalRepo.setToDefault()
+        }
+    }
+
+    private suspend fun updateCachedCompany(
+        companyId: Int,
+        onUpdate: (CompanyWithStockPrice) -> Unit
+    ) {
+        mCompaniesState.ifPrepared { companiesState ->
+
+            val targetIndex = companiesState
+                .companiesWithStockPrice
+                .binarySearchBy(companyId) { it.company.id }
+
+            val companyWithStockPrice = companiesState.companiesWithStockPrice[targetIndex]
+            onUpdate.invoke(companyWithStockPrice)
+
+            if (companyWithStockPrice.company.isFavourite) {
+                mFavouriteCompaniesState.ifPrepared { favouriteCompaniesState ->
+
+                    val targetIndexFav = favouriteCompaniesState
+                        .companiesWithStockPrice
+                        .indexOfFirst { it.company.id == companyId }
+
+                    onUpdate.invoke(favouriteCompaniesState.companiesWithStockPrice[targetIndexFav])
+                }
+            }
+
+            mCompanyWithStockPriceChanged.emit(companyWithStockPrice)
         }
     }
 
