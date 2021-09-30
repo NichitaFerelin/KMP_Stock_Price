@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
 import com.ferelin.core.utils.animManager.AnimationManager
+import com.ferelin.core.utils.invalidate
 
 class StockItemAnimator : DefaultItemAnimator() {
 
@@ -57,7 +58,8 @@ class StockItemAnimator : DefaultItemAnimator() {
         changeFlags: Int,
         payloads: MutableList<Any>
     ): ItemHolderInfo {
-        if (changeFlags == FLAG_CHANGED && viewHolder is StockViewHolder) {
+        if (changeFlags == FLAG_CHANGED && viewHolder is StockViewHolder
+        ) {
             val priceStr = viewHolder.binding.textViewCurrentPrice.text.toString()
             return StockHolderInfo(priceStr)
         }

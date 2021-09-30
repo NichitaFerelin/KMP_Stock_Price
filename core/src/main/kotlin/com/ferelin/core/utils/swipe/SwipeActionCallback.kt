@@ -20,12 +20,14 @@ import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.stockprice.ui.stocksSection.common.adapter.StockViewHolder
-import com.ferelin.stockprice.ui.stocksSection.common.adapter.StocksRecyclerAdapter
+import com.ferelin.core.adapter.utils.StockViewHolder
 import kotlin.math.abs
 import kotlin.math.ln
 
-class SwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+class SwipeActionCallback(
+    val onHolderRebound: (StockViewHolder) -> Unit,
+    val onHolderUntouched: (StockViewHolder, Boolean) -> Unit,
+) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
     private var mRebounded = false
 
@@ -42,8 +44,11 @@ class SwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RI
     ): Boolean = false
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        (recyclerView.adapter as StocksRecyclerAdapter).onUntouched(viewHolder as StockViewHolder,mRebounded)
-        mRebounded = false
+        if (viewHolder is StockViewHolder) {
+            onHolderUntouched(viewHolder, mRebounded)
+            mRebounded = false
+        }
+
         super.clearView(recyclerView, viewHolder)
     }
 
@@ -64,7 +69,7 @@ class SwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RI
         val currentSwipePercentage = abs(dX) / itemView.width
 
         if (currentSwipePercentage > 0.2F && !mRebounded) {
-            (recyclerView.adapter as StocksRecyclerAdapter).onRebound(viewHolder)
+            onHolderRebound(viewHolder)
             mRebounded = true
         }
         translateReboundingView(itemView, viewHolder, dX)
@@ -86,6 +91,6 @@ class SwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RI
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        // Do nothing.
+        // Do nothing
     }
 }

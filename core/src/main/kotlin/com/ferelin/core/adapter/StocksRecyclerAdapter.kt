@@ -22,16 +22,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.R
 import com.ferelin.core.databinding.ItemStockBinding
-import com.ferelin.core.utils.recycler.createRecyclerBindingAdapterDelegate
+import com.ferelin.core.utils.recycler.createRecyclerAdapter
+import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.viewData.StockViewData
+
+const val ITEM_STOCK_TYPE = 0
+const val ITEM_TEXT_TYPE = 1
 
 fun createStocksAdapter(
     onStockClick: (StockViewData) -> Unit,
     onFavouriteIconClick: (StockViewData) -> Unit,
     onBindCallback: (StockViewData) -> Unit
-) = createRecyclerBindingAdapterDelegate<StockViewData, ItemStockBinding>(
+) = createRecyclerAdapter<StockViewData, ItemStockBinding>(
     ItemStockBinding::inflate
-) { viewBinding, item, _ ->
+) { viewBinding, item ->
 
     item as StockViewData
 
@@ -50,8 +54,10 @@ fun createStocksAdapter(
         root.foreground =
             ContextCompat.getDrawable(root.context, item.style.rippleForeground)
 
+
         val context = rootLayout.context
         val errorIcon = AppCompatResources.getDrawable(context, R.drawable.ic_load_error)
+
 
         Glide
             .with(root)

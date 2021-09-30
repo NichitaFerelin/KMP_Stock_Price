@@ -22,6 +22,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
+inline fun <reified T : ViewHolderType, VB : ViewBinding> createRecyclerAdapter(
+    noinline inflater: (LayoutInflater, ViewGroup?, Boolean) -> VB,
+    noinline onBind: (VB, ViewHolderType) -> Unit
+) = object : RecyclerAdapterDelegate {
+
+    override fun isForValidType(check: ViewHolderType): Boolean {
+        return check is T
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup): BaseRecyclerBindingViewHolder<VB> {
+        return BaseRecyclerBindingViewHolder(
+            binding = inflater(LayoutInflater.from(parent.context), parent, false),
+            onBind = onBind
+        )
+    }
+
+    override fun getViewHolderTypeName(): String {
+        return T::class.java.simpleName
+    }
+}
+
 interface RecyclerAdapterDelegate {
 
     fun isForValidType(check: ViewHolderType): Boolean
@@ -33,34 +54,16 @@ interface RecyclerAdapterDelegate {
 
 abstract class BaseRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    abstract fun bind(item: ViewHolderType, payloads: List<Any>)
+    abstract fun bind(item: ViewHolderType)
 }
 
-class BaseRecyclerBindingViewHolder<B : ViewBinding>(
-    private val binding: B,
-    private val onBind: (B, ViewHolderType, List<Any>) -> Unit
+open class BaseRecyclerBindingViewHolder<VB : ViewBinding>(
+    val binding: VB,
+    private val onBind: (VB, ViewHolderType) -> Unit
 ) : BaseRecyclerViewHolder(binding.root) {
 
-    override fun bind(item: ViewHolderType, payloads: List<Any>) {
-        onBind(binding, item, payloads)
+    override fun bind(item: ViewHolderType) {
+        onBind(binding, item)
     }
-}
-
-inline fun <reified T : ViewHolderType, B : ViewBinding> createRecyclerBindingAdapterDelegate(
-    noinline inflater: (LayoutInflater, ViewGroup?, Boolean) -> B,
-    noinline onBind: (B, ViewHolderType, List<Any>) -> Unit
-) = object : RecyclerAdapterDelegate {
-
-    override fun isForValidType(check: ViewHolderType): Boolean {
-        return check is T
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup): BaseRecyclerBindingViewHolder<B> =
-        BaseRecyclerBindingViewHolder(
-            binding = inflater(LayoutInflater.from(parent.context), parent, false),
-            onBind = onBind
-        )
-
-    override fun getViewHolderTypeName(): String = T::class.java.simpleName
 }
 
