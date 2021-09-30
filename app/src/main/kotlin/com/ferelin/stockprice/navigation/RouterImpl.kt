@@ -18,57 +18,56 @@ package com.ferelin.stockprice.navigation
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.ferelin.navigation.Router
 import com.ferelin.navigation.ScreenResolver
 import com.ferelin.stockprice.R
+import com.ferelin.stockprice.ui.MainActivity
 import javax.inject.Inject
 
 class RouterImpl @Inject constructor(
     private val mScreenResolver: ScreenResolver
 ) : Router {
 
-    private var activity: Activity? = null
-    private val mActivity: Activity
+    private var activity: FragmentActivity? = null
+    private val mActivity: FragmentActivity
         get() = checkNotNull(activity)
 
-    private var navController: NavController? = null
-    private val mNavController: NavController
-        get() = checkNotNull(navController)
-
-    override fun bind(activity: Activity) {
+    override fun bind(activity: FragmentActivity) {
         this.activity = activity
-        this.navController = mActivity.findNavController(R.id.container)
     }
 
     override fun unbind() {
         activity = null
-        navController = null
     }
 
     override fun back() {
-        mNavController.navigateUp()
     }
 
-    override fun fromLoadingToWelcome() {
-        mScreenResolver.fromLoadingToWelcome(mNavController)
+    override fun fromLoadingToWelcome(args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromLoadingToStocksPager() {
-        mScreenResolver.fromLoadingToStocksPager(mNavController)
+    override fun fromLoadingToStocksPager(args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromStocksPagerToSearch() {
-        mScreenResolver.fromStocksPagerToSearch(mNavController)
+    override fun fromStocksPagerToSearch(args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromDefaultStocksToAbout(args: Bundle) {
-        mScreenResolver.fromDefaultStocksToAbout(mNavController, args)
+    override fun fromDefaultStocksToAbout(args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromFavouriteStocksToAbout(args: Bundle) {
-        mScreenResolver.fromFavouriteStocksToAbout(mNavController, args)
+    override fun fromFavouriteStocksToAbout(args: Bundle?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun fromSearchToAbout(args: Bundle?) {
+        TODO("Not yet implemented")
     }
 }

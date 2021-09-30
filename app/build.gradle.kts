@@ -1,7 +1,6 @@
 import com.ferelin.Base
 import com.ferelin.Dependencies
 import com.ferelin.Projects
-import com.ferelin.Versions
 
 plugins {
     id("com.android.application")
@@ -27,9 +26,6 @@ android {
 
 dependencies {
     implementation(Dependencies.androidCore)
-
-    implementation(Dependencies.navFragment)
-    implementation(Dependencies.navUi)
 
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)

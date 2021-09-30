@@ -17,6 +17,7 @@
 package com.ferelin.stockprice.navigation
 
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.ferelin.navigation.ScreenResolver
 import com.ferelin.stockprice.R
@@ -24,35 +25,27 @@ import javax.inject.Inject
 
 class ScreenResolverImpl @Inject constructor() : ScreenResolver {
 
-    override fun fromLoadingToWelcome(navController: NavController) {
-        navController.navigate(
-            R.id.action_loadingFragment_to_welcomeFragment
-        )
+    override fun fromLoadingToWelcome(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromLoadingToStocksPager(navController: NavController) {
-        navController.navigate(
-            R.id.action_loadingFragment_to_stocksPagerFragment
-        )
+    override fun fromLoadingToStocksPager(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromStocksPagerToSearch(navController: NavController) {
-        navController.navigate(
-            R.id.action_stocksPagerFragment_to_searchFragment
-        )
+    override fun fromStocksPagerToSearch(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromDefaultStocksToAbout(navController: NavController, args: Bundle) {
-        navController.navigate(
-            R.id.action_stocksFragment_to_aboutPagerFragment,
-            args
-        )
+    override fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
     }
 
-    override fun fromFavouriteStocksToAbout(navController: NavController, args: Bundle) {
-        navController.navigate(
-            R.id.action_favouriteFragment_to_aboutPagerFragment,
-            args
-        )
+    override fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun fromSearchToAbout(hostActivity: FragmentActivity, args: Bundle?) {
+        TODO("Not yet implemented")
     }
 }

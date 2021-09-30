@@ -17,17 +17,19 @@
 package com.ferelin.navigation
 
 import android.os.Bundle
-import androidx.navigation.NavController
+import androidx.fragment.app.FragmentActivity
 
 interface ScreenResolver {
 
-    fun fromLoadingToWelcome(navController: NavController)
+    fun fromLoadingToWelcome(hostActivity: FragmentActivity, args: Bundle?)
 
-    fun fromLoadingToStocksPager(navController: NavController)
+    fun fromLoadingToStocksPager(hostActivity: FragmentActivity, args: Bundle?)
 
-    fun fromStocksPagerToSearch(navController: NavController)
+    fun fromStocksPagerToSearch(hostActivity: FragmentActivity, args: Bundle?)
 
-    fun fromDefaultStocksToAbout(navController: NavController, args: Bundle)
+    fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, args: Bundle?)
 
-    fun fromFavouriteStocksToAbout(navController: NavController, args: Bundle)
+    fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, args: Bundle?)
+
+    fun fromSearchToAbout(hostActivity: FragmentActivity, args: Bundle?)
 }

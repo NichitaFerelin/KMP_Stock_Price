@@ -73,12 +73,6 @@ object Dependencies {
     const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
     const val glideCompilerKapt = "com.github.bumptech.glide:compiler:${Versions.glide}"
 
-    /*
-    * Navigation
-    * */
-    const val navFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
-    const val navUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
-
     /**
      * Tests
      * */

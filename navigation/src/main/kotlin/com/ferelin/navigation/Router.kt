@@ -16,25 +16,26 @@
 
 package com.ferelin.navigation
 
-import android.app.Activity
 import android.os.Bundle
-import androidx.navigation.NavDirections
+import androidx.fragment.app.FragmentActivity
 
 interface Router {
 
-    fun bind(activity: Activity)
+    fun bind(activity: FragmentActivity)
 
     fun unbind()
 
     fun back()
 
-    fun fromLoadingToWelcome()
+    fun fromLoadingToWelcome(args: Bundle?)
 
-    fun fromLoadingToStocksPager()
+    fun fromLoadingToStocksPager(args: Bundle?)
 
-    fun fromStocksPagerToSearch(navDirections: NavDirections)
+    fun fromStocksPagerToSearch(args: Bundle?)
 
-    fun fromDefaultStocksToAbout(navDirections: NavDirections, args: Bundle)
+    fun fromDefaultStocksToAbout(args: Bundle?)
 
-    fun fromFavouriteStocksToAbout(navDirections: NavDirections, args: Bundle)
+    fun fromFavouriteStocksToAbout(args: Bundle?)
+
+    fun fromSearchToAbout(args: Bundle?)
 }

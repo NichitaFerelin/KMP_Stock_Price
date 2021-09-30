@@ -4,7 +4,6 @@ import com.ferelin.Dependencies
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("kotlin-kapt")
 }
 
 android {
@@ -19,6 +18,5 @@ android {
 }
 
 dependencies {
-    implementation(Dependencies.navFragment)
-    implementation(Dependencies.navUi)
+    implementation(Dependencies.fragments)
 }
