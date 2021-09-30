@@ -61,7 +61,7 @@ class CompaniesInteractorImpl @Inject constructor(
 ) : CompaniesInteractor, CompaniesInternal {
 
     private val mCompanyWithStockPriceChanged = MutableSharedFlow<CompanyWithStockPrice>()
-    override val companyWithStockPriceChanged: SharedFlow<CompanyWithStockPrice>
+    override val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
         get() = mCompanyWithStockPriceChanged.asSharedFlow()
 
     private var mCompaniesState: CompaniesState = CompaniesState.None

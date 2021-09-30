@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface CompaniesInteractor : NetworkListener {
 
-    val companyWithStockPriceChanged: SharedFlow<CompanyWithStockPrice>
+    val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
 
     suspend fun getAll(): List<CompanyWithStockPrice>
 
