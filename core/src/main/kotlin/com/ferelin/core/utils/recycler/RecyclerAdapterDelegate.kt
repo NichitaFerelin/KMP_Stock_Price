@@ -24,7 +24,7 @@ import androidx.viewbinding.ViewBinding
 
 inline fun <reified T : ViewHolderType, VB : ViewBinding> createRecyclerAdapter(
     noinline inflater: (LayoutInflater, ViewGroup?, Boolean) -> VB,
-    noinline onBind: (VB, ViewHolderType, Boolean) -> Unit
+    noinline onBind: (VB, ViewHolderType, MutableList<Any>?) -> Unit
 ) = object : RecyclerAdapterDelegate {
 
     override fun isForValidType(check: ViewHolderType): Boolean {
@@ -54,16 +54,16 @@ interface RecyclerAdapterDelegate {
 
 abstract class BaseRecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    abstract fun bind(item: ViewHolderType, withPayloads: Boolean)
+    abstract fun bind(item: ViewHolderType, payloads: MutableList<Any>?)
 }
 
 open class BaseRecyclerBindingViewHolder<VB : ViewBinding>(
     val binding: VB,
-    private val onBind: (VB, ViewHolderType, Boolean) -> Unit,
+    private val onBind: (VB, ViewHolderType, MutableList<Any>?) -> Unit,
 ) : BaseRecyclerViewHolder(binding.root) {
 
-    override fun bind(item: ViewHolderType, withPayloads: Boolean) {
-        onBind(binding, item, withPayloads)
+    override fun bind(item: ViewHolderType, payloads: MutableList<Any>?) {
+        onBind(binding, item, payloads)
     }
 }
 

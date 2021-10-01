@@ -34,7 +34,7 @@ fun createStocksAdapter(
     onBindCallback: (StockViewData) -> Unit
 ) = createRecyclerAdapter<StockViewData, ItemStockBinding>(
     ItemStockBinding::inflate
-) { viewBinding, item, withPayloads ->
+) { viewBinding, item, payloads ->
 
     item as StockViewData
 
@@ -49,7 +49,7 @@ fun createStocksAdapter(
         imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
         imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
 
-        if (!withPayloads) {
+        if (payloads == null) {
             root.setCardBackgroundColor(item.style.holderBackground)
             root.foreground =
                 ContextCompat.getDrawable(root.context, item.style.rippleForeground)

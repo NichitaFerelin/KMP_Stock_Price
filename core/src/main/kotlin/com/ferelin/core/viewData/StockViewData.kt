@@ -25,7 +25,7 @@ data class StockViewData(
     val ticker: String,
     val logoUrl: String,
     val style: StockStyle,
-    val stockPrice: StockPrice? = null,
+    var stockPrice: StockPrice? = null,
     var isFavourite: Boolean = false,
     var addedByIndex: Int = 0
 ) : ViewHolderType {

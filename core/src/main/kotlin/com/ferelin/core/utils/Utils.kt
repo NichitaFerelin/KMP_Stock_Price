@@ -26,7 +26,7 @@ import com.ferelin.core.view.DialogErrorFragment
 import java.util.*
 import kotlin.concurrent.timerTask
 
-const val NULL_INDEX = -1
+const val SHARING_STOP_TIMEOUT = 5000L
 
 fun showDialog(text: String, fragmentManager: FragmentManager) {
     DialogErrorFragment

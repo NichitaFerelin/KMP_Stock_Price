@@ -34,6 +34,9 @@ dependencies {
     api(Dependencies.constraintLayout)
     api(Dependencies.material)
 
+    api(Dependencies.glide)
+    kapt(Dependencies.glideCompilerKapt)
+
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 }

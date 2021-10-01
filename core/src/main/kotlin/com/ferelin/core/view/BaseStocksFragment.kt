@@ -20,8 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.ferelin.core.adapter.BaseRecyclerAdapter
-import com.ferelin.core.adapter.createStocksAdapter
 import com.ferelin.core.adapter.utils.StockItemAnimator
 import com.ferelin.core.adapter.utils.StockItemDecoration
 import com.ferelin.core.adapter.utils.StockViewHolder
@@ -41,19 +39,9 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
     protected var recyclerView: RecyclerView? = null
 
-    protected val mStocksAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        BaseRecyclerAdapter(
-            createStocksAdapter(
-                onStockClick = mViewModel::onStockClick,
-                onFavouriteIconClick = mViewModel::onFavouriteIconClick,
-                onBindCallback = mViewModel::onBind
-            )
-        ).apply { setHasStableIds(true) }
-    }
-
     override fun initUi() {
         recyclerView?.apply {
-            adapter = mStocksAdapter
+            adapter = mViewModel.stocksAdapter
             itemAnimator = StockItemAnimator()
             addItemDecoration(StockItemDecoration(requireContext()))
 
@@ -63,6 +51,14 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                     onHolderUntouched = this@BaseStocksFragment::onHolderUntouched
                 )
             ).attachToRecyclerView(this)
+        }
+    }
+
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            launch { mViewModel.companiesStockPriceUpdates.collect() }
+            launch { mViewModel.favouriteCompaniesUpdates.collect() }
         }
     }
 
