@@ -17,8 +17,8 @@
 package com.ferelin.domain.utils
 
 import com.ferelin.domain.interactors.companies.CompaniesState
+import com.ferelin.shared.NULL_INDEX
 
-// TODO add for all
 inline fun CompaniesState.ifPrepared(action: (CompaniesState.Prepared) -> Unit): Unit? {
     return if (this is CompaniesState.Prepared) {
         action.invoke(this)

@@ -83,6 +83,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { mPopularRequestsState = SearchRequestsState.Prepared(it) }
     }
 
+    // TODO return new requests
     override suspend fun cacheSearchRequest(searchRequest: String) {
         mExternalScope.launch(mDispatchersProvider.IO) {
 

@@ -28,9 +28,9 @@ import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.CompaniesSource
 import com.ferelin.domain.syncers.CompaniesSyncer
-import com.ferelin.domain.utils.NULL_INDEX
 import com.ferelin.domain.utils.ifPrepared
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NULL_INDEX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
