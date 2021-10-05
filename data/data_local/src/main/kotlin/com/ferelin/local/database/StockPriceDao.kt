@@ -28,7 +28,7 @@ interface StockPriceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStockPrice(dbo: StockPriceDBO)
 
-    @Query("SELECT 1 FROM `companies_stock_price` WHERE id = :companyId")
+    @Query("SELECT * FROM `companies_stock_price` WHERE id = :companyId LIMIT 1")
     suspend fun getStockPrice(companyId: Int): StockPriceDBO?
 
     @Query(

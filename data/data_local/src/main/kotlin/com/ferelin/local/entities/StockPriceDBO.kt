@@ -18,16 +18,14 @@ package com.ferelin.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import androidx.room.Relation
 
 @Entity(tableName = "companies_stock_price")
 data class StockPriceDBO(
 
+    @PrimaryKey
     @ColumnInfo(name = "id")
-    @Relation(
-        parentColumn = CompanyDBO.ID_COLUMN,
-        entityColumn = "id"
-    )
     val id: Int,
 
     @ColumnInfo(name = "current_price")

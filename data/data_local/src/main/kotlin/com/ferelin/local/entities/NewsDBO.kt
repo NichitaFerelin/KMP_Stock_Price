@@ -27,10 +27,6 @@ class NewsDBO(
     @ColumnInfo(name = "id")
     val id: Long = 0,
 
-    @Relation(
-        parentColumn = CompanyDBO.ID_COLUMN,
-        entityColumn = "relation_id"
-    )
     @ColumnInfo(name = "relation_id")
     var relationId: Int,
 

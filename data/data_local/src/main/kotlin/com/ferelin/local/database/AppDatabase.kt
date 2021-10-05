@@ -20,9 +20,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ferelin.local.entities.*
 
-/**
- * Represents a room database for caching companies
- * */
 @Database(
     entities = [
         CompanyDBO::class,

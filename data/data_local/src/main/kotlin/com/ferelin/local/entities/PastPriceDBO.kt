@@ -27,10 +27,6 @@ data class PastPriceDBO(
     @ColumnInfo(name = "id")
     val id: Long,
 
-    @Relation(
-        parentColumn = CompanyDBO.ID_COLUMN,
-        entityColumn = "id"
-    )
     @ColumnInfo(name = "relation_id")
     val relationId: Int,
 
