@@ -16,6 +16,24 @@
 
 package com.ferelin.feature_stocks_default.viewModel
 
-import androidx.lifecycle.ViewModel
+import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.domain.interactors.StockPriceInteractor
+import com.ferelin.domain.interactors.companies.CompaniesInteractor
+import com.ferelin.navigation.Router
+import com.ferelin.shared.DispatchersProvider
+import javax.inject.Inject
 
-class StocksViewModel : ViewModel()
+class StocksViewModel @Inject constructor(
+    stockMapper: StockMapper,
+    router: Router,
+    companiesInteractor: CompaniesInteractor,
+    stockPriceInteractor: StockPriceInteractor,
+    dispatchersProvider: DispatchersProvider
+) : BaseStocksViewModel(
+    stockMapper,
+    router,
+    companiesInteractor,
+    stockPriceInteractor,
+    dispatchersProvider
+)

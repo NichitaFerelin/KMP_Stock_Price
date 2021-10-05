@@ -28,5 +28,5 @@ class StockViewHolder(
     var attachedPriceFadeAnimation: Animation? = null,
     var attachedStartAnimator: Animator? = null,
     binding: ItemStockBinding,
-    onBind: (ItemStockBinding, ViewHolderType, Boolean) -> Unit
+    onBind: (ItemStockBinding, ViewHolderType, MutableList<Any>?) -> Unit
 ) : BaseRecyclerBindingViewHolder<ItemStockBinding>(binding, onBind)

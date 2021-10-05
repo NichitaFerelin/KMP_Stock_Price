@@ -29,7 +29,7 @@ import javax.inject.Inject
 class LoadingViewModel @Inject constructor(
     private val mFirstLaunchInteractor: FirstLaunchInteractor,
     private val mRouter: Router,
-    mDispatchersProvider: DispatchersProvider
+    private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     private val mLoadPreparedState = MutableStateFlow(false)
@@ -45,10 +45,14 @@ class LoadingViewModel @Inject constructor(
     }
 
     fun onAnimationsStopped() {
-        if (mIsFirstTimeLaunch) {
-            mRouter.fromLoadingToWelcome()
-        } else {
-            mRouter.fromLoadingToStocksPager()
+        viewModelScope.launch(mDispatchersProvider.IO) {
+            if (mIsFirstTimeLaunch) {
+                // TODO to welcome fragment
+                mRouter.fromLoadingToStocksPager()
+                mFirstLaunchInteractor.cacheFirstTimeLaunch(false)
+            } else {
+                mRouter.fromLoadingToStocksPager()
+            }
         }
     }
 

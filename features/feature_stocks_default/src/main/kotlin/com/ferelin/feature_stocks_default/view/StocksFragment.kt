@@ -16,24 +16,58 @@
 
 package com.ferelin.feature_stocks_default.view
 
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
-import com.ferelin.core.databinding.FragmentStocksBinding
+import androidx.lifecycle.lifecycleScope
+import com.ferelin.core.utils.LoadState
+import com.ferelin.core.view.BaseStocksFragment
+import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.feature_stocks_default.databinding.FragmentStocksBinding
 import com.ferelin.feature_stocks_default.viewModel.StocksViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 
-class StocksFragment : BaseFragment<FragmentStocksBinding>() {
+class StocksFragment : BaseStocksFragment<FragmentStocksBinding, StocksViewModel>() {
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksBinding
         get() = FragmentStocksBinding::inflate
 
-    @Inject
-    lateinit var viewModelFactory: BaseViewModelFactory<StocksViewModel>
-
-    private val mViewModel: StocksViewModel by viewModels(
+    override val mViewModel: StocksViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        recyclerView = mViewBinding.recyclerViewStocks
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun initUi() {
+        super.initUi()
+        mViewBinding.recyclerViewStocks.setHasFixedSize(true)
+    }
+
+    override fun initObservers() {
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            observeStocksLoadState()
+        }
+    }
+
+    private suspend fun observeStocksLoadState() {
+        mViewModel.stocksLoadState.collect { loadState ->
+            if (loadState is LoadState.None) {
+                mViewModel.loadStocks()
+            } else {
+                // show progress bar
+            }
+        }
+    }
+
+    companion object {
+
+        fun newInstance(data: Any?) : StocksFragment {
+            return StocksFragment()
+        }
+    }
 }

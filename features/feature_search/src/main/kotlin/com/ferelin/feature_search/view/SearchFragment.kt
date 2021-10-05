@@ -19,14 +19,23 @@ package com.ferelin.feature_search.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
+import com.ferelin.core.view.BaseStocksFragment
 import com.ferelin.feature_search.databinding.FragmentSearchBinding
 import com.ferelin.feature_search.viewModel.SearchViewModel
-import javax.inject.Inject
 
-class SearchFragment : BaseFragment<FragmentSearchBinding>() {
+class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel>() {
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
         get() = FragmentSearchBinding::inflate
+
+    override val mViewModel: SearchViewModel by viewModels(
+        factoryProducer = { viewModelFactory }
+    )
+
+    companion object {
+
+        fun newInstance(data: Any?): SearchFragment {
+            return SearchFragment()
+        }
+    }
 }

@@ -19,11 +19,13 @@ package com.ferelin.feature_news.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
-import com.ferelin.core.base.recyclerAdapter.BaseRecyclerAdapter
+import com.ferelin.core.adapter.BaseRecyclerAdapter
+import com.ferelin.core.params.NewsParams
+import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_news.adapter.NewsItemDecoration
 import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.databinding.FragmentNewsBinding
@@ -83,26 +85,23 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[ARGS_COMPANY_ID_KEY]?.let { companyId ->
-            if (companyId is Int) {
-                mViewModel.companyId = companyId
-            }
-        }
-        args[ARGS_COMPANY_TICKER_KEY]?.let { companyTicker ->
-            if (companyTicker is String) {
-                mViewModel.companyTicker = companyTicker
+        args[sNewsParamsKey]?.let { params ->
+            if (params is NewsParams) {
+                mViewModel.companyId = params.companyId
+                mViewModel.companyTicker = params.companyTicker
             }
         }
     }
 
     companion object {
 
-        const val ARGS_COMPANY_ID_KEY = "id"
-        const val ARGS_COMPANY_TICKER_KEY = "ticker"
+        private const val sNewsParamsKey = "news-params"
 
-        fun newInstance(args: Bundle): NewsFragment {
-            return NewsFragment().apply {
-                arguments = args
+        fun newInstance(data: Any?): NewsFragment {
+            return NewsFragment().also {
+                if (data is NewsParams) {
+                    it.arguments = bundleOf(sNewsParamsKey to data)
+                }
             }
         }
     }

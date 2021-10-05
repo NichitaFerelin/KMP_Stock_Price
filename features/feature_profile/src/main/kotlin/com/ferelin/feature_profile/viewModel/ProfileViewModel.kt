@@ -40,6 +40,7 @@ class ProfileViewModel @Inject constructor(
 
     var companyId = 0
     var companyTicker = ""
+    var companyName = ""
     var companyLogoUrl = ""
 
     private val mProfileLoadState = MutableStateFlow<ProfileLoadState>(ProfileLoadState.None)

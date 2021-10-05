@@ -1,5 +1,4 @@
 import com.ferelin.Base
-import com.ferelin.Dependencies
 import com.ferelin.Projects
 
 plugins {
@@ -23,5 +22,14 @@ android {
 }
 
 dependencies {
-    api(project(Projects.core))
+    implementation(project(Projects.core))
+
+    implementation(project(Projects.featureProfile))
+    implementation(project(Projects.featureChart))
+    implementation(project(Projects.featureNews))
+    implementation(project(Projects.featureForecasts))
+    implementation(project(Projects.featureIdeas))
+
+    implementation(com.ferelin.Dependencies.dagger)
+    kapt(com.ferelin.Dependencies.daggerCompilerKapt)
 }

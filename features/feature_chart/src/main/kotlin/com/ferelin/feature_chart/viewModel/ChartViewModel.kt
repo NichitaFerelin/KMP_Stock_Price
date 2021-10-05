@@ -19,13 +19,13 @@ package com.ferelin.feature_chart.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.utils.ifNotEmpty
-import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.interactors.PastPriceInteractor
 import com.ferelin.domain.interactors.PastPriceState
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.StockPriceState
-import com.ferelin.domain.interactors.livePrice.LiveTimePriceInteractor
+import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
 import com.ferelin.feature_chart.utils.points.Marker
 import com.ferelin.feature_chart.viewData.ChartViewMode
@@ -37,8 +37,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChartViewModel @Inject constructor(
+    private val mCompaniesInteractor: CompaniesInteractor,
     private val mPastPriceInteractor: PastPriceInteractor,
-    private val mLiveTimePriceInteractor: LiveTimePriceInteractor,
     private val mStockPriceInteractor: StockPriceInteractor,
     private val mPastPriceTypeMapper: PastPriceTypeMapper,
     private val mDispatchersProvider: DispatchersProvider
@@ -54,11 +54,8 @@ class ChartViewModel @Inject constructor(
     val stockPriceLoad: StateFlow<StockPriceLoadState>
         get() = mStockPriceLoad.asStateFlow()
 
-    val liveTimePrice: SharedFlow<LiveTimePrice>
-        get() = mLiveTimePriceInteractor.observeLiveTimeUpdates()
-            .filter { it != null && it.companyId == companyId }
-            .map { it!! }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+    val companiesStockPriceUpdates: SharedFlow<CompanyWithStockPrice>
+        get() = mCompaniesInteractor.companyWithStockPriceChanges
 
     var chartMode: ChartViewMode = ChartViewMode.All
         private set

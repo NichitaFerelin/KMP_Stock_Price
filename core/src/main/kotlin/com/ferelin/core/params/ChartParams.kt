@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.utils
+package com.ferelin.core.params
 
-const val NULL_INDEX = -1
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class ChartParams(
+    val id: Int,
+    val ticker: String
+) : Parcelable

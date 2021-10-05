@@ -23,5 +23,5 @@ android {
 }
 
 dependencies {
-    api(project(Projects.core))
+    implementation(project(Projects.core))
 }

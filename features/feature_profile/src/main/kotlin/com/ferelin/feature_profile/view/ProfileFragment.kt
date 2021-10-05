@@ -19,12 +19,14 @@ package com.ferelin.feature_profile.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
+import com.ferelin.core.params.ProfileParams
+import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.domain.entities.Profile
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
 import com.ferelin.feature_profile.viewModel.ProfileLoadState
@@ -32,11 +34,6 @@ import com.ferelin.feature_profile.viewModel.ProfileViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-// TODO temp value
-val companyId = 1
-val companyName = "Apple"
-val companyLogoUrl = ""
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
@@ -76,7 +73,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     private fun setUi(profile: Profile) {
         with(mViewBinding) {
-            textViewName.text = companyName
+            textViewName.text = mViewModel.companyName
             textViewWebUrl.text = profile.webUrl
             textViewCountry.text = profile.country
             textViewIndustry.text = profile.industry
@@ -85,39 +82,32 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
             Glide
                 .with(root)
-                .load(companyLogoUrl)
+                .load(mViewModel.companyLogoUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imageViewIcon)
         }
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[ARGS_COMPANY_ID_KEY]?.let { companyId ->
-            if (companyId is Int) {
-                mViewModel.companyId = companyId
-            }
-        }
-        args[ARGS_COMPANY_TICKER_KEY]?.let { companyTicker ->
-            if (companyTicker is String) {
-                mViewModel.companyTicker = companyTicker
-            }
-        }
-        args[ARGS_COMPANY_LOGO_URL_KEY]?.let { logoUrl ->
-            if (logoUrl is String) {
-                mViewModel.companyLogoUrl = logoUrl
+        args[sProfileParamsKey]?.let { params ->
+            if (params is ProfileParams) {
+                mViewModel.companyId = params.companyId
+                mViewModel.companyName = params.companyName
+                mViewModel.companyTicker = params.companyTicker
+                mViewModel.companyLogoUrl = params.companyLogoUrl
             }
         }
     }
 
     companion object {
 
-        const val ARGS_COMPANY_ID_KEY = "id"
-        const val ARGS_COMPANY_TICKER_KEY = "ticker"
-        const val ARGS_COMPANY_LOGO_URL_KEY = "logo"
+        private const val sProfileParamsKey = "profile-params"
 
-        fun newInstance(args: Bundle): ProfileFragment {
-            return ProfileFragment().apply {
-                arguments = args
+        fun newInstance(data: Any?): ProfileFragment {
+            return ProfileFragment().also {
+                if (data is ProfileParams) {
+                    it.arguments = bundleOf(sProfileParamsKey to data)
+                }
             }
         }
     }

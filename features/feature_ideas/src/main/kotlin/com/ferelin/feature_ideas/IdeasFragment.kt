@@ -32,4 +32,11 @@ class IdeasFragment : Fragment() {
     ): View {
         return FragmentIdeasBinding.inflate(inflater, container, false).root
     }
+
+    companion object {
+
+        fun newInstance(data: Any?): IdeasFragment {
+            return IdeasFragment()
+        }
+    }
 }

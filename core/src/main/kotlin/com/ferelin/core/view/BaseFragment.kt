@@ -16,7 +16,6 @@
 
 package com.ferelin.core.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,21 +26,16 @@ import androidx.viewbinding.ViewBinding
 import com.ferelin.shared.DispatchersProvider
 import javax.inject.Inject
 
-abstract class BaseFragment<ViewBindingType : ViewBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> ViewBindingType
+    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
-    private var viewBinding: ViewBindingType? = null
-    protected val mViewBinding: ViewBindingType
+    private var viewBinding: VB? = null
+    protected val mViewBinding: VB
         get() = checkNotNull(viewBinding)
 
     @Inject
     lateinit var mDispatchersProvider: DispatchersProvider
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        // TODO inject deps
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

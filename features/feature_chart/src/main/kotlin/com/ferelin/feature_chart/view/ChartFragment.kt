@@ -23,12 +23,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
+import com.ferelin.core.params.ChartParams
+import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_chart.R
 import com.ferelin.feature_chart.databinding.FragmentChartBinding
 import com.ferelin.feature_chart.utils.SuggestionController
@@ -147,8 +149,8 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private suspend fun observeLiveTimePrice() {
-        mViewModel.liveTimePrice.collect { livePrice ->
-            setPriceFields(livePrice.price, livePrice.profit)
+        mViewModel.companiesStockPriceUpdates.collect { livePrice ->
+            // setPriceFields(livePrice.price, livePrice.profit)
         }
     }
 
@@ -326,26 +328,23 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         }
 
     private fun unpackArgs(args: Bundle) {
-        args[ARGS_COMPANY_ID_KEY]?.let { companyId ->
-            if (companyId is Int) {
-                mViewModel.companyId = companyId
-            }
-        }
-        args[ARGS_COMPANY_TICKER_KEY]?.let { companyTicker ->
-            if (companyTicker is String) {
-                mViewModel.companyTicker = companyTicker
+        args[sChartParamsKey]?.let { params ->
+            if (params is ChartParams) {
+                mViewModel.companyId = params.id
+                mViewModel.companyTicker = params.ticker
             }
         }
     }
 
     companion object {
 
-        const val ARGS_COMPANY_ID_KEY = "id"
-        const val ARGS_COMPANY_TICKER_KEY = "ticker"
+        private const val sChartParamsKey = "chart-params"
 
-        fun newInstance(args: Bundle): ChartFragment {
-            return ChartFragment().apply {
-                arguments = args
+        fun newInstance(data: Any?): ChartFragment {
+            return ChartFragment().also {
+                if (data is ChartParams) {
+                    it.arguments = bundleOf(sChartParamsKey to data)
+                }
             }
         }
     }

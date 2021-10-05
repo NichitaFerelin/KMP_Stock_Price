@@ -16,62 +16,28 @@
 
 package com.ferelin.feature_search.adapter
 
-import android.annotation.SuppressLint
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.stockprice.databinding.ItemTickerBinding
+import com.ferelin.core.utils.recycler.createRecyclerAdapter
+import com.ferelin.feature_search.databinding.ItemTextBinding
+import com.ferelin.feature_search.databinding.ItemTickerBinding
+import com.ferelin.feature_search.viewData.SearchViewData
+import com.ferelin.feature_search.viewData.TextViewData
 
-class SearchRequestsAdapter(
-    private var mTickerClickListener: ((item: AdaptiveSearchRequest, position: Int) -> Unit)? = null
-) : RecyclerView.Adapter<SearchRequestsAdapter.TickerViewHolder>() {
+fun createTextAdapter() = createRecyclerAdapter<TextViewData, ItemTextBinding>(
+    ItemTextBinding::inflate
+) { viewBinding, item, _ ->
 
-    private var mSearches = arrayListOf<AdaptiveSearchRequest>()
+    item as TextViewData
+    viewBinding.text.text = item.text
+}
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): TickerViewHolder {
-        return TickerViewHolder.from(parent)
-    }
+fun createTickerAdapter(
+    onTickerClick: (SearchViewData) -> Unit
+) = createRecyclerAdapter<SearchViewData, ItemTickerBinding>(
+    ItemTickerBinding::inflate
+) { viewBinding, item, _ ->
 
-    override fun onBindViewHolder(holder: TickerViewHolder, position: Int) {
-        holder.bind(mSearches[position])
-        holder.itemView.setOnClickListener {
-            mTickerClickListener?.invoke(mSearches[position], position)
-        }
-    }
+    item as SearchViewData
 
-    override fun getItemCount(): Int = mSearches.size
-
-    override fun getItemId(position: Int): Long {
-        return mSearches[position].id.toLong()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(items: List<AdaptiveSearchRequest>) {
-        mSearches = ArrayList(items)
-        notifyDataSetChanged()
-    }
-
-    fun setOnTickerClickListener(func: (item: AdaptiveSearchRequest, position: Int) -> Unit) {
-        mTickerClickListener = func
-    }
-
-    class TickerViewHolder private constructor(
-        private val binding: ItemTickerBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: AdaptiveSearchRequest) {
-            binding.textViewName.text = item.searchText
-        }
-
-        companion object {
-            fun from(parent: ViewGroup): TickerViewHolder {
-                val inflater = LayoutInflater.from(parent.context)
-                val binding = ItemTickerBinding.inflate(inflater, parent, false)
-                return TickerViewHolder(binding)
-            }
-        }
-    }
+    viewBinding.textViewName.text = item.text
+    viewBinding.root.setOnClickListener { onTickerClick.invoke(item) }
 }

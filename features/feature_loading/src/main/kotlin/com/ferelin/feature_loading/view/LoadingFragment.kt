@@ -22,9 +22,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
-import com.ferelin.core.utils.anim.MotionManager
+import com.ferelin.core.utils.animManager.MotionManager
+import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_loading.R
 import com.ferelin.feature_loading.databinding.FragmentLoadingBinding
 import com.ferelin.feature_loading.viewModel.LoadingViewModel
@@ -76,5 +76,12 @@ class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
             MotionScene.Transition.AUTO_NONE
         mViewBinding.root.getTransition(R.id.transitionJump).autoTransition =
             MotionScene.Transition.AUTO_NONE
+    }
+
+    companion object {
+
+        fun newInstance(data: Any?): LoadingFragment {
+            return LoadingFragment()
+        }
     }
 }

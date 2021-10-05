@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.interactors.livePrice
+package com.ferelin.core.params
 
-import com.ferelin.shared.NetworkListener
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-interface LiveTimePriceInteractor : NetworkListener
+@Parcelize
+data class ProfileParams(
+    val companyId: Int,
+    val companyTicker: String,
+    val companyName: String,
+    val companyLogoUrl: String
+) : Parcelable

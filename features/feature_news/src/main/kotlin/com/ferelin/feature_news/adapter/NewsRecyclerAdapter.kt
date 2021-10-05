@@ -16,13 +16,13 @@
 
 package com.ferelin.feature_news.adapter
 
-import com.ferelin.core.base.recyclerAdapter.createRecyclerBindingAdapterDelegate
+import com.ferelin.core.utils.recycler.createRecyclerAdapter
 import com.ferelin.feature_news.databinding.ItemNewsBinding
 import com.ferelin.feature_news.viewData.NewsViewData
 
 fun createNewsAdapter(
     onItemClick: (NewsViewData) -> Unit
-) = createRecyclerBindingAdapterDelegate<NewsViewData, ItemNewsBinding>(
+) = createRecyclerAdapter<NewsViewData, ItemNewsBinding>(
     ItemNewsBinding::inflate
 ) { viewBinding, item, _ ->
 

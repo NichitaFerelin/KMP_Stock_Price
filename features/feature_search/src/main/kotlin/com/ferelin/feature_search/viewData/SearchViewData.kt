@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.internals
+package com.ferelin.feature_search.viewData
 
-interface LiveTimePriceInternal {
+import com.ferelin.core.utils.recycler.ViewHolderType
 
-    suspend fun subscribeCompanyOnUpdates(companyTicker: String)
+data class SearchViewData(
+    val text: String
+) : ViewHolderType {
 
-    suspend fun unsubscribeCompanyFromUpdates(companyTicker: String)
+    override fun getUniqueId(): Long {
+        return text.hashCode().toLong()
+    }
+
+    override fun isValidType(other: ViewHolderType): Boolean {
+        return other is SearchViewData
+    }
 }

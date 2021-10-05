@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_search.adapter
+package com.ferelin.feature_section_stocks.viewModel
 
-import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ferelin.navigation.Router
+import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchItemDecorationLandscape(context: Context) : SearchItemDecoration(context) {
-    override val twoColumns: Boolean = false
+class StocksPagerViewModel @Inject constructor(
+    private val mRouter: Router,
+    private val mDispatchersProvider: DispatchersProvider
+) : ViewModel() {
+
+    fun onSearchCardClick() {
+        viewModelScope.launch(mDispatchersProvider.IO) {
+            mRouter.fromStocksPagerToSearch(null)
+        }
+    }
 }

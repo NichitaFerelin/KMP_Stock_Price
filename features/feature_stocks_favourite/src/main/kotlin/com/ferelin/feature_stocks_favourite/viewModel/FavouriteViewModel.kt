@@ -16,8 +16,37 @@
 
 package com.ferelin.feature_stocks_favourite.viewModel
 
-import androidx.lifecycle.ViewModel
+import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.viewData.StockViewData
+import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.domain.interactors.StockPriceInteractor
+import com.ferelin.domain.interactors.companies.CompaniesInteractor
+import com.ferelin.navigation.Router
+import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class FavouriteViewModel : ViewModel() {
-
+class FavouriteViewModel @Inject constructor(
+    stockMapper: StockMapper,
+    router: Router,
+    companiesInteractor: CompaniesInteractor,
+    stockPriceInteractor: StockPriceInteractor,
+    dispatchersProvider: DispatchersProvider
+) : BaseStocksViewModel(
+    stockMapper,
+    router,
+    companiesInteractor,
+    stockPriceInteractor,
+    dispatchersProvider
+) {
+    override suspend fun onFavouriteStockViewDataUpdate(stockViewData: StockViewData) {
+        if (stockViewData.isFavourite) {
+            withContext(mDispatchesProvider.Main) {
+                stocksAdapter.add(stockViewData)
+            }
+        } else {
+            val id = stockViewData.id.toLong()
+            stocksAdapter.remove { it.getUniqueId() == id }
+        }
+    }
 }

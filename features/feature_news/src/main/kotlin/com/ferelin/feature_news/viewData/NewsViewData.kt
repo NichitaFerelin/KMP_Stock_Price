@@ -16,7 +16,7 @@
 
 package com.ferelin.feature_news.viewData
 
-import com.ferelin.core.base.recyclerAdapter.ViewHolderType
+import com.ferelin.core.utils.recycler.ViewHolderType
 
 class NewsViewData(
     val id: Long = 0L,

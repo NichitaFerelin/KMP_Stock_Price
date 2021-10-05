@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.viewData
+package com.ferelin.core.params
 
-import com.ferelin.core.utils.recycler.ViewHolderType
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class TextViewData(val text: String) : ViewHolderType {
-
-    // is single
-    override fun getUniqueId(): Long = 0L
-
-    override fun isValidType(other: ViewHolderType): Boolean {
-        return other is TextViewData
-    }
-}
+@Parcelize
+data class AboutParams(
+    val companyId: Int,
+    val companyTicker: String,
+    val companyName: String,
+    val isFavourite: Boolean
+) : Parcelable

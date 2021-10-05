@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_search.adapter
+package com.ferelin.feature_search.adapter.itemDecoration
 
 import android.content.Context
 import android.graphics.Rect
@@ -29,7 +29,7 @@ open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration(
     private val mDefaultStartMargin =
         context.resources.getDimension(R.dimen.searchItemMargin).toInt()
 
-    open val twoColumns: Boolean = true
+    open val twoRows: Boolean = true
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -39,12 +39,12 @@ open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration(
     ) {
         super.getItemOffsets(outRect, view, parent, state)
 
-        val finalChildCounter = (parent.adapter as SearchRequestsAdapter).itemCount
+        val finalChildCounter = parent.adapter?.itemCount ?: 0
 
         when {
             parent.getChildAdapterPosition(view) == 0 -> outRect.left = mFirstItemStartMargin
 
-            twoColumns && parent.getChildAdapterPosition(view) == 1 -> {
+            twoRows && parent.getChildAdapterPosition(view) == 1 -> {
                 outRect.left = mFirstItemStartMargin
             }
 
@@ -52,7 +52,7 @@ open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration(
                 addMarginToLastItem(outRect)
             }
 
-            twoColumns && parent.getChildAdapterPosition(view) == finalChildCounter - 2 -> {
+            twoRows && parent.getChildAdapterPosition(view) == finalChildCounter - 2 -> {
                 addMarginToLastItem(outRect)
             }
             else -> outRect.left = mDefaultStartMargin

@@ -23,9 +23,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Slide
-import com.ferelin.core.base.BaseFragment
-import com.ferelin.core.base.BaseViewModelFactory
 import com.ferelin.core.utils.setOnClick
+import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_login.R
 import com.ferelin.feature_login.databinding.FragmentLoginBinding
 import com.ferelin.feature_login.viewData.AuthProcessingState
@@ -95,6 +95,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
                 }
             }
+        }
+    }
+
+    companion object {
+
+        fun newInstance(data: Any?): LoginFragment {
+            return LoginFragment()
         }
     }
 }

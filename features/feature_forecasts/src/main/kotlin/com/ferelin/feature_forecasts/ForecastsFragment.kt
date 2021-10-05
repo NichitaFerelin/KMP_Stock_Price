@@ -32,4 +32,11 @@ class ForecastsFragment : Fragment() {
     ): View {
         return FragmentForecastsBinding.inflate(inflater, container, false).root
     }
+
+    companion object {
+
+        fun newInstance(data: Any?): ForecastsFragment {
+            return ForecastsFragment()
+        }
+    }
 }

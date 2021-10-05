@@ -16,17 +16,22 @@
 
 package com.ferelin.feature_section_about.adapter
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.ferelin.feature_chart.view.ChartFragment
+import com.ferelin.feature_forecasts.ForecastsFragment
+import com.ferelin.feature_ideas.IdeasFragment
+import com.ferelin.feature_news.view.NewsFragment
+import com.ferelin.feature_profile.view.ProfileFragment
 
 class AboutPagerAdapter(
+    private val mArguments: Bundle,
     fm: FragmentManager,
-    lifecycle: Lifecycle,
+    lifecycle: Lifecycle
 ) : FragmentStateAdapter(fm, lifecycle) {
-
-    /*private val mSelectedCompany: UseCaseCompany? = selectedCompany
 
     override fun getItemCount(): Int {
         return 5
@@ -34,19 +39,12 @@ class AboutPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ProfileFragment(mSelectedCompany = mSelectedCompany!!)
-            1 -> ChartFragment(mSelectedCompany)
-            2 -> NewsFragment(mSelectedCompany)
+            0 -> ProfileFragment.newInstance(mArguments)
+            1 -> ChartFragment.newInstance(mArguments)
+            2 -> NewsFragment.newInstance(mArguments)
             3 -> ForecastsFragment()
             4 -> IdeasFragment()
             else -> throw IllegalStateException("No fragment for position: $position")
         }
-    }*/
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun createFragment(position: Int): Fragment {
-        TODO("Not yet implemented")
     }
 }

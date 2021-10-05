@@ -23,5 +23,8 @@ android {
 }
 
 dependencies {
-    api(project(Projects.core))
+    implementation(project(Projects.core))
+
+    implementation(Dependencies.dagger)
+    kapt(Dependencies.daggerCompilerKapt)
 }
