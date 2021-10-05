@@ -21,12 +21,12 @@ import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.internals.CompaniesInternal
-import com.ferelin.domain.internals.LiveTimePriceInternal
 import com.ferelin.domain.repositories.ProfileRepo
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.CompaniesSource
+import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.domain.utils.ifPrepared
 import com.ferelin.shared.DispatchersProvider
@@ -51,11 +51,11 @@ sealed class CompaniesState {
 class CompaniesInteractorImpl @Inject constructor(
     private val mCompaniesLocalRepo: CompaniesLocalRepo,
     private val mCompaniesRemoteRepo: CompaniesRemoteRepo,
-    private val mCompaniesSource: CompaniesSource,
-    private val mCompaniesSyncer: CompaniesSyncer,
     private val mProfileRepo: ProfileRepo,
+    private val mCompaniesSource: CompaniesSource,
+    private val mLivePriceSource: LivePriceSource,
     private val mAuthenticationSource: AuthenticationSource,
-    private val mLiveTimePriceInternal: LiveTimePriceInternal,
+    private val mCompaniesSyncer: CompaniesSyncer,
     private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
@@ -110,7 +110,7 @@ class CompaniesInteractorImpl @Inject constructor(
             .also { loadedCompanies ->
                 val favouriteCompanies = loadedCompanies
                     .filter { it.company.isFavourite }
-                    .onEach { mLiveTimePriceInternal.subscribeCompanyOnUpdates(it.company.ticker) }
+                    .onEach { mLivePriceSource.subscribeCompanyOnUpdates(it.company.ticker) }
 
                 mFavouriteCompaniesState = CompaniesState.Prepared(favouriteCompanies)
             }
@@ -135,7 +135,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         mFavouriteCompanyUpdates.emit(company)
 
-        mLiveTimePriceInternal.subscribeCompanyOnUpdates(company.ticker)
+        mLivePriceSource.subscribeCompanyOnUpdates(company.ticker)
 
         mExternalScope.launch(mDispatchersProvider.IO) {
             launch {
@@ -163,7 +163,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         mFavouriteCompanyUpdates.emit(company)
 
-        mLiveTimePriceInternal.unsubscribeCompanyFromUpdates(company.ticker)
+        mLivePriceSource.unsubscribeCompanyFromUpdates(company.ticker)
 
         mExternalScope.launch(mDispatchersProvider.IO) {
             launch {

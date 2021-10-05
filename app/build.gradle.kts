@@ -10,6 +10,8 @@ plugins {
 }
 
 android {
+    compileSdk = Base.currentSDK
+
     defaultConfig {
         applicationId = Base.name
         minSdk = Base.minSDK
@@ -30,14 +32,11 @@ dependencies {
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 
-    implementation(project(Projects.domain))
-    implementation(project(Projects.core))
     implementation(project(Projects.auth))
-    implementation(project(Projects.shared))
-
     implementation(project(Projects.dataLocal))
     implementation(project(Projects.dataFirebase))
     implementation(project(Projects.dataNetworkApi))
+    implementation(project(Projects.core))
 
     implementation(project(Projects.featureChart))
     implementation(project(Projects.featureForecasts))
@@ -47,10 +46,14 @@ dependencies {
     implementation(project(Projects.featureNews))
     implementation(project(Projects.featureSearch))
     implementation(project(Projects.featureProfile))
-
     implementation(project(Projects.featureSectionAbout))
     implementation(project(Projects.featureSectionStocks))
-
     implementation(project(Projects.featureStocksDefault))
     implementation(project(Projects.featureStocksFavourite))
+
+    // For DI
+    implementation(Dependencies.roomRuntime)
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.firebaseDatabaseKtx)
+    implementation(Dependencies.firebaseAuthenticationKtx)
 }

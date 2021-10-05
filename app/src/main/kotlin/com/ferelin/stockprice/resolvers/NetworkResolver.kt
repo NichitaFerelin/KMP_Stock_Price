@@ -19,6 +19,7 @@ package com.ferelin.stockprice.resolvers
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.os.Build
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
@@ -29,13 +30,27 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkResolver @Inject constructor(
-    @Named("NetworkDeps") private val mNetworkDeps: List<NetworkListener>,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope,
+    private val mNetworkDeps: List<@JvmSuppressWildcards NetworkListener>,
     private val mDispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val mExternalScope: CoroutineScope,
     service: ConnectivityManager,
     networkRequest: NetworkRequest
 ) {
     init {
+        val isNetworkAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            service.activeNetwork != null
+        } else {
+            service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
+        }
+
+        mExternalScope.launch(mDispatchersProvider.IO) {
+            if (isNetworkAvailable) {
+                mNetworkDeps.forEach { it.onNetworkAvailable() }
+            } else {
+                mNetworkDeps.forEach { it.onNetworkLost() }
+            }
+        }
+
         service.registerNetworkCallback(
             networkRequest,
             object : ConnectivityManager.NetworkCallback() {

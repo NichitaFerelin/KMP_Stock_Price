@@ -16,6 +16,21 @@
 
 package com.ferelin.shared
 
+const val NULL_INDEX = -1
+
+inline fun <reified T> List<Any>.ifExist(
+    selector: (T) -> Boolean,
+    action: (Int) -> Unit
+): Unit? {
+    val targetIndex = this.indexOfFirst { it is T && selector.invoke(it) }
+
+    return if (targetIndex != NULL_INDEX) {
+        action.invoke(targetIndex)
+    } else {
+        null
+    }
+}
+
 /*
     * Call:     adaptPrice(2253.14)
     * Result:   $2 253.14

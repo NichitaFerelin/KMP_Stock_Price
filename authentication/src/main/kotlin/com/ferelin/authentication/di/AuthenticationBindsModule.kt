@@ -19,7 +19,9 @@ package com.ferelin.authentication.di
 import com.ferelin.authentication.sources.AuthenticationSourceImpl
 import com.ferelin.domain.sources.AuthenticationSource
 import dagger.Binds
+import dagger.Module
 
+@Module
 interface AuthenticationBindsModule {
 
     @Binds

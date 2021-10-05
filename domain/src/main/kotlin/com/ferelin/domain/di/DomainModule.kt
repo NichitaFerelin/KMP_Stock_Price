@@ -16,16 +16,31 @@
 
 package com.ferelin.domain.di
 
-import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
-import dagger.Binds
+import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
+import com.ferelin.domain.utils.StockPriceListener
+import com.ferelin.shared.AuthenticationListener
 import dagger.Module
+import dagger.Provides
 
 @Module
-interface DomainBindsModule {
+class DomainModule {
 
-    @Binds
-    fun provideCompaniesInternal(
+    @Provides
+    fun providePriceListeners(
         companiesInteractorImpl: CompaniesInteractorImpl
-    ): CompaniesInteractor
+    ): List<@JvmSuppressWildcards StockPriceListener> {
+        return listOf(companiesInteractorImpl)
+    }
+
+    @Provides
+    fun provideAuthListeners(
+        companiesInteractorImpl: CompaniesInteractorImpl,
+        searchRequestsInteractorImpl: SearchRequestsInteractorImpl
+    ): List<@JvmSuppressWildcards AuthenticationListener> {
+        return listOf(
+            companiesInteractorImpl,
+            searchRequestsInteractorImpl
+        )
+    }
 }

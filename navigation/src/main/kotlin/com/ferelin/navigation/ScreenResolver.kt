@@ -16,20 +16,29 @@
 
 package com.ferelin.navigation
 
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 
 interface ScreenResolver {
 
-    fun fromLoadingToWelcome(hostActivity: FragmentActivity, args: Bundle?)
+    companion object {
+        const val STOCKS_PAGER_TAG = "stocks-pager"
+        const val SEARCH_TAG = "search"
+        const val ABOUT_PAGER_TAG = "about"
+        const val DEFAULT_STOCKS_TAG = "stocks"
+        const val FAVOURITE_STOCKS_TAG = "favourite-stocks"
+        const val LOGIN_TAG = "login"
+        const val LOADING_TAG = "loading"
+    }
 
-    fun fromLoadingToStocksPager(hostActivity: FragmentActivity, args: Bundle?)
+    fun toLoadingFragment(hostActivity: FragmentActivity)
 
-    fun fromStocksPagerToSearch(hostActivity: FragmentActivity, args: Bundle?)
+    fun fromLoadingToStocksPager(hostActivity: FragmentActivity, data: Any? = null)
 
-    fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, args: Bundle?)
+    fun fromStocksPagerToSearch(hostActivity: FragmentActivity, data: Any? = null)
 
-    fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, args: Bundle?)
+    fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, data: Any? = null)
 
-    fun fromSearchToAbout(hostActivity: FragmentActivity, args: Bundle?)
+    fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, data: Any? = null)
+
+    fun fromSearchToAbout(hostActivity: FragmentActivity, data: Any? = null)
 }

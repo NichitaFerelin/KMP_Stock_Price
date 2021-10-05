@@ -5,6 +5,7 @@ import com.ferelin.Projects
 plugins {
     id("com.android.library")
     id("kotlin-android")
+    id("kotlin-parcelize")
     id("kotlin-kapt")
 }
 
@@ -23,8 +24,8 @@ android {
 }
 
 dependencies {
-    api(project(Projects.domain))
     api(project(Projects.shared))
+    api(project(Projects.domain))
     api(project(Projects.navigation))
 
     api(Dependencies.appCompat)
@@ -34,7 +35,7 @@ dependencies {
     api(Dependencies.constraintLayout)
     api(Dependencies.material)
 
-    api(Dependencies.glide)
+    implementation(Dependencies.glide)
     kapt(Dependencies.glideCompilerKapt)
 
     implementation(Dependencies.dagger)

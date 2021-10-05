@@ -17,10 +17,14 @@
 package com.ferelin.domain.interactors
 
 import android.app.Activity
+import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
+import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.AuthenticationState
 import com.ferelin.shared.AuthenticationListener
 import com.ferelin.shared.DispatchersProvider
+import dagger.Module
+import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -31,7 +35,7 @@ import javax.inject.Named
 class AuthenticationInteractor @Inject constructor(
     private val mAuthenticationSource: AuthenticationSource,
     private val mDispatchersProvider: DispatchersProvider,
-    @Named("AuthDeps") private val mAuthenticationListeners: List<AuthenticationListener>,
+    private val mAuthenticationListeners: List<@JvmSuppressWildcards AuthenticationListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState> {

@@ -19,6 +19,6 @@ dependencies {
     implementation(Dependencies.kotlinLib)
     implementation(Dependencies.kotlinCoroutines)
 
-    api(Dependencies.dagger)
+    implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 }

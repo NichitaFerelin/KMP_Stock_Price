@@ -20,6 +20,15 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.ferelin.feature_chart.view.ChartFragment
+import com.ferelin.feature_ideas.IdeasFragment
+import com.ferelin.feature_loading.view.LoadingFragment
+import com.ferelin.feature_login.view.LoginFragment
+import com.ferelin.feature_news.view.NewsFragment
+import com.ferelin.feature_section_about.view.AboutPagerFragment
+import com.ferelin.feature_section_stocks.view.StocksPagerFragment
+import com.ferelin.feature_stocks_default.view.StocksFragment
+import com.ferelin.feature_stocks_favourite.view.FavouriteFragment
 import com.ferelin.navigation.Router
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.databinding.ActivityMainBinding
@@ -33,11 +42,20 @@ class MainActivity : AppCompatActivity() {
     lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         injectDependencies()
 
-        super.onCreate(savedInstanceState)
-        mViewBinding = ActivityMainBinding.inflate(layoutInflater)
-        router.bind(this)
+        ActivityMainBinding.inflate(layoutInflater).also {
+            mViewBinding = it
+            setContentView(it.root)
+        }
+
+        router.apply {
+            bind(this@MainActivity)
+            toStartFragment()
+        }
+
+        setStatusBarColor()
     }
 
     override fun onDestroy() {
@@ -50,6 +68,22 @@ class MainActivity : AppCompatActivity() {
         val application = application
         if (application is App) {
             application.appComponent.inject(this)
+
+            this
+                .supportFragmentManager
+                .addFragmentOnAttachListener { _, fragment ->
+                    when (fragment) {
+                        is LoadingFragment -> application.appComponent.inject(fragment)
+                        is StocksPagerFragment -> application.appComponent.inject(fragment)
+                        is IdeasFragment -> application.appComponent.inject(fragment)
+                        is NewsFragment -> application.appComponent.inject(fragment)
+                        is LoginFragment -> application.appComponent.inject(fragment)
+                        is ChartFragment -> application.appComponent.inject(fragment)
+                        is AboutPagerFragment -> application.appComponent.inject(fragment)
+                        is StocksFragment -> application.appComponent.inject(fragment)
+                        is FavouriteFragment -> application.appComponent.inject(fragment)
+                    }
+                }
         }
     }
 

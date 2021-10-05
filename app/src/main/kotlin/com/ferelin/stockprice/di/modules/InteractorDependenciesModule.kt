@@ -18,42 +18,22 @@ package com.ferelin.stockprice.di.modules
 
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
+import com.ferelin.domain.internals.CompaniesInternal
 import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.AuthenticationListener
 import com.ferelin.shared.NetworkListener
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
-
 @Module
 class InteractorDependenciesModule {
 
     @Provides
-    @Named("AuthDeps")
-    fun provideAuthDependencies(
+    fun provideNetworkListeners(
         companiesInteractorImpl: CompaniesInteractorImpl,
         searchRequestsInteractorImpl: SearchRequestsInteractorImpl
-    ): List<AuthenticationListener> {
-        return listOf(
-            companiesInteractorImpl,
-            searchRequestsInteractorImpl
-        )
-    }
-
-    @Provides
-    @Named("PriceDeps")
-    fun providePriceDeps(
-        companiesInteractorImpl: CompaniesInteractorImpl
-    ): List<StockPriceListener> {
-        return listOf(companiesInteractorImpl)
-    }
-
-    @Provides
-    @Named("NetworkDeps")
-    fun provideNetworkDependencies(
-        companiesInteractorImpl: CompaniesInteractorImpl,
-        searchRequestsInteractorImpl: SearchRequestsInteractorImpl
-    ): List<NetworkListener> {
+    ): List<@JvmSuppressWildcards NetworkListener> {
         return listOf(
             companiesInteractorImpl,
             searchRequestsInteractorImpl

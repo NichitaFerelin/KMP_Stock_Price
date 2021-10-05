@@ -26,11 +26,11 @@ import javax.inject.Singleton
 
 @Singleton
 class PreferencesProvider @Inject constructor(
+    private val mContext: Context,
     @Named("PreferencesName") preferencesName: String
 ) {
     private val Context.dataStore by preferencesDataStore(preferencesName)
 
-    fun get(context: Context): DataStore<Preferences> {
-        return context.dataStore
-    }
+    val dataStore: DataStore<Preferences>
+        get() = mContext.dataStore
 }

@@ -40,14 +40,6 @@ class DataLocalModule {
     }
 
     @Provides
-    fun provideDataStore(
-        context: Context,
-        preferencesProvider: PreferencesProvider
-    ): DataStore<Preferences> {
-        return preferencesProvider.get(context)
-    }
-
-    @Provides
     @Named("PreferencesName")
     fun providePreferencesName(): String {
         return "stock.price.preferences"

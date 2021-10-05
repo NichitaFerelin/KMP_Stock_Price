@@ -16,16 +16,9 @@
 
 package com.ferelin.stockprice.navigation
 
-import android.app.Activity
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.NavController
-import androidx.navigation.NavDirections
-import androidx.navigation.findNavController
 import com.ferelin.navigation.Router
 import com.ferelin.navigation.ScreenResolver
-import com.ferelin.stockprice.R
-import com.ferelin.stockprice.ui.MainActivity
 import javax.inject.Inject
 
 class RouterImpl @Inject constructor(
@@ -45,29 +38,30 @@ class RouterImpl @Inject constructor(
     }
 
     override fun back() {
+        mActivity.supportFragmentManager.popBackStack()
     }
 
-    override fun fromLoadingToWelcome(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun toStartFragment() {
+        mScreenResolver.toLoadingFragment(mActivity)
     }
 
-    override fun fromLoadingToStocksPager(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun fromLoadingToStocksPager(data: Any?) {
+        mScreenResolver.fromLoadingToStocksPager(mActivity, data)
     }
 
-    override fun fromStocksPagerToSearch(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun fromStocksPagerToSearch(data: Any?) {
+        mScreenResolver.fromStocksPagerToSearch(mActivity, data)
     }
 
-    override fun fromDefaultStocksToAbout(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun fromDefaultStocksToAbout(data: Any?) {
+        mScreenResolver.fromDefaultStocksToAbout(mActivity, data)
     }
 
-    override fun fromFavouriteStocksToAbout(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun fromFavouriteStocksToAbout(data: Any?) {
+        mScreenResolver.fromFavouriteStocksToAbout(mActivity, data)
     }
 
-    override fun fromSearchToAbout(args: Bundle?) {
-        TODO("Not yet implemented")
+    override fun fromSearchToAbout(data: Any?) {
+        mScreenResolver.fromSearchToAbout(mActivity, data)
     }
 }

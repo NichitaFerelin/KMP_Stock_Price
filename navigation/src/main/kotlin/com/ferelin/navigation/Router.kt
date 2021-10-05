@@ -16,7 +16,6 @@
 
 package com.ferelin.navigation
 
-import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 
 interface Router {
@@ -27,15 +26,15 @@ interface Router {
 
     fun back()
 
-    fun fromLoadingToWelcome(args: Bundle?)
+    fun toStartFragment()
 
-    fun fromLoadingToStocksPager(args: Bundle?)
+    fun fromLoadingToStocksPager(data: Any? = null)
 
-    fun fromStocksPagerToSearch(args: Bundle?)
+    fun fromStocksPagerToSearch(data: Any? = null)
 
-    fun fromDefaultStocksToAbout(args: Bundle?)
+    fun fromDefaultStocksToAbout(data: Any? = null)
 
-    fun fromFavouriteStocksToAbout(args: Bundle?)
+    fun fromFavouriteStocksToAbout(data: Any? = null)
 
-    fun fromSearchToAbout(args: Bundle?)
+    fun fromSearchToAbout(data: Any? = null)
 }

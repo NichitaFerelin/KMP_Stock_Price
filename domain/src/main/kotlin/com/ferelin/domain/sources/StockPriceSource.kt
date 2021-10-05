@@ -17,7 +17,6 @@
 package com.ferelin.domain.sources
 
 import com.ferelin.domain.interactors.StockPriceState
-import com.ferelin.remote.entities.StockPriceResponse
 import kotlinx.coroutines.flow.Flow
 
 interface StockPriceSource {
