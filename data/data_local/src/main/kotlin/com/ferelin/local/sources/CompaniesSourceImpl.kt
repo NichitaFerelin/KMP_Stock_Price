@@ -16,6 +16,7 @@
 
 package com.ferelin.local.sources
 
+import android.content.Context
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.sources.CompaniesSource
@@ -33,6 +34,7 @@ import javax.inject.Named
 
 class CompaniesSourceImpl @Inject constructor(
     @Named("CompaniesJsonFileName") private val mCompaniesJsonFileName: String,
+    private val mContext: Context,
     private val mCompanyMapper: CompanyMapper,
     private val mProfileMapper: ProfileMapper
 ) : CompaniesSource {
@@ -47,8 +49,12 @@ class CompaniesSourceImpl @Inject constructor(
         try {
             Timber.d("get companies with profile from json")
             val type = Types.newParameterizedType(List::class.java, CompanyPojo::class.java)
-            val adapter: JsonAdapter<List<CompanyPojo>> = mMoshi.adapter(type)
-            val parsedList = adapter.fromJson(mCompaniesJsonFileName) ?: emptyList()
+            val json = mContext.assets
+                .open(mCompaniesJsonFileName)
+                .bufferedReader()
+                .use { it.readText() }
+            val adapter = mMoshi.adapter<List<CompanyPojo>?>(type)
+            val parsedList = adapter.fromJson(json) ?: emptyList()
 
             Timber.d("json parsed companies size = ${parsedList.size}")
 
