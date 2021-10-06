@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -50,17 +51,23 @@ class LivePriceSocketResolver @Inject constructor(
 
     suspend fun subscribe(companyTicker: String) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("try to subscribe (companyTicker = $companyTicker)")
             mWebSocket?.let {
                 subscribe(it, companyTicker)
-            } ?: mMessagesQueue.offer(companyTicker)
+            } ?: {
+                Timber.d("added to queue: $companyTicker")
+                mMessagesQueue.offer(companyTicker)
+            }
         }
 
     suspend fun unsubscribe(companyTicker: String) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("unsubscribe (companyTicker = $companyTicker)")
             mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
         }
 
     fun openConnection(): Flow<LivePricePojo?> = callbackFlow {
+        Timber.d("open connection")
 
         val request = Request
             .Builder()
@@ -72,6 +79,7 @@ class LivePriceSocketResolver @Inject constructor(
         mWebSocket = okHttp.newWebSocket(
             request = request,
             listener = AppWebSocketListener { response ->
+                Timber.d("on response (response = $response)")
                 val converted = mLivePriceJsonResolver.fromJson(response)
                 this.trySend(converted).isSuccess
             })
@@ -82,16 +90,21 @@ class LivePriceSocketResolver @Inject constructor(
             }
         okHttp.dispatcher.executorService.shutdown()
 
-        awaitClose { closeConnection() }
+        awaitClose {
+            Timber.d("{await close} close connection")
+            closeConnection()
+        }
     }
         .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     fun closeConnection() {
+        Timber.d("close connection")
         mWebSocket?.close(0, null)
         mWebSocket = null
     }
 
     private fun subscribe(webSocket: WebSocket, symbol: String) {
+        Timber.d("subscribe (symbol = $symbol)")
         webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"$symbol\"}")
     }
 }

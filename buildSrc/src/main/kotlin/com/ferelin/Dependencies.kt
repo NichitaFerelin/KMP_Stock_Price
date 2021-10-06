@@ -9,6 +9,7 @@ object Dependencies {
     const val kotlinLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinLib}"
     const val kotlinCoroutines =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinCoroutines}"
+    const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
     /**
      * UI

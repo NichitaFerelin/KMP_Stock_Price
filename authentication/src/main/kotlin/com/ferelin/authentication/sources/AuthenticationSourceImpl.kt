@@ -29,6 +29,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -52,6 +53,8 @@ class AuthenticationSourceImpl @Inject constructor(
         holderActivity: Activity,
         phone: String
     ) = callbackFlow<AuthenticationState> {
+        Timber.d("try to log in (phone = $phone)")
+
         trySend(AuthenticationState.PhoneProcessing)
 
         // Empty phone number causes exception
@@ -62,11 +65,14 @@ class AuthenticationSourceImpl @Inject constructor(
 
         mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                Timber.d("code sent")
                 mUserVerificationId = p0
                 trySend(AuthenticationState.CodeSent)
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                Timber.d("on verification completed")
+
                 trySend(AuthenticationState.CodeProcessing)
 
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
@@ -80,6 +86,8 @@ class AuthenticationSourceImpl @Inject constructor(
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
+                Timber.d("on verification failed (exception = $p0)")
+
                 val response = if (p0 is FirebaseTooManyRequestsException) {
                     AuthenticationState.TooManyRequests
                 } else {
@@ -103,6 +111,8 @@ class AuthenticationSourceImpl @Inject constructor(
 
     override suspend fun completeAuthentication(code: String): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("complete authentication (code = $code)")
+
             mUserVerificationId?.let { userVerificationId ->
                 val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
                 mAuthCallbacks?.onVerificationCompleted(credential)
@@ -111,16 +121,19 @@ class AuthenticationSourceImpl @Inject constructor(
 
     override suspend fun logOut(): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("log out")
             mFirebaseAuth.signOut()
         }
 
     override suspend fun isUserAuthenticated(): Boolean =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("is user authenticated")
             mFirebaseAuth.currentUser != null
         }
 
     override suspend fun getUserToken(): String? =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get user token")
             mFirebaseAuth.uid
         }
 

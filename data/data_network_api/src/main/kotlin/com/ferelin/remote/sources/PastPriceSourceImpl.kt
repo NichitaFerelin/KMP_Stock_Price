@@ -23,6 +23,7 @@ import com.ferelin.remote.mappers.PastPriceMapper
 import com.ferelin.remote.utils.withExceptionHandle
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -46,9 +47,13 @@ class PastPriceSourceImpl @Inject constructor(
                     .execute()
             },
             onSuccess = { responseBody ->
+                Timber.d("on success (responseBody = $responseBody)")
                 PastPriceState.Loaded(mPastPriceMapper.map(responseBody))
             },
-            onFail = { PastPriceState.Error }
+            onFail = {
+                Timber.d("on exception (exception = $it)")
+                PastPriceState.Error
+            }
         )
     }
 }

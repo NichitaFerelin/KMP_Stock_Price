@@ -24,6 +24,7 @@ import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class FirstLaunchRepoImpl @Inject constructor(
@@ -37,6 +38,7 @@ class FirstLaunchRepoImpl @Inject constructor(
 
     override suspend fun getFirstTimeLaunch(): Boolean =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get first time launch")
             return@withContext mPreferencesProvider.dataStore.data.map {
                 it[sFirstTimeLaunchKey]
             }.firstOrNull() ?: true
@@ -44,6 +46,7 @@ class FirstLaunchRepoImpl @Inject constructor(
 
     override suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache first time launch (isFirstLaunch = $isFirstLaunch)")
             mPreferencesProvider.dataStore.edit {
                 it[sFirstTimeLaunchKey] = isFirstLaunch
             }

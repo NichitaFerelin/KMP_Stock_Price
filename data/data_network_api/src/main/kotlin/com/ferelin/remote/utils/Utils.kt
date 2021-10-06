@@ -22,7 +22,7 @@ import java.net.SocketTimeoutException
 fun <T, R> withExceptionHandle(
     request: () -> Response<R>,
     onSuccess: (R) -> T,
-    onFail: () -> T
+    onFail: (Exception) -> T
 ): T {
     return try {
         val retrofitResponse = request.invoke()
@@ -31,10 +31,10 @@ fun <T, R> withExceptionHandle(
         if (retrofitResponse.isSuccessful && body != null) {
             onSuccess.invoke(body)
         } else {
-            onFail.invoke()
+            onFail.invoke(IllegalStateException("RetrofitResponse is not successful"))
         }
     } catch (exception: SocketTimeoutException) {
-        onFail.invoke()
+        onFail.invoke(exception)
     }
 }
 

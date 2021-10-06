@@ -16,12 +16,13 @@
 
 package com.ferelin.firebase.syncers
 
-import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.repositories.companies.CompaniesLoadState
+import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,6 +38,10 @@ class CompaniesSyncerImpl @Inject constructor(
         userToken: String,
         sourceCompaniesIds: List<Int>
     ): List<Int> {
+        Timber.d(
+            "init sync (isDataSynchronized = $mIsDataSynchronized," +
+                    "userToken = $userToken, sourceCompaniesSize = ${sourceCompaniesIds.size}"
+        )
 
         if (mIsDataSynchronized) {
             return emptyList()
@@ -45,6 +50,8 @@ class CompaniesSyncerImpl @Inject constructor(
         val remoteCompaniesState = withContext(mDispatchersProvider.IO) {
             mCompaniesRemoteRepo.getFavouriteCompaniesIds(userToken)
         }
+
+        Timber.d("loaded remote companies state = $remoteCompaniesState")
 
         return if (remoteCompaniesState is CompaniesLoadState.Loaded) {
             val remoteCompaniesIds = remoteCompaniesState.companies
@@ -57,6 +64,7 @@ class CompaniesSyncerImpl @Inject constructor(
     }
 
     override fun invalidate() {
+        Timber.d("invalidate")
         mIsDataSynchronized = false
     }
 
@@ -65,7 +73,10 @@ class CompaniesSyncerImpl @Inject constructor(
         sourceCompaniesIds: List<Int>,
         remoteCompaniesIds: List<Int>
     ): Unit = withContext(mDispatchersProvider.IO) {
-
+        Timber.d(
+            "sync cloud db (sources = ${sourceCompaniesIds.size}, " +
+                    "remotes = ${remoteCompaniesIds.size})"
+        )
         sourceCompaniesIds
             .itemsNotIn(remoteCompaniesIds)
             .forEach { mCompaniesRemoteRepo.cacheCompanyIdToFavourites(userToken, it) }

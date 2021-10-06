@@ -22,6 +22,7 @@ import com.ferelin.remote.mappers.LivePriceMapper
 import com.ferelin.remote.resolvers.LivePriceSocketResolver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class LivePriceSourceImpl @Inject constructor(
@@ -30,12 +31,14 @@ class LivePriceSourceImpl @Inject constructor(
 ) : LivePriceSource {
 
     override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
+        Timber.d("observe lite time price updates")
         return mLivePriceSocketResolver
             .openConnection()
             .map(mLivePriceMapper::map)
     }
 
     override suspend fun cancelLiveTimeUpdates() {
+        Timber.d("cancel live time updates")
         mLivePriceSocketResolver.closeConnection()
     }
 

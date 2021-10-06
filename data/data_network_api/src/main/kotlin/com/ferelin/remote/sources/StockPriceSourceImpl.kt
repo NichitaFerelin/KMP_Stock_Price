@@ -25,6 +25,7 @@ import com.ferelin.remote.utils.withExceptionHandle
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -40,11 +41,16 @@ class StockPriceSourceImpl @Inject constructor(
         keyPosition: Int,
         isImportant: Boolean
     ) {
+        Timber.d(
+            "add request to get stock price (companyTicker = $companyTicker," +
+                    " keyPosition = $keyPosition, isImportant = $isImportant"
+        )
         mRequestsLimiter.addRequestToOrder(companyTicker, keyPosition, !isImportant, !isImportant)
     }
 
     override fun observeActualStockPriceResponses(): Flow<StockPriceState> =
         callbackFlow {
+            Timber.d("observe actual stock price response")
             mRequestsLimiter.onExecuteRequest { tickerToExecute ->
                 withExceptionHandle(
                     request = {
@@ -53,11 +59,15 @@ class StockPriceSourceImpl @Inject constructor(
                             .execute()
                     },
                     onSuccess = {
+                        Timber.d("on success (response = $it)")
                         trySend(
                             StockPriceState.Loaded(mStockPriceMapper.map(it))
                         )
                     },
-                    onFail = { trySend(StockPriceState.Error) }
+                    onFail = {
+                        Timber.d("on fail (exception = $it)")
+                        trySend(StockPriceState.Error)
+                    }
                 )
             }
             awaitClose { mRequestsLimiter.invalidate() }

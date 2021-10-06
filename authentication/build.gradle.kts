@@ -22,6 +22,7 @@ android {
 dependencies {
     implementation(project(Projects.domain))
     implementation(project(Projects.shared))
+    implementation(Dependencies.timber)
 
     implementation(Dependencies.kotlinLib)
     implementation(Dependencies.kotlinCoroutines)

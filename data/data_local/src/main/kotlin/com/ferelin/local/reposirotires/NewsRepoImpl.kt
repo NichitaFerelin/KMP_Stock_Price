@@ -22,6 +22,7 @@ import com.ferelin.local.database.NewsDao
 import com.ferelin.local.mappers.NewsMapper
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class NewsRepoImpl @Inject constructor(
@@ -32,6 +33,7 @@ class NewsRepoImpl @Inject constructor(
 
     override suspend fun getNews(companyId: Int): List<News> =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get news by companyId (companyId = $companyId)")
             return@withContext mNewsDao
                 .getAllNews(companyId)
                 .map(mNewsMapper::map)
@@ -39,6 +41,7 @@ class NewsRepoImpl @Inject constructor(
 
     override suspend fun cacheNews(news: News) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache news (news = $news)")
             mNewsDao.insertNews(
                 newsDBO = mNewsMapper.map(news)
             )

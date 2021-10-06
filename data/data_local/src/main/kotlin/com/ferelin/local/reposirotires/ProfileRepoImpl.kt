@@ -22,6 +22,7 @@ import com.ferelin.local.database.ProfileDao
 import com.ferelin.local.mappers.ProfileMapper
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileRepoImpl @Inject constructor(
@@ -32,6 +33,7 @@ class ProfileRepoImpl @Inject constructor(
 
     override suspend fun getProfile(companyId: Int): Profile =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get profile by company id (companyId = $companyId)")
             return@withContext mProfileMapper.map(
                 profileDBO = mProfileDao.getProfile(companyId)
             )
@@ -39,6 +41,7 @@ class ProfileRepoImpl @Inject constructor(
 
     override suspend fun cacheProfiles(profiles: List<Profile>) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache profiles (size = ${profiles.size})")
             mProfileDao.insertProfiles(profiles.map(mProfileMapper::map))
         }
 }

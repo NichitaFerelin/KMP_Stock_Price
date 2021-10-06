@@ -25,6 +25,7 @@ import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRepoImpl @Inject constructor(
@@ -38,6 +39,7 @@ class SearchRequestsRepoImpl @Inject constructor(
 
     override suspend fun cacheSearchRequest(searchRequest: String): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache search request (search request = $searchRequest)")
             mPreferencesProvider.dataStore.edit {
                 val source = it[sSearchRequestsKey]?.toMutableSet() ?: mutableSetOf()
                 source.add(searchRequest)
@@ -47,6 +49,7 @@ class SearchRequestsRepoImpl @Inject constructor(
 
     override suspend fun eraseSearchRequest(searchRequest: String): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("erase search request (searchRequest = $searchRequest)")
             mPreferencesProvider.dataStore.edit {
                 it[sSearchRequestsKey]?.toMutableSet()?.let { sourceRequests ->
                     sourceRequests.remove(searchRequest)
@@ -57,17 +60,20 @@ class SearchRequestsRepoImpl @Inject constructor(
 
     override suspend fun getSearchRequests(): List<String> =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get search requests")
             return@withContext mPreferencesProvider.dataStore.data.map {
                 it[sSearchRequestsKey]?.toList()
             }.firstOrNull() ?: emptyList()
         }
 
     override suspend fun getPopularSearchRequests(): List<String> {
+        Timber.d("get popular search requests")
         return PopularRequestsSource.popularSearchRequests
     }
 
     override suspend fun clearSearchRequests(): Unit =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("clear search requests")
             mPreferencesProvider.dataStore.edit {
                 it[sSearchRequestsKey] = emptySet()
             }

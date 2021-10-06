@@ -23,6 +23,7 @@ import com.ferelin.remote.mappers.NewsMapper
 import com.ferelin.remote.utils.withExceptionHandle
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -39,6 +40,7 @@ class NewsSourceImpl @Inject constructor(
         from: String,
         to: String
     ): NewsState = withContext(mDispatchersProvider.IO) {
+        Timber.d("load company news (companyTicker: $companyTicker)")
         withExceptionHandle(
             request = {
                 mNewsApi
@@ -46,9 +48,13 @@ class NewsSourceImpl @Inject constructor(
                     .execute()
             },
             onSuccess = { responseBody ->
+                Timber.d("on success (responseSize = ${responseBody.size})")
                 NewsState.Loaded(responseBody.map(mNewsMapper::map))
             },
-            onFail = { NewsState.Error }
+            onFail = {
+                Timber.d("on fail (exception = $it)")
+                NewsState.Error
+            }
         )
     }
 }

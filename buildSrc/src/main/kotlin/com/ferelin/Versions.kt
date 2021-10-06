@@ -10,6 +10,8 @@ object Versions {
     const val kotlinCoroutines = "1.5.2"
     const val gradleTools = "7.1.0-alpha13"
 
+    const val timber = "5.0.1"
+
     /**
      * UI
      * */

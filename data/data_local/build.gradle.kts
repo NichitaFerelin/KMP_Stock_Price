@@ -21,6 +21,7 @@ dependencies {
     implementation(project(Projects.shared))
 
     implementation(Dependencies.kotlinLib)
+    implementation(Dependencies.timber)
 
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)

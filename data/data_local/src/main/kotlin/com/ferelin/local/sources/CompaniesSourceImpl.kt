@@ -27,6 +27,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -44,9 +45,12 @@ class CompaniesSourceImpl @Inject constructor(
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun getCompaniesWithProfileFromJson(): Pair<List<Company>, List<Profile>> =
         try {
+            Timber.d("get companies with profile from json")
             val type = Types.newParameterizedType(List::class.java, CompanyPojo::class.java)
             val adapter: JsonAdapter<List<CompanyPojo>> = mMoshi.adapter(type)
             val parsedList = adapter.fromJson(mCompaniesJsonFileName) ?: emptyList()
+
+            Timber.d("json parsed companies size = ${parsedList.size}")
 
             val companies = List(parsedList.size) { index ->
                 mCompanyMapper.map(index, parsedList[index])
@@ -58,6 +62,7 @@ class CompaniesSourceImpl @Inject constructor(
 
             Pair(companies, profiles)
         } catch (exception: JsonDataException) {
+            Timber.d("json parsed exception $exception")
             Pair(emptyList(), emptyList())
         }
 }

@@ -28,6 +28,7 @@ android {
 
 dependencies {
     implementation(Dependencies.androidCore)
+    implementation(Dependencies.timber)
 
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)

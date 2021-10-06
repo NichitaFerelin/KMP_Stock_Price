@@ -22,6 +22,7 @@ import com.ferelin.local.database.PastPriceDao
 import com.ferelin.local.mappers.PastPriceMapper
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class PastPriceRepoImpl @Inject constructor(
@@ -32,6 +33,7 @@ class PastPriceRepoImpl @Inject constructor(
 
     override suspend fun getAllPastPrices(companyId: Int): List<PastPrice> =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get all past prices by companyId (companyId = $companyId)")
             return@withContext mPastPriceDao
                 .getAllPastPrices(companyId)
                 .map(mPastPriceMapper::map)
@@ -39,6 +41,7 @@ class PastPriceRepoImpl @Inject constructor(
 
     override suspend fun cacheAllPastPrices(list: List<PastPrice>) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache all past prices (size = ${list.size})")
             mPastPriceDao.insertAllPastPrices(
                 list = list.map(mPastPriceMapper::map)
             )
@@ -46,6 +49,7 @@ class PastPriceRepoImpl @Inject constructor(
 
     override suspend fun cachePastPrice(pastPrice: PastPrice) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache past price(pastPrice = $pastPrice)")
             mPastPriceDao.insertPastPrice(
                 pastPriceDBO = mPastPriceMapper.map(pastPrice)
             )

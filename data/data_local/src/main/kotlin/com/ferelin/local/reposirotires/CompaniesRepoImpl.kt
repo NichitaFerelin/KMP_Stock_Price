@@ -23,6 +23,7 @@ import com.ferelin.local.database.CompaniesDao
 import com.ferelin.local.mappers.CompanyMapper
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class CompaniesRepoImpl @Inject constructor(
@@ -33,6 +34,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun getAll(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get all")
             mCompaniesDao
                 .getCompaniesWithStocksPrice()
                 .map(mCompanyMapper::map)
@@ -40,6 +42,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun getAllFavourites(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get all favourites")
             mCompaniesDao
                 .getFavouriteCompaniesWithStockPrice()
                 .map(mCompanyMapper::map)
@@ -47,6 +50,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun cache(companies: List<Company>) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache companies (size = ${companies.size})")
             mCompaniesDao.insertAllCompanies(
                 list = companies.map(mCompanyMapper::map)
             )
@@ -54,6 +58,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun setToDefault() =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("set to default")
             mCompaniesDao.setToDefault()
         }
 
@@ -62,6 +67,10 @@ class CompaniesRepoImpl @Inject constructor(
         isFavourite: Boolean,
         addedByIndex: Int
     ) = withContext(mDispatchersProvider.IO) {
+        Timber.d(
+            "update is favourite(companyId = $companyId," +
+                    " isFavourite = $isFavourite, addedByIndex = $addedByIndex)"
+        )
         mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }
 }

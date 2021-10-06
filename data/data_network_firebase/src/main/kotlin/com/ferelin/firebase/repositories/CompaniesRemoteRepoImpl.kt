@@ -21,6 +21,7 @@ import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class CompaniesRemoteRepoImpl @Inject constructor(
@@ -36,6 +37,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         userToken: String,
         companyId: Int
     ): Unit = withContext(mDispatchersProvider.IO) {
+        Timber.d("cache to favourites (userToken = $userToken, companyId = $companyId)")
 
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
@@ -48,6 +50,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         userToken: String,
         companyId: Int
     ): Unit = withContext(mDispatchersProvider.IO) {
+        Timber.d("erase from favourites (userToken = $userToken, companyId = $companyId)")
 
         mFirebaseReference
             .child(sFavouriteCompaniesRef)
@@ -59,6 +62,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
     override suspend fun getFavouriteCompaniesIds(
         userToken: String
     ): CompaniesLoadState = withContext(mDispatchersProvider.IO) {
+        Timber.d("get favourite companies ids (userToken = $userToken)")
 
         val resultSnapshot = mFirebaseReference
             .child(sFavouriteCompaniesRef)

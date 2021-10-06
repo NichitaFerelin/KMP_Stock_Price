@@ -22,6 +22,7 @@ import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,6 +38,10 @@ class SearchRequestsSyncerImpl @Inject constructor(
         userToken: String,
         sourceRequests: List<String>
     ): List<String> {
+        Timber.d(
+            "init data sync (isDataSynchronized = $mIsDataSynchronized, " +
+                    "userToken = $userToken, sourceRequestsSize = ${sourceRequests.size}"
+        )
 
         if (mIsDataSynchronized) {
             return emptyList()
@@ -57,6 +62,7 @@ class SearchRequestsSyncerImpl @Inject constructor(
     }
 
     override fun invalidate() {
+        Timber.d("invalidate")
         mIsDataSynchronized = false
     }
 
@@ -65,6 +71,10 @@ class SearchRequestsSyncerImpl @Inject constructor(
         sourceRequests: List<String>,
         remoteRequests: List<String>
     ): Unit = withContext(mDispatchersProvider.IO) {
+        Timber.d(
+            "sync cloud db (sources = ${sourceRequests.size}, " +
+                    "remotes = ${remoteRequests.size})"
+        )
 
         sourceRequests
             .itemsNotIn(remoteRequests)

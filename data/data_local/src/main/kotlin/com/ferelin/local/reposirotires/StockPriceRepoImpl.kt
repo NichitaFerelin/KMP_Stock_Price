@@ -22,6 +22,7 @@ import com.ferelin.local.database.StockPriceDao
 import com.ferelin.local.mappers.StockPriceMapper
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class StockPriceRepoImpl @Inject constructor(
@@ -32,12 +33,14 @@ class StockPriceRepoImpl @Inject constructor(
 
     override suspend fun getStockPrice(companyId: Int): StockPrice? =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("get stock price by company id (companyId = $companyId)")
             val dbo = mStockPriceDao.getStockPrice(companyId)
             return@withContext dbo?.let { mStockPriceMapper.map(it) }
         }
 
     override suspend fun cacheStockPrice(stockPrice: StockPrice) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d("cache stock price (stockPrice = $stockPrice)")
             mStockPriceDao.insertStockPrice(
                 dbo = mStockPriceMapper.map(stockPrice)
             )
@@ -45,6 +48,10 @@ class StockPriceRepoImpl @Inject constructor(
 
     override suspend fun updateStockPrice(companyId: Int, price: String, profit: String) =
         withContext(mDispatchersProvider.IO) {
+            Timber.d(
+                "update stock price (companyId = $companyId, " +
+                        "price = $price, profit = $profit)"
+            )
             mStockPriceDao.updateStockPrice(companyId, price, profit)
         }
 }

@@ -21,6 +21,7 @@ import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRemoteRepoImpl @Inject constructor(
@@ -36,6 +37,10 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
         userToken: String,
         searchRequest: String
     ): Unit = withContext(mDispatchersProvider.IO) {
+        Timber.d(
+            "cache search request (userToken = $userToken, " +
+                    "searchRequest = $searchRequest)"
+        )
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
@@ -48,6 +53,10 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
         userToken: String,
         searchRequest: String
     ): Unit = withContext(mDispatchersProvider.IO) {
+        Timber.d(
+            "erase search request (userToken = $userToken, " +
+                    "searchRequest = $searchRequest"
+        )
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
@@ -59,6 +68,8 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
     override suspend fun loadSearchRequests(
         userToken: String
     ): SearchRequestsLoadState = withContext(mDispatchersProvider.IO) {
+        Timber.d("load search requests (userToken = $userToken")
+
 
         val resultSnapshot = mFirebaseReference
             .child(sSearchesHistoryRef)
