@@ -16,6 +16,8 @@
 
 package com.ferelin.remote.di
 
+import android.content.Context
+import com.ferelin.remote.R
 import com.ferelin.remote.entities.NewsApi
 import com.ferelin.remote.entities.PastPricesApi
 import com.ferelin.remote.entities.StockPriceApi
@@ -41,8 +43,8 @@ class NetworkApiModule {
 
     @Provides
     @Named("FinnhubToken")
-    fun provideFinnhubToken(): String {
-        return "" // TODO
+    fun provideFinnhubToken(context: Context): String {
+        return context.resources.getString(R.string.api_key)
     }
 
     @Provides

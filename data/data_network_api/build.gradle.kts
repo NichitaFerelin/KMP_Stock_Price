@@ -1,6 +1,8 @@
 import com.ferelin.Base
 import com.ferelin.Dependencies
 import com.ferelin.Projects
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     id("com.android.library")
@@ -10,6 +12,21 @@ plugins {
 
 android {
     compileSdk = Base.currentSDK
+
+    val properties = Properties().apply {
+        load(
+            FileInputStream(project.rootProject.file("local.properties"))
+        )
+    }
+
+    buildTypes {
+        getByName("debug") {
+            resValue("string", "api_key", properties["apiKey"] as String)
+        }
+        getByName("release") {
+            resValue("string", "api_key", properties["apiKey"] as String)
+        }
+    }
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
