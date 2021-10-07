@@ -147,7 +147,7 @@
         <item name="android:backgroundTint">@color/whiteDark</item>
         <item name="android:visibility">invisible</item>
         <item name="android:src">@drawable/ic_arrow_up</item>
-        <item name="layout_behavior">.custom.FabBehaviourScrollable</item>
+        <item name="layout_behavior">com.ferelin.core.view.FabBehaviourScrollable</item>
         <item name="tint">@color/black</item>
     </style>
 

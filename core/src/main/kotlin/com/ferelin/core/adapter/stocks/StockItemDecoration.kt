@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.utils
+package com.ferelin.core.adapter.stocks
 
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
-import com.ferelin.core.adapter.ITEM_STOCK_TYPE
-import com.ferelin.core.adapter.ITEM_TEXT_TYPE
 
 class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
@@ -36,6 +34,8 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
 
         val position = parent.getChildAdapterPosition(view)
 
+        TODO()
+
         when (parent.adapter?.getItemViewType(position)) {
             ITEM_STOCK_TYPE -> {
                 outRect.bottom =
@@ -43,14 +43,14 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
                 outRect.left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
                 outRect.right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
             }
-            ITEM_TEXT_TYPE -> {
+            /*ITEM_TEXT_TYPE -> {
                 outRect.left =
                     mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
                 outRect.top =
                     mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
                 outRect.bottom =
                     mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-            }
+            }*/
         }
     }
 }

@@ -28,6 +28,7 @@ dependencies {
     api(project(Projects.domain))
     api(project(Projects.navigation))
 
+    api(Dependencies.timber)
     api(Dependencies.appCompat)
     api(Dependencies.browser)
     api(Dependencies.fragments)

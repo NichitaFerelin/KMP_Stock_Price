@@ -18,8 +18,10 @@ package com.ferelin.core.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ferelin.core.adapter.BaseRecyclerAdapter
-import com.ferelin.core.adapter.createStocksAdapter
+import com.ferelin.core.adapter.base.BaseRecyclerAdapter
+import com.ferelin.core.adapter.stocks.PAYLOAD_FAVOURITE_UPDATED
+import com.ferelin.core.adapter.stocks.PAYLOAD_PRICE_UPDATED
+import com.ferelin.core.adapter.stocks.createStocksAdapter
 import com.ferelin.core.mapper.StockMapper
 import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
@@ -28,6 +30,7 @@ import com.ferelin.core.viewData.StockViewData
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
+import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
@@ -70,14 +73,19 @@ abstract class BaseStocksViewModel(
         .onEach { onFavouriteCompanyUpdate(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
+    val actualStockPrice: SharedFlow<StockPriceState> = mStockPriceInteractor
+        .observeActualStockPriceResponses()
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+
     fun loadStocks(onlyFavourites: Boolean = false) {
         viewModelScope.launch(mDispatchesProvider.IO) {
+
             mStocksLoadState.value = LoadState.Loading()
 
             val companies = if (onlyFavourites) {
-                mCompaniesInteractor.getAll()
-            } else {
                 mCompaniesInteractor.getAllFavourites()
+            } else {
+                mCompaniesInteractor.getAll()
             }
 
             val viewData = companies.map(mStockMapper::map)
@@ -87,18 +95,26 @@ abstract class BaseStocksViewModel(
             )
 
             withContext(mDispatchesProvider.Main) {
-                stocksAdapter.replace(viewData)
+                stocksAdapter.setData(viewData)
             }
         }
     }
 
     open suspend fun onFavouriteStockViewDataUpdate(stockViewData: StockViewData) {
-        val id = stockViewData.id.toLong()
-        stocksAdapter.replace(stockViewData) { it.getUniqueId() == id }
+        val targetPosition = stocksAdapter.getPosition {
+            stockViewData.getUniqueId() == it.getUniqueId()
+        }
+        withContext(mDispatchesProvider.Main) {
+            stocksAdapter.update(
+                stockViewData,
+                targetPosition,
+                mutableListOf(PAYLOAD_FAVOURITE_UPDATED)
+            )
+        }
     }
 
     private fun onStockClick(stockViewData: StockViewData) {
-        // replace
+        // TODO abstract
     }
 
     private fun onFavouriteIconClick(stockViewData: StockViewData) {
@@ -113,11 +129,12 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    private fun onBind(stockViewData: StockViewData) {
+    private fun onBind(stockViewData: StockViewData, position: Int) {
         viewModelScope.launch(mDispatchesProvider.IO) {
             mStockPriceInteractor.addRequestToGetStockPrice(
+                stockViewData.id,
                 stockViewData.ticker,
-                stockViewData.id
+                position
             )
         }
     }
@@ -125,15 +142,21 @@ abstract class BaseStocksViewModel(
     private fun onStockPriceUpdate(companyWithStockPrice: CompanyWithStockPrice) {
         viewModelScope.launch(mDispatchesProvider.IO) {
             mStocksLoadState.value.ifPrepared { preparedLoad ->
-
-                preparedLoad.data.ifExist<CompanyWithStockPrice>(
-                    selector = { companyWithStockPrice.company.id == it.company.id },
+                preparedLoad.data.ifExist<StockViewData>(
+                    selector = { companyWithStockPrice.company.id == it.id },
                     action = { companyPosition ->
-                        val companyToReplace = preparedLoad.data[companyPosition]
-                        companyToReplace.stockPrice = companyWithStockPrice.stockPrice
+                        val stockViewData = preparedLoad.data[companyPosition]
+                        stockViewData.stockPrice = companyWithStockPrice.stockPrice
 
-                        val id = companyToReplace.id.toLong()
-                        stocksAdapter.replace(companyToReplace) { it.getUniqueId() == id }
+                        val targetPosition = stocksAdapter.getPosition {
+                            stockViewData.getUniqueId() == it.getUniqueId()
+                        }
+
+                        stocksAdapter.update(
+                            stockViewData,
+                            targetPosition,
+                            mutableListOf(PAYLOAD_PRICE_UPDATED)
+                        )
                     }
                 )
             }

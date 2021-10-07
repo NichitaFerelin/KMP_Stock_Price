@@ -20,7 +20,7 @@ import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.ferelin.core.adapter.utils.StockViewHolder
+import com.ferelin.core.adapter.stocks.StockViewHolder
 import kotlin.math.abs
 import kotlin.math.ln
 
@@ -87,7 +87,7 @@ class SwipeActionCallback(
             3.toDouble()
         )
         val dragTo = dragFraction * swipeDismissDistanceHorizontal * 1.2F
-        viewHolder.binding.rootLayout.translationX = dragTo.toFloat()
+        viewHolder.viewBinding.rootLayout.translationX = dragTo.toFloat()
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

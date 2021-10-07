@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.utils
+package com.ferelin.core.adapter.stocks
 
 import androidx.recyclerview.widget.RecyclerView
 

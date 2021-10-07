@@ -16,6 +16,9 @@
 
 package com.ferelin.core.utils
 
+import android.content.Context
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import com.ferelin.core.viewData.StockStyle
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.StockPrice
@@ -23,6 +26,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class StockStyleProvider @Inject constructor(
+    private val mContext: Context,
     @Named("BackIcon") private val mDrawableFavouriteBackgroundIcon: Int,
     @Named("BackIconActive") private val mDrawableFavouriteBackgroundIconActive: Int,
     @Named("ForeIcon") private val mDrawableFavouriteForegroundIcon: Int,
@@ -63,8 +67,8 @@ class StockStyleProvider @Inject constructor(
     private fun getProfitBackground(profit: String): Int {
         val prefix = profit.getOrNull(0)
         return if (prefix == '+') {
-            mColorProfitPlus
-        } else mColorProfitMinus
+            getColor(mColorProfitPlus)
+        } else getColor(mColorProfitMinus)
     }
 
     /**
@@ -72,11 +76,15 @@ class StockStyleProvider @Inject constructor(
      * */
     private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
-            mColorHolderFirst
-        } else mColorHolderSecond
+            getColor(mColorHolderFirst)
+        } else getColor(mColorHolderSecond)
     }
 
     private fun getRippleForeground(index: Int): Int {
         return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
+    }
+
+    private fun getColor(color: Int) : Int {
+        return ContextCompat.getColor(mContext, color)
     }
 }

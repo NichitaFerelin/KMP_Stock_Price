@@ -16,7 +16,10 @@
 
 package com.ferelin.core.viewData
 
-import com.ferelin.core.utils.recycler.ViewHolderType
+import android.animation.Animator
+import android.view.animation.Animation
+import com.ferelin.core.adapter.base.ViewDataType
+import com.ferelin.core.adapter.stocks.ITEM_STOCK_TYPE
 import com.ferelin.domain.entities.StockPrice
 
 data class StockViewData(
@@ -28,13 +31,21 @@ data class StockViewData(
     var stockPrice: StockPrice? = null,
     var isFavourite: Boolean = false,
     var addedByIndex: Int = 0
-) : ViewHolderType {
+) : ViewDataType(ITEM_STOCK_TYPE) {
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is StockViewData) {
+            other.id == id
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
 
     override fun getUniqueId(): Long {
         return id.toLong()
-    }
-
-    override fun isValidType(other: ViewHolderType): Boolean {
-        return other is StockViewData
     }
 }

@@ -20,14 +20,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.ferelin.core.adapter.utils.StockItemAnimator
-import com.ferelin.core.adapter.utils.StockItemDecoration
-import com.ferelin.core.adapter.utils.StockViewHolder
+import com.ferelin.core.adapter.stocks.StockItemAnimator
+import com.ferelin.core.adapter.stocks.StockItemDecoration
+import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.utils.swipe.SwipeActionCallback
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : BaseFragment<VB>() {
@@ -55,10 +56,12 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     override fun initObservers() {
-        super.initObservers()
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            launch { mViewModel.companiesStockPriceUpdates.collect() }
-            launch { mViewModel.favouriteCompaniesUpdates.collect() }
+            withContext(mDispatchersProvider.IO) {
+                launch { mViewModel.companiesStockPriceUpdates.collect() }
+                launch { mViewModel.favouriteCompaniesUpdates.collect() }
+                launch { mViewModel.actualStockPrice.collect() }
+            }
         }
     }
 

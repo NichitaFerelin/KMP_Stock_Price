@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.utils
+package com.ferelin.core.adapter.stocks
 
 import android.animation.Animator
 import android.view.animation.Animation
+import com.ferelin.core.adapter.base.BaseViewHolder
+import com.ferelin.core.adapter.base.ViewDataType
 import com.ferelin.core.databinding.ItemStockBinding
-import com.ferelin.core.utils.recycler.BaseRecyclerBindingViewHolder
-import com.ferelin.core.utils.recycler.ViewHolderType
 
 class StockViewHolder(
     var attachedPriceAnimator: Animator? = null,
@@ -28,5 +28,5 @@ class StockViewHolder(
     var attachedPriceFadeAnimation: Animation? = null,
     var attachedStartAnimator: Animator? = null,
     binding: ItemStockBinding,
-    onBind: (ItemStockBinding, ViewHolderType, MutableList<Any>?) -> Unit
-) : BaseRecyclerBindingViewHolder<ItemStockBinding>(binding, onBind)
+    onBind: (ItemStockBinding, ViewDataType, Int, MutableList<Any>) -> Unit
+) : BaseViewHolder<ItemStockBinding>(binding, onBind)
