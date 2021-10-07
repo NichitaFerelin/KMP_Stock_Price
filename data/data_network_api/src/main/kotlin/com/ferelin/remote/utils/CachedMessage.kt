@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.sources
+package com.ferelin.remote.utils
 
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.Profile
+data class CachedMessage(
+    val companyId: Int,
+    val companyTicker: String,
+    val keyPosition: Int,
+    val eraseIfNotActual: Boolean
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is CachedMessage) {
+            companyId == other.companyId
+        } else {
+            false
+        }
+    }
 
-interface CompaniesSource {
-
-    suspend fun getCompaniesWithProfileFromJson(): Pair<List<Company>, List<Profile>>
+    override fun hashCode(): Int {
+        return companyId.hashCode()
+    }
 }

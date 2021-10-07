@@ -21,20 +21,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.math.abs
+
 
 @Singleton
 class RequestsLimiter @Inject constructor(
     @Named("ExternalScope") externalScope: CoroutineScope,
     dispatchersProvider: DispatchersProvider
 ) {
-    private var mStockPriceApi: ((String) -> Unit)? = null
+    private var mStockPriceApi: ((Int, String) -> Unit)? = null
 
-    private val mMessagesQueue = LinkedHashSet<HashMap<String, Any>>(100)
-    private var mMessagesHistory = HashMap<String, Any?>(300, 0.5F)
+    private val mMessagesQueue = LinkedHashSet<CachedMessage>(100)
+    private var mMessagesHistory = HashMap<Int, Any?>(300, 0.5F)
 
     private val mPerSecondRequestLimit = 1050L
     private var mIsRunning = true
@@ -48,17 +50,18 @@ class RequestsLimiter @Inject constructor(
     }
 
     fun addRequestToOrder(
+        companyId: Int,
         companyTicker: String,
         keyPosition: Int,
         eraseIfNotActual: Boolean,
         ignoreDuplicates: Boolean
     ) {
-        if (ignoreDuplicates || isNotDuplicatedMessage(companyTicker)) {
-            acceptMessage(companyTicker, keyPosition, eraseIfNotActual)
+        if (ignoreDuplicates || isNotDuplicatedMessage(companyId)) {
+            acceptMessage(companyId, companyTicker, keyPosition, eraseIfNotActual)
         }
     }
 
-    fun onExecuteRequest(onExecute: (String) -> Unit) {
+    fun onExecuteRequest(onExecute: (Int, String) -> Unit) {
         mStockPriceApi = onExecute
     }
 
@@ -72,44 +75,52 @@ class RequestsLimiter @Inject constructor(
     private suspend fun start() {
         while (mIsRunning) {
             try {
-                mMessagesQueue.firstOrNull()?.let {
-                    val lastPosition = mMessagesQueue.last()[sPosition] as Int
-                    val currentPosition = it[sPosition] as Int
-                    val symbol = it[sSymbol] as String
-                    val eraseIfNotActual = it[sEraseState] as Boolean
-                    mMessagesQueue.remove(it)
-
-                    if (isNotActual(currentPosition, lastPosition, eraseIfNotActual)) {
+                mMessagesQueue.firstOrNull()?.let { task ->
+                    if (mMessagesHistory[task.companyId] != null) {
                         return@let
                     }
 
-                    mStockPriceApi?.invoke(symbol)
+                    val lastPosition = mMessagesQueue.last().keyPosition
+                    mMessagesQueue.remove(task)
 
-                    mMessagesHistory[symbol] = null
+                    if (isNotActual(task.keyPosition, lastPosition, task.eraseIfNotActual)) {
+                        return@let
+                    }
+
+                    Timber.d(
+                        "execute request for ${task.companyTicker}" +
+                                ". Api: $mStockPriceApi"
+                    )
+                    mStockPriceApi?.invoke(task.companyId, task.companyTicker)
+
+                    mMessagesHistory[task.companyId] = null
                     delay(mPerSecondRequestLimit)
                 }
             } catch (exception: ConcurrentModificationException) {
                 // Do nothing. Message will not be removed
+                Timber.d("execute exception $exception")
             }
         }
     }
 
     private fun acceptMessage(
-        symbol: String,
+        companyId: Int,
+        companyTicker: String,
         position: Int,
         eraseIfNotActual: Boolean
     ) {
         mMessagesQueue.add(
-            hashMapOf(
-                sSymbol to symbol,
-                sPosition to position,
-                sEraseState to eraseIfNotActual
+            CachedMessage(
+                companyId,
+                companyTicker,
+                position,
+                eraseIfNotActual
             )
         )
     }
 
-    private fun isNotDuplicatedMessage(symbol: String): Boolean {
-        return !mMessagesHistory.containsKey(symbol)
+    private fun isNotDuplicatedMessage(companyId: Int): Boolean {
+        return !mMessagesHistory.containsKey(companyId)
     }
 
     private fun isNotActual(
@@ -117,14 +128,11 @@ class RequestsLimiter @Inject constructor(
         lastPosition: Int,
         eraseIfNotActual: Boolean
     ): Boolean {
-        return abs(currentPosition - lastPosition) >= sAlreadyNotActualValue && eraseIfNotActual
+        return abs(currentPosition - lastPosition) >= sAlreadyNotActualValue
+                && eraseIfNotActual
     }
 
     private companion object {
         const val sAlreadyNotActualValue = 13
-
-        const val sSymbol = "symbol"
-        const val sPosition = "position"
-        const val sEraseState = "erase"
     }
 }

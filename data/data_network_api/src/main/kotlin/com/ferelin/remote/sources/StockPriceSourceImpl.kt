@@ -37,6 +37,7 @@ class StockPriceSourceImpl @Inject constructor(
 ) : StockPriceSource {
 
     override suspend fun addRequestToGetStockPrice(
+        companyId: Int,
         companyTicker: String,
         keyPosition: Int,
         isImportant: Boolean
@@ -45,13 +46,20 @@ class StockPriceSourceImpl @Inject constructor(
             "add request to get stock price (companyTicker = $companyTicker," +
                     " keyPosition = $keyPosition, isImportant = $isImportant"
         )
-        mRequestsLimiter.addRequestToOrder(companyTicker, keyPosition, !isImportant, !isImportant)
+        mRequestsLimiter.addRequestToOrder(
+            companyId,
+            companyTicker,
+            keyPosition,
+            !isImportant,
+            !isImportant
+        )
     }
 
     override fun observeActualStockPriceResponses(): Flow<StockPriceState> =
         callbackFlow {
             Timber.d("observe actual stock price response")
-            mRequestsLimiter.onExecuteRequest { tickerToExecute ->
+            mRequestsLimiter.onExecuteRequest { companyId, tickerToExecute ->
+                Timber.d("on execute request")
                 withExceptionHandle(
                     request = {
                         mStockPriceApi
@@ -61,7 +69,7 @@ class StockPriceSourceImpl @Inject constructor(
                     onSuccess = {
                         Timber.d("on success (response = $it)")
                         trySend(
-                            StockPriceState.Loaded(mStockPriceMapper.map(it))
+                            StockPriceState.Loaded(mStockPriceMapper.map(it, companyId))
                         )
                     },
                     onFail = {

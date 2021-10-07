@@ -40,8 +40,8 @@ class PastPriceInteractor @Inject constructor(
         return mPastPriceRepo.getAllPastPrices(companyId)
     }
 
-    suspend fun loadPastPrices(companyTicker: String): PastPriceState {
-        return mPastPriceSource.loadPastPrices(companyTicker)
+    suspend fun loadPastPrices(companyId: Int, companyTicker: String): PastPriceState {
+        return mPastPriceSource.loadPastPrices(companyId, companyTicker)
             .also { cacheIfLoaded(it) }
     }
 

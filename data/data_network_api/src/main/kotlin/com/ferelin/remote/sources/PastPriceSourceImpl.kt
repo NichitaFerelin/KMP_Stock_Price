@@ -35,6 +35,7 @@ class PastPriceSourceImpl @Inject constructor(
 ) : PastPriceSource {
 
     override suspend fun loadPastPrices(
+        companyId: Int,
         companyTicker: String,
         from: Long,
         to: Long,
@@ -48,7 +49,9 @@ class PastPriceSourceImpl @Inject constructor(
             },
             onSuccess = { responseBody ->
                 Timber.d("on success (responseBody = $responseBody)")
-                PastPriceState.Loaded(mPastPriceMapper.map(responseBody))
+                PastPriceState.Loaded(
+                    pastPrices = mPastPriceMapper.map(responseBody, companyId)
+                )
             },
             onFail = {
                 Timber.d("on exception (exception = $it)")

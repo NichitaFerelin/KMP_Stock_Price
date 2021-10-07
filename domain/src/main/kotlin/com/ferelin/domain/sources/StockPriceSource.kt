@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 interface StockPriceSource {
 
     suspend fun addRequestToGetStockPrice(
+        companyId: Int,
         companyTicker: String,
         keyPosition: Int,
         isImportant: Boolean

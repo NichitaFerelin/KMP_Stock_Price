@@ -36,6 +36,7 @@ class NewsSourceImpl @Inject constructor(
 ) : NewsSource {
 
     override suspend fun loadCompanyNews(
+        companyId: Int,
         companyTicker: String,
         from: String,
         to: String
@@ -49,7 +50,11 @@ class NewsSourceImpl @Inject constructor(
             },
             onSuccess = { responseBody ->
                 Timber.d("on success (responseSize = ${responseBody.size})")
-                NewsState.Loaded(responseBody.map(mNewsMapper::map))
+                NewsState.Loaded(
+                    news = responseBody.map {
+                        mNewsMapper.map(it, companyId)
+                    }
+                )
             },
             onFail = {
                 Timber.d("on fail (exception = $it)")

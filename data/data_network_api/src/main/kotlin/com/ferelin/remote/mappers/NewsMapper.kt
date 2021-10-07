@@ -23,8 +23,9 @@ import javax.inject.Inject
 
 class NewsMapper @Inject constructor() {
 
-    fun map(response: NewsResponse): News {
+    fun map(response: NewsResponse, companyId: Int): News {
         return News(
+            relationId = companyId,
             cloudId = response.id.toString().substringBefore('.'),
             headline = response.headline,
             date = response.dateTime.toLong().toDateStr(),

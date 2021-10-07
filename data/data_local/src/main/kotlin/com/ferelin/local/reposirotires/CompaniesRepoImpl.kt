@@ -34,7 +34,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun getAll(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("get all")
+            Timber.d("get all from local db")
             mCompaniesDao
                 .getCompaniesWithStocksPrice()
                 .map(mCompanyMapper::map)
@@ -42,7 +42,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun getAllFavourites(): List<CompanyWithStockPrice> =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("get all favourites")
+            Timber.d("get all favourites from local db")
             mCompaniesDao
                 .getFavouriteCompaniesWithStockPrice()
                 .map(mCompanyMapper::map)
@@ -50,7 +50,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun cache(companies: List<Company>) =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("cache companies (size = ${companies.size})")
+            Timber.d("cache companies (size = ${companies.size}) to local db")
             mCompaniesDao.insertAllCompanies(
                 list = companies.map(mCompanyMapper::map)
             )
@@ -58,7 +58,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun setToDefault() =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("set to default")
+            Timber.d("set to default at local db")
             mCompaniesDao.setToDefault()
         }
 
@@ -69,7 +69,7 @@ class CompaniesRepoImpl @Inject constructor(
     ) = withContext(mDispatchersProvider.IO) {
         Timber.d(
             "update is favourite(companyId = $companyId," +
-                    " isFavourite = $isFavourite, addedByIndex = $addedByIndex)"
+                    " isFavourite = $isFavourite, addedByIndex = $addedByIndex) at local db"
         )
         mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }

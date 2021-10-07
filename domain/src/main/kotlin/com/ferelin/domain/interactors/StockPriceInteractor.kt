@@ -48,11 +48,17 @@ class StockPriceInteractor @Inject constructor(
     }
 
     suspend fun addRequestToGetStockPrice(
+        companyId: Int,
         companyTicker: String,
         keyPosition: Int,
         isImportant: Boolean = false
     ) {
-        mStockPriceSource.addRequestToGetStockPrice(companyTicker, keyPosition, isImportant)
+        mStockPriceSource.addRequestToGetStockPrice(
+            companyId,
+            companyTicker,
+            keyPosition,
+            isImportant
+        )
     }
 
     private fun cacheIfLoaded(responseState: StockPriceState) {

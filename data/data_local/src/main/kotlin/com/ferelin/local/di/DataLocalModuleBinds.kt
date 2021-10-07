@@ -19,9 +19,9 @@ package com.ferelin.local.di
 import com.ferelin.domain.repositories.*
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
-import com.ferelin.domain.sources.CompaniesSource
+import com.ferelin.domain.sources.CompaniesJsonSource
 import com.ferelin.local.reposirotires.*
-import com.ferelin.local.sources.CompaniesSourceImpl
+import com.ferelin.local.sources.CompaniesJsonSourceImpl
 import dagger.Binds
 import dagger.Module
 
@@ -52,5 +52,5 @@ interface DataLocalModuleBinds {
     fun provideStockPriceRepo(stockPriceRepoImpl: StockPriceRepoImpl): StockPriceRepo
 
     @Binds
-    fun provideCompaniesSource(companiesSourceImpl: CompaniesSourceImpl): CompaniesSource
+    fun provideCompaniesSource(companiesSourceImpl: CompaniesJsonSourceImpl): CompaniesJsonSource
 }

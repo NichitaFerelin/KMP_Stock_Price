@@ -25,7 +25,7 @@ import com.ferelin.domain.repositories.ProfileRepo
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
-import com.ferelin.domain.sources.CompaniesSource
+import com.ferelin.domain.sources.CompaniesJsonSource
 import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.domain.utils.ifPrepared
@@ -52,7 +52,7 @@ class CompaniesInteractorImpl @Inject constructor(
     private val mCompaniesLocalRepo: CompaniesLocalRepo,
     private val mCompaniesRemoteRepo: CompaniesRemoteRepo,
     private val mProfileRepo: ProfileRepo,
-    private val mCompaniesSource: CompaniesSource,
+    private val mCompaniesJsonSource: CompaniesJsonSource,
     private val mLivePriceSource: LivePriceSource,
     private val mAuthenticationSource: AuthenticationSource,
     private val mCompaniesSyncer: CompaniesSyncer,
@@ -79,7 +79,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         return mCompaniesLocalRepo.getAll()
             .ifEmpty {
-                val fromJson = mCompaniesSource.getCompaniesWithProfileFromJson()
+                val fromJson = mCompaniesJsonSource.getCompaniesWithProfileFromJson()
                 val companies = fromJson.first
 
                 mExternalScope.launch(mDispatchersProvider.IO) {

@@ -28,6 +28,7 @@ sealed class Resolutions(val key: String) {
 interface PastPriceSource {
 
     suspend fun loadPastPrices(
+        companyId: Int,
         companyTicker: String,
         from: Long = AppDate.toTimeMillisForRequest(System.currentTimeMillis() - AppDate.ONE_YEAR),
         to: Long = AppDate.toTimeMillisForRequest(System.currentTimeMillis()),

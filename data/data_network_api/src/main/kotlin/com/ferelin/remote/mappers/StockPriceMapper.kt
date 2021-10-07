@@ -24,8 +24,9 @@ import javax.inject.Inject
 
 class StockPriceMapper @Inject constructor() {
 
-    fun map(response: StockPriceResponse): StockPrice {
+    fun map(response: StockPriceResponse, companyId: Int): StockPrice {
         return StockPrice(
+            id = companyId,
             currentPrice = response.currentPrice.toStrPrice(),
             previousClosePrice = response.previousClosePrice.toStrPrice(),
             openPrice = response.openPrice.toStrPrice(),

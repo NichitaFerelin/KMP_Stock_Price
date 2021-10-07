@@ -19,11 +19,10 @@ package com.ferelin.local.sources
 import android.content.Context
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.sources.CompaniesSource
+import com.ferelin.domain.sources.CompaniesJsonSource
 import com.ferelin.local.mappers.CompanyMapper
 import com.ferelin.local.mappers.ProfileMapper
 import com.ferelin.local.utils.CompanyPojo
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -32,12 +31,12 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
-class CompaniesSourceImpl @Inject constructor(
+class CompaniesJsonSourceImpl @Inject constructor(
     @Named("CompaniesJsonFileName") private val mCompaniesJsonFileName: String,
     private val mContext: Context,
     private val mCompanyMapper: CompanyMapper,
     private val mProfileMapper: ProfileMapper
-) : CompaniesSource {
+) : CompaniesJsonSource {
 
     private val mMoshi = Moshi
         .Builder()

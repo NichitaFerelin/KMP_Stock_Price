@@ -40,8 +40,8 @@ class NewsInteractor @Inject constructor(
         return mNewsRepo.getNews(companyId)
     }
 
-    suspend fun loadCompanyNews(companyTicker: String): NewsState {
-        return mNewsSource.loadCompanyNews(companyTicker)
+    suspend fun loadCompanyNews(companyId: Int, companyTicker: String): NewsState {
+        return mNewsSource.loadCompanyNews(companyId, companyTicker)
             .also { cacheIfLoaded(it) }
     }
 

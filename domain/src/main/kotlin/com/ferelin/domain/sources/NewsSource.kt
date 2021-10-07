@@ -22,6 +22,7 @@ import com.ferelin.domain.utils.AppDate
 interface NewsSource {
 
     suspend fun loadCompanyNews(
+        companyId: Int,
         companyTicker: String,
         from: String = AppDate.getYearAgoDateForRequest(),
         to: String = AppDate.getCurrentDateForRequest()

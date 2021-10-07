@@ -19,7 +19,6 @@ package com.ferelin.domain.repositories.companies
 sealed class CompaniesLoadState {
 
     class Loaded(val companies: List<Int>) : CompaniesLoadState()
-
     object Error  : CompaniesLoadState()
 }
 

@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.utils.recycler
+package com.ferelin.domain.sources
 
-interface ViewHolderType {
+import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.Profile
 
-    fun getUniqueId(): Long
+interface CompaniesJsonSource {
 
-    fun isValidType(other: ViewHolderType): Boolean
-
-    fun areItemsTheSame(other: ViewHolderType): Boolean {
-        return this.isValidType(other)
-                && this.getUniqueId() == other.getUniqueId()
-    }
-
-    fun areContentsTheSame(other: ViewHolderType): Boolean {
-        return this == other
-    }
+    suspend fun getCompaniesWithProfileFromJson(): Pair<List<Company>, List<Profile>>
 }
