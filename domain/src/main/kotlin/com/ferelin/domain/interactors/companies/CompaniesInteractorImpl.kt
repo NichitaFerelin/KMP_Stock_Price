@@ -67,7 +67,7 @@ class CompaniesInteractorImpl @Inject constructor(
     private var mCompaniesState: CompaniesState = CompaniesState.None
     private var mFavouriteCompaniesState: CompaniesState = CompaniesState.None
 
-    private val mFavouriteCompanyUpdates = MutableSharedFlow<Company>()
+    private val mFavouriteCompanyUpdates = MutableSharedFlow<CompanyWithStockPrice>()
 
     override suspend fun getAll(): List<CompanyWithStockPrice> {
         if (mCompaniesState is CompaniesState.Prepared) {
@@ -117,75 +117,78 @@ class CompaniesInteractorImpl @Inject constructor(
     }
 
     override suspend fun addCompanyToFavourites(company: Company) {
-        if (mFavouriteCompaniesState !is CompaniesState.Prepared) {
-            throw IllegalStateException(
-                "Attempting to make 'Company' object favourite " +
-                        "without first calling it from the database"
-            )
-        }
+        invokeWithStateHandleOnFavItem(company) { itemToUpdate, favouriteCompanies ->
 
-        val favouriteCompanies =
-            (mFavouriteCompaniesState as CompaniesState.Prepared).companiesWithStockPrice
-        val orderIndex = favouriteCompanies
-            .firstOrNull()
-            ?.let { it.company.addedByIndex + 1 } ?: 0
+            val orderIndex = favouriteCompanies
+                .firstOrNull()
+                ?.let { it.company.addedByIndex + 1 } ?: 0
 
-        company.isFavourite = true
-        company.addedByIndex = orderIndex
+            itemToUpdate.company.isFavourite = true
+            itemToUpdate.company.addedByIndex = orderIndex
 
-        mFavouriteCompanyUpdates.emit(company)
 
-        mLivePriceSource.subscribeCompanyOnUpdates(company.ticker)
+            favouriteCompanies.add(0, itemToUpdate)
+            mFavouriteCompaniesState = CompaniesState.Prepared(favouriteCompanies)
 
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            launch {
-                mCompaniesLocalRepo.updateIsFavourite(
-                    companyId = company.id,
-                    isFavourite = company.isFavourite,
-                    addedByIndex = company.addedByIndex
-                )
-            }
+            mFavouriteCompanyUpdates.emit(itemToUpdate)
 
-            launch {
-                mAuthenticationSource.getUserToken()?.let { userToken ->
-                    mCompaniesRemoteRepo.cacheCompanyIdToFavourites(
-                        userToken,
-                        company.id
+            mLivePriceSource.subscribeCompanyOnUpdates(itemToUpdate.company.ticker)
+
+            mExternalScope.launch(mDispatchersProvider.IO) {
+                launch {
+                    mCompaniesLocalRepo.updateIsFavourite(
+                        companyId = itemToUpdate.company.id,
+                        isFavourite = itemToUpdate.company.isFavourite,
+                        addedByIndex = itemToUpdate.company.addedByIndex
                     )
+                }
+
+                launch {
+                    mAuthenticationSource.getUserToken()?.let { userToken ->
+                        mCompaniesRemoteRepo.cacheCompanyIdToFavourites(
+                            userToken,
+                            itemToUpdate.company.id
+                        )
+                    }
                 }
             }
         }
     }
 
     override suspend fun removeCompanyFromFavourites(company: Company) {
-        company.isFavourite = false
-        company.addedByIndex = 0
+        invokeWithStateHandleOnFavItem(company) { itemToUpdate, favouriteCompanies ->
 
-        mFavouriteCompanyUpdates.emit(company)
+            itemToUpdate.company.isFavourite = false
+            itemToUpdate.company.addedByIndex = 0
 
-        mLivePriceSource.unsubscribeCompanyFromUpdates(company.ticker)
+            favouriteCompanies.remove(itemToUpdate)
+            mFavouriteCompaniesState = CompaniesState.Prepared(favouriteCompanies)
 
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            launch {
-                mCompaniesLocalRepo.updateIsFavourite(
-                    companyId = company.id,
-                    isFavourite = company.isFavourite,
-                    addedByIndex = company.addedByIndex
-                )
-            }
+            mFavouriteCompanyUpdates.emit(itemToUpdate)
 
-            launch {
-                mAuthenticationSource.getUserToken()?.let { userToken ->
-                    mCompaniesRemoteRepo.eraseCompanyIdFromFavourites(
-                        userToken,
-                        company.id
+            mLivePriceSource.unsubscribeCompanyFromUpdates(itemToUpdate.company.ticker)
+
+            mExternalScope.launch(mDispatchersProvider.IO) {
+                launch {
+                    mCompaniesLocalRepo.updateIsFavourite(
+                        companyId = itemToUpdate.company.id,
+                        isFavourite = itemToUpdate.company.isFavourite,
+                        addedByIndex = itemToUpdate.company.addedByIndex
                     )
+                }
+                launch {
+                    mAuthenticationSource.getUserToken()?.let { userToken ->
+                        mCompaniesRemoteRepo.eraseCompanyIdFromFavourites(
+                            userToken,
+                            itemToUpdate.company.id
+                        )
+                    }
                 }
             }
         }
     }
 
-    override fun observeFavouriteCompaniesUpdates(): SharedFlow<Company> {
+    override fun observeFavouriteCompaniesUpdates(): SharedFlow<CompanyWithStockPrice> {
         return mFavouriteCompanyUpdates.asSharedFlow()
     }
 
@@ -280,5 +283,38 @@ class CompaniesInteractorImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun invokeWithStateHandleOnFavItem(
+        company: Company,
+        onAction: suspend (CompanyWithStockPrice, MutableList<CompanyWithStockPrice>) -> Unit
+    ) {
+        if (mCompaniesState !is CompaniesState.Prepared
+            || mFavouriteCompaniesState !is CompaniesState.Prepared
+        ) {
+            throw IllegalStateException(
+                "Attempting to make 'Company' object favourite " +
+                        "without first calling it from the database"
+            )
+        }
+
+        val targetCompanyIndex = (mCompaniesState as CompaniesState.Prepared)
+            .companiesWithStockPrice
+            .binarySearch {
+                when {
+                    company.id == it.company.id -> 0
+                    company.id > it.company.id -> -1
+                    else -> 1
+                }
+            }
+
+        val targetCompany = (mCompaniesState as CompaniesState.Prepared)
+            .companiesWithStockPrice[targetCompanyIndex]
+
+        val favouriteCompanies = (mFavouriteCompaniesState as CompaniesState.Prepared)
+            .companiesWithStockPrice
+            .toMutableList()
+
+        onAction.invoke(targetCompany, favouriteCompanies)
     }
 }
