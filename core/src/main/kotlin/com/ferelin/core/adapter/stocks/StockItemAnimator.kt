@@ -22,11 +22,8 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
-import com.ferelin.core.adapter.base.BaseViewHolder
-import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.invalidate
-import timber.log.Timber
 
 class StockItemAnimator : DefaultItemAnimator() {
 
@@ -37,10 +34,7 @@ class StockItemAnimator : DefaultItemAnimator() {
         postInfo: ItemHolderInfo
     ): Boolean {
 
-        if (newHolder !is StockViewHolder
-            || oldHolder !is StockViewHolder
-            || preInfo !is StockHolderInfo
-        ) {
+        if (newHolder !is StockViewHolder || preInfo !is StockHolderInfo) {
             return super.animateChange(oldHolder, newHolder, preInfo, postInfo)
         }
 
@@ -49,7 +43,7 @@ class StockItemAnimator : DefaultItemAnimator() {
         when {
             isFirstTimePriceLoad(preInfo, newHolder) -> animatePriceFadeIn(newHolder)
             isPriceChanged(preInfo, newHolder) -> animatePriceChanges(newHolder)
-            else -> animateStar(newHolder)
+            isFavouriteStateChanged(preInfo, newHolder) -> animateStar(newHolder)
         }
 
         return true
@@ -61,12 +55,11 @@ class StockItemAnimator : DefaultItemAnimator() {
         changeFlags: Int,
         payloads: MutableList<Any>
     ): ItemHolderInfo {
-        if (changeFlags == FLAG_CHANGED
-            && viewHolder is BaseViewHolder<*>
-            && viewHolder.viewBinding is ItemStockBinding
-        ) {
+        if (changeFlags == FLAG_CHANGED && viewHolder is StockViewHolder) {
             val priceStr = viewHolder.viewBinding.textViewCurrentPrice.text.toString()
-            return StockHolderInfo(priceStr)
+            val profit = viewHolder.viewBinding.textViewDayProfit.text.toString()
+            val drawable = viewHolder.viewBinding.imageViewFavourite.drawable
+            return StockHolderInfo(priceStr, profit, drawable)
         }
 
         return super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads)
@@ -130,13 +123,21 @@ class StockItemAnimator : DefaultItemAnimator() {
         newHolder: StockViewHolder
     ): Boolean {
         return preInfo.price.isEmpty()
-                && newHolder.viewBinding.textViewCurrentPrice.text.isNotEmpty()
+                && newHolder.viewBinding.textViewCurrentPrice.text.toString().isNotEmpty()
     }
 
     private fun isPriceChanged(
         preInfo: StockHolderInfo,
         newHolder: StockViewHolder
     ): Boolean {
-        return preInfo.price != newHolder.viewBinding.textViewCurrentPrice.text
+        return preInfo.price != newHolder.viewBinding.textViewCurrentPrice.text.toString()
+                || preInfo.profit != newHolder.viewBinding.textViewDayProfit.text.toString()
+    }
+
+    private fun isFavouriteStateChanged(
+        preInfo: StockHolderInfo,
+        newHolder: StockViewHolder
+    ): Boolean {
+        return preInfo.favouriteIcon != newHolder.viewBinding.imageViewFavourite.drawable
     }
 }

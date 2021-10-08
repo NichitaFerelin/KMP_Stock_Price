@@ -24,7 +24,7 @@ import com.ferelin.core.R
 import com.ferelin.core.adapter.text.TEXT_VIEW_TYPE
 import com.ferelin.shared.NULL_INDEX
 
-open class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -36,25 +36,22 @@ open class StockItemDecoration(private val mContext: Context) : RecyclerView.Ite
 
         val position = parent.getChildAdapterPosition(view)
 
-        if (position == NULL_INDEX) {
-            return
+        when {
+            position == NULL_INDEX -> outRect.applyForStock()
+            parent.adapter?.getItemViewType(position) == STOCK_VIEW_TYPE -> outRect.applyForStock()
+            parent.adapter?.getItemViewType(position) == TEXT_VIEW_TYPE -> outRect.applyForText()
         }
+    }
 
-        when (parent.adapter?.getItemViewType(position)) {
-            STOCK_VIEW_TYPE -> {
-                outRect.bottom =
-                    mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-                outRect.left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
-                outRect.right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
-            }
-            TEXT_VIEW_TYPE -> {
-                outRect.left =
-                    mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
-                outRect.top =
-                    mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
-                outRect.bottom =
-                    mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-            }
-        }
+    private fun Rect.applyForStock() {
+        bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
+        left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
+        right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
+    }
+
+    private fun Rect.applyForText() {
+        left = mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
+        top = mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
+        bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
     }
 }

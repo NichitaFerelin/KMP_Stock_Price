@@ -16,6 +16,11 @@
 
 package com.ferelin.core.adapter.stocks
 
+import android.graphics.drawable.Drawable
 import androidx.recyclerview.widget.RecyclerView
 
-class StockHolderInfo(val price: String) : RecyclerView.ItemAnimator.ItemHolderInfo()
+class StockHolderInfo(
+    val price: String,
+    val profit: String,
+    val favouriteIcon: Drawable
+) : RecyclerView.ItemAnimator.ItemHolderInfo()
