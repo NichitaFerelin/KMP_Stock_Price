@@ -16,10 +16,13 @@
 
 package com.ferelin.stockprice.ui
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.ferelin.feature_chart.view.ChartFragment
 import com.ferelin.feature_ideas.IdeasFragment
 import com.ferelin.feature_loading.view.LoadingFragment
@@ -41,10 +44,45 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var router: Router
 
+    private val mFragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
+        object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentPreAttached(
+                fm: FragmentManager,
+                f: Fragment,
+                context: Context
+            ) {
+                super.onFragmentPreAttached(fm, f, context)
+
+                application.let { app ->
+                    if (app !is App) {
+                        return
+                    }
+
+                    when (f) {
+                        is LoadingFragment -> app.appComponent.inject(f)
+                        is IdeasFragment -> app.appComponent.inject(f)
+                        is NewsFragment -> app.appComponent.inject(f)
+                        is LoginFragment -> app.appComponent.inject(f)
+                        is ChartFragment -> app.appComponent.inject(f)
+                        is AboutPagerFragment -> app.appComponent.inject(f)
+                        is StocksFragment -> app.appComponent.inject(f)
+                        is FavouriteFragment -> app.appComponent.inject(f)
+                        is StocksPagerFragment -> app.appComponent.inject(f)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         injectDependencies()
 
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            mFragmentLifecycleCallbacks,
+            true
+        )
+
+        super.onCreate(savedInstanceState)
         ActivityMainBinding.inflate(layoutInflater).also {
             mViewBinding = it
             setContentView(it.root)
@@ -52,7 +90,10 @@ class MainActivity : AppCompatActivity() {
 
         router.apply {
             bind(this@MainActivity)
-            toStartFragment()
+
+            if (savedInstanceState == null) {
+                toStartFragment()
+            }
         }
 
         setStatusBarColor()
@@ -68,22 +109,6 @@ class MainActivity : AppCompatActivity() {
         val application = application
         if (application is App) {
             application.appComponent.inject(this)
-
-            this
-                .supportFragmentManager
-                .addFragmentOnAttachListener { _, fragment ->
-                    when (fragment) {
-                        is LoadingFragment -> application.appComponent.inject(fragment)
-                        is StocksPagerFragment -> application.appComponent.inject(fragment)
-                        is IdeasFragment -> application.appComponent.inject(fragment)
-                        is NewsFragment -> application.appComponent.inject(fragment)
-                        is LoginFragment -> application.appComponent.inject(fragment)
-                        is ChartFragment -> application.appComponent.inject(fragment)
-                        is AboutPagerFragment -> application.appComponent.inject(fragment)
-                        is StocksFragment -> application.appComponent.inject(fragment)
-                        is FavouriteFragment -> application.appComponent.inject(fragment)
-                    }
-                }
         }
     }
 

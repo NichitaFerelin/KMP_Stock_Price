@@ -20,7 +20,9 @@ import androidx.fragment.app.FragmentActivity
 import com.ferelin.navigation.Router
 import com.ferelin.navigation.ScreenResolver
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RouterImpl @Inject constructor(
     private val mScreenResolver: ScreenResolver
 ) : Router {

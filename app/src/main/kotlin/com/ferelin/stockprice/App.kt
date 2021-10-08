@@ -23,7 +23,7 @@ import timber.log.Timber
 
 class App : Application() {
 
-    val appComponent: AppComponent by lazy {
+    val appComponent: AppComponent by lazy(LazyThreadSafetyMode.NONE) {
         DaggerAppComponent.factory().create(applicationContext)
     }
 
