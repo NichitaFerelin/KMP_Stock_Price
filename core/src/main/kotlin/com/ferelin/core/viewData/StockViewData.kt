@@ -16,10 +16,8 @@
 
 package com.ferelin.core.viewData
 
-import android.animation.Animator
-import android.view.animation.Animation
 import com.ferelin.core.adapter.base.ViewDataType
-import com.ferelin.core.adapter.stocks.ITEM_STOCK_TYPE
+import com.ferelin.core.adapter.stocks.STOCK_VIEW_TYPE
 import com.ferelin.domain.entities.StockPrice
 
 data class StockViewData(
@@ -31,7 +29,7 @@ data class StockViewData(
     var stockPrice: StockPrice? = null,
     var isFavourite: Boolean = false,
     var addedByIndex: Int = 0
-) : ViewDataType(ITEM_STOCK_TYPE) {
+) : ViewDataType(STOCK_VIEW_TYPE) {
 
     override fun equals(other: Any?): Boolean {
         return if (other is StockViewData) {

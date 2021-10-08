@@ -18,6 +18,7 @@ package com.ferelin.core.adapter.base
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 import java.util.*
 
 class BaseRecyclerAdapter(
@@ -28,7 +29,8 @@ class BaseRecyclerAdapter(
     private val mDelegates = adapterDelegates.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRecyclerViewHolder {
-        return mDelegates[viewType].onCreateViewHolder(parent)
+        val targetIndex = mDelegates.indexOfFirst { it.itemsViewType == viewType }
+        return mDelegates[targetIndex].onCreateViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: BaseRecyclerViewHolder, position: Int) {
@@ -52,9 +54,7 @@ class BaseRecyclerAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return mDelegates.indexOfFirst {
-            it.itemsViewType == mCurrentList[position].itemViewType
-        }
+        return mCurrentList[position].itemViewType
     }
 
     override fun getItemId(position: Int): Long {
@@ -69,17 +69,17 @@ class BaseRecyclerAdapter(
         return mCurrentList.indexOfFirst(selector)
     }
 
-    fun update(viewDataType: ViewDataType, position: Int, payloads: MutableList<Any>? = null) {
+    fun update(viewDataType: ViewDataType, position: Int, payloads: Any? = null) {
         mCurrentList[position] = viewDataType
         notifyItemChanged(position, payloads)
     }
 
-    fun add(viewDataType: ViewDataType, position: Int) {
+    fun add( position: Int, viewDataType: ViewDataType) {
         mCurrentList.add(position, viewDataType)
         notifyItemInserted(position)
     }
 
-    fun remove(position: Int) {
+    fun removeAt(position: Int) {
         mCurrentList.removeAt(position)
         notifyItemRemoved(position)
     }

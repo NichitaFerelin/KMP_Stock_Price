@@ -26,6 +26,7 @@ import com.ferelin.core.adapter.base.BaseViewHolder
 import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.invalidate
+import timber.log.Timber
 
 class StockItemAnimator : DefaultItemAnimator() {
 

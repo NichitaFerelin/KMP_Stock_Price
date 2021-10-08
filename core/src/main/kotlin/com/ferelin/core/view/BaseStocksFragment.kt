@@ -26,6 +26,7 @@ import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.utils.swipe.SwipeActionCallback
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.BaseViewModelFactory
+import com.ferelin.core.viewModel.StocksMode
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +38,7 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     lateinit var viewModelFactory: BaseViewModelFactory<VM>
 
     abstract val mViewModel: VM
+    abstract val mStocksMode: StocksMode
 
     protected var recyclerView: RecyclerView? = null
 
@@ -58,6 +60,7 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             withContext(mDispatchersProvider.IO) {
+                launch { mViewModel.loadStocks(mStocksMode) }
                 launch { mViewModel.companiesStockPriceUpdates.collect() }
                 launch { mViewModel.favouriteCompaniesUpdates.collect() }
                 launch { mViewModel.actualStockPrice.collect() }
@@ -71,7 +74,6 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     private fun onHolderRebound(stockViewHolder: StockViewHolder) {
-
     }
 
     private fun onHolderUntouched(stockViewHolder: StockViewHolder, isRebounded: Boolean) {

@@ -17,11 +17,12 @@
 package com.ferelin.core.utils
 
 import android.content.Context
-import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.ferelin.core.viewData.StockStyle
+import com.ferelin.core.viewData.StockViewData
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.StockPrice
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -46,6 +47,19 @@ class StockStyleProvider @Inject constructor(
             favouriteForegroundIconResource = getForegroundIconDrawable(company.isFavourite),
             dayProfitBackground = stockPrice?.let { getProfitBackground(it.profit) } ?: 0
         )
+    }
+
+    fun updateProfit(stockViewData: StockViewData) {
+        stockViewData.stockPrice?.let { stockPrice ->
+            stockViewData.style.dayProfitBackground = getProfitBackground(stockPrice.profit)
+        }
+    }
+
+    fun updateFavourite(stockViewData: StockViewData) {
+        stockViewData.style.apply {
+            favouriteBackgroundIconResource = getBackgroundIconDrawable(stockViewData.isFavourite)
+            favouriteForegroundIconResource = getForegroundIconDrawable(stockViewData.isFavourite)
+        }
     }
 
     private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
@@ -84,7 +98,7 @@ class StockStyleProvider @Inject constructor(
         return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
     }
 
-    private fun getColor(color: Int) : Int {
+    private fun getColor(color: Int): Int {
         return ContextCompat.getColor(mContext, color)
     }
 }

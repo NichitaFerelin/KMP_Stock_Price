@@ -16,16 +16,20 @@
 
 package com.ferelin.core.adapter.stocks
 
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.R
-import com.ferelin.core.adapter.base.createRecyclerAdapter
+import com.ferelin.core.adapter.base.BaseRecyclerViewHolder
+import com.ferelin.core.adapter.base.RecyclerAdapterDelegate
 import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.viewData.StockViewData
+import timber.log.Timber
 
-const val ITEM_STOCK_TYPE = 0
+const val STOCK_VIEW_TYPE = 1
 
 const val PAYLOAD_FAVOURITE_UPDATED = 1
 const val PAYLOAD_PRICE_UPDATED = 2
@@ -34,62 +38,71 @@ fun createStocksAdapter(
     onStockClick: (StockViewData) -> Unit,
     onFavouriteIconClick: (StockViewData) -> Unit,
     onBindCallback: (StockViewData, Int) -> Unit
-) = createRecyclerAdapter(
-    ITEM_STOCK_TYPE,
-    ItemStockBinding::inflate
-) { viewBinding, item, position, payloads ->
+) = object : RecyclerAdapterDelegate(STOCK_VIEW_TYPE) {
 
-    item as StockViewData
+    override fun onCreateViewHolder(parent: ViewGroup): BaseRecyclerViewHolder {
+        return StockViewHolder(
+            viewBinding = ItemStockBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ),
+            onBind = { viewBinding, item, position, payloads ->
+                item as StockViewData
 
-    onBindCallback.invoke(item, position)
+                onBindCallback.invoke(item, position)
 
-    fun ItemStockBinding.setCompanyInfo() {
-        textViewCompanyName.text = item.name
-        textViewCompanySymbol.text = item.ticker
-    }
+                fun ItemStockBinding.setCompanyInfo() {
+                    textViewCompanyName.text = item.name
+                    textViewCompanySymbol.text = item.ticker
+                }
 
-    fun ItemStockBinding.setFavourite() {
-        imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
-        imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
-    }
+                fun ItemStockBinding.setFavourite() {
+                    imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
+                    imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
+                }
 
-    fun ItemStockBinding.setCompanyPrice() {
-        item.stockPrice?.let { stockPrice ->
-            textViewCurrentPrice.text = stockPrice.currentPrice
-            textViewDayProfit.text = stockPrice.profit
-            textViewDayProfit.setTextColor(item.style.dayProfitBackground)
-        }
-    }
+                fun ItemStockBinding.setCompanyPrice() {
+                    textViewCurrentPrice.text = item.stockPrice?.currentPrice ?: ""
+                    textViewDayProfit.text = item.stockPrice?.profit ?: ""
+                    textViewDayProfit.setTextColor(item.style.dayProfitBackground)
+                }
 
-    fun ItemStockBinding.setBackground() {
-        root.setCardBackgroundColor(item.style.holderBackground)
-        root.foreground =
-            ContextCompat.getDrawable(root.context, item.style.rippleForeground)
+                fun ItemStockBinding.setBackground() {
+                    root.setCardBackgroundColor(item.style.holderBackground)
+                    root.foreground =
+                        ContextCompat.getDrawable(root.context, item.style.rippleForeground)
 
-        root.setOnClickListener { onStockClick.invoke(item) }
-        imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
+                    root.setOnClickListener { onStockClick.invoke(item) }
+                    imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
 
-        Glide
-            .with(root)
-            .load(item.logoUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .error(
-                AppCompatResources.getDrawable(rootLayout.context, R.drawable.ic_load_error)
-            )
-            .into(imageViewIcon)
-    }
+                    Glide
+                        .with(root)
+                        .load(item.logoUrl)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .error(
+                            AppCompatResources.getDrawable(
+                                rootLayout.context,
+                                R.drawable.ic_load_error
+                            )
+                        )
+                        .into(imageViewIcon)
+                }
 
-    with(viewBinding) {
-        if (payloads.isEmpty()) {
-            setCompanyInfo()
-            setCompanyPrice()
-            setFavourite()
-            setBackground()
-        } else if (payloads[0] is Int) {
-            when (payloads[0]) {
-                PAYLOAD_FAVOURITE_UPDATED -> setFavourite()
-                PAYLOAD_PRICE_UPDATED -> setCompanyPrice()
+                with(viewBinding) {
+                    if (payloads.isEmpty()) {
+                        setCompanyInfo()
+                        setCompanyPrice()
+                        setFavourite()
+                        setBackground()
+                    } else {
+                        when (payloads[0]) {
+                            PAYLOAD_FAVOURITE_UPDATED -> setFavourite()
+                            PAYLOAD_PRICE_UPDATED -> setCompanyPrice()
+                        }
+                    }
+                }
             }
-        }
+        )
     }
 }

@@ -21,8 +21,10 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
+import com.ferelin.core.adapter.text.TEXT_VIEW_TYPE
+import com.ferelin.shared.NULL_INDEX
 
-class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+open class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -34,23 +36,25 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
 
         val position = parent.getChildAdapterPosition(view)
 
-        TODO()
+        if (position == NULL_INDEX) {
+            return
+        }
 
         when (parent.adapter?.getItemViewType(position)) {
-            ITEM_STOCK_TYPE -> {
+            STOCK_VIEW_TYPE -> {
                 outRect.bottom =
                     mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
                 outRect.left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
                 outRect.right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
             }
-            /*ITEM_TEXT_TYPE -> {
+            TEXT_VIEW_TYPE -> {
                 outRect.left =
                     mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
                 outRect.top =
                     mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
                 outRect.bottom =
                     mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-            }*/
+            }
         }
     }
 }

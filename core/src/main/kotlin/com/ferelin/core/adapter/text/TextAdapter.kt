@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_search.viewData
+package com.ferelin.core.adapter.text
 
-import com.ferelin.core.utils.recycler.ViewHolderType
+import com.ferelin.core.adapter.base.createRecyclerAdapter
+import com.ferelin.core.databinding.ItemTextBinding
+import com.ferelin.core.viewData.TextViewData
 
-data class TextViewData(val text: String) : ViewHolderType {
+const val TEXT_VIEW_TYPE = 0
 
-    override fun getUniqueId(): Long = 0L // is single at view
+fun createTextAdapter() = createRecyclerAdapter(
+    TEXT_VIEW_TYPE,
+    ItemTextBinding::inflate
+) { viewBinding, item, _, _ ->
 
-    override fun isValidType(other: ViewHolderType): Boolean {
-        return other is TextViewData
-    }
+    item as TextViewData
+    viewBinding.text.text = item.text
 }

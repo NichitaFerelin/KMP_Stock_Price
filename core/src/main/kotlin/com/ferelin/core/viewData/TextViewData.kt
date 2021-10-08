@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.stocks
+package com.ferelin.core.viewData
 
-import android.animation.Animator
-import android.view.animation.Animation
-import com.ferelin.core.adapter.base.BaseViewHolder
 import com.ferelin.core.adapter.base.ViewDataType
-import com.ferelin.core.databinding.ItemStockBinding
+import com.ferelin.core.adapter.text.TEXT_VIEW_TYPE
 
-class StockViewHolder(
-    var attachedPriceAnimator: Animator? = null,
-    var attachedProfitAnimator: Animator? = null,
-    var attachedPriceFadeAnimation: Animation? = null,
-    var attachedStartAnimator: Animator? = null,
-    viewBinding: ItemStockBinding,
-    onBind: (ItemStockBinding, ViewDataType, Int, MutableList<Any>) -> Unit
-) : BaseViewHolder<ItemStockBinding>(viewBinding, onBind)
+data class TextViewData(val text: String) : ViewDataType(TEXT_VIEW_TYPE) {
+
+    override fun getUniqueId(): Long = Long.MIN_VALUE
+}
