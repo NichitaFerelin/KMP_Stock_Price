@@ -36,12 +36,16 @@ class RequestsLimiter @Inject constructor(
     private var mStockPriceApi: ((Int, String) -> Unit)? = null
 
     private val mMessagesQueue = LinkedHashSet<CachedMessage>(100)
-    private var mMessagesHistory = HashMap<Int, Any?>(300, 0.5F)
+    private var mMessagesHistory = HashMap<Int, Unit>(300, 0.5F)
 
-    private val mPerSecondRequestLimit = 1050L
     private var mIsRunning = true
 
     private var mJob: Job? = null
+
+    private companion object {
+        const val sPerSecondRequestLimit = 1050L
+        const val sAlreadyNotActualValue = 13
+    }
 
     init {
         mJob = externalScope.launch(dispatchersProvider.IO) {
@@ -76,7 +80,7 @@ class RequestsLimiter @Inject constructor(
         while (mIsRunning) {
             try {
                 mMessagesQueue.firstOrNull()?.let { task ->
-                    if (mMessagesHistory[task.companyId] != null) {
+                    if (mMessagesHistory[task.companyId] == Unit) {
                         return@let
                     }
 
@@ -93,8 +97,8 @@ class RequestsLimiter @Inject constructor(
                     )
                     mStockPriceApi?.invoke(task.companyId, task.companyTicker)
 
-                    mMessagesHistory[task.companyId] = null
-                    delay(mPerSecondRequestLimit)
+                    mMessagesHistory[task.companyId] = Unit
+                    delay(sPerSecondRequestLimit)
                 }
             } catch (exception: ConcurrentModificationException) {
                 // Do nothing. Message will not be removed
@@ -130,9 +134,5 @@ class RequestsLimiter @Inject constructor(
     ): Boolean {
         return abs(currentPosition - lastPosition) >= sAlreadyNotActualValue
                 && eraseIfNotActual
-    }
-
-    private companion object {
-        const val sAlreadyNotActualValue = 13
     }
 }
