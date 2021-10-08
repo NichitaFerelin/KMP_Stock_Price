@@ -81,6 +81,7 @@ class RequestsLimiter @Inject constructor(
             try {
                 mMessagesQueue.firstOrNull()?.let { task ->
                     if (mMessagesHistory[task.companyId] == Unit) {
+                        mMessagesQueue.remove(task)
                         return@let
                     }
 
