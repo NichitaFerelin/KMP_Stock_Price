@@ -34,8 +34,8 @@ class StocksPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> StocksFragment()
-            1 -> FavouriteFragment()
+            0 -> StocksFragment.newInstance(null)
+            1 -> FavouriteFragment.newInstance(null)
             else -> throw IllegalStateException("No fragment for position: $position")
         }
     }

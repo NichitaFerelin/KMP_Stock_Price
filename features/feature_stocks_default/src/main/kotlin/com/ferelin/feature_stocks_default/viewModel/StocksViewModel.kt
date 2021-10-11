@@ -17,6 +17,7 @@
 package com.ferelin.feature_stocks_default.viewModel
 
 import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
@@ -25,15 +26,17 @@ import com.ferelin.shared.DispatchersProvider
 import javax.inject.Inject
 
 class StocksViewModel @Inject constructor(
-    stockMapper: StockMapper,
-    router: Router,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
+    router: Router,
+    stockMapper: StockMapper,
+    stockStyleProvider: StockStyleProvider,
     dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
-    stockMapper,
-    router,
     companiesInteractor,
     stockPriceInteractor,
+    router,
+    stockMapper,
+    stockStyleProvider,
     dispatchersProvider
 )

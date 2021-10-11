@@ -31,3 +31,8 @@ abstract class AnimatorManager : Animator.AnimatorListener {
     override fun onAnimationRepeat(animation: Animator?) {
     }
 }
+
+fun Animator.invalidate() {
+    removeAllListeners()
+    cancel()
+}

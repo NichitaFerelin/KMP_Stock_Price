@@ -21,8 +21,10 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.adapter.stocks.PAYLOAD_FAVOURITE_UPDATED
 import com.ferelin.core.adapter.stocks.PAYLOAD_PRICE_UPDATED
+import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.adapter.stocks.createStocksAdapter
 import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.params.AboutParams
 import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
@@ -111,6 +113,15 @@ abstract class BaseStocksViewModel(
         }
     }
 
+    fun onHolderUntouched(stockViewHolder: StockViewHolder) {
+        viewModelScope.launch(mDispatchesProvider.IO) {
+            val viewData = stocksAdapter.getByPosition(stockViewHolder.layoutPosition)
+            if (viewData is StockViewData) {
+                onFavouriteIconClick(viewData)
+            }
+        }
+    }
+
     protected open suspend fun onFavouriteCompanyUpdate(
         companyWithStockPrice: CompanyWithStockPrice
     ) {
@@ -141,7 +152,16 @@ abstract class BaseStocksViewModel(
     }
 
     private fun onStockClick(stockViewData: StockViewData) {
-        // TODO abstract
+        viewModelScope.launch(mDispatchesProvider.IO) {
+            mRouter.fromDefaultStocksToAbout(
+                data = AboutParams(
+                    companyId = stockViewData.id,
+                    companyTicker = stockViewData.ticker,
+                    companyName = stockViewData.name,
+                    isFavourite = stockViewData.isFavourite
+                )
+            )
+        }
     }
 
     private fun onFavouriteIconClick(stockViewData: StockViewData) {

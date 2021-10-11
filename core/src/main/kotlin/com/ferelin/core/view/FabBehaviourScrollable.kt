@@ -22,14 +22,8 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
+import timber.log.Timber
 
-/**
- * [FabBehaviourScrollable] provides the behaviour for FAB that is located at scrollable view.
- * - FAB will hide on the Scroll UP.
- * - FAB will show on the Scroll BOTTOM.
- *
- *  Used in xml. When changing the class name do not forget to change the XML file.
- */
 class FabBehaviourScrollable(
     context: Context,
     attributeSet: AttributeSet

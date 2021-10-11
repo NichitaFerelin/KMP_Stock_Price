@@ -29,3 +29,8 @@ abstract class AnimationManager : Animation.AnimationListener {
     override fun onAnimationRepeat(animation: Animation?) {
     }
 }
+
+fun Animation.invalidate() {
+    setAnimationListener(null)
+    cancel()
+}

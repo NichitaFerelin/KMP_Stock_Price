@@ -21,25 +21,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.view.BaseStocksFragment
-import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.feature_stocks_default.databinding.FragmentStocksBinding
 import com.ferelin.feature_stocks_default.viewModel.StocksViewModel
-import kotlinx.coroutines.flow.collect
 
 class StocksFragment : BaseStocksFragment<FragmentStocksBinding, StocksViewModel>() {
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksBinding
         get() = FragmentStocksBinding::inflate
 
+    override val mStocksMode = StocksMode.ALL
+
     override val mViewModel: StocksViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = mViewBinding.recyclerViewStocks
+        stocksRecyclerView = mViewBinding.recyclerViewStocks
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -48,25 +47,9 @@ class StocksFragment : BaseStocksFragment<FragmentStocksBinding, StocksViewModel
         mViewBinding.recyclerViewStocks.setHasFixedSize(true)
     }
 
-    override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            observeStocksLoadState()
-        }
-    }
-
-    private suspend fun observeStocksLoadState() {
-        mViewModel.stocksLoadState.collect { loadState ->
-            if (loadState is LoadState.None) {
-                mViewModel.loadStocks()
-            } else {
-                // show progress bar
-            }
-        }
-    }
-
     companion object {
 
-        fun newInstance(data: Any?) : StocksFragment {
+        fun newInstance(data: Any?): StocksFragment {
             return StocksFragment()
         }
     }

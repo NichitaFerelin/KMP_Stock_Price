@@ -21,41 +21,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.view.BaseStocksFragment
+import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.feature_stocks_favourite.databinding.FragmentFavouriteBinding
 import com.ferelin.feature_stocks_favourite.viewModel.FavouriteViewModel
-import kotlinx.coroutines.flow.collect
 
 class FavouriteFragment : BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel>() {
 
     override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
         get() = FragmentFavouriteBinding::inflate
 
+    override val mStocksMode = StocksMode.ONLY_FAVOURITES
+
     override val mViewModel: FavouriteViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = mViewBinding.recyclerViewFavourites
+        stocksRecyclerView = mViewBinding.recyclerViewStocks
+        // fab = mViewBinding.fab
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            observeStocksLoadState()
-        }
-    }
-
-    private suspend fun observeStocksLoadState() {
-        mViewModel.stocksLoadState.collect { loadState ->
-            if (loadState is LoadState.None) {
-                mViewModel.loadStocks()
-            } else {
-                // show progress bar
-            }
-        }
     }
 
     companion object {

@@ -65,6 +65,10 @@ class BaseRecyclerAdapter(
         }
     }
 
+    fun getByPosition(position: Int) : ViewDataType {
+        return mCurrentList[position]
+    }
+
     fun getPosition(selector: (ViewDataType) -> Boolean): Int {
         return mCurrentList.indexOfFirst(selector)
     }

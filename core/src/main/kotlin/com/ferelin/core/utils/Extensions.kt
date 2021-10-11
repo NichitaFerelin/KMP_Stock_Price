@@ -16,21 +16,11 @@
 
 package com.ferelin.core.utils
 
-import android.animation.Animator
-import android.content.Context
 import android.content.res.Resources
-import android.graphics.Color
 import android.view.View
-import android.view.animation.Animation
-import androidx.annotation.AttrRes
 
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
-
-fun Context.themeColor(@AttrRes themeAttrId: Int): Int {
-    return obtainStyledAttributes(intArrayOf(themeAttrId))
-        .use { it.getColor(0, Color.MAGENTA) }
-}
 
 fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
     if (this.isNotEmpty()) {
@@ -56,14 +46,4 @@ fun Float.normalize(
 
     return outputMin * (1 - (this - inputMin) / (inputMax - inputMin)) +
             outputMax * ((this - inputMin) / (inputMax - inputMin))
-}
-
-fun Animation.invalidate() {
-    setAnimationListener(null)
-    cancel()
-}
-
-fun Animator.invalidate() {
-    removeAllListeners()
-    cancel()
 }

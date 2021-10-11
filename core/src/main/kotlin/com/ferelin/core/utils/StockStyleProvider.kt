@@ -62,19 +62,19 @@ class StockStyleProvider @Inject constructor(
         }
     }
 
+    fun getForegroundIconDrawable(isFavourite: Boolean): Int {
+        return if (isFavourite) {
+            mDrawableFavouriteForegroundIconActive
+        } else {
+            mDrawableFavouriteForegroundIcon
+        }
+    }
+
     private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
         return if (isFavourite) {
             mDrawableFavouriteBackgroundIconActive
         } else {
             mDrawableFavouriteBackgroundIcon
-        }
-    }
-
-    private fun getForegroundIconDrawable(isFavourite: Boolean): Int {
-        return if (isFavourite) {
-            mDrawableFavouriteForegroundIconActive
-        } else {
-            mDrawableFavouriteForegroundIcon
         }
     }
 

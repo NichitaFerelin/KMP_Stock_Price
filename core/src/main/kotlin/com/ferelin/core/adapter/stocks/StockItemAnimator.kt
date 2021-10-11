@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
 import com.ferelin.core.utils.animManager.AnimationManager
-import com.ferelin.core.utils.invalidate
+import com.ferelin.core.utils.animManager.invalidate
 
 class StockItemAnimator : DefaultItemAnimator() {
 
