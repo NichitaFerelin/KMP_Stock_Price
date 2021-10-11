@@ -116,6 +116,14 @@ class CompaniesInteractorImpl @Inject constructor(
             }
     }
 
+    override suspend fun addCompanyToFavourites(companyId: Int) {
+        findById(companyId)?.let { addCompanyToFavourites(it) }
+    }
+
+    override suspend fun removeCompanyFromFavourites(companyId: Int) {
+        findById(companyId)?.let { removeCompanyFromFavourites(it) }
+    }
+
     override suspend fun addCompanyToFavourites(company: Company) {
         invokeWithStateHandleOnFavItem(company) { itemToUpdate, favouriteCompanies ->
 
@@ -263,7 +271,8 @@ class CompaniesInteractorImpl @Inject constructor(
                     .companiesWithStockPrice
                     .map { it.company.id }
 
-                val receivedCompaniesIds = mCompaniesSyncer.initDataSync(userToken, favouriteIds)
+                val receivedCompaniesIds =
+                    mCompaniesSyncer.initDataSync(userToken, favouriteIds)
                 applyRemoteCompaniesIds(receivedCompaniesIds)
             }
         }
@@ -316,5 +325,21 @@ class CompaniesInteractorImpl @Inject constructor(
             .toMutableList()
 
         onAction.invoke(targetCompany, favouriteCompanies)
+    }
+
+    private fun findById(companyId: Int): Company? {
+        mCompaniesState.ifPrepared { preparedState ->
+            val targetIndex = preparedState
+                .companiesWithStockPrice
+                .binarySearch { companyWithStockPrice ->
+                    when {
+                        companyId > companyWithStockPrice.company.id -> -1
+                        companyId < companyWithStockPrice.company.id -> 1
+                        else -> 0
+                    }
+                }
+            return preparedState.companiesWithStockPrice[targetIndex].company
+        }
+        return null
     }
 }

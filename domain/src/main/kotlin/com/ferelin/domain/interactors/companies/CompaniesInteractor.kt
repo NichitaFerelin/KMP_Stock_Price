@@ -29,6 +29,10 @@ interface CompaniesInteractor : NetworkListener {
 
     suspend fun getAllFavourites(): List<CompanyWithStockPrice>
 
+    suspend fun addCompanyToFavourites(companyId: Int)
+
+    suspend fun removeCompanyFromFavourites(companyId: Int)
+
     suspend fun addCompanyToFavourites(company: Company)
 
     suspend fun removeCompanyFromFavourites(company: Company)
