@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.utils
+package com.ferelin.core.view.chart
 
 import android.content.Context
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import com.ferelin.feature_chart.utils.points.Marker
-import com.ferelin.feature_chart.view.ChartView
+import com.ferelin.core.view.chart.points.Marker
 import com.ferelin.core.R as coreRes
-import com.ferelin.feature_chart.R as chartRes
 
 /**
  * [SuggestionController] provides a method to control and display the SuggestionView at Chart.
@@ -243,18 +241,18 @@ object SuggestionController {
         arrow.rotationX = 180F
         ConstraintSet().apply {
             clone(root)
-            clear(chartRes.id.viewArrow, ConstraintSet.TOP)
-            clear(chartRes.id.viewPlug, ConstraintSet.TOP)
+            clear(coreRes.id.viewArrow, ConstraintSet.TOP)
+            clear(coreRes.id.viewPlug, ConstraintSet.TOP)
             connect(
-                chartRes.id.viewArrow,
+                coreRes.id.viewArrow,
                 ConstraintSet.BOTTOM,
-                chartRes.id.cardViewSuggestion,
+                coreRes.id.cardViewSuggestion,
                 ConstraintSet.TOP
             )
             connect(
-                chartRes.id.viewPlug,
+                coreRes.id.viewPlug,
                 ConstraintSet.BOTTOM,
-                chartRes.id.cardViewSuggestion,
+                coreRes.id.cardViewSuggestion,
                 ConstraintSet.TOP
             )
             applyTo(root)
@@ -270,18 +268,18 @@ object SuggestionController {
         arrow.rotationX = 0F
         ConstraintSet().apply {
             clone(root)
-            clear(chartRes.id.viewArrow, ConstraintSet.BOTTOM)
-            clear(chartRes.id.viewPlug, ConstraintSet.BOTTOM)
+            clear(coreRes.id.viewArrow, ConstraintSet.BOTTOM)
+            clear(coreRes.id.viewPlug, ConstraintSet.BOTTOM)
             connect(
-                chartRes.id.viewArrow,
+                coreRes.id.viewArrow,
                 ConstraintSet.TOP,
-                chartRes.id.cardViewSuggestion,
+                coreRes.id.cardViewSuggestion,
                 ConstraintSet.BOTTOM
             )
             connect(
-                chartRes.id.viewPlug,
+                coreRes.id.viewPlug,
                 ConstraintSet.TOP,
-                chartRes.id.cardViewSuggestion,
+                coreRes.id.cardViewSuggestion,
                 ConstraintSet.BOTTOM
             )
             applyTo(root)

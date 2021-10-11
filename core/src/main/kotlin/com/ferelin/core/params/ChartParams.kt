@@ -21,6 +21,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChartParams(
-    val id: Int,
-    val ticker: String
+    val companyId: Int,
+    val companyTicker: String
 ) : Parcelable

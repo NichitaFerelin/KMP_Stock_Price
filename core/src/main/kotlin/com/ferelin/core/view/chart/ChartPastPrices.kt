@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.utils.points
+package com.ferelin.core.view.chart
 
-/**
- * [Point] represents base point with coords for chart
- * */
-data class Point(var x: Float, var y: Float)
+data class ChartPastPrices(
+    val prices: List<Double>,
+    val pricesStr: List<String>,
+    val dates: List<String>
+)

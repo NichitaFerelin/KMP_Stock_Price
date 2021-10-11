@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.utils.points
+package com.ferelin.core.view.chart.points
 
 /**
- * [Marker] represents model of chart "advanced" point with data.
+ * [Point] represents base point with coords for chart
  * */
-data class Marker(
-    val position: Point = Point(0f, 0f),
-    val price: Double,
-    val priceStr: String,
-    val date: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is Marker) {
-            other.price == price && other.date == date
-        } else false
-    }
-
-    override fun hashCode(): Int {
-        var result = price.hashCode()
-        result = 31 * result + date.hashCode()
-        return result
-    }
-}
+data class Point(var x: Float, var y: Float)

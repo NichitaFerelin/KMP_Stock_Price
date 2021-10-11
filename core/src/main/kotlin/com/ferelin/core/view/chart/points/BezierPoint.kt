@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.utils.points
+package com.ferelin.core.view.chart.points
 
 /**
  * [BezierPoint] represents model to build chart

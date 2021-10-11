@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.view
+package com.ferelin.core.view.chart
 
 import android.content.Context
 import android.graphics.*
@@ -23,11 +23,10 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.ferelin.core.R
 import com.ferelin.core.utils.px
-import com.ferelin.feature_chart.R
-import com.ferelin.feature_chart.utils.points.BezierPoint
-import com.ferelin.feature_chart.utils.points.Marker
-import com.ferelin.feature_chart.viewData.ChartPastPrices
+import com.ferelin.core.view.chart.points.BezierPoint
+import com.ferelin.core.view.chart.points.Marker
 import kotlin.math.abs
 
 /**

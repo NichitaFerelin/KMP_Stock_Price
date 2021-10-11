@@ -14,10 +14,26 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.viewData
+package com.ferelin.core.view.chart.points
 
-data class ChartPastPrices(
-    val prices: List<Double>,
-    val pricesStr: List<String>,
-    val dates: List<String>
-)
+/**
+ * [Marker] represents model of chart "advanced" point with data.
+ * */
+data class Marker(
+    val position: Point = Point(0f, 0f),
+    val price: Double,
+    val priceStr: String,
+    val date: String
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is Marker) {
+            other.price == price && other.date == date
+        } else false
+    }
+
+    override fun hashCode(): Int {
+        var result = price.hashCode()
+        result = 31 * result + date.hashCode()
+        return result
+    }
+}

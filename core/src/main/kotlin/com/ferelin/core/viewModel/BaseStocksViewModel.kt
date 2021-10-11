@@ -158,6 +158,7 @@ abstract class BaseStocksViewModel(
                     companyId = stockViewData.id,
                     companyTicker = stockViewData.ticker,
                     companyName = stockViewData.name,
+                    logoUrl = stockViewData.logoUrl,
                     isFavourite = stockViewData.isFavourite
                 )
             )

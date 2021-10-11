@@ -54,7 +54,7 @@ fun createStocksAdapter(
 
                 fun ItemStockBinding.setCompanyInfo() {
                     textViewCompanyName.text = item.name
-                    textViewCompanySymbol.text = item.ticker
+                    textViewCompanyTicker.text = item.ticker
                 }
 
                 fun ItemStockBinding.setFavourite() {

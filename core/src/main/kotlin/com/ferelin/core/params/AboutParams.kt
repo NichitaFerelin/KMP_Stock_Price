@@ -24,5 +24,6 @@ data class AboutParams(
     val companyId: Int,
     val companyTicker: String,
     val companyName: String,
+    val logoUrl: String,
     val isFavourite: Boolean
 ) : Parcelable
