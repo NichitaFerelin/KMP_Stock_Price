@@ -12,6 +12,8 @@ import com.ferelin.feature_ideas.IdeasFragment
 import com.ferelin.feature_loading.view.LoadingFragment
 import com.ferelin.feature_login.view.LoginFragment
 import com.ferelin.feature_news.view.NewsFragment
+import com.ferelin.feature_profile.view.ProfileFragment
+import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
 import com.ferelin.feature_section_stocks.view.StocksPagerFragment
 import com.ferelin.feature_stocks_default.view.StocksFragment
@@ -60,14 +62,16 @@ interface AppComponent {
 
     fun inject(activity: MainActivity)
 
+    fun inject(fragment: LoadingFragment)
     fun inject(fragment: StocksPagerFragment)
-    fun inject(fragment: ForecastsFragment)
-    fun inject(fragment: IdeasFragment)
-    fun inject(fragment: NewsFragment)
-    fun inject(fragment: LoginFragment)
-    fun inject(fragment: ChartFragment)
-    fun inject(fragment: AboutPagerFragment)
     fun inject(fragment: StocksFragment)
     fun inject(fragment: FavouriteFragment)
-    fun inject(fragment: LoadingFragment)
+    fun inject(fragment: AboutPagerFragment)
+    fun inject(fragment: ProfileFragment)
+    fun inject(fragment: ChartFragment)
+    fun inject(fragment: NewsFragment)
+    fun inject(fragment: ForecastsFragment)
+    fun inject(fragment: IdeasFragment)
+    fun inject(fragment: LoginFragment)
+    fun inject(fragment: SearchFragment)
 }

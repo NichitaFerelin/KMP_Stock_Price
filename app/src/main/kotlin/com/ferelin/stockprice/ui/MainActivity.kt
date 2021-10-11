@@ -24,10 +24,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.ferelin.feature_chart.view.ChartFragment
+import com.ferelin.feature_forecasts.ForecastsFragment
 import com.ferelin.feature_ideas.IdeasFragment
 import com.ferelin.feature_loading.view.LoadingFragment
 import com.ferelin.feature_login.view.LoginFragment
 import com.ferelin.feature_news.view.NewsFragment
+import com.ferelin.feature_profile.view.ProfileFragment
+import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
 import com.ferelin.feature_section_stocks.view.StocksPagerFragment
 import com.ferelin.feature_stocks_default.view.StocksFragment
@@ -60,14 +63,17 @@ class MainActivity : AppCompatActivity() {
 
                     when (f) {
                         is LoadingFragment -> app.appComponent.inject(f)
-                        is IdeasFragment -> app.appComponent.inject(f)
-                        is NewsFragment -> app.appComponent.inject(f)
-                        is LoginFragment -> app.appComponent.inject(f)
-                        is ChartFragment -> app.appComponent.inject(f)
-                        is AboutPagerFragment -> app.appComponent.inject(f)
+                        is StocksPagerFragment -> app.appComponent.inject(f)
                         is StocksFragment -> app.appComponent.inject(f)
                         is FavouriteFragment -> app.appComponent.inject(f)
-                        is StocksPagerFragment -> app.appComponent.inject(f)
+                        is AboutPagerFragment -> app.appComponent.inject(f)
+                        is ProfileFragment -> app.appComponent.inject(f)
+                        is ChartFragment -> app.appComponent.inject(f)
+                        is NewsFragment -> app.appComponent.inject(f)
+                        is ForecastsFragment -> app.appComponent.inject(f)
+                        is IdeasFragment -> app.appComponent.inject(f)
+                        is LoginFragment -> app.appComponent.inject(f)
+                        is SearchFragment -> app.appComponent.inject(f)
                     }
                 }
             }
