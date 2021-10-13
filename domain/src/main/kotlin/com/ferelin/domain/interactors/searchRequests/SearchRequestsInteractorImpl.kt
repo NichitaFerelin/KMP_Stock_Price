@@ -83,30 +83,32 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { mPopularRequestsState = SearchRequestsState.Prepared(it) }
     }
 
-    // TODO return new requests
-    override suspend fun cacheSearchRequest(searchRequest: String) {
-        mExternalScope.launch(mDispatchersProvider.IO) {
+    override suspend fun cacheSearchRequest(searchRequest: String): List<String> =
+        withContext(mDispatchersProvider.IO) {
 
-            mSearchRequestsState.value.let { requestsState ->
-                if (requestsState is SearchRequestsState.Prepared) {
-                    val requestsWithoutDuplicates = removeDuplicates(
-                        sourceRequests = requestsState.searchRequests,
-                        newSearchRequest = searchRequest
-                    )
-                    requestsWithoutDuplicates.add(0, searchRequest)
+            var updatedSearchRequests = mutableListOf<String>()
 
-                    if (requestsWithoutDuplicates.size > sCachedRequestsLimit) {
-                        reduceRequestsToLimit(requestsWithoutDuplicates)
+            mExternalScope.launch(mDispatchersProvider.IO) {
+                mSearchRequestsState.value.let { requestsState ->
+                    if (requestsState is SearchRequestsState.Prepared) {
+                        updatedSearchRequests = removeDuplicates(
+                            sourceRequests = requestsState.searchRequests,
+                            newSearchRequest = searchRequest
+                        )
+                        updatedSearchRequests.add(0, searchRequest)
+
+                        if (updatedSearchRequests.size > sCachedRequestsLimit) {
+                            reduceRequestsToLimit(updatedSearchRequests)
+                        }
+
+                        mSearchRequestsState.value =
+                            SearchRequestsState.Prepared(updatedSearchRequests)
                     }
-
-                    mSearchRequestsState.value =
-                        SearchRequestsState.Prepared(requestsWithoutDuplicates)
                 }
-            }
+            }.join()
 
-            cache(searchRequest)
+            updatedSearchRequests.toList()
         }
-    }
 
     override fun observeSearchRequestsUpdates(): StateFlow<SearchRequestsState> {
         return mSearchRequestsState.asStateFlow()

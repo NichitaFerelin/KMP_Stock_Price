@@ -22,7 +22,7 @@ interface SearchRequestsInteractor {
 
     fun observeSearchRequestsUpdates() : StateFlow<SearchRequestsState>
 
-    suspend fun cacheSearchRequest(searchRequest: String)
+    suspend fun cacheSearchRequest(searchRequest: String) : List<String>
 
     suspend fun getSearchRequests() : List<String>
 
