@@ -17,6 +17,7 @@
 package com.ferelin.stockprice.navigation
 
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import com.ferelin.navigation.Router
 import com.ferelin.navigation.ScreenResolver
 import javax.inject.Inject
@@ -47,23 +48,38 @@ class RouterImpl @Inject constructor(
         mScreenResolver.toLoadingFragment(mActivity)
     }
 
-    override fun fromLoadingToStocksPager(data: Any?) {
-        mScreenResolver.fromLoadingToStocksPager(mActivity, data)
+    override fun fromLoadingToStocksPager(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromLoadingToStocksPager(mActivity, params, onTransaction)
     }
 
-    override fun fromStocksPagerToSearch(data: Any?) {
-        mScreenResolver.fromStocksPagerToSearch(mActivity, data)
+    override fun fromStocksPagerToSearch(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromStocksPagerToSearch(mActivity, params, onTransaction)
     }
 
-    override fun fromDefaultStocksToAbout(data: Any?) {
-        mScreenResolver.fromDefaultStocksToAbout(mActivity, data)
+    override fun fromDefaultStocksToAbout(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromDefaultStocksToAbout(mActivity, params, onTransaction)
     }
 
-    override fun fromFavouriteStocksToAbout(data: Any?) {
-        mScreenResolver.fromFavouriteStocksToAbout(mActivity, data)
+    override fun fromFavouriteStocksToAbout(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromFavouriteStocksToAbout(mActivity, params, onTransaction)
     }
 
-    override fun fromSearchToAbout(data: Any?) {
-        mScreenResolver.fromSearchToAbout(mActivity, data)
+    override fun fromSearchToAbout(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromSearchToAbout(mActivity, params, onTransaction)
     }
 }

@@ -17,6 +17,7 @@
 package com.ferelin.navigation
 
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 
 interface ScreenResolver {
 
@@ -30,15 +31,38 @@ interface ScreenResolver {
         const val LOADING_TAG = "loading"
     }
 
-    fun toLoadingFragment(hostActivity: FragmentActivity)
+    fun toLoadingFragment(
+        hostActivity: FragmentActivity,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromLoadingToStocksPager(hostActivity: FragmentActivity, data: Any? = null)
+    fun fromLoadingToStocksPager(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromStocksPagerToSearch(hostActivity: FragmentActivity, data: Any? = null)
+    fun fromStocksPagerToSearch(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, data: Any? = null)
+    fun fromDefaultStocksToAbout(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, data: Any? = null)
+    fun fromFavouriteStocksToAbout(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromSearchToAbout(hostActivity: FragmentActivity, data: Any? = null)
+    fun fromSearchToAbout(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 }

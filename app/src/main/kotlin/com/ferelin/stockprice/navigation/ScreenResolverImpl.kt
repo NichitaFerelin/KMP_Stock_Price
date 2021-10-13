@@ -16,10 +16,7 @@
 
 package com.ferelin.stockprice.navigation
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
+import androidx.fragment.app.*
 import com.ferelin.feature_loading.view.LoadingFragment
 import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
@@ -30,33 +27,52 @@ import javax.inject.Inject
 
 class ScreenResolverImpl @Inject constructor() : ScreenResolver {
 
-    override fun toLoadingFragment(hostActivity: FragmentActivity) {
+    override fun toLoadingFragment(
+        hostActivity: FragmentActivity,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         replaceMainContainerBy(
             hostActivity.supportFragmentManager,
             LoadingFragment.newInstance(null),
             ScreenResolver.LOADING_TAG,
-            false
+            false,
+            onTransaction
         )
     }
 
-    override fun fromLoadingToStocksPager(hostActivity: FragmentActivity, data: Any?) {
+    override fun fromLoadingToStocksPager(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         replaceMainContainerBy(
             hostActivity.supportFragmentManager,
-            StocksPagerFragment.newInstance(data),
+            StocksPagerFragment.newInstance(params),
             ScreenResolver.STOCKS_PAGER_TAG,
-            false
+            false,
+            onTransaction
         )
     }
 
-    override fun fromStocksPagerToSearch(hostActivity: FragmentActivity, data: Any?) {
+    override fun fromStocksPagerToSearch(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         replaceMainContainerBy(
             hostActivity.supportFragmentManager,
-            SearchFragment.newInstance(data),
-            ScreenResolver.SEARCH_TAG
+            SearchFragment.newInstance(params),
+            ScreenResolver.SEARCH_TAG,
+            true,
+            onTransaction
         )
     }
 
-    override fun fromDefaultStocksToAbout(hostActivity: FragmentActivity, data: Any?) {
+    override fun fromDefaultStocksToAbout(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         val parentManager = hostActivity
             .supportFragmentManager
             .findFragmentByTag(ScreenResolver.STOCKS_PAGER_TAG)
@@ -68,12 +84,18 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
 
         replaceMainContainerBy(
             parentManager,
-            AboutPagerFragment.newInstance(data),
-            ScreenResolver.ABOUT_PAGER_TAG
+            AboutPagerFragment.newInstance(params),
+            ScreenResolver.ABOUT_PAGER_TAG,
+            true,
+            onTransaction
         )
     }
 
-    override fun fromFavouriteStocksToAbout(hostActivity: FragmentActivity, data: Any?) {
+    override fun fromFavouriteStocksToAbout(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         val parentManager = hostActivity
             .supportFragmentManager
             .findFragmentByTag(ScreenResolver.STOCKS_PAGER_TAG)
@@ -85,12 +107,18 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
 
         replaceMainContainerBy(
             parentManager,
-            AboutPagerFragment.newInstance(data),
-            ScreenResolver.ABOUT_PAGER_TAG
+            AboutPagerFragment.newInstance(params),
+            ScreenResolver.ABOUT_PAGER_TAG,
+            true,
+            onTransaction
         )
     }
 
-    override fun fromSearchToAbout(hostActivity: FragmentActivity, data: Any?) {
+    override fun fromSearchToAbout(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
         val parentManager = hostActivity
             .supportFragmentManager
             .findFragmentByTag(ScreenResolver.SEARCH_TAG)
@@ -99,8 +127,10 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
 
         replaceMainContainerBy(
             parentManager,
-            SearchFragment.newInstance(data),
-            ScreenResolver.ABOUT_PAGER_TAG
+            SearchFragment.newInstance(params),
+            ScreenResolver.ABOUT_PAGER_TAG,
+            true,
+            onTransaction
         )
     }
 
@@ -108,11 +138,13 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
         fragmentManager: FragmentManager,
         fragment: Fragment,
         tag: String,
-        addToBackStack: Boolean = true
+        addToBackStack: Boolean = true,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
     ) {
         fragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.container, fragment, tag)
+            onTransaction?.invoke(this)
             if (addToBackStack) addToBackStack(null)
         }
     }

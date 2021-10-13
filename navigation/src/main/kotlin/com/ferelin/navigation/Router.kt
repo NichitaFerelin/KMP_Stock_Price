@@ -17,6 +17,7 @@
 package com.ferelin.navigation
 
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 
 interface Router {
 
@@ -28,13 +29,28 @@ interface Router {
 
     fun toStartFragment()
 
-    fun fromLoadingToStocksPager(data: Any? = null)
+    fun fromLoadingToStocksPager(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromStocksPagerToSearch(data: Any? = null)
+    fun fromStocksPagerToSearch(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromDefaultStocksToAbout(data: Any? = null)
+    fun fromDefaultStocksToAbout(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromFavouriteStocksToAbout(data: Any? = null)
+    fun fromFavouriteStocksToAbout(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 
-    fun fromSearchToAbout(data: Any? = null)
+    fun fromSearchToAbout(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 }
