@@ -43,8 +43,14 @@ class PastPriceRepoImpl @Inject constructor(
         withContext(mDispatchersProvider.IO) {
             Timber.d("cache all past prices (size = ${list.size})")
             mPastPriceDao.insertAllPastPrices(
-                list = list.map(mPastPriceMapper::map)
+                list.map(mPastPriceMapper::map)
             )
+        }
+
+    override suspend fun clearPastPrices(relationId: Int) =
+        withContext(mDispatchersProvider.IO) {
+            Timber.d("clear past prices (relationId = $relationId)")
+            mPastPriceDao.clearPastPrices(relationId)
         }
 
     override suspend fun cachePastPrice(pastPrice: PastPrice) =

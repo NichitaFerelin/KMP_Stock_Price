@@ -33,4 +33,7 @@ interface PastPriceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllPastPrices(list: List<PastPriceDBO>)
+
+    @Query("DELETE FROM `companies_past_prices` WHERE relation_id = :relationId")
+    suspend fun clearPastPrices(relationId: Int)
 }
