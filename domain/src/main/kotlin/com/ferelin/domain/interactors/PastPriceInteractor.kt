@@ -42,15 +42,14 @@ class PastPriceInteractor @Inject constructor(
 
     suspend fun loadPastPrices(companyId: Int, companyTicker: String): PastPriceState {
         return mPastPriceSource.loadPastPrices(companyId, companyTicker)
-            .also { cacheIfLoaded(it) }
+            .also { cacheIfLoaded(it, companyId) }
     }
 
-    private fun cacheIfLoaded(responseState: PastPriceState) {
+    private fun cacheIfLoaded(responseState: PastPriceState, companyId: Int) {
         if (responseState is PastPriceState.Loaded) {
             mExternalScope.launch(mDispatchersProvider.IO) {
-                for (news in responseState.pastPrices) {
-                    mPastPriceRepo.cacheAllPastPrices(responseState.pastPrices)
-                }
+                mPastPriceRepo.clearPastPrices(companyId)
+                mPastPriceRepo.cacheAllPastPrices(responseState.pastPrices)
             }
         }
     }

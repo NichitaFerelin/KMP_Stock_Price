@@ -22,5 +22,7 @@ interface NewsRepo {
 
     suspend fun getNews(companyId: Int) : List<News>
 
-    suspend fun cacheNews(news: News)
+    suspend fun cacheNews(news: List<News>)
+
+    suspend fun clearNews(companyId: Int)
 }

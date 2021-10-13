@@ -42,15 +42,14 @@ class NewsInteractor @Inject constructor(
 
     suspend fun loadCompanyNews(companyId: Int, companyTicker: String): NewsState {
         return mNewsSource.loadCompanyNews(companyId, companyTicker)
-            .also { cacheIfLoaded(it) }
+            .also { cacheIfLoaded(it, companyId) }
     }
 
-    private fun cacheIfLoaded(responseState: NewsState) {
+    private fun cacheIfLoaded(responseState: NewsState, companyId: Int) {
         mExternalScope.launch(mDispatchersProvider.IO) {
             if (responseState is NewsState.Loaded) {
-                for (news in responseState.news) {
-                    mNewsRepo.cacheNews(news)
-                }
+                mNewsRepo.clearNews(companyId)
+                mNewsRepo.cacheNews(responseState.news)
             }
         }
     }

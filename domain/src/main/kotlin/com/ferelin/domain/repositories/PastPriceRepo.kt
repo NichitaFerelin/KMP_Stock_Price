@@ -25,4 +25,6 @@ interface PastPriceRepo {
     suspend fun cacheAllPastPrices(list: List<PastPrice>)
 
     suspend fun cachePastPrice(pastPrice: PastPrice)
+
+    suspend fun clearPastPrices(relationId: Int)
 }

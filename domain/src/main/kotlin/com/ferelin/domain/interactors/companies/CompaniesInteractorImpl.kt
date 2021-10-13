@@ -60,9 +60,9 @@ class CompaniesInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
 
-    private val mCompanyWithStockPriceChanged = MutableSharedFlow<CompanyWithStockPrice>()
+    private val mCompanyWithStockPriceChanges = MutableSharedFlow<CompanyWithStockPrice>()
     override val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
-        get() = mCompanyWithStockPriceChanged.asSharedFlow()
+        get() = mCompanyWithStockPriceChanges.asSharedFlow()
 
     private var mCompaniesState: CompaniesState = CompaniesState.None
     private var mFavouriteCompaniesState: CompaniesState = CompaniesState.None
@@ -256,7 +256,7 @@ class CompaniesInteractorImpl @Inject constructor(
                 }
             }
 
-            mCompanyWithStockPriceChanged.emit(companyWithStockPrice)
+            mCompanyWithStockPriceChanges.emit(companyWithStockPrice)
         }
     }
 

@@ -18,6 +18,8 @@ package com.ferelin.domain.di
 
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
+import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
+import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
 import dagger.Binds
 import dagger.Module
 
@@ -25,7 +27,12 @@ import dagger.Module
 interface DomainBindsModule {
 
     @Binds
-    fun provideCompaniesInternal(
+    fun provideCompaniesInteractor(
         companiesInteractorImpl: CompaniesInteractorImpl
     ): CompaniesInteractor
+
+    @Binds
+    fun provideSearchRequestsInteractor(
+        searchRequestsInteractorImpl: SearchRequestsInteractorImpl
+    ): SearchRequestsInteractor
 }

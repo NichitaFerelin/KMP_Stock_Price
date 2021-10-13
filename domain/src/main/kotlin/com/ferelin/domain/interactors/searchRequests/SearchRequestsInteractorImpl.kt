@@ -130,7 +130,8 @@ class SearchRequestsInteractorImpl @Inject constructor(
         val noDuplicatesRequests = sourceRequests.toMutableList()
         val newRequestLower = newSearchRequest.lowercase()
 
-        sourceRequests
+        noDuplicatesRequests
+            .toList()
             .asSequence()
             .filter { previousRequest ->
                 newRequestLower.contains(previousRequest.lowercase())
