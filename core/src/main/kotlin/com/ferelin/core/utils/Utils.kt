@@ -34,16 +34,7 @@ fun showDialog(text: String, fragmentManager: FragmentManager) {
         .show(fragmentManager, null)
 }
 
-fun openKeyboard(context: Context, view: View) {
-    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-}
-
-fun hideKeyboard(context: Context, view: View) {
-    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(view.windowToken, 0)
-}
-
+// TODO remove
 fun withTimer(time: Long = 200L, body: () -> Unit) {
     Timer().schedule(timerTask {
         body.invoke()

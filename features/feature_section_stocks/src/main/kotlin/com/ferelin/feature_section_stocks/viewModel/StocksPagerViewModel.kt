@@ -16,6 +16,7 @@
 
 package com.ferelin.feature_section_stocks.viewModel
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.navigation.Router
@@ -30,9 +31,11 @@ class StocksPagerViewModel @Inject constructor(
 
     var lastSelectedPage = 0
 
-    fun onSearchCardClick() {
+    fun onSearchCardClick(sharedElement: View, name: String) {
         viewModelScope.launch(mDispatchersProvider.IO) {
-            mRouter.fromStocksPagerToSearch(null)
+            mRouter.fromStocksPagerToSearch { fragmentTransaction ->
+                fragmentTransaction.addSharedElement(sharedElement, name)
+            }
         }
     }
 }

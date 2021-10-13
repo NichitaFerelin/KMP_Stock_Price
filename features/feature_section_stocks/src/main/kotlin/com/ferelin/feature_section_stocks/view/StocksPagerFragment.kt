@@ -107,7 +107,13 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
             textViewHintStocks.setOnClick(this@StocksPagerFragment::onHintStocksClick)
             textViewHintFavourite.setOnClick(this@StocksPagerFragment::onHistFavouritesClick)
             fab.setOnClick(this@StocksPagerFragment::onFabClick)
-            cardViewSearch.setOnClick(mViewModel::onSearchCardClick)
+
+            cardViewSearch.setOnClick {
+                mViewModel.onSearchCardClick(
+                    sharedElement = mViewBinding.toolbar,
+                    name = requireContext().resources.getString(R.string.transitionSearchFragment)
+                )
+            }
         }
     }
 

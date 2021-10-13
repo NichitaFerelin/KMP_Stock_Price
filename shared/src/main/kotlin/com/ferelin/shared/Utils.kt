@@ -23,7 +23,6 @@ inline fun <reified T> List<Any>.ifExist(
     action: (Int) -> Unit
 ): Unit? {
     val targetIndex = this.indexOfFirst { it is T && selector.invoke(it) }
-
     return if (targetIndex != NULL_INDEX) {
         action.invoke(targetIndex)
     } else {

@@ -17,9 +17,10 @@
 package com.ferelin.feature_search.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.ferelin.core.adapter.BaseRecyclerAdapter
+import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.mapper.StockMapper
 import com.ferelin.core.utils.LoadState
+import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.ifPrepared
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
@@ -28,13 +29,13 @@ import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.feature_search.adapter.createTickerAdapter
 import com.ferelin.feature_search.mapper.SearchRequestMapper
+import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_search.viewData.SearchViewData
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.timerTask
@@ -44,22 +45,44 @@ typealias SearchLoadState = LoadState<List<SearchViewData>>
 class SearchViewModel @Inject constructor(
     private val mSearchRequestsInteractor: SearchRequestsInteractor,
     private val mSearchRequestMapper: SearchRequestMapper,
-    stockMapper: StockMapper,
-    router: Router,
+    private val mRouter: Router,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
+    router: Router,
+    stockMapper: StockMapper,
+    stockStyleProvider: StockStyleProvider,
     dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
     stockMapper,
-    router,
+    dispatchersProvider,
     companiesInteractor,
     stockPriceInteractor,
-    dispatchersProvider
+    stockStyleProvider,
+    router
 ) {
     private companion object {
-        const val sSearchTaskTimeout = 300L
-        const val sMinRequestResults = 5
+        const val sSearchTaskTimeout = 350L
+        const val sMaxRequestResults = 5
     }
+
+    private val mOnNewSearchText = MutableSharedFlow<String>()
+    val searchTextChanged: SharedFlow<String>
+        get() = mOnNewSearchText.asSharedFlow()
+
+    private val mSearchResultsExists = MutableStateFlow(false)
+    val searchResultsExists: StateFlow<Boolean>
+        get() = mSearchResultsExists.asStateFlow()
+
+    private val mSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
+    val searchRequestsState: StateFlow<SearchLoadState>
+        get() = mSearchRequestsState.asStateFlow()
+
+    private val mPopularSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
+
+    private var mSearchTaskTimer: Timer? = null
+    private var mLastSearchRequest = ""
+
+    var transitionState = SearchFragment.TRANSITION_START
 
     val searchRequestsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
@@ -73,37 +96,19 @@ class SearchViewModel @Inject constructor(
         )
     }
 
-    private val mSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
-    val searchRequestsState: StateFlow<SearchLoadState>
-        get() = mSearchRequestsState.asStateFlow()
-
-    private val mPopularSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
-    val popularSearchRequestsState: StateFlow<SearchLoadState>
-        get() = mPopularSearchRequestsState.asStateFlow()
-
-    private val mSearchStocksResult = MutableStateFlow<List<StockViewData>>(emptyList())
-    val searchStocksResult: StateFlow<List<StockViewData>>
-        get() = mSearchStocksResult.asStateFlow()
-
-    private var mSearchTaskTimer: Timer? = null
-    private var mLastSearchRequest = ""
-
     fun loadSearchRequests() {
         viewModelScope.launch(mDispatchesProvider.IO) {
             mSearchRequestsState.value = LoadState.Loading()
             mPopularSearchRequestsState.value = LoadState.Loading()
 
-            mSearchRequestsState.value = LoadState.Prepared(
-                data = mSearchRequestsInteractor
-                    .getSearchRequests()
-                    .map(mSearchRequestMapper::map)
-            )
-
-            mPopularSearchRequestsState.value = LoadState.Prepared(
-                data = mSearchRequestsInteractor
-                    .getPopularSearchRequests()
-                    .map(mSearchRequestMapper::map)
-            )
+            launch {
+                val dbSearchRequests = mSearchRequestsInteractor.getSearchRequests()
+                onSearchRequestsChanged(dbSearchRequests)
+            }
+            launch {
+                val dbPopularSearchRequests = mSearchRequestsInteractor.getPopularSearchRequests()
+                onPopularSearchRequestsChanged(dbPopularSearchRequests)
+            }
         }
     }
 
@@ -111,7 +116,6 @@ class SearchViewModel @Inject constructor(
         if (searchText == mLastSearchRequest) {
             return
         }
-
         mSearchTaskTimer?.cancel()
         mSearchTaskTimer = Timer().apply {
             schedule(timerTask {
@@ -122,39 +126,64 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun onBackClick() {
+        mRouter.back()
+    }
+
     private fun onTickerClick(searchViewData: SearchViewData) {
-        // init search
+        viewModelScope.launch(mDispatchesProvider.IO) {
+            mOnNewSearchText.emit(searchViewData.text)
+        }
     }
 
     private suspend fun initSearch(searchText: String) {
-        if (searchText.isEmpty()) {
-            mSearchStocksResult.value = emptyList()
+        val searchResults = if (searchText.isEmpty()) {
+            emptyList()
         } else {
-            val searchResults = search(searchText)
-            onNewSearchRequest(searchText, searchResults.size)
-            mSearchStocksResult.value = searchResults
+            search(searchText).also { searchResults ->
+                onNewSearchRequest(searchText, searchResults.size)
+            }
+        }
+
+        mSearchResultsExists.value = searchResults.isNotEmpty()
+
+        withContext(mDispatchesProvider.Main) {
+            stocksAdapter.setData(searchResults)
         }
 
         mLastSearchRequest = searchText
     }
 
     private fun search(searchText: String): List<StockViewData> {
-        mStocksLoadState.value.ifPrepared { preparedStocksState ->
-            val itemsToSearchIn = if (searchText.length > mLastSearchRequest.length) {
-                mSearchStocksResult.value
-            } else {
-                preparedStocksState.data
-            }
+        return mStocksLoadState.value.ifPrepared { preparedStocksState ->
+            preparedStocksState
+                .data
+                .filter { filterCompanies(it, searchText) }
+        } ?: emptyList()
+    }
 
-            return itemsToSearchIn.filter { filterCompanies(it, searchText) }
+    private suspend fun onSearchRequestsChanged(searchRequests: List<String>) {
+        val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
+        mSearchRequestsState.value = LoadState.Prepared(mappedRequests)
+
+        withContext(mDispatchesProvider.Main) {
+            searchRequestsAdapter.setData(mappedRequests)
         }
+    }
 
-        return emptyList()
+    private suspend fun onPopularSearchRequestsChanged(searchRequests: List<String>) {
+        val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
+        mPopularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
+
+        withContext(mDispatchesProvider.Main) {
+            popularSearchRequestsAdapter.setData(mappedRequests)
+        }
     }
 
     private suspend fun onNewSearchRequest(searchText: String, results: Int) {
-        if (results >= sMinRequestResults) {
-            mSearchRequestsInteractor.cacheSearchRequest(searchText)
+        if (results in 1..sMaxRequestResults) {
+            val updatedSearchRequests = mSearchRequestsInteractor.cacheSearchRequest(searchText)
+            onSearchRequestsChanged(updatedSearchRequests)
         }
     }
 

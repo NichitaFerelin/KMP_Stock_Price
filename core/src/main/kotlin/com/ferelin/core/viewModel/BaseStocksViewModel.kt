@@ -146,7 +146,7 @@ abstract class BaseStocksViewModel(
                 ?: arrayOf("", "")
 
             mRouter.fromDefaultStocksToAbout(
-                data = AboutParams(
+                params = AboutParams(
                     companyId = stockViewData.id,
                     companyTicker = stockViewData.ticker,
                     companyName = stockViewData.name,

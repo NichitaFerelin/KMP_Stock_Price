@@ -16,10 +16,12 @@
 
 package com.ferelin.core.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
@@ -48,6 +50,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeTransitions(this)
         initUi()
         initUx()
         initObservers()
@@ -70,7 +73,24 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         // Override in subclasses
     }
 
-    fun postponeTransitions(fragment: Fragment) {
+    fun hideKeyboard() {
+        with(requireActivity()) {
+            val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        }
+    }
+
+    fun showKeyboard(view: View) {
+        with(requireActivity()) {
+            currentFocus?.clearFocus()
+            view.requestFocus()
+
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun postponeTransitions(fragment: Fragment) {
         fragment.postponeEnterTransition()
         fragment
             .requireView()

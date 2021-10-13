@@ -16,17 +16,14 @@
 
 package com.ferelin.feature_search.viewData
 
-import com.ferelin.core.utils.recycler.ViewHolderType
+import com.ferelin.core.adapter.base.ViewDataType
+import com.ferelin.feature_search.adapter.TICKER_VIEW_TYPE
 
 data class SearchViewData(
     val text: String
-) : ViewHolderType {
+) : ViewDataType(TICKER_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {
         return text.hashCode().toLong()
-    }
-
-    override fun isValidType(other: ViewHolderType): Boolean {
-        return other is SearchViewData
     }
 }

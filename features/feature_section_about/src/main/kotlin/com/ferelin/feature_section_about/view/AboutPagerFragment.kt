@@ -67,13 +67,6 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            scrimColor = Color.TRANSPARENT
-        }
-        exitTransition = Hold().apply { duration = 200L }
-        enterTransition = MaterialFadeThrough().apply { duration = 200L }
-
         arguments?.let { unpackArgs(it) }
     }
 

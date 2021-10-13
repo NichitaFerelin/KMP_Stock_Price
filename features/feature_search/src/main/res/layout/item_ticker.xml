@@ -8,7 +8,8 @@
     android:foreground="@drawable/ripple_light"
     android:minWidth="63dp"
     app:cardCornerRadius="20dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    tools:theme="@style/Theme.StockPrice">
 
     <TextView
         android:id="@+id/textViewName"

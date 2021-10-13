@@ -16,25 +16,18 @@
 
 package com.ferelin.feature_search.adapter
 
-import com.ferelin.core.utils.recycler.createRecyclerAdapter
-import com.ferelin.feature_search.databinding.ItemTextBinding
+import com.ferelin.core.adapter.base.createRecyclerAdapter
 import com.ferelin.feature_search.databinding.ItemTickerBinding
 import com.ferelin.feature_search.viewData.SearchViewData
-import com.ferelin.feature_search.viewData.TextViewData
 
-fun createTextAdapter() = createRecyclerAdapter<TextViewData, ItemTextBinding>(
-    ItemTextBinding::inflate
-) { viewBinding, item, _ ->
-
-    item as TextViewData
-    viewBinding.text.text = item.text
-}
+const val TICKER_VIEW_TYPE = 3
 
 fun createTickerAdapter(
     onTickerClick: (SearchViewData) -> Unit
-) = createRecyclerAdapter<SearchViewData, ItemTickerBinding>(
+) = createRecyclerAdapter(
+    TICKER_VIEW_TYPE,
     ItemTickerBinding::inflate
-) { viewBinding, item, _ ->
+) { viewBinding, item, _, _ ->
 
     item as SearchViewData
 

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:transitionName="@string/transitionSearchFragment"
-    app:layoutDescription="@xml/fragment_search_scene">
+    app:layoutDescription="@xml/fragment_search_scene"
+    tools:theme="@style/Theme.StockPrice">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
