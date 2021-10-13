@@ -20,9 +20,10 @@ sealed class LoadState<T> {
     class Prepared<T>(val data: T) : LoadState<T>()
     class Loading<T> : LoadState<T>()
     class None<T> : LoadState<T>()
+    class Error<T> : LoadState<T>()
 }
 
-inline fun <T> LoadState<T>.ifPrepared(action: (LoadState.Prepared<T>) -> Unit): Unit? {
+inline fun <T, R> LoadState<T>.ifPrepared(action: (LoadState.Prepared<T>) -> R?): R? {
     return if (this is LoadState.Prepared) {
         action.invoke(this)
     } else {

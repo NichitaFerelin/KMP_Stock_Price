@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/suggestionLayoutWidth"
     android:layout_height="@dimen/suggestionLayoutHeight"
-    android:alpha="0.0"
+    android:alpha="0"
     android:background="@color/whiteTransparent"
     tools:alpha="1">
 

@@ -21,6 +21,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewsParams(
-    val companyId: Int,
-    val companyTicker: String
+    val companyId: Int = 0,
+    val companyTicker: String = ""
 ) : Parcelable

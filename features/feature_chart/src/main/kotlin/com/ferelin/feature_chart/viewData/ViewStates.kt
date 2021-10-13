@@ -16,21 +16,6 @@
 
 package com.ferelin.feature_chart.viewData
 
-import com.ferelin.domain.entities.StockPrice
-
-sealed class PastPriceLoadState {
-    class Loaded(val chartPastPrices: ChartPastPrices) : PastPriceLoadState()
-    object Loading : PastPriceLoadState()
-    object Error : PastPriceLoadState()
-    object None : PastPriceLoadState()
-}
-
-sealed class StockPriceLoadState {
-    class Loaded(val stockPrice: StockPrice) : StockPriceLoadState()
-    object Loading : StockPriceLoadState()
-    object None : StockPriceLoadState()
-}
-
 enum class ChartViewMode {
     All,
     Year,

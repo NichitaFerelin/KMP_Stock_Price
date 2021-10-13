@@ -18,9 +18,14 @@ package com.ferelin.feature_news.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.core.adapter.base.BaseRecyclerAdapter
+import com.ferelin.core.params.NewsParams
+import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.ifNotEmpty
+import com.ferelin.domain.entities.News
 import com.ferelin.domain.interactors.NewsInteractor
 import com.ferelin.domain.interactors.NewsState
+import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.mapper.NewsMapper
 import com.ferelin.feature_news.viewData.NewsViewData
 import com.ferelin.shared.DispatchersProvider
@@ -28,14 +33,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-sealed class NewsLoadState {
-    class Loaded(val news: List<NewsViewData>) : NewsLoadState()
-    object Loading : NewsLoadState()
-    object Error : NewsLoadState()
-    object None : NewsLoadState()
-}
+typealias NewsLoadState = LoadState<List<NewsViewData>>
 
 class NewsViewModel @Inject constructor(
     private val mNewsInteractor: NewsInteractor,
@@ -43,40 +44,48 @@ class NewsViewModel @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val mNewLoadState = MutableStateFlow<NewsLoadState>(NewsLoadState.None)
+    private val mNewLoadState = MutableStateFlow<NewsLoadState>(LoadState.None())
     val newsLoadState: StateFlow<NewsLoadState>
         get() = mNewLoadState.asStateFlow()
 
-    var companyId = 0
-    var companyTicker = ""
+    var newsParams = NewsParams()
+
+    val newsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        BaseRecyclerAdapter(
+            createNewsAdapter(this::onNewsItemClick)
+        ).apply { setHasStableIds(true) }
+    }
 
     fun loadData() {
         viewModelScope.launch(mDispatchersProvider.IO) {
-            mNewLoadState.value = NewsLoadState.Loading
+            mNewLoadState.value = LoadState.Loading()
 
             mNewsInteractor
-                .getNews(companyId)
-                .ifNotEmpty { dbNews ->
-                    mNewLoadState.value = NewsLoadState.Loaded(
-                        dbNews.map(mNewsMapper::map)
-                    )
-                }
+                .getNews(newsParams.companyId)
+                .ifNotEmpty { dbNews -> onNewsChanged(dbNews) }
 
             mNewsInteractor
-                .loadCompanyNews(companyTicker)
+                .loadCompanyNews(newsParams.companyId, newsParams.companyTicker)
                 .let { remoteNewsState ->
                     if (remoteNewsState is NewsState.Loaded) {
-                        mNewLoadState.value = NewsLoadState.Loaded(
-                            remoteNewsState.news.map(mNewsMapper::map)
-                        )
-                    } else if (mNewLoadState.value !is NewsLoadState.Loaded) {
-                        mNewLoadState.value = NewsLoadState.Error
+                        onNewsChanged(remoteNewsState.news)
+                    } else if (mNewLoadState.value !is LoadState.Prepared) {
+                        mNewLoadState.value = LoadState.Error()
                     }
                 }
         }
     }
 
-    fun onNewsClicked(newsViewData: NewsViewData) {
-        // open url
+    private suspend fun onNewsChanged(news: List<News>) {
+        val mappedNews = news.map(mNewsMapper::map)
+        mNewLoadState.value = LoadState.Prepared(mappedNews)
+
+        withContext(mDispatchersProvider.Main) {
+            newsAdapter.setData(mappedNews)
+        }
+    }
+
+    private fun onNewsItemClick(newsViewData: NewsViewData) {
+
     }
 }

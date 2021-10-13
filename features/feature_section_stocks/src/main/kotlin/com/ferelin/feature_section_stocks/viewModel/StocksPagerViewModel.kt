@@ -28,6 +28,8 @@ class StocksPagerViewModel @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
+    var lastSelectedPage = 0
+
     fun onSearchCardClick() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mRouter.fromStocksPagerToSearch(null)

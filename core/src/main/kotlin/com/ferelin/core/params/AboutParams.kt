@@ -21,9 +21,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AboutParams(
-    val companyId: Int,
-    val companyTicker: String,
-    val companyName: String,
-    val logoUrl: String,
-    val isFavourite: Boolean
+    val companyId: Int = 0,
+    val companyTicker: String = "",
+    val companyName: String = "",
+    val stockPrice: String = "",
+    val stockProfit: String = "",
+    val logoUrl: String = "",
+    var isFavourite: Boolean = false
 ) : Parcelable

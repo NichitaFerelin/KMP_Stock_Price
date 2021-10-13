@@ -30,19 +30,19 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FavouriteViewModel @Inject constructor(
+    stockMapper: StockMapper,
+    dispatchersProvider: DispatchersProvider,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
-    router: Router,
-    stockMapper: StockMapper,
     stockStyleProvider: StockStyleProvider,
-    dispatchersProvider: DispatchersProvider
+    router: Router
 ) : BaseStocksViewModel(
+    stockMapper,
+    dispatchersProvider,
     companiesInteractor,
     stockPriceInteractor,
-    router,
-    stockMapper,
     stockStyleProvider,
-    dispatchersProvider
+    router
 ) {
     override suspend fun onFavouriteCompanyUpdate(companyWithStockPrice: CompanyWithStockPrice) {
         mStocksLoadState.value.ifPrepared { preparedLoad ->

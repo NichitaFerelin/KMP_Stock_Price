@@ -33,10 +33,10 @@ class StocksViewModel @Inject constructor(
     stockStyleProvider: StockStyleProvider,
     dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
+    stockMapper,
+    dispatchersProvider,
     companiesInteractor,
     stockPriceInteractor,
-    router,
-    stockMapper,
     stockStyleProvider,
-    dispatchersProvider
+    router
 )

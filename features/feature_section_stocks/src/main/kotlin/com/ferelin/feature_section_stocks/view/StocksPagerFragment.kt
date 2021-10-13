@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -54,10 +55,22 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         factoryProducer = { viewModelFactory }
     )
 
+    private val mBackPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mViewBinding.viewPager.currentItem != 0) {
+                    mViewBinding.viewPager.setCurrentItem(0, true)
+                } else {
+                    this.remove()
+                    requireActivity().onBackPressed()
+                }
+            }
+        }
+    }
+
     private val mViewPagerChangeCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
                 switchTextStyles(position)
             }
         }
@@ -76,13 +89,6 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         }
     }
 
-    override fun onDestroyView() {
-        mViewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
-        mScaleInOut?.invalidate()
-        mScaleOut?.invalidate()
-        super.onDestroyView()
-    }
-
     override fun initUi() {
         mViewBinding.viewPager.adapter = StocksPagerAdapter(
             childFragmentManager,
@@ -92,12 +98,24 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
     }
 
     override fun initUx() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            mBackPressedCallback
+        )
+
         with(mViewBinding) {
             textViewHintStocks.setOnClick(this@StocksPagerFragment::onHintStocksClick)
             textViewHintFavourite.setOnClick(this@StocksPagerFragment::onHistFavouritesClick)
             fab.setOnClick(this@StocksPagerFragment::onFabClick)
             cardViewSearch.setOnClick(mViewModel::onSearchCardClick)
         }
+    }
+
+    override fun onDestroyView() {
+        mViewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
+        mScaleInOut?.invalidate()
+        mScaleOut?.invalidate()
+        super.onDestroyView()
     }
 
     private fun onHintStocksClick() {
@@ -130,15 +148,19 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         }
 
         with(mViewBinding) {
-            if (selectedPosition == sStockPosition) {
+            val itemToAnimate = if (selectedPosition == sStockPosition) {
                 setAsSelected(textViewHintStocks)
                 setAsDefault(textViewHintFavourite)
-                mScaleInOut!!.setTarget(textViewHintStocks)
-                mScaleInOut!!.start()
+                textViewHintStocks
             } else {
                 setAsSelected(textViewHintFavourite)
                 setAsDefault(textViewHintStocks)
-                mScaleInOut!!.setTarget(textViewHintFavourite)
+                textViewHintFavourite
+            }
+
+            if (mViewModel.lastSelectedPage != selectedPosition) {
+                mViewModel.lastSelectedPage = selectedPosition
+                mScaleInOut!!.setTarget(itemToAnimate)
                 mScaleInOut!!.start()
             }
         }

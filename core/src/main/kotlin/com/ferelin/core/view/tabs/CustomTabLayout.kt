@@ -62,7 +62,8 @@ class CustomTabLayout @JvmOverloads constructor(
             val firstTab = mCustomTabTrip.getChildAt(0)
             val lastTab = mCustomTabTrip.getChildAt(mCustomTabTrip.childCount - 1)
 
-            val start = (w - firstTab.measuredWidth) / 2 - CustomTabUtils.getMarginStart(firstTab)
+            val start =
+                (w - firstTab.measuredWidth) / 2 - CustomTabUtils.getMarginStart(firstTab) + 44
             val end = (w - lastTab.measuredWidth) / 2 - CustomTabUtils.getMarginEnd(lastTab)
 
             mCustomTabTrip.minimumWidth = mCustomTabTrip.measuredWidth
@@ -149,12 +150,14 @@ class CustomTabLayout @JvmOverloads constructor(
         if (isLayoutRtl) {
             val first = firstTab.width + CustomTabUtils.getMarginEnd(firstTab)
             val selected = selectedTab.width + CustomTabUtils.getMarginEnd(selectedTab)
-            x = CustomTabUtils.getEnd(selectedTab) - CustomTabUtils.getMarginEnd(selectedTab) - extraOffset
+            x =
+                CustomTabUtils.getEnd(selectedTab) - CustomTabUtils.getMarginEnd(selectedTab) - extraOffset
             x -= (first - selected) / 2
         } else {
             val first = firstTab.width + CustomTabUtils.getMarginStart(firstTab)
             val selected = selectedTab.width + CustomTabUtils.getMarginStart(selectedTab)
-            x = CustomTabUtils.getStart(selectedTab) - CustomTabUtils.getMarginStart(selectedTab) + extraOffset
+            x =
+                CustomTabUtils.getStart(selectedTab) - CustomTabUtils.getMarginStart(selectedTab) + extraOffset
             x -= (first - selected) / 2
         }
 

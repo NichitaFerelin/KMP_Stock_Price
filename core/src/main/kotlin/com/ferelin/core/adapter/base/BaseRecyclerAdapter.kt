@@ -91,11 +91,11 @@ class BaseRecyclerAdapter(
     fun setData(data: List<ViewDataType>) {
         if (mCurrentList.isNotEmpty()) {
             val itemCount = mCurrentList.size
-            mCurrentList.clear()
+            mCurrentList = emptyList()
             notifyItemRangeRemoved(0, itemCount)
         }
 
-        mCurrentList = data
+        mCurrentList = data.toList()
         notifyItemRangeInserted(0, mCurrentList.size)
     }
 }

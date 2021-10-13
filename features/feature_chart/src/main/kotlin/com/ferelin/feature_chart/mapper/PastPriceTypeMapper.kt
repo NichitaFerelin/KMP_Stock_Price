@@ -21,15 +21,11 @@ import com.ferelin.feature_chart.utils.extractPrice
 import com.ferelin.feature_chart.utils.parseMonthFromDate
 import com.ferelin.feature_chart.utils.parseYearFromDate
 import com.ferelin.feature_chart.utils.sum
-import com.ferelin.feature_chart.viewData.ChartPastPrices
+import com.ferelin.core.view.chart.ChartPastPrices
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.shared.toStrPrice
 import javax.inject.Inject
 
-/**
- * [PastPriceTypeMapper] is used to convert history for UI with
- *  special view mode(OneYearMode,SixMonths, etc.)
- */
 class PastPriceTypeMapper @Inject constructor() {
 
     fun mapByViewMode(viewMode: ChartViewMode, pastPrices: List<PastPrice>): ChartPastPrices? {
@@ -81,7 +77,7 @@ class PastPriceTypeMapper @Inject constructor() {
         val firstHalfTo = parseMonthFromDate(pastPrices[firstHalfBorder].date)
 
         val secondHalfAmount = pastPrices.sum(firstHalfBorder + 1, pastPrices.lastIndex)
-        val secondHalfAverage = secondHalfAmount / pastPrices.size - firstHalfBorder + 1
+        val secondHalfAverage = secondHalfAmount / (pastPrices.size - firstHalfBorder + 1)
         val secondHalfFrom = parseMonthFromDate(pastPrices[firstHalfBorder + 1].date)
         val secondHalfTo = parseMonthFromDate(pastPrices[pastPrices.lastIndex].date)
 

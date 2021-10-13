@@ -22,17 +22,19 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.params.ProfileParams
+import com.ferelin.core.utils.LoadState
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.domain.entities.Profile
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
-import com.ferelin.feature_profile.viewModel.ProfileLoadState
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
@@ -52,56 +54,58 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         arguments?.let { unpackArgs(it) }
     }
 
+    override fun initUi() {
+        mViewBinding.textViewName.text = mViewModel.profileParams.companyName
+
+        Glide
+            .with(mViewBinding.root)
+            .load(mViewModel.profileParams.companyLogoUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(mViewBinding.imageViewIcon)
+    }
+
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
-            mViewModel.profileLoadState.collect { loadState ->
-                when (loadState) {
-                    is ProfileLoadState.None -> {
-                        mViewModel.loadProfile()
-                    }
-                    is ProfileLoadState.Loaded -> {
-                        setUi(loadState.profile)
-                    }
-                    else -> {
+            observeProfileState()
+        }
+    }
 
+    private suspend fun observeProfileState() {
+        mViewModel.profileLoadState.collect { loadState ->
+            when (loadState) {
+                is LoadState.None -> mViewModel.loadProfile()
+                is LoadState.Prepared -> {
+                    withContext(mDispatchersProvider.Main) {
+                        setProfile(loadState.data)
                     }
-
                 }
+                else -> Unit
             }
         }
     }
 
-    private fun setUi(profile: Profile) {
+    private fun setProfile(profile: Profile) {
         with(mViewBinding) {
-            textViewName.text = mViewModel.companyName
+            TransitionManager.beginDelayedTransition(mViewBinding.root)
             textViewWebUrl.text = profile.webUrl
             textViewCountry.text = profile.country
             textViewIndustry.text = profile.industry
             textViewPhone.text = profile.phone
             textViewCapitalization.text = profile.capitalization
-
-            Glide
-                .with(root)
-                .load(mViewModel.companyLogoUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imageViewIcon)
         }
     }
 
     private fun unpackArgs(args: Bundle) {
         args[sProfileParamsKey]?.let { params ->
             if (params is ProfileParams) {
-                mViewModel.companyId = params.companyId
-                mViewModel.companyName = params.companyName
-                mViewModel.companyTicker = params.companyTicker
-                mViewModel.companyLogoUrl = params.companyLogoUrl
+                mViewModel.profileParams = params
             }
         }
     }
 
     companion object {
 
-        private const val sProfileParamsKey = "profile-params"
+        private const val sProfileParamsKey = "p"
 
         fun newInstance(data: Any?): ProfileFragment {
             return ProfileFragment().also {

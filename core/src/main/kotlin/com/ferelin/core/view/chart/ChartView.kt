@@ -27,6 +27,7 @@ import com.ferelin.core.R
 import com.ferelin.core.utils.px
 import com.ferelin.core.view.chart.points.BezierPoint
 import com.ferelin.core.view.chart.points.Marker
+import timber.log.Timber
 import kotlin.math.abs
 
 /**
@@ -89,15 +90,16 @@ class ChartView @JvmOverloads constructor(
     private var mOnTouchListener: ((marker: Marker) -> Unit)? = null
     private var mLastNearestPoint: Marker? = null
 
-    private var mTouchEventDetector: GestureDetector? =
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+    private var mTouchEventDetector = GestureDetector(
+        context,
+        object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(e: MotionEvent?): Boolean {
                 return true
             }
 
             override fun onSingleTapUp(e: MotionEvent?): Boolean {
                 return if (e != null) {
-                    onSingleTapListener(e)
+                    onSingleTap(e)
                     true
                 } else false
             }
@@ -124,14 +126,19 @@ class ChartView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return mTouchEventDetector?.onTouchEvent(event).also { wasHandled ->
-            if (wasHandled == true) performClick()
-        } ?: false
+        return mTouchEventDetector.onTouchEvent(event).also { wasHandled ->
+            if (wasHandled) performClick()
+        }
     }
 
     override fun performClick(): Boolean {
         super.performClick()
-        mLastNearestPoint?.let { mOnTouchListener?.invoke(it) }
+        Timber.tag("CHART")
+        Timber.d("perform click")
+        mLastNearestPoint?.let {
+            Timber.tag("CHART")
+            Timber.d("onTouch invoke")
+            mOnTouchListener?.invoke(it) }
         return true
     }
 
@@ -352,7 +359,7 @@ class ChartView @JvmOverloads constructor(
         }
     }
 
-    private fun onSingleTapListener(event: MotionEvent) {
+    private fun onSingleTap(event: MotionEvent) {
         val nearestPoint = findNearestPoint(event)
         event.setLocation(nearestPoint?.position?.x ?: 0F, nearestPoint?.position?.y ?: 0F)
         mLastNearestPoint = nearestPoint

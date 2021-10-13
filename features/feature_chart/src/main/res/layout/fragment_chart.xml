@@ -15,7 +15,7 @@
             android:id="@+id/point"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:alpha="0.0"
+            android:alpha="0"
             android:background="@drawable/point"
             android:elevation="7dp"
             tools:alpha="1" />
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="chartView, flowButtons,textViewAll,textViewDays,textViewMonths,textViewSixMonths,textViewWeeks,textViewYear" />
 
-        <com.ferelin.feature_chart.view.ChartView
+        <com.ferelin.core.view.chart.ChartView
             android:id="@+id/chartView"
             android:layout_width="0dp"
             android:layout_height="@dimen/chartHeight"

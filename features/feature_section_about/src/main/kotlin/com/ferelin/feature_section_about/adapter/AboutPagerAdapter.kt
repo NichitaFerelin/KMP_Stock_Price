@@ -16,11 +16,14 @@
 
 package com.ferelin.feature_section_about.adapter
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.ferelin.core.params.AboutParams
+import com.ferelin.core.params.ChartParams
+import com.ferelin.core.params.NewsParams
+import com.ferelin.core.params.ProfileParams
 import com.ferelin.feature_chart.view.ChartFragment
 import com.ferelin.feature_forecasts.ForecastsFragment
 import com.ferelin.feature_ideas.IdeasFragment
@@ -28,7 +31,7 @@ import com.ferelin.feature_news.view.NewsFragment
 import com.ferelin.feature_profile.view.ProfileFragment
 
 class AboutPagerAdapter(
-    private val mArguments: Bundle,
+    private val mParams: AboutParams,
     fm: FragmentManager,
     lifecycle: Lifecycle
 ) : FragmentStateAdapter(fm, lifecycle) {
@@ -39,11 +42,33 @@ class AboutPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ProfileFragment.newInstance(mArguments)
-            1 -> ChartFragment.newInstance(mArguments)
-            2 -> NewsFragment.newInstance(mArguments)
-            3 -> ForecastsFragment()
-            4 -> IdeasFragment()
+            0 -> ProfileFragment.newInstance(
+                ProfileParams(
+                    mParams.companyId,
+                    mParams.companyTicker,
+                    mParams.companyName,
+                    mParams.logoUrl
+                )
+            )
+
+            1 -> ChartFragment.newInstance(
+                ChartParams(
+                    mParams.companyId,
+                    mParams.companyTicker,
+                    mParams.stockPrice,
+                    mParams.stockProfit
+                )
+            )
+
+            2 -> NewsFragment.newInstance(
+                NewsParams(
+                    mParams.companyId,
+                    mParams.companyTicker
+                )
+            )
+
+            3 -> ForecastsFragment.newInstance(null)
+            4 -> IdeasFragment.newInstance(null)
             else -> throw IllegalStateException("No fragment for position: $position")
         }
     }

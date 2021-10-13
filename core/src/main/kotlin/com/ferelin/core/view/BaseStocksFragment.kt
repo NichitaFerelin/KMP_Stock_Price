@@ -30,6 +30,7 @@ import com.ferelin.core.adapter.base.scrollToTopWithCustomAnim
 import com.ferelin.core.adapter.stocks.StockItemAnimator
 import com.ferelin.core.adapter.stocks.StockItemDecoration
 import com.ferelin.core.adapter.stocks.StockViewHolder
+import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
@@ -40,7 +41,6 @@ import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.core.viewModel.StocksMode
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : BaseFragment<VB>() {
@@ -77,13 +77,11 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            withContext(mDispatchersProvider.IO) {
-                launch { mViewModel.loadStocks(mStocksMode) }
-                launch { mViewModel.companiesStockPriceUpdates.collect() }
-                launch { mViewModel.favouriteCompaniesUpdates.collect() }
-                launch { mViewModel.actualStockPrice.collect() }
-            }
+        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+            launch { observeStocksState() }
+            launch { mViewModel.companiesStockPriceUpdates.collect() }
+            launch { mViewModel.favouriteCompaniesUpdates.collect() }
+            launch { mViewModel.actualStockPrice.collect() }
         }
     }
 
@@ -107,6 +105,14 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                         StockItemAnimator()
                     )
                 }
+            }
+        }
+    }
+
+    private suspend fun observeStocksState() {
+        mViewModel.stocksLoadState.collect { loadState ->
+            if (loadState is LoadState.None) {
+                mViewModel.loadStocks(mStocksMode)
             }
         }
     }

@@ -70,6 +70,13 @@ class StockStyleProvider @Inject constructor(
         }
     }
 
+    fun getProfitBackground(profit: String): Int {
+        val prefix = profit.getOrNull(0)
+        return if (prefix == '+') {
+            getColor(mColorProfitPlus)
+        } else getColor(mColorProfitMinus)
+    }
+
     private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
         return if (isFavourite) {
             mDrawableFavouriteBackgroundIconActive
@@ -78,16 +85,6 @@ class StockStyleProvider @Inject constructor(
         }
     }
 
-    private fun getProfitBackground(profit: String): Int {
-        val prefix = profit.getOrNull(0)
-        return if (prefix == '+') {
-            getColor(mColorProfitPlus)
-        } else getColor(mColorProfitMinus)
-    }
-
-    /**
-     * Holder background depends of index at UI
-     * */
     private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
             getColor(mColorHolderFirst)

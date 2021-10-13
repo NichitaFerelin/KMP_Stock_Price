@@ -36,6 +36,7 @@ import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NULL_INDEX
 import com.ferelin.shared.ifExist
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -49,31 +50,26 @@ enum class StocksMode {
 }
 
 abstract class BaseStocksViewModel(
-    protected val mCompaniesInteractor: CompaniesInteractor,
-    protected val mStockPriceInteractor: StockPriceInteractor,
-    private val mRouter: Router,
     protected val mStockMapper: StockMapper,
-    protected val mStockStyleProvider: StockStyleProvider,
-    protected val mDispatchesProvider: DispatchersProvider
+    protected val mDispatchesProvider: DispatchersProvider,
+    private val mCompaniesInteractor: CompaniesInteractor,
+    private val mStockPriceInteractor: StockPriceInteractor,
+    private val mStockStyleProvider: StockStyleProvider,
+    private val mRouter: Router
 ) : ViewModel() {
 
     protected val mStocksLoadState = MutableStateFlow<StockLoadState>(LoadState.None())
     val stocksLoadState: StateFlow<StockLoadState>
         get() = mStocksLoadState.asStateFlow()
 
-    protected open val mStocksRecyclerDelegates by lazy(LazyThreadSafetyMode.NONE) {
-        arrayOf(
+    val stocksAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        BaseRecyclerAdapter(
             createStocksAdapter(
                 onStockClick = this::onStockClick,
                 onFavouriteIconClick = this::onFavouriteIconClick,
                 onBindCallback = this::onBind
             )
-        )
-    }
-
-    val stocksAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        BaseRecyclerAdapter(*mStocksRecyclerDelegates)
-            .apply { setHasStableIds(true) }
+        ).apply { setHasStableIds(true) }
     }
 
     val companiesStockPriceUpdates: SharedFlow<CompanyWithStockPrice> = mCompaniesInteractor
@@ -136,16 +132,7 @@ abstract class BaseStocksViewModel(
                     companyToReplace.isFavourite = companyWithStockPrice.company.isFavourite
                     mStockStyleProvider.updateFavourite(companyToReplace)
 
-                    val targetPosition = stocksAdapter.getPosition {
-                        companyToReplace.getUniqueId() == it.getUniqueId()
-                    }
-                    withContext(mDispatchesProvider.Main) {
-                        stocksAdapter.update(
-                            companyToReplace,
-                            targetPosition,
-                            PAYLOAD_FAVOURITE_UPDATED
-                        )
-                    }
+                    updateItemAtAdapter(companyToReplace, PAYLOAD_FAVOURITE_UPDATED)
                 }
             )
         }
@@ -153,13 +140,20 @@ abstract class BaseStocksViewModel(
 
     private fun onStockClick(stockViewData: StockViewData) {
         viewModelScope.launch(mDispatchesProvider.IO) {
+            val (price, profit) = stockViewData
+                .stockPrice
+                ?.let { arrayOf(it.currentPrice, it.profit) }
+                ?: arrayOf("", "")
+
             mRouter.fromDefaultStocksToAbout(
                 data = AboutParams(
                     companyId = stockViewData.id,
                     companyTicker = stockViewData.ticker,
                     companyName = stockViewData.name,
                     logoUrl = stockViewData.logoUrl,
-                    isFavourite = stockViewData.isFavourite
+                    isFavourite = stockViewData.isFavourite,
+                    stockPrice = price,
+                    stockProfit = profit
                 )
             )
         }
@@ -198,19 +192,24 @@ abstract class BaseStocksViewModel(
                         stockViewData.stockPrice = companyWithStockPrice.stockPrice
                         mStockStyleProvider.updateProfit(stockViewData)
 
-                        val targetPosition = stocksAdapter.getPosition {
-                            stockViewData.getUniqueId() == it.getUniqueId()
-                        }
-
-                        withContext(mDispatchesProvider.Main) {
-                            stocksAdapter.update(
-                                stockViewData,
-                                targetPosition,
-                                PAYLOAD_PRICE_UPDATED
-                            )
-                        }
+                        updateItemAtAdapter(stockViewData, PAYLOAD_PRICE_UPDATED)
                     }
                 )
+            }
+        }
+    }
+
+    private suspend fun updateItemAtAdapter(
+        stockViewData: StockViewData,
+        payloads: Any? = null
+    ) {
+        val targetPosition = stocksAdapter.getPosition {
+            stockViewData.getUniqueId() == it.getUniqueId()
+        }
+
+        if (targetPosition != NULL_INDEX) {
+            withContext(mDispatchesProvider.Main) {
+                stocksAdapter.update(stockViewData, targetPosition, payloads)
             }
         }
     }

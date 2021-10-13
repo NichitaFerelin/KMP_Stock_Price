@@ -4,25 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:transitionName="@string/transitionAboutPager">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:background="@color/white"
-        android:elevation="@dimen/aboutPagerElevation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:transitionName="@string/transitionAboutPager"
+    tools:background="@color/white">
 
     <TextView
-        android:id="@+id/textViewCompanySymbol"
+        android:id="@+id/textViewCompanyTicker"
         style="@style/textViewH2"
         android:layout_width="wrap_content"
         android:layout_marginTop="18dp"
-        android:elevation="@dimen/aboutPagerElevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,11 +22,10 @@
         style="@style/textViewBodyConstrainedWidth"
         android:layout_marginHorizontal="26dp"
         android:layout_marginTop="4dp"
-        android:elevation="@dimen/aboutPagerElevation"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewCompanySymbol"
+        app:layout_constraintTop_toBottomOf="@id/textViewCompanyTicker"
         tools:text="Apple Inc." />
 
     <ImageView
@@ -45,37 +33,29 @@
         style="@style/clickableImage"
         android:layout_marginStart="9dp"
         android:contentDescription="@string/descriptionBack"
-        android:elevation="@dimen/aboutPagerElevation"
         android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textViewCompanySymbol" />
+        app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker" />
 
     <ImageView
         android:id="@+id/imageViewStar"
         style="@style/clickableImage"
         android:layout_marginEnd="9dp"
         android:contentDescription="@string/descriptionAddToFavourite"
-        android:elevation="@dimen/aboutPagerElevation"
         android:src="@drawable/ic_star"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textViewCompanySymbol" />
+        app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTabsTopBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="84dp"
-        app:layout_constraintTop_toBottomOf="@id/textViewCompanyName" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTabsBottomBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@id/appBar" />
+    <com.ferelin.core.view.tabs.CustomTabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewCompanyName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -84,6 +64,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBar" />
+        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,7 @@ import android.view.View
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
+inline fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
     if (this.isNotEmpty()) {
         defaultValue.invoke(this)
     }

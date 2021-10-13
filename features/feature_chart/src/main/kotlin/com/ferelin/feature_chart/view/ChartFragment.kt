@@ -16,6 +16,8 @@
 
 package com.ferelin.feature_chart.view
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,19 +31,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.ferelin.core.params.ChartParams
+import com.ferelin.core.utils.LoadState
+import com.ferelin.core.utils.StockStyleProvider
+import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.view.BaseFragment
+import com.ferelin.core.view.chart.ChartPastPrices
+import com.ferelin.core.view.chart.SuggestionController
+import com.ferelin.core.view.chart.points.Marker
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_chart.R
 import com.ferelin.feature_chart.databinding.FragmentChartBinding
-import com.ferelin.feature_chart.utils.SuggestionController
-import com.ferelin.feature_chart.utils.points.Marker
-import com.ferelin.feature_chart.viewData.ChartPastPrices
 import com.ferelin.feature_chart.viewData.ChartViewMode
-import com.ferelin.feature_chart.viewData.PastPriceLoadState
-import com.ferelin.feature_chart.viewData.StockPriceLoadState
 import com.ferelin.feature_chart.viewModel.ChartViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -54,14 +56,21 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<ChartViewModel>
 
+    @Inject
+    lateinit var mStockStyleProvider: StockStyleProvider
+
     private val mViewModel: ChartViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
+
+    private val mViewsPropertyAnimator = mutableSetOf<View>()
 
     private val mSuggestionControl = SuggestionController
 
     private var mSelectedCard: CardView? = null
     private var mSelectedText: TextView? = null
+
+    private var mScaleInOut: Animator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +79,8 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
     override fun initUi() {
         restoreSelectedViewMode(mViewModel.chartMode)
-        mViewModel.selectedMarker?.let { restoreChartState(it) }
+        restoreChartState(mViewModel.selectedMarker)
+        setPriceFields(mViewModel.chartParams.stockPrice, mViewModel.chartParams.stockProfit)
     }
 
     override fun initUx() {
@@ -80,14 +90,46 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
                 newClickedMarker = it
             )
         }
-
         setCardBtnsListeners()
     }
 
+    override fun initObservers() {
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            launch { observePastPrice() }
+            launch { observeActualStockPrice() }
+        }
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
+        mViewsPropertyAnimator.forEach { it.animate().cancel() }
+        mScaleInOut?.invalidate()
         mSelectedCard = null
         mSelectedText = null
+        super.onDestroyView()
+    }
+
+    private suspend fun observePastPrice() {
+        mViewModel.pastPriceLoadState.collect { pastPriceLoad ->
+            when (pastPriceLoad) {
+                is LoadState.Prepared -> {
+                    withContext(mDispatchersProvider.Main) {
+                        onDataLoadingStateChanged(false)
+                        onPastPriceChanged(pastPriceLoad.data)
+                    }
+                }
+                is LoadState.Loading -> onDataLoadingStateChanged(true)
+                is LoadState.None -> mViewModel.loadPastPrices()
+                else -> Unit
+            }
+        }
+    }
+
+    private suspend fun observeActualStockPrice() {
+        mViewModel.actualStockPrice.collect { stockPrice ->
+            withContext(mDispatchersProvider.Main) {
+                setPriceFields(stockPrice.currentPrice, stockPrice.profit)
+            }
+        }
     }
 
     private fun setCardBtnsListeners() {
@@ -98,59 +140,6 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
             cardViewHalfYear.setOnClickListener { onCardClicked(it as CardView) }
             cardViewYear.setOnClickListener { onCardClicked(it as CardView) }
             cardViewAll.setOnClickListener { onCardClicked(it as CardView) }
-        }
-    }
-
-    override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            launch { observePastPrice() }
-            launch {
-                observeActualStockPrice()
-                observeLiveTimePrice()
-            }
-        }
-    }
-
-    private suspend fun observePastPrice() {
-        mViewModel.pastPriceLoadState.collect { pastPriceLoad ->
-            when (pastPriceLoad) {
-                is PastPriceLoadState.Loaded -> {
-                    onDataLoadingStateChanged(false)
-                    onPastPriceChanged(pastPriceLoad.chartPastPrices)
-                }
-                is PastPriceLoadState.Loading -> {
-                    onDataLoadingStateChanged(true)
-                }
-                is PastPriceLoadState.None -> {
-                    mViewModel.loadPastPrices()
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    private suspend fun observeActualStockPrice() {
-        mViewModel.stockPriceLoad
-            .take(1)
-            .collect { stockPriceLoad ->
-                when (stockPriceLoad) {
-                    is StockPriceLoadState.Loaded -> {
-                        setPriceFields(
-                            price = stockPriceLoad.stockPrice.currentPrice,
-                            profit = stockPriceLoad.stockPrice.profit
-                        )
-                    }
-                    is StockPriceLoadState.None -> {
-                        mViewModel.loadActualStockPrice()
-                    }
-                    else -> Unit
-                }
-            }
-    }
-
-    private suspend fun observeLiveTimePrice() {
-        mViewModel.companiesStockPriceUpdates.collect { livePrice ->
-            // setPriceFields(livePrice.price, livePrice.profit)
         }
     }
 
@@ -169,7 +158,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
     private fun onCardClicked(card: CardView) {
         if (card == mSelectedCard) {
-            // mViewAnimator.runScaleInOut(card, null)
+            jumpCard(card)
             return
         }
 
@@ -194,13 +183,10 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun onDataLoadingStateChanged(isDataLoading: Boolean) {
-        if (isDataLoading) showProgressBar() else hideProgressBar()
-    }
-
-    private fun showChart() {
-        if (!mViewBinding.groupChartWidgets.isVisible) {
-            TransitionManager.beginDelayedTransition(mViewBinding.root)
-            mViewBinding.groupChartWidgets.isVisible = true
+        if (isDataLoading) {
+            showProgressBar()
+        } else {
+            hideProgressBar()
         }
     }
 
@@ -210,6 +196,10 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun restoreSelectedViewMode(lastSelectedChartViewMode: ChartViewMode) {
+        val (lastCard, lastText) = getAttachedViewsByMode(lastSelectedChartViewMode)
+        mSelectedText = lastText as TextView
+        mSelectedCard = lastCard as CardView
+
         // Mode 'All' is set by default
         if (lastSelectedChartViewMode == ChartViewMode.All) {
             return
@@ -221,10 +211,21 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         saveSelectedViews(restoredCardView, restoredTextView)
     }
 
-    private fun restoreChartState(lastClickedMarker: Marker) {
-        mViewBinding.chartView.addOnChartPreparedListener {
-            mViewBinding.chartView.restoreMarker(lastClickedMarker)?.let { restoredMarker ->
-                onChartClicked(null, restoredMarker)
+    private fun restoreChartState(lastClickedMarker: Marker?) {
+        mViewModel.pastPriceLoadState.value.let { pastPriceState ->
+            if (pastPriceState is LoadState.Prepared) {
+                onPastPriceChanged(pastPriceState.data)
+            } else {
+                mViewBinding.groupChartWidgets.isVisible = false
+            }
+        }
+
+        lastClickedMarker?.let { marker ->
+            mViewBinding.chartView.addOnChartPreparedListener {
+                val restoredMarker = mViewBinding.chartView.restoreMarker(marker)
+                if (restoredMarker != null) {
+                    onChartClicked(null, restoredMarker)
+                }
             }
         }
     }
@@ -248,13 +249,11 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun showSuggestion() {
-        // mViewAnimator.runFadeIn(viewBinding.includeSuggestion.root, viewBinding.point)
-        mViewBinding.includeSuggestion.root.isVisible = true
+        runFadeIn(mViewBinding.includeSuggestion.root, mViewBinding.point)
     }
 
     private fun hideSuggestion() {
-        // mViewAnimator.runFadeOut(viewBinding.includeSuggestion.root, viewBinding.point)
-        mViewBinding.includeSuggestion.root.isVisible = false
+        runFadeOut(mViewBinding.includeSuggestion.root, mViewBinding.point)
     }
 
     private fun showProgressBar() {
@@ -320,25 +319,57 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         }
     }
 
-    private suspend fun setPriceFields(price: String, profit: String) =
-        withContext(mDispatchersProvider.Main) {
-            mViewBinding.textViewCurrentPrice.text = price
-            mViewBinding.textViewBuyPrice.text = price
-            mViewBinding.textViewDayProfit.text = profit
+    private fun setPriceFields(price: String, profit: String) {
+        mViewBinding.textViewCurrentPrice.text = price
+
+        val profitBackground = mStockStyleProvider.getProfitBackground(profit)
+        mViewBinding.textViewDayProfit.text = profit
+        mViewBinding.textViewDayProfit.setTextColor(profitBackground)
+
+        mViewBinding.textViewBuyPrice.text =
+            String.format(getString(R.string.hintBuyFor), price)
+    }
+
+    private fun showChart() {
+        if (!mViewBinding.groupChartWidgets.isVisible) {
+            TransitionManager.beginDelayedTransition(mViewBinding.root)
+            mViewBinding.groupChartWidgets.isVisible = true
         }
+    }
+
+    private fun jumpCard(card: CardView) {
+        if (mScaleInOut == null) {
+            mScaleInOut = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
+        }
+        mScaleInOut!!.setTarget(card)
+        mScaleInOut!!.start()
+    }
+
+    private fun runFadeIn(vararg targets: View) {
+        targets.forEach { view ->
+            mViewsPropertyAnimator.add(view)
+            view.animate().alpha(1F).duration = 150L
+        }
+    }
+
+    private fun runFadeOut(vararg targets: View) {
+        targets.forEach { view ->
+            mViewsPropertyAnimator.add(view)
+            view.animate().alpha(0F).duration = 150L
+        }
+    }
 
     private fun unpackArgs(args: Bundle) {
         args[sChartParamsKey]?.let { params ->
             if (params is ChartParams) {
-                mViewModel.companyId = params.id
-                mViewModel.companyTicker = params.ticker
+                mViewModel.chartParams = params
             }
         }
     }
 
     companion object {
 
-        private const val sChartParamsKey = "chart-params"
+        private const val sChartParamsKey = "c"
 
         fun newInstance(data: Any?): ChartFragment {
             return ChartFragment().also {

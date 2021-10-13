@@ -18,61 +18,54 @@ package com.ferelin.feature_section_about.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.interactors.ProfileInteractor
+import com.ferelin.core.params.AboutParams
+import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
+import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
+import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class ProfileLoadState {
-    class Loaded(val profile: Profile) : ProfileLoadState()
-    object Loading : ProfileLoadState()
-    object None : ProfileLoadState()
-}
-
 class AboutPagerViewModel @Inject constructor(
     private val mCompaniesInteractor: CompaniesInteractor,
-    private val mProfileInteractor: ProfileInteractor,
+    private val mStockStyleProvider: StockStyleProvider,
+    private val mRouter: Router,
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val mProfileLoadState = MutableStateFlow<ProfileLoadState>(ProfileLoadState.None)
-    val profileLoadState: StateFlow<ProfileLoadState>
-        get() = mProfileLoadState.asStateFlow()
+    var aboutParams = AboutParams()
 
-    fun loadProfile(companyId: Int) {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mProfileLoadState.value = ProfileLoadState.Loading
-
-            val response = mProfileInteractor.getProfile(companyId)
-            mProfileLoadState.value = ProfileLoadState.Loaded(response)
+    var isFavourite = false
+        set(value) {
+            field = value
+            aboutParams.isFavourite = field
+            favouriteIconRes = mStockStyleProvider.getForegroundIconDrawable(value)
         }
-    }
 
-    fun observeFavouriteCompaniesChanges() : SharedFlow<Company> {
-        return mCompaniesInteractor
+    var favouriteIconRes = mStockStyleProvider.getForegroundIconDrawable(isFavourite)
+
+    val favouriteCompaniesUpdate: SharedFlow<Unit> by lazy(LazyThreadSafetyMode.NONE) {
+        mCompaniesInteractor
             .observeFavouriteCompaniesUpdates()
-
+            .filter { it.company.id == aboutParams.companyId }
+            .onEach { isFavourite = it.company.isFavourite }
+            .map { Unit }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
     }
-/*
+
     fun onFavouriteIconClick() {
         viewModelScope.launch(mDispatchersProvider.IO) {
-            when (selectedCompany.isFavourite) {
-                true -> mDataInteractor.removeCompanyFromFavourites(selectedCompany)
-                false -> mDataInteractor.addCompanyToFavourites(selectedCompany)
+            if (isFavourite) {
+                mCompaniesInteractor.removeCompanyFromFavourites(aboutParams.companyId)
+            } else {
+                mCompaniesInteractor.addCompanyToFavourites(aboutParams.companyId)
             }
         }
     }
 
-    private fun filterUpdate(notificator: DataNotificator<UseCaseCompany>): Boolean {
-        return notificator is DataNotificator.ItemUpdatedCommon
-                && notificator.data != null
-                && selectedCompany.companyProfile.symbol == notificator.data.companyProfile.symbol
-    }*/
+    fun onBackBtnClick() {
+        mRouter.back()
+    }
 }

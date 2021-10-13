@@ -16,9 +16,10 @@
 
 package com.ferelin.feature_news.viewData
 
-import com.ferelin.core.utils.recycler.ViewHolderType
+import com.ferelin.core.adapter.base.ViewDataType
+import com.ferelin.feature_news.adapter.NEWS_VIEW_TYPE
 
-class NewsViewData(
+data class NewsViewData(
     val id: Long = 0L,
     val relationId: Int = 0,
     val cloudId: String,
@@ -28,13 +29,21 @@ class NewsViewData(
     val source: String,
     val sourceUrl: String,
     val summary: String
-) : ViewHolderType {
+) : ViewDataType(NEWS_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {
         return id
     }
 
-    override fun isValidType(other: ViewHolderType): Boolean {
-        return other is NewsViewData
+    override fun equals(other: Any?): Boolean {
+        return if (other is NewsViewData) {
+            other.cloudId == cloudId
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return cloudId.hashCode()
     }
 }
