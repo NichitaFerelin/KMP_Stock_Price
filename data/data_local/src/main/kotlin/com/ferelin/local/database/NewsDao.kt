@@ -25,9 +25,12 @@ import com.ferelin.local.entities.NewsDBO
 @Dao
 interface NewsDao {
 
-    @Query("SELECT * FROM `companies_news` WHERE relation_id = :companyId")
-    suspend fun getAllNews(companyId: Int): List<NewsDBO>
+    @Query("SELECT * FROM `companies_news` WHERE relation_id = :relationId")
+    suspend fun getAllNews(relationId: Int): List<NewsDBO>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNews(newsDBO: NewsDBO)
+    suspend fun insertNews(newsDBO: List<NewsDBO>)
+
+    @Query("DELETE FROM `companies_news` WHERE relation_id = :relationId")
+    suspend fun clearNews(relationId: Int)
 }

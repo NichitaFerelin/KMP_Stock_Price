@@ -39,11 +39,17 @@ class NewsRepoImpl @Inject constructor(
                 .map(mNewsMapper::map)
         }
 
-    override suspend fun cacheNews(news: News) =
+    override suspend fun cacheNews(news: List<News>) =
         withContext(mDispatchersProvider.IO) {
             Timber.d("cache news (news = $news)")
             mNewsDao.insertNews(
-                newsDBO = mNewsMapper.map(news)
+                newsDBO = news.map { mNewsMapper.map(it) }
             )
+        }
+
+    override suspend fun clearNews(companyId: Int) =
+        withContext(mDispatchersProvider.IO) {
+            Timber.d("clear news (company id = $companyId")
+            mNewsDao.clearNews(companyId)
         }
 }
