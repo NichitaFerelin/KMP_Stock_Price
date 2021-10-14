@@ -35,6 +35,7 @@ import com.ferelin.feature_section_about.viewModel.AboutPagerViewModel
 import com.google.android.material.transition.Hold
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -67,6 +68,14 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = 200L
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = 200L
+        }
+
         arguments?.let { unpackArgs(it) }
     }
 

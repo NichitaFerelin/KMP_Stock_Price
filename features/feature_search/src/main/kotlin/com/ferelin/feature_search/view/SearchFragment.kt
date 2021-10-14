@@ -42,6 +42,7 @@ import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecorationLan
 import com.ferelin.feature_search.databinding.FragmentSearchBinding
 import com.ferelin.feature_search.viewModel.SearchViewModel
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,6 +83,18 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             scrimColor = Color.TRANSPARENT
+        }
+        exitTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 200L
+        }
+        reenterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 200L
         }
     }
 
