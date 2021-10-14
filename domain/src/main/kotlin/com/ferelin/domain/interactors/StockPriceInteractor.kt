@@ -21,6 +21,8 @@ import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.sources.StockPriceSource
 import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -28,11 +30,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
-
-sealed class StockPriceState {
-    class Loaded(val stockPrice: StockPrice) : StockPriceState()
-    object Error : StockPriceState()
-}
 
 @Singleton
 class StockPriceInteractor @Inject constructor(
@@ -42,7 +39,7 @@ class StockPriceInteractor @Inject constructor(
     private val mPriceListeners: List<@JvmSuppressWildcards StockPriceListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
-    fun observeActualStockPriceResponses(): Flow<StockPriceState> {
+    fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> {
         return mStockPriceSource.observeActualStockPriceResponses()
             .onEach { cacheIfLoaded(it) }
     }
@@ -61,12 +58,12 @@ class StockPriceInteractor @Inject constructor(
         )
     }
 
-    private fun cacheIfLoaded(responseState: StockPriceState) {
-        if (responseState is StockPriceState.Loaded) {
+    private fun cacheIfLoaded(loadState: LoadState<StockPrice>) {
+        loadState.ifPrepared { preparedState ->
             mExternalScope.launch(mDispatchersProvider.IO) {
-                mStockPriceRepo.cacheStockPrice(responseState.stockPrice)
+                mStockPriceRepo.cacheStockPrice(preparedState.data)
 
-                mPriceListeners.forEach { it.onStockPriceChanged(responseState.stockPrice) }
+                mPriceListeners.forEach { it.onStockPriceChanged(preparedState.data) }
             }
         }
     }

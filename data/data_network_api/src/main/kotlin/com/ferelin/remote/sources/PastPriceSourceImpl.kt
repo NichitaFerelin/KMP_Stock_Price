@@ -16,12 +16,13 @@
 
 package com.ferelin.remote.sources
 
-import com.ferelin.domain.interactors.PastPriceState
+import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.sources.PastPriceSource
 import com.ferelin.remote.entities.PastPricesApi
 import com.ferelin.remote.mappers.PastPriceMapper
 import com.ferelin.remote.utils.withExceptionHandle
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class PastPriceSourceImpl @Inject constructor(
         from: Long,
         to: Long,
         resolution: String
-    ): PastPriceState = withContext(mDispatchersProvider.IO) {
+    ): LoadState<List<PastPrice>> = withContext(mDispatchersProvider.IO) {
         withExceptionHandle(
             request = {
                 mPastPricesApi
@@ -49,13 +50,13 @@ class PastPriceSourceImpl @Inject constructor(
             },
             onSuccess = { responseBody ->
                 Timber.d("on success (responseBody = $responseBody)")
-                PastPriceState.Loaded(
-                    pastPrices = mPastPriceMapper.map(responseBody, companyId)
+                LoadState.Prepared(
+                    data = mPastPriceMapper.map(responseBody, companyId)
                 )
             },
             onFail = {
                 Timber.d("on exception (exception = $it)")
-                PastPriceState.Error
+                LoadState.Error()
             }
         )
     }

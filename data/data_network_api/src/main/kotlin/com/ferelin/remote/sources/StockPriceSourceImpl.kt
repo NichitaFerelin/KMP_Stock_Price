@@ -16,12 +16,13 @@
 
 package com.ferelin.remote.sources
 
-import com.ferelin.domain.interactors.StockPriceState
+import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.sources.StockPriceSource
 import com.ferelin.remote.entities.StockPriceApi
 import com.ferelin.remote.mappers.StockPriceMapper
 import com.ferelin.remote.utils.RequestsLimiter
 import com.ferelin.remote.utils.withExceptionHandle
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -55,7 +56,7 @@ class StockPriceSourceImpl @Inject constructor(
         )
     }
 
-    override fun observeActualStockPriceResponses(): Flow<StockPriceState> =
+    override fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> =
         callbackFlow {
             Timber.d("observe actual stock price response")
             mRequestsLimiter.onExecuteRequest { companyId, tickerToExecute ->
@@ -69,12 +70,13 @@ class StockPriceSourceImpl @Inject constructor(
                     onSuccess = {
                         Timber.d("on success (response = $it)")
                         trySend(
-                            StockPriceState.Loaded(mStockPriceMapper.map(it, companyId))
+                            LoadState.Prepared(mStockPriceMapper.map(it, companyId))
                         )
                     },
                     onFail = {
                         Timber.d("on fail (exception = $it)")
-                        trySend(StockPriceState.Error)
+                        trySend(LoadState.Error())
+                        Unit
                     }
                 )
             }

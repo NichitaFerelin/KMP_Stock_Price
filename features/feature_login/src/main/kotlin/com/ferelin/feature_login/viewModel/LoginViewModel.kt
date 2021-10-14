@@ -20,44 +20,57 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.domain.interactors.AuthenticationInteractor
-import com.ferelin.feature_login.mapper.AuthStateMapper
-import com.ferelin.feature_login.viewData.AuthProcessingState
+import com.ferelin.domain.sources.AuthResponse
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+typealias AuthState = LoadState<AuthResponse>
+
 class LoginViewModel @Inject constructor(
     private val mAuthenticationInteractor: AuthenticationInteractor,
-    private val mAuthStateMapper: AuthStateMapper,
     private val mRouter: Router,
     private val mDispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val mAuthProcessingState =
-        MutableStateFlow<AuthProcessingState>(AuthProcessingState.None())
-    val authProcessingState: StateFlow<AuthProcessingState>
-        get() = mAuthProcessingState
+    private val mAuthenticationLoadState = MutableStateFlow<AuthState>(LoadState.None())
+    val authenticationLoadState: StateFlow<AuthState>
+        get() = mAuthenticationLoadState.asStateFlow()
 
-    private var mLogInJob: Job? = null
+    private var mAuthJob: Job? = null
 
-    fun tryToLogIn(holder: Activity, phone: String) {
-        if (mAuthProcessingState.value is AuthProcessingState.Processing) {
-            return
+    fun onSendCodeClick(holderActivity: Activity, phone: String) {
+        mAuthenticationLoadState.value.let { authLoadState ->
+            if (authLoadState is LoadState.Prepared
+                && authLoadState.data == AuthResponse.Complete
+            ) return
         }
 
-        mLogInJob?.cancel()
-        mLogInJob = viewModelScope.launch(mDispatchersProvider.IO) {
-            mAuthenticationInteractor.tryToLogIn(holder, phone)
-                .map { mAuthStateMapper.map(it) }
-                .collect { authState ->
-                    mAuthProcessingState.value = authState
-                    onAuthStateChanged(authState)
+        mAuthJob?.cancel()
+        mAuthJob = viewModelScope.launch(mDispatchersProvider.IO) {
+            mAuthenticationInteractor
+                .tryToLogIn(holderActivity, "+$phone")
+                .collect { authResponse ->
+
+                    mAuthenticationLoadState.value = when (authResponse) {
+                        AuthResponse.CodeSent -> LoadState.Prepared(authResponse)
+                        AuthResponse.CodeProcessing -> LoadState.Loading(authResponse)
+                        AuthResponse.PhoneProcessing -> LoadState.Loading(authResponse)
+                        AuthResponse.TooManyRequests -> LoadState.Error(authResponse)
+                        AuthResponse.EmptyPhone -> LoadState.Error(authResponse)
+                        AuthResponse.Error -> LoadState.Error(authResponse)
+                        AuthResponse.Complete -> {
+                            mRouter.back()
+                            LoadState.Prepared(authResponse)
+                        }
+                    }
                 }
         }
     }
@@ -70,13 +83,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onBackClicked() {
+    fun onBackClick() {
         mRouter.back()
-    }
-
-    private fun onAuthStateChanged(state: AuthProcessingState) {
-        if (state is AuthProcessingState.Complete) {
-            mRouter.back()
-        }
     }
 }

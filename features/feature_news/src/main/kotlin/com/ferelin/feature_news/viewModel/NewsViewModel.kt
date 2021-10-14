@@ -20,15 +20,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.params.NewsParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.domain.entities.News
 import com.ferelin.domain.interactors.NewsInteractor
-import com.ferelin.domain.interactors.NewsState
 import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.mapper.NewsMapper
 import com.ferelin.feature_news.viewData.NewsViewData
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,8 +66,8 @@ class NewsViewModel @Inject constructor(
             mNewsInteractor
                 .loadCompanyNews(newsParams.companyId, newsParams.companyTicker)
                 .let { remoteNewsState ->
-                    if (remoteNewsState is NewsState.Loaded) {
-                        onNewsChanged(remoteNewsState.news)
+                    if (remoteNewsState is LoadState.Prepared) {
+                        onNewsChanged(remoteNewsState.data)
                     } else if (mNewLoadState.value !is LoadState.Prepared) {
                         mNewLoadState.value = LoadState.Error()
                     }

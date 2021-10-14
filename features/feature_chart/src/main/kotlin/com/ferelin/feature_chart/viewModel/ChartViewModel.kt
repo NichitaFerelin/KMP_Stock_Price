@@ -19,7 +19,6 @@ package com.ferelin.feature_chart.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ChartParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.core.view.chart.ChartPastPrices
@@ -27,12 +26,11 @@ import com.ferelin.core.view.chart.points.Marker
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.interactors.PastPriceInteractor
-import com.ferelin.domain.interactors.PastPriceState
 import com.ferelin.domain.interactors.StockPriceInteractor
-import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -58,8 +56,8 @@ class ChartViewModel @Inject constructor(
 
     val actualStockPrice: SharedFlow<StockPrice> = mStockPriceInteractor
         .observeActualStockPriceResponses()
-        .filter { it is StockPriceState.Loaded && it.stockPrice.id == chartParams.companyId }
-        .map { (it as StockPriceState.Loaded).stockPrice }
+        .filter { it is LoadState.Prepared && it.data.id == chartParams.companyId }
+        .map { (it as LoadState.Prepared).data }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     var chartMode: ChartViewMode = ChartViewMode.All
@@ -75,8 +73,8 @@ class ChartViewModel @Inject constructor(
             mPastPriceInteractor
                 .loadPastPrices(chartParams.companyId, chartParams.companyTicker)
                 .let { responseState ->
-                    if (responseState is PastPriceState.Loaded) {
-                        onNewsPastPrices(responseState.pastPrices)
+                    if (responseState is LoadState.Prepared) {
+                        onNewsPastPrices(responseState.data)
                     } else if (mPastPriceLoad.value !is LoadState.Prepared) {
                         mPastPriceLoad.value = LoadState.Error()
                     }

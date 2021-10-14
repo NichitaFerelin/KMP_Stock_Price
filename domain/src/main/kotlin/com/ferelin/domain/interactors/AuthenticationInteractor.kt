@@ -17,14 +17,10 @@
 package com.ferelin.domain.interactors
 
 import android.app.Activity
-import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
-import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
 import com.ferelin.domain.sources.AuthenticationSource
-import com.ferelin.domain.sources.AuthenticationState
+import com.ferelin.domain.sources.AuthResponse
 import com.ferelin.shared.AuthenticationListener
 import com.ferelin.shared.DispatchersProvider
-import dagger.Module
-import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -38,7 +34,7 @@ class AuthenticationInteractor @Inject constructor(
     private val mAuthenticationListeners: List<@JvmSuppressWildcards AuthenticationListener>,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
-    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState> {
+    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthResponse> {
         return mAuthenticationSource.tryToLogIn(holderActivity, phone)
             .onEach { notifyIfCompleted(it) }
     }
@@ -69,8 +65,8 @@ class AuthenticationInteractor @Inject constructor(
         return mAuthenticationSource.isUserAuthenticated()
     }
 
-    private fun notifyIfCompleted(authenticationState: AuthenticationState) {
-        if (authenticationState == AuthenticationState.Complete) {
+    private fun notifyIfCompleted(authResponse: AuthResponse) {
+        if (authResponse == AuthResponse.Complete) {
             mExternalScope.launch(mDispatchersProvider.IO) {
                 mAuthenticationListeners.forEach {
                     it.onLogIn()

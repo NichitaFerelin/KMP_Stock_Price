@@ -20,9 +20,7 @@ import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.syncers.SearchRequestsSyncer
-import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.DispatchersProvider
-import com.ferelin.shared.NetworkListener
+import com.ferelin.shared.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,11 +31,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-sealed class SearchRequestsState {
-    class Prepared(val searchRequests: List<String>) : SearchRequestsState()
-    object Loading : SearchRequestsState()
-    object None : SearchRequestsState()
-}
+typealias SearchRequests = List<String>
 
 @Singleton
 class SearchRequestsInteractorImpl @Inject constructor(
@@ -49,38 +43,39 @@ class SearchRequestsInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
-    private val mSearchRequestsState =
-        MutableStateFlow<SearchRequestsState>(SearchRequestsState.None)
+    private val mSearchRequestsState = MutableStateFlow<LoadState<SearchRequests>>(LoadState.None())
+    override val searchRequestsState: StateFlow<LoadState<SearchRequests>>
+        get() = mSearchRequestsState.asStateFlow()
 
-    private var mPopularRequestsState: SearchRequestsState = SearchRequestsState.None
+    private var mPopularRequestsState: LoadState<SearchRequests> = LoadState.None()
 
     private companion object {
         const val sCachedRequestsLimit = 30
     }
 
     override suspend fun getSearchRequests(): List<String> {
-        if (mSearchRequestsState.value is SearchRequestsState.Prepared) {
-            return (mSearchRequestsState.value as SearchRequestsState.Prepared).searchRequests
+        mSearchRequestsState.value.ifPrepared { preparedState ->
+            return preparedState.data
         }
 
-        mSearchRequestsState.value = SearchRequestsState.Loading
+        mSearchRequestsState.value = LoadState.Loading()
 
         return mSearchRequestsLocalRepo.getSearchRequests()
             .also {
-                mSearchRequestsState.value = SearchRequestsState.Prepared(it)
+                mSearchRequestsState.value = LoadState.Prepared(it)
                 tryToSync()
             }
     }
 
     override suspend fun getPopularSearchRequests(): List<String> {
-        if (mPopularRequestsState is SearchRequestsState.Prepared) {
-            return (mPopularRequestsState as SearchRequestsState.Prepared).searchRequests
+        mSearchRequestsState.value.ifPrepared { preparedState ->
+            return preparedState.data
         }
 
-        mPopularRequestsState = SearchRequestsState.Loading
+        mPopularRequestsState = LoadState.Loading()
 
         return mSearchRequestsLocalRepo.getPopularSearchRequests()
-            .also { mPopularRequestsState = SearchRequestsState.Prepared(it) }
+            .also { mPopularRequestsState = LoadState.Prepared(it) }
     }
 
     override suspend fun cacheSearchRequest(searchRequest: String): List<String> =
@@ -89,30 +84,25 @@ class SearchRequestsInteractorImpl @Inject constructor(
             var updatedSearchRequests = mutableListOf<String>()
 
             mExternalScope.launch(mDispatchersProvider.IO) {
-                mSearchRequestsState.value.let { requestsState ->
-                    if (requestsState is SearchRequestsState.Prepared) {
-                        updatedSearchRequests = removeDuplicates(
-                            sourceRequests = requestsState.searchRequests,
-                            newSearchRequest = searchRequest
-                        )
-                        updatedSearchRequests.add(0, searchRequest)
+                mSearchRequestsState.value.ifPrepared { preparedState ->
+                    updatedSearchRequests = removeDuplicates(
+                        sourceRequests = preparedState.data,
+                        newSearchRequest = searchRequest
+                    )
+                    updatedSearchRequests.add(0, searchRequest)
 
-                        if (updatedSearchRequests.size > sCachedRequestsLimit) {
-                            reduceRequestsToLimit(updatedSearchRequests)
-                        }
-
-                        mSearchRequestsState.value =
-                            SearchRequestsState.Prepared(updatedSearchRequests)
+                    if (updatedSearchRequests.size > sCachedRequestsLimit) {
+                        reduceRequestsToLimit(updatedSearchRequests)
                     }
+
+                    mSearchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
                 }
+
+                cache(searchRequest)
             }.join()
 
             updatedSearchRequests.toList()
         }
-
-    override fun observeSearchRequestsUpdates(): StateFlow<SearchRequestsState> {
-        return mSearchRequestsState.asStateFlow()
-    }
 
     private suspend fun reduceRequestsToLimit(requests: MutableList<String>) =
         withContext(mDispatchersProvider.IO) {
@@ -153,7 +143,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     override suspend fun onLogOut() {
-        mSearchRequestsState.value = SearchRequestsState.Prepared(emptyList())
+        mSearchRequestsState.value = LoadState.Prepared(emptyList())
 
         mExternalScope.launch(mDispatchersProvider.IO) {
             mSearchRequestsLocalRepo.clearSearchRequests()
@@ -185,14 +175,10 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     private suspend fun tryToSync() {
-        mSearchRequestsState.value.let { searchRequestsState ->
-            if (searchRequestsState !is SearchRequestsState.Prepared) {
-                return
-            }
-
+        mSearchRequestsState.value.ifPrepared { preparedState ->
             mAuthenticationSource.getUserToken()?.let { userToken ->
                 mSearchRequestsSyncer
-                    .initDataSync(userToken, searchRequestsState.searchRequests)
+                    .initDataSync(userToken, preparedState.data)
                     .forEach { remoteSearchRequest ->
                         cacheSearchRequest(remoteSearchRequest)
                     }

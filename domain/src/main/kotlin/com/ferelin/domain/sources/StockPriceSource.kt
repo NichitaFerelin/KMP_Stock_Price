@@ -16,7 +16,8 @@
 
 package com.ferelin.domain.sources
 
-import com.ferelin.domain.interactors.StockPriceState
+import com.ferelin.domain.entities.StockPrice
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.Flow
 
 interface StockPriceSource {
@@ -28,5 +29,5 @@ interface StockPriceSource {
         isImportant: Boolean
     )
 
-    fun observeActualStockPriceResponses(): Flow<StockPriceState>
+    fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>>
 }

@@ -19,7 +19,7 @@ package com.ferelin.domain.sources
 import android.app.Activity
 import kotlinx.coroutines.flow.Flow
 
-enum class AuthenticationState {
+enum class AuthResponse {
     EmptyPhone,
     PhoneProcessing,
     CodeSent,
@@ -31,7 +31,7 @@ enum class AuthenticationState {
 
 interface AuthenticationSource {
 
-    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState>
+    fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthResponse>
 
     fun isUserAuthenticated() : Boolean
 

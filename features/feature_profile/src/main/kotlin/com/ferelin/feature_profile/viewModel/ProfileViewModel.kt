@@ -19,10 +19,10 @@ package com.ferelin.feature_profile.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ProfileParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.interactors.ProfileInteractor
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -25,19 +25,15 @@ import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.adapter.stocks.createStocksAdapter
 import com.ferelin.core.mapper.StockMapper
 import com.ferelin.core.params.AboutParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
-import com.ferelin.core.utils.ifPrepared
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.domain.entities.CompanyWithStockPrice
+import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
-import com.ferelin.domain.interactors.StockPriceState
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
-import com.ferelin.shared.NULL_INDEX
-import com.ferelin.shared.ifExist
+import com.ferelin.shared.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,7 +78,7 @@ abstract class BaseStocksViewModel(
         .onEach { onFavouriteCompanyUpdate(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
-    val actualStockPrice: SharedFlow<StockPriceState> = mStockPriceInteractor
+    val actualStockPrice: SharedFlow<LoadState<StockPrice>> = mStockPriceInteractor
         .observeActualStockPriceResponses()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 

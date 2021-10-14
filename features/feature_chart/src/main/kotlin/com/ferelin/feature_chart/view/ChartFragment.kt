@@ -31,7 +31,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.ferelin.core.params.ChartParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.view.BaseFragment
@@ -43,6 +42,7 @@ import com.ferelin.feature_chart.R
 import com.ferelin.feature_chart.databinding.FragmentChartBinding
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.feature_chart.viewModel.ChartViewModel
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

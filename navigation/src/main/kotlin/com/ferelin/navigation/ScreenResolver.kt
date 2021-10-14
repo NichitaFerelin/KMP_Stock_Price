@@ -25,8 +25,6 @@ interface ScreenResolver {
         const val STOCKS_PAGER_TAG = "stocks-pager"
         const val SEARCH_TAG = "search"
         const val ABOUT_PAGER_TAG = "about"
-        const val DEFAULT_STOCKS_TAG = "stocks"
-        const val FAVOURITE_STOCKS_TAG = "favourite-stocks"
         const val LOGIN_TAG = "login"
         const val SETTINGS_TAG = "settings"
         const val LOADING_TAG = "loading"
@@ -68,6 +66,12 @@ interface ScreenResolver {
     )
 
     fun fromSearchToAbout(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
+
+    fun fromSettingsToLogin(
         hostActivity: FragmentActivity,
         params: Any? = null,
         onTransaction: ((FragmentTransaction) -> Unit)? = null

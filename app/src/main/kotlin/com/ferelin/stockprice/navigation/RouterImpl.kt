@@ -89,4 +89,11 @@ class RouterImpl @Inject constructor(
     ) {
         mScreenResolver.fromSearchToAbout(mActivity, params, onTransaction)
     }
+
+    override fun fromSettingsToLogin(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromSettingsToLogin(mActivity, params, onTransaction)
+    }
 }

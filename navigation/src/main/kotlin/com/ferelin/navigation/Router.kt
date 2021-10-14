@@ -58,4 +58,9 @@ interface Router {
         params: Any? = null,
         onTransaction: ((FragmentTransaction) -> Unit)? = null
     )
+
+    fun fromSettingsToLogin(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
 }

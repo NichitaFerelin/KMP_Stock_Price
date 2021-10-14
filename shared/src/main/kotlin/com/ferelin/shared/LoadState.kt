@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_login.viewData
+package com.ferelin.shared
 
-import com.ferelin.domain.sources.AuthenticationState
+sealed class LoadState<T> {
+    class None<T> : LoadState<T>()
+    class Prepared<T>(var data: T) : LoadState<T>()
+    class Loading<T>(var data: T? = null) : LoadState<T>()
+    class Error<T>(var data: T? = null) : LoadState<T>()
+}
 
-sealed class AuthProcessingState {
-    class Processing(val state: AuthenticationState) : AuthProcessingState()
-    class Error(val error: AuthenticationState) : AuthProcessingState()
-    class None(val state: AuthenticationState? = null) : AuthProcessingState()
-    object Complete : AuthProcessingState()
+inline fun <T, R> LoadState<T>.ifPrepared(action: (LoadState.Prepared<T>) -> R?): R? {
+    return if (this is LoadState.Prepared) {
+        action.invoke(this)
+    } else {
+        null
+    }
 }

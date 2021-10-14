@@ -18,7 +18,7 @@ package com.ferelin.authentication.sources
 
 import android.app.Activity
 import com.ferelin.domain.sources.AuthenticationSource
-import com.ferelin.domain.sources.AuthenticationState
+import com.ferelin.domain.sources.AuthResponse
 import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -52,14 +52,14 @@ class AuthenticationSourceImpl @Inject constructor(
     override fun tryToLogIn(
         holderActivity: Activity,
         phone: String
-    ) = callbackFlow<AuthenticationState> {
+    ) = callbackFlow<AuthResponse> {
         Timber.d("try to log in (phone = $phone)")
 
-        trySend(AuthenticationState.PhoneProcessing)
+        trySend(AuthResponse.PhoneProcessing)
 
         // Empty phone number causes exception
         if (phone.isEmpty()) {
-            trySend(AuthenticationState.EmptyPhone)
+            trySend(AuthResponse.EmptyPhone)
             return@callbackFlow
         }
 
@@ -67,19 +67,19 @@ class AuthenticationSourceImpl @Inject constructor(
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 Timber.d("code sent")
                 mUserVerificationId = p0
-                trySend(AuthenticationState.CodeSent)
+                trySend(AuthResponse.CodeSent)
             }
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 Timber.d("on verification completed")
 
-                trySend(AuthenticationState.CodeProcessing)
+                trySend(AuthResponse.CodeProcessing)
 
                 mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     val response = if (task.isSuccessful) {
-                        AuthenticationState.Complete
+                        AuthResponse.Complete
                     } else {
-                        AuthenticationState.Error
+                        AuthResponse.Error
                     }
                     trySend(response)
                 }
@@ -89,9 +89,9 @@ class AuthenticationSourceImpl @Inject constructor(
                 Timber.d("on verification failed (exception = $p0)")
 
                 val response = if (p0 is FirebaseTooManyRequestsException) {
-                    AuthenticationState.TooManyRequests
+                    AuthResponse.TooManyRequests
                 } else {
-                    AuthenticationState.Error
+                    AuthResponse.Error
                 }
                 trySend(response)
             }

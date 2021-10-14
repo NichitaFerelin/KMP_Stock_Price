@@ -20,15 +20,12 @@ import com.ferelin.domain.entities.News
 import com.ferelin.domain.repositories.NewsRepo
 import com.ferelin.domain.sources.NewsSource
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-
-sealed class NewsState {
-    class Loaded(val news: List<News>) : NewsState()
-    object Error : NewsState()
-}
 
 class NewsInteractor @Inject constructor(
     private val mNewsRepo: NewsRepo,
@@ -40,16 +37,16 @@ class NewsInteractor @Inject constructor(
         return mNewsRepo.getNews(companyId)
     }
 
-    suspend fun loadCompanyNews(companyId: Int, companyTicker: String): NewsState {
+    suspend fun loadCompanyNews(companyId: Int, companyTicker: String): LoadState<List<News>> {
         return mNewsSource.loadCompanyNews(companyId, companyTicker)
-            .also { cacheIfLoaded(it, companyId) }
+            .also { cacheIfPrepared(it, companyId) }
     }
 
-    private fun cacheIfLoaded(responseState: NewsState, companyId: Int) {
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            if (responseState is NewsState.Loaded) {
+    private fun cacheIfPrepared(loadState: LoadState<List<News>>, companyId: Int) {
+        loadState.ifPrepared { preparedState ->
+            mExternalScope.launch(mDispatchersProvider.IO) {
                 mNewsRepo.clearNews(companyId)
-                mNewsRepo.cacheNews(responseState.news)
+                mNewsRepo.cacheNews(preparedState.data)
             }
         }
     }

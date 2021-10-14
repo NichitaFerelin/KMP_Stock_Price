@@ -18,6 +18,7 @@ package com.ferelin.stockprice.navigation
 
 import androidx.fragment.app.*
 import com.ferelin.feature_loading.view.LoadingFragment
+import com.ferelin.feature_login.view.LoginFragment
 import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
 import com.ferelin.feature_section_stocks.view.StocksPagerFragment
@@ -144,6 +145,20 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
             parentManager,
             SearchFragment.newInstance(params),
             ScreenResolver.ABOUT_PAGER_TAG,
+            true,
+            onTransaction
+        )
+    }
+
+    override fun fromSettingsToLogin(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        replaceMainContainerBy(
+            hostActivity.supportFragmentManager,
+            LoginFragment.newInstance(params),
+            ScreenResolver.LOGIN_TAG,
             true,
             onTransaction
         )

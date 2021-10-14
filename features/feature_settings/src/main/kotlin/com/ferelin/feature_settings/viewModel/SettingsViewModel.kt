@@ -20,13 +20,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.adapter.options.createOptionsAdapter
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.MenuOptionsProvider
 import com.ferelin.core.utils.OptionType
 import com.ferelin.core.viewData.OptionViewData
 import com.ferelin.domain.interactors.AuthenticationInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -68,8 +68,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun onOptionClick(optionViewData: OptionViewData) {
         when (optionViewData.type) {
-            OptionType.AUTH -> {
-            }
+            OptionType.AUTH -> mRouter.fromSettingsToLogin()
             OptionType.CLEAR_DATA -> {
             }
         }

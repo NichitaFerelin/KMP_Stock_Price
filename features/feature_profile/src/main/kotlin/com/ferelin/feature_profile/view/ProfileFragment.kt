@@ -26,12 +26,12 @@ import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.params.ProfileParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.domain.entities.Profile
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

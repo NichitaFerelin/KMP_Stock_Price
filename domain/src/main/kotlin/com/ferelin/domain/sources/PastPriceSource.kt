@@ -16,8 +16,9 @@
 
 package com.ferelin.domain.sources
 
-import com.ferelin.domain.interactors.PastPriceState
+import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.utils.AppDate
+import com.ferelin.shared.LoadState
 
 sealed class Resolutions(val key: String) {
     object Day : Resolutions("D")
@@ -33,5 +34,5 @@ interface PastPriceSource {
         from: Long = AppDate.toTimeMillisForRequest(System.currentTimeMillis() - AppDate.ONE_YEAR),
         to: Long = AppDate.toTimeMillisForRequest(System.currentTimeMillis()),
         resolution: String = Resolutions.Day.key
-    ): PastPriceState
+    ): LoadState<List<PastPrice>>
 }

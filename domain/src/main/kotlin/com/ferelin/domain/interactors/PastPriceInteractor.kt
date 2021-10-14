@@ -20,15 +20,14 @@ import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.repositories.PastPriceRepo
 import com.ferelin.domain.sources.PastPriceSource
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
-sealed class PastPriceState {
-    class Loaded(val pastPrices: List<PastPrice>) : PastPriceState()
-    object Error : PastPriceState()
-}
+typealias PastPrices = List<PastPrice>
 
 class PastPriceInteractor @Inject constructor(
     private val mPastPriceRepo: PastPriceRepo,
@@ -40,16 +39,16 @@ class PastPriceInteractor @Inject constructor(
         return mPastPriceRepo.getAllPastPrices(companyId)
     }
 
-    suspend fun loadPastPrices(companyId: Int, companyTicker: String): PastPriceState {
+    suspend fun loadPastPrices(companyId: Int, companyTicker: String): LoadState<PastPrices> {
         return mPastPriceSource.loadPastPrices(companyId, companyTicker)
             .also { cacheIfLoaded(it, companyId) }
     }
 
-    private fun cacheIfLoaded(responseState: PastPriceState, companyId: Int) {
-        if (responseState is PastPriceState.Loaded) {
+    private fun cacheIfLoaded(responseState: LoadState<PastPrices>, companyId: Int) {
+        responseState.ifPrepared { preparedState ->
             mExternalScope.launch(mDispatchersProvider.IO) {
                 mPastPriceRepo.clearPastPrices(companyId)
-                mPastPriceRepo.cacheAllPastPrices(responseState.pastPrices)
+                mPastPriceRepo.cacheAllPastPrices(preparedState.data)
             }
         }
     }

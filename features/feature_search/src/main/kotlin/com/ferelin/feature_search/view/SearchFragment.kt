@@ -29,7 +29,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.MotionManager
 import com.ferelin.core.utils.animManager.invalidate
@@ -41,6 +40,7 @@ import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecoration
 import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecorationLandscape
 import com.ferelin.feature_search.databinding.FragmentSearchBinding
 import com.ferelin.feature_search.viewModel.SearchViewModel
+import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
@@ -81,21 +81,12 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            scrimColor = Color.TRANSPARENT
-        }
-        exitTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 200L
-        }
-        reenterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 200L
-        }
+        sharedElementEnterTransition = MaterialContainerTransform()
+            .apply { scrimColor = Color.TRANSPARENT }
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+            .apply { duration = 200L }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+            .apply { duration = 200L }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

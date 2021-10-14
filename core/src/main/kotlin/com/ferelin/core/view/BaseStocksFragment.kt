@@ -30,7 +30,6 @@ import com.ferelin.core.adapter.base.scrollToTopWithCustomAnim
 import com.ferelin.core.adapter.stocks.StockItemAnimator
 import com.ferelin.core.adapter.stocks.StockItemDecoration
 import com.ferelin.core.adapter.stocks.StockViewHolder
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
@@ -39,6 +38,7 @@ import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.core.viewModel.StocksMode
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject

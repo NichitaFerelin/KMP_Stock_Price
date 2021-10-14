@@ -22,12 +22,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_settings.databinding.FragmentSettingsBinding
 import com.ferelin.feature_settings.viewModel.SettingsViewModel
+import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -47,12 +47,12 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-            duration = 200L
-        }
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = 200L
-        }
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+            .apply { duration = 200L }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+            .apply { duration = 200L }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+            .apply { duration = 200L }
     }
 
     override fun initUi() {

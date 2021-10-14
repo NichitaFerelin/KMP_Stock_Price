@@ -16,8 +16,9 @@
 
 package com.ferelin.domain.sources
 
-import com.ferelin.domain.interactors.NewsState
+import com.ferelin.domain.entities.News
 import com.ferelin.domain.utils.AppDate
+import com.ferelin.shared.LoadState
 
 interface NewsSource {
 
@@ -26,5 +27,5 @@ interface NewsSource {
         companyTicker: String,
         from: String = AppDate.getYearAgoDateForRequest(),
         to: String = AppDate.getCurrentDateForRequest()
-    ): NewsState
+    ): LoadState<List<News>>
 }

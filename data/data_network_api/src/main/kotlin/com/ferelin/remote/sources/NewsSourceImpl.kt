@@ -16,12 +16,13 @@
 
 package com.ferelin.remote.sources
 
-import com.ferelin.domain.interactors.NewsState
+import com.ferelin.domain.entities.News
 import com.ferelin.domain.sources.NewsSource
 import com.ferelin.remote.entities.NewsApi
 import com.ferelin.remote.mappers.NewsMapper
 import com.ferelin.remote.utils.withExceptionHandle
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class NewsSourceImpl @Inject constructor(
         companyTicker: String,
         from: String,
         to: String
-    ): NewsState = withContext(mDispatchersProvider.IO) {
+    ): LoadState<List<News>> = withContext(mDispatchersProvider.IO) {
         Timber.d("load company news (companyTicker: $companyTicker)")
         withExceptionHandle(
             request = {
@@ -50,15 +51,15 @@ class NewsSourceImpl @Inject constructor(
             },
             onSuccess = { responseBody ->
                 Timber.d("on success (responseSize = ${responseBody.size})")
-                NewsState.Loaded(
-                    news = responseBody.map {
+                LoadState.Prepared(
+                    data = responseBody.map {
                         mNewsMapper.map(it, companyId)
                     }
                 )
             },
             onFail = {
                 Timber.d("on fail (exception = $it)")
-                NewsState.Error
+                LoadState.Error()
             }
         )
     }

@@ -17,15 +17,15 @@
 package com.ferelin.feature_stocks_favourite.viewModel
 
 import com.ferelin.core.mapper.StockMapper
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.StockStyleProvider
-import com.ferelin.core.utils.ifPrepared
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

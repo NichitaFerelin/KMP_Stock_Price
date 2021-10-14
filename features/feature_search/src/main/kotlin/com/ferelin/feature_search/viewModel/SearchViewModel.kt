@@ -19,9 +19,7 @@ package com.ferelin.feature_search.viewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.mapper.StockMapper
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.StockStyleProvider
-import com.ferelin.core.utils.ifPrepared
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.domain.interactors.StockPriceInteractor
@@ -33,6 +31,8 @@ import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_search.viewData.SearchViewData
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -29,7 +29,6 @@ import com.ferelin.core.R
 import com.ferelin.core.adapter.base.ifLinear
 import com.ferelin.core.adapter.base.scrollToTopWithCustomAnim
 import com.ferelin.core.params.NewsParams
-import com.ferelin.core.utils.LoadState
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
@@ -37,6 +36,7 @@ import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_news.adapter.NewsItemDecoration
 import com.ferelin.feature_news.databinding.FragmentNewsBinding
 import com.ferelin.feature_news.viewModel.NewsViewModel
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -90,6 +90,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
                 is LoadState.None -> mViewModel.loadData()
                 is LoadState.Loading -> showProgressBar()
                 is LoadState.Prepared -> hideProgressBar()
+                else -> Unit
             }
         }
     }

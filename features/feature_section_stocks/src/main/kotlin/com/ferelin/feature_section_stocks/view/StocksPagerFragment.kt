@@ -81,15 +81,12 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialFadeThrough().apply {
-            duration = 300L
-        }
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-            duration = 200L
-        }
-        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = 200L
-        }
+        enterTransition = MaterialFadeThrough()
+            .apply { duration = 300L }
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+            .apply { duration = 200L }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+            .apply { duration = 200L }
     }
 
     override fun initUi() {

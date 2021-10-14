@@ -16,11 +16,12 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.StateFlow
 
 interface SearchRequestsInteractor {
 
-    fun observeSearchRequestsUpdates() : StateFlow<SearchRequestsState>
+    val searchRequestsState: StateFlow<LoadState<SearchRequests>>
 
     suspend fun cacheSearchRequest(searchRequest: String) : List<String>
 
