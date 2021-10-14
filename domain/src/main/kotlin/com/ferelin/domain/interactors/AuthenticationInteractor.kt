@@ -57,15 +57,15 @@ class AuthenticationInteractor @Inject constructor(
         }
     }
 
-    suspend fun getCodeRequiredSize(): Int {
+    fun getCodeRequiredSize(): Int {
         return mAuthenticationSource.getCodeRequiredSize()
     }
 
-    suspend fun getUserToken(): String? {
+    fun getUserToken(): String? {
         return mAuthenticationSource.getUserToken()
     }
 
-    suspend fun isUserAuthenticated(): Boolean {
+    fun isUserAuthenticated(): Boolean {
         return mAuthenticationSource.isUserAuthenticated()
     }
 

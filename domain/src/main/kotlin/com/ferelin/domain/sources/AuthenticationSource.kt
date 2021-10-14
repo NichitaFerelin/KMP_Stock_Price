@@ -33,11 +33,11 @@ interface AuthenticationSource {
 
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthenticationState>
 
-    suspend fun isUserAuthenticated() : Boolean
+    fun isUserAuthenticated() : Boolean
 
-    suspend fun getCodeRequiredSize() : Int
+    fun getCodeRequiredSize() : Int
 
-    suspend fun getUserToken() : String?
+    fun getUserToken() : String?
 
     suspend fun completeAuthentication(code: String)
 

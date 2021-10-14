@@ -125,20 +125,16 @@ class AuthenticationSourceImpl @Inject constructor(
             mFirebaseAuth.signOut()
         }
 
-    override suspend fun isUserAuthenticated(): Boolean =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("is user authenticated")
-            mFirebaseAuth.currentUser != null
-        }
+    override fun isUserAuthenticated(): Boolean {
+        return mFirebaseAuth.currentUser != null
+    }
 
-    override suspend fun getUserToken(): String? =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get user token")
-            mFirebaseAuth.uid
-        }
+    override fun getUserToken(): String? {
+        return mFirebaseAuth.uid
+    }
 
-    override suspend fun getCodeRequiredSize(): Int =
-        withContext(mDispatchersProvider.IO) {
-            sCodeRequiredSize
-        }
+    override fun getCodeRequiredSize(): Int {
+        return sCodeRequiredSize
+    }
 }
+
