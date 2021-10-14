@@ -62,6 +62,13 @@ class RouterImpl @Inject constructor(
         mScreenResolver.fromStocksPagerToSearch(mActivity, params, onTransaction)
     }
 
+    override fun fromStocksPagerToSettings(
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        mScreenResolver.fromStocksPagerToSettings(mActivity, params, onTransaction)
+    }
+
     override fun fromDefaultStocksToAbout(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?

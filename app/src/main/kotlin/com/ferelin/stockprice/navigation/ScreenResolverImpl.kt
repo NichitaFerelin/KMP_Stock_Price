@@ -21,6 +21,7 @@ import com.ferelin.feature_loading.view.LoadingFragment
 import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
 import com.ferelin.feature_section_stocks.view.StocksPagerFragment
+import com.ferelin.feature_settings.view.SettingsFragment
 import com.ferelin.navigation.ScreenResolver
 import com.ferelin.stockprice.R
 import javax.inject.Inject
@@ -63,6 +64,20 @@ class ScreenResolverImpl @Inject constructor() : ScreenResolver {
             hostActivity.supportFragmentManager,
             SearchFragment.newInstance(params),
             ScreenResolver.SEARCH_TAG,
+            true,
+            onTransaction
+        )
+    }
+
+    override fun fromStocksPagerToSettings(
+        hostActivity: FragmentActivity,
+        params: Any?,
+        onTransaction: ((FragmentTransaction) -> Unit)?
+    ) {
+        replaceMainContainerBy(
+            hostActivity.supportFragmentManager,
+            SettingsFragment.newInstance(params),
+            ScreenResolver.SETTINGS_TAG,
             true,
             onTransaction
         )

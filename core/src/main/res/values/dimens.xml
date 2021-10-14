@@ -47,4 +47,6 @@
 
     <dimen name="messageMarginTop">8dp</dimen>
     <dimen name="messageMarginStart">16dp</dimen>
+
+    <dimen name="optionBottomMargin">20dp</dimen>
 </resources>

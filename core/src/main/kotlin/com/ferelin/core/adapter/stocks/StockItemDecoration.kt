@@ -21,7 +21,6 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
-import com.ferelin.core.adapter.text.TEXT_VIEW_TYPE
 import com.ferelin.shared.NULL_INDEX
 
 class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
@@ -39,7 +38,6 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
         when {
             position == NULL_INDEX -> outRect.applyForStock()
             parent.adapter?.getItemViewType(position) == STOCK_VIEW_TYPE -> outRect.applyForStock()
-            parent.adapter?.getItemViewType(position) == TEXT_VIEW_TYPE -> outRect.applyForText()
         }
     }
 
@@ -47,11 +45,5 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
         bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
         left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
         right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
-    }
-
-    private fun Rect.applyForText() {
-        left = mContext.resources.getDimension(R.dimen.textDividerStartMargin).toInt()
-        top = mContext.resources.getDimension(R.dimen.textDividerTopMargin).toInt()
-        bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
     }
 }

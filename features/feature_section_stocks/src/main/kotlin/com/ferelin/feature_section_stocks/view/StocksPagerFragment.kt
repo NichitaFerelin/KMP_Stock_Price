@@ -39,8 +39,8 @@ import com.ferelin.feature_section_stocks.R
 import com.ferelin.feature_section_stocks.adapter.StocksPagerAdapter
 import com.ferelin.feature_section_stocks.databinding.FragmentStocksPagerBinding
 import com.ferelin.feature_section_stocks.viewModel.StocksPagerViewModel
-import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import javax.inject.Inject
 
 class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
@@ -84,7 +84,10 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         enterTransition = MaterialFadeThrough().apply {
             duration = 300L
         }
-        exitTransition = MaterialElevationScale(false).apply {
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = 200L
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration = 200L
         }
     }
@@ -107,6 +110,7 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
             textViewHintStocks.setOnClick(this@StocksPagerFragment::onHintStocksClick)
             textViewHintFavourite.setOnClick(this@StocksPagerFragment::onHistFavouritesClick)
             fab.setOnClick(this@StocksPagerFragment::onFabClick)
+            imageSettings.setOnClick(mViewModel::onSettingsClick)
 
             cardViewSearch.setOnClick {
                 mViewModel.onSearchCardClick(

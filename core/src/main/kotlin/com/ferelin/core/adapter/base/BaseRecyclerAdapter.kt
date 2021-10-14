@@ -18,7 +18,6 @@ package com.ferelin.core.adapter.base
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import timber.log.Timber
 import java.util.*
 
 class BaseRecyclerAdapter(
@@ -65,7 +64,7 @@ class BaseRecyclerAdapter(
         }
     }
 
-    fun getByPosition(position: Int) : ViewDataType {
+    fun getByPosition(position: Int): ViewDataType {
         return mCurrentList[position]
     }
 
@@ -78,7 +77,7 @@ class BaseRecyclerAdapter(
         notifyItemChanged(position, payloads)
     }
 
-    fun add( position: Int, viewDataType: ViewDataType) {
+    fun add(position: Int, viewDataType: ViewDataType) {
         mCurrentList.add(position, viewDataType)
         notifyItemInserted(position)
     }

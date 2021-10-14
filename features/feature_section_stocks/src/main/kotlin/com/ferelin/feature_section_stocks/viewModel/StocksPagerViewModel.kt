@@ -18,24 +18,22 @@ package com.ferelin.feature_section_stocks.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class StocksPagerViewModel @Inject constructor(
-    private val mRouter: Router,
-    private val mDispatchersProvider: DispatchersProvider
+    private val mRouter: Router
 ) : ViewModel() {
 
     var lastSelectedPage = 0
 
+    fun onSettingsClick() {
+        mRouter.fromStocksPagerToSettings()
+    }
+
     fun onSearchCardClick(sharedElement: View, name: String) {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mRouter.fromStocksPagerToSearch { fragmentTransaction ->
-                fragmentTransaction.addSharedElement(sharedElement, name)
-            }
+        mRouter.fromStocksPagerToSearch { fragmentTransaction ->
+            fragmentTransaction.addSharedElement(sharedElement, name)
         }
     }
 }

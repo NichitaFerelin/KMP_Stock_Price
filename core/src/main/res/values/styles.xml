@@ -257,5 +257,4 @@
         <item name="android:layout_height">match_parent</item>
         <item name="layout_scrollFlags">scroll|snap</item>
     </style>
-
 </resources>

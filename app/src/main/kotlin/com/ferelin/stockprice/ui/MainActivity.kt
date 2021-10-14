@@ -33,6 +33,7 @@ import com.ferelin.feature_profile.view.ProfileFragment
 import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_section_about.view.AboutPagerFragment
 import com.ferelin.feature_section_stocks.view.StocksPagerFragment
+import com.ferelin.feature_settings.view.SettingsFragment
 import com.ferelin.feature_stocks_default.view.StocksFragment
 import com.ferelin.feature_stocks_favourite.view.FavouriteFragment
 import com.ferelin.navigation.Router
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                         is IdeasFragment -> app.appComponent.inject(f)
                         is LoginFragment -> app.appComponent.inject(f)
                         is SearchFragment -> app.appComponent.inject(f)
+                        is SettingsFragment -> app.appComponent.inject(f)
                     }
                 }
             }

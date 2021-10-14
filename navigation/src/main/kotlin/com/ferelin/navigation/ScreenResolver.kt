@@ -28,6 +28,7 @@ interface ScreenResolver {
         const val DEFAULT_STOCKS_TAG = "stocks"
         const val FAVOURITE_STOCKS_TAG = "favourite-stocks"
         const val LOGIN_TAG = "login"
+        const val SETTINGS_TAG = "settings"
         const val LOADING_TAG = "loading"
     }
 
@@ -43,6 +44,12 @@ interface ScreenResolver {
     )
 
     fun fromStocksPagerToSearch(
+        hostActivity: FragmentActivity,
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
+
+    fun fromStocksPagerToSettings(
         hostActivity: FragmentActivity,
         params: Any? = null,
         onTransaction: ((FragmentTransaction) -> Unit)? = null

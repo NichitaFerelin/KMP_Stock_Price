@@ -51,6 +51,7 @@ dependencies {
     implementation(project(Projects.featureSectionStocks))
     implementation(project(Projects.featureStocksDefault))
     implementation(project(Projects.featureStocksFavourite))
+    implementation(project(Projects.featureSettings))
 
     // For DI
     implementation(Dependencies.roomRuntime)

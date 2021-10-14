@@ -39,6 +39,11 @@ interface Router {
         onTransaction: ((FragmentTransaction) -> Unit)? = null
     )
 
+    fun fromStocksPagerToSettings(
+        params: Any? = null,
+        onTransaction: ((FragmentTransaction) -> Unit)? = null
+    )
+
     fun fromDefaultStocksToAbout(
         params: Any? = null,
         onTransaction: ((FragmentTransaction) -> Unit)? = null

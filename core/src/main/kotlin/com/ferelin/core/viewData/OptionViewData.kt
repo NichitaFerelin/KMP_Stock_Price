@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.text
+package com.ferelin.core.viewData
 
-import com.ferelin.core.adapter.base.createRecyclerAdapter
-import com.ferelin.core.databinding.ItemTextBinding
-import com.ferelin.core.viewData.TextViewData
+import com.ferelin.core.adapter.base.ViewDataType
+import com.ferelin.core.adapter.options.OPTION_VIEW_TYPE
+import com.ferelin.core.utils.OptionType
 
-const val TEXT_VIEW_TYPE = 0
+data class OptionViewData(
+    val id: Long,
+    val type: OptionType,
+    val title: String,
+    val source: String,
+    val iconRes: Int
+) : ViewDataType(OPTION_VIEW_TYPE) {
 
-fun createTextAdapter() = createRecyclerAdapter(
-    TEXT_VIEW_TYPE,
-    ItemTextBinding::inflate
-) { viewBinding, item, _, _ ->
-
-    item as TextViewData
-    viewBinding.text.text = item.text
+    override fun getUniqueId(): Long {
+        return id
+    }
 }
