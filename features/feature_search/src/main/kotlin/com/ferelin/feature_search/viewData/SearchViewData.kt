@@ -20,10 +20,11 @@ import com.ferelin.core.adapter.base.ViewDataType
 import com.ferelin.feature_search.adapter.TICKER_VIEW_TYPE
 
 data class SearchViewData(
+    val id: Int,
     val text: String
 ) : ViewDataType(TICKER_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {
-        return text.hashCode().toLong()
+        return id.toLong()
     }
 }

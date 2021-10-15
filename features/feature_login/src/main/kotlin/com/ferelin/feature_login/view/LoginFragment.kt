@@ -17,6 +17,7 @@
 package com.ferelin.feature_login.view
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -60,6 +61,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             .apply { duration = 200L }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
             .apply { duration = 200L }
+    }
+
+    override fun initUi() {
+        mViewBinding.editTextCode.filters += InputFilter.LengthFilter(mViewModel.requiredCodeSize)
     }
 
     override fun initUx() {

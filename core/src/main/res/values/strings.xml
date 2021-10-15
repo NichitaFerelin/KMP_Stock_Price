@@ -108,5 +108,9 @@
     <string name="messageNetworkNotAvailable">Network is not available</string>
     <string name="messageNetworkAvailable">Network available</string>
 
+    <string name="messageLogOutComplete">Log out complete</string>
+    <string name="messageDataCleared">Data has been cleared</string>
+    <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
+
 
 </resources>

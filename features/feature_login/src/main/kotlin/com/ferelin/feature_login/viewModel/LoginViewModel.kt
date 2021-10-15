@@ -50,6 +50,8 @@ class LoginViewModel @Inject constructor(
 
     private var mAuthJob: Job? = null
 
+    val requiredCodeSize = mAuthenticationInteractor.getCodeRequiredSize()
+
     init {
         mNetworkResolver.registerNetworkListener(this)
     }

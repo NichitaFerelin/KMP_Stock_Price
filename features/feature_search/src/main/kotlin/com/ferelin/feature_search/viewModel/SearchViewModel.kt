@@ -19,9 +19,11 @@ package com.ferelin.feature_search.viewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
@@ -65,6 +67,24 @@ class SearchViewModel @Inject constructor(
         const val sMaxRequestResults = 5
     }
 
+    val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
+            by lazy(LazyThreadSafetyMode.NONE) {
+                mSearchRequestsInteractor
+                    .searchRequestsState
+                    .onEach {
+                        if (it is LoadState.Prepared) {
+                            onSearchRequestsChanged(it.data)
+                        }
+                    }
+                    .stateIn(
+                        viewModelScope,
+                        SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT),
+                        LoadState.None()
+                    )
+            }
+
+    private val mPopularSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
+
     private val mOnNewSearchText = MutableSharedFlow<String>()
     val searchTextChanged: SharedFlow<String>
         get() = mOnNewSearchText.asSharedFlow()
@@ -72,12 +92,6 @@ class SearchViewModel @Inject constructor(
     private val mSearchResultsExists = MutableStateFlow(false)
     val searchResultsExists: StateFlow<Boolean>
         get() = mSearchResultsExists.asStateFlow()
-
-    private val mSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
-    val searchRequestsState: StateFlow<SearchLoadState>
-        get() = mSearchRequestsState.asStateFlow()
-
-    private val mPopularSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
 
     private var mSearchTaskTimer: Timer? = null
     private var mLastSearchRequest = ""
@@ -98,7 +112,6 @@ class SearchViewModel @Inject constructor(
 
     fun loadSearchRequests() {
         viewModelScope.launch(mDispatchesProvider.IO) {
-            mSearchRequestsState.value = LoadState.Loading()
             mPopularSearchRequestsState.value = LoadState.Loading()
 
             launch {
@@ -136,12 +149,12 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun initSearch(searchText: String) {
-        val searchResults = if (searchText.isEmpty()) {
+    private suspend fun initSearch(text: String) {
+        val searchResults = if (text.isEmpty()) {
             emptyList()
         } else {
-            search(searchText).also { searchResults ->
-                onNewSearchRequest(searchText, searchResults.size)
+            search(text).also { searchResults ->
+                onNewSearchRequest(text, searchResults.size)
             }
         }
 
@@ -151,7 +164,7 @@ class SearchViewModel @Inject constructor(
             stocksAdapter.setData(searchResults)
         }
 
-        mLastSearchRequest = searchText
+        mLastSearchRequest = text
     }
 
     private fun search(searchText: String): List<StockViewData> {
@@ -162,16 +175,15 @@ class SearchViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    private suspend fun onSearchRequestsChanged(searchRequests: List<String>) {
+    private suspend fun onSearchRequestsChanged(searchRequests: List<SearchRequest>) {
         val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
-        mSearchRequestsState.value = LoadState.Prepared(mappedRequests)
 
         withContext(mDispatchesProvider.Main) {
             searchRequestsAdapter.setData(mappedRequests)
         }
     }
 
-    private suspend fun onPopularSearchRequestsChanged(searchRequests: List<String>) {
+    private suspend fun onPopularSearchRequestsChanged(searchRequests: List<SearchRequest>) {
         val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
         mPopularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
 
@@ -180,10 +192,13 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onNewSearchRequest(searchText: String, results: Int) {
+    private suspend fun onNewSearchRequest(text: String, results: Int) {
         if (results in 1..sMaxRequestResults) {
-            val updatedSearchRequests = mSearchRequestsInteractor.cacheSearchRequest(searchText)
-            onSearchRequestsChanged(updatedSearchRequests)
+            val searchRequest = SearchRequest(
+                searchRequestsState.value.ifPrepared { it.data.size } ?: 0,
+                text
+            )
+            mSearchRequestsInteractor.cacheSearchRequest(searchRequest)
         }
     }
 

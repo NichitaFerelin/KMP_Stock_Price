@@ -16,13 +16,13 @@
 
 package com.ferelin.feature_search.mapper
 
-import android.widget.SearchView
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.feature_search.viewData.SearchViewData
 import javax.inject.Inject
 
 class SearchRequestMapper @Inject constructor() {
 
-    fun map(request: String) : SearchViewData {
-        return SearchViewData(request)
+    fun map(searchRequest: SearchRequest): SearchViewData {
+        return SearchViewData(searchRequest.id, searchRequest.request)
     }
 }

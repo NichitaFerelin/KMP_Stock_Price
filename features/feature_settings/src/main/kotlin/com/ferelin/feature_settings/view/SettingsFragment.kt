@@ -25,12 +25,15 @@ import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
+import com.ferelin.feature_settings.R
 import com.ferelin.feature_settings.databinding.FragmentSettingsBinding
+import com.ferelin.feature_settings.viewModel.Event
 import com.ferelin.feature_settings.viewModel.SettingsViewModel
 import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
@@ -68,7 +71,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
-            observeMenuOptions()
+            launch { observeMenuOptions() }
+            launch { observeMessageEvent() }
         }
     }
 
@@ -76,6 +80,24 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         mViewModel.optionsLoadState.collect { loadState ->
             if (loadState is LoadState.None) {
                 mViewModel.loadOptions()
+            }
+        }
+    }
+
+    private suspend fun observeMessageEvent() {
+        mViewModel.messageEvent.collect { event ->
+            withContext(mDispatchersProvider.Main) {
+                when (event) {
+                    Event.LOG_OUT_COMPLETE -> {
+                        showTempSnackbar(getString(R.string.messageLogOutComplete))
+                    }
+                    Event.DATA_CLEARED_NO_NETWORK -> {
+                        showTempSnackbar(getString(R.string.messageDataClearedNoNetwork))
+                    }
+                    Event.DATA_CLEARED -> {
+                        showTempSnackbar(getString(R.string.messageDataCleared))
+                    }
+                }
             }
         }
     }

@@ -90,7 +90,7 @@ class BaseRecyclerAdapter(
     fun setData(data: List<ViewDataType>) {
         if (mCurrentList.isNotEmpty()) {
             val itemCount = mCurrentList.size
-            mCurrentList = emptyList()
+            mCurrentList = mutableListOf()
             notifyItemRangeRemoved(0, itemCount)
         }
 
