@@ -26,7 +26,8 @@ import com.ferelin.local.entities.*
         StockPriceDBO::class,
         NewsDBO::class,
         PastPriceDBO::class,
-        ProfileDBO::class
+        ProfileDBO::class,
+        SearchRequestDBO::class
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -40,6 +41,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pastPriceDao(): PastPriceDao
 
     abstract fun profileDao(): ProfileDao
+
+    abstract fun searchRequestsDao() : SearchRequestsDao
 
     companion object {
         const val DB_NAME = "stock.price.db"

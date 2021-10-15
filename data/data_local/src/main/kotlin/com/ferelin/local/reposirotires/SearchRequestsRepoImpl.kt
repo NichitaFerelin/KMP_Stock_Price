@@ -16,57 +16,45 @@
 
 package com.ferelin.local.reposirotires
 
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
+import com.ferelin.local.database.SearchRequestsDao
+import com.ferelin.local.mappers.SearchRequestMapper
 import com.ferelin.local.utils.PopularRequestsSource
-import com.ferelin.local.utils.PreferencesProvider
 import com.ferelin.shared.DispatchersProvider
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRepoImpl @Inject constructor(
-    private val mPreferencesProvider: PreferencesProvider,
+    private val mSearchRequestsDao: SearchRequestsDao,
+    private val mSearchRequestMapper: SearchRequestMapper,
     private val mDispatchersProvider: DispatchersProvider
 ) : SearchRequestsLocalRepo {
 
-    private companion object {
-        val sSearchRequestsKey = stringSetPreferencesKey("search-requests")
-    }
-
-    override suspend fun cacheSearchRequest(searchRequest: String): Unit =
+    override suspend fun cacheSearchRequest(searchRequest: SearchRequest): Unit =
         withContext(mDispatchersProvider.IO) {
             Timber.d("cache search request (search request = $searchRequest)")
-            mPreferencesProvider.dataStore.edit {
-                val source = it[sSearchRequestsKey]?.toMutableSet() ?: mutableSetOf()
-                source.add(searchRequest)
-                it[sSearchRequestsKey] = source
-            }
+            val mappedRequest = mSearchRequestMapper.map(searchRequest)
+            mSearchRequestsDao.insert(mappedRequest)
         }
 
-    override suspend fun eraseSearchRequest(searchRequest: String): Unit =
+    override suspend fun eraseSearchRequest(searchRequest: SearchRequest): Unit =
         withContext(mDispatchersProvider.IO) {
             Timber.d("erase search request (searchRequest = $searchRequest)")
-            mPreferencesProvider.dataStore.edit {
-                it[sSearchRequestsKey]?.toMutableSet()?.let { sourceRequests ->
-                    sourceRequests.remove(searchRequest)
-                    it[sSearchRequestsKey] = sourceRequests
-                }
-            }
+            val mappedRequest = mSearchRequestMapper.map(searchRequest)
+            mSearchRequestsDao.remove(mappedRequest)
         }
 
-    override suspend fun getSearchRequests(): List<String> =
+    override suspend fun getSearchRequests(): List<SearchRequest> =
         withContext(mDispatchersProvider.IO) {
             Timber.d("get search requests")
-            return@withContext mPreferencesProvider.dataStore.data.map {
-                it[sSearchRequestsKey]?.toList()
-            }.firstOrNull() ?: emptyList()
+            return@withContext mSearchRequestsDao
+                .getAll()
+                .map(mSearchRequestMapper::map)
         }
 
-    override suspend fun getPopularSearchRequests(): List<String> {
+    override suspend fun getPopularSearchRequests(): List<SearchRequest> {
         Timber.d("get popular search requests")
         return PopularRequestsSource.popularSearchRequests
     }
@@ -74,8 +62,6 @@ class SearchRequestsRepoImpl @Inject constructor(
     override suspend fun clearSearchRequests(): Unit =
         withContext(mDispatchersProvider.IO) {
             Timber.d("clear search requests")
-            mPreferencesProvider.dataStore.edit {
-                it[sSearchRequestsKey] = emptySet()
-            }
+            mSearchRequestsDao.clearSearchRequests()
         }
 }

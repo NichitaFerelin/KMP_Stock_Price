@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.searchRequests
+package com.ferelin.local.database
 
-import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.shared.LoadState
+import androidx.room.*
+import com.ferelin.local.entities.SearchRequestDBO
 
-interface SearchRequestsRemoteRepo {
+@Dao
+interface SearchRequestsDao {
 
-    suspend fun cacheSearchRequest(userToken: String, searchRequest: SearchRequest)
+    @Query("SELECT * FROM `search_requests`")
+    suspend fun getAll() : List<SearchRequestDBO>
 
-    suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(searchRequestDBO: SearchRequestDBO)
 
-    suspend fun loadSearchRequests(userToken: String): LoadState<List<SearchRequest>>
+    @Delete
+    suspend fun remove(searchRequestDBO: SearchRequestDBO)
 
-    suspend fun clearSearchRequests(userToken: String)
+    @Query("DELETE FROM `search_requests`")
+    fun clearSearchRequests()
 }

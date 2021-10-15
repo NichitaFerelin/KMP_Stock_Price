@@ -16,15 +16,17 @@
 
 package com.ferelin.domain.repositories.searchRequests
 
+import com.ferelin.domain.entities.SearchRequest
+
 interface SearchRequestsLocalRepo {
 
-    suspend fun cacheSearchRequest(searchRequest: String)
+    suspend fun cacheSearchRequest(searchRequest: SearchRequest)
 
-    suspend fun eraseSearchRequest(searchRequest: String)
+    suspend fun eraseSearchRequest(searchRequest: SearchRequest)
 
-    suspend fun getSearchRequests() : List<String>
+    suspend fun getSearchRequests() : List<SearchRequest>
 
-    suspend fun getPopularSearchRequests() : List<String>
+    suspend fun getPopularSearchRequests() : List<SearchRequest>
 
     suspend fun clearSearchRequests()
 }

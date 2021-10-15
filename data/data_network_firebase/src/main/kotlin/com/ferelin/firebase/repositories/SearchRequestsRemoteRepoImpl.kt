@@ -16,9 +16,10 @@
 
 package com.ferelin.firebase.repositories
 
-import com.ferelin.domain.repositories.searchRequests.SearchRequestsLoadState
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -35,41 +36,34 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
 
     override suspend fun cacheSearchRequest(
         userToken: String,
-        searchRequest: String
+        searchRequest: SearchRequest
     ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d(
-            "cache search request (userToken = $userToken, " +
-                    "searchRequest = $searchRequest)"
-        )
+        Timber.d("cache search request ($searchRequest)")
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
-            .child(searchRequest)
-            .push()
+            .child(searchRequest.id.toString())
+            .setValue(searchRequest.request)
     }
 
     override suspend fun eraseSearchRequest(
         userToken: String,
-        searchRequest: String
+        searchRequest: SearchRequest
     ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d(
-            "erase search request (userToken = $userToken, " +
-                    "searchRequest = $searchRequest"
-        )
+        Timber.d("erase search request ($searchRequest)")
 
         mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
-            .child(searchRequest)
+            .child(searchRequest.id.toString())
             .removeValue()
     }
 
     override suspend fun loadSearchRequests(
         userToken: String
-    ): SearchRequestsLoadState = withContext(mDispatchersProvider.IO) {
+    ): LoadState<List<SearchRequest>> = withContext(mDispatchersProvider.IO) {
         Timber.d("load search requests (userToken = $userToken")
-
 
         val resultSnapshot = mFirebaseReference
             .child(sSearchesHistoryRef)
@@ -78,16 +72,26 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
 
         return@withContext if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
             val searchRequestsSnapshot = resultSnapshot.result!!
-            val searchRequests = mutableListOf<String>()
+            val searchRequests = mutableListOf<SearchRequest>()
 
             for (searchSnapshot in searchRequestsSnapshot.children) {
+                val requestId = searchSnapshot.key?.toInt() ?: 0
                 val request = searchSnapshot.value?.toString() ?: ""
-                searchRequests.add(request)
+                searchRequests.add(
+                    SearchRequest(requestId, request)
+                )
             }
 
-            SearchRequestsLoadState.Loaded(searchRequests)
+            LoadState.Prepared(searchRequests)
         } else {
-            SearchRequestsLoadState.Error
+            LoadState.Error()
         }
+    }
+
+    override suspend fun clearSearchRequests(userToken: String) {
+        mFirebaseReference
+            .child(sSearchesHistoryRef)
+            .child(userToken)
+            .removeValue()
     }
 }

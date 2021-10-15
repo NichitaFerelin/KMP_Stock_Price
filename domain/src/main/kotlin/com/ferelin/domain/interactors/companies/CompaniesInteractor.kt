@@ -31,11 +31,13 @@ interface CompaniesInteractor : NetworkListener {
 
     suspend fun addCompanyToFavourites(companyId: Int)
 
-    suspend fun removeCompanyFromFavourites(companyId: Int)
+    suspend fun removeCompanyFromFavourites(companyId: Int, includingRemoteSource: Boolean = true)
 
     suspend fun addCompanyToFavourites(company: Company)
 
-    suspend fun removeCompanyFromFavourites(company: Company)
+    suspend fun removeCompanyFromFavourites(company: Company, includingRemoteSource: Boolean = true)
+
+    suspend fun clearUserData()
 
     fun observeFavouriteCompaniesUpdates(): SharedFlow<CompanyWithStockPrice>
 }

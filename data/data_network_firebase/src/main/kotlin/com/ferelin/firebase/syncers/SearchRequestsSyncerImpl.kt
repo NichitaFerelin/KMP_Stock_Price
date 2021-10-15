@@ -16,11 +16,12 @@
 
 package com.ferelin.firebase.syncers
 
-import com.ferelin.domain.repositories.searchRequests.SearchRequestsLoadState
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -36,8 +37,8 @@ class SearchRequestsSyncerImpl @Inject constructor(
 
     override suspend fun initDataSync(
         userToken: String,
-        sourceRequests: List<String>
-    ): List<String> {
+        sourceRequests: List<SearchRequest>
+    ): List<SearchRequest> {
         Timber.d(
             "init data sync (isDataSynchronized = $mIsDataSynchronized, " +
                     "userToken = $userToken, sourceRequestsSize = ${sourceRequests.size}"
@@ -51,14 +52,12 @@ class SearchRequestsSyncerImpl @Inject constructor(
             mSearchRequestsRemoteRepo.loadSearchRequests(userToken)
         }
 
-        return if (remoteRequestsState is SearchRequestsLoadState.Loaded) {
-            val remoteRequests = remoteRequestsState.searchRequests
+        return remoteRequestsState.ifPrepared { preparedState ->
+            val remoteRequests = preparedState.data
             syncCloudDb(userToken, sourceRequests, remoteRequests)
 
             remoteRequests.itemsNotIn(sourceRequests)
-        } else {
-            emptyList()
-        }
+        } ?: emptyList()
     }
 
     override fun invalidate() {
@@ -68,8 +67,8 @@ class SearchRequestsSyncerImpl @Inject constructor(
 
     private suspend fun syncCloudDb(
         userToken: String,
-        sourceRequests: List<String>,
-        remoteRequests: List<String>
+        sourceRequests: List<SearchRequest>,
+        remoteRequests: List<SearchRequest>
     ): Unit = withContext(mDispatchersProvider.IO) {
         Timber.d(
             "sync cloud db (sources = ${sourceRequests.size}, " +

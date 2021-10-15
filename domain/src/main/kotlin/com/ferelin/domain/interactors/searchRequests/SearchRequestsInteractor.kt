@@ -16,16 +16,20 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 
 interface SearchRequestsInteractor {
 
-    val searchRequestsState: StateFlow<LoadState<SearchRequests>>
+    val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
 
-    suspend fun cacheSearchRequest(searchRequest: String) : List<String>
+    suspend fun cacheSearchRequest(searchRequest: SearchRequest)
 
-    suspend fun getSearchRequests() : List<String>
+    suspend fun getSearchRequests() : List<SearchRequest>
 
-    suspend fun getPopularSearchRequests() : List<String>
+    suspend fun getPopularSearchRequests() : List<SearchRequest>
+
+    suspend fun clearUserData()
 }

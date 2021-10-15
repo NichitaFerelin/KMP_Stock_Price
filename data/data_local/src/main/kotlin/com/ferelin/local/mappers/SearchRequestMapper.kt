@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.searchRequests
+package com.ferelin.local.mappers
 
 import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.shared.LoadState
+import com.ferelin.local.entities.SearchRequestDBO
+import javax.inject.Inject
 
-interface SearchRequestsRemoteRepo {
+class SearchRequestMapper @Inject constructor() {
 
-    suspend fun cacheSearchRequest(userToken: String, searchRequest: SearchRequest)
+    fun map(searchRequestDBO: SearchRequestDBO): SearchRequest {
+        return SearchRequest(
+            id = searchRequestDBO.id,
+            request = searchRequestDBO.request
+        )
+    }
 
-    suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
-
-    suspend fun loadSearchRequests(userToken: String): LoadState<List<SearchRequest>>
-
-    suspend fun clearSearchRequests(userToken: String)
+    fun map(searchRequest: SearchRequest): SearchRequestDBO {
+        return SearchRequestDBO(
+            id = searchRequest.id,
+            request = searchRequest.request
+        )
+    }
 }

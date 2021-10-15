@@ -29,4 +29,6 @@ interface CompaniesRemoteRepo {
     suspend fun eraseCompanyIdFromFavourites(userToken: String, companyId: Int)
 
     suspend fun getFavouriteCompaniesIds(userToken: String): CompaniesLoadState
+
+    suspend fun clearCompanies(userToken: String)
 }

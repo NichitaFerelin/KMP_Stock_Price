@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.searchRequests
+package com.ferelin.local.entities
 
-import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.shared.LoadState
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-interface SearchRequestsRemoteRepo {
-
-    suspend fun cacheSearchRequest(userToken: String, searchRequest: SearchRequest)
-
-    suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
-
-    suspend fun loadSearchRequests(userToken: String): LoadState<List<SearchRequest>>
-
-    suspend fun clearSearchRequests(userToken: String)
-}
+@Entity(tableName = "search_requests")
+data class SearchRequestDBO(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val request: String
+)

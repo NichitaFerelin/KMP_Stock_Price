@@ -16,6 +16,7 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
+import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
@@ -31,7 +32,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-typealias SearchRequests = List<String>
+typealias SearchRequestsState = LoadState<List<SearchRequest>>
 
 @Singleton
 class SearchRequestsInteractorImpl @Inject constructor(
@@ -43,17 +44,17 @@ class SearchRequestsInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
-    private val mSearchRequestsState = MutableStateFlow<LoadState<SearchRequests>>(LoadState.None())
-    override val searchRequestsState: StateFlow<LoadState<SearchRequests>>
+    private val mSearchRequestsState = MutableStateFlow<SearchRequestsState>(LoadState.None())
+    override val searchRequestsState: StateFlow<SearchRequestsState>
         get() = mSearchRequestsState.asStateFlow()
 
-    private var mPopularRequestsState: LoadState<SearchRequests> = LoadState.None()
+    private var mPopularRequestsState: SearchRequestsState = LoadState.None()
 
     private companion object {
         const val sCachedRequestsLimit = 30
     }
 
-    override suspend fun getSearchRequests(): List<String> {
+    override suspend fun getSearchRequests(): List<SearchRequest> {
         mSearchRequestsState.value.ifPrepared { preparedState ->
             return preparedState.data
         }
@@ -67,7 +68,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
             }
     }
 
-    override suspend fun getPopularSearchRequests(): List<String> {
+    override suspend fun getPopularSearchRequests(): List<SearchRequest> {
         mSearchRequestsState.value.ifPrepared { preparedState ->
             return preparedState.data
         }
@@ -78,10 +79,10 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { mPopularRequestsState = LoadState.Prepared(it) }
     }
 
-    override suspend fun cacheSearchRequest(searchRequest: String): List<String> =
+    override suspend fun cacheSearchRequest(searchRequest: SearchRequest): Unit =
         withContext(mDispatchersProvider.IO) {
 
-            var updatedSearchRequests = mutableListOf<String>()
+            var updatedSearchRequests: MutableList<SearchRequest>
 
             mExternalScope.launch(mDispatchersProvider.IO) {
                 mSearchRequestsState.value.ifPrepared { preparedState ->
@@ -99,12 +100,10 @@ class SearchRequestsInteractorImpl @Inject constructor(
                 }
 
                 cache(searchRequest)
-            }.join()
-
-            updatedSearchRequests.toList()
+            }
         }
 
-    private suspend fun reduceRequestsToLimit(requests: MutableList<String>) =
+    private suspend fun reduceRequestsToLimit(requests: MutableList<SearchRequest>) =
         withContext(mDispatchersProvider.IO) {
 
             while (requests.size > sCachedRequestsLimit) {
@@ -115,18 +114,18 @@ class SearchRequestsInteractorImpl @Inject constructor(
         }
 
     private suspend fun removeDuplicates(
-        sourceRequests: List<String>,
-        newSearchRequest: String
-    ): MutableList<String> = withContext(mDispatchersProvider.IO) {
+        sourceRequests: List<SearchRequest>,
+        newSearchRequest: SearchRequest
+    ): MutableList<SearchRequest> = withContext(mDispatchersProvider.IO) {
 
         val noDuplicatesRequests = sourceRequests.toMutableList()
-        val newRequestLower = newSearchRequest.lowercase()
+        val newRequestLower = newSearchRequest.request.lowercase()
 
         noDuplicatesRequests
             .toList()
             .asSequence()
             .filter { previousRequest ->
-                newRequestLower.contains(previousRequest.lowercase())
+                newRequestLower.contains(previousRequest.request.lowercase())
             }
             .onEachIndexed { index, requestToRemove ->
                 launch { erase(requestToRemove) }
@@ -143,11 +142,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     override suspend fun onLogOut() {
-        mSearchRequestsState.value = LoadState.Prepared(emptyList())
-
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            mSearchRequestsLocalRepo.clearSearchRequests()
-        }
+        invalidateUserData(false)
     }
 
     override suspend fun onNetworkAvailable() {
@@ -158,7 +153,25 @@ class SearchRequestsInteractorImpl @Inject constructor(
         mSearchRequestsSyncer.invalidate()
     }
 
-    private suspend fun cache(searchRequest: String) {
+    override suspend fun clearUserData() {
+        invalidateUserData(true)
+    }
+
+    private fun invalidateUserData(includingRemoteSource: Boolean) {
+        mExternalScope.launch(mDispatchersProvider.IO) {
+            mSearchRequestsLocalRepo.clearSearchRequests()
+
+            if (includingRemoteSource) {
+                mAuthenticationSource.getUserToken()?.let { userToken ->
+                    mSearchRequestsRemoteRepo.clearSearchRequests(userToken)
+                }
+            }
+
+            mSearchRequestsState.value = LoadState.Prepared(emptyList())
+        }
+    }
+
+    private suspend fun cache(searchRequest: SearchRequest) {
         mSearchRequestsLocalRepo.cacheSearchRequest(searchRequest)
 
         mAuthenticationSource.getUserToken()?.let { userToken ->
@@ -166,7 +179,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun erase(searchRequest: String) {
+    private suspend fun erase(searchRequest: SearchRequest) {
         mSearchRequestsLocalRepo.eraseSearchRequest(searchRequest)
 
         mAuthenticationSource.getUserToken()?.let { userToken ->

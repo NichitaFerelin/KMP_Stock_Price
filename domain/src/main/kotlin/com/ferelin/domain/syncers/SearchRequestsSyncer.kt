@@ -16,9 +16,14 @@
 
 package com.ferelin.domain.syncers
 
+import com.ferelin.domain.entities.SearchRequest
+
 interface SearchRequestsSyncer {
 
-    suspend fun initDataSync(userToken: String, sourceRequests: List<String>): List<String>
+    suspend fun initDataSync(
+        userToken: String,
+        sourceRequests: List<SearchRequest>
+    ): List<SearchRequest>
 
     fun invalidate()
 }

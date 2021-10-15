@@ -84,4 +84,11 @@ class CompaniesRemoteRepoImpl @Inject constructor(
             CompaniesLoadState.Error
         }
     }
+
+    override suspend fun clearCompanies(userToken: String) {
+        mFirebaseReference
+            .child(sFavouriteCompaniesRef)
+            .child(userToken)
+            .removeValue()
+    }
 }

@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.repositories.searchRequests
+package com.ferelin.domain.entities
 
-import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.shared.LoadState
-
-interface SearchRequestsRemoteRepo {
-
-    suspend fun cacheSearchRequest(userToken: String, searchRequest: SearchRequest)
-
-    suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
-
-    suspend fun loadSearchRequests(userToken: String): LoadState<List<SearchRequest>>
-
-    suspend fun clearSearchRequests(userToken: String)
-}
+data class SearchRequest(
+    val id: Int,
+    val request: String
+)
