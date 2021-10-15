@@ -18,6 +18,7 @@ package com.ferelin.remote.mappers
 
 import com.ferelin.domain.entities.News
 import com.ferelin.remote.entities.NewsResponse
+import com.ferelin.remote.utils.toBasicMillisTime
 import com.ferelin.remote.utils.toDateStr
 import javax.inject.Inject
 
@@ -28,10 +29,10 @@ class NewsMapper @Inject constructor() {
             relationId = companyId,
             cloudId = response.id.toString().substringBefore('.'),
             headline = response.headline,
-            date = response.dateTime.toLong().toDateStr(),
+            date = response.dateTime.toLong().toBasicMillisTime().toDateStr(),
             previewImageUrl = response.previewImageUrl,
             source = response.source,
-            sourceUrl = response.source,
+            sourceUrl = response.sourceUrl,
             summary = response.summary
         )
     }
