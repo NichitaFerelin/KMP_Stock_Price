@@ -19,6 +19,10 @@ package com.ferelin.remote.entities
 import com.squareup.moshi.Json
 
 data class LivePricePojo(
+    @Json(name = "data") val livePrices: List<LivePrice>
+)
+
+data class LivePrice(
     @Json(name = "s") val companyTicker: String,
     @Json(name = "p") val lastPrice: Double,
     @Json(name = "v") val volume: Double

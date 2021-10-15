@@ -17,6 +17,7 @@
 package com.ferelin.remote.mappers
 
 import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.remote.entities.LivePrice
 import com.ferelin.remote.entities.LivePricePojo
 import com.ferelin.remote.utils.buildProfitString
 import com.ferelin.shared.toStrPrice
@@ -24,7 +25,7 @@ import javax.inject.Inject
 
 class LivePriceMapper @Inject constructor() {
 
-    fun map(pojo: LivePricePojo?): LiveTimePrice? {
+    fun map(pojo: LivePrice?): LiveTimePrice? {
         return pojo?.let {
             LiveTimePrice(
                 companyTicker = pojo.companyTicker,

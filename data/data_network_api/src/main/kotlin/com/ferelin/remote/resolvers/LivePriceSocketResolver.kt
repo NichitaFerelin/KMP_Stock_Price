@@ -16,6 +16,7 @@
 
 package com.ferelin.remote.resolvers
 
+import com.ferelin.remote.entities.LivePrice
 import com.ferelin.remote.entities.LivePricePojo
 import com.ferelin.remote.utils.AppWebSocketListener
 import com.ferelin.shared.DispatchersProvider
@@ -66,9 +67,8 @@ class LivePriceSocketResolver @Inject constructor(
             mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
         }
 
-    fun openConnection(): Flow<LivePricePojo?> = callbackFlow {
+    fun openConnection(): Flow<LivePrice?> = callbackFlow {
         Timber.d("open connection")
-
         val request = Request
             .Builder()
             .url("$mBaseUrl$mToken")
@@ -81,7 +81,7 @@ class LivePriceSocketResolver @Inject constructor(
             listener = AppWebSocketListener { response ->
                 Timber.d("on response (response = $response)")
                 val converted = mLivePriceJsonResolver.fromJson(response)
-                this.trySend(converted).isSuccess
+                this.trySend(converted)
             })
             .also { webSocket ->
                 while (mMessagesQueue.isNotEmpty()) {

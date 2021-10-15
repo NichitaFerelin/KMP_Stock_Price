@@ -19,6 +19,7 @@ package com.ferelin.remote.utils
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import timber.log.Timber
 
 class AppWebSocketListener(
     private val mOnResponse: (response: String) -> Unit
@@ -26,19 +27,19 @@ class AppWebSocketListener(
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
+        Timber.d("on message $text")
         mOnResponse(text)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
+        Timber.d("on failure $t")
         mOnResponse("")
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
-        webSocket.apply {
-            close(0, null)
-            cancel()
-        }
+        Timber.d("on closing")
+        webSocket.cancel()
     }
 }

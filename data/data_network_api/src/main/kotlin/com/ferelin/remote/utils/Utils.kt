@@ -17,7 +17,9 @@
 package com.ferelin.remote.utils
 
 import retrofit2.Response
+import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 fun <T, R> withExceptionHandle(
     request: () -> Response<R>,
@@ -34,6 +36,10 @@ fun <T, R> withExceptionHandle(
             onFail.invoke(IllegalStateException("RetrofitResponse is not successful"))
         }
     } catch (exception: SocketTimeoutException) {
+        onFail.invoke(exception)
+    } catch (exception: UnknownHostException) {
+        onFail.invoke(exception)
+    } catch (exception: ConnectException) {
         onFail.invoke(exception)
     }
 }

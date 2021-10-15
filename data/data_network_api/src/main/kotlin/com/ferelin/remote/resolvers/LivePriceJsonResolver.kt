@@ -16,6 +16,7 @@
 
 package com.ferelin.remote.resolvers
 
+import com.ferelin.remote.entities.LivePrice
 import com.ferelin.remote.entities.LivePricePojo
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -24,18 +25,17 @@ import javax.inject.Inject
 
 class LivePriceJsonResolver @Inject constructor() {
 
-    private val mConverter = Moshi
-        .Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    private val mConverter by lazy {
+        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    }
 
-    private val mResponseAdapter = mConverter
-        .adapter(LivePricePojo::class.java)
-        .lenient()
+    private val mPojoAdapter by lazy {
+        mConverter.adapter(LivePricePojo::class.java).lenient()
+    }
 
-    fun fromJson(jsonResponse: String): LivePricePojo? = try {
+    fun fromJson(jsonResponse: String): LivePrice? = try {
         Timber.d("extract pojo object from json (json = $jsonResponse)")
-        mResponseAdapter.fromJson(jsonResponse)
+        mPojoAdapter.fromJson(jsonResponse)?.livePrices?.firstOrNull()
     } catch (e: Exception) {
         Timber.d("extract pojo object exception $e")
         null

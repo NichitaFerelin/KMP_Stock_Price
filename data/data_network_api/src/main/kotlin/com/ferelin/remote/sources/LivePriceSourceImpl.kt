@@ -31,7 +31,7 @@ class LivePriceSourceImpl @Inject constructor(
 ) : LivePriceSource {
 
     override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
-        Timber.d("observe lite time price updates")
+        Timber.d("observe live time price updates")
         return mLivePriceSocketResolver
             .openConnection()
             .map(mLivePriceMapper::map)
