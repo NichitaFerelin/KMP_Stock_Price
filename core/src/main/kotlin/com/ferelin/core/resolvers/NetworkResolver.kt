@@ -51,14 +51,6 @@ class NetworkResolver @Inject constructor(
             service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
         }
 
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            if (mIsNetworkAvailable) {
-                mNetworkDeps.forEach { it.onNetworkAvailable() }
-            } else {
-                mNetworkDeps.forEach { it.onNetworkLost() }
-            }
-        }
-
         service.registerNetworkCallback(
             networkRequest,
             object : ConnectivityManager.NetworkCallback() {
