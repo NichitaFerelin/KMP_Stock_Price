@@ -19,11 +19,13 @@ package com.ferelin.feature_section_about.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.AboutParams
+import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,9 +33,31 @@ import javax.inject.Inject
 class AboutPagerViewModel @Inject constructor(
     private val mCompaniesInteractor: CompaniesInteractor,
     private val mStockStyleProvider: StockStyleProvider,
+    private val mNetworkResolver: NetworkResolver,
     private val mRouter: Router,
     private val mDispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), NetworkListener {
+
+    private val mNetworkState = MutableSharedFlow<Boolean>()
+    val networkState: SharedFlow<Boolean>
+        get() = mNetworkState.asSharedFlow()
+
+    init {
+        mNetworkResolver.registerNetworkListener(this)
+    }
+
+    override suspend fun onNetworkAvailable() {
+        mNetworkState.emit(true)
+    }
+
+    override suspend fun onNetworkLost() {
+        mNetworkState.emit(false)
+    }
+
+    override fun onCleared() {
+        mNetworkResolver.unregisterNetworkListener(this)
+        super.onCleared()
+    }
 
     var aboutParams = AboutParams()
 

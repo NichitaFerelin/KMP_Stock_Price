@@ -26,9 +26,9 @@ import com.ferelin.local.di.DataLocalModuleBinds
 import com.ferelin.remote.di.NetworkApiBindsModule
 import com.ferelin.remote.di.NetworkApiModule
 import com.ferelin.shared.di.ScopeModule
-import com.ferelin.stockprice.di.modules.InteractorDependenciesModule
+import com.ferelin.core.di.InteractorDependenciesModule
 import com.ferelin.stockprice.di.modules.NavigationBindsModule
-import com.ferelin.stockprice.di.modules.NetworkModule
+import com.ferelin.core.di.NetworkModule
 import com.ferelin.stockprice.ui.MainActivity
 import dagger.BindsInstance
 import dagger.Component

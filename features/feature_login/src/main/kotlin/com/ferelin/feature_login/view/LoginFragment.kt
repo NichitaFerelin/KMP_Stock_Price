@@ -83,7 +83,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
-            observeAuthenticationState()
+            launch { observeAuthenticationState() }
+            launch { observeNetworkState() }
         }
     }
 
@@ -95,6 +96,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                     is LoadState.Prepared -> onPrepared(authLoadState)
                     is LoadState.Error -> onError(authLoadState)
                     is LoadState.None -> Unit
+                }
+            }
+        }
+    }
+
+    private suspend fun observeNetworkState() {
+        mViewModel.networkState.collect { isAvailable ->
+            withContext(mDispatchersProvider.Main) {
+                if (isAvailable) {
+                    showSnackbar(getString(R.string.messageNetworkAvailable))
+                } else {
+                    showTempSnackbar(getString(R.string.messageNetworkNotAvailable))
                 }
             }
         }
@@ -137,13 +150,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         when (errorState.data) {
             AuthResponse.TooManyRequests -> {
                 hideEnterCodeField()
-                mViewBinding.editTextPhone.error = getString(R.string.errorApiLimit)
+                mViewBinding.editTextPhone.error = getString(R.string.errorTooManyRequests)
             }
-            AuthResponse.EmptyPhone ->{
+            AuthResponse.EmptyPhone -> {
                 hideEnterCodeField()
-                mViewBinding.editTextPhone.error = getString(R.string.errorApiLimit)
+                mViewBinding.editTextPhone.error = getString(R.string.errorEmptyPhone)
             }
-            else -> mViewBinding.editTextCode.error = getString(R.string.errorApiLimit)
+            else -> {
+                showTempSnackbar(getString(R.string.errorUndefined))
+            }
         }
     }
 

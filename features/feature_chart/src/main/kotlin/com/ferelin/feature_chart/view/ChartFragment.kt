@@ -113,13 +113,16 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
             when (pastPriceLoad) {
                 is LoadState.Prepared -> {
                     withContext(mDispatchersProvider.Main) {
-                        onDataLoadingStateChanged(false)
+                        hideProgressBar()
                         onPastPriceChanged(pastPriceLoad.data)
                     }
                 }
-                is LoadState.Loading -> onDataLoadingStateChanged(true)
+                is LoadState.Loading -> showProgressBar()
                 is LoadState.None -> mViewModel.loadPastPrices()
-                else -> Unit
+                else -> {
+                    hideProgressBar()
+                    onError()
+                }
             }
         }
     }
@@ -174,18 +177,18 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         saveSelectedViews(card, attachedTextView)
     }
 
+    private fun onError() {
+        if(!mViewModel.isNetworkAvailable) {
+            showSnackbar(getString(R.string.messageNetworkNotAvailable))
+        } else {
+            showTempSnackbar(getString(R.string.errorUndefined))
+        }
+    }
+
     private fun onPastPriceChanged(history: ChartPastPrices) {
         if (history.prices.isNotEmpty()) {
             mViewBinding.chartView.setData(history)
             showChart()
-            hideProgressBar()
-        }
-    }
-
-    private fun onDataLoadingStateChanged(isDataLoading: Boolean) {
-        if (isDataLoading) {
-            showProgressBar()
-        } else {
             hideProgressBar()
         }
     }

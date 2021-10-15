@@ -36,7 +36,6 @@
     <string name="errorLoadStockCandles">Error loading %s data</string>
     <string name="errorLoadCompanyNews">Error loading %s news</string>
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
-    <string name="errorNetwork">Network is not available</string>
     <string name="errorNoAppToOpenUrl">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorSmthWentWrong">Something went wrong</string>
@@ -46,6 +45,7 @@
     <string name="errorUndefined">Undefined error</string>
     <string name="errorLoadMessages">Messages for this user cannot be loaded</string>
     <string name="errorNotAuthorized">Before using chats you need to log in to identify</string>
+    <string name="errorEmptyPhone">Empty phone number</string>
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
@@ -104,6 +104,9 @@
     <string name="sourceNotAuthorized">You are not authorized. Login</string>
     <string name="sourceAuthorized">You are logged in. Log off</string>
     <string name="sourceClearData">Clear all added stocks, search history, etc.</string>
+
+    <string name="messageNetworkNotAvailable">Network is not available</string>
+    <string name="messageNetworkAvailable">Network available</string>
 
 
 </resources>

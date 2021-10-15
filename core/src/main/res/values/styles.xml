@@ -257,4 +257,18 @@
         <item name="android:layout_height">match_parent</item>
         <item name="layout_scrollFlags">scroll|snap</item>
     </style>
+
+    <style name="snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="backgroundTint">@color/whiteDark</item>
+        <item name="android:layout_margin">16dp</item>
+    </style>
+
+    <style name="snackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="snackbarTextView" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textAppearance">@style/textViewH2</item>
+    </style>
+
 </resources>

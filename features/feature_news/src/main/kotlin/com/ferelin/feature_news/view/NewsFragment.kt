@@ -90,8 +90,16 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
                 is LoadState.None -> mViewModel.loadData()
                 is LoadState.Loading -> showProgressBar()
                 is LoadState.Prepared -> hideProgressBar()
-                else -> Unit
+                is LoadState.Error -> onError()
             }
+        }
+    }
+
+    private fun onError() {
+        if(!mViewModel.isNetworkAvailable) {
+            showSnackbar(getString(R.string.messageNetworkNotAvailable))
+        } else {
+            showTempSnackbar(getString(R.string.errorUndefined))
         }
     }
 

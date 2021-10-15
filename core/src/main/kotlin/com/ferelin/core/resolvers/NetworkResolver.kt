@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.resolvers
+package com.ferelin.core.resolvers
 
+import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
@@ -24,27 +25,34 @@ import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
+@SuppressLint("MissingPermission")
 @Singleton
 class NetworkResolver @Inject constructor(
-    private val mNetworkDeps: List<@JvmSuppressWildcards NetworkListener>,
+    private val mNetworkDeps: ArrayList<@JvmSuppressWildcards NetworkListener>,
     private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope,
     service: ConnectivityManager,
     networkRequest: NetworkRequest
 ) {
+    private var mIsNetworkAvailable: Boolean
+    val isNetworkAvailable: Boolean
+        get() = mIsNetworkAvailable
+
     init {
-        val isNetworkAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        mIsNetworkAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             service.activeNetwork != null
         } else {
             service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
         }
 
         mExternalScope.launch(mDispatchersProvider.IO) {
-            if (isNetworkAvailable) {
+            if (mIsNetworkAvailable) {
                 mNetworkDeps.forEach { it.onNetworkAvailable() }
             } else {
                 mNetworkDeps.forEach { it.onNetworkLost() }
@@ -56,21 +64,35 @@ class NetworkResolver @Inject constructor(
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     mExternalScope.launch(mDispatchersProvider.IO) {
+                        Timber.d("on available, deps size: ${mNetworkDeps.size}")
+                        mIsNetworkAvailable = true
                         mNetworkDeps.forEach { it.onNetworkAvailable() }
                     }
                 }
 
                 override fun onLost(network: Network) {
                     mExternalScope.launch(mDispatchersProvider.IO) {
+                        Timber.d("on lost, deps size: ${mNetworkDeps.size}")
+                        mIsNetworkAvailable = false
                         mNetworkDeps.forEach { it.onNetworkLost() }
                     }
                 }
 
                 override fun onUnavailable() {
                     mExternalScope.launch(mDispatchersProvider.IO) {
+                        Timber.d("on unavailable, deps size: ${mNetworkDeps.size}")
+                        mIsNetworkAvailable = false
                         mNetworkDeps.forEach { it.onNetworkLost() }
                     }
                 }
             })
+    }
+
+    fun registerNetworkListener(networkListener: NetworkListener) {
+        mNetworkDeps.add(networkListener)
+    }
+
+    fun unregisterNetworkListener(networkListener: NetworkListener) {
+        mNetworkDeps.remove(networkListener)
     }
 }

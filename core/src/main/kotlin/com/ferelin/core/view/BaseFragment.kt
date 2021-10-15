@@ -25,7 +25,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.ferelin.core.R
 import com.ferelin.shared.DispatchersProvider
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
@@ -71,6 +73,19 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     open fun initObservers() {
         // Override in subclasses
+    }
+
+    fun showSnackbar(message: String) {
+        Snackbar
+            .make(mViewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.hintOk) { /*dismiss by default*/ }
+            .show()
+    }
+
+    fun showTempSnackbar(message: String) {
+        Snackbar
+            .make(mViewBinding.root, message, Snackbar.LENGTH_LONG)
+            .show()
     }
 
     fun hideKeyboard() {

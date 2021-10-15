@@ -16,7 +16,6 @@
 
 package com.ferelin.feature_section_about.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,12 +31,11 @@ import com.ferelin.feature_section_about.R
 import com.ferelin.feature_section_about.adapter.AboutPagerAdapter
 import com.ferelin.feature_section_about.databinding.FragmentAboutPagerBinding
 import com.ferelin.feature_section_about.viewModel.AboutPagerViewModel
-import com.google.android.material.transition.Hold
-import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -114,18 +112,35 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            mViewModel.favouriteCompaniesUpdate.collect {
-                withContext(mDispatchersProvider.Main) {
-                    mViewBinding.imageViewStar.setImageResource(mViewModel.favouriteIconRes)
-                }
-            }
+        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+            launch { observeFavouriteCompaniesUpdate() }
+            launch { observeNetworkState() }
         }
     }
 
     override fun onDestroyView() {
         mViewBinding.tabLayout.detachViewPager()
         super.onDestroyView()
+    }
+
+    private suspend fun observeFavouriteCompaniesUpdate() {
+        mViewModel.favouriteCompaniesUpdate.collect {
+            withContext(mDispatchersProvider.Main) {
+                mViewBinding.imageViewStar.setImageResource(mViewModel.favouriteIconRes)
+            }
+        }
+    }
+
+    private suspend fun observeNetworkState() {
+        mViewModel.networkState.collect { isAvailable ->
+            withContext(mDispatchersProvider.Main) {
+                if (isAvailable) {
+                    showTempSnackbar(getString(R.string.messageNetworkAvailable))
+                } else {
+                    showSnackbar(getString(R.string.messageNetworkNotAvailable))
+                }
+            }
+        }
     }
 
     private fun unpackArgs(args: Bundle) {

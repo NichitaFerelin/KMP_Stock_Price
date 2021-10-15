@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.params.NewsParams
+import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.domain.entities.News
 import com.ferelin.domain.interactors.NewsInteractor
@@ -28,6 +29,8 @@ import com.ferelin.feature_news.mapper.NewsMapper
 import com.ferelin.feature_news.viewData.NewsViewData
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NetworkListener
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,12 +43,16 @@ typealias NewsLoadState = LoadState<List<NewsViewData>>
 class NewsViewModel @Inject constructor(
     private val mNewsInteractor: NewsInteractor,
     private val mNewsMapper: NewsMapper,
+    private val mNetworkResolver: NetworkResolver,
     private val mDispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), NetworkListener {
 
     private val mNewLoadState = MutableStateFlow<NewsLoadState>(LoadState.None())
     val newsLoadState: StateFlow<NewsLoadState>
         get() = mNewLoadState.asStateFlow()
+
+    val isNetworkAvailable: Boolean
+        get() = mNetworkResolver.isNetworkAvailable
 
     var newsParams = NewsParams()
 
@@ -55,24 +62,52 @@ class NewsViewModel @Inject constructor(
         ).apply { setHasStableIds(true) }
     }
 
+    init {
+        mNetworkResolver.registerNetworkListener(this)
+    }
+
+    override suspend fun onNetworkAvailable() {
+        viewModelScope.launch(mDispatchersProvider.IO) {
+            mNewLoadState.value.ifPrepared {
+                loadFromNetwork()
+            } ?: loadData()
+        }
+    }
+
+    override suspend fun onNetworkLost() {
+        // do nothing
+    }
+
+    override fun onCleared() {
+        mNetworkResolver.unregisterNetworkListener(this)
+        super.onCleared()
+    }
+
     fun loadData() {
         viewModelScope.launch(mDispatchersProvider.IO) {
             mNewLoadState.value = LoadState.Loading()
 
-            mNewsInteractor
-                .getNews(newsParams.companyId)
-                .ifNotEmpty { dbNews -> onNewsChanged(dbNews) }
-
-            mNewsInteractor
-                .loadCompanyNews(newsParams.companyId, newsParams.companyTicker)
-                .let { remoteNewsState ->
-                    if (remoteNewsState is LoadState.Prepared) {
-                        onNewsChanged(remoteNewsState.data)
-                    } else if (mNewLoadState.value !is LoadState.Prepared) {
-                        mNewLoadState.value = LoadState.Error()
-                    }
-                }
+            loadFromDb()
+            loadFromNetwork()
         }
+    }
+
+    private suspend fun loadFromDb() {
+        mNewsInteractor
+            .getNews(newsParams.companyId)
+            .ifNotEmpty { dbNews -> onNewsChanged(dbNews) }
+    }
+
+    private suspend fun loadFromNetwork() {
+        mNewsInteractor
+            .loadCompanyNews(newsParams.companyId, newsParams.companyTicker)
+            .let { remoteNewsState ->
+                if (remoteNewsState is LoadState.Prepared) {
+                    onNewsChanged(remoteNewsState.data)
+                } else if (mNewLoadState.value !is LoadState.Prepared) {
+                    mNewLoadState.value = LoadState.Error()
+                }
+            }
     }
 
     private suspend fun onNewsChanged(news: List<News>) {

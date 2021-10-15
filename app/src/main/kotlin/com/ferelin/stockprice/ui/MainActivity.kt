@@ -23,6 +23,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.feature_chart.view.ChartFragment
 import com.ferelin.feature_forecasts.ForecastsFragment
 import com.ferelin.feature_ideas.IdeasFragment
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var router: Router
+
+    @Inject
+    lateinit var networkResolver: NetworkResolver
 
     private val mFragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
         object : FragmentManager.FragmentLifecycleCallbacks() {

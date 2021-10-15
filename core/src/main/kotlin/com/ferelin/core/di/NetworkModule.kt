@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.di.modules
+package com.ferelin.core.di
 
 import android.content.Context
 import android.net.ConnectivityManager

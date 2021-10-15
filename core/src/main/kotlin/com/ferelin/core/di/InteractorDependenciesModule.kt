@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.stockprice.di.modules
+package com.ferelin.core.di
 
 import com.ferelin.domain.interactors.companies.CompaniesInteractorImpl
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractorImpl
 import com.ferelin.domain.internals.CompaniesInternal
+import com.ferelin.domain.resolvers.LiveTimePriceResolver
 import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.AuthenticationListener
 import com.ferelin.shared.NetworkListener
@@ -26,17 +27,20 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
+
 @Module
 class InteractorDependenciesModule {
 
     @Provides
     fun provideNetworkListeners(
         companiesInteractorImpl: CompaniesInteractorImpl,
-        searchRequestsInteractorImpl: SearchRequestsInteractorImpl
-    ): List<@JvmSuppressWildcards NetworkListener> {
-        return listOf(
+        searchRequestsInteractorImpl: SearchRequestsInteractorImpl,
+        liveTimePriceResolver: LiveTimePriceResolver
+    ): ArrayList<@JvmSuppressWildcards NetworkListener> {
+        return arrayListOf(
             companiesInteractorImpl,
-            searchRequestsInteractorImpl
+            searchRequestsInteractorImpl,
+            liveTimePriceResolver
         )
     }
 }

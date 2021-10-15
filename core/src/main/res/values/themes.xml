@@ -15,5 +15,9 @@
         <item name="android:fontFamily">@font/w_600</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:windowContentTransitions">true</item>
+
+        <item name="snackbarStyle">@style/snackbar</item>
+        <item name="snackbarButtonStyle">@style/snackbarButton</item>
+        <item name="snackbarTextViewStyle">@style/snackbarTextView</item>
     </style>
 </resources>

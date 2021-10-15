@@ -25,6 +25,7 @@ import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.adapter.stocks.createStocksAdapter
 import com.ferelin.core.mapper.StockMapper
 import com.ferelin.core.params.AboutParams
+import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
