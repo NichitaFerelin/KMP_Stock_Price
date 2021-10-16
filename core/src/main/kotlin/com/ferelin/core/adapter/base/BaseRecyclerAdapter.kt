@@ -94,7 +94,7 @@ class BaseRecyclerAdapter(
             notifyItemRangeRemoved(0, itemCount)
         }
 
-        mCurrentList = data.toList()
+        mCurrentList = data.toMutableList()
         notifyItemRangeInserted(0, mCurrentList.size)
     }
 }
