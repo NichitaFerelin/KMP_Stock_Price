@@ -61,15 +61,20 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
         mSearchRequestsState.value = LoadState.Loading()
 
-        return mSearchRequestsLocalRepo.getSearchRequests()
-            .also {
-                mSearchRequestsState.value = LoadState.Prepared(it)
-                tryToSync()
-            }
+        val dbRequests = mSearchRequestsLocalRepo
+            .getSearchRequests()
+            .sortedByDescending { it.id }
+
+        mSearchRequestsState.value = LoadState.Prepared(dbRequests)
+        mExternalScope.launch(mDispatchersProvider.IO) {
+            tryToSync()
+        }
+
+        return dbRequests
     }
 
     override suspend fun getPopularSearchRequests(): List<SearchRequest> {
-        mSearchRequestsState.value.ifPrepared { preparedState ->
+        mPopularRequestsState.ifPrepared { preparedState ->
             return preparedState.data
         }
 
@@ -79,14 +84,17 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { mPopularRequestsState = LoadState.Prepared(it) }
     }
 
-    override suspend fun cacheSearchRequest(searchRequest: SearchRequest): Unit =
+    override suspend fun cacheSearchRequest(searchText: String): Unit =
         withContext(mDispatchersProvider.IO) {
-
-            var updatedSearchRequests: MutableList<SearchRequest>
 
             mExternalScope.launch(mDispatchersProvider.IO) {
                 mSearchRequestsState.value.ifPrepared { preparedState ->
-                    updatedSearchRequests = removeDuplicates(
+                    val searchRequest = SearchRequest(
+                        id = preparedState.data.firstOrNull()?.id?.plus(1) ?: 0,
+                        request = searchText
+                    )
+
+                    val updatedSearchRequests = removeDuplicates(
                         sourceRequests = preparedState.data,
                         newSearchRequest = searchRequest
                     )
@@ -97,20 +105,17 @@ class SearchRequestsInteractorImpl @Inject constructor(
                     }
 
                     mSearchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
-                }
 
-                cache(searchRequest)
+                    cache(searchRequest)
+                }
             }
         }
 
     private suspend fun reduceRequestsToLimit(requests: MutableList<SearchRequest>) =
         withContext(mDispatchersProvider.IO) {
+            val removedRequest = requests.removeLast()
 
-            while (requests.size > sCachedRequestsLimit) {
-                val removedRequest = requests.removeLast()
-
-                launch { erase(removedRequest) }
-            }
+            launch { erase(removedRequest) }
         }
 
     private suspend fun removeDuplicates(
@@ -193,7 +198,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
                 mSearchRequestsSyncer
                     .initDataSync(userToken, preparedState.data)
                     .forEach { remoteSearchRequest ->
-                        cacheSearchRequest(remoteSearchRequest)
+                        cacheSearchRequest(remoteSearchRequest.request)
                     }
             }
         }
