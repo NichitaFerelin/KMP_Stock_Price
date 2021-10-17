@@ -19,4 +19,16 @@ package com.ferelin.domain.entities
 data class SearchRequest(
     val id: Int,
     val request: String
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is SearchRequest) {
+            request == other.request
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return request.hashCode()
+    }
+}

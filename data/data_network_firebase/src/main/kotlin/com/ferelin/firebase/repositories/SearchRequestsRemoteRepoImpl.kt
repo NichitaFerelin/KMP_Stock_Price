@@ -21,6 +21,10 @@ import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -62,31 +66,38 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
 
     override suspend fun loadSearchRequests(
         userToken: String
-    ): LoadState<List<SearchRequest>> = withContext(mDispatchersProvider.IO) {
+    ): Flow<LoadState<List<SearchRequest>>> = callbackFlow<LoadState<List<SearchRequest>>> {
         Timber.d("load search requests (userToken = $userToken")
 
-        val resultSnapshot = mFirebaseReference
+        mFirebaseReference
             .child(sSearchesHistoryRef)
             .child(userToken)
             .get()
+            .addOnCompleteListener { resultSnapshot ->
+                if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
+                    Timber.d("on success search requests")
+                    val searchRequestsSnapshot = resultSnapshot.result!!
+                    val searchRequests = mutableListOf<SearchRequest>()
 
-        return@withContext if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
-            val searchRequestsSnapshot = resultSnapshot.result!!
-            val searchRequests = mutableListOf<SearchRequest>()
+                    for (searchSnapshot in searchRequestsSnapshot.children) {
+                        val requestId = searchSnapshot.key?.toInt() ?: 0
+                        val request = searchSnapshot.value?.toString() ?: ""
+                        searchRequests.add(
+                            SearchRequest(requestId, request)
+                        )
+                    }
 
-            for (searchSnapshot in searchRequestsSnapshot.children) {
-                val requestId = searchSnapshot.key?.toInt() ?: 0
-                val request = searchSnapshot.value?.toString() ?: ""
-                searchRequests.add(
-                    SearchRequest(requestId, request)
-                )
+                    trySend(
+                        LoadState.Prepared(searchRequests)
+                    )
+                } else {
+                    trySend(
+                        LoadState.Error()
+                    )
+                }
             }
-
-            LoadState.Prepared(searchRequests)
-        } else {
-            LoadState.Error()
-        }
-    }
+        awaitClose()
+    }.flowOn(mDispatchersProvider.IO)
 
     override suspend fun clearSearchRequests(userToken: String) {
         mFirebaseReference

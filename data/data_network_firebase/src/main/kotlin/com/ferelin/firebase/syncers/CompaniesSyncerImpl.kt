@@ -21,6 +21,7 @@ import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,8 +40,8 @@ class CompaniesSyncerImpl @Inject constructor(
         sourceCompaniesIds: List<Int>
     ): List<Int> {
         Timber.d(
-            "init sync (isDataSynchronized = $mIsDataSynchronized," +
-                    "userToken = $userToken, sourceCompaniesSize = ${sourceCompaniesIds.size}"
+            "init sync (isSynchronized = $mIsDataSynchronized, " +
+                    "localSize = ${sourceCompaniesIds.size}"
         )
 
         if (mIsDataSynchronized) {
@@ -48,7 +49,7 @@ class CompaniesSyncerImpl @Inject constructor(
         }
 
         val remoteCompaniesState = withContext(mDispatchersProvider.IO) {
-            mCompaniesRemoteRepo.getFavouriteCompaniesIds(userToken)
+            mCompaniesRemoteRepo.getFavouriteCompaniesIds(userToken).firstOrNull()
         }
 
         Timber.d("loaded remote companies state = $remoteCompaniesState")

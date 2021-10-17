@@ -20,6 +20,11 @@ import com.ferelin.domain.repositories.companies.CompaniesLoadState
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -61,29 +66,35 @@ class CompaniesRemoteRepoImpl @Inject constructor(
 
     override suspend fun getFavouriteCompaniesIds(
         userToken: String
-    ): CompaniesLoadState = withContext(mDispatchersProvider.IO) {
-        Timber.d("get favourite companies ids (userToken = $userToken)")
+    ): Flow<CompaniesLoadState> = callbackFlow {
+        Timber.d("get favourite companies ids")
 
-        val resultSnapshot = mFirebaseReference
+        mFirebaseReference
             .child(sFavouriteCompaniesRef)
             .child(userToken)
             .get()
+            .addOnCompleteListener { resultSnapshot ->
+                if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
+                    val favouriteCompaniesIds = mutableListOf<Int>()
+                    val idsSnapshot = resultSnapshot.result!!
 
-        return@withContext if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
-            val favouriteCompaniesIds = mutableListOf<Int>()
-            val idsSnapshot = resultSnapshot.result!!
+                    for (idSnapshot in idsSnapshot.children) {
+                        favouriteCompaniesIds.add(idSnapshot.key?.toInt() ?: 0)
+                    }
 
-            for (idSnapshot in idsSnapshot.children) {
-                favouriteCompaniesIds.add(idSnapshot.key?.toInt() ?: 0)
+                    trySend(
+                        CompaniesLoadState.Loaded(
+                            companies = favouriteCompaniesIds.toList()
+                        )
+                    )
+                } else {
+                    trySend(CompaniesLoadState.Error)
+                }
             }
-
-            CompaniesLoadState.Loaded(
-                companies = favouriteCompaniesIds.toList()
-            )
-        } else {
-            CompaniesLoadState.Error
-        }
+        awaitClose()
     }
+        .take(1)
+        .flowOn(mDispatchersProvider.IO)
 
     override suspend fun clearCompanies(userToken: String) {
         mFirebaseReference

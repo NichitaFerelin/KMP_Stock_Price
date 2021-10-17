@@ -148,6 +148,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
     override suspend fun onLogOut() {
         invalidateUserData(false)
+        mSearchRequestsSyncer.invalidate()
     }
 
     override suspend fun onNetworkAvailable() {

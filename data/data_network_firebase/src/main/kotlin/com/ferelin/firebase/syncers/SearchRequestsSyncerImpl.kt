@@ -22,6 +22,7 @@ import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.ifPrepared
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -49,10 +50,10 @@ class SearchRequestsSyncerImpl @Inject constructor(
         }
 
         val remoteRequestsState = withContext(mDispatchersProvider.IO) {
-            mSearchRequestsRemoteRepo.loadSearchRequests(userToken)
+            mSearchRequestsRemoteRepo.loadSearchRequests(userToken).firstOrNull()
         }
 
-        return remoteRequestsState.ifPrepared { preparedState ->
+        return remoteRequestsState?.ifPrepared { preparedState ->
             val remoteRequests = preparedState.data
             syncCloudDb(userToken, sourceRequests, remoteRequests)
 

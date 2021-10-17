@@ -16,13 +16,13 @@
 
 package com.ferelin.domain.interactors.companies
 
+import android.util.Log
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.internals.CompaniesInternal
 import com.ferelin.domain.repositories.ProfileRepo
-import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
@@ -48,7 +48,6 @@ typealias Companies = List<CompanyWithStockPrice>
 class CompaniesInteractorImpl @Inject constructor(
     private val mCompaniesLocalRepo: CompaniesLocalRepo,
     private val mCompaniesRemoteRepo: CompaniesRemoteRepo,
-    private val mStockPriceRepo: StockPriceRepo,
     private val mProfileRepo: ProfileRepo,
     private val mCompaniesJsonSource: CompaniesJsonSource,
     private val mLivePriceSource: LivePriceSource,
@@ -58,14 +57,16 @@ class CompaniesInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
 
+    private var mCompaniesState: LoadState<Companies> = LoadState.None()
+    private var mFavouriteCompaniesState: LoadState<Companies> = LoadState.None()
+
     private val mCompanyWithStockPriceChanges = MutableSharedFlow<CompanyWithStockPrice>()
     override val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
         get() = mCompanyWithStockPriceChanges.asSharedFlow()
 
-    private var mCompaniesState: LoadState<Companies> = LoadState.None()
-    private var mFavouriteCompaniesState: LoadState<Companies> = LoadState.None()
-
     private val mFavouriteCompanyUpdates = MutableSharedFlow<CompanyWithStockPrice>()
+    override val favouriteCompaniesUpdated: SharedFlow<CompanyWithStockPrice>
+        get() = mFavouriteCompanyUpdates.asSharedFlow()
 
     override suspend fun getAll(): List<CompanyWithStockPrice> {
         mCompaniesState.ifPrepared { preparedState ->
@@ -141,7 +142,6 @@ class CompaniesInteractorImpl @Inject constructor(
             itemToUpdate.company.isFavourite = true
             itemToUpdate.company.addedByIndex = orderIndex
 
-
             favouriteCompanies.add(0, itemToUpdate)
             mFavouriteCompaniesState = LoadState.Prepared(favouriteCompanies)
 
@@ -208,10 +208,6 @@ class CompaniesInteractorImpl @Inject constructor(
         }
     }
 
-    override fun observeFavouriteCompaniesUpdates(): SharedFlow<CompanyWithStockPrice> {
-        return mFavouriteCompanyUpdates.asSharedFlow()
-    }
-
     override suspend fun onStockPriceChanged(stockPrice: StockPrice) {
         updateCachedCompany(stockPrice.id) { itemToUpdate ->
             itemToUpdate.stockPrice = stockPrice
@@ -239,6 +235,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
     override suspend fun onLogOut() {
         invalidateUserData(false)
+        mCompaniesSyncer.invalidate()
     }
 
     private suspend fun updateCachedCompany(
@@ -284,10 +281,12 @@ class CompaniesInteractorImpl @Inject constructor(
 
     private suspend fun applyRemoteCompaniesIds(remoteIds: List<Int>) {
         mCompaniesState.ifPrepared { preparedState ->
+            Log.d("TEST", "got size: ${remoteIds.size}")
             val sourceCompanies = preparedState.data
             remoteIds.forEach { id ->
                 val targetCompanyIndex = sourceCompanies.indexOfFirst { it.company.id == id }
                 if (targetCompanyIndex != NULL_INDEX) {
+                    Log.d("TEST", "add to favourites with index $targetCompanyIndex")
                     addCompanyToFavourites(sourceCompanies[targetCompanyIndex].company)
                 }
             }

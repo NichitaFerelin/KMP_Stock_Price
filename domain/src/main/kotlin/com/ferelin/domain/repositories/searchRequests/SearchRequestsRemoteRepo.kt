@@ -18,6 +18,7 @@ package com.ferelin.domain.repositories.searchRequests
 
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRequestsRemoteRepo {
 
@@ -25,7 +26,7 @@ interface SearchRequestsRemoteRepo {
 
     suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
 
-    suspend fun loadSearchRequests(userToken: String): LoadState<List<SearchRequest>>
+    suspend fun loadSearchRequests(userToken: String): Flow<LoadState<List<SearchRequest>>>
 
     suspend fun clearSearchRequests(userToken: String)
 }
