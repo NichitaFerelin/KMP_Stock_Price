@@ -16,6 +16,7 @@
 
 package com.ferelin.core.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
@@ -75,13 +76,30 @@ abstract class BaseStocksViewModel(
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     val favouriteCompaniesUpdates: SharedFlow<CompanyWithStockPrice> = mCompaniesInteractor
-        .observeFavouriteCompaniesUpdates()
+        .favouriteCompaniesUpdated
         .onEach { onFavouriteCompanyUpdate(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     val actualStockPrice: SharedFlow<LoadState<StockPrice>> = mStockPriceInteractor
         .observeActualStockPriceResponses()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+
+    init {
+        Log.d("TEST", "INIT VIEW MODEL")
+        // TODO
+        /*viewModelScope.launch {
+            launch { companiesStockPriceUpdates.collect() }
+            launch { favouriteCompaniesUpdates.collect{
+                Log.d("TEST", "COLLECT VIEW MODEL")
+            } }
+            launch { actualStockPrice.collect() }
+        }*/
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("TEST", "CLEAR VIEW MODEL")
+    }
 
     fun loadStocks(stocksMode: StocksMode) {
         viewModelScope.launch(mDispatchesProvider.IO) {

@@ -17,7 +17,7 @@
 package com.ferelin.domain.entities
 
 data class SearchRequest(
-    val id: Int,
+    var id: Int,
     val request: String
 ) {
     override fun equals(other: Any?): Boolean {

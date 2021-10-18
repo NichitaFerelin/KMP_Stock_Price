@@ -72,7 +72,7 @@ class AboutPagerViewModel @Inject constructor(
 
     val favouriteCompaniesUpdate: SharedFlow<Unit> by lazy(LazyThreadSafetyMode.NONE) {
         mCompaniesInteractor
-            .observeFavouriteCompaniesUpdates()
+            .favouriteCompaniesUpdated
             .filter { it.company.id == aboutParams.companyId }
             .onEach { isFavourite = it.company.isFavourite }
             .map { Unit }

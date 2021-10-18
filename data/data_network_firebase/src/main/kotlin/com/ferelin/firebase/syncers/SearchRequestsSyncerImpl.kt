@@ -76,9 +76,14 @@ class SearchRequestsSyncerImpl @Inject constructor(
                     "remotes = ${remoteRequests.size})"
         )
 
+        var lastId = remoteRequests.lastOrNull()?.id ?: 0
+
         sourceRequests
             .itemsNotIn(remoteRequests)
-            .forEach { mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, it) }
+            .forEach {
+                it.id = ++lastId
+                mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, it)
+            }
 
         mIsDataSynchronized = true
     }

@@ -16,6 +16,8 @@
 
 package com.ferelin.core.view
 
+import android.os.Bundle
+import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
@@ -40,6 +42,7 @@ import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,6 +64,16 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     private var mFadeOut: Animation? = null
     private var mFadeIn: Animation? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("TEST", "On Create ${this}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("TEST", "On Destroy ${this}")
+    }
+
     override fun initUi() {
         stocksRecyclerView?.apply {
             adapter = mViewModel.stocksAdapter
@@ -77,10 +90,15 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        lifecycleScope.launch {
             launch { observeStocksState() }
             launch { mViewModel.companiesStockPriceUpdates.collect() }
-            launch { mViewModel.favouriteCompaniesUpdates.collect() }
+            launch {
+                Log.d("TEST", "COLLECT ${this@BaseStocksFragment}")
+                mViewModel.favouriteCompaniesUpdates.collect {
+                    Log.d("TEST", "onCollect Result ${this@BaseStocksFragment}")
+                }
+            }
             launch { mViewModel.actualStockPrice.collect() }
         }
     }
@@ -110,11 +128,14 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     private suspend fun observeStocksState() {
-        mViewModel.stocksLoadState.collect { loadState ->
-            if (loadState is LoadState.None) {
-                mViewModel.loadStocks(mStocksMode)
+        // TODO
+        mViewModel.stocksLoadState
+            .take(1)
+            .collect { loadState ->
+                if (loadState is LoadState.None) {
+                    mViewModel.loadStocks(mStocksMode)
+                }
             }
-        }
     }
 
     private fun onHolderRebound(stockViewHolder: StockViewHolder) {

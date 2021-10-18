@@ -16,6 +16,7 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
+import android.util.Log
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
@@ -23,6 +24,7 @@ import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.syncers.SearchRequestsSyncer
 import com.ferelin.shared.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -84,9 +86,10 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { mPopularRequestsState = LoadState.Prepared(it) }
     }
 
+    private var mCacheJob: Job? = null
+
     override suspend fun cacheSearchRequest(searchText: String): Unit =
         withContext(mDispatchersProvider.IO) {
-
             mExternalScope.launch(mDispatchersProvider.IO) {
                 mSearchRequestsState.value.ifPrepared { preparedState ->
                     val searchRequest = SearchRequest(
@@ -199,6 +202,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
                 mSearchRequestsSyncer
                     .initDataSync(userToken, preparedState.data)
                     .forEach { remoteSearchRequest ->
+                        Log.d("TEST", "New item $remoteSearchRequest")
                         cacheSearchRequest(remoteSearchRequest.request)
                     }
             }
