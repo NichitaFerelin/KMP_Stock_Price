@@ -16,21 +16,16 @@
 
 package com.ferelin.domain.repositories.companies
 
+import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.Flow
-
-sealed class CompaniesLoadState {
-
-    class Loaded(val companies: List<Int>) : CompaniesLoadState()
-    object Error  : CompaniesLoadState()
-}
 
 interface CompaniesRemoteRepo {
 
-    suspend fun cacheCompanyIdToFavourites(userToken: String, companyId: Int)
+    suspend fun insertBy(userToken: String, companyId: Int)
 
-    suspend fun eraseCompanyIdFromFavourites(userToken: String, companyId: Int)
+    suspend fun loadAll(userToken: String): Flow<LoadState<List<Int>>>
 
-    suspend fun getFavouriteCompaniesIds(userToken: String): Flow<CompaniesLoadState>
+    suspend fun eraseAll(userToken: String)
 
-    suspend fun clearCompanies(userToken: String)
+    suspend fun eraseBy(userToken: String, companyId: Int)
 }

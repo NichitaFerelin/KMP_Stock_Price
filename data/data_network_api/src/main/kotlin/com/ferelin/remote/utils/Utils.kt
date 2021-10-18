@@ -17,6 +17,7 @@
 package com.ferelin.remote.utils
 
 import retrofit2.Response
+import timber.log.Timber
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -33,7 +34,8 @@ fun <T, R> withExceptionHandle(
         if (retrofitResponse.isSuccessful && body != null) {
             onSuccess.invoke(body)
         } else {
-            onFail.invoke(IllegalStateException("RetrofitResponse is not successful"))
+            val exception = IllegalStateException("RetrofitResponse is not successful")
+            onFail.invoke(exception)
         }
     } catch (exception: SocketTimeoutException) {
         onFail.invoke(exception)

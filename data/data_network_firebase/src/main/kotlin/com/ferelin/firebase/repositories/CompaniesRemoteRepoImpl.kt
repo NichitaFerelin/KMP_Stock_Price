@@ -16,61 +16,46 @@
 
 package com.ferelin.firebase.repositories
 
-import com.ferelin.domain.repositories.companies.CompaniesLoadState
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.LoadState
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class CompaniesRemoteRepoImpl @Inject constructor(
-    private val mFirebaseReference: DatabaseReference,
-    private val mDispatchersProvider: DispatchersProvider
+    private val firebaseReference: DatabaseReference,
+    private val dispatchersProvider: DispatchersProvider
 ) : CompaniesRemoteRepo {
 
     private companion object {
-        const val sFavouriteCompaniesRef = "favourite-companies"
+        const val FAVOURITE_COMPANIES_REF = "favourite-companies"
     }
 
-    override suspend fun cacheCompanyIdToFavourites(
+    override suspend fun insertBy(
         userToken: String,
         companyId: Int
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d("cache to favourites (userToken = $userToken, companyId = $companyId)")
+    ): Unit = withContext(dispatchersProvider.IO) {
+        Timber.d("insert by (company id = $companyId)")
 
-        mFirebaseReference
-            .child(sFavouriteCompaniesRef)
+        firebaseReference
+            .child(FAVOURITE_COMPANIES_REF)
             .child(userToken)
             .child(companyId.toString())
             .setValue(companyId)
     }
 
-    override suspend fun eraseCompanyIdFromFavourites(
-        userToken: String,
-        companyId: Int
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d("erase from favourites (userToken = $userToken, companyId = $companyId)")
-
-        mFirebaseReference
-            .child(sFavouriteCompaniesRef)
-            .child(userToken)
-            .child(companyId.toString())
-            .removeValue()
-    }
-
-    override suspend fun getFavouriteCompaniesIds(
+    override suspend fun loadAll(
         userToken: String
-    ): Flow<CompaniesLoadState> = callbackFlow {
-        Timber.d("get favourite companies ids")
+    ) = callbackFlow<LoadState<List<Int>>> {
+        Timber.d("get all")
 
-        mFirebaseReference
-            .child(sFavouriteCompaniesRef)
+        firebaseReference
+            .child(FAVOURITE_COMPANIES_REF)
             .child(userToken)
             .get()
             .addOnCompleteListener { resultSnapshot ->
@@ -83,23 +68,36 @@ class CompaniesRemoteRepoImpl @Inject constructor(
                     }
 
                     trySend(
-                        CompaniesLoadState.Loaded(
-                            companies = favouriteCompaniesIds.toList()
+                        LoadState.Prepared(
+                            data = favouriteCompaniesIds.toList()
                         )
                     )
                 } else {
-                    trySend(CompaniesLoadState.Error)
+                    trySend(LoadState.Error())
                 }
             }
         awaitClose()
-    }
-        .take(1)
-        .flowOn(mDispatchersProvider.IO)
+    }.flowOn(dispatchersProvider.IO)
 
-    override suspend fun clearCompanies(userToken: String) {
-        mFirebaseReference
-            .child(sFavouriteCompaniesRef)
+    override suspend fun eraseAll(userToken: String) {
+        Timber.d("erase all")
+
+        firebaseReference
+            .child(FAVOURITE_COMPANIES_REF)
             .child(userToken)
+            .removeValue()
+    }
+
+    override suspend fun eraseBy(
+        userToken: String,
+        companyId: Int
+    ): Unit = withContext(dispatchersProvider.IO) {
+        Timber.d("erase by (company id = $companyId)")
+
+        firebaseReference
+            .child(FAVOURITE_COMPANIES_REF)
+            .child(userToken)
+            .child(companyId.toString())
             .removeValue()
     }
 }

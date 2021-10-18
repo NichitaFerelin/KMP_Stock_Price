@@ -40,18 +40,6 @@ class DataLocalModule {
     }
 
     @Provides
-    @Named("PreferencesName")
-    fun providePreferencesName(): String {
-        return "stock.price.preferences"
-    }
-
-    @Provides
-    @Named("CompaniesJsonFileName")
-    fun provideCompaniesJsonFileName(): String {
-        return "companies.json"
-    }
-
-    @Provides
     fun provideCompaniesDao(appDatabase: AppDatabase): CompaniesDao {
         return appDatabase.companyDao()
     }
@@ -79,5 +67,17 @@ class DataLocalModule {
     @Provides
     fun provideSearchRequestsDao(appDatabase: AppDatabase) : SearchRequestsDao {
         return appDatabase.searchRequestsDao()
+    }
+
+    @Provides
+    @Named("PreferencesName")
+    fun providePreferencesName(): String {
+        return "stock.price.preferences"
+    }
+
+    @Provides
+    @Named("CompaniesJsonFileName")
+    fun provideCompaniesJsonFileName(): String {
+        return "companies.json"
     }
 }

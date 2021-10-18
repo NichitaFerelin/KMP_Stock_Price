@@ -20,13 +20,13 @@ import com.ferelin.domain.entities.SearchRequest
 
 interface SearchRequestsLocalRepo {
 
-    suspend fun cacheSearchRequest(searchRequest: SearchRequest)
+    suspend fun insert(searchRequest: SearchRequest)
 
-    suspend fun eraseSearchRequest(searchRequest: SearchRequest)
+    suspend fun getAll() : List<SearchRequest>
 
-    suspend fun getSearchRequests() : List<SearchRequest>
+    suspend fun getAllPopular() : List<SearchRequest>
 
-    suspend fun getPopularSearchRequests() : List<SearchRequest>
+    suspend fun eraseAll()
 
-    suspend fun clearSearchRequests()
+    suspend fun erase(searchRequest: SearchRequest)
 }

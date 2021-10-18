@@ -26,27 +26,28 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class LivePriceSourceImpl @Inject constructor(
-    private val mLivePriceSocketResolver: LivePriceSocketResolver,
-    private val mLivePriceMapper: LivePriceMapper,
+    private val livePriceSocketResolver: LivePriceSocketResolver,
+    private val livePriceMapper: LivePriceMapper,
 ) : LivePriceSource {
 
     override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
         Timber.d("observe live time price updates")
-        return mLivePriceSocketResolver
+
+        return livePriceSocketResolver
             .openConnection()
-            .map(mLivePriceMapper::map)
+            .map(livePriceMapper::map)
     }
 
     override suspend fun cancelLiveTimeUpdates() {
         Timber.d("cancel live time updates")
-        mLivePriceSocketResolver.closeConnection()
+        livePriceSocketResolver.closeConnection()
     }
 
     override suspend fun subscribeCompanyOnUpdates(companyTicker: String) {
-        mLivePriceSocketResolver.subscribe(companyTicker)
+        livePriceSocketResolver.subscribe(companyTicker)
     }
 
     override suspend fun unsubscribeCompanyFromUpdates(companyTicker: String) {
-        mLivePriceSocketResolver.unsubscribe(companyTicker)
+        livePriceSocketResolver.unsubscribe(companyTicker)
     }
 }

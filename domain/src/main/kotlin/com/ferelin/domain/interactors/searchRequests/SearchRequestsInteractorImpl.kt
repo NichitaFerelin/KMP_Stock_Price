@@ -38,62 +38,63 @@ typealias SearchRequestsState = LoadState<List<SearchRequest>>
 
 @Singleton
 class SearchRequestsInteractorImpl @Inject constructor(
-    private val mSearchRequestsLocalRepo: SearchRequestsLocalRepo,
-    private val mSearchRequestsRemoteRepo: SearchRequestsRemoteRepo,
-    private val mSearchRequestsSyncer: SearchRequestsSyncer,
-    private val mAuthenticationSource: AuthenticationSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val searchRequestsLocalRepo: SearchRequestsLocalRepo,
+    private val searchRequestsRemoteRepo: SearchRequestsRemoteRepo,
+    private val searchRequestsSyncer: SearchRequestsSyncer,
+    private val authenticationSource: AuthenticationSource,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
-    private val mSearchRequestsState = MutableStateFlow<SearchRequestsState>(LoadState.None())
+    private val _searchRequestsState = MutableStateFlow<SearchRequestsState>(LoadState.None())
     override val searchRequestsState: StateFlow<SearchRequestsState>
-        get() = mSearchRequestsState.asStateFlow()
+        get() = _searchRequestsState.asStateFlow()
 
-    private var mPopularRequestsState: SearchRequestsState = LoadState.None()
+    private var popularRequestsState: SearchRequestsState = LoadState.None()
+
+    private var cacheJob: Job? = null
 
     private companion object {
-        const val sCachedRequestsLimit = 30
+        const val CACHED_REQUESTS_LIMIT = 30
     }
 
-    override suspend fun getSearchRequests(): List<SearchRequest> {
-        mSearchRequestsState.value.ifPrepared { preparedState ->
+    override suspend fun getAll(): List<SearchRequest> {
+        _searchRequestsState.value.ifPrepared { preparedState ->
             return preparedState.data
         }
 
-        mSearchRequestsState.value = LoadState.Loading()
+        _searchRequestsState.value = LoadState.Loading()
 
-        val dbRequests = mSearchRequestsLocalRepo
-            .getSearchRequests()
+        val dbRequests = searchRequestsLocalRepo
+            .getAll()
             .sortedByDescending { it.id }
 
-        mSearchRequestsState.value = LoadState.Prepared(dbRequests)
-        mExternalScope.launch(mDispatchersProvider.IO) {
+        _searchRequestsState.value = LoadState.Prepared(dbRequests)
+
+        externalScope.launch(dispatchersProvider.IO) {
             tryToSync()
         }
 
         return dbRequests
     }
 
-    override suspend fun getPopularSearchRequests(): List<SearchRequest> {
-        mPopularRequestsState.ifPrepared { preparedState ->
+    override suspend fun getAllPopular(): List<SearchRequest> {
+        popularRequestsState.ifPrepared { preparedState ->
             return preparedState.data
         }
 
-        mPopularRequestsState = LoadState.Loading()
+        popularRequestsState = LoadState.Loading()
 
-        return mSearchRequestsLocalRepo.getPopularSearchRequests()
-            .also { mPopularRequestsState = LoadState.Prepared(it) }
+        return searchRequestsLocalRepo.getAllPopular()
+            .also { popularRequestsState = LoadState.Prepared(it) }
     }
 
-    private var mCacheJob: Job? = null
+    override suspend fun cache(searchText: String): Unit =
+        withContext(dispatchersProvider.IO) {
 
-    override suspend fun cacheSearchRequest(searchText: String, toNetwork: Boolean): Unit =
-        withContext(mDispatchersProvider.IO) {
-
-            mCacheJob?.join()
-            mCacheJob = mExternalScope.launch(mDispatchersProvider.IO) {
-                mSearchRequestsState.value.ifPrepared { preparedState ->
+            cacheJob?.join()
+            cacheJob = externalScope.launch(dispatchersProvider.IO) {
+                _searchRequestsState.value.ifPrepared { preparedState ->
                     val searchRequest = SearchRequest(
                         id = preparedState.data.firstOrNull()?.id?.plus(1) ?: 0,
                         request = searchText
@@ -105,34 +106,32 @@ class SearchRequestsInteractorImpl @Inject constructor(
                     )
                     updatedSearchRequests.add(0, searchRequest)
 
-                    if (updatedSearchRequests.size > sCachedRequestsLimit) {
+                    if (updatedSearchRequests.size > CACHED_REQUESTS_LIMIT) {
                         reduceRequestsToLimit(updatedSearchRequests)
                     }
 
-                    mSearchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
+                    _searchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
 
-                    mSearchRequestsLocalRepo.cacheSearchRequest(searchRequest)
+                    searchRequestsLocalRepo.insert(searchRequest)
 
-                    if (toNetwork) {
-                        mAuthenticationSource.getUserToken()?.let { userToken ->
-                            mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, searchRequest)
-                        }
+                    // TODO Rewrites requests at db
+                    authenticationSource.getUserToken()?.let { userToken ->
+                        searchRequestsRemoteRepo.insert(userToken, searchRequest)
                     }
                 }
             }
         }
 
     private suspend fun reduceRequestsToLimit(requests: MutableList<SearchRequest>) =
-        withContext(mDispatchersProvider.IO) {
+        withContext(dispatchersProvider.IO) {
             val removedRequest = requests.removeLast()
-
             launch { erase(removedRequest) }
         }
 
     private suspend fun removeDuplicates(
         sourceRequests: List<SearchRequest>,
         newSearchRequest: SearchRequest
-    ): MutableList<SearchRequest> = withContext(mDispatchersProvider.IO) {
+    ): MutableList<SearchRequest> = withContext(dispatchersProvider.IO) {
 
         val noDuplicatesRequests = sourceRequests.toMutableList()
         val newRequestLower = newSearchRequest.request.lowercase()
@@ -158,8 +157,8 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     override suspend fun onLogOut() {
-        invalidateUserData(false)
-        mSearchRequestsSyncer.invalidate()
+        invalidateUserData()
+        searchRequestsSyncer.invalidate()
     }
 
     override suspend fun onNetworkAvailable() {
@@ -167,43 +166,41 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     override suspend fun onNetworkLost() {
-        mSearchRequestsSyncer.invalidate()
+        searchRequestsSyncer.invalidate()
     }
 
-    override suspend fun clearUserData() {
-        invalidateUserData(true)
+    override suspend fun eraseUserData() {
+        invalidateUserData()
     }
 
-    private fun invalidateUserData(includingRemoteSource: Boolean) {
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            mSearchRequestsLocalRepo.clearSearchRequests()
+    private fun invalidateUserData() {
+        externalScope.launch(dispatchersProvider.IO) {
+            searchRequestsLocalRepo.eraseAll()
 
-            if (includingRemoteSource) {
-                mAuthenticationSource.getUserToken()?.let { userToken ->
-                    mSearchRequestsRemoteRepo.clearSearchRequests(userToken)
-                }
+            authenticationSource.getUserToken()?.let { userToken ->
+                searchRequestsRemoteRepo.eraseAll(userToken)
             }
 
-            mSearchRequestsState.value = LoadState.Prepared(emptyList())
+            _searchRequestsState.value = LoadState.Prepared(emptyList())
         }
     }
 
     private suspend fun erase(searchRequest: SearchRequest) {
-        mSearchRequestsLocalRepo.eraseSearchRequest(searchRequest)
+        searchRequestsLocalRepo.erase(searchRequest)
 
-        mAuthenticationSource.getUserToken()?.let { userToken ->
-            mSearchRequestsRemoteRepo.eraseSearchRequest(userToken, searchRequest)
+        authenticationSource.getUserToken()?.let { userToken ->
+            searchRequestsRemoteRepo.erase(userToken, searchRequest)
         }
     }
 
     private suspend fun tryToSync() {
-        mSearchRequestsState.value.ifPrepared { preparedState ->
-            mAuthenticationSource.getUserToken()?.let { userToken ->
-                mSearchRequestsSyncer
+        _searchRequestsState.value.ifPrepared { preparedState ->
+            authenticationSource.getUserToken()?.let { userToken ->
+
+                searchRequestsSyncer
                     .initDataSync(userToken, preparedState.data)
                     .forEach { remoteSearchRequest ->
-                        Log.d("TEST", "New item $remoteSearchRequest")
-                        cacheSearchRequest(remoteSearchRequest.request, false)
+                        cache(remoteSearchRequest.request)
                     }
             }
         }

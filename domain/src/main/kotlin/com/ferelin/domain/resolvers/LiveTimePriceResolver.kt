@@ -32,15 +32,15 @@ import javax.inject.Singleton
 
 @Singleton
 class LiveTimePriceResolver @Inject constructor(
-    private val mLivePriceSource: LivePriceSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    private val mPriceListeners: List<@JvmSuppressWildcards StockPriceListener>,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val livePriceSource: LivePriceSource,
+    private val dispatchersProvider: DispatchersProvider,
+    private val priceListeners: List<@JvmSuppressWildcards StockPriceListener>,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) : NetworkListener {
 
     override suspend fun onNetworkAvailable() {
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            mLivePriceSource.observeLiveTimePriceUpdates()
+        externalScope.launch(dispatchersProvider.IO) {
+            livePriceSource.observeLiveTimePriceUpdates()
                 .filter { it != null }
                 .map { it!! }
                 .collect { onLiveTimePrice(it) }
@@ -48,10 +48,10 @@ class LiveTimePriceResolver @Inject constructor(
     }
 
     override suspend fun onNetworkLost() {
-        mLivePriceSource.cancelLiveTimeUpdates()
+        livePriceSource.cancelLiveTimeUpdates()
     }
 
     private suspend fun onLiveTimePrice(liveTimePrice: LiveTimePrice) {
-        mPriceListeners.forEach { it.onStockPriceChanged(liveTimePrice) }
+        priceListeners.forEach { it.onStockPriceChanged(liveTimePrice) }
     }
 }

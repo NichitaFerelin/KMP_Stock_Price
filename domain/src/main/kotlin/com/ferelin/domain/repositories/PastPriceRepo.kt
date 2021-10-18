@@ -20,11 +20,11 @@ import com.ferelin.domain.entities.PastPrice
 
 interface PastPriceRepo {
 
-    suspend fun getAllPastPrices(companyId: Int): List<PastPrice>
+    suspend fun insertAll(pastPrices: List<PastPrice>)
 
-    suspend fun cacheAllPastPrices(list: List<PastPrice>)
+    suspend fun insert(pastPrice: PastPrice)
 
-    suspend fun cachePastPrice(pastPrice: PastPrice)
+    suspend fun getAllBy(relationCompanyId: Int): List<PastPrice>
 
-    suspend fun clearPastPrices(relationId: Int)
+    suspend fun eraseBy(relationCompanyId: Int)
 }

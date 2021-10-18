@@ -25,7 +25,7 @@ class NewsMapper @Inject constructor() {
     fun map(news: News): NewsDBO {
         return NewsDBO(
             id = news.id,
-            relationId = news.relationId,
+            relationCompanyId = news.relationCompanyId,
             cloudId = news.cloudId,
             headline = news.headline,
             date = news.date,
@@ -36,17 +36,17 @@ class NewsMapper @Inject constructor() {
         )
     }
 
-    fun map(dbo: NewsDBO): News {
+    fun map(newsDBO: NewsDBO): News {
         return News(
-            id = dbo.id,
-            relationId = dbo.relationId,
-            cloudId = dbo.cloudId,
-            headline = dbo.headline,
-            date = dbo.date,
-            previewImageUrl = dbo.previewImageUrl,
-            source = dbo.source,
-            sourceUrl = dbo.sourceUrl,
-            summary = dbo.summary
+            id = newsDBO.id,
+            relationCompanyId = newsDBO.relationCompanyId,
+            cloudId = newsDBO.cloudId,
+            headline = newsDBO.headline,
+            date = newsDBO.date,
+            previewImageUrl = newsDBO.previewImageUrl,
+            source = newsDBO.source,
+            sourceUrl = newsDBO.sourceUrl,
+            summary = newsDBO.summary
         )
     }
 }

@@ -27,8 +27,8 @@ class NewsDBO(
     @ColumnInfo(name = "id")
     val id: Long = 0,
 
-    @ColumnInfo(name = "relation_id")
-    var relationId: Int,
+    @ColumnInfo(name = "relation_company_id")
+    var relationCompanyId: Int,
 
     @ColumnInfo(name = "cloud_id")
     val cloudId: String,

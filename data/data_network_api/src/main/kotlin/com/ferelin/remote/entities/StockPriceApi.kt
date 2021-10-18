@@ -34,7 +34,7 @@ interface StockPriceApi {
      * @return server response as [StockPriceResponse] object
      * */
     @GET("quote")
-    fun getStockPrice(
+    fun loadBy(
         @Query("symbol") symbol: String,
         @Query("token") token: String
     ): Call<StockPriceResponse>

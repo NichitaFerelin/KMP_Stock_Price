@@ -17,8 +17,8 @@
 package com.ferelin.domain.entities
 
 class LiveTimePrice(
-    val companyId: Int = 0,
-    val companyTicker: String,
+    val relationCompanyId: Int = 0,
+    val relationCompanyTicker: String,
     val price: String,
     val profit: String
 )

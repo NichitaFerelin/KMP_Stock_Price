@@ -22,11 +22,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchRequestsRemoteRepo {
 
-    suspend fun cacheSearchRequest(userToken: String, searchRequest: SearchRequest)
+    suspend fun insert(userToken: String, searchRequest: SearchRequest)
 
-    suspend fun eraseSearchRequest(userToken: String, searchRequest: SearchRequest)
+    suspend fun loadAll(userToken: String): Flow<LoadState<List<SearchRequest>>>
 
-    suspend fun loadSearchRequests(userToken: String): Flow<LoadState<List<SearchRequest>>>
+    suspend fun eraseAll(userToken: String)
 
-    suspend fun clearSearchRequests(userToken: String)
+    suspend fun erase(userToken: String, searchRequest: SearchRequest)
 }

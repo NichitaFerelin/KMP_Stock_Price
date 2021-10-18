@@ -28,13 +28,17 @@ class FirstLaunchInteractor @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val mExternalScope: CoroutineScope
 ) {
-    suspend fun getFirstTimeLaunch(): Boolean {
-        return mFirstLaunchRepo.getFirstTimeLaunch()
+    private companion object {
+        const val DEFAULT_FIRST_LAUNCH_STATE = true
     }
 
-    suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean) {
+    suspend fun get(): Boolean {
+        return mFirstLaunchRepo.get() ?: DEFAULT_FIRST_LAUNCH_STATE
+    }
+
+    suspend fun cache(isFirstLaunch: Boolean) {
         mExternalScope.launch(mDispatchersProvider.IO) {
-            mFirstLaunchRepo.cacheFirstTimeLaunch(isFirstLaunch)
+            mFirstLaunchRepo.cache(isFirstLaunch)
         }
     }
 }

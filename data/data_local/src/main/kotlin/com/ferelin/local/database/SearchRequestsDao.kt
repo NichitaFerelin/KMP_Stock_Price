@@ -22,15 +22,15 @@ import com.ferelin.local.entities.SearchRequestDBO
 @Dao
 interface SearchRequestsDao {
 
-    @Query("SELECT * FROM `search_requests`")
-    suspend fun getAll() : List<SearchRequestDBO>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(searchRequestDBO: SearchRequestDBO)
 
-    @Delete
-    suspend fun remove(searchRequestDBO: SearchRequestDBO)
+    @Query("SELECT * FROM `search_requests`")
+    suspend fun getAll() : List<SearchRequestDBO>
 
     @Query("DELETE FROM `search_requests`")
-    fun clearSearchRequests()
+    suspend fun eraseAll()
+
+    @Delete
+    suspend fun erase(searchRequestDBO: SearchRequestDBO)
 }

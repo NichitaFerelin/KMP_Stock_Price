@@ -27,50 +27,55 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class CompaniesRepoImpl @Inject constructor(
-    private val mCompaniesDao: CompaniesDao,
-    private val mCompanyMapper: CompanyMapper,
-    private val mDispatchersProvider: DispatchersProvider
+    private val companiesDao: CompaniesDao,
+    private val companyMapper: CompanyMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : CompaniesLocalRepo {
 
-    override suspend fun getAll(): List<CompanyWithStockPrice> =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get all from local db")
-            mCompaniesDao
-                .getCompaniesWithStocksPrice()
-                .map(mCompanyMapper::map)
-        }
+    override suspend fun insertAll(companies: List<Company>) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("cache (size = ${companies.size})")
 
-    override suspend fun getAllFavourites(): List<CompanyWithStockPrice> =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get all favourites from local db")
-            mCompaniesDao
-                .getFavouriteCompaniesWithStockPrice()
-                .map(mCompanyMapper::map)
-        }
-
-    override suspend fun cache(companies: List<Company>) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache companies (size = ${companies.size}) to local db")
-            mCompaniesDao.insertAllCompanies(
-                list = companies.map(mCompanyMapper::map)
+            companiesDao.insertAll(
+                list = companies.map(companyMapper::map)
             )
         }
 
-    override suspend fun setToDefault() =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("set to default at local db")
-            mCompaniesDao.setToDefault()
+    override suspend fun getAll(): List<CompanyWithStockPrice> =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get all")
+
+            companiesDao
+                .getAll()
+                .map(companyMapper::map)
+        }
+
+    override suspend fun getAllFavourites(): List<CompanyWithStockPrice> =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get all favourites")
+
+            companiesDao
+                .getAllFavourites()
+                .map(companyMapper::map)
+        }
+
+    override suspend fun rollbackToDefault() =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("rollback to default")
+
+            companiesDao.rollbackToDefault()
         }
 
     override suspend fun updateIsFavourite(
         companyId: Int,
         isFavourite: Boolean,
         addedByIndex: Int
-    ) = withContext(mDispatchersProvider.IO) {
+    ) = withContext(dispatchersProvider.IO) {
         Timber.d(
-            "update is favourite(companyId = $companyId," +
-                    " isFavourite = $isFavourite, addedByIndex = $addedByIndex) at local db"
+            "update is favourite (companyId = $companyId," +
+                    " isFavourite = $isFavourite, addedByIndex = $addedByIndex)"
         )
-        mCompaniesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
+
+        companiesDao.updateIsFavourite(companyId, isFavourite, addedByIndex)
     }
 }

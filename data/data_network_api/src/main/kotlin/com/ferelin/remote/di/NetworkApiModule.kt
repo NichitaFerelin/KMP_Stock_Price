@@ -36,34 +36,6 @@ import javax.inject.Singleton
 class NetworkApiModule {
 
     @Provides
-    @Named("FinnhubWebSocketUrl")
-    fun provideFinnhubWebSocketUrl(): String {
-        return "wss://ws.finnhub.io?token="
-    }
-
-    @Provides
-    @Named("FinnhubToken")
-    fun provideFinnhubToken(context: Context): String {
-        return context.resources.getString(R.string.api_key)
-    }
-
-    @Provides
-    @Named("FinnhubBaseUrl")
-    fun provideFinnhubBaseUrl(): String {
-        return "https://finnhub.io/api/v1/"
-    }
-
-    /*
-    *
-    * @Provides
-    @Named("FinnhubToken")
-    fun provideToken(context: Context): String {
-        // Set your own api key to local.properties root file. Name value as 'apiKey'.
-        return context.resources.getString(R.string.api_key)
-    }
-    * */
-
-    @Provides
     @Singleton
     fun provideRetrofit(@Named("FinnhubBaseUrl") finnhubUrl: String): Retrofit {
         val moshi = Moshi
@@ -95,5 +67,23 @@ class NetworkApiModule {
     @Provides
     fun providePastPriceApi(retrofit: Retrofit): PastPricesApi {
         return retrofit.create(PastPricesApi::class.java)
+    }
+
+    @Provides
+    @Named("FinnhubWebSocketUrl")
+    fun provideFinnhubWebSocketUrl(): String {
+        return "wss://ws.finnhub.io?token="
+    }
+
+    @Provides
+    @Named("FinnhubToken")
+    fun provideFinnhubToken(context: Context): String {
+        return context.resources.getString(R.string.api_key)
+    }
+
+    @Provides
+    @Named("FinnhubBaseUrl")
+    fun provideFinnhubBaseUrl(): String {
+        return "https://finnhub.io/api/v1/"
     }
 }

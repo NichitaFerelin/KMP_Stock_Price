@@ -31,10 +31,10 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class StockPriceSourceImpl @Inject constructor(
-    private val mStockPriceApi: StockPriceApi,
-    private val mStockPriceMapper: StockPriceMapper,
-    private val mRequestsLimiter: RequestsLimiter,
-    @Named("FinnhubToken") private val mApiToken: String
+    @Named("FinnhubToken") private val token: String,
+    private val stockPriceApi: StockPriceApi,
+    private val stockPriceMapper: StockPriceMapper,
+    private val requestsLimiter: RequestsLimiter
 ) : StockPriceSource {
 
     override suspend fun addRequestToGetStockPrice(
@@ -47,39 +47,40 @@ class StockPriceSourceImpl @Inject constructor(
             "add request to get stock price (companyTicker = $companyTicker," +
                     " keyPosition = $keyPosition, isImportant = $isImportant"
         )
-        mRequestsLimiter.addRequestToOrder(
+
+        requestsLimiter.addRequestToOrder(
             companyId,
             companyTicker,
             keyPosition,
-            !isImportant,
-            !isImportant
+            eraseIfNotActual = !isImportant,
+            ignoreDuplicates = !isImportant
         )
     }
 
     override fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> =
         callbackFlow {
-            Timber.d("observe actual stock price response")
-            mRequestsLimiter.onExecuteRequest { companyId, tickerToExecute ->
-                Timber.d("on execute request")
+            Timber.d("observe actual stock price responses")
+
+            requestsLimiter.onExecuteRequest { companyId, tickerToExecute ->
                 withExceptionHandle(
                     request = {
-                        mStockPriceApi
-                            .getStockPrice(tickerToExecute, mApiToken)
+                        stockPriceApi
+                            .loadBy(tickerToExecute, token)
                             .execute()
                     },
                     onSuccess = {
-                        Timber.d("on success (response = $it)")
                         trySend(
-                            LoadState.Prepared(mStockPriceMapper.map(it, companyId))
+                            LoadState.Prepared(
+                                data = stockPriceMapper.map(it, companyId)
+                            )
                         )
                     },
                     onFail = {
-                        Timber.d("on fail (exception = $it)")
                         trySend(LoadState.Error())
                         Unit
                     }
                 )
             }
-            awaitClose { mRequestsLimiter.invalidate() }
+            awaitClose { requestsLimiter.invalidate() }
         }
 }

@@ -25,19 +25,23 @@ import javax.inject.Inject
 
 class LivePriceJsonResolver @Inject constructor() {
 
-    private val mConverter by lazy {
-        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val moshi by lazy {
+        Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
     }
 
-    private val mPojoAdapter by lazy {
-        mConverter.adapter(LivePricePojo::class.java).lenient()
+    private val pojoAdapter by lazy {
+        moshi.adapter(LivePricePojo::class.java).lenient()
     }
 
     fun fromJson(jsonResponse: String): LivePrice? = try {
-        Timber.d("extract pojo object from json (json = $jsonResponse)")
-        mPojoAdapter.fromJson(jsonResponse)?.livePrices?.firstOrNull()
-    } catch (e: Exception) {
-        Timber.d("extract pojo object exception $e")
+        Timber.d("fromJson (json response = $jsonResponse)")
+
+        pojoAdapter.fromJson(jsonResponse)?.livePrices?.firstOrNull()
+    } catch (exception: Exception) {
+        Timber.d("from json (exception = $exception")
         null
     }
 }

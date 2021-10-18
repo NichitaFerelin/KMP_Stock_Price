@@ -17,8 +17,8 @@
 package com.ferelin.authentication.sources
 
 import android.app.Activity
-import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.AuthResponse
+import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.shared.DispatchersProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -27,6 +27,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -36,23 +37,24 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthenticationSourceImpl @Inject constructor(
-    private val mFirebaseAuth: FirebaseAuth,
-    private val mDispatchersProvider: DispatchersProvider
+    private val firebaseAuth: FirebaseAuth,
+    private val dispatchersProvider: DispatchersProvider
 ) : AuthenticationSource {
 
     private companion object {
-        const val sCodeRequiredSize = 6
+        const val CODE_REQUIRED_SIZE = 6
+        const val AUTH_TIMEOUT = 30L
     }
 
     // User ID is used to complete verification
-    private var mUserVerificationId: String? = null
+    private var userVerificationId: String? = null
 
-    private var mAuthCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
+    private var authCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
     override fun tryToLogIn(
         holderActivity: Activity,
         phone: String
-    ) = callbackFlow<AuthResponse> {
+    ): Flow<AuthResponse> = callbackFlow {
         Timber.d("try to log in (phone = $phone)")
 
         trySend(AuthResponse.PhoneProcessing)
@@ -63,10 +65,11 @@ class AuthenticationSourceImpl @Inject constructor(
             return@callbackFlow
         }
 
-        mAuthCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        authCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 Timber.d("code sent")
-                mUserVerificationId = p0
+
+                userVerificationId = p0
                 trySend(AuthResponse.CodeSent)
             }
 
@@ -75,7 +78,7 @@ class AuthenticationSourceImpl @Inject constructor(
 
                 trySend(AuthResponse.CodeProcessing)
 
-                mFirebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
+                firebaseAuth.signInWithCredential(p0).addOnCompleteListener { task ->
                     val response = if (task.isSuccessful) {
                         AuthResponse.Complete
                     } else {
@@ -97,10 +100,10 @@ class AuthenticationSourceImpl @Inject constructor(
             }
         }
 
-        mAuthCallbacks?.let { authCallbacks ->
-            val options = PhoneAuthOptions.newBuilder(mFirebaseAuth)
+        authCallbacks?.let { authCallbacks ->
+            val options = PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(phone)
-                .setTimeout(30L, TimeUnit.SECONDS)
+                .setTimeout(AUTH_TIMEOUT, TimeUnit.SECONDS)
                 .setActivity(holderActivity)
                 .setCallbacks(authCallbacks)
                 .build()
@@ -110,31 +113,32 @@ class AuthenticationSourceImpl @Inject constructor(
     }
 
     override suspend fun completeAuthentication(code: String): Unit =
-        withContext(mDispatchersProvider.IO) {
+        withContext(dispatchersProvider.IO) {
             Timber.d("complete authentication (code = $code)")
 
-            mUserVerificationId?.let { userVerificationId ->
+            userVerificationId?.let { userVerificationId ->
                 val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
-                mAuthCallbacks?.onVerificationCompleted(credential)
+                authCallbacks?.onVerificationCompleted(credential)
             }
         }
 
     override suspend fun logOut(): Unit =
-        withContext(mDispatchersProvider.IO) {
+        withContext(dispatchersProvider.IO) {
             Timber.d("log out")
-            mFirebaseAuth.signOut()
+
+            firebaseAuth.signOut()
         }
 
     override fun isUserAuthenticated(): Boolean {
-        return mFirebaseAuth.currentUser != null
+        return firebaseAuth.currentUser != null
     }
 
     override fun getUserToken(): String? {
-        return mFirebaseAuth.uid
+        return firebaseAuth.uid
     }
 
     override fun getCodeRequiredSize(): Int {
-        return sCodeRequiredSize
+        return CODE_REQUIRED_SIZE
     }
 }
 

@@ -16,11 +16,11 @@
 
 package com.ferelin.firebase.syncers
 
-import com.ferelin.domain.repositories.companies.CompaniesLoadState
 import com.ferelin.domain.repositories.companies.CompaniesRemoteRepo
 import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -29,59 +29,52 @@ import javax.inject.Singleton
 
 @Singleton
 class CompaniesSyncerImpl @Inject constructor(
-    private val mCompaniesRemoteRepo: CompaniesRemoteRepo,
-    private val mDispatchersProvider: DispatchersProvider,
+    private val companiesRemoteRepo: CompaniesRemoteRepo,
+    private val dispatchersProvider: DispatchersProvider,
 ) : CompaniesSyncer {
 
-    private var mIsDataSynchronized: Boolean = false
+    private var isDataSynchronized: Boolean = false
 
     override suspend fun initDataSync(
         userToken: String,
         sourceCompaniesIds: List<Int>
     ): List<Int> {
         Timber.d(
-            "init sync (isSynchronized = $mIsDataSynchronized, " +
-                    "localSize = ${sourceCompaniesIds.size}"
+            "init data sync (isSynchronized = $isDataSynchronized, " +
+                    "source companies size = ${sourceCompaniesIds.size}"
         )
 
-        if (mIsDataSynchronized) {
+        if (isDataSynchronized) {
             return emptyList()
         }
 
-        val remoteCompaniesState = withContext(mDispatchersProvider.IO) {
-            mCompaniesRemoteRepo.getFavouriteCompaniesIds(userToken).firstOrNull()
+        val remoteCompaniesState = withContext(dispatchersProvider.IO) {
+            companiesRemoteRepo.loadAll(userToken).firstOrNull()
         }
 
-        Timber.d("loaded remote companies state = $remoteCompaniesState")
-
-        return if (remoteCompaniesState is CompaniesLoadState.Loaded) {
-            val remoteCompaniesIds = remoteCompaniesState.companies
+        return remoteCompaniesState?.ifPrepared { preparedState ->
+            val remoteCompaniesIds = preparedState.data
             syncCloudDb(userToken, sourceCompaniesIds, remoteCompaniesIds)
 
             remoteCompaniesIds.itemsNotIn(sourceCompaniesIds)
-        } else {
-            emptyList()
-        }
+        } ?: emptyList()
     }
 
     override fun invalidate() {
         Timber.d("invalidate")
-        mIsDataSynchronized = false
+        isDataSynchronized = false
     }
 
     private suspend fun syncCloudDb(
         userToken: String,
         sourceCompaniesIds: List<Int>,
         remoteCompaniesIds: List<Int>
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d(
-            "sync cloud db (sources = ${sourceCompaniesIds.size}, " +
-                    "remotes = ${remoteCompaniesIds.size})"
-        )
+    ): Unit = withContext(dispatchersProvider.IO) {
+
         sourceCompaniesIds
             .itemsNotIn(remoteCompaniesIds)
-            .forEach { mCompaniesRemoteRepo.cacheCompanyIdToFavourites(userToken, it) }
+            .forEach { companiesRemoteRepo.insertBy(userToken, it) }
 
-        mIsDataSynchronized = true
+        isDataSynchronized = true
     }
 }

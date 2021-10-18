@@ -25,15 +25,15 @@ import com.ferelin.local.entities.PastPriceDBO
 @Dao
 interface PastPriceDao {
 
-    @Query("SELECT * FROM `companies_past_prices` WHERE relation_id = :companyId")
-    suspend fun getAllPastPrices(companyId: Int): List<PastPriceDBO>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(pastPriceDBO: PastPriceDBO)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPastPrice(pastPriceDBO: PastPriceDBO)
+    suspend fun insertAll(list: List<PastPriceDBO>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllPastPrices(list: List<PastPriceDBO>)
+    @Query("SELECT * FROM `companies_past_prices` WHERE relation_company_id = :companyId")
+    suspend fun getAll(companyId: Int): List<PastPriceDBO>
 
-    @Query("DELETE FROM `companies_past_prices` WHERE relation_id = :relationId")
-    suspend fun clearPastPrices(relationId: Int)
+    @Query("DELETE FROM `companies_past_prices` WHERE relation_company_id = :relationId")
+    suspend fun eraseBy(relationId: Int)
 }

@@ -20,9 +20,9 @@ import com.ferelin.domain.entities.News
 
 interface NewsRepo {
 
-    suspend fun getNews(companyId: Int) : List<News>
+    suspend fun insertAll(news: List<News>)
 
-    suspend fun cacheNews(news: List<News>)
+    suspend fun getAllBy(relationCompanyId: Int) : List<News>
 
-    suspend fun clearNews(companyId: Int)
+    suspend fun eraseBy(relationCompanyId: Int)
 }

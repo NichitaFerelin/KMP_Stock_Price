@@ -32,42 +32,46 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class CompaniesJsonSourceImpl @Inject constructor(
-    @Named("CompaniesJsonFileName") private val mCompaniesJsonFileName: String,
-    private val mContext: Context,
-    private val mCompanyMapper: CompanyMapper,
-    private val mProfileMapper: ProfileMapper
+    @Named("CompaniesJsonFileName") private val companiesJsonFileName: String,
+    private val context: Context,
+    private val companyMapper: CompanyMapper,
+    private val profileMapper: ProfileMapper
 ) : CompaniesJsonSource {
 
-    private val mMoshi = Moshi
-        .Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    private val moshi by lazy(LazyThreadSafetyMode.NONE) {
+        Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun getCompaniesWithProfileFromJson(): Pair<List<Company>, List<Profile>> =
+    override suspend fun parse(): Pair<List<Company>, List<Profile>> =
         try {
-            Timber.d("get companies with profile from json")
+            Timber.d("parse")
+
             val type = Types.newParameterizedType(List::class.java, CompanyPojo::class.java)
-            val json = mContext.assets
-                .open(mCompaniesJsonFileName)
+
+            val json = context.assets
+                .open(companiesJsonFileName)
                 .bufferedReader()
                 .use { it.readText() }
-            val adapter = mMoshi.adapter<List<CompanyPojo>?>(type)
-            val parsedList = adapter.fromJson(json) ?: emptyList()
 
-            Timber.d("json parsed companies size = ${parsedList.size}")
+            val adapter = moshi.adapter<List<CompanyPojo>?>(type)
+            val parsedItems = adapter.fromJson(json) ?: emptyList()
 
-            val companies = List(parsedList.size) { index ->
-                mCompanyMapper.map(index, parsedList[index])
+            Timber.d("parse result size = ${parsedItems.size}")
+
+            val companies = List(parsedItems.size) { index ->
+                companyMapper.map(index, parsedItems[index])
             }
-
-            val profiles = List(parsedList.size) { index ->
-                mProfileMapper.map(index, parsedList[index])
+            val profiles = List(parsedItems.size) { index ->
+                profileMapper.map(index, parsedItems[index])
             }
 
             Pair(companies, profiles)
         } catch (exception: JsonDataException) {
-            Timber.d("json parsed exception $exception")
+            Timber.d("parse exception $exception")
             Pair(emptyList(), emptyList())
         }
 }

@@ -25,11 +25,11 @@ interface SearchRequestsInteractor {
 
     val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
 
-    suspend fun cacheSearchRequest(searchText: String, toNetwork:Boolean)
+    suspend fun cache(searchText: String)
 
-    suspend fun getSearchRequests() : List<SearchRequest>
+    suspend fun getAll() : List<SearchRequest>
 
-    suspend fun getPopularSearchRequests() : List<SearchRequest>
+    suspend fun getAllPopular() : List<SearchRequest>
 
-    suspend fun clearUserData()
+    suspend fun eraseUserData()
 }

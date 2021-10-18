@@ -25,7 +25,7 @@ class ProfileMapper @Inject constructor() {
 
     fun map(profile: Profile): ProfileDBO {
         return ProfileDBO(
-            id = profile.companyId,
+            relationCompanyId = profile.relationCompanyId,
             country = profile.country,
             phone = profile.phone,
             webUrl = profile.webUrl,
@@ -37,7 +37,7 @@ class ProfileMapper @Inject constructor() {
 
     fun map(profileDBO: ProfileDBO): Profile {
         return Profile(
-            companyId = profileDBO.id,
+            relationCompanyId = profileDBO.relationCompanyId,
             country = profileDBO.country,
             phone = profileDBO.phone,
             webUrl = profileDBO.webUrl,
@@ -49,7 +49,7 @@ class ProfileMapper @Inject constructor() {
 
     fun map(index: Int, companyPojo: CompanyPojo) : Profile {
         return Profile(
-            companyId = index,
+            relationCompanyId = index,
             country = companyPojo.country,
             phone = companyPojo.phone,
             webUrl = companyPojo.weburl,

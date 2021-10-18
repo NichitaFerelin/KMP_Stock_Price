@@ -23,10 +23,9 @@ import androidx.room.Relation
 
 @Entity(tableName = "companies_stock_price")
 data class StockPriceDBO(
-
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    val id: Int,
+    @ColumnInfo(name = "relation_company_id")
+    val relationCompanyId: Int,
 
     @ColumnInfo(name = "current_price")
     var currentPrice: String,

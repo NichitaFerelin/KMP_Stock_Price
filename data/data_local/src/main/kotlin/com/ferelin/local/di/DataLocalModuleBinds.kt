@@ -52,5 +52,7 @@ interface DataLocalModuleBinds {
     fun provideStockPriceRepo(stockPriceRepoImpl: StockPriceRepoImpl): StockPriceRepo
 
     @Binds
-    fun provideCompaniesSource(companiesSourceImpl: CompaniesJsonSourceImpl): CompaniesJsonSource
+    fun provideCompaniesJsonSource(
+        companiesJsonSourceImpl: CompaniesJsonSourceImpl
+    ): CompaniesJsonSource
 }

@@ -27,14 +27,14 @@ class CompanyMapper @Inject constructor(
     private val mStockPriceMapper: StockPriceMapper
 ) {
 
-    fun map(dbo: CompanyDBO): Company {
+    fun map(companyDBO: CompanyDBO): Company {
         return Company(
-            id = dbo.id,
-            name = dbo.name,
-            ticker = dbo.ticker,
-            logoUrl = dbo.logoUrl,
-            isFavourite = dbo.isFavourite,
-            addedByIndex = dbo.addedByIndex
+            id = companyDBO.id,
+            name = companyDBO.name,
+            ticker = companyDBO.ticker,
+            logoUrl = companyDBO.logoUrl,
+            isFavourite = companyDBO.isFavourite,
+            addedByIndex = companyDBO.addedByIndex
         )
     }
 

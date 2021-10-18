@@ -17,7 +17,7 @@
 package com.ferelin.domain.entities
 
 data class Profile(
-    val companyId: Int,
+    val relationCompanyId: Int,
     val country: String,
     val phone: String,
     val webUrl: String,

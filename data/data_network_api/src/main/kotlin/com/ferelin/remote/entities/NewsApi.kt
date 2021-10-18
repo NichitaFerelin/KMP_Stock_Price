@@ -36,7 +36,7 @@ interface NewsApi {
      * @return server response as [NewsResponse] object
      * */
     @GET("company-news")
-    fun getNews(
+    fun loadBy(
         @Query("symbol") symbol: String,
         @Query("token") token: String,
         @Query("from") from: String,

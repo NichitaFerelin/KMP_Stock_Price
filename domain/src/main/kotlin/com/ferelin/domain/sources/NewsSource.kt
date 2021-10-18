@@ -22,7 +22,7 @@ import com.ferelin.shared.LoadState
 
 interface NewsSource {
 
-    suspend fun loadCompanyNews(
+    suspend fun loadBy(
         companyId: Int,
         companyTicker: String,
         from: String = AppDate.getYearAgoDateForRequest(),

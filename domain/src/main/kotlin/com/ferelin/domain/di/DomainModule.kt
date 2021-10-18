@@ -27,14 +27,14 @@ import dagger.Provides
 class DomainModule {
 
     @Provides
-    fun providePriceListeners(
+    fun provideStockPriceListeners(
         companiesInteractorImpl: CompaniesInteractorImpl
     ): List<@JvmSuppressWildcards StockPriceListener> {
         return listOf(companiesInteractorImpl)
     }
 
     @Provides
-    fun provideAuthListeners(
+    fun provideAuthenticationListeners(
         companiesInteractorImpl: CompaniesInteractorImpl,
         searchRequestsInteractorImpl: SearchRequestsInteractorImpl
     ): List<@JvmSuppressWildcards AuthenticationListener> {

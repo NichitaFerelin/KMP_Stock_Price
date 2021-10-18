@@ -30,37 +30,34 @@ import javax.inject.Named
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class NewsSourceImpl @Inject constructor(
-    private val mNewsApi: NewsApi,
-    private val mNewsMapper: NewsMapper,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("FinnhubToken") private val mApiToken: String
+    @Named("FinnhubToken") private val token: String,
+    private val newsApi: NewsApi,
+    private val newsMapper: NewsMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : NewsSource {
 
-    override suspend fun loadCompanyNews(
+    override suspend fun loadBy(
         companyId: Int,
         companyTicker: String,
         from: String,
         to: String
-    ): LoadState<List<News>> = withContext(mDispatchersProvider.IO) {
-        Timber.d("load company news (companyTicker: $companyTicker)")
+    ): LoadState<List<News>> = withContext(dispatchersProvider.IO) {
+        Timber.d("get by (company ticker: $companyTicker)")
+
         withExceptionHandle(
             request = {
-                mNewsApi
-                    .getNews(companyTicker, mApiToken, from, to)
+                newsApi
+                    .loadBy(companyTicker, token, from, to)
                     .execute()
             },
             onSuccess = { responseBody ->
-                Timber.d("on success (responseSize = ${responseBody.size})")
                 LoadState.Prepared(
                     data = responseBody.map {
-                        mNewsMapper.map(it, companyId)
+                        newsMapper.map(it, companyId)
                     }
                 )
             },
-            onFail = {
-                Timber.d("on fail (exception = $it)")
-                LoadState.Error()
-            }
+            onFail = { LoadState.Error() }
         )
     }
 }

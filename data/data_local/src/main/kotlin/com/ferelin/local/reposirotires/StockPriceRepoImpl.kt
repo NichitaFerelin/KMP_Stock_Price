@@ -31,27 +31,29 @@ class StockPriceRepoImpl @Inject constructor(
     private val mDispatchersProvider: DispatchersProvider
 ) : StockPriceRepo {
 
-    override suspend fun getStockPrice(companyId: Int): StockPrice? =
+    override suspend fun insert(stockPrice: StockPrice) =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("get stock price by company id (companyId = $companyId)")
-            val dbo = mStockPriceDao.getStockPrice(companyId)
-            return@withContext dbo?.let { mStockPriceMapper.map(it) }
+            Timber.d("insert (stockPrice = $stockPrice)")
+
+            val stockPriceDBO = mStockPriceMapper.map(stockPrice)
+            mStockPriceDao.insert(stockPriceDBO)
         }
 
-    override suspend fun cacheStockPrice(stockPrice: StockPrice) =
+    override suspend fun getBy(relationCompanyId: Int): StockPrice? =
         withContext(mDispatchersProvider.IO) {
-            Timber.d("cache stock price (stockPrice = $stockPrice)")
-            mStockPriceDao.insertStockPrice(
-                dbo = mStockPriceMapper.map(stockPrice)
-            )
+            Timber.d("get by (relation company id  = $relationCompanyId)")
+
+            val stockPriceDbo = mStockPriceDao.getBy(relationCompanyId)
+            return@withContext stockPriceDbo?.let(mStockPriceMapper::map)
         }
 
-    override suspend fun updateStockPrice(companyId: Int, price: String, profit: String) =
+    override suspend fun update(relationCompanyId: Int, price: String, profit: String) =
         withContext(mDispatchersProvider.IO) {
             Timber.d(
-                "update stock price (companyId = $companyId, " +
+                "update (relation company id = $relationCompanyId, " +
                         "price = $price, profit = $profit)"
             )
-            mStockPriceDao.updateStockPrice(companyId, price, profit)
+
+            mStockPriceDao.update(relationCompanyId, price, profit)
         }
 }

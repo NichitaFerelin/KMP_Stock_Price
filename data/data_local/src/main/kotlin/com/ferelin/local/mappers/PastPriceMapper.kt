@@ -25,7 +25,7 @@ class PastPriceMapper @Inject constructor() {
     fun map(pastPrice: PastPrice): PastPriceDBO {
         return PastPriceDBO(
             id = pastPrice.id,
-            relationId = pastPrice.relationId,
+            relationCompanyId = pastPrice.relationCompanyId,
             openPrice = pastPrice.openPrice,
             openPriceStr = pastPrice.openPriceStr,
             highPrice = pastPrice.highPrice,
@@ -36,17 +36,17 @@ class PastPriceMapper @Inject constructor() {
         )
     }
 
-    fun map(dbo: PastPriceDBO): PastPrice {
+    fun map(pastPriceDBO: PastPriceDBO): PastPrice {
         return PastPrice(
-            id = dbo.id,
-            relationId = dbo.relationId,
-            openPrice = dbo.openPrice,
-            openPriceStr = dbo.openPriceStr,
-            highPrice = dbo.highPrice,
-            lowPrice = dbo.lowPrice,
-            closePrice = dbo.closePrice,
-            closePriceStr = dbo.closePriceStr,
-            date = dbo.date
+            id = pastPriceDBO.id,
+            relationCompanyId = pastPriceDBO.relationCompanyId,
+            openPrice = pastPriceDBO.openPrice,
+            openPriceStr = pastPriceDBO.openPriceStr,
+            highPrice = pastPriceDBO.highPrice,
+            lowPrice = pastPriceDBO.lowPrice,
+            closePrice = pastPriceDBO.closePrice,
+            closePriceStr = pastPriceDBO.closePriceStr,
+            date = pastPriceDBO.date
         )
     }
 }

@@ -26,38 +26,41 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class PastPriceRepoImpl @Inject constructor(
-    private val mPastPriceDao: PastPriceDao,
-    private val mPastPriceMapper: PastPriceMapper,
-    private val mDispatchersProvider: DispatchersProvider
+    private val pastPriceDao: PastPriceDao,
+    private val pastPriceMapper: PastPriceMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : PastPriceRepo {
 
-    override suspend fun getAllPastPrices(companyId: Int): List<PastPrice> =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get all past prices by companyId (companyId = $companyId)")
-            return@withContext mPastPriceDao
-                .getAllPastPrices(companyId)
-                .map(mPastPriceMapper::map)
-        }
+    override suspend fun insertAll(pastPrices: List<PastPrice>) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("insert all (past prices size = ${pastPrices.size})")
 
-    override suspend fun cacheAllPastPrices(list: List<PastPrice>) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache all past prices (size = ${list.size})")
-            mPastPriceDao.insertAllPastPrices(
-                list.map(mPastPriceMapper::map)
+            pastPriceDao.insertAll(
+                pastPrices.map(pastPriceMapper::map)
             )
         }
 
-    override suspend fun clearPastPrices(relationId: Int) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("clear past prices (relationId = $relationId)")
-            mPastPriceDao.clearPastPrices(relationId)
-        }
-
-    override suspend fun cachePastPrice(pastPrice: PastPrice) =
-        withContext(mDispatchersProvider.IO) {
+    override suspend fun insert(pastPrice: PastPrice) =
+        withContext(dispatchersProvider.IO) {
             Timber.d("cache past price(pastPrice = $pastPrice)")
-            mPastPriceDao.insertPastPrice(
-                pastPriceDBO = mPastPriceMapper.map(pastPrice)
+            pastPriceDao.insert(
+                pastPriceDBO = pastPriceMapper.map(pastPrice)
             )
+        }
+
+    override suspend fun getAllBy(relationCompanyId: Int): List<PastPrice> =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get all by (relation company id = $relationCompanyId)")
+
+            return@withContext pastPriceDao
+                .getAll(relationCompanyId)
+                .map(pastPriceMapper::map)
+        }
+
+    override suspend fun eraseBy(relationCompanyId: Int) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("erase by (relation company id = $relationCompanyId)")
+
+            pastPriceDao.eraseBy(relationCompanyId)
         }
 }

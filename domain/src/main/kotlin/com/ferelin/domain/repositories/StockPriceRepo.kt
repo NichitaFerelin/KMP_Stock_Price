@@ -20,9 +20,9 @@ import com.ferelin.domain.entities.StockPrice
 
 interface StockPriceRepo {
 
-    suspend fun getStockPrice(companyId: Int) : StockPrice?
+    suspend fun insert(stockPrice: StockPrice)
 
-    suspend fun cacheStockPrice(stockPrice: StockPrice)
+    suspend fun getBy(relationCompanyId: Int) : StockPrice?
 
-    suspend fun updateStockPrice(companyId: Int, price: String, profit: String)
+    suspend fun update(relationCompanyId: Int, price: String, profit: String)
 }

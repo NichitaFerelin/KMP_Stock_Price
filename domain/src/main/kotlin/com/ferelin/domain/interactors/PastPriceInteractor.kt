@@ -27,28 +27,29 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
-typealias PastPrices = List<PastPrice>
-
 class PastPriceInteractor @Inject constructor(
-    private val mPastPriceRepo: PastPriceRepo,
-    private val mPastPriceSource: PastPriceSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val pastPriceRepo: PastPriceRepo,
+    private val pastPriceSource: PastPriceSource,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
-    suspend fun getAllPastPrices(companyId: Int): List<PastPrice> {
-        return mPastPriceRepo.getAllPastPrices(companyId)
+    suspend fun getAllBy(relationCompanyId: Int): List<PastPrice> {
+        return pastPriceRepo.getAllBy(relationCompanyId)
     }
 
-    suspend fun loadPastPrices(companyId: Int, companyTicker: String): LoadState<PastPrices> {
-        return mPastPriceSource.loadPastPrices(companyId, companyTicker)
-            .also { cacheIfLoaded(it, companyId) }
+    suspend fun loadAllBy(
+        relationCompanyId: Int,
+        relationCompanyTicker: String
+    ): LoadState<List<PastPrice>> {
+        return pastPriceSource.loadBy(relationCompanyId, relationCompanyTicker)
+            .also { cacheIfLoaded(it, relationCompanyId) }
     }
 
-    private fun cacheIfLoaded(responseState: LoadState<PastPrices>, companyId: Int) {
+    private fun cacheIfLoaded(responseState: LoadState<List<PastPrice>>, relationCompanyId: Int) {
         responseState.ifPrepared { preparedState ->
-            mExternalScope.launch(mDispatchersProvider.IO) {
-                mPastPriceRepo.clearPastPrices(companyId)
-                mPastPriceRepo.cacheAllPastPrices(preparedState.data)
+            externalScope.launch(dispatchersProvider.IO) {
+                pastPriceRepo.eraseBy(relationCompanyId)
+                pastPriceRepo.insertAll(preparedState.data)
             }
         }
     }

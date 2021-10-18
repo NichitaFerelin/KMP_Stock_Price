@@ -75,5 +75,5 @@ interface AppComponent {
     fun inject(fragment: IdeasFragment)
     fun inject(fragment: LoginFragment)
     fun inject(fragment: SearchFragment)
-    fun inject(fragmnet: SettingsFragment)
+    fun inject(fragment: SettingsFragment)
 }

@@ -28,27 +28,29 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class FirstLaunchRepoImpl @Inject constructor(
-    private val mPreferencesProvider: PreferencesProvider,
-    private val mDispatchersProvider: DispatchersProvider
+    private val preferencesProvider: PreferencesProvider,
+    private val dispatchersProvider: DispatchersProvider
 ) : FirstLaunchRepo {
 
     private companion object {
-        val sFirstTimeLaunchKey = booleanPreferencesKey("first-launch")
+        val FIRST_TIME_LAUNCH_KEY = booleanPreferencesKey("first-launch")
     }
 
-    override suspend fun getFirstTimeLaunch(): Boolean =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get first time launch")
-            return@withContext mPreferencesProvider.dataStore.data.map {
-                it[sFirstTimeLaunchKey]
-            }.firstOrNull() ?: true
+    override suspend fun get(): Boolean? =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get")
+
+            return@withContext preferencesProvider.dataStore.data.map {
+                it[FIRST_TIME_LAUNCH_KEY]
+            }.firstOrNull()
         }
 
-    override suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean): Unit =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache first time launch (isFirstLaunch = $isFirstLaunch)")
-            mPreferencesProvider.dataStore.edit {
-                it[sFirstTimeLaunchKey] = isFirstLaunch
+    override suspend fun cache(isFirstLaunch: Boolean): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("cache (isFirstLaunch = $isFirstLaunch)")
+
+            preferencesProvider.dataStore.edit {
+                it[FIRST_TIME_LAUNCH_KEY] = isFirstLaunch
             }
         }
 }

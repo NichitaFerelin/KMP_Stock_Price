@@ -28,25 +28,25 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class NewsInteractor @Inject constructor(
-    private val mNewsRepo: NewsRepo,
-    private val mNewsSource: NewsSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val newsRepo: NewsRepo,
+    private val newsSource: NewsSource,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
-    suspend fun getNews(companyId: Int): List<News> {
-        return mNewsRepo.getNews(companyId)
+    suspend fun getAllBy(relationCompanyId: Int): List<News> {
+        return newsRepo.getAllBy(relationCompanyId)
     }
 
-    suspend fun loadCompanyNews(companyId: Int, companyTicker: String): LoadState<List<News>> {
-        return mNewsSource.loadCompanyNews(companyId, companyTicker)
+    suspend fun loadBy(companyId: Int, companyTicker: String): LoadState<List<News>> {
+        return newsSource.loadBy(companyId, companyTicker)
             .also { cacheIfPrepared(it, companyId) }
     }
 
-    private fun cacheIfPrepared(loadState: LoadState<List<News>>, companyId: Int) {
+    private fun cacheIfPrepared(loadState: LoadState<List<News>>, relationCompanyId: Int) {
         loadState.ifPrepared { preparedState ->
-            mExternalScope.launch(mDispatchersProvider.IO) {
-                mNewsRepo.clearNews(companyId)
-                mNewsRepo.cacheNews(preparedState.data)
+            externalScope.launch(dispatchersProvider.IO) {
+                newsRepo.eraseBy(relationCompanyId)
+                newsRepo.insertAll(preparedState.data)
             }
         }
     }

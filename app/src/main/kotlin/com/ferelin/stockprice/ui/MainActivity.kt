@@ -44,7 +44,7 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private var mViewBinding: ActivityMainBinding? = null
+    private var viewBinding: ActivityMainBinding? = null
 
     @Inject
     lateinit var router: Router
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var networkResolver: NetworkResolver
 
-    private val mFragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
+    private val fragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
         object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentPreAttached(
                 fm: FragmentManager,
@@ -90,13 +90,13 @@ class MainActivity : AppCompatActivity() {
         injectDependencies()
 
         supportFragmentManager.registerFragmentLifecycleCallbacks(
-            mFragmentLifecycleCallbacks,
+            fragmentLifecycleCallbacks,
             true
         )
 
         super.onCreate(savedInstanceState)
         ActivityMainBinding.inflate(layoutInflater).also {
-            mViewBinding = it
+            viewBinding = it
             setContentView(it.root)
         }
 
@@ -112,9 +112,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        mViewBinding = null
+        viewBinding = null
         router.unbind()
+        super.onDestroy()
     }
 
     private fun injectDependencies() {

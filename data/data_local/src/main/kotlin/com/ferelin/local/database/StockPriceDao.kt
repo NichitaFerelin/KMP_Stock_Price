@@ -26,15 +26,15 @@ import com.ferelin.local.entities.StockPriceDBO
 interface StockPriceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStockPrice(dbo: StockPriceDBO)
+    suspend fun insert(dbo: StockPriceDBO)
 
-    @Query("SELECT * FROM `companies_stock_price` WHERE id = :companyId LIMIT 1")
-    suspend fun getStockPrice(companyId: Int): StockPriceDBO?
+    @Query("SELECT * FROM `companies_stock_price` WHERE relation_company_id = :companyId LIMIT 1")
+    suspend fun getBy(companyId: Int): StockPriceDBO?
 
     @Query(
         "UPDATE `companies_stock_price` " +
                 "SET current_price = :price ,profit = :profit " +
-                "WHERE id = :companyId"
+                "WHERE relation_company_id = :companyId"
     )
-    suspend fun updateStockPrice(companyId: Int, price: String, profit: String)
+    suspend fun update(companyId: Int, price: String, profit: String)
 }

@@ -24,7 +24,7 @@ class StockPriceMapper @Inject constructor() {
 
     fun map(stockPrice: StockPrice): StockPriceDBO {
         return StockPriceDBO(
-            id = stockPrice.id,
+            relationCompanyId = stockPrice.relationCompanyId,
             currentPrice = stockPrice.currentPrice,
             previousClosePrice = stockPrice.previousClosePrice,
             openPrice = stockPrice.openPrice,
@@ -36,7 +36,7 @@ class StockPriceMapper @Inject constructor() {
 
     fun map(stockPriceDBO: StockPriceDBO): StockPrice {
         return StockPrice(
-            id = stockPriceDBO.id,
+            relationCompanyId = stockPriceDBO.relationCompanyId,
             currentPrice = stockPriceDBO.currentPrice,
             previousClosePrice = stockPriceDBO.previousClosePrice,
             openPrice = stockPriceDBO.openPrice,

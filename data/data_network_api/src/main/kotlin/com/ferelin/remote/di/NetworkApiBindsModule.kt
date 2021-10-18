@@ -37,7 +37,7 @@ interface NetworkApiBindsModule {
     fun provideNewsSource(newsSourceImpl: NewsSourceImpl): NewsSource
 
     @Binds
-    fun providePastPrice(pastPriceSourceImpl: PastPriceSourceImpl): PastPriceSource
+    fun providePastPriceSource(pastPriceSourceImpl: PastPriceSourceImpl): PastPriceSource
 
     @Binds
     fun provideStockPriceSource(stockPriceSourceImpl: StockPriceSourceImpl): StockPriceSource

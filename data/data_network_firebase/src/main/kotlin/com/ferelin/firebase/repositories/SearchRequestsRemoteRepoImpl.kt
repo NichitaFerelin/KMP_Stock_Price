@@ -22,7 +22,6 @@ import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -30,79 +29,76 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRemoteRepoImpl @Inject constructor(
-    private val mFirebaseReference: DatabaseReference,
-    private val mDispatchersProvider: DispatchersProvider
+    private val firebaseReference: DatabaseReference,
+    private val dispatchersProvider: DispatchersProvider
 ) : SearchRequestsRemoteRepo {
 
     private companion object {
-        const val sSearchesHistoryRef = "search-requests"
+        const val SEARCH_REQUEST_REF = "search-requests"
     }
 
-    override suspend fun cacheSearchRequest(
+    override suspend fun insert(
         userToken: String,
         searchRequest: SearchRequest
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d("cache search request ($searchRequest)")
+    ): Unit = withContext(dispatchersProvider.IO) {
+        Timber.d("insert (search request = $searchRequest)")
 
-        mFirebaseReference
-            .child(sSearchesHistoryRef)
+        firebaseReference
+            .child(SEARCH_REQUEST_REF)
             .child(userToken)
             .child(searchRequest.id.toString())
             .setValue(searchRequest.request)
     }
 
-    override suspend fun eraseSearchRequest(
-        userToken: String,
-        searchRequest: SearchRequest
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d("erase search request ($searchRequest)")
-
-        mFirebaseReference
-            .child(sSearchesHistoryRef)
-            .child(userToken)
-            .child(searchRequest.id.toString())
-            .removeValue()
-    }
-
-    override suspend fun loadSearchRequests(
+    override suspend fun loadAll(
         userToken: String
-    ): Flow<LoadState<List<SearchRequest>>> = callbackFlow<LoadState<List<SearchRequest>>> {
-        Timber.d("load search requests (userToken = $userToken")
+    ) = callbackFlow<LoadState<List<SearchRequest>>> {
+        Timber.d("get all")
 
-        mFirebaseReference
-            .child(sSearchesHistoryRef)
+        firebaseReference
+            .child(SEARCH_REQUEST_REF)
             .child(userToken)
             .get()
             .addOnCompleteListener { resultSnapshot ->
                 if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
-                    Timber.d("on success search requests")
                     val searchRequestsSnapshot = resultSnapshot.result!!
                     val searchRequests = mutableListOf<SearchRequest>()
 
                     for (searchSnapshot in searchRequestsSnapshot.children) {
                         val requestId = searchSnapshot.key?.toInt() ?: 0
                         val request = searchSnapshot.value?.toString() ?: ""
-                        searchRequests.add(
-                            SearchRequest(requestId, request)
-                        )
+                        val searchRequest = SearchRequest(requestId, request)
+
+                        searchRequests.add(searchRequest)
                     }
 
-                    trySend(
-                        LoadState.Prepared(searchRequests)
-                    )
+                    trySend(LoadState.Prepared(searchRequests))
                 } else {
-                    trySend(
-                        LoadState.Error()
-                    )
+                    trySend(LoadState.Error())
                 }
             }
         awaitClose()
-    }.flowOn(mDispatchersProvider.IO)
+    }.flowOn(dispatchersProvider.IO)
 
-    override suspend fun clearSearchRequests(userToken: String) {
-        mFirebaseReference
-            .child(sSearchesHistoryRef)
+    override suspend fun eraseAll(userToken: String) {
+        Timber.d("erase all")
+
+        firebaseReference
+            .child(SEARCH_REQUEST_REF)
             .child(userToken)
+            .removeValue()
+    }
+
+    override suspend fun erase(
+        userToken: String,
+        searchRequest: SearchRequest
+    ): Unit = withContext(dispatchersProvider.IO) {
+        Timber.d("erase (search request = $searchRequest)")
+
+        firebaseReference
+            .child(SEARCH_REQUEST_REF)
+            .child(userToken)
+            .child(searchRequest.id.toString())
             .removeValue()
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.local.utils
+package com.ferelin.local.sources
 
 import com.ferelin.domain.entities.SearchRequest
 

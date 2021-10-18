@@ -29,35 +29,33 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class PastPriceSourceImpl @Inject constructor(
-    private val mPastPricesApi: PastPricesApi,
-    private val mPastPriceMapper: PastPriceMapper,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("FinnhubToken") private val mApiToken: String
+    @Named("FinnhubToken") private val token: String,
+    private val pastPricesApi: PastPricesApi,
+    private val pastPriceMapper: PastPriceMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : PastPriceSource {
 
-    override suspend fun loadPastPrices(
+    override suspend fun loadBy(
         companyId: Int,
         companyTicker: String,
         from: Long,
         to: Long,
         resolution: String
-    ): LoadState<List<PastPrice>> = withContext(mDispatchersProvider.IO) {
+    ): LoadState<List<PastPrice>> = withContext(dispatchersProvider.IO) {
+        Timber.d("get by (company ticker = $companyTicker)")
+
         withExceptionHandle(
             request = {
-                mPastPricesApi
-                    .getPastPrices(companyTicker, mApiToken, from, to, resolution)
+                pastPricesApi
+                    .loadBy(companyTicker, token, from, to, resolution)
                     .execute()
             },
             onSuccess = { responseBody ->
-                Timber.d("on success (responseBody = $responseBody)")
                 LoadState.Prepared(
-                    data = mPastPriceMapper.map(responseBody, companyId)
+                    data = pastPriceMapper.map(responseBody, companyId)
                 )
             },
-            onFail = {
-                Timber.d("on exception (exception = $it)")
-                LoadState.Error()
-            }
+            onFail = { LoadState.Error() }
         )
     }
 }

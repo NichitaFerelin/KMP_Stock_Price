@@ -25,8 +25,8 @@ import javax.inject.Inject
 
 class PastPriceMapper @Inject constructor() {
 
-    fun map(response: PastPricesResponse,  companyId: Int): List<PastPrice> {
-        with(response) {
+    fun map(pastPriceResponse: PastPricesResponse, relationCompanyId: Int): List<PastPrice> {
+        with(pastPriceResponse) {
             if (
                 closePrices.size != highPrices.size
                 || highPrices.size != lowPrices.size
@@ -43,7 +43,7 @@ class PastPriceMapper @Inject constructor() {
                 val timestamp = timestamps[index]
 
                 PastPrice(
-                    relationId = companyId,
+                    relationCompanyId = relationCompanyId,
                     openPrice = openPrice,
                     openPriceStr = openPrice.toStrPrice(),
                     highPrice = highPrice.toStrPrice(),

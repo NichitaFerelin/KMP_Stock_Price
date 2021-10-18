@@ -20,48 +20,53 @@ import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.local.database.SearchRequestsDao
 import com.ferelin.local.mappers.SearchRequestMapper
-import com.ferelin.local.utils.PopularRequestsSource
+import com.ferelin.local.sources.PopularRequestsSource
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRepoImpl @Inject constructor(
-    private val mSearchRequestsDao: SearchRequestsDao,
-    private val mSearchRequestMapper: SearchRequestMapper,
-    private val mDispatchersProvider: DispatchersProvider
+    private val searchRequestsDao: SearchRequestsDao,
+    private val searchRequestsMapper: SearchRequestMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : SearchRequestsLocalRepo {
 
-    override suspend fun cacheSearchRequest(searchRequest: SearchRequest): Unit =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache search request (search request = $searchRequest)")
-            val mappedRequest = mSearchRequestMapper.map(searchRequest)
-            mSearchRequestsDao.insert(mappedRequest)
+    override suspend fun insert(searchRequest: SearchRequest): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("insert (search request = $searchRequest)")
+
+            val searchRequestDBO = searchRequestsMapper.map(searchRequest)
+            searchRequestsDao.insert(searchRequestDBO)
         }
 
-    override suspend fun eraseSearchRequest(searchRequest: SearchRequest): Unit =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("erase search request (searchRequest = $searchRequest)")
-            val mappedRequest = mSearchRequestMapper.map(searchRequest)
-            mSearchRequestsDao.remove(mappedRequest)
-        }
+    override suspend fun getAll(): List<SearchRequest> =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get all")
 
-    override suspend fun getSearchRequests(): List<SearchRequest> =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get search requests")
-            return@withContext mSearchRequestsDao
+            return@withContext searchRequestsDao
                 .getAll()
-                .map(mSearchRequestMapper::map)
+                .map(searchRequestsMapper::map)
         }
 
-    override suspend fun getPopularSearchRequests(): List<SearchRequest> {
-        Timber.d("get popular search requests")
+    override suspend fun getAllPopular(): List<SearchRequest> {
+        Timber.d("get all popular")
+
         return PopularRequestsSource.popularSearchRequests
     }
 
-    override suspend fun clearSearchRequests(): Unit =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("clear search requests")
-            mSearchRequestsDao.clearSearchRequests()
+    override suspend fun eraseAll(): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("erase all")
+
+            searchRequestsDao.eraseAll()
+        }
+
+    override suspend fun erase(searchRequest: SearchRequest): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("erase (searchRequest = $searchRequest)")
+
+            val searchRequestDBO = searchRequestsMapper.map(searchRequest)
+            searchRequestsDao.erase(searchRequestDBO)
         }
 }

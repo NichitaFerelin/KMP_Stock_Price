@@ -29,46 +29,42 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AuthenticationInteractor @Inject constructor(
-    private val mAuthenticationSource: AuthenticationSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    private val mAuthenticationListeners: List<@JvmSuppressWildcards AuthenticationListener>,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val authenticationSource: AuthenticationSource,
+    private val dispatchersProvider: DispatchersProvider,
+    private val authenticationListeners: List<@JvmSuppressWildcards AuthenticationListener>,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthResponse> {
-        return mAuthenticationSource.tryToLogIn(holderActivity, phone)
+        return authenticationSource.tryToLogIn(holderActivity, phone)
             .onEach { notifyIfCompleted(it) }
     }
 
     suspend fun completeAuthentication(code: String) {
-        mAuthenticationSource.completeAuthentication(code)
+        authenticationSource.completeAuthentication(code)
     }
 
     suspend fun logOut() {
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            mAuthenticationSource.logOut()
+        externalScope.launch(dispatchersProvider.IO) {
+            authenticationSource.logOut()
 
-            mAuthenticationListeners.forEach {
+            authenticationListeners.forEach {
                 it.onLogOut()
             }
         }
     }
 
     fun getCodeRequiredSize(): Int {
-        return mAuthenticationSource.getCodeRequiredSize()
-    }
-
-    fun getUserToken(): String? {
-        return mAuthenticationSource.getUserToken()
+        return authenticationSource.getCodeRequiredSize()
     }
 
     fun isUserAuthenticated(): Boolean {
-        return mAuthenticationSource.isUserAuthenticated()
+        return authenticationSource.isUserAuthenticated()
     }
 
     private fun notifyIfCompleted(authResponse: AuthResponse) {
         if (authResponse == AuthResponse.Complete) {
-            mExternalScope.launch(mDispatchersProvider.IO) {
-                mAuthenticationListeners.forEach {
+            externalScope.launch(dispatchersProvider.IO) {
+                authenticationListeners.forEach {
                     it.onLogIn()
                 }
             }

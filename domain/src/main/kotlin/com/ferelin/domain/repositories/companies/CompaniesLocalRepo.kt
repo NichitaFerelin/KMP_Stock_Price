@@ -21,13 +21,13 @@ import com.ferelin.domain.entities.CompanyWithStockPrice
 
 interface CompaniesLocalRepo {
 
+    suspend fun insertAll(companies: List<Company>)
+
     suspend fun getAll(): List<CompanyWithStockPrice>
 
     suspend fun getAllFavourites(): List<CompanyWithStockPrice>
 
-    suspend fun cache(companies: List<Company>)
-
-    suspend fun setToDefault()
+    suspend fun rollbackToDefault()
 
     suspend fun updateIsFavourite(companyId: Int, isFavourite: Boolean, addedByIndex: Int = 0)
 }

@@ -20,7 +20,7 @@ import com.ferelin.domain.entities.Profile
 
 interface ProfileRepo {
 
-    suspend fun getProfile(companyId: Int): Profile
+    suspend fun insertAll(profiles: List<Profile>)
 
-    suspend fun cacheProfiles(profiles: List<Profile>)
+    suspend fun getBy(relationCompanyId: Int): Profile
 }

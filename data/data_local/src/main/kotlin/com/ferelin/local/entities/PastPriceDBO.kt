@@ -27,8 +27,8 @@ data class PastPriceDBO(
     @ColumnInfo(name = "id")
     val id: Long,
 
-    @ColumnInfo(name = "relation_id")
-    val relationId: Int,
+    @ColumnInfo(name = "relation_company_id")
+    val relationCompanyId: Int,
 
     @ColumnInfo(name = "open_price")
     val openPrice: Double,

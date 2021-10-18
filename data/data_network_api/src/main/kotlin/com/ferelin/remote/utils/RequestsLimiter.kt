@@ -33,22 +33,22 @@ class RequestsLimiter @Inject constructor(
     @Named("ExternalScope") externalScope: CoroutineScope,
     dispatchersProvider: DispatchersProvider
 ) {
-    private var mStockPriceApi: ((Int, String) -> Unit)? = null
-
-    private val mMessagesQueue = LinkedHashSet<CachedMessage>(100)
-    private var mMessagesHistory = HashMap<Int, Unit>(300, 0.5F)
-
-    private var mIsRunning = true
-
-    private var mJob: Job? = null
-
     private companion object {
-        const val sPerSecondRequestLimit = 1050L
-        const val sAlreadyNotActualValue = 13
+        const val PER_SECOND_REQUESTS_LIMIT = 1050L
+        const val ALREADY_NOT_ACTUAL_REQUEST = 13
     }
 
+    private var stockPriceApi: ((Int, String) -> Unit)? = null
+
+    private val messagesQueue = LinkedHashSet<CachedMessage>(100)
+    private var messagesHistory = HashMap<Int, Unit>(300, 0.5F)
+
+    private var isRunning = true
+
+    private var workerJob: Job? = null
+
     init {
-        mJob = externalScope.launch(dispatchersProvider.IO) {
+        workerJob = externalScope.launch(dispatchersProvider.IO) {
             start()
         }
     }
@@ -66,27 +66,27 @@ class RequestsLimiter @Inject constructor(
     }
 
     fun onExecuteRequest(onExecute: (Int, String) -> Unit) {
-        mStockPriceApi = onExecute
+        stockPriceApi = onExecute
     }
 
     fun invalidate() {
-        mJob?.cancel()
-        mJob = null
-        mMessagesQueue.clear()
-        mIsRunning = false
+        workerJob?.cancel()
+        workerJob = null
+        messagesQueue.clear()
+        isRunning = false
     }
 
     private suspend fun start() {
-        while (mIsRunning) {
+        while (isRunning) {
             try {
-                mMessagesQueue.firstOrNull()?.let { task ->
-                    if (mMessagesHistory[task.companyId] == Unit) {
-                        mMessagesQueue.remove(task)
+                messagesQueue.firstOrNull()?.let { task ->
+                    if (messagesHistory[task.companyId] == Unit) {
+                        messagesQueue.remove(task)
                         return@let
                     }
 
-                    val lastPosition = mMessagesQueue.last().keyPosition
-                    mMessagesQueue.remove(task)
+                    val lastPosition = messagesQueue.last().keyPosition
+                    messagesQueue.remove(task)
 
                     if (isNotActual(task.keyPosition, lastPosition, task.eraseIfNotActual)) {
                         return@let
@@ -94,12 +94,12 @@ class RequestsLimiter @Inject constructor(
 
                     Timber.d(
                         "execute request for ${task.companyTicker}" +
-                                ". Api: $mStockPriceApi"
+                                ". Api: $stockPriceApi"
                     )
-                    mStockPriceApi?.invoke(task.companyId, task.companyTicker)
+                    stockPriceApi?.invoke(task.companyId, task.companyTicker)
 
-                    mMessagesHistory[task.companyId] = Unit
-                    delay(sPerSecondRequestLimit)
+                    messagesHistory[task.companyId] = Unit
+                    delay(PER_SECOND_REQUESTS_LIMIT)
                 }
             } catch (exception: ConcurrentModificationException) {
                 // Do nothing. Message will not be removed
@@ -114,7 +114,7 @@ class RequestsLimiter @Inject constructor(
         position: Int,
         eraseIfNotActual: Boolean
     ) {
-        mMessagesQueue.add(
+        messagesQueue.add(
             CachedMessage(
                 companyId,
                 companyTicker,
@@ -125,7 +125,7 @@ class RequestsLimiter @Inject constructor(
     }
 
     private fun isNotDuplicatedMessage(companyId: Int): Boolean {
-        return !mMessagesHistory.containsKey(companyId)
+        return !messagesHistory.containsKey(companyId)
     }
 
     private fun isNotActual(
@@ -133,7 +133,7 @@ class RequestsLimiter @Inject constructor(
         lastPosition: Int,
         eraseIfNotActual: Boolean
     ): Boolean {
-        return abs(currentPosition - lastPosition) >= sAlreadyNotActualValue
+        return abs(currentPosition - lastPosition) >= ALREADY_NOT_ACTUAL_REQUEST
                 && eraseIfNotActual
     }
 }

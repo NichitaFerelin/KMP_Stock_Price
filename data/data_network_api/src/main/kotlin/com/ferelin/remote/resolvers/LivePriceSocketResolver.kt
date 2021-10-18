@@ -17,7 +17,6 @@
 package com.ferelin.remote.resolvers
 
 import com.ferelin.remote.entities.LivePrice
-import com.ferelin.remote.entities.LivePricePojo
 import com.ferelin.remote.utils.AppWebSocketListener
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.channels.BufferOverflow
@@ -37,78 +36,74 @@ import javax.inject.Singleton
 
 @Singleton
 class LivePriceSocketResolver @Inject constructor(
-    private val mLivePriceJsonResolver: LivePriceJsonResolver,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("FinnhubWebSocketUrl") private val mBaseUrl: String,
-    @Named("FinnhubToken") private val mToken: String
+    @Named("FinnhubWebSocketUrl") private val baseUrl: String,
+    @Named("FinnhubToken") private val token: String,
+    private val livePriceJsonResolver: LivePriceJsonResolver,
+    private val dispatchersProvider: DispatchersProvider
 ) {
-    private var mWebSocket: WebSocket? = null
+    private var webSocket: WebSocket? = null
 
     /*
     * If the web socket has not yet been initialized, then incoming tasks
     * are inserted into this queue.
     * */
-    private var mMessagesQueue: Queue<String> = LinkedList()
-
-    private companion object{
-        const val sDefaultCloseCode = 4000
-    }
+    private var messagesQueue: Queue<String> = LinkedList()
 
     suspend fun subscribe(companyTicker: String) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("try to subscribe (companyTicker = $companyTicker)")
-            mWebSocket?.let {
+        withContext(dispatchersProvider.IO) {
+            Timber.d("subscribe (companyTicker = $companyTicker)")
+
+            webSocket?.let {
                 subscribe(it, companyTicker)
-            } ?: {
-                Timber.d("added to queue: $companyTicker")
-                mMessagesQueue.offer(companyTicker)
-            }
+            } ?: messagesQueue.offer(companyTicker)
         }
 
     suspend fun unsubscribe(companyTicker: String) =
-        withContext(mDispatchersProvider.IO) {
+        withContext(dispatchersProvider.IO) {
             Timber.d("unsubscribe (companyTicker = $companyTicker)")
-            mWebSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
+
+            webSocket?.send("{\"type\":\"unsubscribe\",\"symbol\":\"$companyTicker\"}")
         }
 
     fun openConnection(): Flow<LivePrice?> = callbackFlow {
         Timber.d("open connection")
+
         val request = Request
             .Builder()
-            .url("$mBaseUrl$mToken")
+            .url("$baseUrl$token")
             .build()
 
         val okHttp = OkHttpClient()
 
-        mWebSocket = okHttp.newWebSocket(
+        webSocket = okHttp.newWebSocket(
             request = request,
             listener = AppWebSocketListener { response ->
-                Timber.d("on response (response = $response)")
-                val converted = mLivePriceJsonResolver.fromJson(response)
+                val converted = livePriceJsonResolver.fromJson(response)
                 this.trySend(converted)
             })
             .also { webSocket ->
-                while (mMessagesQueue.isNotEmpty()) {
-                    subscribe(webSocket, mMessagesQueue.poll()!!)
+                while (messagesQueue.isNotEmpty()) {
+                    subscribe(webSocket, messagesQueue.poll()!!)
                 }
             }
         okHttp.dispatcher.executorService.shutdown()
 
-        awaitClose {
-            Timber.d("{await close} close connection")
-            closeConnection()
-        }
+        awaitClose { closeConnection() }
     }
         .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     fun closeConnection() {
         Timber.d("close connection")
-        mWebSocket?.close(sDefaultCloseCode, null)
-        mWebSocket = null
+
+        webSocket?.close(DEFAULT_CLOSE_CODE, null)
+        webSocket = null
     }
 
-    private fun subscribe(webSocket: WebSocket, symbol: String) {
-        Timber.d("subscribe (symbol = $symbol)")
-        webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"$symbol\"}")
+    private fun subscribe(webSocket: WebSocket, companyTicker: String) {
+        webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"$companyTicker\"}")
+    }
+
+    private companion object {
+        const val DEFAULT_CLOSE_CODE = 4000
     }
 }

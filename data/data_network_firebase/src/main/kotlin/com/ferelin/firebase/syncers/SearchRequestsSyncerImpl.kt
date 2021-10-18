@@ -16,7 +16,6 @@
 
 package com.ferelin.firebase.syncers
 
-import android.util.Log
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
@@ -31,27 +30,27 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchRequestsSyncerImpl @Inject constructor(
-    private val mSearchRequestsRemoteRepo: SearchRequestsRemoteRepo,
-    private val mDispatchersProvider: DispatchersProvider
+    private val searchRequestsRemoteRepo: SearchRequestsRemoteRepo,
+    private val dispatchersProvider: DispatchersProvider
 ) : SearchRequestsSyncer {
 
-    private var mIsDataSynchronized: Boolean = false
+    private var isDataSynchronized: Boolean = false
 
     override suspend fun initDataSync(
         userToken: String,
         sourceRequests: List<SearchRequest>
     ): List<SearchRequest> {
         Timber.d(
-            "init data sync (isDataSynchronized = $mIsDataSynchronized, " +
-                    "userToken = $userToken, sourceRequestsSize = ${sourceRequests.size}"
+            "init data sync (is data synchronized = $isDataSynchronized, " +
+                    "source requests size = ${sourceRequests.size}"
         )
 
-        if (mIsDataSynchronized) {
+        if (isDataSynchronized) {
             return emptyList()
         }
 
-        val remoteRequestsState = withContext(mDispatchersProvider.IO) {
-            mSearchRequestsRemoteRepo.loadSearchRequests(userToken).firstOrNull()
+        val remoteRequestsState = withContext(dispatchersProvider.IO) {
+            searchRequestsRemoteRepo.loadAll(userToken).firstOrNull()
         }
 
         return remoteRequestsState?.ifPrepared { preparedState ->
@@ -64,19 +63,14 @@ class SearchRequestsSyncerImpl @Inject constructor(
 
     override fun invalidate() {
         Timber.d("invalidate")
-        mIsDataSynchronized = false
+        isDataSynchronized = false
     }
 
     private suspend fun syncCloudDb(
         userToken: String,
         sourceRequests: List<SearchRequest>,
         remoteRequests: List<SearchRequest>
-    ): Unit = withContext(mDispatchersProvider.IO) {
-        Timber.d(
-            "sync cloud db (sources = ${sourceRequests.size}, " +
-                    "remotes = ${remoteRequests.size})"
-        )
-
+    ): Unit = withContext(dispatchersProvider.IO) {
         val lastRemoteId = remoteRequests.lastOrNull()?.id ?: 0
         val lastSourceId = sourceRequests.firstOrNull()?.id ?: 0
 
@@ -90,9 +84,9 @@ class SearchRequestsSyncerImpl @Inject constructor(
             .itemsNotIn(remoteRequests)
             .forEach {
                 it.id = ++lastId
-                mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, it)
+                searchRequestsRemoteRepo.insert(userToken, it)
             }
 
-        mIsDataSynchronized = true
+        isDataSynchronized = true
     }
 }

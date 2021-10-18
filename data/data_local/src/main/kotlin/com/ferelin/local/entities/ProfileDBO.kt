@@ -25,8 +25,8 @@ import com.squareup.moshi.Json
 @Entity(tableName = "companies_profile")
 data class ProfileDBO(
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    val id: Int,
+    @ColumnInfo(name = "relation_company_id")
+    val relationCompanyId: Int,
 
     @ColumnInfo(name = "country")
     val country: String,

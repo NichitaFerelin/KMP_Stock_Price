@@ -33,14 +33,14 @@ import javax.inject.Singleton
 
 @Singleton
 class StockPriceInteractor @Inject constructor(
-    private val mStockPriceRepo: StockPriceRepo,
-    private val mStockPriceSource: StockPriceSource,
-    private val mDispatchersProvider: DispatchersProvider,
-    private val mPriceListeners: List<@JvmSuppressWildcards StockPriceListener>,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+    private val stockPriceRepo: StockPriceRepo,
+    private val stockPriceSource: StockPriceSource,
+    private val dispatchersProvider: DispatchersProvider,
+    private val priceListeners: List<@JvmSuppressWildcards StockPriceListener>,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
     fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> {
-        return mStockPriceSource.observeActualStockPriceResponses()
+        return stockPriceSource.observeActualStockPriceResponses()
             .onEach { cacheIfLoaded(it) }
     }
 
@@ -50,7 +50,7 @@ class StockPriceInteractor @Inject constructor(
         keyPosition: Int,
         isImportant: Boolean = false
     ) {
-        mStockPriceSource.addRequestToGetStockPrice(
+        stockPriceSource.addRequestToGetStockPrice(
             companyId,
             companyTicker,
             keyPosition,
@@ -60,10 +60,10 @@ class StockPriceInteractor @Inject constructor(
 
     private fun cacheIfLoaded(loadState: LoadState<StockPrice>) {
         loadState.ifPrepared { preparedState ->
-            mExternalScope.launch(mDispatchersProvider.IO) {
-                mStockPriceRepo.cacheStockPrice(preparedState.data)
+            externalScope.launch(dispatchersProvider.IO) {
+                stockPriceRepo.insert(preparedState.data)
 
-                mPriceListeners.forEach { it.onStockPriceChanged(preparedState.data) }
+                priceListeners.forEach { it.onStockPriceChanged(preparedState.data) }
             }
         }
     }

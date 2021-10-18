@@ -24,30 +24,22 @@ import com.ferelin.local.entities.CompanyWithStockPriceDBO
 interface CompaniesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllCompanies(list: List<CompanyDBO>)
-
-    @Query("SELECT * FROM `companies`")
-    suspend fun getAllCompanies(): List<CompanyDBO>
-
-    @Query("SELECT * FROM `companies` WHERE is_favourite = :condition")
-    suspend fun getAllFavourites(condition: Boolean = true): List<CompanyDBO>
+    suspend fun insertAll(list: List<CompanyDBO>)
 
     @Transaction
     @Query("SELECT * FROM `companies`")
-    suspend fun getCompaniesWithStocksPrice(): List<CompanyWithStockPriceDBO>
+    suspend fun getAll(): List<CompanyWithStockPriceDBO>
 
     @Transaction
     @Query("SELECT * FROM `companies` WHERE is_favourite = :condition")
-    suspend fun getFavouriteCompaniesWithStockPrice(
-        condition: Boolean = true
-    ): List<CompanyWithStockPriceDBO>
+    suspend fun getAllFavourites(condition: Boolean = true): List<CompanyWithStockPriceDBO>
 
     @Query(
         "UPDATE `companies` " +
                 "SET is_favourite = :condition ,added_by_index = :param " +
                 "WHERE NOT is_favourite = :condition"
     )
-    suspend fun setToDefault(condition: Boolean = false, param: Int = 0)
+    suspend fun rollbackToDefault(condition: Boolean = false, param: Int = 0)
 
     @Query(
         "UPDATE `companies` " +

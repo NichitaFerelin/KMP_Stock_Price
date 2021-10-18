@@ -26,30 +26,33 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class NewsRepoImpl @Inject constructor(
-    private val mNewsDao: NewsDao,
-    private val mNewsMapper: NewsMapper,
-    private val mDispatchersProvider: DispatchersProvider
+    private val newsDao: NewsDao,
+    private val newsMapper: NewsMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : NewsRepo {
 
-    override suspend fun getNews(companyId: Int): List<News> =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get news by companyId (companyId = $companyId)")
-            return@withContext mNewsDao
-                .getAllNews(companyId)
-                .map(mNewsMapper::map)
+    override suspend fun getAllBy(relationCompanyId: Int): List<News> =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get all by (companyId = $relationCompanyId)")
+
+            return@withContext newsDao
+                .getAll(relationCompanyId)
+                .map(newsMapper::map)
         }
 
-    override suspend fun cacheNews(news: List<News>) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache news (news = $news)")
-            mNewsDao.insertNews(
-                newsDBO = news.map { mNewsMapper.map(it) }
+    override suspend fun insertAll(news: List<News>) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("insert all (news size = ${news.size})")
+
+            newsDao.insertAll(
+                newsDBO = news.map(newsMapper::map)
             )
         }
 
-    override suspend fun clearNews(companyId: Int) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("clear news (company id = $companyId")
-            mNewsDao.clearNews(companyId)
+    override suspend fun eraseBy(relationCompanyId: Int) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("erase by (company id = $relationCompanyId")
+
+            newsDao.eraseBy(relationCompanyId)
         }
 }

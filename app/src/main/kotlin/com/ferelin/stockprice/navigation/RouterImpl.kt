@@ -25,75 +25,75 @@ import javax.inject.Singleton
 
 @Singleton
 class RouterImpl @Inject constructor(
-    private val mScreenResolver: ScreenResolver
+    private val screenResolver: ScreenResolver
 ) : Router {
 
-    private var activity: FragmentActivity? = null
-    private val mActivity: FragmentActivity
-        get() = checkNotNull(activity)
+    private var _activity: FragmentActivity? = null
+    private val activity: FragmentActivity
+        get() = checkNotNull(_activity)
 
     override fun bind(activity: FragmentActivity) {
-        this.activity = activity
+        this._activity = activity
     }
 
     override fun unbind() {
-        activity = null
+        _activity = null
     }
 
     override fun back() {
-        mActivity.supportFragmentManager.popBackStack()
+        activity.supportFragmentManager.popBackStack()
     }
 
     override fun toStartFragment() {
-        mScreenResolver.toLoadingFragment(mActivity)
+        screenResolver.toLoadingFragment(activity)
     }
 
     override fun fromLoadingToStocksPager(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromLoadingToStocksPager(mActivity, params, onTransaction)
+        screenResolver.fromLoadingToStocksPager(activity, params, onTransaction)
     }
 
     override fun fromStocksPagerToSearch(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromStocksPagerToSearch(mActivity, params, onTransaction)
+        screenResolver.fromStocksPagerToSearch(activity, params, onTransaction)
     }
 
     override fun fromStocksPagerToSettings(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromStocksPagerToSettings(mActivity, params, onTransaction)
+        screenResolver.fromStocksPagerToSettings(activity, params, onTransaction)
     }
 
     override fun fromDefaultStocksToAbout(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromDefaultStocksToAbout(mActivity, params, onTransaction)
+        screenResolver.fromDefaultStocksToAbout(activity, params, onTransaction)
     }
 
     override fun fromFavouriteStocksToAbout(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromFavouriteStocksToAbout(mActivity, params, onTransaction)
+        screenResolver.fromFavouriteStocksToAbout(activity, params, onTransaction)
     }
 
     override fun fromSearchToAbout(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromSearchToAbout(mActivity, params, onTransaction)
+        screenResolver.fromSearchToAbout(activity, params, onTransaction)
     }
 
     override fun fromSettingsToLogin(
         params: Any?,
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
-        mScreenResolver.fromSettingsToLogin(mActivity, params, onTransaction)
+        screenResolver.fromSettingsToLogin(activity, params, onTransaction)
     }
 }

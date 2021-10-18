@@ -24,15 +24,18 @@ import javax.inject.Inject
 
 class StockPriceMapper @Inject constructor() {
 
-    fun map(response: StockPriceResponse, companyId: Int): StockPrice {
+    fun map(stockPriceResponse: StockPriceResponse, relationCompanyId: Int): StockPrice {
         return StockPrice(
-            id = companyId,
-            currentPrice = response.currentPrice.toStrPrice(),
-            previousClosePrice = response.previousClosePrice.toStrPrice(),
-            openPrice = response.openPrice.toStrPrice(),
-            highPrice = response.highPrice.toStrPrice(),
-            lowPrice = response.lowPrice.toStrPrice(),
-            profit = buildProfitString(response.currentPrice, response.openPrice)
+            relationCompanyId = relationCompanyId,
+            currentPrice = stockPriceResponse.currentPrice.toStrPrice(),
+            previousClosePrice = stockPriceResponse.previousClosePrice.toStrPrice(),
+            openPrice = stockPriceResponse.openPrice.toStrPrice(),
+            highPrice = stockPriceResponse.highPrice.toStrPrice(),
+            lowPrice = stockPriceResponse.lowPrice.toStrPrice(),
+            profit = buildProfitString(
+                currentPrice = stockPriceResponse.currentPrice,
+                previousPrice = stockPriceResponse.openPrice
+            )
         )
     }
 }

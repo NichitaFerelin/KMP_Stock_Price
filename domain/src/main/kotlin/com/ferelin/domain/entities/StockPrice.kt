@@ -17,7 +17,7 @@
 package com.ferelin.domain.entities
 
 data class StockPrice(
-    val id: Int = 0,
+    val relationCompanyId: Int = 0,
     var currentPrice: String,
     var previousClosePrice: String,
     var openPrice: String,
@@ -27,12 +27,12 @@ data class StockPrice(
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is StockPrice) {
-            other.id == id && other.currentPrice == currentPrice
+            other.relationCompanyId == relationCompanyId && other.currentPrice == currentPrice
         } else false
     }
 
     override fun hashCode(): Int {
-        var result = id
+        var result = relationCompanyId
         result = 31 * result + currentPrice.hashCode()
         return result
     }

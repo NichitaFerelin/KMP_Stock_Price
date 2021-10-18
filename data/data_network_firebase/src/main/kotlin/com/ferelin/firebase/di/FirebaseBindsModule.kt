@@ -33,8 +33,7 @@ interface FirebaseBindsModule {
     @Binds
     fun provideCompaniesRemoteRepo(
         companiesRemoteRepoImpl: CompaniesRemoteRepoImpl
-    )
-            : CompaniesRemoteRepo
+    ): CompaniesRemoteRepo
 
     @Binds
     fun provideSearchRequestsRemoteRepo(

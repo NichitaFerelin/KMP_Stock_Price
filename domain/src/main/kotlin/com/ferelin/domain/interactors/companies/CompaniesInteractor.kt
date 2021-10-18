@@ -25,7 +25,7 @@ interface CompaniesInteractor : NetworkListener {
 
     val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
 
-    val favouriteCompaniesUpdated: SharedFlow<CompanyWithStockPrice>
+    val favouriteCompaniesUpdates: SharedFlow<CompanyWithStockPrice>
 
     suspend fun getAll(): List<CompanyWithStockPrice>
 
@@ -33,11 +33,11 @@ interface CompaniesInteractor : NetworkListener {
 
     suspend fun addCompanyToFavourites(companyId: Int)
 
-    suspend fun removeCompanyFromFavourites(companyId: Int, includingRemoteSource: Boolean = true)
-
     suspend fun addCompanyToFavourites(company: Company)
 
-    suspend fun removeCompanyFromFavourites(company: Company, includingRemoteSource: Boolean = true)
+    suspend fun eraseCompanyFromFavourites(companyId: Int)
 
-    suspend fun clearUserData()
+    suspend fun eraseCompanyFromFavourites(company: Company)
+
+    suspend fun eraseUserData()
 }

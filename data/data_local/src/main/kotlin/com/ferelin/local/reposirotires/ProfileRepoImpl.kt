@@ -26,22 +26,25 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileRepoImpl @Inject constructor(
-    private val mProfileDao: ProfileDao,
-    private val mProfileMapper: ProfileMapper,
-    private val mDispatchersProvider: DispatchersProvider
+    private val profileDao: ProfileDao,
+    private val profileMapper: ProfileMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : ProfileRepo {
 
-    override suspend fun getProfile(companyId: Int): Profile =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("get profile by company id (companyId = $companyId)")
-            return@withContext mProfileMapper.map(
-                profileDBO = mProfileDao.getProfile(companyId)
+    override suspend fun insertAll(profiles: List<Profile>) =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("insert all (profiles size = ${profiles.size})")
+
+            profileDao.insertAll(
+                profilesDBO = profiles.map(profileMapper::map)
             )
         }
 
-    override suspend fun cacheProfiles(profiles: List<Profile>) =
-        withContext(mDispatchersProvider.IO) {
-            Timber.d("cache profiles (size = ${profiles.size})")
-            mProfileDao.insertProfiles(profiles.map(mProfileMapper::map))
+    override suspend fun getBy(relationCompanyId: Int): Profile =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("get by (relation company id = $relationCompanyId)")
+
+            val profile = profileDao.get(relationCompanyId)
+            return@withContext profileMapper.map(profile)
         }
 }

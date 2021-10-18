@@ -25,9 +25,9 @@ import com.ferelin.local.entities.ProfileDBO
 @Dao
 interface ProfileDao {
 
-    @Query("SELECT * FROM `companies_profile` WHERE id = :companyId LIMIT 1")
-    suspend fun getProfile(companyId: Int): ProfileDBO
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfiles(profilesDBO: List<ProfileDBO>)
+    suspend fun insertAll(profilesDBO: List<ProfileDBO>)
+
+    @Query("SELECT * FROM `companies_profile` WHERE relation_company_id = :companyId LIMIT 1")
+    suspend fun get(companyId: Int): ProfileDBO
 }

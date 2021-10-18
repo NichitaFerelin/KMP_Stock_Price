@@ -21,9 +21,9 @@ import com.ferelin.domain.repositories.ProfileRepo
 import javax.inject.Inject
 
 class ProfileInteractor @Inject constructor(
-    private val mProfileRepo: ProfileRepo
+    private val profileRepo: ProfileRepo
 ) {
-    suspend fun getProfile(companyId: Int): Profile {
-        return mProfileRepo.getProfile(companyId)
+    suspend fun getBy(relationCompanyId: Int): Profile {
+        return profileRepo.getBy(relationCompanyId)
     }
 }

@@ -18,7 +18,7 @@ package com.ferelin.domain.repositories
 
 interface FirstLaunchRepo {
 
-    suspend fun getFirstTimeLaunch() : Boolean
+    suspend fun get() : Boolean?
 
-    suspend fun cacheFirstTimeLaunch(isFirstLaunch: Boolean)
+    suspend fun cache(isFirstLaunch: Boolean)
 }

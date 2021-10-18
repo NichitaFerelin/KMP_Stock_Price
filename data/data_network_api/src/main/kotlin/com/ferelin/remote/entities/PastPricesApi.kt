@@ -37,7 +37,7 @@ interface PastPricesApi {
      * @return server response as [PastPricesResponse] object
      * */
     @GET("stock/candle")
-    fun getPastPrices(
+    fun loadBy(
         @Query("symbol") companyTicker: String,
         @Query("token") token: String,
         @Query("from") from: Long,
