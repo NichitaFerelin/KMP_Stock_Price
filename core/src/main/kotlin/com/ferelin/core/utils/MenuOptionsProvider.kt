@@ -27,15 +27,15 @@ enum class OptionType {
 }
 
 class MenuOptionsProvider @Inject constructor(
-    private val mContext: Context
+    private val context: Context
 ) {
     fun buildMenuOptions(isUserAuthenticated: Boolean): List<OptionViewData> {
         return listOf(
             OptionViewData(
                 id = 0,
                 type = OptionType.AUTH,
-                title = mContext.getString(R.string.titleAuthorization),
-                source = mContext.getString(
+                title = context.getString(R.string.titleAuthorization),
+                source = context.getString(
                     if (isUserAuthenticated) {
                         R.string.sourceAuthorized
                     } else R.string.sourceNotAuthorized
@@ -45,8 +45,8 @@ class MenuOptionsProvider @Inject constructor(
             OptionViewData(
                 id = 1,
                 type = OptionType.CLEAR_DATA,
-                title = mContext.getString(R.string.titleClearData),
-                source = mContext.getString(R.string.sourceClearData),
+                title = context.getString(R.string.titleClearData),
+                source = context.getString(R.string.sourceClearData),
                 iconRes = R.drawable.outline_delete_24
             )
         )

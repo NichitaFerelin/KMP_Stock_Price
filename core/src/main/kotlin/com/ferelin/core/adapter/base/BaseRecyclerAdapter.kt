@@ -24,16 +24,16 @@ class BaseRecyclerAdapter(
     vararg adapterDelegates: RecyclerAdapterDelegate
 ) : RecyclerView.Adapter<BaseRecyclerViewHolder>() {
 
-    private var mCurrentList = Collections.synchronizedList(mutableListOf<ViewDataType>())
-    private val mDelegates = adapterDelegates.toList()
+    private var currentList = Collections.synchronizedList(mutableListOf<ViewDataType>())
+    private val delegates = adapterDelegates.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRecyclerViewHolder {
-        val targetIndex = mDelegates.indexOfFirst { it.itemsViewType == viewType }
-        return mDelegates[targetIndex].onCreateViewHolder(parent)
+        val targetIndex = delegates.indexOfFirst { it.itemsViewType == viewType }
+        return delegates[targetIndex].onCreateViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: BaseRecyclerViewHolder, position: Int) {
-        holder.bind(mCurrentList[position], position, mutableListOf())
+        holder.bind(currentList[position], position, mutableListOf())
     }
 
     override fun onBindViewHolder(
@@ -42,59 +42,59 @@ class BaseRecyclerAdapter(
         payloads: MutableList<Any>
     ) {
         if (payloads.isNotEmpty()) {
-            holder.bind(mCurrentList[position], position, payloads)
+            holder.bind(currentList[position], position, payloads)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
     }
 
     override fun getItemCount(): Int {
-        return mCurrentList.size
+        return currentList.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return mCurrentList[position].itemViewType
+        return currentList[position].itemViewType
     }
 
     override fun getItemId(position: Int): Long {
         return if (hasStableIds()) {
-            mCurrentList[position].getUniqueId()
+            currentList[position].getUniqueId()
         } else {
             super.getItemId(position)
         }
     }
 
     fun getByPosition(position: Int): ViewDataType {
-        return mCurrentList[position]
+        return currentList[position]
     }
 
     fun getPosition(selector: (ViewDataType) -> Boolean): Int {
-        return mCurrentList.indexOfFirst(selector)
+        return currentList.indexOfFirst(selector)
     }
 
     fun update(viewDataType: ViewDataType, position: Int, payloads: Any? = null) {
-        mCurrentList[position] = viewDataType
+        currentList[position] = viewDataType
         notifyItemChanged(position, payloads)
     }
 
     fun add(position: Int, viewDataType: ViewDataType) {
-        mCurrentList.add(position, viewDataType)
+        currentList.add(position, viewDataType)
         notifyItemInserted(position)
     }
 
     fun removeAt(position: Int) {
-        mCurrentList.removeAt(position)
+        currentList.removeAt(position)
         notifyItemRemoved(position)
     }
 
     fun setData(data: List<ViewDataType>) {
-        if (mCurrentList.isNotEmpty()) {
-            val itemCount = mCurrentList.size
-            mCurrentList = mutableListOf()
+        if (currentList.isNotEmpty()) {
+            val itemCount = currentList.size
+            currentList = mutableListOf()
             notifyItemRangeRemoved(0, itemCount)
         }
 
-        mCurrentList = data.toMutableList()
-        notifyItemRangeInserted(0, mCurrentList.size)
+        currentList = data.toMutableList()
+        notifyItemRangeInserted(0, currentList.size)
     }
 }

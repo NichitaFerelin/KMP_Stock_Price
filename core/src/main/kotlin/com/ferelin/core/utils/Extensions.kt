@@ -31,19 +31,3 @@ inline fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
 fun View.setOnClick(listener: (() -> Unit)) {
     setOnClickListener { listener.invoke() }
 }
-
-fun Float.normalize(
-    inputMin: Float,
-    inputMax: Float,
-    outputMin: Float,
-    outputMax: Float
-): Float {
-    if (this < inputMin) {
-        return outputMin
-    } else if (this > inputMax) {
-        return outputMax
-    }
-
-    return outputMin * (1 - (this - inputMin) / (inputMax - inputMin)) +
-            outputMax * ((this - inputMin) / (inputMax - inputMin))
-}

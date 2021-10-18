@@ -33,27 +33,27 @@ internal class CustomTabTrip(context: Context, attrs: AttributeSet?) : LinearLay
         setWillNotDraw(false)
     }
 
-    private val mRect = RectF()
-    private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val mCornerRadius = sDefaultIndicatorCornerRadius * resources.displayMetrics.density
+    private val rect = RectF()
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val cornerRadius = CORNER_RADIUS * resources.displayMetrics.density
 
-    private var mLastPosition = 0
-    private var mSelectedPosition = 0
-    private var mSelectionOffset = 0f
+    private var lastPosition = 0
+    private var selectedPosition = 0
+    private var selectionOffset = 0f
 
-    private val mLeftInterpolator = AccelerateInterpolator(sDefaultInterpolatorFactor)
-    private val mRightInterpolator = DecelerateInterpolator(sDefaultInterpolatorFactor)
+    private val leftInterpolator = AccelerateInterpolator(INTERPOLATOR_FACTOR)
+    private val rightInterpolator = DecelerateInterpolator(INTERPOLATOR_FACTOR)
 
     override fun onDraw(canvas: Canvas) {
         drawDecoration(canvas)
     }
 
     fun onViewPagerPageChanged(position: Int, positionOffset: Float) {
-        mSelectedPosition = position
-        mSelectionOffset = positionOffset
+        selectedPosition = position
+        selectionOffset = positionOffset
 
-        if (positionOffset == 0f && mLastPosition != mSelectedPosition) {
-            mLastPosition = mSelectedPosition
+        if (positionOffset == 0f && lastPosition != selectedPosition) {
+            lastPosition = selectedPosition
         }
 
         invalidate()
@@ -63,7 +63,7 @@ internal class CustomTabTrip(context: Context, attrs: AttributeSet?) : LinearLay
         val isLayoutRtl = CustomTabUtils.isLayoutRtl(this)
 
         if (childCount > 0) {
-            val selectedTab = getChildAt(mSelectedPosition)
+            val selectedTab = getChildAt(selectedPosition)
             val selectedStart = CustomTabUtils.getStart(selectedTab)
             val selectedEnd = CustomTabUtils.getEnd(selectedTab)
 
@@ -78,14 +78,14 @@ internal class CustomTabTrip(context: Context, attrs: AttributeSet?) : LinearLay
                 right = selectedEnd
             }
 
-            var thickness = sDefaultThickness.toFloat()
+            var thickness = THICKNESS.toFloat()
 
-            if (mSelectionOffset > 0f && mSelectedPosition < childCount - 1) {
-                val startOffset = mLeftInterpolator.getInterpolation(mSelectionOffset)
-                val endOffset = mRightInterpolator.getInterpolation(mSelectionOffset)
+            if (selectionOffset > 0f && selectedPosition < childCount - 1) {
+                val startOffset = leftInterpolator.getInterpolation(selectionOffset)
+                val endOffset = rightInterpolator.getInterpolation(selectionOffset)
                 val thicknessOffset = 1f / (1.0f - startOffset + endOffset)
 
-                val nextTab = getChildAt(mSelectedPosition + 1)
+                val nextTab = getChildAt(selectedPosition + 1)
                 val nextStart = CustomTabUtils.getStart(nextTab)
                 val nextEnd = CustomTabUtils.getEnd(nextTab)
 
@@ -114,19 +114,19 @@ internal class CustomTabTrip(context: Context, attrs: AttributeSet?) : LinearLay
         canvas: Canvas, left: Int, right: Int, height: Int, thickness: Float,
         color: Int
     ) {
-        val center = height - sDefaultThickness / 2f
+        val center = height - THICKNESS / 2f
         val top = center - thickness / 2f
         val bottom = center + thickness / 2f
 
-        mPaint.color = color
-        mRect[left.toFloat(), top, right.toFloat()] = bottom
+        paint.color = color
+        rect[left.toFloat(), top, right.toFloat()] = bottom
 
-        canvas.drawRoundRect(mRect, mCornerRadius, mCornerRadius, mPaint)
+        canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
     }
 
     private companion object {
-        const val sDefaultIndicatorCornerRadius = 8f
-        const val sDefaultThickness = 10
-        const val sDefaultInterpolatorFactor = 3.0F
+        const val CORNER_RADIUS = 8f
+        const val THICKNESS = 10
+        const val INTERPOLATOR_FACTOR = 3.0F
     }
 }

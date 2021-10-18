@@ -30,16 +30,6 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <!-- Tab text views -->
-    <style name="textViewH3Tab" parent="textViewH3">
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingEnd">10dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_marginStart">10dp</item>
-    </style>
-
     <!-- Constrained width text views -->
     <style name="textViewH3ConstrainedWidth" parent="textViewH3">
         <item name="android:ellipsize">end</item>
@@ -66,11 +56,6 @@
     </style>
 
     <!-- Shadowed text views -->
-    <style name="textViewH1Shadowed" parent="textView">
-        <item name="android:textSize">28sp</item>
-        <item name="fontFamily">@font/w_700</item>
-        <item name="android:textColor">@color/grey</item>
-    </style>
 
     <style name="textViewH2Shadowed" parent="textView">
         <item name="android:textSize">18sp</item>
@@ -80,25 +65,6 @@
 
     <style name="textViewH3Shadowed" parent="textView">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/grey</item>
-    </style>
-
-    <style name="textViewBodyShadowed" parent="textView">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/grey</item>
-    </style>
-
-    <style name="textViewBodyShadowedTab" parent="textViewBodyShadowed">
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingEnd">10dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_marginStart">10dp</item>
-    </style>
-
-    <style name="textViewBodySemiBoldShadowed" parent="textView">
-        <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/grey</item>
     </style>
 
@@ -227,29 +193,11 @@
         <item name="cardCornerRadius">8dp</item>
     </style>
 
-    <style name="ShapeAppearance.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
-    </style>
-
     <style name="materialEditTextInputLayout" parent="editText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="boxBackgroundColor">@color/white</item>
         <item name="hintTextColor">@color/grey</item>
-    </style>
-
-    <style name="imageView">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:padding">16dp</item>
-    </style>
-
-    <style name="appBar">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/appBarHeight</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:elevation">6dp</item>
     </style>
 
     <style name="collapsingToolbar">

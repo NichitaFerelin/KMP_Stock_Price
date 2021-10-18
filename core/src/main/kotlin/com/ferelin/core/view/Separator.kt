@@ -30,25 +30,25 @@ class Separator @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val mCornerRadius = sDefaultCornerRadius * resources.displayMetrics.density
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val cornerRadius = CORNER_RADIUS * resources.displayMetrics.density
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        mPaint.color = ContextCompat.getColor(context, R.color.grey)
+        paint.color = ContextCompat.getColor(context, R.color.grey)
         canvas.drawRoundRect(
             0F,
             0F,
             width.toFloat(),
             height.toFloat(),
-            mCornerRadius,
-            mCornerRadius,
-            mPaint
+            cornerRadius,
+            cornerRadius,
+            paint
         )
     }
 
     private companion object {
-        const val sDefaultCornerRadius = 8F
+        const val CORNER_RADIUS = 8F
     }
 }

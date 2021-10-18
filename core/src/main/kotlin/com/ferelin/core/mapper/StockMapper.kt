@@ -20,11 +20,10 @@ import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
-import com.ferelin.domain.entities.LiveTimePrice
 import javax.inject.Inject
 
 class StockMapper @Inject constructor(
-    private val mStockStyleProvider: StockStyleProvider
+    private val stockStyleProvider: StockStyleProvider
 ) {
     fun map(companyWithStockPrice: CompanyWithStockPrice): StockViewData {
         return StockViewData(
@@ -32,7 +31,7 @@ class StockMapper @Inject constructor(
             name = companyWithStockPrice.company.name,
             ticker = companyWithStockPrice.company.ticker,
             logoUrl = companyWithStockPrice.company.logoUrl,
-            style = mStockStyleProvider.createStyle(
+            style = stockStyleProvider.createStyle(
                 companyWithStockPrice.company,
                 companyWithStockPrice.stockPrice
             ),

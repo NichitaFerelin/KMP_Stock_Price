@@ -36,37 +36,37 @@ class CustomTabLayout @JvmOverloads constructor(
     defStyle: Int = 0
 ) : HorizontalScrollView(context, attrs, defStyle) {
 
-    private val mCustomTabTrip = CustomTabTrip(context, attrs)
+    private val customTabTrip = CustomTabTrip(context, attrs)
 
     init {
         isHorizontalScrollBarEnabled = false
         isFillViewport = false
 
-        addView(mCustomTabTrip, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(customTabTrip, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     }
 
-    private var mAttachedViewPager: ViewPager2? = null
-    private val mViewPagerListener by lazy(LazyThreadSafetyMode.NONE) {
+    private var attachedViewPager: ViewPager2? = null
+    private val viewPagerListener by lazy(LazyThreadSafetyMode.NONE) {
         InternalViewPagerListener()
     }
 
-    private val mInternalTabClickListener = InternalTabClickListener()
+    private val internalTabClickListener = InternalTabClickListener()
 
-    private val mTabViewTextHorizontalPadding =
-        (sDefaultTabPadding * resources.displayMetrics.density).toInt()
+    private val tabViewTextHorizontalPadding =
+        (TAB_PADDING * resources.displayMetrics.density).toInt()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        if (mCustomTabTrip.childCount > 0) {
-            val firstTab = mCustomTabTrip.getChildAt(0)
-            val lastTab = mCustomTabTrip.getChildAt(mCustomTabTrip.childCount - 1)
+        if (customTabTrip.childCount > 0) {
+            val firstTab = customTabTrip.getChildAt(0)
+            val lastTab = customTabTrip.getChildAt(customTabTrip.childCount - 1)
 
             val start =
                 (w - firstTab.measuredWidth) / 2 - CustomTabUtils.getMarginStart(firstTab) + 44
             val end = (w - lastTab.measuredWidth) / 2 - CustomTabUtils.getMarginEnd(lastTab)
 
-            mCustomTabTrip.minimumWidth = mCustomTabTrip.measuredWidth
+            customTabTrip.minimumWidth = customTabTrip.measuredWidth
 
             ViewCompat.setPaddingRelative(this, start, paddingTop, end, paddingBottom)
 
@@ -77,32 +77,32 @@ class CustomTabLayout @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
 
-        if (changed && mAttachedViewPager != null) {
-            scrollToTab(mAttachedViewPager!!.currentItem, 0f)
+        if (changed && attachedViewPager != null) {
+            scrollToTab(attachedViewPager!!.currentItem, 0f)
         }
     }
 
     fun attachViewPager(viewPager: ViewPager2, vararg titles: String) {
-        mCustomTabTrip.removeAllViews()
+        customTabTrip.removeAllViews()
 
-        mAttachedViewPager = viewPager
-        mAttachedViewPager!!.registerOnPageChangeCallback(mViewPagerListener)
+        attachedViewPager = viewPager
+        attachedViewPager!!.registerOnPageChangeCallback(viewPagerListener)
 
         populateTabStrip(*titles)
     }
 
     fun detachViewPager() {
-        mAttachedViewPager?.unregisterOnPageChangeCallback(mViewPagerListener)
-        mAttachedViewPager = null
+        attachedViewPager?.unregisterOnPageChangeCallback(viewPagerListener)
+        attachedViewPager = null
     }
 
     private fun populateTabStrip(vararg titles: String) {
         titles.forEachIndexed { index, title ->
             val tabView = createDefaultTabView(title)
-            tabView.setOnClickListener(mInternalTabClickListener)
-            mCustomTabTrip.addView(tabView)
+            tabView.setOnClickListener(internalTabClickListener)
+            customTabTrip.addView(tabView)
 
-            if (index == mAttachedViewPager!!.currentItem) {
+            if (index == attachedViewPager!!.currentItem) {
                 tabView.isSelected = true
             }
         }
@@ -113,8 +113,8 @@ class CustomTabLayout @JvmOverloads constructor(
             text = title
             gravity = Gravity.CENTER
             setPadding(
-                mTabViewTextHorizontalPadding, 0,
-                mTabViewTextHorizontalPadding, 0
+                tabViewTextHorizontalPadding, 0,
+                tabViewTextHorizontalPadding, 0
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -125,18 +125,18 @@ class CustomTabLayout @JvmOverloads constructor(
     }
 
     private fun scrollToTab(tabIndex: Int, positionOffset: Float) {
-        if (mCustomTabTrip.childCount == 0 || tabIndex < 0 || tabIndex >= mCustomTabTrip.childCount) {
+        if (customTabTrip.childCount == 0 || tabIndex < 0 || tabIndex >= customTabTrip.childCount) {
             return
         }
 
         val isLayoutRtl = CustomTabUtils.isLayoutRtl(this)
-        val selectedTab = mCustomTabTrip.getChildAt(tabIndex)
+        val selectedTab = customTabTrip.getChildAt(tabIndex)
 
         val widthPlusMargin = selectedTab.width + CustomTabUtils.getMarginHorizontally(selectedTab)
         var extraOffset = (positionOffset * widthPlusMargin).toInt()
 
         if (0f < positionOffset && positionOffset < 1f) {
-            val nextTab = mCustomTabTrip.getChildAt(tabIndex + 1)
+            val nextTab = customTabTrip.getChildAt(tabIndex + 1)
 
             val selectHalfWidth = selectedTab.width / 2 + CustomTabUtils.getMarginEnd(selectedTab)
             val nextHalfWidth = nextTab.width / 2 + CustomTabUtils.getMarginStart(nextTab)
@@ -144,7 +144,7 @@ class CustomTabLayout @JvmOverloads constructor(
             extraOffset = (positionOffset * (selectHalfWidth + nextHalfWidth)).roundToInt()
         }
 
-        val firstTab = mCustomTabTrip.getChildAt(0)
+        val firstTab = customTabTrip.getChildAt(0)
         var x: Int
 
         if (isLayoutRtl) {
@@ -175,12 +175,12 @@ class CustomTabLayout @JvmOverloads constructor(
             positionOffsetPixels: Int
         ) {
             if (
-                mCustomTabTrip.childCount == 0
+                customTabTrip.childCount == 0
                 || position < 0
-                || position >= mCustomTabTrip.childCount
+                || position >= customTabTrip.childCount
             ) return
 
-            mCustomTabTrip.onViewPagerPageChanged(position, positionOffset)
+            customTabTrip.onViewPagerPageChanged(position, positionOffset)
             scrollToTab(position, positionOffset)
         }
 
@@ -190,14 +190,14 @@ class CustomTabLayout @JvmOverloads constructor(
 
         override fun onPageSelected(position: Int) {
             if (mScrollState == ViewPager.SCROLL_STATE_IDLE) {
-                mCustomTabTrip.onViewPagerPageChanged(position, 0f)
+                customTabTrip.onViewPagerPageChanged(position, 0f)
                 scrollToTab(position, 0f)
             }
 
             var index = 0
-            val size = mCustomTabTrip.childCount
+            val size = customTabTrip.childCount
             while (index < size) {
-                mCustomTabTrip.getChildAt(index).isSelected = position == index
+                customTabTrip.getChildAt(index).isSelected = position == index
                 index++
             }
         }
@@ -206,9 +206,9 @@ class CustomTabLayout @JvmOverloads constructor(
     private inner class InternalTabClickListener : OnClickListener {
 
         override fun onClick(v: View) {
-            for (index in 0 until mCustomTabTrip.childCount) {
-                if (v === mCustomTabTrip.getChildAt(index)) {
-                    mAttachedViewPager!!.currentItem = index
+            for (index in 0 until customTabTrip.childCount) {
+                if (v === customTabTrip.getChildAt(index)) {
+                    attachedViewPager!!.currentItem = index
                     return
                 }
             }
@@ -216,6 +216,6 @@ class CustomTabLayout @JvmOverloads constructor(
     }
 
     private companion object {
-        private const val sDefaultTabPadding = 16
+        private const val TAB_PADDING = 16
     }
 }

@@ -32,22 +32,22 @@ import javax.inject.Inject
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    abstract val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
-    private var viewBinding: VB? = null
-    protected val mViewBinding: VB
-        get() = checkNotNull(viewBinding)
+    private var _viewBinding: VB? = null
+    protected val viewBinding: VB
+        get() = checkNotNull(_viewBinding)
 
     @Inject
-    lateinit var mDispatchersProvider: DispatchersProvider
+    lateinit var dispatchersProvider: DispatchersProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = mBindingInflater.invoke(inflater, container, false)
-        return mViewBinding.root
+        _viewBinding = bindingInflater.invoke(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewBinding = null
+        _viewBinding = null
     }
 
     open fun initUi() {
@@ -77,14 +77,14 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     fun showSnackbar(message: String) {
         Snackbar
-            .make(mViewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
+            .make(viewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
             .setAction(R.string.hintOk) { /*dismiss by default*/ }
             .show()
     }
 
     fun showTempSnackbar(message: String) {
         Snackbar
-            .make(mViewBinding.root, message, Snackbar.LENGTH_LONG)
+            .make(viewBinding.root, message, Snackbar.LENGTH_LONG)
             .show()
     }
 

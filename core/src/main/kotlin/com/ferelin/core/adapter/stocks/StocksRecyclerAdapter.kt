@@ -52,57 +52,57 @@ fun createStocksAdapter(
 
                 onBindCallback.invoke(item, position)
 
-                fun ItemStockBinding.setCompanyInfo() {
-                    textViewCompanyName.text = item.name
-                    textViewCompanyTicker.text = item.ticker
-                }
-
-                fun ItemStockBinding.setFavourite() {
-                    imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
-                    imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
-                }
-
-                fun ItemStockBinding.setCompanyPrice() {
-                    textViewCurrentPrice.text = item.stockPrice?.currentPrice ?: ""
-                    textViewDayProfit.text = item.stockPrice?.profit ?: ""
-                    textViewDayProfit.setTextColor(item.style.dayProfitBackground)
-                }
-
-                fun ItemStockBinding.setBackground() {
-                    root.setCardBackgroundColor(item.style.holderBackground)
-                    root.foreground =
-                        ContextCompat.getDrawable(root.context, item.style.rippleForeground)
-
-                    root.setOnClickListener { onStockClick.invoke(item) }
-                    imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
-
-                    Glide
-                        .with(root)
-                        .load(item.logoUrl)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .error(
-                            AppCompatResources.getDrawable(
-                                rootLayout.context,
-                                R.drawable.ic_load_error
-                            )
-                        )
-                        .into(imageViewIcon)
-                }
-
                 with(viewBinding) {
                     if (payloads.isEmpty()) {
-                        setCompanyInfo()
-                        setCompanyPrice()
-                        setFavourite()
-                        setBackground()
+                        setCompanyInfo(item)
+                        setCompanyPrice(item)
+                        setFavourite(item)
+                        setBackground(item)
                     } else {
                         when (payloads[0]) {
-                            PAYLOAD_FAVOURITE_UPDATED -> setFavourite()
-                            PAYLOAD_PRICE_UPDATED -> setCompanyPrice()
+                            PAYLOAD_FAVOURITE_UPDATED -> setFavourite(item)
+                            PAYLOAD_PRICE_UPDATED -> setCompanyPrice(item)
                         }
                     }
                 }
             }
         )
+    }
+
+    fun ItemStockBinding.setCompanyInfo(item: StockViewData) {
+        textViewCompanyName.text = item.name
+        textViewCompanyTicker.text = item.ticker
+    }
+
+    fun ItemStockBinding.setFavourite(item: StockViewData) {
+        imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
+        imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
+    }
+
+    fun ItemStockBinding.setCompanyPrice(item: StockViewData) {
+        textViewCurrentPrice.text = item.stockPrice?.currentPrice ?: ""
+        textViewDayProfit.text = item.stockPrice?.profit ?: ""
+        textViewDayProfit.setTextColor(item.style.dayProfitBackground)
+    }
+
+    fun ItemStockBinding.setBackground(item: StockViewData) {
+        root.setCardBackgroundColor(item.style.holderBackground)
+        root.foreground =
+            ContextCompat.getDrawable(root.context, item.style.rippleForeground)
+
+        root.setOnClickListener { onStockClick.invoke(item) }
+        imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
+
+        Glide
+            .with(root)
+            .load(item.logoUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .error(
+                AppCompatResources.getDrawable(
+                    rootLayout.context,
+                    R.drawable.ic_load_error
+                )
+            )
+            .into(imageViewIcon)
     }
 }

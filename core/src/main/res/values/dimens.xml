@@ -10,9 +10,6 @@
     <dimen name="stockItemBottomMargin">8dp</dimen>
     <dimen name="newsItemOffset">8dp</dimen>
 
-    <dimen name="textDividerStartMargin">20dp</dimen>
-    <dimen name="textDividerTopMargin">16dp</dimen>
-
     <dimen name="stockIconHeight">52dp</dimen>
     <dimen name="stockIconWidth">52dp</dimen>
 
@@ -25,9 +22,6 @@
     <dimen name="pointWidth">8dp</dimen>
     <dimen name="pointHeight">8dp</dimen>
 
-    <dimen name="aboutPagerAppBarHeight">120dp</dimen>
-    <dimen name="aboutPagerElevation">10dp</dimen>
-
     <dimen name="chartHeight">260dp</dimen>
     <dimen name="chartDrawPadding">15dp</dimen>
 
@@ -35,18 +29,7 @@
     <dimen name="recyclerSearchesHeight">96dp</dimen>
     <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
 
-    <dimen name="bottomDrawerElevation">16dp</dimen>
     <dimen name="appBarHeight">55dp</dimen>
-
-    <dimen name="dialogHeight">300dp</dimen>
-    <dimen name="dialogWidth">350dp</dimen>
-
-    <dimen name="chatMarginHorizontal">30dp</dimen>
-    <dimen name="chatMarginBetween">8dp</dimen>
-    <dimen name="bottomAppBarHeight">56dp</dimen>
-
-    <dimen name="messageMarginTop">8dp</dimen>
-    <dimen name="messageMarginStart">16dp</dimen>
 
     <dimen name="optionBottomMargin">20dp</dimen>
 </resources>

@@ -29,7 +29,7 @@ class SwipeActionCallback(
     val onHolderUntouched: (StockViewHolder, Boolean) -> Unit,
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-    private var mRebounded = false
+    private var rebounded = false
 
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float = Float.MAX_VALUE
 
@@ -45,8 +45,8 @@ class SwipeActionCallback(
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         if (viewHolder is StockViewHolder) {
-            onHolderUntouched(viewHolder, mRebounded)
-            mRebounded = false
+            onHolderUntouched(viewHolder, rebounded)
+            rebounded = false
         }
 
         super.clearView(recyclerView, viewHolder)
@@ -68,9 +68,9 @@ class SwipeActionCallback(
         val itemView = viewHolder.itemView
         val currentSwipePercentage = abs(dX) / itemView.width
 
-        if (currentSwipePercentage > 0.2F && !mRebounded) {
+        if (currentSwipePercentage > 0.2F && !rebounded) {
             onHolderRebound(viewHolder)
-            mRebounded = true
+            rebounded = true
         }
         translateReboundingView(itemView, viewHolder, dX)
     }

@@ -16,35 +16,13 @@
 
 package com.ferelin.core.utils
 
-import android.content.Context
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.FragmentManager
-import com.ferelin.core.R
-import com.ferelin.core.view.DialogErrorFragment
 import java.util.*
 import kotlin.concurrent.timerTask
 
 const val SHARING_STOP_TIMEOUT = 5000L
 
-fun showDialog(text: String, fragmentManager: FragmentManager) {
-    DialogErrorFragment
-        .newInstance(text)
-        .show(fragmentManager, null)
-}
-
-// TODO remove
 fun withTimer(time: Long = 200L, body: () -> Unit) {
     Timer().schedule(timerTask {
         body.invoke()
     }, time)
-}
-
-fun showDefaultDialog(context: Context, message: String) {
-    AlertDialog.Builder(context)
-        .setMessage(message)
-        .setCancelable(true)
-        .setPositiveButton(R.string.hintOk) { dialog, _ -> dialog.cancel() }
-        .show()
 }

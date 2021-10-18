@@ -18,27 +18,27 @@ package com.ferelin.core.utils
 
 import android.content.Context
 import androidx.core.content.ContextCompat
+import com.ferelin.core.R
 import com.ferelin.core.viewData.StockStyle
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.StockPrice
-import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class StockStyleProvider @Inject constructor(
-    private val mContext: Context,
-    @Named("BackIcon") private val mDrawableFavouriteBackgroundIcon: Int,
-    @Named("BackIconActive") private val mDrawableFavouriteBackgroundIconActive: Int,
-    @Named("ForeIcon") private val mDrawableFavouriteForegroundIcon: Int,
-    @Named("ForeIconActive") private val mDrawableFavouriteForegroundIconActive: Int,
-    @Named("RippleLight") private val mDrawableRippleLight: Int,
-    @Named("RippleDark") private val mDrawableRippleDark: Int,
-    @Named("ProfitPlus") private val mColorProfitPlus: Int,
-    @Named("ProfitMinus") private val mColorProfitMinus: Int,
-    @Named("HolderFirst") private val mColorHolderFirst: Int,
-    @Named("HolderSecond") private val mColorHolderSecond: Int
+    private val context: Context
 ) {
+    private val drawableFavouriteBackgroundIcon: Int = R.drawable.ic_favourite
+    private val drawableFavouriteBackgroundIconActive: Int = R.drawable.ic_favourite_active
+    private val drawableFavouriteForegroundIcon: Int = R.drawable.ic_star
+    private val drawableFavouriteForegroundIconActive: Int = R.drawable.ic_star_active
+    private val drawableRippleLight: Int = R.drawable.ic_star_active
+    private val drawableRippleDark: Int = R.drawable.ripple_dark
+    private val colorProfitPlus: Int = R.color.green
+    private val colorProfitMinus: Int = R.color.red
+    private val colorHolderFirst: Int = R.color.white
+    private val colorHolderSecond: Int = R.color.whiteDark
+
     fun createStyle(company: Company, stockPrice: StockPrice?): StockStyle {
         return StockStyle(
             holderBackground = getHolderBackground(company.id),
@@ -64,38 +64,38 @@ class StockStyleProvider @Inject constructor(
 
     fun getForegroundIconDrawable(isFavourite: Boolean): Int {
         return if (isFavourite) {
-            mDrawableFavouriteForegroundIconActive
+            drawableFavouriteForegroundIconActive
         } else {
-            mDrawableFavouriteForegroundIcon
+            drawableFavouriteForegroundIcon
         }
     }
 
     fun getProfitBackground(profit: String): Int {
         val prefix = profit.getOrNull(0)
         return if (prefix == '+') {
-            getColor(mColorProfitPlus)
-        } else getColor(mColorProfitMinus)
+            getColor(colorProfitPlus)
+        } else getColor(colorProfitMinus)
     }
 
     private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
         return if (isFavourite) {
-            mDrawableFavouriteBackgroundIconActive
+            drawableFavouriteBackgroundIconActive
         } else {
-            mDrawableFavouriteBackgroundIcon
+            drawableFavouriteBackgroundIcon
         }
     }
 
     private fun getHolderBackground(index: Int): Int {
         return if (index % 2 == 0) {
-            getColor(mColorHolderFirst)
-        } else getColor(mColorHolderSecond)
+            getColor(colorHolderFirst)
+        } else getColor(colorHolderSecond)
     }
 
     private fun getRippleForeground(index: Int): Int {
-        return if (index % 2 == 0) mDrawableRippleDark else mDrawableRippleLight
+        return if (index % 2 == 0) drawableRippleDark else drawableRippleLight
     }
 
     private fun getColor(color: Int): Int {
-        return ContextCompat.getColor(mContext, color)
+        return ContextCompat.getColor(context, color)
     }
 }

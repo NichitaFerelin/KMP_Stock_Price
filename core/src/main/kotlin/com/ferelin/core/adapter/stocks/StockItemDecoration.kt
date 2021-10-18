@@ -23,7 +23,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
 import com.ferelin.shared.NULL_INDEX
 
-class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+class StockItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
+
+    private val bottomMargin = context.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
+    private val startMargin = context.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
+    private val endMargin = context.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -42,8 +46,8 @@ class StockItemDecoration(private val mContext: Context) : RecyclerView.ItemDeco
     }
 
     private fun Rect.applyForStock() {
-        bottom = mContext.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-        left = mContext.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
-        right = mContext.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
+        bottom = bottomMargin
+        left = startMargin
+        right = endMargin
     }
 }

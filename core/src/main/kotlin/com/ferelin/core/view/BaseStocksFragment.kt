@@ -17,7 +17,6 @@
 package com.ferelin.core.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
@@ -39,10 +38,7 @@ import com.ferelin.core.utils.swipe.SwipeActionCallback
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.BaseViewModelFactory
-import com.ferelin.core.viewModel.StocksMode
-import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,31 +48,29 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     lateinit var viewModelFactory: BaseViewModelFactory<VM>
 
     @Inject
-    lateinit var mStockStyleProvider: StockStyleProvider
+    lateinit var stockStyleProvider: StockStyleProvider
 
-    abstract val mViewModel: VM
-    abstract val mStocksMode: StocksMode
+    abstract val viewModel: VM
 
     protected var stocksRecyclerView: RecyclerView? = null
 
-    private var mScaleIn: Animation? = null
-    private var mScaleOut: Animation? = null
-    private var mFadeOut: Animation? = null
-    private var mFadeIn: Animation? = null
+    private var scaleIn: Animation? = null
+    private var scaleOut: Animation? = null
+    private var fadeIn: Animation? = null
+    private var fadeOut: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("TEST", "On Create ${this}")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("TEST", "On Destroy ${this}")
+        lifecycleScope.launch {
+            launch { viewModel.companiesStockPriceUpdates.collect() }
+            launch { viewModel.favouriteCompaniesUpdates.collect() }
+            launch { viewModel.actualStockPrice.collect() }
+        }
     }
 
     override fun initUi() {
         stocksRecyclerView?.apply {
-            adapter = mViewModel.stocksAdapter
+            adapter = viewModel.stocksAdapter
             itemAnimator = StockItemAnimator()
             addItemDecoration(StockItemDecoration(requireContext()))
 
@@ -86,20 +80,6 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                     onHolderUntouched = this@BaseStocksFragment::onHolderUntouched
                 )
             ).attachToRecyclerView(this)
-        }
-    }
-
-    override fun initObservers() {
-        lifecycleScope.launch {
-            launch { observeStocksState() }
-            launch { mViewModel.companiesStockPriceUpdates.collect() }
-            launch {
-                Log.d("TEST", "COLLECT ${this@BaseStocksFragment}")
-                mViewModel.favouriteCompaniesUpdates.collect {
-                    Log.d("TEST", "onCollect Result ${this@BaseStocksFragment}")
-                }
-            }
-            launch { mViewModel.actualStockPrice.collect() }
         }
     }
 
@@ -118,24 +98,13 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                 } else {
                     initFadeAnims()
                     recyclerView.scrollToTopWithCustomAnim(
-                        mFadeIn!!,
-                        mFadeOut!!,
+                        fadeIn!!,
+                        fadeOut!!,
                         StockItemAnimator()
                     )
                 }
             }
         }
-    }
-
-    private suspend fun observeStocksState() {
-        // TODO
-        mViewModel.stocksLoadState
-            .take(1)
-            .collect { loadState ->
-                if (loadState is LoadState.None) {
-                    mViewModel.loadStocks(mStocksMode)
-                }
-            }
     }
 
     private fun onHolderRebound(stockViewHolder: StockViewHolder) {
@@ -144,7 +113,7 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
     private fun onHolderUntouched(stockViewHolder: StockViewHolder, isRebounded: Boolean) {
         if (isRebounded) {
-            mViewModel.onHolderUntouched(stockViewHolder)
+            viewModel.onHolderUntouched(stockViewHolder)
         }
     }
 
@@ -153,13 +122,13 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
         val scaleInCallback = object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
-                val starRes = mStockStyleProvider.getForegroundIconDrawable(false)
-                val startActiveRes = mStockStyleProvider.getForegroundIconDrawable(true)
+                val starRes = stockStyleProvider.getForegroundIconDrawable(false)
+                val startActiveRes = stockStyleProvider.getForegroundIconDrawable(true)
 
                 val starDrawable = ContextCompat.getDrawable(requireContext(), starRes)
                 val starActiveDrawable = ContextCompat.getDrawable(requireContext(), startActiveRes)
 
-                getStockViewData(stockViewHolder.layoutPosition)?.let { stockViewData ->
+                getStockViewDataBy(stockViewHolder.layoutPosition)?.let { stockViewData ->
                     with(stockViewHolder.viewBinding.imageViewBoundedIcon) {
                         if (stockViewData.isFavourite) {
                             setImageDrawable(starDrawable)
@@ -167,17 +136,17 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                             setImageDrawable(starActiveDrawable)
                         }
 
-                        startAnimation(mScaleOut!!)
+                        startAnimation(scaleOut!!)
                     }
                 }
             }
         }
 
-        mScaleIn!!.setAnimationListener(scaleInCallback)
-        stockViewHolder.viewBinding.imageViewBoundedIcon.startAnimation(mScaleIn!!)
+        scaleIn!!.setAnimationListener(scaleInCallback)
+        stockViewHolder.viewBinding.imageViewBoundedIcon.startAnimation(scaleIn!!)
     }
 
-    private fun getStockViewData(position: Int): StockViewData? {
+    private fun getStockViewDataBy(position: Int): StockViewData? {
         return stocksRecyclerView?.adapter?.let { adapter ->
             return if (
                 adapter is BaseRecyclerAdapter
@@ -191,24 +160,24 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     }
 
     private fun initFadeAnims() {
-        if (mFadeIn == null) {
-            mFadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-            mFadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+        if (fadeIn == null) {
+            fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+            fadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
         }
     }
 
     private fun initScaleAnims() {
-        if (mScaleIn == null) {
-            mScaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in_large)
-            mScaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out_large)
+        if (scaleIn == null) {
+            scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in_large)
+            scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out_large)
         }
     }
 
     private fun invalidateAnims() {
-        mFadeIn?.invalidate()
-        mFadeOut?.invalidate()
-        mScaleIn?.invalidate()
-        mScaleOut?.invalidate()
+        fadeIn?.invalidate()
+        fadeOut?.invalidate()
+        scaleIn?.invalidate()
+        scaleOut?.invalidate()
     }
 
     companion object {
