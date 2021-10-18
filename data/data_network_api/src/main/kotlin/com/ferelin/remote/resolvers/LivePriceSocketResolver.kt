@@ -50,6 +50,10 @@ class LivePriceSocketResolver @Inject constructor(
     * */
     private var mMessagesQueue: Queue<String> = LinkedList()
 
+    private companion object{
+        const val sDefaultCloseCode = 4000
+    }
+
     suspend fun subscribe(companyTicker: String) =
         withContext(mDispatchersProvider.IO) {
             Timber.d("try to subscribe (companyTicker = $companyTicker)")
@@ -99,7 +103,7 @@ class LivePriceSocketResolver @Inject constructor(
 
     fun closeConnection() {
         Timber.d("close connection")
-        mWebSocket?.close(0, null)
+        mWebSocket?.close(sDefaultCloseCode, null)
         mWebSocket = null
     }
 
