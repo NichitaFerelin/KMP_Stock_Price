@@ -27,6 +27,10 @@ interface Router {
 
     fun back()
 
+    fun openUrl(url: String) : Boolean
+
+    fun openContacts(phone: String) : Boolean
+
     fun toStartFragment()
 
     fun fromLoadingToStocksPager(

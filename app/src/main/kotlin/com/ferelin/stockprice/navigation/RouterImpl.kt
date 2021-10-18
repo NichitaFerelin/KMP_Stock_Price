@@ -16,6 +16,9 @@
 
 package com.ferelin.stockprice.navigation
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.ferelin.navigation.Router
@@ -42,6 +45,17 @@ class RouterImpl @Inject constructor(
 
     override fun back() {
         activity.supportFragmentManager.popBackStack()
+    }
+
+    override fun openUrl(url: String): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW)
+            .apply { data = Uri.parse(url) }
+        return launchIntent(intent)
+    }
+
+    override fun openContacts(phone: String): Boolean {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null))
+        return launchIntent(intent)
     }
 
     override fun toStartFragment() {
@@ -95,5 +109,14 @@ class RouterImpl @Inject constructor(
         onTransaction: ((FragmentTransaction) -> Unit)?
     ) {
         screenResolver.fromSettingsToLogin(activity, params, onTransaction)
+    }
+
+    private fun launchIntent(intent: Intent): Boolean {
+        return try {
+            activity.startActivity(intent)
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        }
     }
 }

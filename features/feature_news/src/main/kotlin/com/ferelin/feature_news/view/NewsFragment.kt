@@ -75,7 +75,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            observeNewsState()
+            launch { observeNewsState() }
+            launch { observeOpenUrlEventError() }
         }
     }
 
@@ -96,8 +97,16 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
         }
     }
 
+    private suspend fun observeOpenUrlEventError() {
+        viewModel.openUrlErrorEvent.collect {
+            withContext(Dispatchers.Main) {
+                showTempSnackbar(getString(R.string.errorNoAppToResolve))
+            }
+        }
+    }
+
     private fun onError() {
-        if(!viewModel.isNetworkAvailable) {
+        if (!viewModel.isNetworkAvailable) {
             showSnackbar(getString(R.string.messageNetworkNotAvailable))
         } else {
             showTempSnackbar(getString(R.string.errorUndefined))

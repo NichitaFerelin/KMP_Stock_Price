@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ProfileParams
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.interactors.ProfileInteractor
+import com.ferelin.navigation.Router
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +30,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val profileInteractor: ProfileInteractor
+    private val profileInteractor: ProfileInteractor,
+    private val router: Router
 ) : ViewModel() {
 
     private val _profileLoadState = MutableStateFlow<LoadState<Profile>>(LoadState.None())
@@ -44,5 +46,9 @@ class ProfileViewModel @Inject constructor(
             val response = profileInteractor.getBy(profileParams.companyId)
             _profileLoadState.value = LoadState.Prepared(response)
         }
+    }
+
+    fun onPhoneClick(phone: String): Boolean {
+        return router.openContacts(phone)
     }
 }

@@ -25,7 +25,7 @@
 
     <!-- Errors -->
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
-    <string name="errorNoAppToOpenUrl">App that can resolve it do not found</string>
+    <string name="errorNoAppToResolve">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorUndefined">Undefined error</string>
     <string name="errorEmptyPhone">Empty phone number</string>

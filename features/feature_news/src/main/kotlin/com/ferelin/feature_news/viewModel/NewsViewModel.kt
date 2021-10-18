@@ -27,14 +27,12 @@ import com.ferelin.domain.interactors.NewsInteractor
 import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.mapper.NewsMapper
 import com.ferelin.feature_news.viewData.NewsViewData
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.navigation.Router
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NetworkListener
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -42,11 +40,15 @@ import javax.inject.Inject
 class NewsViewModel @Inject constructor(
     private val newsInteractor: NewsInteractor,
     private val newsMapper: NewsMapper,
-    private val networkResolver: NetworkResolver
+    private val networkResolver: NetworkResolver,
+    private val router: Router
 ) : ViewModel(), NetworkListener {
 
     private val _newsLoadState = MutableStateFlow<LoadState<List<NewsViewData>>>(LoadState.None())
     val newsLoadState: StateFlow<LoadState<List<NewsViewData>>> = _newsLoadState.asStateFlow()
+
+    private val _openUrlErrorEvent = MutableSharedFlow<Unit>()
+    val openUrlErrorEvent: SharedFlow<Unit> = _openUrlErrorEvent.asSharedFlow()
 
     val isNetworkAvailable: Boolean
         get() = networkResolver.isNetworkAvailable
@@ -117,6 +119,11 @@ class NewsViewModel @Inject constructor(
     }
 
     private fun onNewsItemClick(newsViewData: NewsViewData) {
-
+        viewModelScope.launch {
+            val isSuccessful = router.openUrl(newsViewData.sourceUrl)
+            if (!isSuccessful) {
+                _openUrlErrorEvent.emit(Unit)
+            }
+        }
     }
 }

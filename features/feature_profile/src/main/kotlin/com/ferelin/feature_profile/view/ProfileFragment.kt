@@ -26,9 +26,11 @@ import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.params.ProfileParams
+import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.domain.entities.Profile
+import com.ferelin.feature_profile.R
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
 import com.ferelin.shared.LoadState
@@ -65,6 +67,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             .into(viewBinding.imageViewIcon)
     }
 
+    override fun initUx() {
+        viewBinding.textViewPhone.setOnClick(this::onPhoneClick)
+    }
+
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             observeProfileState()
@@ -82,6 +88,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 }
                 else -> Unit
             }
+        }
+    }
+
+    private fun onPhoneClick() {
+        val phoneNumber = viewBinding.textViewPhone.text.toString()
+        val processed = viewModel.onPhoneClick(phoneNumber)
+        if (!processed) {
+            showTempSnackbar(getString(R.string.errorNoAppToResolve))
         }
     }
 
