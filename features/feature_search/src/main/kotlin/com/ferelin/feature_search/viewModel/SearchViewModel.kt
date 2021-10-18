@@ -194,7 +194,7 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun onNewSearchRequest(text: String, results: Int) {
         if (results in 1..sMaxRequestResults) {
-            mSearchRequestsInteractor.cacheSearchRequest(text)
+            mSearchRequestsInteractor.cacheSearchRequest(text, true)
         }
     }
 

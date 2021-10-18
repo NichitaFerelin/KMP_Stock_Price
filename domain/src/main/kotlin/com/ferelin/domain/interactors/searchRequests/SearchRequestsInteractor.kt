@@ -25,7 +25,7 @@ interface SearchRequestsInteractor {
 
     val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
 
-    suspend fun cacheSearchRequest(searchText: String)
+    suspend fun cacheSearchRequest(searchText: String, toNetwork:Boolean)
 
     suspend fun getSearchRequests() : List<SearchRequest>
 

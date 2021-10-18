@@ -16,6 +16,7 @@
 
 package com.ferelin.firebase.syncers
 
+import android.util.Log
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
@@ -76,7 +77,14 @@ class SearchRequestsSyncerImpl @Inject constructor(
                     "remotes = ${remoteRequests.size})"
         )
 
-        var lastId = remoteRequests.lastOrNull()?.id ?: 0
+        val lastRemoteId = remoteRequests.lastOrNull()?.id ?: 0
+        val lastSourceId = sourceRequests.firstOrNull()?.id ?: 0
+
+        var lastId = if (lastRemoteId > lastSourceId) {
+            lastRemoteId
+        } else {
+            lastSourceId
+        }
 
         sourceRequests
             .itemsNotIn(remoteRequests)

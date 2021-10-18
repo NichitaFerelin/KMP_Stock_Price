@@ -16,14 +16,26 @@
 
 package com.ferelin.firebase.utils
 
-fun <T> List<T>.itemsNotIn(source: List<T>): List<T> {
+import android.util.Log
+
+fun <T> List<T>.itemsNotIn(searchIn: List<T>): List<T> {
     val itemsNotIn = mutableListOf<T>()
 
     this.forEach { item ->
-        if (!source.contains(item)) {
+        var exists = false
+        Log.d("TEST", "Search for $item")
+        for (searchItem in searchIn) {
+            Log.d("TEST", "Compare [$searchItem] and [$item]")
+            if (searchItem == item) {
+                exists = true
+                break
+            }
+        }
+
+        if (!exists) {
+            Log.d("TEST", "Add $item")
             itemsNotIn.add(item)
         }
     }
-
     return itemsNotIn
 }

@@ -88,9 +88,11 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
     private var mCacheJob: Job? = null
 
-    override suspend fun cacheSearchRequest(searchText: String): Unit =
+    override suspend fun cacheSearchRequest(searchText: String, toNetwork: Boolean): Unit =
         withContext(mDispatchersProvider.IO) {
-            mExternalScope.launch(mDispatchersProvider.IO) {
+
+            mCacheJob?.join()
+            mCacheJob = mExternalScope.launch(mDispatchersProvider.IO) {
                 mSearchRequestsState.value.ifPrepared { preparedState ->
                     val searchRequest = SearchRequest(
                         id = preparedState.data.firstOrNull()?.id?.plus(1) ?: 0,
@@ -109,7 +111,13 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
                     mSearchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
 
-                    cache(searchRequest)
+                    mSearchRequestsLocalRepo.cacheSearchRequest(searchRequest)
+
+                    if (toNetwork) {
+                        mAuthenticationSource.getUserToken()?.let { userToken ->
+                            mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, searchRequest)
+                        }
+                    }
                 }
             }
         }
@@ -180,14 +188,6 @@ class SearchRequestsInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun cache(searchRequest: SearchRequest) {
-        mSearchRequestsLocalRepo.cacheSearchRequest(searchRequest)
-
-        mAuthenticationSource.getUserToken()?.let { userToken ->
-            mSearchRequestsRemoteRepo.cacheSearchRequest(userToken, searchRequest)
-        }
-    }
-
     private suspend fun erase(searchRequest: SearchRequest) {
         mSearchRequestsLocalRepo.eraseSearchRequest(searchRequest)
 
@@ -203,7 +203,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
                     .initDataSync(userToken, preparedState.data)
                     .forEach { remoteSearchRequest ->
                         Log.d("TEST", "New item $remoteSearchRequest")
-                        cacheSearchRequest(remoteSearchRequest.request)
+                        cacheSearchRequest(remoteSearchRequest.request, false)
                     }
             }
         }
