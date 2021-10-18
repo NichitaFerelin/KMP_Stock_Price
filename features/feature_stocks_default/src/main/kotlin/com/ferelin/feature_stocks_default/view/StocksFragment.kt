@@ -28,23 +28,21 @@ import com.ferelin.feature_stocks_default.viewModel.StocksViewModel
 
 class StocksFragment : BaseStocksFragment<FragmentStocksBinding, StocksViewModel>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksBinding
         get() = FragmentStocksBinding::inflate
 
-    override val mStocksMode = StocksMode.ALL
-
-    override val mViewModel: StocksViewModel by viewModels(
+    override val viewModel: StocksViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        stocksRecyclerView = mViewBinding.recyclerViewStocks
+        stocksRecyclerView = viewBinding.recyclerViewStocks
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun initUi() {
         super.initUi()
-        mViewBinding.recyclerViewStocks.setHasFixedSize(true)
+        viewBinding.recyclerViewStocks.setHasFixedSize(true)
     }
 
     companion object {

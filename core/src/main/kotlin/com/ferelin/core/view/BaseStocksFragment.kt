@@ -59,6 +59,10 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
     private var fadeIn: Animation? = null
     private var fadeOut: Animation? = null
 
+    companion object {
+        private const val SCROLL_WITH_ANIM_AFTER = 40
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
@@ -93,7 +97,7 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
         stocksRecyclerView?.let { recyclerView ->
             recyclerView.layoutManager.ifLinear { layoutManager ->
 
-                if (layoutManager.findFirstVisibleItemPosition() < sScrollWithAnimAfter) {
+                if (layoutManager.findFirstVisibleItemPosition() < SCROLL_WITH_ANIM_AFTER) {
                     recyclerView.smoothScrollToPosition(0)
                 } else {
                     initFadeAnims()
@@ -178,9 +182,5 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
         fadeOut?.invalidate()
         scaleIn?.invalidate()
         scaleOut?.invalidate()
-    }
-
-    companion object {
-        private const val sScrollWithAnimAfter = 40
     }
 }

@@ -25,7 +25,7 @@ data class CompanyWithStockPriceDBO(
 
     @Relation(
         parentColumn = CompanyDBO.ID_COLUMN,
-        entityColumn = "id"
+        entityColumn = "relation_company_id"
     )
     val stockPriceDBO: StockPriceDBO? = null
 )

@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/white"
-    app:cardElevation="10dp">
+    app:cardElevation="10dp"
+    tools:background="@color/white"
+    tools:theme="@style/Theme.StockPrice">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:transitionName="@string/transitionSearchFragment"
     app:layoutDescription="@xml/fragment_search_scene"
+    tools:background="@color/white"
     tools:theme="@style/Theme.StockPrice">
 
     <com.google.android.material.appbar.AppBarLayout

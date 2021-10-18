@@ -23,41 +23,39 @@ import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LoadingViewModel @Inject constructor(
-    private val mFirstLaunchInteractor: FirstLaunchInteractor,
-    private val mRouter: Router,
-    private val mDispatchersProvider: DispatchersProvider
+    private val firstLaunchInteractor: FirstLaunchInteractor,
+    private val router: Router
 ) : ViewModel() {
 
-    private val mLoadPreparedState = MutableStateFlow(false)
-    val loadPreparedState: StateFlow<Boolean>
-        get() = mLoadPreparedState
+    private val _loadPreparedState = MutableStateFlow(false)
+    val loadPreparedState: StateFlow<Boolean> = _loadPreparedState.asStateFlow()
 
-    private var mIsFirstTimeLaunch = false
+    private var isFirstTimeLaunch = false
 
     init {
-        viewModelScope.launch(mDispatchersProvider.IO) {
+        viewModelScope.launch {
             prepareLaunch()
         }
     }
 
     fun onAnimationsStopped() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            if (mIsFirstTimeLaunch) {
-                // TODO to welcome fragment
-                mRouter.fromLoadingToStocksPager()
-                mFirstLaunchInteractor.cacheFirstTimeLaunch(false)
+        viewModelScope.launch {
+            if (isFirstTimeLaunch) {
+                router.fromLoadingToStocksPager()
+                firstLaunchInteractor.cache(false)
             } else {
-                mRouter.fromLoadingToStocksPager()
+                router.fromLoadingToStocksPager()
             }
         }
     }
 
     private suspend fun prepareLaunch() {
-        mIsFirstTimeLaunch = mFirstLaunchInteractor.getFirstTimeLaunch()
-        mLoadPreparedState.value = true
+        isFirstTimeLaunch = firstLaunchInteractor.get()
+        _loadPreparedState.value = true
     }
 }

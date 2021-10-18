@@ -32,10 +32,10 @@ import com.ferelin.feature_section_about.adapter.AboutPagerAdapter
 import com.ferelin.feature_section_about.databinding.FragmentAboutPagerBinding
 import com.ferelin.feature_section_about.viewModel.AboutPagerViewModel
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -44,18 +44,18 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<AboutPagerViewModel>
 
-    private val mViewModel: AboutPagerViewModel by viewModels(
+    private val viewModel: AboutPagerViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
         get() = FragmentAboutPagerBinding::inflate
 
-    private val mBackPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
+    private val backPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (mViewBinding.viewPager.currentItem != 0) {
-                    mViewBinding.viewPager.setCurrentItem(0, true)
+                if (viewBinding.viewPager.currentItem != 0) {
+                    viewBinding.viewPager.setCurrentItem(0, true)
                 } else {
                     this.remove()
                     requireActivity().onBackPressed()
@@ -66,7 +66,6 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = 200L
         }
@@ -78,13 +77,13 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     }
 
     override fun initUi() {
-        with(mViewBinding) {
-            textViewCompanyName.text = mViewModel.aboutParams.companyName
-            textViewCompanyTicker.text = mViewModel.aboutParams.companyTicker
-            imageViewStar.setImageResource(mViewModel.favouriteIconRes)
+        with(viewBinding) {
+            textViewCompanyName.text = viewModel.aboutParams.companyName
+            textViewCompanyTicker.text = viewModel.aboutParams.companyTicker
+            imageViewStar.setImageResource(viewModel.favouriteIconRes)
 
             viewPager.adapter = AboutPagerAdapter(
-                mParams = mViewModel.aboutParams,
+                params = viewModel.aboutParams,
                 fm = childFragmentManager,
                 lifecycle = viewLifecycleOwner.lifecycle
             )
@@ -104,36 +103,36 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     override fun initUx() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            mBackPressedCallback
+            backPressedCallback
         )
 
-        mViewBinding.imageViewBack.setOnClick(mViewModel::onBackBtnClick)
-        mViewBinding.imageViewStar.setOnClick(mViewModel::onFavouriteIconClick)
+        viewBinding.imageViewBack.setOnClick(viewModel::onBackBtnClick)
+        viewBinding.imageViewStar.setOnClick(viewModel::onFavouriteIconClick)
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch { observeFavouriteCompaniesUpdate() }
             launch { observeNetworkState() }
         }
     }
 
     override fun onDestroyView() {
-        mViewBinding.tabLayout.detachViewPager()
+        viewBinding.tabLayout.detachViewPager()
         super.onDestroyView()
     }
 
     private suspend fun observeFavouriteCompaniesUpdate() {
-        mViewModel.favouriteCompaniesUpdate.collect {
-            withContext(mDispatchersProvider.Main) {
-                mViewBinding.imageViewStar.setImageResource(mViewModel.favouriteIconRes)
+        viewModel.favouriteCompaniesUpdate.collect {
+            withContext(Dispatchers.Main) {
+                viewBinding.imageViewStar.setImageResource(viewModel.favouriteIconRes)
             }
         }
     }
 
     private suspend fun observeNetworkState() {
-        mViewModel.networkState.collect { isAvailable ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.networkState.collect { isAvailable ->
+            withContext(Dispatchers.Main) {
                 if (isAvailable) {
                     showTempSnackbar(getString(R.string.messageNetworkAvailable))
                 } else {
@@ -144,22 +143,22 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[sAboutParamsKey]?.let { params ->
+        args[ABOUT_PARAMS_KEY]?.let { params ->
             if (params is AboutParams) {
-                mViewModel.aboutParams = params
-                mViewModel.isFavourite = params.isFavourite
+                viewModel.aboutParams = params
+                viewModel.isFavourite = params.isFavourite
             }
         }
     }
 
     companion object {
 
-        private const val sAboutParamsKey = "about-params"
+        private const val ABOUT_PARAMS_KEY = "about-params"
 
         fun newInstance(data: Any?): AboutPagerFragment {
             return AboutPagerFragment().also {
                 if (data is AboutParams) {
-                    it.arguments = bundleOf(sAboutParamsKey to data)
+                    it.arguments = bundleOf(ABOUT_PARAMS_KEY to data)
                 }
             }
         }

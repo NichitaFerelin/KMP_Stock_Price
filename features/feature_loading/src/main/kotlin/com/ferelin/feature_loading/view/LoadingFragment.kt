@@ -28,53 +28,55 @@ import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_loading.R
 import com.ferelin.feature_loading.databinding.FragmentLoadingBinding
 import com.ferelin.feature_loading.viewModel.LoadingViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoadingBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoadingBinding
         get() = FragmentLoadingBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<LoadingViewModel>
 
-    private val mViewModel: LoadingViewModel by viewModels(
+    private val viewModel: LoadingViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
     override fun initObservers() {
         super.initObservers()
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        viewLifecycleOwner.lifecycleScope.launch {
             observeFirstTimeLaunch()
         }
     }
 
     private suspend fun observeFirstTimeLaunch() {
-        mViewModel.loadPreparedState.collect { loadPrepared ->
+        viewModel.loadPreparedState.collect { loadPrepared ->
             if (loadPrepared) {
-                withContext(mDispatchersProvider.Main) {
-                    initiateAnimationsStops()
+                withContext(Dispatchers.Main) {
+                    stopAnim()
                 }
             }
         }
     }
 
-    private fun initiateAnimationsStops() {
-        mViewBinding.root.setTransitionListener(object : MotionManager() {
+    private fun stopAnim() {
+        viewBinding.root.setTransitionListener(object : MotionManager() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 super.onTransitionCompleted(p0, p1)
                 removeAutoTransition()
-                mViewModel.onAnimationsStopped()
+                viewModel.onAnimationsStopped()
             }
         })
     }
 
     private fun removeAutoTransition() {
-        mViewBinding.root.getTransition(R.id.transitionMain).autoTransition =
+        viewBinding.root.getTransition(R.id.transitionMain).autoTransition =
             MotionScene.Transition.AUTO_NONE
-        mViewBinding.root.getTransition(R.id.transitionJump).autoTransition =
+        viewBinding.root.getTransition(R.id.transitionJump).autoTransition =
             MotionScene.Transition.AUTO_NONE
     }
 

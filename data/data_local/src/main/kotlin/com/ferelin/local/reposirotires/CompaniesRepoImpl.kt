@@ -34,7 +34,7 @@ class CompaniesRepoImpl @Inject constructor(
 
     override suspend fun insertAll(companies: List<Company>) =
         withContext(dispatchersProvider.IO) {
-            Timber.d("cache (size = ${companies.size})")
+            Timber.d("insert all (size = ${companies.size})")
 
             companiesDao.insertAll(
                 list = companies.map(companyMapper::map)

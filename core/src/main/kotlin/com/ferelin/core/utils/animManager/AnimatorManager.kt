@@ -19,6 +19,7 @@ package com.ferelin.core.utils.animManager
 import android.animation.Animator
 
 abstract class AnimatorManager : Animator.AnimatorListener {
+
     override fun onAnimationStart(animation: Animator?) {
     }
 

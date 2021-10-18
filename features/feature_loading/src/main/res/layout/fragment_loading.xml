@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_loading_scene"
-    tools:ignore="ContentDescription">
+    tools:background="@color/white"
+    tools:ignore="ContentDescription"
+    tools:theme="@style/Theme.StockPrice">
 
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/flowCards"

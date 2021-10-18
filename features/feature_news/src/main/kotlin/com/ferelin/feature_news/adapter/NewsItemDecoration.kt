@@ -22,7 +22,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ferelin.core.R
 
-class NewsItemDecoration(private val mContext: Context) : RecyclerView.ItemDecoration() {
+class NewsItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
+
+    private val margin = context.resources.getDimension(R.dimen.newsItemOffset).toInt()
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -32,10 +34,10 @@ class NewsItemDecoration(private val mContext: Context) : RecyclerView.ItemDecor
     ) {
         super.getItemOffsets(outRect, view, parent, state)
         if (parent.getChildAdapterPosition(view) == 0) {
-            outRect.top = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
+            outRect.top = margin
         }
-        outRect.bottom = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
-        outRect.right = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
-        outRect.left = mContext.resources.getDimension(R.dimen.newsItemOffset).toInt()
+        outRect.bottom = margin
+        outRect.right = margin
+        outRect.left = margin
     }
 }

@@ -61,6 +61,7 @@
         app:layout_constraintBottom_toBottomOf="@id/textViewSource"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewTitle"
-        tools:src="@drawable/ic_login" />
+        tools:src="@drawable/ic_login"
+        android:contentDescription="@string/descriptionLogOut" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

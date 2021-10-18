@@ -28,23 +28,19 @@ import com.ferelin.feature_stocks_favourite.viewModel.FavouriteViewModel
 
 class FavouriteFragment : BaseStocksFragment<FragmentFavouriteBinding, FavouriteViewModel>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentFavouriteBinding
         get() = FragmentFavouriteBinding::inflate
 
-    override val mStocksMode = StocksMode.ONLY_FAVOURITES
-
-    override val mViewModel: FavouriteViewModel by viewModels(
+    override val viewModel: FavouriteViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        stocksRecyclerView = mViewBinding.recyclerViewStocks
-        // fab = mViewBinding.fab
+        stocksRecyclerView = viewBinding.recyclerViewStocks
         super.onViewCreated(view, savedInstanceState)
     }
 
     companion object {
-
         fun newInstance(data: Any?): FavouriteFragment {
             return FavouriteFragment()
         }

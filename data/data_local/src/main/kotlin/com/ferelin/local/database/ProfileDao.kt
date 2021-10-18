@@ -28,6 +28,6 @@ interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(profilesDBO: List<ProfileDBO>)
 
-    @Query("SELECT * FROM `companies_profile` WHERE relation_company_id = :companyId LIMIT 1")
-    suspend fun get(companyId: Int): ProfileDBO
+    @Query("SELECT * FROM `companies_profile` WHERE relation_company_id = :relationCompanyId LIMIT 1")
+    suspend fun get(relationCompanyId: Int): ProfileDBO
 }

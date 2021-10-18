@@ -37,6 +37,7 @@ import com.ferelin.feature_news.adapter.NewsItemDecoration
 import com.ferelin.feature_news.databinding.FragmentNewsBinding
 import com.ferelin.feature_news.viewModel.NewsViewModel
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,18 +45,18 @@ import javax.inject.Inject
 
 class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentNewsBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentNewsBinding
         get() = FragmentNewsBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<NewsViewModel>
 
-    private val mViewModel: NewsViewModel by viewModels(
+    private val viewModel: NewsViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    private var mFadeOut: Animation? = null
-    private var mFadeIn: Animation? = null
+    private var fadeOut: Animation? = null
+    private var fadeIn: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +64,9 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     override fun initUi() {
-        with(mViewBinding) {
+        with(viewBinding) {
             recyclerViewNews.apply {
-                adapter = mViewModel.newsAdapter
+                adapter = viewModel.newsAdapter
                 addItemDecoration(NewsItemDecoration(requireContext()))
             }
             fab.setOnClick(this@NewsFragment::scrollToTop)
@@ -73,21 +74,21 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             observeNewsState()
         }
     }
 
     override fun onDestroyView() {
-        mFadeIn?.invalidate()
-        mFadeOut?.invalidate()
+        fadeIn?.invalidate()
+        fadeOut?.invalidate()
         super.onDestroyView()
     }
 
     private suspend fun observeNewsState() {
-        mViewModel.newsLoadState.collect { loadState ->
+        viewModel.newsLoadState.collect { loadState ->
             when (loadState) {
-                is LoadState.None -> mViewModel.loadData()
+                is LoadState.None -> viewModel.loadData()
                 is LoadState.Loading -> showProgressBar()
                 is LoadState.Prepared -> hideProgressBar()
                 is LoadState.Error -> onError()
@@ -96,7 +97,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun onError() {
-        if(!mViewModel.isNetworkAvailable) {
+        if(!viewModel.isNetworkAvailable) {
             showSnackbar(getString(R.string.messageNetworkNotAvailable))
         } else {
             showTempSnackbar(getString(R.string.errorUndefined))
@@ -104,26 +105,26 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private suspend fun showProgressBar() {
-        withContext(mDispatchersProvider.Main) {
-            mViewBinding.progressBar.isVisible = true
+        withContext(Dispatchers.Main) {
+            viewBinding.progressBar.isVisible = true
         }
     }
 
     private suspend fun hideProgressBar() {
-        withContext(mDispatchersProvider.Main) {
-            mViewBinding.progressBar.isVisible = false
+        withContext(Dispatchers.Main) {
+            viewBinding.progressBar.isVisible = false
         }
     }
 
     private fun scrollToTop() {
-        mViewBinding.recyclerViewNews.layoutManager.ifLinear { layoutManager ->
-            if (layoutManager.findFirstVisibleItemPosition() < sScrollWithAnimAfter) {
-                mViewBinding.recyclerViewNews.smoothScrollToPosition(0)
+        viewBinding.recyclerViewNews.layoutManager.ifLinear { layoutManager ->
+            if (layoutManager.findFirstVisibleItemPosition() < SCROLL_WITH_ANIM_AFTER) {
+                viewBinding.recyclerViewNews.smoothScrollToPosition(0)
             } else {
                 initFadeAnims()
-                mViewBinding.recyclerViewNews.scrollToTopWithCustomAnim(
-                    mFadeIn!!,
-                    mFadeOut!!,
+                viewBinding.recyclerViewNews.scrollToTopWithCustomAnim(
+                    fadeIn!!,
+                    fadeOut!!,
                     null
                 )
             }
@@ -131,29 +132,29 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun initFadeAnims() {
-        if (mFadeIn == null) {
-            mFadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-            mFadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+        if (fadeIn == null) {
+            fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+            fadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
         }
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[sNewsParamsKey]?.let { params ->
+        args[NEWS_PARAMS_KEY]?.let { params ->
             if (params is NewsParams) {
-                mViewModel.newsParams = params
+                viewModel.newsParams = params
             }
         }
     }
 
     companion object {
 
-        private const val sNewsParamsKey = "n"
-        private const val sScrollWithAnimAfter = 7
+        private const val NEWS_PARAMS_KEY = "n"
+        private const val SCROLL_WITH_ANIM_AFTER = 7
 
         fun newInstance(data: Any?): NewsFragment {
             return NewsFragment().also {
                 if (data is NewsParams) {
-                    it.arguments = bundleOf(sNewsParamsKey to data)
+                    it.arguments = bundleOf(NEWS_PARAMS_KEY to data)
                 }
             }
         }

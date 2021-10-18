@@ -24,9 +24,9 @@ import com.ferelin.feature_search.R
 
 open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
-    private val mFirstItemStartMargin =
+    private val firstItemStartMargin =
         context.resources.getDimension(R.dimen.searchItemStartMargin).toInt()
-    private val mDefaultStartMargin =
+    private val defaultStartMargin =
         context.resources.getDimension(R.dimen.searchItemMargin).toInt()
 
     open val twoRows: Boolean = true
@@ -42,10 +42,10 @@ open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration(
         val finalChildCounter = parent.adapter?.itemCount ?: 0
 
         when {
-            parent.getChildAdapterPosition(view) == 0 -> outRect.left = mFirstItemStartMargin
+            parent.getChildAdapterPosition(view) == 0 -> outRect.left = firstItemStartMargin
 
             twoRows && parent.getChildAdapterPosition(view) == 1 -> {
-                outRect.left = mFirstItemStartMargin
+                outRect.left = firstItemStartMargin
             }
 
             parent.getChildAdapterPosition(view) == finalChildCounter - 1 -> {
@@ -55,12 +55,12 @@ open class SearchItemDecoration(context: Context) : RecyclerView.ItemDecoration(
             twoRows && parent.getChildAdapterPosition(view) == finalChildCounter - 2 -> {
                 addMarginToLastItem(outRect)
             }
-            else -> outRect.left = mDefaultStartMargin
+            else -> outRect.left = defaultStartMargin
         }
     }
 
     private fun addMarginToLastItem(outRect: Rect) {
-        outRect.left = mDefaultStartMargin
-        outRect.right = mFirstItemStartMargin
+        outRect.left = defaultStartMargin
+        outRect.right = firstItemStartMargin
     }
 }

@@ -34,6 +34,7 @@ import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,14 +46,12 @@ enum class StocksMode {
 
 abstract class BaseStocksViewModel(
     protected val stockMapper: StockMapper,
-    protected val dispatchesProvider: DispatchersProvider,
+    protected val router: Router,
     private val companiesInteractor: CompaniesInteractor,
     private val stockPriceInteractor: StockPriceInteractor,
     private val stockStyleProvider: StockStyleProvider,
-    private val router: Router
+    private val stocksMode: StocksMode
 ) : ViewModel() {
-
-    abstract val stocksMode: StocksMode
 
     protected val stockLoadState =
         MutableStateFlow<LoadState<List<StockViewData>>>(LoadState.None())
@@ -82,11 +81,11 @@ abstract class BaseStocksViewModel(
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     init {
-        loadStocks()
+        prepareStocksData()
     }
 
     fun onHolderUntouched(stockViewHolder: StockViewHolder) {
-        viewModelScope.launch(dispatchesProvider.IO) {
+        viewModelScope.launch {
             val viewData = stocksAdapter.getByPosition(stockViewHolder.layoutPosition)
             if (viewData is StockViewData) {
                 onFavouriteIconClick(viewData)
@@ -113,7 +112,7 @@ abstract class BaseStocksViewModel(
         }
     }
 
-    private fun loadStocks() {
+    private fun prepareStocksData() {
         viewModelScope.launch {
             stockLoadState.value = LoadState.Loading()
 
@@ -125,11 +124,9 @@ abstract class BaseStocksViewModel(
 
             val viewData = companies.map(stockMapper::map)
 
-            stockLoadState.value = LoadState.Prepared(
-                data = viewData
-            )
+            stockLoadState.value = LoadState.Prepared(viewData)
 
-            withContext(dispatchesProvider.Main) {
+            withContext(Dispatchers.Main) {
                 stocksAdapter.setData(viewData)
             }
         }
@@ -157,7 +154,7 @@ abstract class BaseStocksViewModel(
     }
 
     private fun onFavouriteIconClick(stockViewData: StockViewData) {
-        viewModelScope.launch(dispatchesProvider.IO) {
+        viewModelScope.launch {
             val company = stockMapper.map(stockViewData)
 
             if (company.isFavourite) {
@@ -169,7 +166,7 @@ abstract class BaseStocksViewModel(
     }
 
     private fun onBind(stockViewData: StockViewData, position: Int) {
-        viewModelScope.launch(dispatchesProvider.IO) {
+        viewModelScope.launch {
             stockPriceInteractor.addRequestToGetStockPrice(
                 stockViewData.id,
                 stockViewData.ticker,
@@ -179,7 +176,7 @@ abstract class BaseStocksViewModel(
     }
 
     private fun onStockPriceUpdate(companyWithStockPrice: CompanyWithStockPrice) {
-        viewModelScope.launch(dispatchesProvider.IO) {
+        viewModelScope.launch{
             stockLoadState.value.ifPrepared { preparedLoad ->
 
                 preparedLoad.data.ifExist<StockViewData>(
@@ -200,12 +197,12 @@ abstract class BaseStocksViewModel(
         stockViewData: StockViewData,
         payloads: Any? = null
     ) {
-        val targetPosition = stocksAdapter.getPosition {
+        val targetPosition = stocksAdapter.getPositionOf {
             stockViewData.getUniqueId() == it.getUniqueId()
         }
 
         if (targetPosition != NULL_INDEX) {
-            withContext(dispatchesProvider.Main) {
+            withContext(Dispatchers.Main) {
                 stocksAdapter.update(stockViewData, targetPosition, payloads)
             }
         }

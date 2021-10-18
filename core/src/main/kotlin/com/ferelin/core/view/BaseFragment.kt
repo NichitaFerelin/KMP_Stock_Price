@@ -38,9 +38,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     protected val viewBinding: VB
         get() = checkNotNull(_viewBinding)
 
-    @Inject
-    lateinit var dispatchersProvider: DispatchersProvider
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

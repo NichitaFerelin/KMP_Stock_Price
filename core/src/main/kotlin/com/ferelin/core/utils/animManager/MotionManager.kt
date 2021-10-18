@@ -19,6 +19,7 @@ package com.ferelin.core.utils.animManager
 import androidx.constraintlayout.motion.widget.MotionLayout
 
 abstract class MotionManager : MotionLayout.TransitionListener {
+
     override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
     }
 

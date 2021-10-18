@@ -24,38 +24,35 @@ import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AboutPagerViewModel @Inject constructor(
-    private val mCompaniesInteractor: CompaniesInteractor,
-    private val mStockStyleProvider: StockStyleProvider,
-    private val mNetworkResolver: NetworkResolver,
-    private val mRouter: Router,
-    private val mDispatchersProvider: DispatchersProvider
+    private val companiesInteractor: CompaniesInteractor,
+    private val stockStyleProvider: StockStyleProvider,
+    private val networkResolver: NetworkResolver,
+    private val router: Router
 ) : ViewModel(), NetworkListener {
 
-    private val mNetworkState = MutableSharedFlow<Boolean>()
-    val networkState: SharedFlow<Boolean>
-        get() = mNetworkState.asSharedFlow()
+    private val _networkState = MutableSharedFlow<Boolean>()
+    val networkState: SharedFlow<Boolean> = _networkState.asSharedFlow()
 
     init {
-        mNetworkResolver.registerNetworkListener(this)
+        networkResolver.registerNetworkListener(this)
     }
 
     override suspend fun onNetworkAvailable() {
-        mNetworkState.emit(true)
+        _networkState.emit(true)
     }
 
     override suspend fun onNetworkLost() {
-        mNetworkState.emit(false)
+        _networkState.emit(false)
     }
 
     override fun onCleared() {
-        mNetworkResolver.unregisterNetworkListener(this)
+        networkResolver.unregisterNetworkListener(this)
         super.onCleared()
     }
 
@@ -65,31 +62,31 @@ class AboutPagerViewModel @Inject constructor(
         set(value) {
             field = value
             aboutParams.isFavourite = field
-            favouriteIconRes = mStockStyleProvider.getForegroundIconDrawable(value)
+            favouriteIconRes = stockStyleProvider.getForegroundIconDrawable(value)
         }
 
-    var favouriteIconRes = mStockStyleProvider.getForegroundIconDrawable(isFavourite)
+    var favouriteIconRes = stockStyleProvider.getForegroundIconDrawable(isFavourite)
 
     val favouriteCompaniesUpdate: SharedFlow<Unit> by lazy(LazyThreadSafetyMode.NONE) {
-        mCompaniesInteractor
-            .favouriteCompaniesUpdated
+        companiesInteractor
+            .favouriteCompaniesUpdates
             .filter { it.company.id == aboutParams.companyId }
             .onEach { isFavourite = it.company.isFavourite }
-            .map { Unit }
+            .map { /*to unit*/ }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
     }
 
     fun onFavouriteIconClick() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
+        viewModelScope.launch {
             if (isFavourite) {
-                mCompaniesInteractor.removeCompanyFromFavourites(aboutParams.companyId)
+                companiesInteractor.eraseCompanyFromFavourites(aboutParams.companyId)
             } else {
-                mCompaniesInteractor.addCompanyToFavourites(aboutParams.companyId)
+                companiesInteractor.addCompanyToFavourites(aboutParams.companyId)
             }
         }
     }
 
     fun onBackBtnClick() {
-        mRouter.back()
+        router.back()
     }
 }

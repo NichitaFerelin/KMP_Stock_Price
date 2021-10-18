@@ -26,6 +26,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.utils.animManager.AnimationManager
+import com.ferelin.core.utils.isOut
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
@@ -35,6 +36,7 @@ import com.ferelin.feature_login.databinding.FragmentLoginBinding
 import com.ferelin.feature_login.viewModel.LoginViewModel
 import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,17 +44,17 @@ import javax.inject.Inject
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoginBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentLoginBinding
         get() = FragmentLoginBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<LoginViewModel>
 
-    private val mViewModel: LoginViewModel by viewModels(
+    private val viewModel: LoginViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    private var mScaleIn: Animation? = null
+    private var scaleIn: Animation? = null
     private var mScaleOut: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,38 +66,38 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     override fun initUi() {
-        mViewBinding.editTextCode.filters += InputFilter.LengthFilter(mViewModel.requiredCodeSize)
+        viewBinding.editTextCode.filters += InputFilter.LengthFilter(viewModel.requiredCodeSize)
     }
 
     override fun initUx() {
-        with(mViewBinding) {
+        with(viewBinding) {
             editTextCode.addTextChangedListener { charSequence ->
-                mViewModel.onCodeChanged(charSequence.toString())
+                viewModel.onCodeChanged(charSequence.toString())
             }
             editTextPhone.addTextChangedListener { charSequence ->
                 onPhoneChanged(charSequence.toString())
             }
 
-            imageViewBack.setOnClick(mViewModel::onBackClick)
+            imageViewBack.setOnClick(viewModel::onBackClick)
             imageViewIconCheck.setOnClickListener {
-                mViewModel.onSendCodeClick(
+                viewModel.onSendCodeClick(
                     holderActivity = requireActivity(),
-                    phone = mViewBinding.editTextPhone.text?.toString() ?: ""
+                    phone = viewBinding.editTextPhone.text?.toString() ?: ""
                 )
             }
         }
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch { observeAuthenticationState() }
             launch { observeNetworkState() }
         }
     }
 
     private suspend fun observeAuthenticationState() {
-        mViewModel.authenticationLoadState.collect { authLoadState ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.authenticationLoad.collect { authLoadState ->
+            withContext(Dispatchers.Main) {
                 when (authLoadState) {
                     is LoadState.Loading -> onLoading(authLoadState)
                     is LoadState.Prepared -> onPrepared(authLoadState)
@@ -107,8 +109,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private suspend fun observeNetworkState() {
-        mViewModel.networkState.collect { isAvailable ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.networkState.collect { isAvailable ->
+            withContext(Dispatchers.Main) {
                 if (isAvailable) {
                     showSnackbar(getString(R.string.messageNetworkAvailable))
                 } else {
@@ -139,7 +141,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 hideProgressBar()
                 hideCheckIcon()
                 showEnterCodeField()
-                showKeyboard(mViewBinding.editTextCode)
+                showKeyboard(viewBinding.editTextCode)
             }
             AuthResponse.Complete -> {
                 hideProgressBar()
@@ -155,11 +157,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         when (errorState.data) {
             AuthResponse.TooManyRequests -> {
                 hideEnterCodeField()
-                mViewBinding.editTextPhone.error = getString(R.string.errorTooManyRequests)
+                viewBinding.editTextPhone.error = getString(R.string.errorTooManyRequests)
             }
             AuthResponse.EmptyPhone -> {
                 hideEnterCodeField()
-                mViewBinding.editTextPhone.error = getString(R.string.errorEmptyPhone)
+                viewBinding.editTextPhone.error = getString(R.string.errorEmptyPhone)
             }
             else -> {
                 showTempSnackbar(getString(R.string.errorUndefined))
@@ -178,8 +180,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private fun hideCheckIcon() {
-        // TODO const
-        if (mViewBinding.imageViewIconCheck.scaleX == 1F) {
+        if (!viewBinding.imageViewIconCheck.isOut) {
 
             if (mScaleOut == null) {
                 mScaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
@@ -187,56 +188,50 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
             val callback = object : AnimationManager() {
                 override fun onAnimationEnd(animation: Animation?) {
-                    mViewBinding.imageViewIconCheck.scaleX = 0F
-                    mViewBinding.imageViewIconCheck.scaleY = 0F
+                    viewBinding.imageViewIconCheck.isOut = true
                 }
             }
 
             mScaleOut!!.setAnimationListener(callback)
-            mViewBinding.imageViewIconCheck.startAnimation(mScaleOut!!)
+            viewBinding.imageViewIconCheck.startAnimation(mScaleOut!!)
         }
     }
 
     private fun showCheckIcon() {
-        // TODO const
-        if (mViewBinding.imageViewIconCheck.scaleX == 0F) {
+        if (viewBinding.imageViewIconCheck.isOut) {
 
-            if (mScaleIn == null) {
-                mScaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
+            if (scaleIn == null) {
+                scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
             }
 
             val callback = object : AnimationManager() {
                 override fun onAnimationStart(animation: Animation?) {
-                    mViewBinding.imageViewIconCheck.scaleX = 1F
-                    mViewBinding.imageViewIconCheck.scaleY = 1F
+                    viewBinding.imageViewIconCheck.isOut = false
                 }
             }
 
-            mScaleIn!!.setAnimationListener(callback)
-            mViewBinding.imageViewIconCheck.startAnimation(mScaleIn!!)
+            scaleIn!!.setAnimationListener(callback)
+            viewBinding.imageViewIconCheck.startAnimation(scaleIn!!)
         }
     }
 
     private fun showProgressBar() {
-        mViewBinding.progressBar.scaleY = 1F
-        mViewBinding.progressBar.scaleX = 1F
+        viewBinding.progressBar.isOut = false
     }
 
     private fun hideProgressBar() {
-        mViewBinding.progressBar.scaleY = 0F
-        mViewBinding.progressBar.scaleX = 0F
+        viewBinding.progressBar.isOut = true
     }
 
     private fun showEnterCodeField() {
-        mViewBinding.editTextCodeLayout.alpha = 1F
+        viewBinding.editTextCodeLayout.alpha = 1F
     }
 
     private fun hideEnterCodeField() {
-        mViewBinding.editTextCodeLayout.alpha = 0F
+        viewBinding.editTextCodeLayout.alpha = 0F
     }
 
     companion object {
-
         fun newInstance(data: Any?): LoginFragment {
             return LoginFragment()
         }

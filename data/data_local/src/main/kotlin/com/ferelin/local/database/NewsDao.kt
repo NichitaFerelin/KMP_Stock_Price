@@ -28,8 +28,8 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(newsDBO: List<NewsDBO>)
 
-    @Query("SELECT * FROM `companies_news` WHERE relation_company_id = :relationId")
-    suspend fun getAll(relationId: Int): List<NewsDBO>
+    @Query("SELECT * FROM `companies_news` WHERE relation_company_id = :relationCompanyId")
+    suspend fun getAll(relationCompanyId: Int): List<NewsDBO>
 
     @Query("DELETE FROM `companies_news` WHERE relation_company_id = :relationId")
     suspend fun eraseBy(relationId: Int)

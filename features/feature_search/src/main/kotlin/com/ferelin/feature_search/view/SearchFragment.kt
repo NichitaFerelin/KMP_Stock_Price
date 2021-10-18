@@ -16,7 +16,6 @@
 
 package com.ferelin.feature_search.view
 
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,9 +31,11 @@ import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.MotionManager
 import com.ferelin.core.utils.animManager.invalidate
+import com.ferelin.core.utils.isAtEnd
+import com.ferelin.core.utils.isLandscapeOrientation
+import com.ferelin.core.utils.isOut
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseStocksFragment
-import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.feature_search.R
 import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecoration
 import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecorationLandscape
@@ -43,6 +44,7 @@ import com.ferelin.feature_search.viewModel.SearchViewModel
 import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -51,21 +53,18 @@ import kotlin.concurrent.timerTask
 
 class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
         get() = FragmentSearchBinding::inflate
 
-    override val mViewModel: SearchViewModel by viewModels(
+    override val viewModel: SearchViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    override val mStocksMode = StocksMode.ALL
-
-    private val mBackPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
+    private val backPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // TODO >= 0.50F
-                if (mViewBinding.root.progress == 1F) {
-                    mViewBinding.editTextSearch.setText("")
+                if (viewBinding.root.isAtEnd) {
+                    viewBinding.editTextSearch.setText("")
                 } else {
                     this.remove()
                     requireActivity().onBackPressed()
@@ -74,10 +73,10 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         }
     }
 
-    private var mScaleIn: Animation? = null
-    private var mScaleOut: Animation? = null
+    private var scaleIn: Animation? = null
+    private var scaleOut: Animation? = null
 
-    private var mKeyboardTimer: Timer? = null
+    private var keyboardTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,14 +89,14 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        stocksRecyclerView = mViewBinding.recyclerViewSearchResults
+        stocksRecyclerView = viewBinding.recyclerViewSearchResults
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-            mKeyboardTimer = Timer().apply {
+            keyboardTimer = Timer().apply {
                 schedule(timerTask {
-                    viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.Main) {
-                        showKeyboard(mViewBinding.editTextSearch)
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        showKeyboard(viewBinding.editTextSearch)
                     }
                 }, 400L)
             }
@@ -106,15 +105,15 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
     override fun initUi() {
         super.initUi()
-        with(mViewBinding) {
-            root.progress = mViewModel.transitionState
+        with(viewBinding) {
+            root.progress = viewModel.transitionState
 
             recyclerViewSearchedHistory.apply {
-                adapter = mViewModel.searchRequestsAdapter
+                adapter = viewModel.searchRequestsAdapter
                 addItemDecoration(provideItemDecoration())
             }
             recyclerViewPopularRequests.apply {
-                adapter = mViewModel.popularSearchRequestsAdapter
+                adapter = viewModel.popularSearchRequestsAdapter
                 addItemDecoration(provideItemDecoration())
             }
         }
@@ -124,16 +123,16 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         super.initUx()
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            mBackPressedCallback
+            backPressedCallback
         )
 
-        with(mViewBinding) {
+        with(viewBinding) {
             imageViewIconClose.setOnClick(this@SearchFragment::onCloseIconClick)
             imageViewBack.setOnClick(this@SearchFragment::onBackClick)
 
             editTextSearch.addTextChangedListener {
                 val searchRequest = it.toString()
-                mViewModel.onSearchTextChanged(searchRequest)
+                viewModel.onSearchTextChanged(searchRequest)
                 onSearchTextChanged(searchRequest)
             }
         }
@@ -141,7 +140,7 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
     override fun initObservers() {
         super.initObservers()
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch { observeSearchRequestsState() }
             launch { observeSearchResults() }
             launch { observeSearchTextChanges() }
@@ -149,47 +148,47 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
     }
 
     override fun onDestroyView() {
-        mScaleIn?.invalidate()
-        mScaleOut?.invalidate()
-        mKeyboardTimer?.cancel()
+        scaleIn?.invalidate()
+        scaleOut?.invalidate()
+        keyboardTimer?.cancel()
         hideKeyboard()
         super.onDestroyView()
     }
 
     private suspend fun observeSearchRequestsState() {
-        mViewModel.searchRequestsState.collect { loadState ->
+        viewModel.searchRequestsState.collect { loadState ->
             if (loadState is LoadState.None) {
-                mViewModel.loadSearchRequests()
+                viewModel.loadSearchRequests()
             }
         }
     }
 
     private suspend fun observeSearchResults() {
-        mViewModel.searchResultsExists.collect { resultsExists ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.searchResultsExists.collect { resultsExists ->
+            withContext(Dispatchers.Main) {
                 if (resultsExists) {
-                    mViewModel.transitionState = TRANSITION_END
-                    mViewBinding.root.transitionToEnd()
+                    viewModel.transitionState = TRANSITION_END
+                    viewBinding.root.transitionToEnd()
                 } else {
-                    mViewModel.transitionState = TRANSITION_START
-                    mViewBinding.root.transitionToStart()
+                    viewModel.transitionState = TRANSITION_START
+                    viewBinding.root.transitionToStart()
                 }
             }
         }
     }
 
     private suspend fun observeSearchTextChanges() {
-        mViewModel.searchTextChanged.collect { searchText ->
-            withContext(mDispatchersProvider.Main) {
-                mViewBinding.editTextSearch.setText(searchText)
-                mViewBinding.editTextSearch.setSelection(searchText.length)
+        viewModel.searchTextChanged.collect { searchText ->
+            withContext(Dispatchers.Main) {
+                viewBinding.editTextSearch.setText(searchText)
+                viewBinding.editTextSearch.setSelection(searchText.length)
             }
         }
     }
 
     private fun provideItemDecoration(): SearchItemDecoration {
         return requireContext().let {
-            if (it.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (it.isLandscapeOrientation) {
                 SearchItemDecorationLandscape(it)
             } else {
                 SearchItemDecoration(it)
@@ -206,64 +205,59 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
     }
 
     private fun onBackClick() {
-        if (mViewBinding.root.progress == 0F) {
-            mViewModel.onBackClick()
+        if (!viewBinding.root.isAtEnd) {
+            viewModel.onBackClick()
         } else {
-            mViewBinding.root.addTransitionListener(object : MotionManager() {
+            viewBinding.root.addTransitionListener(object : MotionManager() {
                 override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                    mViewModel.onBackClick()
+                    viewModel.onBackClick()
                 }
             })
-            mViewBinding.root.transitionToStart()
+            viewBinding.root.transitionToStart()
         }
     }
 
     private fun hideCloseIcon() {
-        // TODO const
-        if (mViewBinding.imageViewIconClose.scaleX == 1F) {
+        if (!viewBinding.imageViewIconClose.isOut) {
 
-            if (mScaleOut == null) {
-                mScaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
+            if (scaleOut == null) {
+                scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
             }
 
             val callback = object : AnimationManager() {
                 override fun onAnimationEnd(animation: Animation?) {
-                    mViewBinding.imageViewIconClose.scaleX = 0F
-                    mViewBinding.imageViewIconClose.scaleY = 0F
+                    viewBinding.imageViewIconClose.isOut = true
                 }
             }
 
-            mScaleOut!!.setAnimationListener(callback)
-            mViewBinding.imageViewIconClose.startAnimation(mScaleOut!!)
+            scaleOut!!.setAnimationListener(callback)
+            viewBinding.imageViewIconClose.startAnimation(scaleOut!!)
         }
     }
 
     private fun showCloseIcon() {
-        // TODO const
-        if (mViewBinding.imageViewIconClose.scaleX == 0F) {
+        if (viewBinding.imageViewIconClose.isOut) {
 
-            if (mScaleIn == null) {
-                mScaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
+            if (scaleIn == null) {
+                scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in)
             }
 
             val callback = object : AnimationManager() {
                 override fun onAnimationStart(animation: Animation?) {
-                    mViewBinding.imageViewIconClose.scaleX = 1F
-                    mViewBinding.imageViewIconClose.scaleY = 1F
+                    viewBinding.imageViewIconClose.isOut = false
                 }
             }
 
-            mScaleIn!!.setAnimationListener(callback)
-            mViewBinding.imageViewIconClose.startAnimation(mScaleIn!!)
+            scaleIn!!.setAnimationListener(callback)
+            viewBinding.imageViewIconClose.startAnimation(scaleIn!!)
         }
     }
 
     private fun onCloseIconClick() {
-        mViewBinding.editTextSearch.setText("")
+        viewBinding.editTextSearch.setText("")
     }
 
     companion object {
-
         const val TRANSITION_START = 0f
         const val TRANSITION_END = 1f
 

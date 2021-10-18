@@ -43,6 +43,7 @@ import com.ferelin.feature_chart.databinding.FragmentChartBinding
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.feature_chart.viewModel.ChartViewModel
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,27 +51,27 @@ import javax.inject.Inject
 
 class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChartBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentChartBinding
         get() = FragmentChartBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<ChartViewModel>
 
     @Inject
-    lateinit var mStockStyleProvider: StockStyleProvider
+    lateinit var stockStyleProvider: StockStyleProvider
 
-    private val mViewModel: ChartViewModel by viewModels(
+    private val viewModel: ChartViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    private val mViewsPropertyAnimator = mutableSetOf<View>()
+    private val viewsPropertyAnimator = mutableSetOf<View>()
 
-    private val mSuggestionControl = SuggestionController
+    private val suggestionControl = SuggestionController
 
-    private var mSelectedCard: CardView? = null
-    private var mSelectedText: TextView? = null
+    private var selectedCard: CardView? = null
+    private var selectedText: TextView? = null
 
-    private var mScaleInOut: Animator? = null
+    private var scaleInOut: Animator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,15 +79,15 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     override fun initUi() {
-        restoreSelectedViewMode(mViewModel.chartMode)
-        restoreChartState(mViewModel.selectedMarker)
-        setPriceFields(mViewModel.chartParams.stockPrice, mViewModel.chartParams.stockProfit)
+        restoreSelectedViewMode(viewModel.chartMode)
+        restoreChartState(viewModel.selectedMarker)
+        setPriceFields(viewModel.chartParams.stockPrice, viewModel.chartParams.stockProfit)
     }
 
     override fun initUx() {
-        mViewBinding.chartView.setOnTouchListener {
+        viewBinding.chartView.setOnTouchListener {
             onChartClicked(
-                previousClickedMarker = mViewModel.selectedMarker,
+                previousClickedMarker = viewModel.selectedMarker,
                 newClickedMarker = it
             )
         }
@@ -94,49 +95,49 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch { observePastPrice() }
             launch { observeActualStockPrice() }
         }
     }
 
     override fun onDestroyView() {
-        mViewsPropertyAnimator.forEach { it.animate().cancel() }
-        mScaleInOut?.invalidate()
-        mSelectedCard = null
-        mSelectedText = null
+        viewsPropertyAnimator.forEach { it.animate().cancel() }
+        scaleInOut?.invalidate()
+        selectedCard = null
+        selectedText = null
         super.onDestroyView()
     }
 
     private suspend fun observePastPrice() {
-        mViewModel.pastPriceLoadState.collect { pastPriceLoad ->
-            when (pastPriceLoad) {
-                is LoadState.Prepared -> {
-                    withContext(mDispatchersProvider.Main) {
+        viewModel.pastPriceLoadState.collect { pastPriceLoad ->
+            withContext(Dispatchers.Main) {
+                when (pastPriceLoad) {
+                    is LoadState.Prepared -> {
                         hideProgressBar()
                         onPastPriceChanged(pastPriceLoad.data)
                     }
-                }
-                is LoadState.Loading -> showProgressBar()
-                is LoadState.None -> mViewModel.loadPastPrices()
-                else -> {
-                    hideProgressBar()
-                    onError()
+                    is LoadState.Loading -> showProgressBar()
+                    is LoadState.None -> viewModel.loadPastPrices()
+                    else -> {
+                        hideProgressBar()
+                        onError()
+                    }
                 }
             }
         }
     }
 
     private suspend fun observeActualStockPrice() {
-        mViewModel.actualStockPrice.collect { stockPrice ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.actualStockPrice.collect { stockPrice ->
+            withContext(Dispatchers.Main) {
                 setPriceFields(stockPrice.currentPrice, stockPrice.profit)
             }
         }
     }
 
     private fun setCardBtnsListeners() {
-        with(mViewBinding) {
+        with(viewBinding) {
             cardViewDay.setOnClickListener { onCardClicked(it as CardView) }
             cardViewWeek.setOnClickListener { onCardClicked(it as CardView) }
             cardViewMonth.setOnClickListener { onCardClicked(it as CardView) }
@@ -151,7 +152,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
             return
         }
 
-        mViewModel.selectedMarker = newClickedMarker
+        viewModel.selectedMarker = newClickedMarker
 
         hideSuggestion()
         changeSuggestionCoordinates(newClickedMarker)
@@ -160,25 +161,25 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun onCardClicked(card: CardView) {
-        if (card == mSelectedCard) {
+        if (card == selectedCard) {
             jumpCard(card)
             return
         }
 
         val selectedChartMode = getCardAttachedViewMode(card)
-        mViewModel.selectedMarker = null
-        mViewModel.onNewChartMode(selectedChartMode)
+        viewModel.selectedMarker = null
+        viewModel.onNewChartMode(selectedChartMode)
 
         hideSuggestion()
 
         val attachedTextView = getCardAttachedTextView(card)
         applySelectedStyle(card, attachedTextView)
-        applyDefaultStyle(mSelectedCard!!, mSelectedText!!)
+        applyDefaultStyle(selectedCard!!, selectedText!!)
         saveSelectedViews(card, attachedTextView)
     }
 
     private fun onError() {
-        if(!mViewModel.isNetworkAvailable) {
+        if (!viewModel.isNetworkAvailable) {
             showSnackbar(getString(R.string.messageNetworkNotAvailable))
         } else {
             showTempSnackbar(getString(R.string.errorUndefined))
@@ -187,21 +188,21 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
     private fun onPastPriceChanged(history: ChartPastPrices) {
         if (history.prices.isNotEmpty()) {
-            mViewBinding.chartView.setData(history)
+            viewBinding.chartView.setData(history)
             showChart()
             hideProgressBar()
         }
     }
 
     private fun updateSuggestionText(marker: Marker) {
-        mViewBinding.includeSuggestion.textViewDate.text = marker.date
-        mViewBinding.includeSuggestion.textViewPrice.text = marker.priceStr
+        viewBinding.includeSuggestion.textViewDate.text = marker.date
+        viewBinding.includeSuggestion.textViewPrice.text = marker.priceStr
     }
 
     private fun restoreSelectedViewMode(lastSelectedChartViewMode: ChartViewMode) {
         val (lastCard, lastText) = getAttachedViewsByMode(lastSelectedChartViewMode)
-        mSelectedText = lastText as TextView
-        mSelectedCard = lastCard as CardView
+        selectedText = lastText as TextView
+        selectedCard = lastCard as CardView
 
         // Mode 'All' is set by default
         if (lastSelectedChartViewMode == ChartViewMode.All) {
@@ -209,23 +210,23 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         }
 
         val (restoredCardView, restoredTextView) = getAttachedViewsByMode(lastSelectedChartViewMode)
-        applyDefaultStyle(mViewBinding.cardViewAll, mViewBinding.textViewAll)
+        applyDefaultStyle(viewBinding.cardViewAll, viewBinding.textViewAll)
         applySelectedStyle(restoredCardView as CardView, restoredTextView as TextView)
         saveSelectedViews(restoredCardView, restoredTextView)
     }
 
     private fun restoreChartState(lastClickedMarker: Marker?) {
-        mViewModel.pastPriceLoadState.value.let { pastPriceState ->
+        viewModel.pastPriceLoadState.value.let { pastPriceState ->
             if (pastPriceState is LoadState.Prepared) {
                 onPastPriceChanged(pastPriceState.data)
             } else {
-                mViewBinding.groupChartWidgets.isVisible = false
+                viewBinding.groupChartWidgets.isVisible = false
             }
         }
 
         lastClickedMarker?.let { marker ->
-            mViewBinding.chartView.addOnChartPreparedListener {
-                val restoredMarker = mViewBinding.chartView.restoreMarker(marker)
+            viewBinding.chartView.addOnChartPreparedListener {
+                val restoredMarker = viewBinding.chartView.restoreMarker(marker)
                 if (restoredMarker != null) {
                     onChartClicked(null, restoredMarker)
                 }
@@ -234,8 +235,8 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun changeSuggestionCoordinates(marker: Marker) {
-        with(mViewBinding) {
-            mSuggestionControl.applyCoordinatesChanges(
+        with(viewBinding) {
+            suggestionControl.applyCoordinatesChanges(
                 rootSuggestionView = includeSuggestion.root,
                 pointView = point,
                 plugView = includeSuggestion.viewPlug,
@@ -247,27 +248,27 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun saveSelectedViews(newCard: CardView, newText: TextView) {
-        mSelectedCard = newCard
-        mSelectedText = newText
+        selectedCard = newCard
+        selectedText = newText
     }
 
     private fun showSuggestion() {
-        runFadeIn(mViewBinding.includeSuggestion.root, mViewBinding.point)
+        runFadeIn(viewBinding.includeSuggestion.root, viewBinding.point)
     }
 
     private fun hideSuggestion() {
-        runFadeOut(mViewBinding.includeSuggestion.root, mViewBinding.point)
+        runFadeOut(viewBinding.includeSuggestion.root, viewBinding.point)
     }
 
     private fun showProgressBar() {
-        if (!mViewBinding.progressBar.isVisible) {
-            mViewBinding.progressBar.isVisible = true
+        if (!viewBinding.progressBar.isVisible) {
+            viewBinding.progressBar.isVisible = true
         }
     }
 
     private fun hideProgressBar() {
-        if (mViewBinding.progressBar.isVisible) {
-            mViewBinding.progressBar.isVisible = false
+        if (viewBinding.progressBar.isVisible) {
+            viewBinding.progressBar.isVisible = false
         }
     }
 
@@ -282,7 +283,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun getAttachedViewsByMode(mode: ChartViewMode): Array<View> {
-        with(mViewBinding) {
+        with(viewBinding) {
             return when (mode) {
                 ChartViewMode.Year -> arrayOf(cardViewYear, textViewYear)
                 ChartViewMode.Months -> arrayOf(cardViewMonth, textViewMonths)
@@ -295,7 +296,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun getCardAttachedViewMode(card: CardView): ChartViewMode {
-        with(mViewBinding) {
+        with(viewBinding) {
             return when (card) {
                 cardViewDay -> ChartViewMode.Days
                 cardViewWeek -> ChartViewMode.Weeks
@@ -309,7 +310,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun getCardAttachedTextView(card: CardView): TextView {
-        with(mViewBinding) {
+        with(viewBinding) {
             return when (card) {
                 cardViewDay -> textViewDays
                 cardViewWeek -> textViewWeeks
@@ -323,61 +324,61 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun setPriceFields(price: String, profit: String) {
-        mViewBinding.textViewCurrentPrice.text = price
+        viewBinding.textViewCurrentPrice.text = price
 
-        val profitBackground = mStockStyleProvider.getProfitBackground(profit)
-        mViewBinding.textViewDayProfit.text = profit
-        mViewBinding.textViewDayProfit.setTextColor(profitBackground)
+        val profitBackground = stockStyleProvider.getProfitBackground(profit)
+        viewBinding.textViewDayProfit.text = profit
+        viewBinding.textViewDayProfit.setTextColor(profitBackground)
 
-        mViewBinding.textViewBuyPrice.text =
+        viewBinding.textViewBuyPrice.text =
             String.format(getString(R.string.hintBuyFor), price)
     }
 
     private fun showChart() {
-        if (!mViewBinding.groupChartWidgets.isVisible) {
-            TransitionManager.beginDelayedTransition(mViewBinding.root)
-            mViewBinding.groupChartWidgets.isVisible = true
+        if (!viewBinding.groupChartWidgets.isVisible) {
+            TransitionManager.beginDelayedTransition(viewBinding.root)
+            viewBinding.groupChartWidgets.isVisible = true
         }
     }
 
     private fun jumpCard(card: CardView) {
-        if (mScaleInOut == null) {
-            mScaleInOut = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
+        if (scaleInOut == null) {
+            scaleInOut = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
         }
-        mScaleInOut!!.setTarget(card)
-        mScaleInOut!!.start()
+        scaleInOut!!.setTarget(card)
+        scaleInOut!!.start()
     }
 
     private fun runFadeIn(vararg targets: View) {
         targets.forEach { view ->
-            mViewsPropertyAnimator.add(view)
+            viewsPropertyAnimator.add(view)
             view.animate().alpha(1F).duration = 150L
         }
     }
 
     private fun runFadeOut(vararg targets: View) {
         targets.forEach { view ->
-            mViewsPropertyAnimator.add(view)
+            viewsPropertyAnimator.add(view)
             view.animate().alpha(0F).duration = 150L
         }
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[sChartParamsKey]?.let { params ->
+        args[CHART_PARAMS_KEY]?.let { params ->
             if (params is ChartParams) {
-                mViewModel.chartParams = params
+                viewModel.chartParams = params
             }
         }
     }
 
     companion object {
 
-        private const val sChartParamsKey = "c"
+        private const val CHART_PARAMS_KEY = "c"
 
         fun newInstance(data: Any?): ChartFragment {
             return ChartFragment().also {
                 if (data is ChartParams) {
-                    it.arguments = bundleOf(sChartParamsKey to data)
+                    it.arguments = bundleOf(CHART_PARAMS_KEY to data)
                 }
             }
         }

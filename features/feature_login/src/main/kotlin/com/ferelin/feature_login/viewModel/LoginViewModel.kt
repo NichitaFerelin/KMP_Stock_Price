@@ -23,7 +23,6 @@ import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.domain.interactors.AuthenticationInteractor
 import com.ferelin.domain.sources.AuthResponse
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.Job
@@ -31,62 +30,57 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-typealias AuthState = LoadState<AuthResponse>
-
 class LoginViewModel @Inject constructor(
-    private val mAuthenticationInteractor: AuthenticationInteractor,
-    private val mNetworkResolver: NetworkResolver,
-    private val mRouter: Router,
-    private val mDispatchersProvider: DispatchersProvider
+    private val authenticationInteractor: AuthenticationInteractor,
+    private val networkResolver: NetworkResolver,
+    private val router: Router,
 ) : ViewModel(), NetworkListener {
 
-    private val mAuthenticationLoadState = MutableStateFlow<AuthState>(LoadState.None())
-    val authenticationLoadState: StateFlow<AuthState>
-        get() = mAuthenticationLoadState.asStateFlow()
+    private val _authenticationLoad = MutableStateFlow<LoadState<AuthResponse>>(LoadState.None())
+    val authenticationLoad: StateFlow<LoadState<AuthResponse>> = _authenticationLoad.asStateFlow()
 
-    private val mNetworkState = MutableSharedFlow<Boolean>()
-    val networkState: SharedFlow<Boolean>
-        get() = mNetworkState.asSharedFlow()
+    private val _networkState = MutableSharedFlow<Boolean>()
+    val networkState: SharedFlow<Boolean> = _networkState.asSharedFlow()
 
-    private var mAuthJob: Job? = null
+    private var authJob: Job? = null
 
-    val requiredCodeSize = mAuthenticationInteractor.getCodeRequiredSize()
+    val requiredCodeSize = authenticationInteractor.getCodeRequiredSize()
 
     init {
-        mNetworkResolver.registerNetworkListener(this)
+        networkResolver.registerNetworkListener(this)
     }
 
     override suspend fun onNetworkAvailable() {
-        mNetworkState.emit(true)
+        _networkState.emit(true)
     }
 
     override suspend fun onNetworkLost() {
-        mNetworkState.emit(false)
+        _networkState.emit(false)
     }
 
     override fun onCleared() {
-        mNetworkResolver.unregisterNetworkListener(this)
+        networkResolver.unregisterNetworkListener(this)
         super.onCleared()
     }
 
     fun onSendCodeClick(holderActivity: Activity, phone: String) {
-        if (!mNetworkResolver.isNetworkAvailable) {
+        if (!networkResolver.isNetworkAvailable) {
             return
         }
 
-        mAuthenticationLoadState.value.let { authLoadState ->
+        _authenticationLoad.value.let { authLoadState ->
             if (authLoadState is LoadState.Prepared
                 && authLoadState.data == AuthResponse.Complete
             ) return
         }
 
-        mAuthJob?.cancel()
-        mAuthJob = viewModelScope.launch(mDispatchersProvider.IO) {
-            mAuthenticationInteractor
+        authJob?.cancel()
+        authJob = viewModelScope.launch {
+            authenticationInteractor
                 .tryToLogIn(holderActivity, "+$phone")
                 .collect { authResponse ->
 
-                    mAuthenticationLoadState.value = when (authResponse) {
+                    _authenticationLoad.value = when (authResponse) {
                         AuthResponse.CodeSent -> LoadState.Prepared(authResponse)
                         AuthResponse.CodeProcessing -> LoadState.Loading(authResponse)
                         AuthResponse.PhoneProcessing -> LoadState.Loading(authResponse)
@@ -94,7 +88,7 @@ class LoginViewModel @Inject constructor(
                         AuthResponse.EmptyPhone -> LoadState.Error(authResponse)
                         AuthResponse.Error -> LoadState.Error(authResponse)
                         AuthResponse.Complete -> {
-                            mRouter.back()
+                            router.back()
                             LoadState.Prepared(authResponse)
                         }
                     }
@@ -103,18 +97,18 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onCodeChanged(code: String) {
-        if (!mNetworkResolver.isNetworkAvailable) {
+        if (!networkResolver.isNetworkAvailable) {
             return
         }
 
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            if (code.length == mAuthenticationInteractor.getCodeRequiredSize()) {
-                mAuthenticationInteractor.completeAuthentication(code)
+        viewModelScope.launch {
+            if (code.length == authenticationInteractor.getCodeRequiredSize()) {
+                authenticationInteractor.completeAuthentication(code)
             }
         }
     }
 
     fun onBackClick() {
-        mRouter.back()
+        router.back()
     }
 }

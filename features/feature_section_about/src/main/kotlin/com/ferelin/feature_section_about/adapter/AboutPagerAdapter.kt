@@ -31,7 +31,7 @@ import com.ferelin.feature_news.view.NewsFragment
 import com.ferelin.feature_profile.view.ProfileFragment
 
 class AboutPagerAdapter(
-    private val mParams: AboutParams,
+    private val params: AboutParams,
     fm: FragmentManager,
     lifecycle: Lifecycle
 ) : FragmentStateAdapter(fm, lifecycle) {
@@ -44,26 +44,26 @@ class AboutPagerAdapter(
         return when (position) {
             0 -> ProfileFragment.newInstance(
                 ProfileParams(
-                    mParams.companyId,
-                    mParams.companyTicker,
-                    mParams.companyName,
-                    mParams.logoUrl
+                    params.companyId,
+                    params.companyTicker,
+                    params.companyName,
+                    params.logoUrl
                 )
             )
 
             1 -> ChartFragment.newInstance(
                 ChartParams(
-                    mParams.companyId,
-                    mParams.companyTicker,
-                    mParams.stockPrice,
-                    mParams.stockProfit
+                    params.companyId,
+                    params.companyTicker,
+                    params.stockPrice,
+                    params.stockProfit
                 )
             )
 
             2 -> NewsFragment.newInstance(
                 NewsParams(
-                    mParams.companyId,
-                    mParams.companyTicker
+                    params.companyId,
+                    params.companyTicker
                 )
             )
 

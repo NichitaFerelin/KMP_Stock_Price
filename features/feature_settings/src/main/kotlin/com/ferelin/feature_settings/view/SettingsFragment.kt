@@ -31,6 +31,7 @@ import com.ferelin.feature_settings.viewModel.Event
 import com.ferelin.feature_settings.viewModel.SettingsViewModel
 import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,13 +39,13 @@ import javax.inject.Inject
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSettingsBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSettingsBinding
         get() = FragmentSettingsBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<SettingsViewModel>
 
-    private val mViewModel: SettingsViewModel by viewModels(
+    private val viewModel: SettingsViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
@@ -59,34 +60,34 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
 
     override fun initUi() {
-        mViewBinding.recyclerView.apply {
-            adapter = mViewModel.optionsAdapter
+        viewBinding.recyclerView.apply {
+            adapter = viewModel.optionsAdapter
             addItemDecoration(OptionDecoration(requireContext()))
         }
     }
 
     override fun initUx() {
-        mViewBinding.imageBack.setOnClick(mViewModel::onBackClick)
+        viewBinding.imageBack.setOnClick(viewModel::onBackClick)
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch { observeMenuOptions() }
             launch { observeMessageEvent() }
         }
     }
 
     private suspend fun observeMenuOptions() {
-        mViewModel.optionsLoadState.collect { loadState ->
+        viewModel.optionsLoadState.collect { loadState ->
             if (loadState is LoadState.None) {
-                mViewModel.loadOptions()
+                viewModel.loadOptions()
             }
         }
     }
 
     private suspend fun observeMessageEvent() {
-        mViewModel.messageEvent.collect { event ->
-            withContext(mDispatchersProvider.Main) {
+        viewModel.messageEvent.collect { event ->
+            withContext(Dispatchers.Main) {
                 when (event) {
                     Event.LOG_OUT_COMPLETE -> {
                         showTempSnackbar(getString(R.string.messageLogOutComplete))
@@ -103,7 +104,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
 
     companion object {
-
         fun newInstance(data: Any? = null): SettingsFragment {
             return SettingsFragment()
         }

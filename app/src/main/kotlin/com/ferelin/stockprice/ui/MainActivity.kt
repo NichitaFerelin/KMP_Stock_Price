@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private val fragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
         object : FragmentManager.FragmentLifecycleCallbacks() {
+
             override fun onFragmentPreAttached(
                 fm: FragmentManager,
                 f: Fragment,

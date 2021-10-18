@@ -47,7 +47,7 @@ class MenuOptionsProvider @Inject constructor(
                 type = OptionType.CLEAR_DATA,
                 title = context.getString(R.string.titleClearData),
                 source = context.getString(R.string.sourceClearData),
-                iconRes = R.drawable.outline_delete_24
+                iconRes = R.drawable.ic_delete
             )
         )
     }

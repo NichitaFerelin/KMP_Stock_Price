@@ -6,6 +6,7 @@
     android:layout_height="@dimen/suggestionLayoutHeight"
     android:alpha="0"
     android:background="@color/whiteTransparent"
+    tools:theme="@style/Theme.StockPrice"
     tools:alpha="1">
 
     <androidx.cardview.widget.CardView

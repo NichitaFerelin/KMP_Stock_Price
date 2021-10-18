@@ -30,6 +30,7 @@ import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,22 +43,19 @@ enum class Event {
 }
 
 class SettingsViewModel @Inject constructor(
-    private val mAuthenticationInteractor: AuthenticationInteractor,
-    private val mCompaniesInteractor: CompaniesInteractor,
-    private val mSearchRequestsInteractor: SearchRequestsInteractor,
-    private val mNetworkResolver: NetworkResolver,
-    private val mRouter: Router,
-    private val mMenuOptionsProvider: MenuOptionsProvider,
-    private val mDispatchersProvider: DispatchersProvider
+    private val authenticationInteractor: AuthenticationInteractor,
+    private val companiesInteractor: CompaniesInteractor,
+    private val searchRequestsInteractor: SearchRequestsInteractor,
+    private val networkResolver: NetworkResolver,
+    private val router: Router,
+    private val menuOptionsProvider: MenuOptionsProvider
 ) : ViewModel() {
 
-    private val mOptionsLoadState = MutableStateFlow<LoadState<Unit>>(LoadState.None())
-    val optionsLoadState: StateFlow<LoadState<Unit>>
-        get() = mOptionsLoadState.asStateFlow()
+    private val _optionsLoadState = MutableStateFlow<LoadState<Unit>>(LoadState.None())
+    val optionsLoadState: StateFlow<LoadState<Unit>> = _optionsLoadState.asStateFlow()
 
-    private val mMessageEvent = MutableSharedFlow<Event>()
-    val messageEvent: SharedFlow<Event>
-        get() = mMessageEvent.asSharedFlow()
+    private val _messageEvent = MutableSharedFlow<Event>()
+    val messageEvent: SharedFlow<Event> = _messageEvent.asSharedFlow()
 
     val optionsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
@@ -66,22 +64,22 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun loadOptions() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            val isUserAuth = mAuthenticationInteractor.isUserAuthenticated()
-            val menuOptions = mMenuOptionsProvider.buildMenuOptions(isUserAuth)
+        viewModelScope.launch {
+            val isUserAuth = authenticationInteractor.isUserAuthenticated()
+            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
 
-            withContext(mDispatchersProvider.Main) {
+            withContext(Dispatchers.Main) {
                 optionsAdapter.setData(menuOptions)
             }
         }
     }
 
     fun onBackClick() {
-        mRouter.back()
+        router.back()
     }
 
     private fun onOptionClick(optionViewData: OptionViewData) {
-        viewModelScope.launch(mDispatchersProvider.IO) {
+        viewModelScope.launch {
             when (optionViewData.type) {
                 OptionType.AUTH -> onAuthClick()
                 OptionType.CLEAR_DATA -> onClearClick()
@@ -90,31 +88,31 @@ class SettingsViewModel @Inject constructor(
     }
 
     private suspend fun onAuthClick() {
-        if (mAuthenticationInteractor.isUserAuthenticated()) {
-            mAuthenticationInteractor.logOut()
-            val updatedMenuOptions = mMenuOptionsProvider.buildMenuOptions(false)
+        if (authenticationInteractor.isUserAuthenticated()) {
+            authenticationInteractor.logOut()
+            val updatedMenuOptions = menuOptionsProvider.buildMenuOptions(false)
 
-            withContext(mDispatchersProvider.Main) {
+            withContext(Dispatchers.Main) {
                 optionsAdapter.setData(updatedMenuOptions)
             }
-            mMessageEvent.emit(Event.LOG_OUT_COMPLETE)
+            _messageEvent.emit(Event.LOG_OUT_COMPLETE)
         } else {
-            mRouter.fromSettingsToLogin()
+            router.fromSettingsToLogin()
         }
     }
 
     private suspend fun onClearClick() {
-        mCompaniesInteractor.clearUserData()
-        mSearchRequestsInteractor.clearUserData()
+        companiesInteractor.eraseUserData()
+        searchRequestsInteractor.eraseUserData()
 
         val event = if (
-            mNetworkResolver.isNetworkAvailable
-            || !mAuthenticationInteractor.isUserAuthenticated()
+            networkResolver.isNetworkAvailable
+            || !authenticationInteractor.isUserAuthenticated()
         ) {
             Event.DATA_CLEARED
         } else {
             Event.DATA_CLEARED_NO_NETWORK
         }
-        mMessageEvent.emit(event)
+        _messageEvent.emit(event)
     }
 }

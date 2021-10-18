@@ -16,11 +16,32 @@
 
 package com.ferelin.core.utils
 
+import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
 
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+val Context.isLandscapeOrientation: Boolean
+    get() = this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+val MotionLayout.isAtEnd: Boolean
+    get() = progress == 1F
+
+var View.isOut: Boolean
+    get() = scaleX == 0F
+    set(value) {
+        if (value) {
+            scaleX = 0F
+            scaleY = 0F
+        } else {
+            scaleX = 1F
+            scaleY = 1F
+        }
+    }
 
 inline fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
     if (this.isNotEmpty()) {

@@ -25,7 +25,7 @@ class NewsMapper @Inject constructor() {
     fun map(news: News): NewsViewData {
         return NewsViewData(
             id = news.id,
-            relationId = news.relationId,
+            relationId = news.relationCompanyId,
             cloudId = news.cloudId,
             headline = news.headline,
             date = news.date,

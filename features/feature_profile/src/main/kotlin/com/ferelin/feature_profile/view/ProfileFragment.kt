@@ -32,6 +32,7 @@ import com.ferelin.domain.entities.Profile
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
 import com.ferelin.shared.LoadState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,13 +40,13 @@ import javax.inject.Inject
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentProfileBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentProfileBinding
         get() = FragmentProfileBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<ProfileViewModel>
 
-    private val mViewModel: ProfileViewModel by viewModels(
+    private val viewModel: ProfileViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
@@ -55,27 +56,27 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     override fun initUi() {
-        mViewBinding.textViewName.text = mViewModel.profileParams.companyName
+        viewBinding.textViewName.text = viewModel.profileParams.companyName
 
         Glide
-            .with(mViewBinding.root)
-            .load(mViewModel.profileParams.companyLogoUrl)
+            .with(viewBinding.root)
+            .load(viewModel.profileParams.companyLogoUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .into(mViewBinding.imageViewIcon)
+            .into(viewBinding.imageViewIcon)
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch(mDispatchersProvider.IO) {
+        viewLifecycleOwner.lifecycleScope.launch {
             observeProfileState()
         }
     }
 
     private suspend fun observeProfileState() {
-        mViewModel.profileLoadState.collect { loadState ->
+        viewModel.profileLoadState.collect { loadState ->
             when (loadState) {
-                is LoadState.None -> mViewModel.loadProfile()
+                is LoadState.None -> viewModel.loadProfile()
                 is LoadState.Prepared -> {
-                    withContext(mDispatchersProvider.Main) {
+                    withContext(Dispatchers.Main) {
                         setProfile(loadState.data)
                     }
                 }
@@ -85,8 +86,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     private fun setProfile(profile: Profile) {
-        with(mViewBinding) {
-            TransitionManager.beginDelayedTransition(mViewBinding.root)
+        with(viewBinding) {
+            TransitionManager.beginDelayedTransition(viewBinding.root)
             textViewWebUrl.text = profile.webUrl
             textViewCountry.text = profile.country
             textViewIndustry.text = profile.industry
@@ -96,21 +97,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[sProfileParamsKey]?.let { params ->
+        args[PROFILE_PARAMS_KEY]?.let { params ->
             if (params is ProfileParams) {
-                mViewModel.profileParams = params
+                viewModel.profileParams = params
             }
         }
     }
 
     companion object {
 
-        private const val sProfileParamsKey = "p"
+        private const val PROFILE_PARAMS_KEY = "p"
 
         fun newInstance(data: Any?): ProfileFragment {
             return ProfileFragment().also {
                 if (data is ProfileParams) {
-                    it.arguments = bundleOf(sProfileParamsKey to data)
+                    it.arguments = bundleOf(PROFILE_PARAMS_KEY to data)
                 }
             }
         }

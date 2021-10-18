@@ -22,17 +22,17 @@ import com.ferelin.navigation.Router
 import javax.inject.Inject
 
 class StocksPagerViewModel @Inject constructor(
-    private val mRouter: Router
+    private val router: Router
 ) : ViewModel() {
 
     var lastSelectedPage = 0
 
     fun onSettingsClick() {
-        mRouter.fromStocksPagerToSettings()
+        router.fromStocksPagerToSettings()
     }
 
     fun onSearchCardClick(sharedElement: View, name: String) {
-        mRouter.fromStocksPagerToSearch { fragmentTransaction ->
+        router.fromStocksPagerToSearch { fragmentTransaction ->
             fragmentTransaction.addSharedElement(sharedElement, name)
         }
     }

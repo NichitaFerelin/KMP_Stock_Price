@@ -30,7 +30,6 @@ import com.ferelin.domain.interactors.PastPriceInteractor
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
 import com.ferelin.feature_chart.viewData.ChartViewMode
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NetworkListener
 import com.ferelin.shared.ifPrepared
@@ -38,43 +37,39 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-typealias ChartPastPriceState = LoadState<ChartPastPrices>
-
 class ChartViewModel @Inject constructor(
     stockPriceInteractor: StockPriceInteractor,
-    private val mPastPriceInteractor: PastPriceInteractor,
-    private val mPastPriceTypeMapper: PastPriceTypeMapper,
-    private val mNetworkResolver: NetworkResolver,
-    private val mDispatchersProvider: DispatchersProvider
+    private val pastPriceInteractor: PastPriceInteractor,
+    private val pastPriceTypeMapper: PastPriceTypeMapper,
+    private val networkResolver: NetworkResolver
 ) : ViewModel(), NetworkListener {
 
-    private var mPastPrices: List<PastPrice> = emptyList()
+    private var pastPrices: List<PastPrice> = emptyList()
 
-    private val mPastPriceLoad = MutableStateFlow<ChartPastPriceState>(LoadState.None())
-    val pastPriceLoadState: StateFlow<ChartPastPriceState>
-        get() = mPastPriceLoad.asStateFlow()
+    private val _pastPriceLoad = MutableStateFlow<LoadState<ChartPastPrices>>(LoadState.None())
+    val pastPriceLoadState: StateFlow<LoadState<ChartPastPrices>> = _pastPriceLoad.asStateFlow()
 
     val isNetworkAvailable: Boolean
-        get() = mNetworkResolver.isNetworkAvailable
+        get() = networkResolver.isNetworkAvailable
 
     var chartParams = ChartParams()
     var selectedMarker: Marker? = null
 
     val actualStockPrice: SharedFlow<StockPrice> = stockPriceInteractor
         .observeActualStockPriceResponses()
-        .filter { it is LoadState.Prepared && it.data.id == chartParams.companyId }
+        .filter { it is LoadState.Prepared && it.data.relationCompanyId == chartParams.companyId }
         .map { (it as LoadState.Prepared).data }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     var chartMode: ChartViewMode = ChartViewMode.All
 
     init {
-        mNetworkResolver.registerNetworkListener(this)
+        networkResolver.registerNetworkListener(this)
     }
 
     override suspend fun onNetworkAvailable() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mPastPriceLoad.value.ifPrepared {
+        viewModelScope.launch {
+            _pastPriceLoad.value.ifPrepared {
                 loadFromNetwork()
             } ?: loadPastPrices()
         }
@@ -85,13 +80,13 @@ class ChartViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        mNetworkResolver.unregisterNetworkListener(this)
+        networkResolver.unregisterNetworkListener(this)
         super.onCleared()
     }
 
     fun loadPastPrices() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mPastPriceLoad.value = LoadState.Loading()
+        viewModelScope.launch {
+            _pastPriceLoad.value = LoadState.Loading()
 
             loadFromDb()
             loadFromNetwork()
@@ -100,34 +95,34 @@ class ChartViewModel @Inject constructor(
 
     fun onNewChartMode(chartViewMode: ChartViewMode) {
         this.chartMode = chartViewMode
-        onNewPastPrices(mPastPrices)
+        onNewPastPrices(pastPrices)
     }
 
     private suspend fun loadFromDb() {
-        mPastPriceInteractor
-            .getAllPastPrices(chartParams.companyId)
+        pastPriceInteractor
+            .getAllBy(chartParams.companyId)
             .ifNotEmpty { dbPrices -> onNewPastPrices(dbPrices) }
     }
 
     private suspend fun loadFromNetwork() {
-        mPastPriceInteractor
-            .loadPastPrices(chartParams.companyId, chartParams.companyTicker)
+        pastPriceInteractor
+            .loadAllBy(chartParams.companyId, chartParams.companyTicker)
             .let { responseState ->
                 if (responseState is LoadState.Prepared) {
                     onNewPastPrices(responseState.data)
-                } else if (mPastPriceLoad.value !is LoadState.Prepared) {
-                    mPastPriceLoad.value = LoadState.Error()
+                } else if (_pastPriceLoad.value !is LoadState.Prepared) {
+                    _pastPriceLoad.value = LoadState.Error()
                 }
             }
     }
 
     private fun onNewPastPrices(pastPrices: List<PastPrice>) {
-        mPastPrices = pastPrices
+        this.pastPrices = pastPrices
 
-        mPastPriceTypeMapper
+        pastPriceTypeMapper
             .mapByViewMode(chartMode, pastPrices)
             ?.let { chartPastPrices ->
-                mPastPriceLoad.value = LoadState.Prepared(chartPastPrices)
+                _pastPriceLoad.value = LoadState.Prepared(chartPastPrices)
             }
     }
 }

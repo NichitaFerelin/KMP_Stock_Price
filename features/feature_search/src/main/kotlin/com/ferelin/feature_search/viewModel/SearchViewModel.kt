@@ -23,6 +23,7 @@ import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
@@ -35,6 +36,7 @@ import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.ifPrepared
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,34 +44,39 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.timerTask
 
-typealias SearchLoadState = LoadState<List<SearchViewData>>
-
 class SearchViewModel @Inject constructor(
-    private val mSearchRequestsInteractor: SearchRequestsInteractor,
-    private val mSearchRequestMapper: SearchRequestMapper,
-    private val mRouter: Router,
+    private val searchRequestsInteractor: SearchRequestsInteractor,
+    private val searchRequestMapper: SearchRequestMapper,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
     router: Router,
     stockMapper: StockMapper,
     stockStyleProvider: StockStyleProvider,
-    dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
     stockMapper,
-    dispatchersProvider,
+    router,
     companiesInteractor,
     stockPriceInteractor,
     stockStyleProvider,
-    router
+    StocksMode.ALL
 ) {
-    private companion object {
-        const val sSearchTaskTimeout = 350L
-        const val sMaxRequestResults = 5
-    }
+    private val mPopularSearchRequestsState =
+        MutableStateFlow<LoadState<List<SearchViewData>>>(LoadState.None())
+
+    private val _onNewSearchText = MutableSharedFlow<String>()
+    val searchTextChanged: SharedFlow<String> = _onNewSearchText.asSharedFlow()
+
+    private val _searchResultsExists = MutableStateFlow(false)
+    val searchResultsExists: StateFlow<Boolean> = _searchResultsExists.asStateFlow()
+
+    private var searchTaskTimer: Timer? = null
+    private var lastSearchRequest = ""
+
+    var transitionState = SearchFragment.TRANSITION_START
 
     val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
             by lazy(LazyThreadSafetyMode.NONE) {
-                mSearchRequestsInteractor
+                searchRequestsInteractor
                     .searchRequestsState
                     .onEach {
                         if (it is LoadState.Prepared) {
@@ -83,21 +90,6 @@ class SearchViewModel @Inject constructor(
                     )
             }
 
-    private val mPopularSearchRequestsState = MutableStateFlow<SearchLoadState>(LoadState.None())
-
-    private val mOnNewSearchText = MutableSharedFlow<String>()
-    val searchTextChanged: SharedFlow<String>
-        get() = mOnNewSearchText.asSharedFlow()
-
-    private val mSearchResultsExists = MutableStateFlow(false)
-    val searchResultsExists: StateFlow<Boolean>
-        get() = mSearchResultsExists.asStateFlow()
-
-    private var mSearchTaskTimer: Timer? = null
-    private var mLastSearchRequest = ""
-
-    var transitionState = SearchFragment.TRANSITION_START
-
     val searchRequestsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
             createTickerAdapter(this::onTickerClick)
@@ -110,42 +102,47 @@ class SearchViewModel @Inject constructor(
         ).apply { setHasStableIds(true) }
     }
 
+    private companion object {
+        const val SEARCH_TASK_TIMEOUT = 350L
+        const val MAX_REQUESTS_RESULT = 5
+    }
+
     fun loadSearchRequests() {
-        viewModelScope.launch(mDispatchesProvider.IO) {
+        viewModelScope.launch {
             mPopularSearchRequestsState.value = LoadState.Loading()
 
             launch {
-                val dbSearchRequests = mSearchRequestsInteractor.getSearchRequests()
+                val dbSearchRequests = searchRequestsInteractor.getAll()
                 onSearchRequestsChanged(dbSearchRequests)
             }
             launch {
-                val dbPopularSearchRequests = mSearchRequestsInteractor.getPopularSearchRequests()
+                val dbPopularSearchRequests = searchRequestsInteractor.getAllPopular()
                 onPopularSearchRequestsChanged(dbPopularSearchRequests)
             }
         }
     }
 
     fun onSearchTextChanged(searchText: String) {
-        if (searchText == mLastSearchRequest) {
+        if (searchText == lastSearchRequest) {
             return
         }
-        mSearchTaskTimer?.cancel()
-        mSearchTaskTimer = Timer().apply {
+        searchTaskTimer?.cancel()
+        searchTaskTimer = Timer().apply {
             schedule(timerTask {
-                viewModelScope.launch(mDispatchesProvider.IO) {
+                viewModelScope.launch {
                     initSearch(searchText)
                 }
-            }, sSearchTaskTimeout)
+            }, SEARCH_TASK_TIMEOUT)
         }
     }
 
     fun onBackClick() {
-        mRouter.back()
+        router.back()
     }
 
     private fun onTickerClick(searchViewData: SearchViewData) {
-        viewModelScope.launch(mDispatchesProvider.IO) {
-            mOnNewSearchText.emit(searchViewData.text)
+        viewModelScope.launch {
+            _onNewSearchText.emit(searchViewData.text)
         }
     }
 
@@ -158,17 +155,17 @@ class SearchViewModel @Inject constructor(
             }
         }
 
-        mSearchResultsExists.value = searchResults.isNotEmpty()
+        this._searchResultsExists.value = searchResults.isNotEmpty()
 
-        withContext(mDispatchesProvider.Main) {
+        withContext(Dispatchers.Main) {
             stocksAdapter.setData(searchResults)
         }
 
-        mLastSearchRequest = text
+        lastSearchRequest = text
     }
 
     private fun search(searchText: String): List<StockViewData> {
-        return mStocksLoadState.value.ifPrepared { preparedStocksState ->
+        return stockLoadState.value.ifPrepared { preparedStocksState ->
             preparedStocksState
                 .data
                 .filter { filterCompanies(it, searchText) }
@@ -176,25 +173,25 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun onSearchRequestsChanged(searchRequests: List<SearchRequest>) {
-        val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
+        val mappedRequests = searchRequests.map(searchRequestMapper::map)
 
-        withContext(mDispatchesProvider.Main) {
+        withContext(Dispatchers.Main) {
             searchRequestsAdapter.setData(mappedRequests)
         }
     }
 
     private suspend fun onPopularSearchRequestsChanged(searchRequests: List<SearchRequest>) {
-        val mappedRequests = searchRequests.map(mSearchRequestMapper::map)
+        val mappedRequests = searchRequests.map(searchRequestMapper::map)
         mPopularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
 
-        withContext(mDispatchesProvider.Main) {
+        withContext(Dispatchers.Main) {
             popularSearchRequestsAdapter.setData(mappedRequests)
         }
     }
 
     private suspend fun onNewSearchRequest(text: String, results: Int) {
-        if (results in 1..sMaxRequestResults) {
-            mSearchRequestsInteractor.cacheSearchRequest(text, true)
+        if (results in 1..MAX_REQUESTS_RESULT) {
+            searchRequestsInteractor.cache(text)
         }
     }
 

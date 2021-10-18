@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ProfileParams
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.interactors.ProfileInteractor
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,25 +28,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-typealias ProfileState = LoadState<Profile>
-
 class ProfileViewModel @Inject constructor(
-    private val mProfileInteractor: ProfileInteractor,
-    private val mDispatchersProvider: DispatchersProvider
+    private val profileInteractor: ProfileInteractor
 ) : ViewModel() {
 
-    private val mProfileLoadState = MutableStateFlow<ProfileState>(LoadState.None())
-    val profileLoadState: StateFlow<ProfileState>
-        get() = mProfileLoadState.asStateFlow()
+    private val _profileLoadState = MutableStateFlow<LoadState<Profile>>(LoadState.None())
+    val profileLoadState: StateFlow<LoadState<Profile>> = _profileLoadState.asStateFlow()
 
     var profileParams = ProfileParams()
 
     fun loadProfile() {
-        viewModelScope.launch(mDispatchersProvider.IO) {
-            mProfileLoadState.value = LoadState.Loading()
+        viewModelScope.launch {
+            _profileLoadState.value = LoadState.Loading()
 
-            val response = mProfileInteractor.getProfile(profileParams.companyId)
-            mProfileLoadState.value = LoadState.Prepared(response)
+            val response = profileInteractor.getBy(profileParams.companyId)
+            _profileLoadState.value = LoadState.Prepared(response)
         }
     }
 }

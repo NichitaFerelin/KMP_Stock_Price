@@ -31,6 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
+import com.ferelin.core.utils.isOut
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.view.BaseStocksFragment
@@ -45,21 +46,21 @@ import javax.inject.Inject
 
 class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
 
-    override val mBindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
         get() = FragmentStocksPagerBinding::inflate
 
     @Inject
     lateinit var viewModelFactory: BaseViewModelFactory<StocksPagerViewModel>
 
-    private val mViewModel: StocksPagerViewModel by viewModels(
+    private val viewModel: StocksPagerViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
 
-    private val mBackPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
+    private val backPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (mViewBinding.viewPager.currentItem != 0) {
-                    mViewBinding.viewPager.setCurrentItem(0, true)
+                if (viewBinding.viewPager.currentItem != 0) {
+                    viewBinding.viewPager.setCurrentItem(0, true)
                 } else {
                     this.remove()
                     requireActivity().onBackPressed()
@@ -68,7 +69,7 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         }
     }
 
-    private val mViewPagerChangeCallback by lazy(LazyThreadSafetyMode.NONE) {
+    private val viewPagerChangeCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 switchTextStyles(position)
@@ -76,8 +77,8 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         }
     }
 
-    private var mScaleInOut: Animator? = null
-    private var mScaleOut: Animation? = null
+    private var scaleInOut: Animator? = null
+    private var scaleOut: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,28 +91,28 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
     }
 
     override fun initUi() {
-        mViewBinding.viewPager.adapter = StocksPagerAdapter(
+        viewBinding.viewPager.adapter = StocksPagerAdapter(
             childFragmentManager,
             viewLifecycleOwner.lifecycle
         )
-        mViewBinding.viewPager.registerOnPageChangeCallback(mViewPagerChangeCallback)
+        viewBinding.viewPager.registerOnPageChangeCallback(viewPagerChangeCallback)
     }
 
     override fun initUx() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            mBackPressedCallback
+            backPressedCallback
         )
 
-        with(mViewBinding) {
+        with(viewBinding) {
             textViewHintStocks.setOnClick(this@StocksPagerFragment::onHintStocksClick)
             textViewHintFavourite.setOnClick(this@StocksPagerFragment::onHistFavouritesClick)
             fab.setOnClick(this@StocksPagerFragment::onFabClick)
-            imageSettings.setOnClick(mViewModel::onSettingsClick)
+            imageSettings.setOnClick(viewModel::onSettingsClick)
 
             cardViewSearch.setOnClick {
-                mViewModel.onSearchCardClick(
-                    sharedElement = mViewBinding.toolbar,
+                viewModel.onSearchCardClick(
+                    sharedElement = viewBinding.toolbar,
                     name = requireContext().resources.getString(R.string.transitionSearchFragment)
                 )
             }
@@ -119,27 +120,27 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
     }
 
     override fun onDestroyView() {
-        mViewBinding.viewPager.unregisterOnPageChangeCallback(mViewPagerChangeCallback)
-        mScaleInOut?.invalidate()
-        mScaleOut?.invalidate()
+        viewBinding.viewPager.unregisterOnPageChangeCallback(viewPagerChangeCallback)
+        scaleInOut?.invalidate()
+        scaleOut?.invalidate()
         super.onDestroyView()
     }
 
     private fun onHintStocksClick() {
-        if (mViewBinding.viewPager.currentItem != sStockPosition) {
-            mViewBinding.viewPager.setCurrentItem(sStockPosition, true)
+        if (viewBinding.viewPager.currentItem != STOCK_SCREEN_POSITION) {
+            viewBinding.viewPager.setCurrentItem(STOCK_SCREEN_POSITION, true)
         }
     }
 
     private fun onHistFavouritesClick() {
-        if (mViewBinding.viewPager.currentItem != sFavouriteStocksPosition) {
-            mViewBinding.viewPager.setCurrentItem(sFavouriteStocksPosition, true)
+        if (viewBinding.viewPager.currentItem != FAVOURITES_SCREEN_POSITION) {
+            viewBinding.viewPager.setCurrentItem(FAVOURITES_SCREEN_POSITION, true)
         }
     }
 
     private fun onFabClick() {
         val childFragments = this.childFragmentManager.fragments
-        val currentChildPosition = mViewBinding.viewPager.currentItem
+        val currentChildPosition = viewBinding.viewPager.currentItem
 
         childFragments.getOrNull(currentChildPosition)?.let { child ->
             if (child is BaseStocksFragment<*, *>) {
@@ -150,12 +151,12 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
     }
 
     private fun switchTextStyles(selectedPosition: Int) {
-        if (mScaleInOut == null) {
-            mScaleInOut = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
+        if (scaleInOut == null) {
+            scaleInOut = AnimatorInflater.loadAnimator(requireContext(), R.animator.scale_in_out)
         }
 
-        with(mViewBinding) {
-            val itemToAnimate = if (selectedPosition == sStockPosition) {
+        with(viewBinding) {
+            val itemToAnimate = if (selectedPosition == STOCK_SCREEN_POSITION) {
                 setAsSelected(textViewHintStocks)
                 setAsDefault(textViewHintFavourite)
                 textViewHintStocks
@@ -165,10 +166,10 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
                 textViewHintFavourite
             }
 
-            if (mViewModel.lastSelectedPage != selectedPosition) {
-                mViewModel.lastSelectedPage = selectedPosition
-                mScaleInOut!!.setTarget(itemToAnimate)
-                mScaleInOut!!.start()
+            if (viewModel.lastSelectedPage != selectedPosition) {
+                viewModel.lastSelectedPage = selectedPosition
+                scaleInOut!!.setTarget(itemToAnimate)
+                scaleInOut!!.start()
             }
         }
     }
@@ -182,26 +183,25 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
     }
 
     private fun hideFab() {
-        if (mScaleOut == null) {
-            mScaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
+        if (scaleOut == null) {
+            scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
         }
 
         val animCallback = object : AnimationManager() {
             override fun onAnimationEnd(animation: Animation?) {
-                mViewBinding.fab.visibility = View.INVISIBLE
-                mViewBinding.fab.scaleX = 1.0F
-                mViewBinding.fab.scaleY = 1.0F
+                viewBinding.fab.visibility = View.INVISIBLE
+                viewBinding.fab.isOut = false
             }
         }
 
-        mScaleOut!!.setAnimationListener(animCallback)
-        mViewBinding.fab.startAnimation(mScaleOut!!)
+        scaleOut!!.setAnimationListener(animCallback)
+        viewBinding.fab.startAnimation(scaleOut!!)
     }
 
     companion object {
 
-        private const val sStockPosition = 0
-        private const val sFavouriteStocksPosition = 1
+        private const val STOCK_SCREEN_POSITION = 0
+        private const val FAVOURITES_SCREEN_POSITION = 1
 
         fun newInstance(data: Any?): StocksPagerFragment {
             return StocksPagerFragment()

@@ -19,6 +19,7 @@ package com.ferelin.feature_stocks_favourite.viewModel
 import com.ferelin.core.mapper.StockMapper
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewModel.BaseStocksViewModel
+import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
@@ -26,46 +27,46 @@ import com.ferelin.navigation.Router
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.ifPrepared
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FavouriteViewModel @Inject constructor(
     stockMapper: StockMapper,
-    dispatchersProvider: DispatchersProvider,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
     stockStyleProvider: StockStyleProvider,
     router: Router
 ) : BaseStocksViewModel(
     stockMapper,
-    dispatchersProvider,
+    router,
     companiesInteractor,
     stockPriceInteractor,
     stockStyleProvider,
-    router
+    StocksMode.ONLY_FAVOURITES
 ) {
     override suspend fun onFavouriteCompanyUpdate(companyWithStockPrice: CompanyWithStockPrice) {
-        mStocksLoadState.value.ifPrepared { preparedLoad ->
+        stockLoadState.value.ifPrepared { preparedLoad ->
             val favouriteCompanies = preparedLoad.data.toMutableList()
-            val stockViewData = mStockMapper.map(companyWithStockPrice)
+            val stockViewData = stockMapper.map(companyWithStockPrice)
 
             if (companyWithStockPrice.company.isFavourite) {
                 favouriteCompanies.add(0, stockViewData)
 
-                withContext(mDispatchesProvider.Main) {
+                withContext(Dispatchers.Main) {
                     stocksAdapter.add(0, stockViewData)
                 }
             } else {
                 favouriteCompanies.remove(stockViewData)
 
                 val uniqueId = stockViewData.getUniqueId()
-                val targetPosition = stocksAdapter.getPosition { uniqueId == it.getUniqueId() }
-                withContext(mDispatchesProvider.Main) {
+                val targetPosition = stocksAdapter.getPositionOf { uniqueId == it.getUniqueId() }
+                withContext(Dispatchers.Main) {
                     stocksAdapter.removeAt(targetPosition)
                 }
             }
 
-            mStocksLoadState.value = LoadState.Prepared(favouriteCompanies)
+            stockLoadState.value = LoadState.Prepared(favouriteCompanies)
         }
     }
 }

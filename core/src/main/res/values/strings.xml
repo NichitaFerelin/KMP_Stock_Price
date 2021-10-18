@@ -73,5 +73,6 @@
     <string name="messageLogOutComplete">Log out complete</string>
     <string name="messageDataCleared">Data has been cleared</string>
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
+    <string name="descriptionLogOut">Log out</string>
 
 </resources>

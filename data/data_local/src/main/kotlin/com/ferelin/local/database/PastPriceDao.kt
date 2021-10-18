@@ -29,11 +29,11 @@ interface PastPriceDao {
     suspend fun insert(pastPriceDBO: PastPriceDBO)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<PastPriceDBO>)
+    suspend fun insertAll(pastPrices: List<PastPriceDBO>)
 
-    @Query("SELECT * FROM `companies_past_prices` WHERE relation_company_id = :companyId")
-    suspend fun getAll(companyId: Int): List<PastPriceDBO>
+    @Query("SELECT * FROM `companies_past_prices` WHERE relation_company_id = :relationCompanyId")
+    suspend fun getAll(relationCompanyId: Int): List<PastPriceDBO>
 
-    @Query("DELETE FROM `companies_past_prices` WHERE relation_company_id = :relationId")
-    suspend fun eraseBy(relationId: Int)
+    @Query("DELETE FROM `companies_past_prices` WHERE relation_company_id = :relationCompanyId")
+    suspend fun eraseBy(relationCompanyId: Int)
 }

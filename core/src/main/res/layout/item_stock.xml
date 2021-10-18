@@ -6,7 +6,8 @@
     android:layout_height="68dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    tools:backgroundTint="@color/white">
+    tools:backgroundTint="@color/white"
+    tools:theme="@style/Theme.StockPrice">
 
     <ImageView
         android:id="@+id/imageViewBoundedIcon"
