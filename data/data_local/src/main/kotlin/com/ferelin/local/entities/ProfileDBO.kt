@@ -19,8 +19,6 @@ package com.ferelin.local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
-import com.squareup.moshi.Json
 
 @Entity(tableName = "companies_profile")
 data class ProfileDBO(

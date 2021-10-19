@@ -22,7 +22,6 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
-import timber.log.Timber
 
 class FabBehaviourScrollable(
     context: Context,

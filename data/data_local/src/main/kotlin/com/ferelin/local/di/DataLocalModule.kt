@@ -17,11 +17,8 @@
 package com.ferelin.local.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.ferelin.local.database.*
-import com.ferelin.local.utils.PreferencesProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -65,7 +62,7 @@ class DataLocalModule {
     }
 
     @Provides
-    fun provideSearchRequestsDao(appDatabase: AppDatabase) : SearchRequestsDao {
+    fun provideSearchRequestsDao(appDatabase: AppDatabase): SearchRequestsDao {
         return appDatabase.searchRequestsDao()
     }
 

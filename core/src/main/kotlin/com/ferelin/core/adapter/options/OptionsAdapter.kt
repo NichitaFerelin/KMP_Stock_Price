@@ -18,7 +18,6 @@ package com.ferelin.core.adapter.options
 
 import com.ferelin.core.adapter.base.createRecyclerAdapter
 import com.ferelin.core.databinding.ItemOptionBinding
-import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.viewData.OptionViewData
 
 const val OPTION_VIEW_TYPE = 0

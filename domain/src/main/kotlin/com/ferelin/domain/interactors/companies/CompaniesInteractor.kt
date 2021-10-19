@@ -68,7 +68,7 @@ interface CompaniesInteractor : NetworkListener {
 
     /**
      * Erases company from favourites
-     * @param is a company to erase
+     * @param company is a company to erase
      * */
     suspend fun eraseCompanyFromFavourites(company: Company)
 

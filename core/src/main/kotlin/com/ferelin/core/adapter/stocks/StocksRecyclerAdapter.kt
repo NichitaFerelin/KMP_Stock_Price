@@ -27,7 +27,6 @@ import com.ferelin.core.adapter.base.BaseRecyclerViewHolder
 import com.ferelin.core.adapter.base.RecyclerAdapterDelegate
 import com.ferelin.core.databinding.ItemStockBinding
 import com.ferelin.core.viewData.StockViewData
-import timber.log.Timber
 
 const val STOCK_VIEW_TYPE = 1
 

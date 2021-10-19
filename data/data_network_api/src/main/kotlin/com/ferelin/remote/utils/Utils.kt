@@ -17,7 +17,6 @@
 package com.ferelin.remote.utils
 
 import retrofit2.Response
-import timber.log.Timber
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

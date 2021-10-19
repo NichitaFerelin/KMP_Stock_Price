@@ -43,6 +43,7 @@ import com.ferelin.feature_chart.databinding.FragmentChartBinding
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.feature_chart.viewModel.ChartViewModel
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -79,9 +80,9 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     override fun initUi() {
+        setPriceFields(viewModel.chartParams.stockPrice, viewModel.chartParams.stockProfit)
         restoreSelectedViewMode(viewModel.chartMode)
         restoreChartState(viewModel.selectedMarker)
-        setPriceFields(viewModel.chartParams.stockPrice, viewModel.chartParams.stockProfit)
     }
 
     override fun initUx() {
@@ -216,12 +217,10 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun restoreChartState(lastClickedMarker: Marker?) {
-        viewModel.pastPriceLoadState.value.let { pastPriceState ->
-            if (pastPriceState is LoadState.Prepared) {
-                onPastPriceChanged(pastPriceState.data)
-            } else {
-                viewBinding.groupChartWidgets.isVisible = false
-            }
+        viewModel.pastPriceLoadState.value.ifPrepared { preparedState ->
+            onPastPriceChanged(preparedState.data)
+        } ?: run {
+            viewBinding.groupChartWidgets.isVisible = false
         }
 
         lastClickedMarker?.let { marker ->
