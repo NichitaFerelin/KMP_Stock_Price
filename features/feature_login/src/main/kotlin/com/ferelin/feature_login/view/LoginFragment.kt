@@ -26,6 +26,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.utils.animManager.AnimationManager
+import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.utils.isOut
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
@@ -55,7 +56,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     )
 
     private var scaleIn: Animation? = null
-    private var mScaleOut: Animation? = null
+    private var scaleOut: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +94,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             launch { observeAuthenticationState() }
             launch { observeNetworkState() }
         }
+    }
+
+    override fun onDestroyView() {
+        scaleIn?.invalidate()
+        scaleOut?.invalidate()
+        super.onDestroyView()
     }
 
     private suspend fun observeAuthenticationState() {
@@ -182,8 +189,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private fun hideCheckIcon() {
         if (!viewBinding.imageViewIconCheck.isOut) {
 
-            if (mScaleOut == null) {
-                mScaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
+            if (scaleOut == null) {
+                scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out)
             }
 
             val callback = object : AnimationManager() {
@@ -192,8 +199,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
             }
 
-            mScaleOut!!.setAnimationListener(callback)
-            viewBinding.imageViewIconCheck.startAnimation(mScaleOut!!)
+            scaleOut!!.setAnimationListener(callback)
+            viewBinding.imageViewIconCheck.startAnimation(scaleOut!!)
         }
     }
 

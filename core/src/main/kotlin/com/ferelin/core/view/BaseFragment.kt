@@ -26,9 +26,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.ferelin.core.R
-import com.ferelin.shared.DispatchersProvider
 import com.google.android.material.snackbar.Snackbar
-import javax.inject.Inject
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
@@ -56,8 +54,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _viewBinding = null
+        super.onDestroyView()
     }
 
     open fun initUi() {

@@ -1,5 +1,4 @@
 import com.ferelin.Base
-import com.ferelin.Dependencies
 import com.ferelin.Projects
 
 plugins {

@@ -83,6 +83,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     override fun onDestroyView() {
         fadeIn?.invalidate()
         fadeOut?.invalidate()
+
+        viewBinding.recyclerViewNews.adapter = null
         super.onDestroyView()
     }
 

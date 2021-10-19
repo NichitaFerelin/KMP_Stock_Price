@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.ferelin.core.view.BaseStocksFragment
-import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.feature_stocks_default.databinding.FragmentStocksBinding
 import com.ferelin.feature_stocks_default.viewModel.StocksViewModel
 
@@ -46,7 +45,6 @@ class StocksFragment : BaseStocksFragment<FragmentStocksBinding, StocksViewModel
     }
 
     companion object {
-
         fun newInstance(data: Any?): StocksFragment {
             return StocksFragment()
         }

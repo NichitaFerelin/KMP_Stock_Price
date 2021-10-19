@@ -34,7 +34,6 @@ class IdeasFragment : Fragment() {
     }
 
     companion object {
-
         fun newInstance(data: Any?): IdeasFragment {
             return IdeasFragment()
         }

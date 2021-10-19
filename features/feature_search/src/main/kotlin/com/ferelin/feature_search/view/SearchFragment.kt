@@ -150,8 +150,12 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
     override fun onDestroyView() {
         scaleIn?.invalidate()
         scaleOut?.invalidate()
+
         keyboardTimer?.cancel()
         hideKeyboard()
+
+        viewBinding.recyclerViewPopularRequests.adapter = null
+        viewBinding.recyclerViewSearchedHistory.adapter = null
         super.onDestroyView()
     }
 

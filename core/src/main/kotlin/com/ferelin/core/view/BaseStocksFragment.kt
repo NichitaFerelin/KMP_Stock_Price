@@ -89,6 +89,7 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
     override fun onDestroyView() {
         invalidateAnims()
+        stocksRecyclerView?.adapter = null
         stocksRecyclerView = null
         super.onDestroyView()
     }

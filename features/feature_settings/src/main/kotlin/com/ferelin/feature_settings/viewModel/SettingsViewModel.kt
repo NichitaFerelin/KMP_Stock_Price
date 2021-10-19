@@ -28,7 +28,6 @@ import com.ferelin.domain.interactors.AuthenticationInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

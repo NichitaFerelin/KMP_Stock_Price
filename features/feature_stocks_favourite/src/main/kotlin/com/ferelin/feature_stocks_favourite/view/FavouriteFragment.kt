@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.ferelin.core.view.BaseStocksFragment
-import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.feature_stocks_favourite.databinding.FragmentFavouriteBinding
 import com.ferelin.feature_stocks_favourite.viewModel.FavouriteViewModel
 

@@ -77,6 +77,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        viewBinding.recyclerView.adapter = null
+        super.onDestroyView()
+    }
+
     private suspend fun observeMenuOptions() {
         viewModel.optionsLoadState.collect { loadState ->
             if (loadState is LoadState.None) {

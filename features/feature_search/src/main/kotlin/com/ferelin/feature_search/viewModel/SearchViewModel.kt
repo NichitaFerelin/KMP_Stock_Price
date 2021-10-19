@@ -33,7 +33,6 @@ import com.ferelin.feature_search.mapper.SearchRequestMapper
 import com.ferelin.feature_search.view.SearchFragment
 import com.ferelin.feature_search.viewData.SearchViewData
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers

@@ -23,7 +23,6 @@ import com.ferelin.core.viewModel.StocksMode
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
-import com.ferelin.shared.DispatchersProvider
 import javax.inject.Inject
 
 class StocksViewModel @Inject constructor(

@@ -113,8 +113,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        viewBinding = null
+        supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifecycleCallbacks)
         router.unbind()
+        viewBinding = null
         super.onDestroy()
     }
 
