@@ -19,6 +19,7 @@ package com.ferelin.feature_chart.view
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -220,7 +221,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         viewModel.pastPriceLoadState.value.ifPrepared { preparedState ->
             onPastPriceChanged(preparedState.data)
         } ?: run {
-            viewBinding.groupChartWidgets.isVisible = false
+            viewBinding.groupChartWidgets.visibility = View.INVISIBLE
         }
 
         lastClickedMarker?.let { marker ->
