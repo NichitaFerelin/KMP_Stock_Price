@@ -56,7 +56,7 @@ class PastPriceTypeMapper @Inject constructor() {
         val startDate = "$startMonth $startYear"
 
         val endMonth = parseMonthFromDate(pastPrices[1].date)
-        val endYear = parseMonthFromDate(pastPrices[1].date)
+        val endYear = parseYearFromDate(pastPrices[1].date)
         val endDate = "$endMonth $endYear"
 
         return ChartPastPrices(
