@@ -16,9 +16,7 @@
 
 package com.ferelin.core.view.chart.points
 
-/**
- * [Marker] represents model of chart "advanced" point with data.
- * */
+// [Marker] represents model of chart "advanced" point with data.
 data class Marker(
     val position: Point = Point(0f, 0f),
     val price: Double,

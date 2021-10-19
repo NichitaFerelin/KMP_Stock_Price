@@ -67,7 +67,7 @@ abstract class BaseStocksViewModel(
     }
 
     val companiesStockPriceUpdates: SharedFlow<CompanyWithStockPrice> = companiesInteractor
-        .companyWithStockPriceChanges
+        .companyWithStockPriceUpdates
         .onEach { onStockPriceUpdate(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 

@@ -49,6 +49,11 @@ class LivePriceSocketResolver @Inject constructor(
     * */
     private var messagesQueue: Queue<String> = LinkedList()
 
+    private companion object {
+        // Close code must be in range [1000-4000]
+        const val DEFAULT_CLOSE_CODE = 4000
+    }
+
     suspend fun subscribe(companyTicker: String) =
         withContext(dispatchersProvider.IO) {
             Timber.d("subscribe (companyTicker = $companyTicker)")
@@ -82,6 +87,7 @@ class LivePriceSocketResolver @Inject constructor(
                 this.trySend(converted)
             })
             .also { webSocket ->
+                // Executes messages from the queue
                 while (messagesQueue.isNotEmpty()) {
                     subscribe(webSocket, messagesQueue.poll()!!)
                 }
@@ -101,9 +107,5 @@ class LivePriceSocketResolver @Inject constructor(
 
     private fun subscribe(webSocket: WebSocket, companyTicker: String) {
         webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"$companyTicker\"}")
-    }
-
-    private companion object {
-        const val DEFAULT_CLOSE_CODE = 4000
     }
 }

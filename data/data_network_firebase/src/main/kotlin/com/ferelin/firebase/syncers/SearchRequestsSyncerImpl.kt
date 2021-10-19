@@ -71,6 +71,10 @@ class SearchRequestsSyncerImpl @Inject constructor(
         sourceRequests: List<SearchRequest>,
         remoteRequests: List<SearchRequest>
     ): Unit = withContext(dispatchersProvider.IO) {
+
+        // Source requests list is reversed.
+        // To avoid rewriting the query on the cloud database, instead of adding it,
+        // needs to change its id to a unique one
         val lastRemoteId = remoteRequests.lastOrNull()?.id ?: 0
         val lastSourceId = sourceRequests.firstOrNull()?.id ?: 0
 

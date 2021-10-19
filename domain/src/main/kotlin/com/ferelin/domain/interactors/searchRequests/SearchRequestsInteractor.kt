@@ -18,18 +18,38 @@ package com.ferelin.domain.interactors.searchRequests
 
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.shared.LoadState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * [SearchRequestsInteractor] provides ability to interact with search requests data
+ * */
 interface SearchRequestsInteractor {
 
+    /**
+     * Provides a state with actual search requests
+     * */
     val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
 
+    /**
+     * Caches new search request
+     * @param searchText is a search request that must be cached
+     * */
     suspend fun cache(searchText: String)
 
-    suspend fun getAll() : List<SearchRequest>
+    /**
+     * Allows to get all cached search requests
+     * @return list of cached search requests
+     * */
+    suspend fun getAll(): List<SearchRequest>
 
-    suspend fun getAllPopular() : List<SearchRequest>
+    /**
+     * Allows to get all popular search requests
+     * @return list of popular search requests
+     * */
+    suspend fun getAllPopular(): List<SearchRequest>
 
+    /**
+     * Erases user data such a search requests
+     * */
     suspend fun eraseUserData()
 }

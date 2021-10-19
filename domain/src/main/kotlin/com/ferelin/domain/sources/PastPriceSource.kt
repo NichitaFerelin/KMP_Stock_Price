@@ -20,6 +20,7 @@ import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.utils.AppDate
 import com.ferelin.shared.LoadState
 
+// Response format type
 sealed class Resolutions(val key: String) {
     object Day : Resolutions("D")
     object Week : Resolutions("W")
@@ -28,6 +29,15 @@ sealed class Resolutions(val key: String) {
 
 interface PastPriceSource {
 
+    /**
+     * Loads past prices
+     * @param companyId is a company id for which need to load past prices
+     * @param companyTicker is a company ticker for which need to load past prices
+     * @param from is a range start time-border by which need to load past prices
+     * @param to is a range end time-border by which need to load past prices
+     * @param resolution is a response format type
+     * @return [LoadState] with list of past prices
+     * */
     suspend fun loadBy(
         companyId: Int,
         companyTicker: String,

@@ -20,11 +20,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /*
-    * API used not basic millis-time
-    * Example:
-    *   Before from response: 12345678
-    *   After:  12345678000
-    * */
+* API used not basic millis-time. Converts millis-time to standard format
+* Example:
+*   Before from response: 12345678
+*   After:                12345678000
+* */
 fun Long.toBasicMillisTime(): Long {
     val timeStr = this.toString()
     val resultStr = "${timeStr}000"
@@ -33,6 +33,6 @@ fun Long.toBasicMillisTime(): Long {
 
 fun Long.toDateStr(): String {
     val datePattern = "dd MMM yyyy"
-    val dateFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
+    val dateFormat = SimpleDateFormat(datePattern, Locale.ROOT)
     return dateFormat.format(Date(this)).filter { it != ',' }
 }

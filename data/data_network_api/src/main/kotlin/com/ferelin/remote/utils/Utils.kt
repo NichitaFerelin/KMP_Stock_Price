@@ -47,10 +47,10 @@ fun <T, R> withExceptionHandle(
 }
 
 /*
-    * Builds profit string example:
-    *   Call:    buildProfitString (100.0, 50.0)
-    *   Result:  "+$50.0 (50,0%)"
-    * */
+* Builds profit string. Example:
+* Call:    buildProfitString (100.0, 50.0)
+* Result:  "+$50.0 (50,0%)"
+* */
 fun buildProfitString(currentPrice: Double, previousPrice: Double): String {
     val numberProfit = currentPrice - previousPrice
     val numberProfitStr = numberProfit.toString()

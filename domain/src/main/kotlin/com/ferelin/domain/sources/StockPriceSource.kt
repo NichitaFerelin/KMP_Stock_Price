@@ -22,6 +22,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface StockPriceSource {
 
+    /**
+     * Allows to add request to load actual stock price for company
+     * @param companyId is a company for which need to load stock price
+     * @param companyTicker is a company ticker for which need to load stock price
+     * @param keyPosition is a position which determines the "importance" of the request
+     * @param isImportant if true guarantees the execution of the request
+     * */
     suspend fun addRequestToGetStockPrice(
         companyId: Int,
         companyTicker: String,

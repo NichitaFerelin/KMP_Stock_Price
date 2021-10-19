@@ -22,17 +22,17 @@ import javax.inject.Inject
 
 class SearchRequestMapper @Inject constructor() {
 
-    fun map(searchRequestDBO: SearchRequestDBO): SearchRequest {
-        return SearchRequest(
-            id = searchRequestDBO.id,
-            request = searchRequestDBO.request
-        )
-    }
-
     fun map(searchRequest: SearchRequest): SearchRequestDBO {
         return SearchRequestDBO(
             id = searchRequest.id,
             request = searchRequest.request
+        )
+    }
+
+    fun map(searchRequestDBO: SearchRequestDBO): SearchRequest {
+        return SearchRequest(
+            id = searchRequestDBO.id,
+            request = searchRequestDBO.request
         )
     }
 }

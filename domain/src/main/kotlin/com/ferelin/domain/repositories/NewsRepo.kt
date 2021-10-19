@@ -22,7 +22,7 @@ interface NewsRepo {
 
     suspend fun insertAll(news: List<News>)
 
-    suspend fun getAllBy(relationCompanyId: Int) : List<News>
+    suspend fun getAllBy(relationCompanyId: Int): List<News>
 
     suspend fun eraseBy(relationCompanyId: Int)
 }

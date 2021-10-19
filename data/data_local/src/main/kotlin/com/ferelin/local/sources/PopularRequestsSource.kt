@@ -20,6 +20,8 @@ import com.ferelin.domain.entities.SearchRequest
 
 object PopularRequestsSource {
 
+    // Free version of the API does not provide popular stock requests
+    // Hardcoded items
     val popularSearchRequests = listOf(
         SearchRequest(0, "Apple"),
         SearchRequest(1, "Microsoft Corp"),

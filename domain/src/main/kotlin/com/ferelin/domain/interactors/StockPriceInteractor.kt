@@ -31,6 +31,9 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
+/**
+ * [StockPriceInteractor] allows to interact with companies stock price
+ * */
 @Singleton
 class StockPriceInteractor @Inject constructor(
     private val stockPriceRepo: StockPriceRepo,
@@ -39,11 +42,22 @@ class StockPriceInteractor @Inject constructor(
     private val priceListeners: List<@JvmSuppressWildcards StockPriceListener>,
     @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
+    /**
+     * Еo receive answers to requests for obtaining the current price
+     * @return flow of [LoadState] with [StockPrice] if [LoadState] is successful
+     * */
     fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> {
         return stockPriceSource.observeActualStockPriceResponses()
             .onEach { cacheIfLoaded(it) }
     }
 
+    /**
+     * Allows to add request to load actual stock price for company
+     * @param companyId is a company for which need to load stock price
+     * @param companyTicker is a company ticker for which need to load stock price
+     * @param keyPosition is a position which determines the "importance" of the request
+     * @param isImportant if true guarantees the execution of the request
+     * */
     suspend fun addRequestToGetStockPrice(
         companyId: Int,
         companyTicker: String,

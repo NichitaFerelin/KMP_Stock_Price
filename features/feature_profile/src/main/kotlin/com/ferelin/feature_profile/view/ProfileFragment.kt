@@ -19,6 +19,7 @@ package com.ferelin.feature_profile.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -64,6 +65,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             .with(viewBinding.root)
             .load(viewModel.profileParams.companyLogoUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
+            .error(
+                AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_load_error
+                )
+            )
             .into(viewBinding.imageViewIcon)
     }
 

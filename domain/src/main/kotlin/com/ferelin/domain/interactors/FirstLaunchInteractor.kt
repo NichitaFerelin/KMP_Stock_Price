@@ -23,6 +23,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
+/**
+ * [FirstLaunchInteractor] allows to interact with first time application launch
+ * */
 class FirstLaunchInteractor @Inject constructor(
     private val mFirstLaunchRepo: FirstLaunchRepo,
     private val mDispatchersProvider: DispatchersProvider,
@@ -32,10 +35,17 @@ class FirstLaunchInteractor @Inject constructor(
         const val DEFAULT_FIRST_LAUNCH_STATE = true
     }
 
+    /**
+     * Allows to get first time application launch
+     * @return first time application launch
+     * */
     suspend fun get(): Boolean {
         return mFirstLaunchRepo.get() ?: DEFAULT_FIRST_LAUNCH_STATE
     }
 
+    /**
+     * Allows to cache first time launch state
+     * */
     suspend fun cache(isFirstLaunch: Boolean) {
         mExternalScope.launch(mDispatchersProvider.IO) {
             mFirstLaunchRepo.cache(isFirstLaunch)

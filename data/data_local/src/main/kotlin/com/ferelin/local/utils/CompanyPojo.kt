@@ -16,6 +16,7 @@
 
 package com.ferelin.local.utils
 
+// Pojo model for json parse
 data class CompanyPojo(
     val name: String,
     val symbol: String,

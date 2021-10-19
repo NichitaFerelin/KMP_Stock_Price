@@ -16,7 +16,6 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
-import android.util.Log
 import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
@@ -34,8 +33,6 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-typealias SearchRequestsState = LoadState<List<SearchRequest>>
-
 @Singleton
 class SearchRequestsInteractorImpl @Inject constructor(
     private val searchRequestsLocalRepo: SearchRequestsLocalRepo,
@@ -46,11 +43,12 @@ class SearchRequestsInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val externalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
-    private val _searchRequestsState = MutableStateFlow<SearchRequestsState>(LoadState.None())
-    override val searchRequestsState: StateFlow<SearchRequestsState>
-        get() = _searchRequestsState.asStateFlow()
+    private val _searchRequestsState =
+        MutableStateFlow<LoadState<List<SearchRequest>>>(LoadState.None())
+    override val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>> =
+        _searchRequestsState.asStateFlow()
 
-    private var popularRequestsState: SearchRequestsState = LoadState.None()
+    private var popularRequestsState: LoadState<List<SearchRequest>> = LoadState.None()
 
     private var cacheJob: Job? = null
 
@@ -65,6 +63,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
         _searchRequestsState.value = LoadState.Loading()
 
+        // Recently created requests should be first in the list
         val dbRequests = searchRequestsLocalRepo
             .getAll()
             .sortedByDescending { it.id }
@@ -92,9 +91,14 @@ class SearchRequestsInteractorImpl @Inject constructor(
     override suspend fun cache(searchText: String): Unit =
         withContext(dispatchersProvider.IO) {
 
+            // New Search Request item ID creates sequentially
+            // So that there are no duplicates it is necessary to wait for job
             cacheJob?.join()
             cacheJob = externalScope.launch(dispatchersProvider.IO) {
                 _searchRequestsState.value.ifPrepared { preparedState ->
+
+                    // Last created item is first at list
+                    // Next id is creates by previous one
                     val searchRequest = SearchRequest(
                         id = preparedState.data.firstOrNull()?.id?.plus(1) ?: 0,
                         request = searchText
@@ -114,7 +118,8 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
                     searchRequestsLocalRepo.insert(searchRequest)
 
-                    // TODO Rewrites requests at db
+                    // TODO Rewrites requests at cloud DB
+                    // TODO ID's inconsistency
                     authenticationSource.getUserToken()?.let { userToken ->
                         searchRequestsRemoteRepo.insert(userToken, searchRequest)
                     }

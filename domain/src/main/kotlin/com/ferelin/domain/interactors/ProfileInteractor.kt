@@ -20,9 +20,17 @@ import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.repositories.ProfileRepo
 import javax.inject.Inject
 
+/**
+ * [ProfileInteractor] allows to interactor with companies profile
+ * */
 class ProfileInteractor @Inject constructor(
     private val profileRepo: ProfileRepo
 ) {
+    /**
+     * Get profile
+     * @param relationCompanyId is a company for which need to get profile
+     * @return company profile
+     * */
     suspend fun getBy(relationCompanyId: Int): Profile {
         return profileRepo.getBy(relationCompanyId)
     }

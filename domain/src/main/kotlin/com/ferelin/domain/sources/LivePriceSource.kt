@@ -25,6 +25,10 @@ interface LivePriceSource {
 
     suspend fun cancelLiveTimeUpdates()
 
+    /**
+     * Subscribes company on stock-price live time updates
+     * @param companyTicker is a company ticker by which company will be subscribed for updates
+     * */
     suspend fun subscribeCompanyOnUpdates(companyTicker: String)
 
     suspend fun unsubscribeCompanyFromUpdates(companyTicker: String)

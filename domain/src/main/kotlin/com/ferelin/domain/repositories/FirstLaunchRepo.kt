@@ -16,9 +16,16 @@
 
 package com.ferelin.domain.repositories
 
+/**
+ * [FirstLaunchRepo] allows to interact with local first launch repository
+ * */
 interface FirstLaunchRepo {
 
-    suspend fun get() : Boolean?
+    /**
+     * Get first launch state
+     * @return [Boolean] if such value exist
+     * */
+    suspend fun get(): Boolean?
 
     suspend fun cache(isFirstLaunch: Boolean)
 }

@@ -31,6 +31,12 @@ enum class AuthResponse {
 
 interface AuthenticationSource {
 
+    /**
+     * The main request for authentication which next returns all responses from the server
+     * @param holderActivity is an activity which is used to check for a robot
+     * @param phone is an phone number by which need to authorize
+     * @return flow with [AuthResponse] states
+     * */
     fun tryToLogIn(holderActivity: Activity, phone: String): Flow<AuthResponse>
 
     fun isUserAuthenticated() : Boolean

@@ -21,5 +21,8 @@ import com.ferelin.domain.entities.Profile
 
 interface CompaniesJsonSource {
 
+    /**
+     * Parses data from json
+     * */
     suspend fun parse(): Pair<List<Company>, List<Profile>>
 }

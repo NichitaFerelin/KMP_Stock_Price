@@ -3,6 +3,9 @@ package com.ferelin.domain.utils
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Special time millis format for API requests
+ * */
 object AppDate {
 
     const val ONE_YEAR = 31536000000

@@ -19,6 +19,9 @@ package com.ferelin.domain.repositories.companies
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 
+/**
+ * [CompaniesLocalRepo] allows to interact with local database
+ * */
 interface CompaniesLocalRepo {
 
     suspend fun insertAll(companies: List<Company>)
@@ -27,7 +30,16 @@ interface CompaniesLocalRepo {
 
     suspend fun getAllFavourites(): List<CompanyWithStockPrice>
 
+    /**
+     * Rollbacks companies properties (such a 'isFavourite') to default (isFavourite = false)
+     * */
     suspend fun rollbackToDefault()
 
+    /**
+     * Updates company property 'isFavourite' and 'addedByIndex'
+     * @param companyId is a company id for which need to update fields
+     * @param isFavourite is a new value for property
+     * @param addedByIndex is a new value for property
+     * */
     suspend fun updateIsFavourite(companyId: Int, isFavourite: Boolean, addedByIndex: Int = 0)
 }

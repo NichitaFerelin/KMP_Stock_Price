@@ -27,25 +27,32 @@ import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.math.abs
 
-
+/**
+ * The API has a limit on the number of requests per minute.
+ * This class optimizes the execution of queries by limiting their number per minute
+ * and excluding "identical" queries.
+ * */
 @Singleton
 class RequestsLimiter @Inject constructor(
     @Named("ExternalScope") externalScope: CoroutineScope,
     dispatchersProvider: DispatchersProvider
 ) {
-    private companion object {
-        const val PER_SECOND_REQUESTS_LIMIT = 1050L
-        const val ALREADY_NOT_ACTUAL_REQUEST = 13
-    }
-
     private var stockPriceApi: ((Int, String) -> Unit)? = null
 
-    private val messagesQueue = LinkedHashSet<CachedMessage>(100)
-    private var messagesHistory = HashMap<Int, Unit>(300, 0.5F)
+    // Main queue with requests
+    private val requestsQueue = LinkedHashSet<CachedMessage>(100)
+
+    // Requests history with which duplicate requests can be excluded
+    private var requestsHistory = HashMap<Int, Unit>(300, 0.5F)
 
     private var isRunning = true
 
     private var workerJob: Job? = null
+
+    private companion object {
+        const val PER_SECOND_REQUESTS_LIMIT = 1050L
+        const val ALREADY_NOT_ACTUAL_REQUEST = 13
+    }
 
     init {
         workerJob = externalScope.launch(dispatchersProvider.IO) {
@@ -72,21 +79,23 @@ class RequestsLimiter @Inject constructor(
     fun invalidate() {
         workerJob?.cancel()
         workerJob = null
-        messagesQueue.clear()
+        requestsQueue.clear()
         isRunning = false
     }
 
     private suspend fun start() {
         while (isRunning) {
             try {
-                messagesQueue.firstOrNull()?.let { task ->
-                    if (messagesHistory[task.companyId] == Unit) {
-                        messagesQueue.remove(task)
+                requestsQueue.firstOrNull()?.let { task ->
+
+                    // Check if is duplicate
+                    if (requestsHistory[task.companyId] == Unit) {
+                        requestsQueue.remove(task)
                         return@let
                     }
 
-                    val lastPosition = messagesQueue.last().keyPosition
-                    messagesQueue.remove(task)
+                    val lastPosition = requestsQueue.last().keyPosition
+                    requestsQueue.remove(task)
 
                     if (isNotActual(task.keyPosition, lastPosition, task.eraseIfNotActual)) {
                         return@let
@@ -98,12 +107,11 @@ class RequestsLimiter @Inject constructor(
                     )
                     stockPriceApi?.invoke(task.companyId, task.companyTicker)
 
-                    messagesHistory[task.companyId] = Unit
+                    requestsHistory[task.companyId] = Unit
                     delay(PER_SECOND_REQUESTS_LIMIT)
                 }
             } catch (exception: ConcurrentModificationException) {
-                // Do nothing. Message will not be removed
-                Timber.d("execute exception $exception")
+                // Do nothing. Request will not be removed
             }
         }
     }
@@ -114,7 +122,7 @@ class RequestsLimiter @Inject constructor(
         position: Int,
         eraseIfNotActual: Boolean
     ) {
-        messagesQueue.add(
+        requestsQueue.add(
             CachedMessage(
                 companyId,
                 companyTicker,
@@ -125,7 +133,7 @@ class RequestsLimiter @Inject constructor(
     }
 
     private fun isNotDuplicatedMessage(companyId: Int): Boolean {
-        return !messagesHistory.containsKey(companyId)
+        return !requestsHistory.containsKey(companyId)
     }
 
     private fun isNotActual(
@@ -135,5 +143,24 @@ class RequestsLimiter @Inject constructor(
     ): Boolean {
         return abs(currentPosition - lastPosition) >= ALREADY_NOT_ACTUAL_REQUEST
                 && eraseIfNotActual
+    }
+}
+
+internal data class CachedMessage(
+    val companyId: Int,
+    val companyTicker: String,
+    val keyPosition: Int,
+    val eraseIfNotActual: Boolean
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is CachedMessage) {
+            companyId == other.companyId
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return companyId.hashCode()
     }
 }

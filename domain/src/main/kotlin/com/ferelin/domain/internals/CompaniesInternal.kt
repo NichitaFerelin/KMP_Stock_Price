@@ -18,6 +18,8 @@ package com.ferelin.domain.internals
 
 import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.NetworkListener
 
+/**
+ * For use on the domain layer
+ * */
 interface CompaniesInternal : AuthenticationListener, StockPriceListener

@@ -30,6 +30,9 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
+/**
+ * [LiveTimePriceResolver] allows to interact with live-time-price web socket
+ * */
 @Singleton
 class LiveTimePriceResolver @Inject constructor(
     private val livePriceSource: LivePriceSource,
@@ -40,6 +43,8 @@ class LiveTimePriceResolver @Inject constructor(
 
     override suspend fun onNetworkAvailable() {
         externalScope.launch(dispatchersProvider.IO) {
+
+            // Creates new observer when network is available
             livePriceSource.observeLiveTimePriceUpdates()
                 .filter { it != null }
                 .map { it!! }
@@ -52,6 +57,7 @@ class LiveTimePriceResolver @Inject constructor(
     }
 
     private suspend fun onLiveTimePrice(liveTimePrice: LiveTimePrice) {
+        // Notifies all listeners about new stock price
         priceListeners.forEach { it.onStockPriceChanged(liveTimePrice) }
     }
 }

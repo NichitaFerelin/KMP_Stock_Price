@@ -33,6 +33,9 @@ fun RecyclerView.scrollToTopWithCustomAnim(
     fadeOut: Animation,
     customItemAnimator: RecyclerView.ItemAnimator? = null
 ) {
+    // starts smooth scrolling to top -> fades out -> hard scroll to 20 position ->
+    // fade in -> smooth scroll to 0
+
     val fadeInCallback = object : AnimationManager() {
         override fun onAnimationStart(animation: Animation?) {
             alpha = 1F

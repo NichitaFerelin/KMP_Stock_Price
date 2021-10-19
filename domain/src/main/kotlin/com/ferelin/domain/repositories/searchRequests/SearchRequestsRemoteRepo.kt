@@ -20,13 +20,36 @@ import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * [SearchRequestsRemoteRepo] allows to interact with cloud database by
+ * special user token
+ * */
 interface SearchRequestsRemoteRepo {
 
+    /**
+     * Inserts user search request to cloud database
+     * @param userToken is an user token by which search request will be inserted
+     * @param searchRequest is a search request need to be cached
+     * */
     suspend fun insert(userToken: String, searchRequest: SearchRequest)
 
+    /**
+     * Loads all search requests from cloud database
+     * @param userToken is an user token by which need to load search requests
+     * @return flow of [LoadState] with list of all user search requests
+     * */
     suspend fun loadAll(userToken: String): Flow<LoadState<List<SearchRequest>>>
 
+    /**
+     * Erases all user search requests from cloud database
+     * @param userToken is an user token by which need to erase all search requests
+     * */
     suspend fun eraseAll(userToken: String)
 
+    /**
+     * Erase user search requests from cloud database
+     * @param userToken is an user token by which need to erase search request
+     * @param searchRequest is a search request that need to be erased
+     * */
     suspend fun erase(userToken: String, searchRequest: SearchRequest)
 }

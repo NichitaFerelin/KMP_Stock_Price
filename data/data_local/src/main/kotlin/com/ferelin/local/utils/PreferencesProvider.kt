@@ -24,13 +24,16 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
+/**
+ * Can be used by different entities that need to store data via data store preferences
+ * */
 @Singleton
 class PreferencesProvider @Inject constructor(
-    private val conte: Context,
+    private val context: Context,
     @Named("PreferencesName") preferencesName: String
 ) {
     private val Context.dataStore by preferencesDataStore(preferencesName)
 
     val dataStore: DataStore<Preferences>
-        get() = conte.dataStore
+        get() = context.dataStore
 }

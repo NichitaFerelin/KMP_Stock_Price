@@ -31,7 +31,6 @@ import com.ferelin.domain.syncers.CompaniesSyncer
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NULL_INDEX
-import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -57,13 +56,13 @@ class CompaniesInteractorImpl @Inject constructor(
     private var companiesState: LoadState<List<CompanyWithStockPrice>> = LoadState.None()
     private var favouriteCompaniesState: LoadState<List<CompanyWithStockPrice>> = LoadState.None()
 
-    private val _companyWithStockPriceChanges = MutableSharedFlow<CompanyWithStockPrice>()
-    override val companyWithStockPriceChanges: SharedFlow<CompanyWithStockPrice>
-        get() = _companyWithStockPriceChanges.asSharedFlow()
+    private val _companyWithStockPriceUpdates = MutableSharedFlow<CompanyWithStockPrice>()
+    override val companyWithStockPriceUpdates: SharedFlow<CompanyWithStockPrice> =
+        _companyWithStockPriceUpdates.asSharedFlow()
 
     private val _favouriteCompaniesUpdates = MutableSharedFlow<CompanyWithStockPrice>()
-    override val favouriteCompaniesUpdates: SharedFlow<CompanyWithStockPrice>
-        get() = _favouriteCompaniesUpdates.asSharedFlow()
+    override val favouriteCompaniesUpdates: SharedFlow<CompanyWithStockPrice> =
+        _favouriteCompaniesUpdates.asSharedFlow()
 
     override suspend fun getAll(): List<CompanyWithStockPrice> {
         companiesState.ifPrepared { preparedState ->
@@ -75,6 +74,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
         return companiesLocalRepo.getAll()
             .ifEmpty {
+                // Parse data from json
                 val fromJson = companiesJsonSource.parse()
                 val companies = fromJson.first
 
@@ -113,7 +113,9 @@ class CompaniesInteractorImpl @Inject constructor(
     }
 
     override suspend fun addCompanyToFavourites(companyId: Int) {
-        findById(companyId)?.let { addCompanyToFavourites(it) }
+        findById(companyId)?.let { companyWithStockPrice ->
+            addCompanyToFavourites(companyWithStockPrice.company)
+        }
     }
 
     override suspend fun addCompanyToFavourites(company: Company) {
@@ -141,7 +143,6 @@ class CompaniesInteractorImpl @Inject constructor(
                         itemToUpdate.company.addedByIndex
                     )
                 }
-
                 launch {
                     authenticationSource.getUserToken()?.let { userToken ->
                         companiesRemoteRepo.insertBy(
@@ -155,8 +156,8 @@ class CompaniesInteractorImpl @Inject constructor(
     }
 
     override suspend fun eraseCompanyFromFavourites(companyId: Int) {
-        findById(companyId)?.let {
-            eraseCompanyFromFavourites(it)
+        findById(companyId)?.let { companyWithStockPrice ->
+            eraseCompanyFromFavourites(companyWithStockPrice.company)
         }
     }
 
@@ -200,9 +201,21 @@ class CompaniesInteractorImpl @Inject constructor(
     }
 
     override suspend fun onStockPriceChanged(liveTimePrice: LiveTimePrice) {
-        // TODO always 0 id
-        updateCachedCompany(liveTimePrice.relationCompanyId) { itemToUpdate ->
-            itemToUpdate.stockPrice?.currentPrice = liveTimePrice.price
+        // Live time price always comes with 0 id
+        // Detect company by live time price relation company ticker
+
+        favouriteCompaniesState.ifPrepared { preparedState ->
+            val targetIndex = preparedState
+                .data
+                .indexOfFirst { it.company.ticker == liveTimePrice.relationCompanyTicker }
+
+            if (targetIndex != NULL_INDEX) {
+                liveTimePrice.relationCompanyId = preparedState.data[targetIndex].company.id
+
+                updateCachedCompany(liveTimePrice.relationCompanyId) { itemToUpdate ->
+                    itemToUpdate.stockPrice?.currentPrice = liveTimePrice.price
+                }
+            }
         }
     }
 
@@ -231,13 +244,7 @@ class CompaniesInteractorImpl @Inject constructor(
         companyId: Int,
         onUpdate: (CompanyWithStockPrice) -> Unit
     ) {
-        companiesState.ifPrepared { preparedState ->
-
-            val targetIndex = preparedState
-                .data
-                .binarySearchBy(companyId) { it.company.id }
-
-            val companyWithStockPrice = preparedState.data[targetIndex]
+        findById(companyId)?.let { companyWithStockPrice ->
             onUpdate.invoke(companyWithStockPrice)
 
             if (companyWithStockPrice.company.isFavourite) {
@@ -250,7 +257,8 @@ class CompaniesInteractorImpl @Inject constructor(
                     onUpdate.invoke(favouriteCompaniesState.data[targetIndexFav])
                 }
             }
-            _companyWithStockPriceChanges.emit(companyWithStockPrice)
+
+            _companyWithStockPriceUpdates.emit(companyWithStockPrice)
         }
     }
 
@@ -280,34 +288,9 @@ class CompaniesInteractorImpl @Inject constructor(
         }
     }
 
-    private suspend fun invokeWithStateHandleOnFavItem(
-        company: Company,
-        onAction: suspend (CompanyWithStockPrice, MutableList<CompanyWithStockPrice>) -> Unit
-    ) {
-        companiesState.ifPrepared { preparedCompaniesState ->
-            favouriteCompaniesState.ifPrepared { preparedFavouritesState ->
-
-                val targetCompanyIndex = preparedCompaniesState
-                    .data
-                    .binarySearch {
-                        when {
-                            company.id == it.company.id -> 0
-                            company.id > it.company.id -> -1
-                            else -> 1
-                        }
-                    }
-
-                val targetCompany = preparedCompaniesState.data[targetCompanyIndex]
-                val favouriteCompanies = preparedFavouritesState.data.toMutableList()
-                onAction.invoke(targetCompany, favouriteCompanies)
-            }
-        }
-    }
-
     private fun invalidateUserData() {
         externalScope.launch(dispatchersProvider.IO) {
             favouriteCompaniesState.ifPrepared { preparedState ->
-
                 preparedState.data.forEach { companyWithStockPrice ->
                     eraseCompanyFromFavourites(companyWithStockPrice.company)
                 }
@@ -315,7 +298,19 @@ class CompaniesInteractorImpl @Inject constructor(
         }
     }
 
-    private fun findById(companyId: Int): Company? {
+    private suspend fun invokeWithStateHandleOnFavItem(
+        company: Company,
+        onAction: suspend (CompanyWithStockPrice, MutableList<CompanyWithStockPrice>) -> Unit
+    ) {
+        findById(company.id)?.let { companyWithStockPrice ->
+            favouriteCompaniesState.ifPrepared { preparedFavouritesState ->
+                val favouriteCompanies = preparedFavouritesState.data.toMutableList()
+                onAction.invoke(companyWithStockPrice, favouriteCompanies)
+            }
+        }
+    }
+
+    private fun findById(companyId: Int): CompanyWithStockPrice? {
         return companiesState.ifPrepared { preparedState ->
             val targetIndex = preparedState
                 .data
@@ -326,7 +321,7 @@ class CompaniesInteractorImpl @Inject constructor(
                         else -> 0
                     }
                 }
-            preparedState.data[targetIndex].company
+            preparedState.data[targetIndex]
         }
     }
 }

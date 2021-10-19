@@ -22,6 +22,14 @@ import com.ferelin.shared.LoadState
 
 interface NewsSource {
 
+    /**
+     * Loads company news
+     * @param companyId is a company by which news will be loaded
+     * @param companyTicker is a company ticker for which need to load news
+     * @param from is a range start time-border by which news will be loaded
+     * @param to is a range end time-border by which news will be loaded
+     * @return [LoadState] with list of news
+     * */
     suspend fun loadBy(
         companyId: Int,
         companyTicker: String,

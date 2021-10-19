@@ -31,9 +31,10 @@ inline fun <reified T> List<Any>.ifExist(
 }
 
 /*
-    * Call:     adaptPrice(2253.14)
-    * Result:   $2 253.14
-    * */
+* Builds price string from double
+* Call:     adaptPrice(2253.14)
+* Result:   $2 253.14
+* */
 fun Double.toStrPrice(): String {
     var resultStr = ""
     val priceStr = this.toString()
