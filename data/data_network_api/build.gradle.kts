@@ -20,11 +20,22 @@ android {
     }
 
     buildTypes {
+
+        val PUBLIC_DEBUG_KEY = "c5n906iad3ido15tstu0"
+
         getByName("debug") {
-            resValue("string", "api_key", properties["apiKey"] as String)
+            resValue(
+                "string",
+                "api_key",
+                (properties["apiKey"] as String?) ?: PUBLIC_DEBUG_KEY
+            )
         }
         getByName("release") {
-            resValue("string", "api_key", properties["apiKey"] as String)
+            resValue(
+                "string",
+                "api_key",
+                (properties["apiKey"] as String?) ?: PUBLIC_DEBUG_KEY
+            )
         }
     }
 
