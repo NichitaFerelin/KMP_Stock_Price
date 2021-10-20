@@ -33,6 +33,7 @@ fun Long.toBasicMillisTime(): Long {
 
 fun Long.toDateStr(): String {
     val datePattern = "dd MMM yyyy"
-    val dateFormat = SimpleDateFormat(datePattern, Locale.ROOT)
+    // Only EN language is support
+    val dateFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
     return dateFormat.format(Date(this)).filter { it != ',' }
 }
