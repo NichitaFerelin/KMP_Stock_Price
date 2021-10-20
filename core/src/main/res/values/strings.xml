@@ -74,5 +74,6 @@
     <string name="messageDataCleared">Data has been cleared</string>
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
     <string name="descriptionLogOut">Log out</string>
+    <string name="descriptionSettings">Settings</string>
 
 </resources>

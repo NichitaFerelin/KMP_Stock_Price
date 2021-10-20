@@ -30,6 +30,7 @@
         android:id="@+id/imageViewBack"
         style="@style/clickableImage"
         android:layout_marginStart="10dp"
+        android:background="@null"
         android:contentDescription="@string/descriptionBack"
         android:elevation="@dimen/searchFragmentElevation"
         android:src="@drawable/ic_back"
