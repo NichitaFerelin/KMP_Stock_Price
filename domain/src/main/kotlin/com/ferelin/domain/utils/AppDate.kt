@@ -12,6 +12,11 @@ object AppDate {
 
     fun toTimeMillisForRequest(time: Long): Long {
         val timeStr = time.toString()
+
+        if (timeStr.length < 3) {
+            return 0L
+        }
+
         val resultStr = timeStr.substring(0, timeStr.length - 3)
         return resultStr.toLong()
     }
