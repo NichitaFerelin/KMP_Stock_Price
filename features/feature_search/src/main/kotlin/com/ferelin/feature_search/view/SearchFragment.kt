@@ -16,7 +16,6 @@
 
 package com.ferelin.feature_search.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,13 +27,10 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.ferelin.core.utils.*
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.MotionManager
 import com.ferelin.core.utils.animManager.invalidate
-import com.ferelin.core.utils.isAtEnd
-import com.ferelin.core.utils.isLandscapeOrientation
-import com.ferelin.core.utils.isOut
-import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseStocksFragment
 import com.ferelin.feature_search.R
 import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecoration
@@ -42,7 +38,6 @@ import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecorationLan
 import com.ferelin.feature_search.databinding.FragmentSearchBinding
 import com.ferelin.feature_search.viewModel.SearchViewModel
 import com.ferelin.shared.LoadState
-import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -80,9 +75,9 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform()
-            .apply { scrimColor = Color.TRANSPARENT }
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+            .apply { duration = 200L }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
             .apply { duration = 200L }
         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
             .apply { duration = 200L }
@@ -154,8 +149,15 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         keyboardTimer?.cancel()
         hideKeyboard()
 
-        viewBinding.recyclerViewPopularRequests.adapter = null
-        viewBinding.recyclerViewSearchedHistory.adapter = null
+        val recyclerViewPopulars = viewBinding.recyclerViewPopularRequests
+        val recyclerViewSearch = viewBinding.recyclerViewSearchedHistory
+
+        // Graphic bug
+        withTimer {
+            recyclerViewPopulars.adapter = null
+            recyclerViewSearch.adapter = null
+        }
+
         super.onDestroyView()
     }
 
