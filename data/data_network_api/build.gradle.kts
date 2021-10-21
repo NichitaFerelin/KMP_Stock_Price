@@ -21,13 +21,19 @@ android {
 
     buildTypes {
         debug {
-
             val publicDebugKey = "c5n906iad3ido15tstu0"
 
             resValue(
                 "string",
                 "api_key",
                 (properties["apiKey"] as String?) ?: publicDebugKey
+            )
+        }
+        release {
+            resValue(
+                "string",
+                "api_key",
+                properties["apiKey"] as String
             )
         }
     }

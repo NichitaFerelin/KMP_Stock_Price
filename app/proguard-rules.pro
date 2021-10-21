@@ -1,0 +1,3 @@
+-dontobfuscate
+-keepclassmembers  class com.ferelin.data_network_api.** {*;}
+-keepclassmembers  class com.ferelin.data_local.** {*;}
