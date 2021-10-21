@@ -16,8 +16,8 @@
 
 package com.ferelin
 
-import com.ferelin.remote.utils.buildProfitString
-import com.ferelin.remote.utils.toBasicMillisTime
+import com.ferelin.data_network_api.utils.buildProfitString
+import com.ferelin.data_network_api.utils.toBasicMillisTime
 import org.junit.Assert
 import org.junit.Test
 

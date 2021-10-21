@@ -23,7 +23,7 @@ import com.ferelin.di.modules.ScopeTestModule
 import com.ferelin.domain.di.DomainBindsModule
 import com.ferelin.domain.di.DomainModule
 import com.ferelin.interactorTests.*
-import com.ferelin.local.di.DataLocalModuleBinds
+import com.ferelin.data_local.di.DataLocalModuleBinds
 import com.ferelin.repoTests.*
 import dagger.BindsInstance
 import dagger.Component

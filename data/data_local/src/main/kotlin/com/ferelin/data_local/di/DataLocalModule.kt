@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package com.ferelin.di.modules
+package com.ferelin.data_local.di
 
 import android.content.Context
 import androidx.room.Room
 import com.ferelin.data_local.database.*
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class DataLocalTestModule {
+class DataLocalModule {
 
     @Provides
     @Singleton
     fun provideAppDatabase(context: Context): AppDatabase {
-        val testCoroutineDispatcher = TestCoroutineDispatcher()
         return Room
-            .inMemoryDatabaseBuilder(context, AppDatabase::class.java)
-            .setTransactionExecutor(testCoroutineDispatcher.asExecutor())
-            .setQueryExecutor(testCoroutineDispatcher.asExecutor())
-            .allowMainThreadQueries()
+            .databaseBuilder(context, AppDatabase::class.java, AppDatabase.DB_NAME)
+            .fallbackToDestructiveMigration()
             .build()
     }
 
