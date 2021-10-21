@@ -37,6 +37,9 @@ object Dependencies {
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
     const val roomCompilerKapt = "androidx.room:room-compiler:${Versions.room}"
+    // SPECIAL FOR TESTS
+    const val roomTestLiveData =
+        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.roomLiveDataTest}"
 
     /**
      * Data Store
@@ -49,16 +52,6 @@ object Dependencies {
      * */
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
     const val daggerCompilerKapt = "com.google.dagger:dagger-compiler:${Versions.dagger}"
-
-    /**
-     * Compose
-     * */
-    const val composeUi = "androidx.compose.ui:ui:${Versions.compose}"
-    const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
-    const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
-    const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
-    const val composeRuntimeLivedata =
-        "androidx.compose.runtime:runtime-livedata:${Versions.compose}"
 
     /**
      * Firebase

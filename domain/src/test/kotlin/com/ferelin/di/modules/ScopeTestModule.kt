@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared.di
+package com.ferelin.di.modules
 
+import com.ferelin.TestDispatchersProvider
 import com.ferelin.shared.DispatchersProvider
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class ScopeModule {
+class ScopeTestModule {
 
     @Provides
-    @Named("ioDispatcher")
-    fun provideIoDispatcher(): CoroutineDispatcher {
-        return Dispatchers.IO
-    }
-
-    @Provides
-    fun provideDispatchersProvider(): DispatchersProvider {
-        return DispatchersProvider()
+    fun provideIoDispatcher() : DispatchersProvider {
+        return TestDispatchersProvider()
     }
 
     @Provides
     @Singleton
     @Named("ExternalScope")
     fun provideExternalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + dispatchersProvider.IO)
+        return CoroutineScope(SupervisorJob() + dispatchersProvider.Main)
     }
 }

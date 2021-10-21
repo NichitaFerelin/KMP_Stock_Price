@@ -35,7 +35,7 @@ class FavouriteFragment : BaseStocksFragment<FragmentFavouriteBinding, Favourite
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        stocksRecyclerView = viewBinding.recyclerViewStocks
+        stocksRecyclerView = viewBinding.recyclerViewFavouriteStocks
         super.onViewCreated(view, savedInstanceState)
     }
 

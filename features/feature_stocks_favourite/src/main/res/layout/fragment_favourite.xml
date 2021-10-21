@@ -7,7 +7,7 @@
     tools:theme="@style/Theme.StockPrice">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewStocks"
+        android:id="@+id/recyclerViewFavouriteStocks"
         style="@style/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

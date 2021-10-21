@@ -55,4 +55,6 @@ dependencies {
     implementation(Dependencies.okHttp)
     implementation(Dependencies.okHttpInterceptor)
     implementation(Dependencies.moshi)
+
+    testImplementation(Dependencies.testJunitKtx)
 }

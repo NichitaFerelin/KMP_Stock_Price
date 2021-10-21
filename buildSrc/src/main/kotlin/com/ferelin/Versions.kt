@@ -22,7 +22,6 @@ object Versions {
     const val viewPager = "1.0.0"
     const val constraintLayout = "2.1.0"
     const val material = "1.4.0"
-    const val compose = "1.0.2"
     const val glide = "4.12.0"
 
     /**
@@ -53,6 +52,7 @@ object Versions {
     const val testRunner = "1.4.0"
     const val testEspresso = "3.4.0"
     const val testUiAutomator = "2.2.0"
-    const val testRobolectric = "4.5.1"
-    const val testMockito = "3.3.3"
+    const val testRobolectric = "4.6.1"
+    const val testMockito = "4.0.0"
+    const val roomLiveDataTest = "2.4.0-rc01"
 }

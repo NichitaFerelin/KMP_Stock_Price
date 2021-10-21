@@ -1,5 +1,3 @@
-@file:Suppress("PropertyName", "PropertyName", "PropertyName")
-
 /*
  * Copyright 2021 Leah Nichita
  *
@@ -16,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin
 
-import kotlinx.coroutines.Dispatchers
+import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlin.coroutines.CoroutineContext
 
-open class DispatchersProvider {
+class TestDispatchersProvider(
+    private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+): DispatchersProvider() {
 
-    open val Main: CoroutineContext
-        get() = Dispatchers.Main
+    override val Main: CoroutineContext
+        get() = testCoroutineDispatcher
 
-    open val IO: CoroutineContext
-        get() = Dispatchers.IO
+    override val IO: CoroutineContext
+        get() = testCoroutineDispatcher
 
-    open val Default: CoroutineContext
-        get() = Dispatchers.Default
+    override val Default: CoroutineContext
+        get() = testCoroutineDispatcher
 }

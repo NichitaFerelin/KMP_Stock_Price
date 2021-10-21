@@ -22,13 +22,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-        }
-    }
     buildFeatures.apply {
         viewBinding = true
+    }
+    testOptions {
+        animationsDisabled = true
     }
 }
 
@@ -64,4 +62,14 @@ dependencies {
     implementation(Dependencies.retrofit)
     implementation(Dependencies.firebaseDatabaseKtx)
     implementation(Dependencies.firebaseAuthenticationKtx)
+
+    // Tests
+    androidTestImplementation(Dependencies.testCoreKtx)
+    androidTestImplementation(Dependencies.testJunitKtx)
+    androidTestImplementation(Dependencies.testRunner)
+    androidTestImplementation(Dependencies.testEspressoCore)
+    androidTestImplementation(Dependencies.testEspressoContrib)
+    androidTestImplementation(Dependencies.testUiAutomator)
+    androidTestImplementation(Dependencies.firebaseDatabaseKtx)
+    androidTestImplementation(Dependencies.firebaseAuthenticationKtx)
 }
