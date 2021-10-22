@@ -12,9 +12,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v1
 
-      - name: Build Project
-        run: ./gradlew assemble
-
       - name: Run style check
         run: ./gradlew ktlintCheck
 
