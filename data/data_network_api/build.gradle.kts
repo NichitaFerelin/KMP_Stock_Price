@@ -13,10 +13,15 @@ plugins {
 android {
     compileSdk = Base.currentSDK
 
-    val properties = Properties().apply {
-        load(
-            FileInputStream(project.rootProject.file("local.properties"))
-        )
+    val properties: Properties? = try {
+        // project.rootProject.file -> Cannot access class java.io.File
+         Properties().apply {
+            load(
+                FileInputStream(project.file("local.properties"))
+            )
+        }
+    } catch (e: Exception) {
+        null
     }
 
     buildTypes {
@@ -26,18 +31,17 @@ android {
             resValue(
                 "string",
                 "api_key",
-                (properties["apiKey"] as String?) ?: publicDebugKey
+                (properties?.get("apiKey") as String?) ?: publicDebugKey
             )
         }
         release {
             resValue(
                 "string",
                 "api_key",
-                (properties["apiKey"] as String?) ?: publicDebugKey
+                (properties?.get("apiKey") as String?) ?: publicDebugKey
             )
         }
     }
-
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
         freeCompilerArgs = freeCompilerArgs +
