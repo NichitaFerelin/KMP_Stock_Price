@@ -1,0 +1,22 @@
+name: Android Build
+on:
+  push:
+    branches:
+      - 'master'
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Build Project
+        run: ./gradlew assemble
+
+      - name: Run style check
+        run: ./gradlew ktlintCheck
+
+      - name: Run tests
+        run: ./gradlew testDebug --stacktrace
