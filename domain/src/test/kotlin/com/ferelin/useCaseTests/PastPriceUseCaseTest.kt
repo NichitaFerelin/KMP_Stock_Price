@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.interactorTests
+package com.ferelin.useCaseTests
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
-import com.ferelin.domain.interactors.PastPriceInteractor
 import com.ferelin.domain.repositories.PastPriceRepo
+import com.ferelin.domain.useCases.pastPrice.PastPriceGetAllByUseCase
 import com.ferelin.fakeData.FakeData
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -36,12 +36,12 @@ import javax.inject.Inject
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class PastPriceInteractorTest {
+class PastPriceUseCaseTest {
 
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var pastPriceInteractor: PastPriceInteractor
+    lateinit var pastPriceGetAllByUseCase: PastPriceGetAllByUseCase
 
     @Inject
     lateinit var pastPriceRepo: PastPriceRepo
@@ -64,7 +64,7 @@ class PastPriceInteractorTest {
     fun getAllBy() = testCoroutineDispatcher.runBlockingTest {
 
         pastPriceRepo.insertAll(FakeData.pastPrices)
-        val actual = pastPriceInteractor.getAllBy(FakeData.relationId)
+        val actual = pastPriceGetAllByUseCase.getAllBy(FakeData.relationId)
 
         Assert.assertEquals(FakeData.defaultSizeByRelationId, actual.size)
 

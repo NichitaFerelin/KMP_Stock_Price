@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.interactors
+package com.ferelin.domain.useCases.pastPrice
 
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.repositories.PastPriceRepo
@@ -28,23 +28,14 @@ import javax.inject.Inject
 import javax.inject.Named
 
 /**
- * [PastPriceInteractor] allows to interact with stock past prices
+ * [PastPriceLoadAllByUseCase] allows to interact with stock past prices
  * */
-class PastPriceInteractor @Inject constructor(
+class PastPriceLoadAllByUseCase @Inject constructor(
     private val pastPriceRepo: PastPriceRepo,
     private val pastPriceSource: PastPriceSource,
     private val dispatchersProvider: DispatchersProvider,
     @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
-    /**
-     * Get all cached past prices
-     * @param relationCompanyId is a company id for which need to get past prices
-     * @return list of cached past prices
-     * */
-    suspend fun getAllBy(relationCompanyId: Int): List<PastPrice> {
-        return pastPriceRepo.getAllBy(relationCompanyId)
-    }
-
     /**
      * Load past prices
      * @param relationCompanyId is a company id for which need to load past prices
@@ -55,19 +46,18 @@ class PastPriceInteractor @Inject constructor(
         relationCompanyId: Int,
         relationCompanyTicker: String
     ): LoadState<List<PastPrice>> {
-        return pastPriceSource.loadBy(relationCompanyId, relationCompanyTicker)
-            .also { cacheIfLoaded(it, relationCompanyId) }
-    }
+        return pastPriceSource
+            .loadBy(relationCompanyId, relationCompanyTicker)
+            .also { loadState ->
+                loadState.ifPrepared { preparedState ->
+                    externalScope.launch(dispatchersProvider.IO) {
 
-    private fun cacheIfLoaded(responseState: LoadState<List<PastPrice>>, relationCompanyId: Int) {
-        responseState.ifPrepared { preparedState ->
-            externalScope.launch(dispatchersProvider.IO) {
+                        // Erase previous
+                        pastPriceRepo.eraseBy(relationCompanyId)
 
-                // Erase previous past prices for free up space
-                pastPriceRepo.eraseBy(relationCompanyId)
-
-                pastPriceRepo.insertAll(preparedState.data)
+                        pastPriceRepo.insertAll(preparedState.data)
+                    }
+                }
             }
-        }
     }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.interactorTests
+package com.ferelin.useCaseTests
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.interactors.ProfileInteractor
-import com.ferelin.domain.repositories.ProfileRepo
+import com.ferelin.domain.repositories.NewsRepo
+import com.ferelin.domain.useCases.news.NewsGetAllByUseCase
+import com.ferelin.fakeData.FakeData
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -36,15 +36,15 @@ import javax.inject.Inject
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class ProfileInteractorTest {
+class NewsUseCaseTest {
 
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var profileInteractor: ProfileInteractor
+    lateinit var newsGetAllByUseCase: NewsGetAllByUseCase
 
     @Inject
-    lateinit var profileRepo: ProfileRepo
+    lateinit var newsRepo: NewsRepo
 
     @Before
     fun before() {
@@ -61,19 +61,16 @@ class ProfileInteractorTest {
     }
 
     @Test
-    fun getBy() = testCoroutineDispatcher.runBlockingTest {
-        val fakeProfiles = listOf(
-            Profile(0, "", "", "", "", "", ""),
-            Profile(2, "", "", "", "", "", ""),
-            Profile(3, "", "", "", "", "", ""),
-            Profile(4, "", "", "", "", "", ""),
-            Profile(5, "", "", "", "", "", ""),
-            Profile(6, "", "", "", "", "", ""),
-        )
+    fun getAllBy() = testCoroutineDispatcher.runBlockingTest {
 
-        profileRepo.insertAll(fakeProfiles)
+        newsRepo.insertAll(FakeData.news)
+        val actual = newsGetAllByUseCase.getAllBy(FakeData.relationId)
 
-        val actual = profileInteractor.getBy(2)
-        Assert.assertEquals(fakeProfiles[1], actual)
+        Assert.assertEquals(FakeData.defaultSizeByRelationId, actual.size)
+
+        actual.forEach {
+            val exists = FakeData.news.contains(it)
+            Assert.assertEquals(true, exists)
+        }
     }
 }

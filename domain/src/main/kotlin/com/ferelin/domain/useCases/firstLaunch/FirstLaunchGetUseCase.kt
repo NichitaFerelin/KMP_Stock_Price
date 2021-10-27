@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.interactors
+package com.ferelin.domain.useCases.firstLaunch
 
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.repositories.ProfileRepo
+import com.ferelin.domain.repositories.FirstLaunchRepo
 import javax.inject.Inject
 
 /**
- * [ProfileInteractor] allows to interactor with companies profile
+ * [FirstLaunchGetUseCase] allows to interact with first time application launch
  * */
-class ProfileInteractor @Inject constructor(
-    private val profileRepo: ProfileRepo
+class FirstLaunchGetUseCase @Inject constructor(
+    private val firstLaunchRepo: FirstLaunchRepo,
 ) {
+    private companion object {
+        const val DEFAULT_FIRST_LAUNCH_STATE = true
+    }
+
     /**
-     * Get profile
-     * @param relationCompanyId is a company for which need to get profile
-     * @return company profile
+     * Allows to get first time application launch
+     * @return first time application launch
      * */
-    suspend fun getBy(relationCompanyId: Int): Profile {
-        return profileRepo.getBy(relationCompanyId)
+    suspend fun get(): Boolean {
+        return firstLaunchRepo.get() ?: DEFAULT_FIRST_LAUNCH_STATE
     }
 }

@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.internals
+package com.ferelin.domain.useCases
 
-import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.AuthenticationListener
+import com.ferelin.domain.entities.Profile
+import com.ferelin.domain.repositories.ProfileRepo
+import javax.inject.Inject
 
 /**
- * For usage on the domain layer
+ * [ProfileGetByUseCase] allows to interactor with companies profile
  * */
-interface CompaniesInternal : AuthenticationListener, StockPriceListener
+class ProfileGetByUseCase @Inject constructor(
+    private val profileRepo: ProfileRepo
+) {
+    /**
+     * Get profile
+     * @param relationCompanyId is a company for which need to get profile
+     * @return company profile
+     * */
+    suspend fun getBy(relationCompanyId: Int): Profile {
+        return profileRepo.getBy(relationCompanyId)
+    }
+}

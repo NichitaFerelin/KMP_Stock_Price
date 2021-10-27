@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.internals
+package com.ferelin.domain.useCases.news
 
-import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.AuthenticationListener
+import com.ferelin.domain.entities.News
+import com.ferelin.domain.repositories.NewsRepo
+import javax.inject.Inject
 
 /**
- * For usage on the domain layer
+ * [NewsGetAllByUseCase] allows to interact with companies news
  * */
-interface CompaniesInternal : AuthenticationListener, StockPriceListener
+class NewsGetAllByUseCase @Inject constructor(
+    private val newsRepo: NewsRepo
+) {
+    /**
+     * Allows to get all cached news
+     * @param relationCompanyId is an company id for which need to get cached company news
+     * @return list of cached news
+     * */
+    suspend fun getAllBy(relationCompanyId: Int): List<News> {
+        return newsRepo.getAllBy(relationCompanyId)
+    }
+}

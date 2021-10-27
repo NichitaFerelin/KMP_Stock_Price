@@ -29,7 +29,7 @@ import javax.inject.Singleton
 class ScopeTestModule {
 
     @Provides
-    fun provideIoDispatcher() : DispatchersProvider {
+    fun provideTestDispatcher() : DispatchersProvider {
         return TestDispatchersProvider()
     }
 

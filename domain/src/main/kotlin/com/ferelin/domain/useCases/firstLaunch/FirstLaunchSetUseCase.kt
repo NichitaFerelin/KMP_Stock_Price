@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.interactors
+package com.ferelin.domain.useCases.firstLaunch
 
 import com.ferelin.domain.repositories.FirstLaunchRepo
 import com.ferelin.shared.DispatchersProvider
@@ -24,31 +24,19 @@ import javax.inject.Inject
 import javax.inject.Named
 
 /**
- * [FirstLaunchInteractor] allows to interact with first time application launch
+ * [FirstLaunchSetUseCase] allows to interact with first time application launch
  * */
-class FirstLaunchInteractor @Inject constructor(
-    private val mFirstLaunchRepo: FirstLaunchRepo,
-    private val mDispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val mExternalScope: CoroutineScope
+class FirstLaunchSetUseCase @Inject constructor(
+    private val firstLaunchRepo: FirstLaunchRepo,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) {
-    private companion object {
-        const val DEFAULT_FIRST_LAUNCH_STATE = true
-    }
-
-    /**
-     * Allows to get first time application launch
-     * @return first time application launch
-     * */
-    suspend fun get(): Boolean {
-        return mFirstLaunchRepo.get() ?: DEFAULT_FIRST_LAUNCH_STATE
-    }
-
     /**
      * Allows to cache first time launch state
      * */
-    suspend fun cache(isFirstLaunch: Boolean) {
-        mExternalScope.launch(mDispatchersProvider.IO) {
-            mFirstLaunchRepo.cache(isFirstLaunch)
+    suspend fun set(isFirstLaunch: Boolean) {
+        externalScope.launch(dispatchersProvider.IO) {
+            firstLaunchRepo.cache(isFirstLaunch)
         }
     }
 }

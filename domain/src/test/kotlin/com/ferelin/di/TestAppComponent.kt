@@ -17,14 +17,19 @@
 package com.ferelin.di
 
 import android.content.Context
+import com.ferelin.data_local.di.DataLocalModuleBinds
 import com.ferelin.di.modules.DataLocalTestModule
 import com.ferelin.di.modules.MockedEntitiesModule
 import com.ferelin.di.modules.ScopeTestModule
 import com.ferelin.domain.di.DomainBindsModule
 import com.ferelin.domain.di.DomainModule
-import com.ferelin.interactorTests.*
-import com.ferelin.data_local.di.DataLocalModuleBinds
+import com.ferelin.interactorTests.CompaniesInteractorTest
+import com.ferelin.interactorTests.SearchRequestsInteractorTest
 import com.ferelin.repoTests.*
+import com.ferelin.useCaseTests.FirstLaunchUseCaseTest
+import com.ferelin.useCaseTests.NewsUseCaseTest
+import com.ferelin.useCaseTests.PastPriceUseCaseTest
+import com.ferelin.useCaseTests.ProfileGetByUseCaseTest
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -48,11 +53,12 @@ interface TestAppComponent {
     }
 
     fun inject(companiesInteractorTest: CompaniesInteractorTest)
-    fun inject(firstLaunchInteractorTest: FirstLaunchInteractorTest)
-    fun inject(newsInteractorTest: NewsInteractorTest)
-    fun inject(pastPriceInteractorTest: PastPriceInteractorTest)
-    fun inject(profileInteractorTest: ProfileInteractorTest)
     fun inject(searchRequestsInteractorTest: SearchRequestsInteractorTest)
+
+    fun inject(firstLaunchUseCaseTest: FirstLaunchUseCaseTest)
+    fun inject(newsUseCaseTest: NewsUseCaseTest)
+    fun inject(pastPriceUseCaseTest: PastPriceUseCaseTest)
+    fun inject(profileUseCaseTest: ProfileGetByUseCaseTest)
 
     fun inject(companiesLocalRepoTest: CompaniesLocalRepoTest)
     fun inject(firstLaunchRepoTest: FirstLaunchRepoTest)

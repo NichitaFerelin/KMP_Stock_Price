@@ -23,7 +23,8 @@ import com.ferelin.core.params.NewsParams
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.domain.entities.News
-import com.ferelin.domain.interactors.NewsInteractor
+import com.ferelin.domain.useCases.news.NewsGetAllByUseCase
+import com.ferelin.domain.useCases.news.NewsLoadByUseCase
 import com.ferelin.feature_news.adapter.createNewsAdapter
 import com.ferelin.feature_news.mapper.NewsMapper
 import com.ferelin.feature_news.viewData.NewsViewData
@@ -38,7 +39,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class NewsViewModel @Inject constructor(
-    private val newsInteractor: NewsInteractor,
+    private val newsGetAllByUseCase: NewsGetAllByUseCase,
+    private val newsLoadByUseCase: NewsLoadByUseCase,
     private val newsMapper: NewsMapper,
     private val networkResolver: NetworkResolver,
     private val router: Router
@@ -92,13 +94,13 @@ class NewsViewModel @Inject constructor(
     }
 
     private suspend fun loadFromDb() {
-        newsInteractor
+        newsGetAllByUseCase
             .getAllBy(newsParams.companyId)
             .ifNotEmpty { dbNews -> onNewsChanged(dbNews) }
     }
 
     private suspend fun loadFromNetwork() {
-        newsInteractor
+        newsLoadByUseCase
             .loadBy(newsParams.companyId, newsParams.companyTicker)
             .let { remoteNewsState ->
                 if (remoteNewsState is LoadState.Prepared) {

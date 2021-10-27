@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.interactorTests
+package com.ferelin.useCaseTests
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
-import com.ferelin.domain.interactors.FirstLaunchInteractor
+import com.ferelin.domain.useCases.firstLaunch.FirstLaunchGetUseCase
+import com.ferelin.domain.useCases.firstLaunch.FirstLaunchSetUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.After
@@ -31,12 +32,15 @@ import javax.inject.Inject
 
 @Config(manifest = Config.NONE)
 // @RunWith(RobolectricTestRunner::class)
-class FirstLaunchInteractorTest {
+class FirstLaunchUseCaseTest {
 
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var firstLaunchInteractor: FirstLaunchInteractor
+    lateinit var firstLaunchSetUseCase: FirstLaunchSetUseCase
+
+    @Inject
+    lateinit var firstLaunchGetUseCase: FirstLaunchGetUseCase
 
     @Before
     fun before() {
