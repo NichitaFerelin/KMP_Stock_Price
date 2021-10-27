@@ -18,40 +18,24 @@ package com.ferelin.data_network_api.di
 
 import android.content.Context
 import com.ferelin.data_network_api.R
+import com.ferelin.data_network_api.delegates.RetrofitDelegate
 import com.ferelin.data_network_api.entities.NewsApi
 import com.ferelin.data_network_api.entities.PastPricesApi
 import com.ferelin.data_network_api.entities.StockPriceApi
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class NetworkApiModule {
 
-    @Provides
     @Singleton
-    fun provideRetrofit(@Named("FinnhubBaseUrl") finnhubUrl: String): Retrofit {
-        val moshi = Moshi
-            .Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-            .build()
-
-        return Retrofit.Builder()
-            .baseUrl(finnhubUrl)
-            .client(httpClient)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
+    @Provides
+    fun provideRetrofit(): Retrofit {
+        val retrofit by RetrofitDelegate
+        return retrofit
     }
 
     @Provides
@@ -69,21 +53,9 @@ class NetworkApiModule {
         return retrofit.create(PastPricesApi::class.java)
     }
 
-    @Provides
-    @Named("FinnhubWebSocketUrl")
-    fun provideFinnhubWebSocketUrl(): String {
-        return "wss://ws.finnhub.io?token="
-    }
-
-    @Provides
     @Named("FinnhubToken")
+    @Provides
     fun provideFinnhubToken(context: Context): String {
         return context.resources.getString(R.string.api_key)
-    }
-
-    @Provides
-    @Named("FinnhubBaseUrl")
-    fun provideFinnhubBaseUrl(): String {
-        return "https://finnhub.io/api/v1/"
     }
 }

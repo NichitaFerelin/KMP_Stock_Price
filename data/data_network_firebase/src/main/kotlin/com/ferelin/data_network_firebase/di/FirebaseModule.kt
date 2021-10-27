@@ -25,8 +25,8 @@ import javax.inject.Singleton
 @Module
 class FirebaseModule {
 
-    @Provides
     @Singleton
+    @Provides
     fun provideFirebaseReference() : DatabaseReference {
         return FirebaseDatabase.getInstance().reference
     }

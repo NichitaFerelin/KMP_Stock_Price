@@ -19,9 +19,7 @@ package com.ferelin.shared.di
 import com.ferelin.shared.DispatchersProvider
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Named
 import javax.inject.Singleton
@@ -30,19 +28,13 @@ import javax.inject.Singleton
 class ScopeModule {
 
     @Provides
-    @Named("ioDispatcher")
-    fun provideIoDispatcher(): CoroutineDispatcher {
-        return Dispatchers.IO
-    }
-
-    @Provides
     fun provideDispatchersProvider(): DispatchersProvider {
         return DispatchersProvider()
     }
 
-    @Provides
-    @Singleton
     @Named("ExternalScope")
+    @Singleton
+    @Provides
     fun provideExternalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
         return CoroutineScope(SupervisorJob() + dispatchersProvider.IO)
     }

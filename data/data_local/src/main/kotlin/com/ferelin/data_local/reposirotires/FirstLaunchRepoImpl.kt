@@ -19,7 +19,7 @@ package com.ferelin.data_local.reposirotires
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.ferelin.domain.repositories.FirstLaunchRepo
-import com.ferelin.data_local.utils.PreferencesProvider
+import com.ferelin.data_local.preferences.PreferencesProvider
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map

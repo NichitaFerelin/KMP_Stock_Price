@@ -16,6 +16,7 @@
 
 package com.ferelin.data_network_api.resolvers
 
+import com.ferelin.data_network_api.delegates.RetrofitDelegate
 import com.ferelin.data_network_api.entities.LivePrice
 import com.ferelin.data_network_api.utils.AppWebSocketListener
 import com.ferelin.shared.DispatchersProvider
@@ -36,7 +37,6 @@ import javax.inject.Singleton
 
 @Singleton
 class LivePriceSocketResolver @Inject constructor(
-    @Named("FinnhubWebSocketUrl") private val baseUrl: String,
     @Named("FinnhubToken") private val token: String,
     private val livePriceJsonResolver: LivePriceJsonResolver,
     private val dispatchersProvider: DispatchersProvider
@@ -75,7 +75,7 @@ class LivePriceSocketResolver @Inject constructor(
 
         val request = Request
             .Builder()
-            .url("$baseUrl$token")
+            .url(RetrofitDelegate.FINNHUB_WEB_SOCKET_URL + token)
             .build()
 
         val okHttp = OkHttpClient()

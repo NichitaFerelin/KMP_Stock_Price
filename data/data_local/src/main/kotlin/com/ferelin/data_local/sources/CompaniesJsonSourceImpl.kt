@@ -17,26 +17,28 @@
 package com.ferelin.data_local.sources
 
 import android.content.Context
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.sources.CompaniesJsonSource
 import com.ferelin.data_local.mappers.CompanyMapper
 import com.ferelin.data_local.mappers.ProfileMapper
 import com.ferelin.data_local.utils.CompanyPojo
+import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.Profile
+import com.ferelin.domain.sources.CompaniesJsonSource
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class CompaniesJsonSourceImpl @Inject constructor(
-    @Named("CompaniesJsonFileName") private val companiesJsonFileName: String,
     private val context: Context,
     private val companyMapper: CompanyMapper,
     private val profileMapper: ProfileMapper
 ) : CompaniesJsonSource {
+
+    companion object {
+        private const val companiesJsonFileName = "companies.json"
+    }
 
     private val moshi by lazy(LazyThreadSafetyMode.NONE) {
         Moshi

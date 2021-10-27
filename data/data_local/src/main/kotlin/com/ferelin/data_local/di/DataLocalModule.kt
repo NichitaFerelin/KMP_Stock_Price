@@ -17,23 +17,18 @@
 package com.ferelin.data_local.di
 
 import android.content.Context
-import androidx.room.Room
 import com.ferelin.data_local.database.*
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class DataLocalModule {
 
-    @Provides
     @Singleton
+    @Provides
     fun provideAppDatabase(context: Context): AppDatabase {
-        return Room
-            .databaseBuilder(context, AppDatabase::class.java, AppDatabase.DB_NAME)
-            .fallbackToDestructiveMigration()
-            .build()
+        return AppDatabase.buildDatabase(context)
     }
 
     @Provides
@@ -64,17 +59,5 @@ class DataLocalModule {
     @Provides
     fun provideSearchRequestsDao(appDatabase: AppDatabase): SearchRequestsDao {
         return appDatabase.searchRequestsDao()
-    }
-
-    @Provides
-    @Named("PreferencesName")
-    fun providePreferencesName(): String {
-        return "stock.price.preferences"
-    }
-
-    @Provides
-    @Named("CompaniesJsonFileName")
-    fun provideCompaniesJsonFileName(): String {
-        return "companies.json"
     }
 }

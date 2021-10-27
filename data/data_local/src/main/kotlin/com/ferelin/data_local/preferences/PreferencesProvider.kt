@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.ferelin.data_local.utils
+package com.ferelin.data_local.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -29,11 +28,14 @@ import javax.inject.Singleton
  * */
 @Singleton
 class PreferencesProvider @Inject constructor(
-    private val context: Context,
-    @Named("PreferencesName") preferencesName: String
+    private val context: Context
 ) {
-    private val Context.dataStore by preferencesDataStore(preferencesName)
+    private val Context.dataStore by preferencesDataStore(prefsName)
 
     val dataStore: DataStore<Preferences>
         get() = context.dataStore
+
+    companion object {
+        private const val prefsName = "stock.price.preferences"
+    }
 }
