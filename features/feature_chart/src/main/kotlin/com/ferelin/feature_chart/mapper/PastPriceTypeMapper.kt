@@ -16,12 +16,12 @@
 
 package com.ferelin.feature_chart.mapper
 
+import com.ferelin.core.view.chart.ChartPastPrices
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.feature_chart.utils.extractPrice
 import com.ferelin.feature_chart.utils.parseMonthFromDate
 import com.ferelin.feature_chart.utils.parseYearFromDate
 import com.ferelin.feature_chart.utils.sum
-import com.ferelin.core.view.chart.ChartPastPrices
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.shared.toStrPrice
 import javax.inject.Inject
@@ -55,13 +55,13 @@ class PastPriceTypeMapper @Inject constructor() {
         val startYear = parseYearFromDate(pastPrices[0].date)
         val startDate = "$startMonth $startYear"
 
-        val endMonth = parseMonthFromDate(pastPrices[1].date)
-        val endYear = parseYearFromDate(pastPrices[1].date)
+        val endMonth = parseMonthFromDate(pastPrices.last().date)
+        val endYear = parseYearFromDate(pastPrices.last().date)
         val endDate = "$endMonth $endYear"
 
         return ChartPastPrices(
-            prices = listOf(pastPrices[0].closePrice, pastPrices[1].closePrice),
-            pricesStr = listOf(pastPrices[0].closePriceStr, pastPrices[1].closePriceStr),
+            prices = listOf(pastPrices[0].closePrice, pastPrices.last().closePrice),
+            pricesStr = listOf(pastPrices[0].closePriceStr, pastPrices.last().closePriceStr),
             dates = listOf(startDate, endDate)
         )
     }
