@@ -23,7 +23,8 @@ import javax.inject.Inject
 
 enum class OptionType {
     AUTH,
-    CLEAR_DATA
+    CLEAR_DATA,
+    SOURCE_CODE
 }
 
 class MenuOptionsProvider @Inject constructor(
@@ -48,6 +49,13 @@ class MenuOptionsProvider @Inject constructor(
                 title = context.getString(R.string.titleClearData),
                 source = context.getString(R.string.sourceClearData),
                 iconRes = R.drawable.ic_delete
+            ),
+            OptionViewData(
+                id = 2,
+                type = OptionType.SOURCE_CODE,
+                title = context.getString(R.string.titleSourceCode),
+                source = context.getString(R.string.sourceDownload),
+                iconRes = R.drawable.ic_download
             )
         )
     }

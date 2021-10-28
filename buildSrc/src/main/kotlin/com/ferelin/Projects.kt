@@ -26,7 +26,8 @@ object Projects {
 
     const val dataLocal = ":data:data_local"
     const val dataNetworkApi = ":data:data_network_api"
-    const val dataFirebase = ":data:data_network_firebase"
+    const val dataNetworkFirebase = ":data:data_network_firebase"
+    const val dataNetworkDownloader = ":data:data_network_downloader"
 
     const val featureChart = ":features:feature_chart"
     const val featureForecasts = ":features:feature_forecasts"

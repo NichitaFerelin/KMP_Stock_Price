@@ -16,9 +16,12 @@
 
 package com.ferelin.feature_settings.view
 
+import android.content.ActivityNotFoundException
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
@@ -48,6 +51,12 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     private val viewModel: SettingsViewModel by viewModels(
         factoryProducer = { viewModelFactory }
     )
+
+    private val askForPath = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { resultUri ->
+        viewModel.onPathSelected(resultUri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,8 +112,33 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                     Event.DATA_CLEARED -> {
                         showTempSnackbar(getString(R.string.messageDataCleared))
                     }
+                    Event.ASK_FOR_PATH -> {
+                        launchAskPath()
+                    }
+                    Event.DOWNLOAD_PATH_ERROR -> {
+                        showActionSnackbar(
+                            getString(R.string.errorPath),
+                            getString(R.string.hintChoose)
+                        ) {
+                            launchAskPath()
+                        }
+                    }
+                    Event.DOWNLOAD_STARTING -> {
+                        showTempSnackbar(getString(R.string.messageDownloadingWillStart))
+                    }
+                    Event.DOWNLOAD_WILL_BE_STARTED -> {
+                        showTempSnackbar(getString(R.string.messageDownloadingNoNetwork))
+                    }
                 }
             }
+        }
+    }
+
+    private fun launchAskPath() {
+        try {
+            askForPath.launch(Uri.EMPTY)
+        } catch (exception: ActivityNotFoundException) {
+            showTempSnackbar(getString(R.string.errorNoAppToResolve))
         }
     }
 

@@ -16,36 +16,53 @@
 
 package com.ferelin.feature_settings.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.adapter.options.createOptionsAdapter
+import com.ferelin.core.resolvers.LocalFilesResolver
 import com.ferelin.core.resolvers.NetworkResolver
+import com.ferelin.core.resolvers.NotificationsResolver
 import com.ferelin.core.utils.MenuOptionsProvider
 import com.ferelin.core.utils.OptionType
 import com.ferelin.core.viewData.OptionViewData
 import com.ferelin.domain.interactors.AuthenticationInteractor
+import com.ferelin.domain.interactors.StoragePathInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
+import com.ferelin.domain.useCases.DownloadProjectUseCase
 import com.ferelin.navigation.Router
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 enum class Event {
     LOG_OUT_COMPLETE,
+
     DATA_CLEARED,
-    DATA_CLEARED_NO_NETWORK
+    DATA_CLEARED_NO_NETWORK,
+
+    DOWNLOAD_PATH_ERROR,
+    DOWNLOAD_STARTING,
+    DOWNLOAD_WILL_BE_STARTED,
+
+    ASK_FOR_PATH
 }
 
 class SettingsViewModel @Inject constructor(
     private val authenticationInteractor: AuthenticationInteractor,
     private val companiesInteractor: CompaniesInteractor,
     private val searchRequestsInteractor: SearchRequestsInteractor,
+    private val storagePathInteractor: StoragePathInteractor,
+    private val downloadProjectUseCase: DownloadProjectUseCase,
     private val networkResolver: NetworkResolver,
+    private val notificationsResolver: NotificationsResolver,
+    private val localFilesResolver: LocalFilesResolver,
     private val router: Router,
     private val menuOptionsProvider: MenuOptionsProvider
 ) : ViewModel() {
@@ -77,11 +94,26 @@ class SettingsViewModel @Inject constructor(
         router.back()
     }
 
+    fun onPathSelected(uri: Uri) {
+        viewModelScope.launch {
+            val path = uri.path
+            val authority = uri.authority
+
+            if (path == null || authority == null) {
+                _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
+                return@launch
+            }
+
+            initSourceProjectDownload(path, authority)
+        }
+    }
+
     private fun onOptionClick(optionViewData: OptionViewData) {
         viewModelScope.launch {
             when (optionViewData.type) {
                 OptionType.AUTH -> onAuthClick()
                 OptionType.CLEAR_DATA -> onClearClick()
+                OptionType.SOURCE_CODE -> onSourceClick()
             }
         }
     }
@@ -89,6 +121,7 @@ class SettingsViewModel @Inject constructor(
     private suspend fun onAuthClick() {
         if (authenticationInteractor.isUserAuthenticated()) {
             authenticationInteractor.logOut()
+
             val updatedMenuOptions = menuOptionsProvider.buildMenuOptions(false)
 
             withContext(Dispatchers.Main) {
@@ -113,5 +146,49 @@ class SettingsViewModel @Inject constructor(
             Event.DATA_CLEARED_NO_NETWORK
         }
         _messageEvent.emit(event)
+    }
+
+    private suspend fun onSourceClick() {
+        val storagePath = storagePathInteractor.getSelectedStoragePath()
+        val pathAuthority = storagePathInteractor.getStoragePathAuthority()
+
+        if (storagePath == null || pathAuthority == null) {
+            _messageEvent.emit(Event.ASK_FOR_PATH)
+        } else {
+            initSourceProjectDownload(storagePath, pathAuthority)
+        }
+    }
+
+    private suspend fun initSourceProjectDownload(storagePath: String, pathAuthority: String) {
+        val destinationFile = localFilesResolver.buildDocumentFile(storagePath, pathAuthority)
+
+        if (destinationFile != null) {
+            val path = localFilesResolver.buildFilePath(destinationFile) +
+                    "/${StoragePathInteractor.SOURCE_CODE_FILE_NAME}.zip"
+            val resultFile = File(path)
+
+            cachePathIfNotExists(path, storagePath)
+
+            if (networkResolver.isNetworkAvailable) {
+                _messageEvent.emit(Event.DOWNLOAD_STARTING)
+            } else {
+                _messageEvent.emit(Event.DOWNLOAD_WILL_BE_STARTED)
+            }
+
+            downloadProjectUseCase.download(
+                resultFile,
+                notificationsResolver.downloadTitle,
+                notificationsResolver.downloadDescription
+            )
+        } else {
+            _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
+        }
+    }
+
+    private suspend fun cachePathIfNotExists(storagePath: String, pathAuthority: String) {
+        if (storagePathInteractor.getSelectedStoragePath() == null) {
+            storagePathInteractor.setSelectedStoragePath(storagePath)
+            storagePathInteractor.setStoragePathAuthority(pathAuthority)
+        }
     }
 }

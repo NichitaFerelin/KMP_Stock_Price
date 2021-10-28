@@ -16,12 +16,12 @@
 
 package com.ferelin.data_local.di
 
+import com.ferelin.data_local.reposirotires.*
+import com.ferelin.data_local.sources.CompaniesJsonSourceImpl
 import com.ferelin.domain.repositories.*
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.sources.CompaniesJsonSource
-import com.ferelin.data_local.reposirotires.*
-import com.ferelin.data_local.sources.CompaniesJsonSourceImpl
 import dagger.Binds
 import dagger.Module
 
@@ -55,4 +55,7 @@ interface DataLocalModuleBinds {
     fun provideCompaniesJsonSource(
         companiesJsonSourceImpl: CompaniesJsonSourceImpl
     ): CompaniesJsonSource
+
+    @Binds
+    fun provideStoragePathRepo(storagePathRepoImpl: StoragePathRepoImpl) : StoragePathRepo
 }

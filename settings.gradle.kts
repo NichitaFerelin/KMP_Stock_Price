@@ -8,6 +8,7 @@ include(
     ":data:data_local",
     ":data:data_network_api",
     ":data:data_network_firebase",
+    ":data:data_network_downloader",
     ":shared",
     ":features:feature_news",
     ":features:feature_profile",

@@ -49,8 +49,9 @@ dependencies {
 
     implementation(project(Projects.auth))
     implementation(project(Projects.dataLocal))
-    implementation(project(Projects.dataFirebase))
+    implementation(project(Projects.dataNetworkFirebase))
     implementation(project(Projects.dataNetworkApi))
+    implementation(project(Projects.dataNetworkDownloader))
     implementation(project(Projects.core))
 
     implementation(project(Projects.featureChart))

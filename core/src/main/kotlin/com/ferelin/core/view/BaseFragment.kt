@@ -77,6 +77,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
             .show()
     }
 
+    fun showActionSnackbar(message: String, actionMessage: String, action: () -> Unit) {
+        Snackbar
+            .make(viewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
+            .setAction(actionMessage) { action.invoke() }
+            .show()
+    }
+
     fun showTempSnackbar(message: String) {
         Snackbar
             .make(viewBinding.root, message, Snackbar.LENGTH_LONG)
