@@ -16,13 +16,14 @@
 
 package com.ferelin.feature_search.mapper
 
-import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.feature_search.viewData.SearchViewData
 import javax.inject.Inject
 
 class SearchRequestMapper @Inject constructor() {
 
-    fun map(searchRequest: SearchRequest): SearchViewData {
-        return SearchViewData(searchRequest.id, searchRequest.request)
+    fun map(searchRequests: Set<String>): List<SearchViewData> {
+        return searchRequests.mapIndexed { index, request ->
+            SearchViewData(id = index, text = request)
+        }
     }
 }

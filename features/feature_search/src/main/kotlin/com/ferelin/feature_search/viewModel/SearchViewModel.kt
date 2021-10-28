@@ -24,7 +24,6 @@ import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.StocksMode
-import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
@@ -73,21 +72,19 @@ class SearchViewModel @Inject constructor(
 
     var transitionState = SearchFragment.TRANSITION_START
 
-    val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>>
-            by lazy(LazyThreadSafetyMode.NONE) {
-                searchRequestsInteractor
-                    .searchRequestsState
-                    .onEach {
-                        if (it is LoadState.Prepared) {
-                            onSearchRequestsChanged(it.data)
-                        }
-                    }
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT),
-                        LoadState.None()
-                    )
+    val searchRequestsState: StateFlow<LoadState<Set<String>>> by lazy(LazyThreadSafetyMode.NONE) {
+        searchRequestsInteractor.searchRequestsState
+            .onEach {
+                if (it is LoadState.Prepared) {
+                    onSearchRequestsChanged(it.data)
+                }
             }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT),
+                LoadState.None()
+            )
+    }
 
     val searchRequestsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
@@ -171,16 +168,16 @@ class SearchViewModel @Inject constructor(
         } ?: emptyList()
     }
 
-    private suspend fun onSearchRequestsChanged(searchRequests: List<SearchRequest>) {
-        val mappedRequests = searchRequests.map(searchRequestMapper::map)
+    private suspend fun onSearchRequestsChanged(searchRequests: Set<String>) {
+        val mappedRequests = searchRequestMapper.map(searchRequests).reversed()
 
         withContext(Dispatchers.Main) {
             searchRequestsAdapter.setData(mappedRequests)
         }
     }
 
-    private suspend fun onPopularSearchRequestsChanged(searchRequests: List<SearchRequest>) {
-        val mappedRequests = searchRequests.map(searchRequestMapper::map)
+    private suspend fun onPopularSearchRequestsChanged(searchRequests: Set<String>) {
+        val mappedRequests = searchRequestMapper.map(searchRequests)
         mPopularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
 
         withContext(Dispatchers.Main) {

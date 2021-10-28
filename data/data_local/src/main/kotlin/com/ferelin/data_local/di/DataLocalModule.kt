@@ -55,9 +55,4 @@ class DataLocalModule {
     fun provideStockPriceDao(appDatabase: AppDatabase): StockPriceDao {
         return appDatabase.stockPriceDao()
     }
-
-    @Provides
-    fun provideSearchRequestsDao(appDatabase: AppDatabase): SearchRequestsDao {
-        return appDatabase.searchRequestsDao()
-    }
 }

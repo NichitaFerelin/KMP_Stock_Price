@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.data_local.mappers
+package com.ferelin.data_local.database
 
-import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.data_local.entities.SearchRequestDBO
-import javax.inject.Inject
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
-class SearchRequestMapper @Inject constructor() {
+class AppDatabaseMigrations {
 
-    fun map(searchRequest: SearchRequest): SearchRequestDBO {
-        return SearchRequestDBO(
-            id = searchRequest.id,
-            request = searchRequest.request
-        )
-    }
+    companion object {
 
-    fun map(searchRequestDBO: SearchRequestDBO): SearchRequest {
-        return SearchRequest(
-            id = searchRequestDBO.id,
-            request = searchRequestDBO.request
-        )
+        val migration_1_to_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE search_requests")
+            }
+        }
     }
 }

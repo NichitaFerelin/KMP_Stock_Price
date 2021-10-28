@@ -65,6 +65,5 @@ interface TestAppComponent {
     fun inject(newsRepoTest: NewsRepoTest)
     fun inject(pastPriceRepoTest: PastPriceRepoTest)
     fun inject(profileRepoTest: ProfileRepoTest)
-    fun inject(searchRequestsLocalRepoTest: SearchRequestsLocalRepoTest)
     fun inject(stockPriceRepoTest: StockPriceRepoTest)
 }

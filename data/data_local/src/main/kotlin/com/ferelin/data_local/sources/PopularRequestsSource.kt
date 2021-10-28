@@ -16,33 +16,31 @@
 
 package com.ferelin.data_local.sources
 
-import com.ferelin.domain.entities.SearchRequest
-
 object PopularRequestsSource {
 
     // Free version of the API does not provide popular stock requests
     // Hardcoded items
-    val popularSearchRequests = listOf(
-        SearchRequest(0, "Apple"),
-        SearchRequest(1, "Microsoft Corp"),
-        SearchRequest(2, "Amazon.com"),
-        SearchRequest(3, "Alphabet"),
-        SearchRequest(4, "JD.com"),
-        SearchRequest(5, "Tesla"),
-        SearchRequest(6, "Facebook"),
-        SearchRequest(7, "Telefonaktiebolaget"),
-        SearchRequest(8, "NVIDIA"),
-        SearchRequest(9, "Beigene"),
-        SearchRequest(10, "Intel"),
-        SearchRequest(11, "Netflix"),
-        SearchRequest(12, "Adobe"),
-        SearchRequest(13, "Cisco"),
-        SearchRequest(14, "Yandex"),
-        SearchRequest(15, "Zoom"),
-        SearchRequest(16, "Starbucks"),
-        SearchRequest(17, "Charter"),
-        SearchRequest(18, "Sanofi"),
-        SearchRequest(19, "Amgen"),
-        SearchRequest(20, "Pepsi")
+    val popularSearchRequests = setOf(
+        "Apple",
+        "Microsoft Corp",
+        "Amazon.com",
+        "Alphabet",
+        "JD.com",
+        "Tesla",
+        "Facebook",
+        "Telefonaktiebolaget",
+        "NVIDIA",
+        "Beigene",
+        "Intel",
+        "Netflix",
+        "Adobe",
+        "Cisco",
+        "Yandex",
+        "Zoom",
+        "Starbucks",
+        "Charter",
+        "Sanofi",
+        "Amgen",
+        "Pepsi"
     )
 }

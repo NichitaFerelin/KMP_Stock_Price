@@ -16,49 +16,59 @@
 
 package com.ferelin.data_network_firebase.syncers
 
-import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
-import com.ferelin.data_network_firebase.utils.itemsNotIn
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.ifPrepared
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class SearchRequestsSyncerImpl @Inject constructor(
     private val searchRequestsRemoteRepo: SearchRequestsRemoteRepo,
-    private val dispatchersProvider: DispatchersProvider
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope
 ) : SearchRequestsSyncer {
 
     private var isDataSynchronized: Boolean = false
 
-    override suspend fun initDataSync(
+    override suspend fun sync(
         userToken: String,
-        sourceRequests: List<SearchRequest>
-    ): List<SearchRequest> {
+        sourceRequests: Set<String>
+    ): Set<String> {
         Timber.d(
             "init data sync (is data synchronized = $isDataSynchronized, " +
                     "source requests size = ${sourceRequests.size}"
         )
 
         if (isDataSynchronized) {
-            return emptyList()
+            return emptySet()
         }
 
+        // First load remote requests
         val remoteRequestsState = withContext(dispatchersProvider.IO) {
             searchRequestsRemoteRepo.loadAll(userToken).firstOrNull()
         }
 
+        // If remote requests exists
         return remoteRequestsState?.ifPrepared { preparedState ->
             val remoteRequests = preparedState.data
-            syncCloudDb(userToken, sourceRequests, remoteRequests)
 
-            remoteRequests.itemsNotIn(sourceRequests)
-        } ?: emptyList()
+            // Find difference between source and remote requests
+            insertMissingItemsToRemote(userToken, sourceRequests, remoteRequests)
+
+            // Return items that not exists at source requests
+            remoteRequests
+                .filterNot { sourceRequests.contains(it) }
+                .toSet()
+
+        } ?: emptySet()
     }
 
     override fun invalidate() {
@@ -66,30 +76,20 @@ class SearchRequestsSyncerImpl @Inject constructor(
         isDataSynchronized = false
     }
 
-    private suspend fun syncCloudDb(
+    private suspend fun insertMissingItemsToRemote(
         userToken: String,
-        sourceRequests: List<SearchRequest>,
-        remoteRequests: List<SearchRequest>
-    ): Unit = withContext(dispatchersProvider.IO) {
-
-        // Source requests list is reversed.
-        // To avoid rewriting the query on the cloud database, instead of adding it,
-        // needs to change its id to a unique one
-        val lastRemoteId = remoteRequests.lastOrNull()?.id ?: 0
-        val lastSourceId = sourceRequests.firstOrNull()?.id ?: 0
-
-        var lastId = if (lastRemoteId > lastSourceId) {
-            lastRemoteId
-        } else {
-            lastSourceId
-        }
-
+        sourceRequests: Set<String>,
+        remoteRequests: Set<String>
+    ) {
         sourceRequests
-            .itemsNotIn(remoteRequests)
-            .forEach {
-                it.id = ++lastId
-                searchRequestsRemoteRepo.insert(userToken, it)
+            .asSequence()
+            .filterNot { remoteRequests.contains(it) }
+            .onEach {
+                externalScope.launch(dispatchersProvider.IO) {
+                    searchRequestsRemoteRepo.insert(userToken, it)
+                }
             }
+            .toList()
 
         isDataSynchronized = true
     }

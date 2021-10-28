@@ -16,23 +16,16 @@
 
 package com.ferelin.domain.repositories.searchRequests
 
-import com.ferelin.domain.entities.SearchRequest
-
 /**
  * [SearchRequestsLocalRepo] allows to interact with search requests local database
  * */
 interface SearchRequestsLocalRepo {
 
-    suspend fun insert(searchRequest: SearchRequest)
+    suspend fun insert(searchRequests: Set<String>)
 
-    suspend fun getAll() : List<SearchRequest>
+    suspend fun getAll(): Set<String>
 
-    suspend fun getAllPopular() : List<SearchRequest>
+    suspend fun getAllPopular(): Set<String>
 
-    /**
-     * Erases all cached search requests from local database
-     * */
     suspend fun eraseAll()
-
-    suspend fun erase(searchRequest: SearchRequest)
 }

@@ -16,40 +16,46 @@
 
 package com.ferelin.data_local.reposirotires
 
-import com.ferelin.domain.entities.SearchRequest
-import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
-import com.ferelin.data_local.database.SearchRequestsDao
-import com.ferelin.data_local.mappers.SearchRequestMapper
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.ferelin.data_local.preferences.PreferencesProvider
 import com.ferelin.data_local.sources.PopularRequestsSource
+import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRequestsRepoImpl @Inject constructor(
-    private val searchRequestsDao: SearchRequestsDao,
-    private val searchRequestsMapper: SearchRequestMapper,
+    private val preferencesProvider: PreferencesProvider,
     private val dispatchersProvider: DispatchersProvider
 ) : SearchRequestsLocalRepo {
 
-    override suspend fun insert(searchRequest: SearchRequest): Unit =
-        withContext(dispatchersProvider.IO) {
-            Timber.d("insert (search request = $searchRequest)")
+    private companion object {
+        val searchRequestsKey = stringSetPreferencesKey("search-requests")
+    }
 
-            val searchRequestDBO = searchRequestsMapper.map(searchRequest)
-            searchRequestsDao.insert(searchRequestDBO)
+    override suspend fun insert(searchRequests: Set<String>): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("insert (search requests size = ${searchRequests.size})")
+
+            preferencesProvider.dataStore.edit {
+                it[searchRequestsKey] = searchRequests
+            }
         }
 
-    override suspend fun getAll(): List<SearchRequest> =
+    override suspend fun getAll(): Set<String> =
         withContext(dispatchersProvider.IO) {
             Timber.d("get all")
 
-            return@withContext searchRequestsDao
-                .getAll()
-                .map(searchRequestsMapper::map)
+            return@withContext preferencesProvider.dataStore.data.map {
+                it[searchRequestsKey]
+            }.firstOrNull() ?: emptySet()
         }
 
-    override suspend fun getAllPopular(): List<SearchRequest> {
+    override suspend fun getAllPopular(): Set<String> {
         Timber.d("get all popular")
 
         return PopularRequestsSource.popularSearchRequests
@@ -59,14 +65,8 @@ class SearchRequestsRepoImpl @Inject constructor(
         withContext(dispatchersProvider.IO) {
             Timber.d("erase all")
 
-            searchRequestsDao.eraseAll()
-        }
-
-    override suspend fun erase(searchRequest: SearchRequest): Unit =
-        withContext(dispatchersProvider.IO) {
-            Timber.d("erase (searchRequest = $searchRequest)")
-
-            val searchRequestDBO = searchRequestsMapper.map(searchRequest)
-            searchRequestsDao.erase(searchRequestDBO)
+            preferencesProvider.dataStore.edit {
+                it[searchRequestsKey] = setOf()
+            }
         }
 }

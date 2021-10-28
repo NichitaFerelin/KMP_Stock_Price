@@ -16,7 +16,6 @@
 
 package com.ferelin.domain.interactors.searchRequests
 
-import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.sources.AuthenticationSource
@@ -43,31 +42,22 @@ class SearchRequestsInteractorImpl @Inject constructor(
     @Named("ExternalScope") private val externalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
-    private val _searchRequestsState =
-        MutableStateFlow<LoadState<List<SearchRequest>>>(LoadState.None())
-    override val searchRequestsState: StateFlow<LoadState<List<SearchRequest>>> =
+    private val _searchRequestsState = MutableStateFlow<LoadState<Set<String>>>(LoadState.None())
+    override val searchRequestsState: StateFlow<LoadState<Set<String>>> =
         _searchRequestsState.asStateFlow()
 
-    private var popularRequestsState: LoadState<List<SearchRequest>> = LoadState.None()
+    private var popularRequestsState: LoadState<Set<String>> = LoadState.None()
 
     private var cacheJob: Job? = null
 
-    private companion object {
-        const val CACHED_REQUESTS_LIMIT = 30
-    }
-
-    override suspend fun getAll(): List<SearchRequest> {
+    override suspend fun getAll(): Set<String> {
         _searchRequestsState.value.ifPrepared { preparedState ->
             return preparedState.data
         }
 
         _searchRequestsState.value = LoadState.Loading()
 
-        // Recently created requests should be first in the list
-        val dbRequests = searchRequestsLocalRepo
-            .getAll()
-            .sortedByDescending { it.id }
-
+        val dbRequests = searchRequestsLocalRepo.getAll()
         _searchRequestsState.value = LoadState.Prepared(dbRequests)
 
         externalScope.launch(dispatchersProvider.IO) {
@@ -77,7 +67,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
         return dbRequests
     }
 
-    override suspend fun getAllPopular(): List<SearchRequest> {
+    override suspend fun getAllPopular(): Set<String> {
         popularRequestsState.ifPrepared { preparedState ->
             return preparedState.data
         }
@@ -88,71 +78,46 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .also { popularRequestsState = LoadState.Prepared(it) }
     }
 
-    override suspend fun cache(searchText: String): Unit =
-        withContext(dispatchersProvider.IO) {
+    override suspend fun cache(searchRequest: String) {
+        cacheJob?.join()
+        cacheJob = externalScope.launch(dispatchersProvider.IO) {
+            _searchRequestsState.value.ifPrepared { preparedState ->
 
-            // New Search Request item ID creates sequentially
-            // So that there are no duplicates it is necessary to wait for job
-            cacheJob?.join()
-            cacheJob = externalScope.launch(dispatchersProvider.IO) {
-                _searchRequestsState.value.ifPrepared { preparedState ->
+                val updatedSearchRequests = removeDuplicates(
+                    sourceRequests = preparedState.data,
+                    newSearchRequest = searchRequest
+                )
+                updatedSearchRequests.add(searchRequest)
 
-                    // Last created item is first at list
-                    // Next id is creates by previous one
-                    val searchRequest = SearchRequest(
-                        id = preparedState.data.firstOrNull()?.id?.plus(1) ?: 0,
-                        request = searchText
-                    )
+                searchRequestsLocalRepo.insert(updatedSearchRequests)
 
-                    val updatedSearchRequests = removeDuplicates(
-                        sourceRequests = preparedState.data,
-                        newSearchRequest = searchRequest
-                    )
-                    updatedSearchRequests.add(0, searchRequest)
-
-                    if (updatedSearchRequests.size > CACHED_REQUESTS_LIMIT) {
-                        reduceRequestsToLimit(updatedSearchRequests)
-                    }
-
-                    _searchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
-
-                    searchRequestsLocalRepo.insert(searchRequest)
-
-                    // TODO Rewrites requests at cloud DB
-                    // TODO ID's inconsistency
-                    authenticationSource.getUserToken()?.let { userToken ->
-                        searchRequestsRemoteRepo.insert(userToken, searchRequest)
-                    }
+                authenticationSource.getUserToken()?.let { userToken ->
+                    searchRequestsRemoteRepo.insert(userToken, searchRequest)
                 }
+
+                _searchRequestsState.value = LoadState.Prepared(updatedSearchRequests)
             }
         }
-
-    private suspend fun reduceRequestsToLimit(requests: MutableList<SearchRequest>) =
-        withContext(dispatchersProvider.IO) {
-            val removedRequest = requests.removeLast()
-            launch { erase(removedRequest) }
-        }
+    }
 
     private suspend fun removeDuplicates(
-        sourceRequests: List<SearchRequest>,
-        newSearchRequest: SearchRequest
-    ): MutableList<SearchRequest> = withContext(dispatchersProvider.IO) {
+        sourceRequests: Set<String>,
+        newSearchRequest: String
+    ): MutableSet<String> = withContext(dispatchersProvider.IO) {
 
-        val noDuplicatesRequests = sourceRequests.toMutableList()
-        val newRequestLower = newSearchRequest.request.lowercase()
+        val noDuplicatesRequests = sourceRequests.toMutableSet()
+        val newRequestLower = newSearchRequest.lowercase()
 
         noDuplicatesRequests
-            .toList()
+            // avoid concurrency exception
+            .toSet()
             .asSequence()
-            .filter { previousRequest ->
-                newRequestLower.contains(previousRequest.request.lowercase())
+            .filter { newRequestLower.contains(it.lowercase()) }
+            .onEach { requestToRemove ->
+                noDuplicatesRequests.remove(requestToRemove)
+                launch { erase(noDuplicatesRequests, requestToRemove) }
             }
-            .onEachIndexed { index, requestToRemove ->
-                launch { erase(requestToRemove) }
-
-                noDuplicatesRequests.removeAt(index)
-            }
-            .toList()
+            .toSet()
 
         noDuplicatesRequests
     }
@@ -186,12 +151,12 @@ class SearchRequestsInteractorImpl @Inject constructor(
                 searchRequestsRemoteRepo.eraseAll(userToken)
             }
 
-            _searchRequestsState.value = LoadState.Prepared(emptyList())
+            _searchRequestsState.value = LoadState.Prepared(emptySet())
         }
     }
 
-    private suspend fun erase(searchRequest: SearchRequest) {
-        searchRequestsLocalRepo.erase(searchRequest)
+    private suspend fun erase(resultItems: Set<String>, searchRequest: String) {
+        searchRequestsLocalRepo.insert(resultItems)
 
         authenticationSource.getUserToken()?.let { userToken ->
             searchRequestsRemoteRepo.erase(userToken, searchRequest)
@@ -202,11 +167,10 @@ class SearchRequestsInteractorImpl @Inject constructor(
         _searchRequestsState.value.ifPrepared { preparedState ->
             authenticationSource.getUserToken()?.let { userToken ->
 
-                searchRequestsSyncer
-                    .initDataSync(userToken, preparedState.data)
-                    .forEach { remoteSearchRequest ->
-                        cache(remoteSearchRequest.request)
-                    }
+                val remoteSearchRequests = searchRequestsSyncer.sync(userToken, preparedState.data)
+                remoteSearchRequests.forEach { remoteSearchRequest ->
+                    cache(remoteSearchRequest)
+                }
             }
         }
     }

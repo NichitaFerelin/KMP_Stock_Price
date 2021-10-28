@@ -16,7 +16,6 @@
 
 package com.ferelin.data_network_firebase.repositories
 
-import com.ferelin.domain.entities.SearchRequest
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
@@ -34,42 +33,50 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
 ) : SearchRequestsRemoteRepo {
 
     private companion object {
-        const val SEARCH_REQUEST_REF = "search-requests"
+        const val searchRequestRef = "search-requests"
+
+        // The key to database value is the search query itself.
+        // The key cannot contain these characters.
+        // They must be replaced by another available
+        const val unavailableCharactersPattern = "[.$\\[\\]#/]"
+        const val replacementCharacter = "%"
     }
 
     override suspend fun insert(
         userToken: String,
-        searchRequest: SearchRequest
+        searchRequest: String
     ): Unit = withContext(dispatchersProvider.IO) {
-        Timber.d("insert (search request = $searchRequest)")
+
+        val formatted = searchRequest.replace(
+            Regex(unavailableCharactersPattern),
+            replacementCharacter
+        )
+
+        Timber.d("insert (search request = $searchRequest, formatted = $formatted)")
 
         firebaseReference
-            .child(SEARCH_REQUEST_REF)
+            .child(searchRequestRef)
             .child(userToken)
-            .child(searchRequest.id.toString())
-            .setValue(searchRequest.request)
+            .child(formatted)
+            .setValue(searchRequest)
     }
 
     override suspend fun loadAll(
         userToken: String
-    ) = callbackFlow<LoadState<List<SearchRequest>>> {
+    ) = callbackFlow<LoadState<Set<String>>> {
         Timber.d("get all")
 
         firebaseReference
-            .child(SEARCH_REQUEST_REF)
+            .child(searchRequestRef)
             .child(userToken)
             .get()
             .addOnCompleteListener { resultSnapshot ->
                 if (resultSnapshot.isSuccessful && resultSnapshot.result != null) {
                     val searchRequestsSnapshot = resultSnapshot.result!!
-                    val searchRequests = mutableListOf<SearchRequest>()
+                    val searchRequests = mutableSetOf<String>()
 
                     for (searchSnapshot in searchRequestsSnapshot.children) {
-                        val requestId = searchSnapshot.key?.toInt() ?: 0
-                        val request = searchSnapshot.value?.toString() ?: ""
-                        val searchRequest = SearchRequest(requestId, request)
-
-                        searchRequests.add(searchRequest)
+                        searchRequests.add(searchSnapshot.value?.toString() ?: "")
                     }
 
                     trySend(LoadState.Prepared(searchRequests))
@@ -84,21 +91,27 @@ class SearchRequestsRemoteRepoImpl @Inject constructor(
         Timber.d("erase all")
 
         firebaseReference
-            .child(SEARCH_REQUEST_REF)
+            .child(searchRequestRef)
             .child(userToken)
             .removeValue()
     }
 
     override suspend fun erase(
         userToken: String,
-        searchRequest: SearchRequest
+        searchRequest: String
     ): Unit = withContext(dispatchersProvider.IO) {
-        Timber.d("erase (search request = $searchRequest)")
+
+        val formatted = searchRequest.replace(
+            Regex(unavailableCharactersPattern),
+            replacementCharacter
+        )
+
+        Timber.d("erase (search request = $searchRequest, formatted = $formatted)")
 
         firebaseReference
-            .child(SEARCH_REQUEST_REF)
+            .child(searchRequestRef)
             .child(userToken)
-            .child(searchRequest.id.toString())
+            .child(formatted)
             .removeValue()
     }
 }
