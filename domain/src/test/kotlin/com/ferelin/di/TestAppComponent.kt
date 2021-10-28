@@ -24,7 +24,6 @@ import com.ferelin.di.modules.ScopeTestModule
 import com.ferelin.domain.di.DomainBindsModule
 import com.ferelin.domain.di.DomainModule
 import com.ferelin.interactorTests.CompaniesInteractorTest
-import com.ferelin.interactorTests.SearchRequestsInteractorTest
 import com.ferelin.repoTests.*
 import com.ferelin.useCaseTests.FirstLaunchUseCaseTest
 import com.ferelin.useCaseTests.NewsUseCaseTest
@@ -53,7 +52,6 @@ interface TestAppComponent {
     }
 
     fun inject(companiesInteractorTest: CompaniesInteractorTest)
-    fun inject(searchRequestsInteractorTest: SearchRequestsInteractorTest)
 
     fun inject(firstLaunchUseCaseTest: FirstLaunchUseCaseTest)
     fun inject(newsUseCaseTest: NewsUseCaseTest)

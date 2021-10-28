@@ -41,13 +41,13 @@ object FakeData {
         StockPrice(8, "", "", "", "", "", "")
     )
 
-    val uniqueSearchRequests = listOf(
-        SearchRequest(1, "Facebook"),
-        SearchRequest(2, "Tesla"),
-        SearchRequest(3, "Zoom"),
-        SearchRequest(4, "Apple"),
-        SearchRequest(5, "Android"),
-        SearchRequest(6, "Amazon.com")
+    val uniqueSearchRequests = setOf(
+        "Facebook",
+        "Tesla",
+        "Zoom",
+        "Apple",
+        "Android",
+        "Amazon.com"
     )
 
     val duplicatedStrings = listOf(

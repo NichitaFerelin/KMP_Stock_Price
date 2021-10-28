@@ -67,11 +67,6 @@ class DataLocalTestModule {
     }
 
     @Provides
-    fun provideSearchRequestsDao(appDatabase: AppDatabase): SearchRequestsDao {
-        return appDatabase.searchRequestsDao()
-    }
-
-    @Provides
     @Named("PreferencesName")
     fun providePreferencesName(): String {
         return "stock.price.preferences"
