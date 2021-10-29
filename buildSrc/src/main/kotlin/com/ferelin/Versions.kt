@@ -22,7 +22,7 @@ object Versions {
     const val androidCore = "1.7.0-rc01"
     const val kotlinLib = "1.5.21"
     const val kotlinCoroutines = "1.5.2"
-    const val gradleTools = "7.1.0-beta01"
+    const val gradleTools = "7.1.0-beta02"
     const val versionsChecker = "0.38.0"
 
     const val timber = "5.0.1"
