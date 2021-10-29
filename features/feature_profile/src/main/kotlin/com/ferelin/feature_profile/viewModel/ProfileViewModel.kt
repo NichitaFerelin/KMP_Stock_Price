@@ -23,6 +23,7 @@ import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.useCases.ProfileGetByUseCase
 import com.ferelin.navigation.Router
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,5 +51,11 @@ class ProfileViewModel @Inject constructor(
 
     fun onPhoneClick(phone: String): Boolean {
         return router.openContacts(phone)
+    }
+
+    fun onUrlClick(): Boolean {
+        return _profileLoadState.value.ifPrepared { preparedState ->
+            router.openUrl(preparedState.data.webUrl)
+        } ?: false
     }
 }

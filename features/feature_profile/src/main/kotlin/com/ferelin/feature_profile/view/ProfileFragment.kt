@@ -75,6 +75,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     override fun initUx() {
+        viewBinding.textViewWebUrl.setOnClick(this::onWebUrlClick)
         viewBinding.textViewPhone.setOnClick(this::onPhoneClick)
     }
 
@@ -95,6 +96,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 }
                 else -> Unit
             }
+        }
+    }
+
+    private fun onWebUrlClick() {
+        val processed = viewModel.onUrlClick()
+        if (!processed) {
+            showTempSnackbar(getString(R.string.errorNoAppToResolve))
         }
     }
 
