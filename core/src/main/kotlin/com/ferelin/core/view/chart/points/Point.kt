@@ -16,7 +16,11 @@
 
 package com.ferelin.core.view.chart.points
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * [Point] represents base point with coords for chart
  * */
-data class Point(var x: Float, var y: Float)
+@Parcelize
+data class Point(var x: Float, var y: Float) : Parcelable

@@ -13,15 +13,6 @@
         android:layout_height="match_parent"
         tools:ignore="MissingConstraints">
 
-        <View
-            android:id="@+id/point"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:alpha="0"
-            android:background="@drawable/point"
-            android:elevation="7dp"
-            tools:alpha="1" />
-
         <TextView
             android:id="@+id/textViewCurrentPrice"
             style="@style/textViewH1"
@@ -207,10 +198,6 @@
             app:layout_constraintStart_toStartOf="@id/cardViewBuy"
             app:layout_constraintTop_toTopOf="@id/cardViewBuy"
             tools:text="Buy for $132.04" />
-
-        <include
-            android:id="@+id/includeSuggestion"
-            layout="@layout/item_suggestion" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

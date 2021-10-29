@@ -16,13 +16,19 @@
 
 package com.ferelin.core.view.chart.points
 
-// [Marker] represents model of chart "advanced" point with data.
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+/**
+ * [Marker] represents model of chart "advanced" point with data.
+ * */
+@Parcelize
 data class Marker(
     val position: Point = Point(0f, 0f),
     val price: Double,
     val priceStr: String,
     val date: String
-) {
+) : Parcelable {
     override fun equals(other: Any?): Boolean {
         return if (other is Marker) {
             other.price == price && other.date == date

@@ -18,9 +18,12 @@
     <dimen name="suggestionWidth">99dp</dimen>
     <dimen name="suggestionHeight">64dp</dimen>
     <dimen name="suggestionOffsetFromPoint">25dp</dimen>
+    <dimen name="suggestionArrowHeight">2dp</dimen>
+    <dimen name="suggestionRectRadius">16dp</dimen>
+    <dimen name="suggestionMarginBetween">4dp</dimen>
 
-    <dimen name="pointWidth">8dp</dimen>
-    <dimen name="pointHeight">8dp</dimen>
+    <dimen name="pointBlackRadius">3dp</dimen>
+    <dimen name="pointWhiteRadius">5dp</dimen>
 
     <dimen name="chartHeight">260dp</dimen>
     <dimen name="chartDrawPadding">15dp</dimen>
@@ -32,4 +35,6 @@
     <dimen name="appBarHeight">55dp</dimen>
 
     <dimen name="optionBottomMargin">20dp</dimen>
+
+    <dimen name="textViewBody">12sp</dimen>
 </resources>

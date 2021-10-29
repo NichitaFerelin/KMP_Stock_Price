@@ -16,7 +16,9 @@
 
 package com.ferelin.core.view.chart
 
-// Model for chart
+/**
+ * Chart model
+ * */
 data class ChartPastPrices(
     val prices: List<Double>,
     val pricesStr: List<String>,

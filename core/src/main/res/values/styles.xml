@@ -9,7 +9,7 @@
     </style>
 
     <style name="textViewBody" parent="textView">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/textViewBody</item>
     </style>
 
     <style name="textViewBodySemiBold" parent="textView">

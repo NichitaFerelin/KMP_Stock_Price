@@ -23,7 +23,6 @@ import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.core.view.chart.ChartPastPrices
-import com.ferelin.core.view.chart.points.Marker
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
@@ -55,7 +54,6 @@ class ChartViewModel @Inject constructor(
         get() = networkResolver.isNetworkAvailable
 
     var chartParams = ChartParams()
-    var selectedMarker: Marker? = null
 
     val actualStockPrice: SharedFlow<StockPrice> = stockPriceInteractor
         .observeActualStockPriceResponses()
