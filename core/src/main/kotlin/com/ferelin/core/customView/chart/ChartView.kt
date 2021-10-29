@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart
+package com.ferelin.core.customView.chart
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.*
 import android.os.Bundle
 import android.os.Parcelable
@@ -25,10 +26,10 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.ferelin.core.R
-import com.ferelin.core.view.chart.points.BezierPoint
-import com.ferelin.core.view.chart.points.Marker
-import com.ferelin.core.view.chart.utils.ChartAttrs
-import com.ferelin.core.view.chart.utils.SuggestionAttrs
+import com.ferelin.core.customView.chart.points.BezierPoint
+import com.ferelin.core.customView.chart.points.Marker
+import com.ferelin.core.customView.chart.utils.ChartAttrs
+import com.ferelin.core.customView.chart.utils.SuggestionAttrs
 import kotlin.math.abs
 
 
@@ -59,8 +60,8 @@ class ChartView @JvmOverloads constructor(
 
     private var lastSelectedMarker: Marker? = null
 
-    private val chartAttrs = ChartAttrs(context)
-    private val suggestionAttrs = SuggestionAttrs(context)
+    private lateinit var chartAttrs: ChartAttrs
+    private lateinit var suggestionAttrs: SuggestionAttrs
 
     private var chartHeight: Int = 0
     private var chartWidth: Int = 0
@@ -93,6 +94,12 @@ class ChartView @JvmOverloads constructor(
                 }
             }
         })
+
+    init {
+        applyAttributes(
+            attrs = context.theme.obtainStyledAttributes(attrs, R.styleable.ChartView, 0, 0)
+        )
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
@@ -440,8 +447,8 @@ class ChartView @JvmOverloads constructor(
             val item = markers[index]
             val itemPosition = item.position
             if (
-                nearestPoint == null || abs(event.x - itemPosition.x)
-                < abs(event.x - nearestPoint.position.x)
+                nearestPoint == null ||
+                abs(event.x - itemPosition.x) < abs(event.x - nearestPoint.position.x)
             ) {
                 nearestPoint = item
             }
@@ -519,6 +526,46 @@ class ChartView @JvmOverloads constructor(
                 }
 
                 else -> floatArrayOf(0F, 0F)
+            }
+        }
+    }
+
+    private fun applyAttributes(attrs: TypedArray) {
+        attrs.apply {
+            try {
+                val chartBackgroundGradientStart =
+                    getInteger(R.styleable.ChartView_chartBackgroundGradientStart, 0)
+                val chartBackgroundGradientEnd =
+                    getInteger(R.styleable.ChartView_chartBackgroundGradientEnd, 0)
+                val chartLineColor = getInteger(R.styleable.ChartView_chartLineColor, 0)
+                val suggestionBackgroundColor =
+                    getInteger(R.styleable.ChartView_suggestionBackgroundColor, 0)
+                val suggestionWidth = getDimension(R.styleable.ChartView_suggestionWidth, 0F)
+                val suggestionHeight = getDimension(R.styleable.ChartView_suggestionHeight, 0F)
+                val suggestionRectRadius =
+                    getDimension(R.styleable.ChartView_suggestionRectRadius, 0F)
+                val suggestionPriceColor =
+                    getInteger(R.styleable.ChartView_suggestionPriceColor, 0)
+                val suggestionDateColor =
+                    getInteger(R.styleable.ChartView_suggestionDateColor, 0)
+
+                chartAttrs = ChartAttrs(
+                    chartBackgroundGradientStart,
+                    chartBackgroundGradientEnd,
+                    chartLineColor
+                )
+
+                suggestionAttrs = SuggestionAttrs(
+                    context,
+                    suggestionWidth,
+                    suggestionHeight,
+                    suggestionRectRadius,
+                    suggestionBackgroundColor,
+                    suggestionPriceColor,
+                    suggestionDateColor
+                )
+            } finally {
+                recycle()
             }
         }
     }

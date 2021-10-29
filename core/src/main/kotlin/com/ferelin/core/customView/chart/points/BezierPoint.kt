@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart.points
+package com.ferelin.core.customView.chart.points
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 
 /**
- * [Point] represents base point with coords for chart
- * */
-@Parcelize
-data class Point(var x: Float, var y: Float) : Parcelable
+ * [BezierPoint] represents model to build chart
+ */
+data class BezierPoint(val x1: Float, val y1: Float, val x2: Float, val y2: Float)

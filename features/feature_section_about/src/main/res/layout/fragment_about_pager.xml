@@ -49,7 +49,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker" />
 
-    <com.ferelin.core.view.tabs.CustomTabLayout
+    <com.ferelin.core.customView.tabs.CustomTabLayout
         android:id="@+id/tabLayout"
         android:layout_width="0dp"
         android:layout_height="40dp"

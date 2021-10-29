@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.tabs
+package com.ferelin.core.customView.tabs
 
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams

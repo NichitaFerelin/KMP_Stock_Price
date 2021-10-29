@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart.points
+package com.ferelin.core.customView.chart.points
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

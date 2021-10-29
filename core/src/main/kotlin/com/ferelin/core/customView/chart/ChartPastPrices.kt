@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart
+package com.ferelin.core.customView.chart
 
 /**
  * Chart model

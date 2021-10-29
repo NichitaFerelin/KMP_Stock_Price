@@ -34,7 +34,7 @@ import com.ferelin.core.params.ChartParams
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.view.BaseFragment
-import com.ferelin.core.view.chart.ChartPastPrices
+import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_chart.R
 import com.ferelin.feature_chart.databinding.FragmentChartBinding

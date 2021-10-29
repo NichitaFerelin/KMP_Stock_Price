@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.tabs
+package com.ferelin.core.customView.tabs
 
 import android.content.Context
 import android.os.Build

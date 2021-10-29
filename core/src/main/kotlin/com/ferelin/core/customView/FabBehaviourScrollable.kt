@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view
+package com.ferelin.core.customView
 
 import android.content.Context
 import android.util.AttributeSet

@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart.utils
+package com.ferelin.core.customView.chart.utils
 
 import android.content.Context
 import android.graphics.Paint
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.ferelin.core.R
 
-class SuggestionAttrs(context: Context) {
+class SuggestionAttrs(
+    context: Context,
+    val suggestionWidth: Float,
+    val suggestionHeight: Float,
+    val suggestionRectRadius: Float,
+    @ColorInt suggestionBackgroundColor: Int,
+    @ColorInt suggestionPriceColor: Int,
+    @ColorInt suggestionDateColor: Int
+) {
 
     /**
      * Paint for main suggestion board on whic prices will be drawn
@@ -30,24 +39,21 @@ class SuggestionAttrs(context: Context) {
     val boardPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true
-        color = ContextCompat.getColor(context, R.color.black)
+        color = suggestionBackgroundColor
     }
 
-    val suggestionWidth = context.resources.getDimension(R.dimen.suggestionWidth)
-    val suggestionHeight = context.resources.getDimension(R.dimen.suggestionHeight)
-    val suggestionRectRadius = context.resources.getDimension(R.dimen.suggestionRectRadius)
     val suggestionMarginBetween = context.resources.getDimension(R.dimen.suggestionMarginBetween)
     val offsetFromPoint = context.resources.getDimension(R.dimen.suggestionOffsetFromPoint)
 
     val pricePaint = Paint().apply {
         typeface = ResourcesCompat.getFont(context, R.font.w_600)
-        color = ContextCompat.getColor(context, R.color.white)
+        color = suggestionPriceColor
         textSize = context.resources.getDimension(R.dimen.textViewBody)
     }
 
     val datePaint = Paint().apply {
         typeface = ResourcesCompat.getFont(context, R.font.w_600)
-        color = ContextCompat.getColor(context, R.color.grey)
+        color = suggestionDateColor
         textSize = context.resources.getDimension(R.dimen.textViewBody)
     }
 

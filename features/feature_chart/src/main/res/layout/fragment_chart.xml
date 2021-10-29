@@ -61,14 +61,23 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="chartView, flowButtons,textViewAll,textViewDays,textViewMonths,textViewSixMonths,textViewWeeks,textViewYear" />
 
-        <com.ferelin.core.view.chart.ChartView
+        <com.ferelin.core.customView.chart.ChartView
             android:id="@+id/chartView"
             android:layout_width="0dp"
             android:layout_height="@dimen/chartHeight"
             android:padding="@dimen/chartDrawPadding"
+            app:chartBackgroundGradientEnd="@color/gradientEnd"
+            app:chartBackgroundGradientStart="@color/gradientStart"
+            app:chartLineColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textViewDayProfit" />
+            app:layout_constraintTop_toBottomOf="@id/textViewDayProfit"
+            app:suggestionBackgroundColor="@color/black"
+            app:suggestionDateColor="@color/grey"
+            app:suggestionHeight="@dimen/suggestionHeight"
+            app:suggestionPriceColor="@color/white"
+            app:suggestionRectRadius="@dimen/suggestionRectRadius"
+            app:suggestionWidth="@dimen/suggestionWidth" />
 
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/flowButtons"

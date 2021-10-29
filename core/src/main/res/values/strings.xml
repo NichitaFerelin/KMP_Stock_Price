@@ -24,6 +24,7 @@
     <string name="titleClearData">Clear data</string>
     <string name="titleSourceCode">Project source code</string>
     <string name="titleDownload">Stock Price</string>
+    <string name="titleAppSettings">App settings</string>
 
     <!-- Errors -->
     <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
@@ -82,5 +83,4 @@
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
     <string name="messageDownloadingWillStart">Downloading will be started soon</string>
     <string name="messageDownloadingNoNetwork">Download will start when connected to the network</string>
-
 </resources>

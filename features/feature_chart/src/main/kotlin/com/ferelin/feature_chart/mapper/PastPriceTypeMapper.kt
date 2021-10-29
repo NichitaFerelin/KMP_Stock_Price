@@ -16,7 +16,7 @@
 
 package com.ferelin.feature_chart.mapper
 
-import com.ferelin.core.view.chart.ChartPastPrices
+import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.feature_chart.utils.extractPrice
 import com.ferelin.feature_chart.utils.parseMonthFromDate

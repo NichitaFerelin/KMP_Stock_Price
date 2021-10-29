@@ -7,7 +7,7 @@
     tools:background="@color/white"
     tools:theme="@style/Theme.StockPrice">
 
-    <com.ferelin.core.view.Separator
+    <com.ferelin.core.customView.Separator
         android:id="@+id/separator"
         android:layout_width="200dp"
         android:layout_height="3dp"

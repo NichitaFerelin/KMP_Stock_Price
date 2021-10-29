@@ -22,7 +22,7 @@ import com.ferelin.core.params.ChartParams
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.ifNotEmpty
-import com.ferelin.core.view.chart.ChartPastPrices
+import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor

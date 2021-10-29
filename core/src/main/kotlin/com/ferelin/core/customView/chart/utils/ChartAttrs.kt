@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.view.chart.utils
+package com.ferelin.core.customView.chart.utils
 
-import android.content.Context
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
-import androidx.core.content.ContextCompat
-import com.ferelin.core.R
+import androidx.annotation.ColorInt
 import com.ferelin.core.utils.px
 
-class ChartAttrs(context: Context) {
+class ChartAttrs(
+    @ColorInt gradientColorStart: Int,
+    @ColorInt gradientColorEnd: Int,
+    @ColorInt lineColor: Int
+) {
 
     /**
      * Chart background color as gradient
      * */
-    val gradientColors = intArrayOf(
-        ContextCompat.getColor(context, R.color.gradientEnd),
-        ContextCompat.getColor(context, R.color.gradientStart)
-    )
+    val gradientColors = intArrayOf(gradientColorEnd, gradientColorStart)
     var gradient: LinearGradient? = null
     var gradientZeroY: Float = 0F
     val gradientPath: Path = Path()
@@ -45,7 +44,7 @@ class ChartAttrs(context: Context) {
         style = Paint.Style.STROKE
         strokeWidth = 2.px.toFloat()
         isAntiAlias = true
-        color = ContextCompat.getColor(context, R.color.black)
+        color = lineColor
     }
     val linePath: Path = Path()
 }
