@@ -94,15 +94,15 @@ class SettingsViewModel @Inject constructor(
         router.back()
     }
 
-    fun onPathSelected(uri: Uri) {
+    fun onPathSelected(uri: Uri?) {
         viewModelScope.launch {
-            val path = uri.path
-            val authority = uri.authority
-
-            if (path == null || authority == null) {
+            if (uri == null || uri.path == null || uri.authority == null) {
                 _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
                 return@launch
             }
+
+            val path = uri.path!!
+            val authority = uri.authority!!
 
             initSourceProjectDownload(path, authority)
         }
