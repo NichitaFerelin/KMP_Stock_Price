@@ -18,6 +18,7 @@ package com.ferelin.di.modules
 
 import com.ferelin.TestDispatchersProvider
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +36,7 @@ class ScopeTestModule {
 
     @Provides
     @Singleton
-    @Named("ExternalScope")
+    @Named(NAMED_EXTERNAL_SCOPE)
     fun provideExternalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
         return CoroutineScope(SupervisorJob() + dispatchersProvider.Main)
     }
