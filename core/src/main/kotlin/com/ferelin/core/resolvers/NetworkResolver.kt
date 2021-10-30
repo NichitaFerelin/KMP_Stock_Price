@@ -21,7 +21,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,17 +34,16 @@ import javax.inject.Singleton
 @Singleton
 class NetworkResolver @Inject constructor(
     private val networkDeps: ArrayList<@JvmSuppressWildcards NetworkListener>,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope,
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope,
     service: ConnectivityManager,
     networkRequest: NetworkRequest
 ) {
-    private var mIsNetworkAvailable: Boolean
+    private var _isNetworkAvailable: Boolean
     val isNetworkAvailable: Boolean
-        get() = mIsNetworkAvailable
+        get() = _isNetworkAvailable
 
     init {
-        mIsNetworkAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        _isNetworkAvailable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             service.activeNetwork != null
         } else {
             service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
@@ -53,26 +52,30 @@ class NetworkResolver @Inject constructor(
         service.registerNetworkCallback(
             networkRequest,
             object : ConnectivityManager.NetworkCallback() {
+
                 override fun onAvailable(network: Network) {
-                    externalScope.launch(dispatchersProvider.IO) {
+                    externalScope.launch {
                         Timber.d("on network available")
-                        mIsNetworkAvailable = true
+
+                        _isNetworkAvailable = true
                         networkDeps.forEach { it.onNetworkAvailable() }
                     }
                 }
 
                 override fun onLost(network: Network) {
-                    externalScope.launch(dispatchersProvider.IO) {
+                    externalScope.launch {
                         Timber.d("on network lost")
-                        mIsNetworkAvailable = false
+
+                        _isNetworkAvailable = false
                         networkDeps.forEach { it.onNetworkLost() }
                     }
                 }
 
                 override fun onUnavailable() {
-                    externalScope.launch(dispatchersProvider.IO) {
+                    externalScope.launch {
                         Timber.d("on network unavailable")
-                        mIsNetworkAvailable = false
+                        
+                        _isNetworkAvailable = false
                         networkDeps.forEach { it.onNetworkLost() }
                     }
                 }

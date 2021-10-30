@@ -16,7 +16,7 @@
 
 package com.ferelin.data_network_api.utils
 
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,8 +34,7 @@ import kotlin.math.abs
  * */
 @Singleton
 class RequestsLimiter @Inject constructor(
-    @Named("ExternalScope") externalScope: CoroutineScope,
-    dispatchersProvider: DispatchersProvider
+    @Named(NAMED_EXTERNAL_SCOPE) externalScope: CoroutineScope
 ) {
     private var stockPriceApi: ((Int, String) -> Unit)? = null
 
@@ -55,7 +54,7 @@ class RequestsLimiter @Inject constructor(
     }
 
     init {
-        workerJob = externalScope.launch(dispatchersProvider.IO) {
+        workerJob = externalScope.launch {
             start()
         }
     }

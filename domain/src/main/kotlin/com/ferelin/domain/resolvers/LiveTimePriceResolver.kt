@@ -19,7 +19,7 @@ package com.ferelin.domain.resolvers
 import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
@@ -36,13 +36,12 @@ import javax.inject.Singleton
 @Singleton
 class LiveTimePriceResolver @Inject constructor(
     private val livePriceSource: LivePriceSource,
-    private val dispatchersProvider: DispatchersProvider,
     private val priceListeners: List<@JvmSuppressWildcards StockPriceListener>,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) : NetworkListener {
 
     override suspend fun onNetworkAvailable() {
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
 
             // Creates new observer when network is available
             livePriceSource.observeLiveTimePriceUpdates()

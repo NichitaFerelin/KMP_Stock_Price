@@ -20,8 +20,8 @@ import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.domain.sources.StockPriceSource
 import com.ferelin.domain.utils.StockPriceListener
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -38,9 +38,8 @@ import javax.inject.Singleton
 class StockPriceInteractor @Inject constructor(
     private val stockPriceRepo: StockPriceRepo,
     private val stockPriceSource: StockPriceSource,
-    private val dispatchersProvider: DispatchersProvider,
     private val priceListeners: List<@JvmSuppressWildcards StockPriceListener>,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
      * Еo receive answers to requests for obtaining the current price
@@ -74,7 +73,7 @@ class StockPriceInteractor @Inject constructor(
 
     private fun cacheIfLoaded(loadState: LoadState<StockPrice>) {
         loadState.ifPrepared { preparedState ->
-            externalScope.launch(dispatchersProvider.IO) {
+            externalScope.launch {
                 stockPriceRepo.insert(preparedState.data)
 
                 priceListeners.forEach { it.onStockPriceChanged(preparedState.data) }

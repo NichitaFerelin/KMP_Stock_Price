@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -38,8 +37,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     private val searchRequestsRemoteRepo: SearchRequestsRemoteRepo,
     private val searchRequestsSyncer: SearchRequestsSyncer,
     private val authenticationSource: AuthenticationSource,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) : SearchRequestsInteractor, AuthenticationListener, NetworkListener {
 
     private val _searchRequestsState = MutableStateFlow<LoadState<Set<String>>>(LoadState.None())
@@ -60,7 +58,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
         val dbRequests = searchRequestsLocalRepo.getAll()
         _searchRequestsState.value = LoadState.Prepared(dbRequests)
 
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
             tryToSync()
         }
 
@@ -80,7 +78,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
 
     override suspend fun cache(searchRequest: String) {
         cacheJob?.join()
-        cacheJob = externalScope.launch(dispatchersProvider.IO) {
+        cacheJob = externalScope.launch {
             _searchRequestsState.value.ifPrepared { preparedState ->
 
                 val updatedSearchRequests = removeDuplicates(
@@ -103,7 +101,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     private suspend fun removeDuplicates(
         sourceRequests: Set<String>,
         newSearchRequest: String
-    ): MutableSet<String> = withContext(dispatchersProvider.IO) {
+    ): MutableSet<String>  {
 
         val noDuplicatesRequests = sourceRequests.toMutableSet()
         val newRequestLower = newSearchRequest.lowercase()
@@ -115,11 +113,14 @@ class SearchRequestsInteractorImpl @Inject constructor(
             .filter { newRequestLower.contains(it.lowercase()) }
             .onEach { requestToRemove ->
                 noDuplicatesRequests.remove(requestToRemove)
-                launch { erase(noDuplicatesRequests, requestToRemove) }
+
+                externalScope.launch {
+                    erase(noDuplicatesRequests, requestToRemove)
+                }
             }
             .toSet()
 
-        noDuplicatesRequests
+        return noDuplicatesRequests
     }
 
     override suspend fun onLogIn() {
@@ -144,7 +145,7 @@ class SearchRequestsInteractorImpl @Inject constructor(
     }
 
     private fun invalidateUserData() {
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
             searchRequestsLocalRepo.eraseAll()
 
             authenticationSource.getUserToken()?.let { userToken ->

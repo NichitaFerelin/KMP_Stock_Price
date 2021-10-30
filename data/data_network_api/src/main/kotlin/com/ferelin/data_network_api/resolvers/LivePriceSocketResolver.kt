@@ -20,6 +20,7 @@ import com.ferelin.data_network_api.delegates.RetrofitDelegate
 import com.ferelin.data_network_api.entities.LivePrice
 import com.ferelin.data_network_api.utils.AppWebSocketListener
 import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_FINNHUB_TOKEN
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +38,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LivePriceSocketResolver @Inject constructor(
-    @Named("FinnhubToken") private val token: String,
+    @Named(NAMED_FINNHUB_TOKEN) private val token: String,
     private val livePriceJsonResolver: LivePriceJsonResolver,
     private val dispatchersProvider: DispatchersProvider
 ) {

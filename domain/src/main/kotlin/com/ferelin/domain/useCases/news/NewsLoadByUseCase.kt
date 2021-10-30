@@ -19,8 +19,8 @@ package com.ferelin.domain.useCases.news
 import com.ferelin.domain.entities.News
 import com.ferelin.domain.repositories.NewsRepo
 import com.ferelin.domain.sources.NewsSource
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -33,8 +33,7 @@ import javax.inject.Named
 class NewsLoadByUseCase @Inject constructor(
     private val newsRepo: NewsRepo,
     private val newsSource: NewsSource,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
      * Allows to load actual news
@@ -47,7 +46,7 @@ class NewsLoadByUseCase @Inject constructor(
             .loadBy(companyId, companyTicker)
             .also { loadState ->
                 loadState.ifPrepared { preparedState ->
-                    externalScope.launch(dispatchersProvider.IO) {
+                    externalScope.launch {
 
                         // Erase previous
                         newsRepo.eraseBy(companyId)

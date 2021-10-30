@@ -28,8 +28,8 @@ import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.domain.sources.CompaniesJsonSource
 import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.domain.syncers.CompaniesSyncer
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.NULL_INDEX
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
@@ -50,8 +50,7 @@ class CompaniesInteractorImpl @Inject constructor(
     private val livePriceSource: LivePriceSource,
     private val authenticationSource: AuthenticationSource,
     private val companiesSyncer: CompaniesSyncer,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) : CompaniesInteractor, CompaniesInternal {
 
     private var companiesState: LoadState<List<CompanyWithStockPrice>> = LoadState.None()
@@ -79,7 +78,7 @@ class CompaniesInteractorImpl @Inject constructor(
                 val fromJson = companiesJsonSource.parse()
                 val companies = fromJson.first
 
-                externalScope.launch(dispatchersProvider.IO) {
+                externalScope.launch {
                     companiesLocalRepo.insertAll(companies)
                     profileRepo.insertAll(fromJson.second)
                 }
@@ -136,7 +135,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
             livePriceSource.subscribeCompanyOnUpdates(itemToUpdate.company.ticker)
 
-            externalScope.launch(dispatchersProvider.IO) {
+            externalScope.launch {
                 launch {
                     companiesLocalRepo.updateIsFavourite(
                         itemToUpdate.company.id,
@@ -175,7 +174,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
             livePriceSource.unsubscribeCompanyFromUpdates(itemToUpdate.company.ticker)
 
-            externalScope.launch(dispatchersProvider.IO) {
+            externalScope.launch {
                 launch {
                     companiesLocalRepo.updateIsFavourite(
                         itemToUpdate.company.id,
@@ -290,7 +289,7 @@ class CompaniesInteractorImpl @Inject constructor(
     }
 
     private fun invalidateUserData() {
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
             favouriteCompaniesState.ifPrepared { preparedState ->
                 preparedState.data.forEach { companyWithStockPrice ->
                     eraseCompanyFromFavourites(companyWithStockPrice.company)

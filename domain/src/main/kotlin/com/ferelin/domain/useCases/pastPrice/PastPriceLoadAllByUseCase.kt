@@ -19,8 +19,8 @@ package com.ferelin.domain.useCases.pastPrice
 import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.repositories.PastPriceRepo
 import com.ferelin.domain.sources.PastPriceSource
-import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -33,8 +33,7 @@ import javax.inject.Named
 class PastPriceLoadAllByUseCase @Inject constructor(
     private val pastPriceRepo: PastPriceRepo,
     private val pastPriceSource: PastPriceSource,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
      * Load past prices
@@ -50,7 +49,7 @@ class PastPriceLoadAllByUseCase @Inject constructor(
             .loadBy(relationCompanyId, relationCompanyTicker)
             .also { loadState ->
                 loadState.ifPrepared { preparedState ->
-                    externalScope.launch(dispatchersProvider.IO) {
+                    externalScope.launch {
 
                         // Erase previous
                         pastPriceRepo.eraseBy(relationCompanyId)

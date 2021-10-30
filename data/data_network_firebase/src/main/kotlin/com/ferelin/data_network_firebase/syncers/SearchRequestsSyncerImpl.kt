@@ -18,12 +18,11 @@ package com.ferelin.data_network_firebase.syncers
 
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsRemoteRepo
 import com.ferelin.domain.syncers.SearchRequestsSyncer
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -32,8 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRequestsSyncerImpl @Inject constructor(
     private val searchRequestsRemoteRepo: SearchRequestsRemoteRepo,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) : SearchRequestsSyncer {
 
     private var isDataSynchronized: Boolean = false
@@ -52,9 +50,7 @@ class SearchRequestsSyncerImpl @Inject constructor(
         }
 
         // First load remote requests
-        val remoteRequestsState = withContext(dispatchersProvider.IO) {
-            searchRequestsRemoteRepo.loadAll(userToken).firstOrNull()
-        }
+        val remoteRequestsState = searchRequestsRemoteRepo.loadAll(userToken).firstOrNull()
 
         // If remote requests exists
         return remoteRequestsState?.ifPrepared { preparedState ->
@@ -85,7 +81,7 @@ class SearchRequestsSyncerImpl @Inject constructor(
             .asSequence()
             .filterNot { remoteRequests.contains(it) }
             .onEach {
-                externalScope.launch(dispatchersProvider.IO) {
+                externalScope.launch {
                     searchRequestsRemoteRepo.insert(userToken, it)
                 }
             }

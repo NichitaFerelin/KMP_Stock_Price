@@ -34,12 +34,16 @@ class LocalFilesResolver @Inject constructor(
      * @return [DocumentFile] if created
      * */
     fun buildDocumentFile(treePath: String, pathAuthority: String): DocumentFile? {
-        val uriByPath = Uri.Builder()
-            .path(treePath)
-            .authority(pathAuthority)
-            .build()
+        return try {
+            val uriByPath = Uri.Builder()
+                .path(treePath)
+                .authority(pathAuthority)
+                .build()
 
-        return DocumentFile.fromTreeUri(context, uriByPath)
+            DocumentFile.fromTreeUri(context, uriByPath)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
     }
 
     /**

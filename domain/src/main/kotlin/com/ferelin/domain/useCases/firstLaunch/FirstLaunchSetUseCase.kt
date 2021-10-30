@@ -17,7 +17,7 @@
 package com.ferelin.domain.useCases.firstLaunch
 
 import com.ferelin.domain.repositories.FirstLaunchRepo
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,14 +28,13 @@ import javax.inject.Named
  * */
 class FirstLaunchSetUseCase @Inject constructor(
     private val firstLaunchRepo: FirstLaunchRepo,
-    private val dispatchersProvider: DispatchersProvider,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
      * Allows to cache first time launch state
      * */
     suspend fun set(isFirstLaunch: Boolean) {
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
             firstLaunchRepo.cache(isFirstLaunch)
         }
     }

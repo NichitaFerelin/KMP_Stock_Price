@@ -20,7 +20,7 @@ import android.app.Activity
 import com.ferelin.domain.sources.AuthResponse
 import com.ferelin.domain.sources.AuthenticationSource
 import com.ferelin.shared.AuthenticationListener
-import com.ferelin.shared.DispatchersProvider
+import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -33,9 +33,8 @@ import javax.inject.Named
  * */
 class AuthenticationInteractor @Inject constructor(
     private val authenticationSource: AuthenticationSource,
-    private val dispatchersProvider: DispatchersProvider,
     private val authenticationListeners: List<@JvmSuppressWildcards AuthenticationListener>,
-    @Named("ExternalScope") private val externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
      * The main request for authentication which next returns all responses from the server
@@ -61,7 +60,7 @@ class AuthenticationInteractor @Inject constructor(
      * User log out
      * */
     suspend fun logOut() {
-        externalScope.launch(dispatchersProvider.IO) {
+        externalScope.launch {
             authenticationSource.logOut()
 
             // Notification for all listeners
@@ -89,7 +88,7 @@ class AuthenticationInteractor @Inject constructor(
 
     private fun notifyIfCompleted(authResponse: AuthResponse) {
         if (authResponse == AuthResponse.Complete) {
-            externalScope.launch(dispatchersProvider.IO) {
+            externalScope.launch {
 
                 // Notify all listeners about log in
                 authenticationListeners.forEach {

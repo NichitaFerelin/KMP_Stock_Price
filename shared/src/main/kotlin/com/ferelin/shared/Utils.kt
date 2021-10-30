@@ -17,6 +17,8 @@
 package com.ferelin.shared
 
 const val NULL_INDEX = -1
+const val NAMED_EXTERNAL_SCOPE = "External Scope"
+const val NAMED_FINNHUB_TOKEN = "Finnhub Token"
 
 inline fun <reified T> List<Any>.ifExist(
     selector: (T) -> Boolean,

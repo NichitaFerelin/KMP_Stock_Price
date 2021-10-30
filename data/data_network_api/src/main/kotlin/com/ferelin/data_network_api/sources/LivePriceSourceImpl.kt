@@ -16,18 +16,21 @@
 
 package com.ferelin.data_network_api.sources
 
-import com.ferelin.domain.entities.LiveTimePrice
-import com.ferelin.domain.sources.LivePriceSource
 import com.ferelin.data_network_api.mappers.LivePriceMapper
 import com.ferelin.data_network_api.resolvers.LivePriceSocketResolver
+import com.ferelin.domain.entities.LiveTimePrice
+import com.ferelin.domain.sources.LivePriceSource
+import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class LivePriceSourceImpl @Inject constructor(
     private val livePriceSocketResolver: LivePriceSocketResolver,
     private val livePriceMapper: LivePriceMapper,
+    private val dispatchersProvider: DispatchersProvider
 ) : LivePriceSource {
 
     override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
@@ -38,16 +41,24 @@ class LivePriceSourceImpl @Inject constructor(
             .map(livePriceMapper::map)
     }
 
-    override suspend fun cancelLiveTimeUpdates() {
-        Timber.d("cancel live time updates")
-        livePriceSocketResolver.closeConnection()
-    }
+    override suspend fun cancelLiveTimeUpdates(): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("cancel live time updates")
 
-    override suspend fun subscribeCompanyOnUpdates(companyTicker: String) {
-        livePriceSocketResolver.subscribe(companyTicker)
-    }
+            livePriceSocketResolver.closeConnection()
+        }
 
-    override suspend fun unsubscribeCompanyFromUpdates(companyTicker: String) {
-        livePriceSocketResolver.unsubscribe(companyTicker)
-    }
+    override suspend fun subscribeCompanyOnUpdates(companyTicker: String): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("subscribe (company ticker = $companyTicker)")
+
+            livePriceSocketResolver.subscribe(companyTicker)
+        }
+
+    override suspend fun unsubscribeCompanyFromUpdates(companyTicker: String): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("unsubscribe (company ticker = $companyTicker)")
+
+            livePriceSocketResolver.unsubscribe(companyTicker)
+        }
 }

@@ -16,13 +16,14 @@
 
 package com.ferelin.data_network_api.sources
 
-import com.ferelin.domain.entities.News
-import com.ferelin.domain.sources.NewsSource
 import com.ferelin.data_network_api.entities.NewsApi
 import com.ferelin.data_network_api.mappers.NewsMapper
 import com.ferelin.data_network_api.utils.withExceptionHandle
+import com.ferelin.domain.entities.News
+import com.ferelin.domain.sources.NewsSource
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
+import com.ferelin.shared.NAMED_FINNHUB_TOKEN
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,7 +31,7 @@ import javax.inject.Named
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class NewsSourceImpl @Inject constructor(
-    @Named("FinnhubToken") private val token: String,
+    @Named(NAMED_FINNHUB_TOKEN) private val token: String,
     private val newsApi: NewsApi,
     private val newsMapper: NewsMapper,
     private val dispatchersProvider: DispatchersProvider
@@ -42,7 +43,7 @@ class NewsSourceImpl @Inject constructor(
         from: String,
         to: String
     ): LoadState<List<News>> = withContext(dispatchersProvider.IO) {
-        Timber.d("get by (company ticker: $companyTicker)")
+        Timber.d("load by (company ticker: $companyTicker)")
 
         withExceptionHandle(
             request = {

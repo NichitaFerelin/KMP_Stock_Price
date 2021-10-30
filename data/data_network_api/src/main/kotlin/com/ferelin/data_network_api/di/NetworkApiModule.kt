@@ -22,6 +22,7 @@ import com.ferelin.data_network_api.delegates.RetrofitDelegate
 import com.ferelin.data_network_api.entities.NewsApi
 import com.ferelin.data_network_api.entities.PastPricesApi
 import com.ferelin.data_network_api.entities.StockPriceApi
+import com.ferelin.shared.NAMED_FINNHUB_TOKEN
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -53,7 +54,7 @@ class NetworkApiModule {
         return retrofit.create(PastPricesApi::class.java)
     }
 
-    @Named("FinnhubToken")
+    @Named(NAMED_FINNHUB_TOKEN)
     @Provides
     fun provideFinnhubToken(context: Context): String {
         return context.resources.getString(R.string.api_key)

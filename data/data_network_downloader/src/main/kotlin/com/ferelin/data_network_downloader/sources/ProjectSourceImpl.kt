@@ -20,12 +20,15 @@ import android.app.DownloadManager
 import android.net.Uri
 import android.os.Build
 import com.ferelin.domain.sources.ProjectSource
+import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
 class ProjectSourceImpl @Inject constructor(
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val dispatchersProvider: DispatchersProvider
 ) : ProjectSource {
 
     companion object {
@@ -37,7 +40,8 @@ class ProjectSourceImpl @Inject constructor(
         destinationFile: File,
         downloadTitle: String,
         downloadDescription: String
-    ) {
+    ): Unit = withContext(dispatchersProvider.IO) {
+
         Timber.d("download")
 
         val request = DownloadManager.Request(Uri.parse(projectSourceUrl))
