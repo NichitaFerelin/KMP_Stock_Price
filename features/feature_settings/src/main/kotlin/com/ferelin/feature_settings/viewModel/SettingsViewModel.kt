@@ -104,6 +104,9 @@ class SettingsViewModel @Inject constructor(
             val path = uri.path!!
             val authority = uri.authority!!
 
+            storagePathInteractor.setSelectedStoragePath(path)
+            storagePathInteractor.setStoragePathAuthority(authority)
+
             initSourceProjectDownload(path, authority)
         }
     }
@@ -167,8 +170,6 @@ class SettingsViewModel @Inject constructor(
                     "/${StoragePathInteractor.SOURCE_CODE_FILE_NAME}.zip"
             val resultFile = File(path)
 
-            cachePathIfNotExists(path, storagePath)
-
             if (networkResolver.isNetworkAvailable) {
                 _messageEvent.emit(Event.DOWNLOAD_STARTING)
             } else {
@@ -182,13 +183,6 @@ class SettingsViewModel @Inject constructor(
             )
         } else {
             _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
-        }
-    }
-
-    private suspend fun cachePathIfNotExists(storagePath: String, pathAuthority: String) {
-        if (storagePathInteractor.getSelectedStoragePath() == null) {
-            storagePathInteractor.setSelectedStoragePath(storagePath)
-            storagePathInteractor.setStoragePathAuthority(pathAuthority)
         }
     }
 }

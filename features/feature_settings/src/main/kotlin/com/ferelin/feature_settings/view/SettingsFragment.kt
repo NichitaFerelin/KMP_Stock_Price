@@ -19,7 +19,6 @@ package com.ferelin.feature_settings.view
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts

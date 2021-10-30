@@ -17,10 +17,16 @@
 package com.ferelin.domain.interactors
 
 import com.ferelin.domain.repositories.StoragePathRepo
+import com.ferelin.shared.DispatchersProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 class StoragePathInteractor @Inject constructor(
-    private val storagePathRepo: StoragePathRepo
+    private val storagePathRepo: StoragePathRepo,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named("ExternalScope") private val externalScope: CoroutineScope,
 ) {
     companion object {
         const val SOURCE_CODE_FILE_NAME = "Stock-Price-Project"
@@ -47,7 +53,9 @@ class StoragePathInteractor @Inject constructor(
      * @param storagePath is a path selected by user
      * */
     suspend fun setSelectedStoragePath(storagePath: String) {
-        storagePathRepo.setSelectedStoragePath(storagePath)
+        externalScope.launch(dispatchersProvider.IO) {
+            storagePathRepo.setSelectedStoragePath(storagePath)
+        }
     }
 
     /**
@@ -55,6 +63,8 @@ class StoragePathInteractor @Inject constructor(
      * @param authority is an authority for path
      * */
     suspend fun setStoragePathAuthority(authority: String) {
-        storagePathRepo.setStoragePathAuthority(authority)
+        externalScope.launch(dispatchersProvider.IO) {
+            storagePathRepo.setStoragePathAuthority(authority)
+        }
     }
 }
