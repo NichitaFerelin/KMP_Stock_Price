@@ -13,26 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewIcon"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewIcon"
+            style="@style/stockImage"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/white"
-            app:cardCornerRadius="13dp"
-            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageViewIcon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/descriptionCompanyIcon"
-                tools:src="@mipmap/msft" />
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/msft" />
 
         <ImageView
             android:id="@+id/imageViewShare"
@@ -40,9 +28,9 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/descriptionShare"
             android:src="@drawable/ic_share"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/cardViewIcon" />
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon" />
 
         <TextView
             android:id="@+id/textViewHintName"
@@ -51,7 +39,7 @@
             android:text="@string/hintName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardViewIcon" />
+            app:layout_constraintTop_toBottomOf="@id/imageViewIcon" />
 
         <TextView
             android:id="@+id/textViewName"
@@ -74,14 +62,11 @@
 
         <TextView
             android:id="@+id/textViewWebUrl"
-            style="@style/textViewH2ConstrainedWidth"
+            style="@style/clickableTextViewH2"
             android:layout_width="0dp"
             android:layout_marginHorizontal="40dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/ripple_text"
             android:gravity="center"
-            android:paddingHorizontal="12dp"
-            android:textColor="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewHintWebUrl"
@@ -160,7 +145,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="50dp"
             android:gravity="end"
-            android:textColor="@color/blue"
+            android:textColor="@color/clickableTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/textViewHintPhone"

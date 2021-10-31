@@ -24,10 +24,9 @@
     <string name="titleClearData">Clear data</string>
     <string name="titleSourceCode">Project source code</string>
     <string name="titleDownload">Stock Price</string>
-    <string name="titleAppSettings">App settings</string>
+    <string name="titleSettings">App settings</string>
 
     <!-- Errors -->
-    <string name="errorApiLimit">Api limit reached. Please try again in a minute</string>
     <string name="errorNoAppToResolve">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorUndefined">Undefined error</string>
@@ -42,13 +41,13 @@
     <string name="descriptionIconClose">Clear search request</string>
     <string name="descriptionImageSearch">Search company or ticker</string>
     <string name="descriptionApply">Apply</string>
-    <string name="descriptionAddPerson">Add person to chat</string>
     <string name="descriptionLogOut">Log out</string>
+    <string name="descriptionLogIn">Log in</string>
     <string name="descriptionSettings">Settings</string>
     <string name="descriptionDownload">Downloading project</string>
+    <string name="descriptionShare">Share</string>
 
     <!-- Hints -->
-    <string name="hintBuyFor">Buy for %s</string>
     <string name="hintFindCompany">Find company or ticker</string>
     <string name="hintOpenInBrowser">Open in browser:</string>
     <string name="hintStocks">Stocks</string>
@@ -62,20 +61,13 @@
     <string name="hintEnterPhone">Enter phone number</string>
     <string name="hintEnterCode">Enter code</string>
     <string name="hintOk">OK</string>
-    <string name="hintAuthorization">Successful authorization. From now, all your favorite
-        stocks and search requests will be synced from the cloud.</string>
     <string name="hintAuthentication">Authentication by phone number</string>
-    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites companies in the cloud database. You will be able to log in from another device and sync this list</string>
+    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites
+        companies in the cloud database. You will be able to log in from another device and
+        sync this list</string>
     <string name="hintChoose">Choose</string>
 
-    <string name="transitionSearchFragment">searchContainer</string>
-    <string name="transitionAboutPager">Transition container about fragment pager</string>
-
-    <string name="sourceNotAuthorized">You are not authorized. Login</string>
-    <string name="sourceAuthorized">You are logged in. Log off</string>
-    <string name="sourceClearData">Clear all added stocks, search history, etc.</string>
-    <string name="sourceDownload">Download source project code from GitHub</string>
-
+    <!-- Messages -->
     <string name="messageNetworkNotAvailable">Network is not available</string>
     <string name="messageNetworkAvailable">Network available</string>
     <string name="messageLogOutComplete">Log out complete</string>
@@ -83,6 +75,13 @@
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
     <string name="messageDownloadingWillStart">Downloading will be started soon</string>
     <string name="messageDownloadingNoNetwork">Download will start when connected to the network</string>
-    <string name="titleSettings">App settings</string>
-    <string name="descriptionShare">Share</string>
+
+    <!-- Others -->
+    <string name="transitionSearchFragment">searchContainer</string>
+    <string name="transitionAboutPager">Transition container about fragment pager</string>
+
+    <string name="sourceNotAuthorized">You are not authorized. Login</string>
+    <string name="sourceAuthorized">You are logged in. Log off</string>
+    <string name="sourceClearData">Clear all added stocks, search history, etc.</string>
+    <string name="sourceDownload">Download source project code from GitHub</string>
 </resources>

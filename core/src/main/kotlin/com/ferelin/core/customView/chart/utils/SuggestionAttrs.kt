@@ -57,14 +57,14 @@ class SuggestionAttrs(
         textSize = context.resources.getDimension(R.dimen.textViewBody)
     }
 
-    val mainPointRadius = context.resources.getDimension(R.dimen.pointWhiteRadius)
+    val mainPointRadius = context.resources.getDimension(R.dimen.chartPointSize)
     val mainPointPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true
         color = ContextCompat.getColor(context, R.color.white)
     }
 
-    val subPointRadius = context.resources.getDimension(R.dimen.pointBlackRadius)
+    val subPointRadius = context.resources.getDimension(R.dimen.chartPointSubSize)
     val subPointPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true

@@ -25,9 +25,9 @@ import com.ferelin.shared.NULL_INDEX
 
 class StockItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
-    private val bottomMargin = context.resources.getDimension(R.dimen.stockItemBottomMargin).toInt()
-    private val startMargin = context.resources.getDimension(R.dimen.stockItemStartMargin).toInt()
-    private val endMargin = context.resources.getDimension(R.dimen.stockItemEndMargin).toInt()
+    private val bottomMargin = context.resources.getDimension(R.dimen.stockBottomMargin).toInt()
+    private val startMargin = context.resources.getDimension(R.dimen.stockStartMargin).toInt()
+    private val endMargin = context.resources.getDimension(R.dimen.stockEndMargin).toInt()
 
     override fun getItemOffsets(
         outRect: Rect,

@@ -24,71 +24,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/msft"
-        style="@style/loadingCard">
+        style="@style/stockImage"
+        android:src="@mipmap/msft" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/msft" />
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/tesla"
-        style="@style/loadingCard">
+        style="@style/stockImage"
+        android:src="@mipmap/tesla" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/tesla" />
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/amazon"
-        style="@style/loadingCard">
+        style="@style/stockImage"
+        android:src="@mipmap/amazon" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/amazon" />
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/facebook"
-        style="@style/loadingCard">
+        style="@style/stockImage"
+        android:src="@mipmap/facebook" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/facebook" />
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/zoom"
-        style="@style/loadingCard">
+        style="@style/stockImage"
+        android:src="@mipmap/zoom" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/zoom" />
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/eric"
-        style="@style/loadingCard">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/eric" />
-
-    </androidx.cardview.widget.CardView>
+        style="@style/stockImage"
+        android:src="@mipmap/eric" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

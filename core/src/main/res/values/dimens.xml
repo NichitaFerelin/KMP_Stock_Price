@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fakePointPadding">8dp</dimen>
-
-    <dimen name="searchItemStartMargin">16dp</dimen>
-    <dimen name="searchItemMargin">4dp</dimen>
-
-    <dimen name="stockItemStartMargin">16dp</dimen>
-    <dimen name="stockItemEndMargin">16dp</dimen>
-    <dimen name="stockItemBottomMargin">8dp</dimen>
-    <dimen name="newsItemOffset">8dp</dimen>
-
-    <dimen name="stockIconHeight">52dp</dimen>
-    <dimen name="stockIconWidth">52dp</dimen>
+    <dimen name="stockHeight">52dp</dimen>
+    <dimen name="stockWidth">52dp</dimen>
+    <dimen name="stockStartMargin">16dp</dimen>
+    <dimen name="stockEndMargin">16dp</dimen>
+    <dimen name="stockBottomMargin">8dp</dimen>
 
     <dimen name="suggestionLayoutWidth">111dp</dimen>
     <dimen name="suggestionLayoutHeight">76dp</dimen>
@@ -22,19 +15,22 @@
     <dimen name="suggestionRectRadius">16dp</dimen>
     <dimen name="suggestionMarginBetween">4dp</dimen>
 
-    <dimen name="pointBlackRadius">3dp</dimen>
-    <dimen name="pointWhiteRadius">5dp</dimen>
+    <dimen name="searchRecyclerHeight">96dp</dimen>
+    <dimen name="searchRecyclerHeightLandscape">48dp</dimen>
+    <dimen name="searchFragmentElevation">7dp</dimen>
+    <dimen name="searchItemStartMargin">16dp</dimen>
+    <dimen name="searchItemMargin">4dp</dimen>
 
     <dimen name="chartHeight">260dp</dimen>
     <dimen name="chartDrawPadding">15dp</dimen>
-
-    <dimen name="searchFragmentElevation">7dp</dimen>
-    <dimen name="recyclerSearchesHeight">96dp</dimen>
-    <dimen name="recyclerSearchesHeightLandscape">48dp</dimen>
-
-    <dimen name="appBarHeight">55dp</dimen>
+    <dimen name="chartPointPadding">8dp</dimen>
+    <dimen name="chartPointSize">5dp</dimen>
+    <dimen name="chartPointSubSize">3dp</dimen>
 
     <dimen name="optionBottomMargin">20dp</dimen>
+    <dimen name="optionMargin">-8dp</dimen>
+
+    <dimen name="newsItemOffset">8dp</dimen>
 
     <dimen name="textViewBody">12sp</dimen>
 </resources>

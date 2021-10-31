@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewCurrentPrice"
             tools:text="+$0.12(1,15%)"
-            tools:textColor="@color/green" />
+            tools:textColor="@color/profitPlus" />
 
         <TextView
             android:id="@+id/textViewError"
@@ -66,8 +66,8 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/chartHeight"
             android:padding="@dimen/chartDrawPadding"
-            app:chartBackgroundGradientEnd="@color/gradientEnd"
-            app:chartBackgroundGradientStart="@color/gradientStart"
+            app:chartBackgroundGradientEnd="@color/chartGradientEnd"
+            app:chartBackgroundGradientStart="@color/chartGradientStart"
             app:chartLineColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -180,33 +180,6 @@
             app:layout_constraintEnd_toEndOf="@id/cardViewAll"
             app:layout_constraintStart_toStartOf="@id/cardViewAll"
             app:layout_constraintTop_toTopOf="@id/cardViewAll" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewBuy"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="52dp"
-            android:layout_marginBottom="20dp"
-            android:backgroundTint="@color/black"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/flowButtons"
-            app:layout_goneMarginTop="70dp" />
-
-        <TextView
-            android:id="@+id/textViewBuyPrice"
-            style="@style/textViewH3ConstrainedWidth"
-            android:textColor="@color/white"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewBuy"
-            app:layout_constraintEnd_toEndOf="@id/cardViewBuy"
-            app:layout_constraintStart_toStartOf="@id/cardViewBuy"
-            app:layout_constraintTop_toTopOf="@id/cardViewBuy"
-            tools:text="Buy for $132.04" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -131,7 +131,7 @@
 
     <style name="recyclerViewSearchRequests">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/recyclerSearchesHeight</item>
+        <item name="android:layout_height">@dimen/searchRecyclerHeight</item>
         <item name="android:layout_marginTop">11dp</item>
         <item name="android:orientation">horizontal</item>
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
@@ -140,7 +140,7 @@
 
     <style name="recyclerViewSearchRequestsLandscape" parent="recyclerViewSearchRequests">
         <item name="spanCount">1</item>
-        <item name="android:layout_height">@dimen/recyclerSearchesHeightLandscape</item>
+        <item name="android:layout_height">@dimen/searchRecyclerHeightLandscape</item>
     </style>
 
     <style name="recyclerView">
@@ -177,17 +177,6 @@
         <item name="android:outlineProvider">none</item>
     </style>
 
-    <style name="stockIcon">
-        <item name="android:layout_width">@dimen/stockIconHeight</item>
-        <item name="android:layout_height">@dimen/stockIconWidth</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:backgroundTint">@color/white</item>
-        <item name="cardCornerRadius">13dp</item>
-        <item name="cardElevation">0dp</item>
-    </style>
-
     <style name="loadingCard">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
@@ -213,11 +202,41 @@
     </style>
 
     <style name="snackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-        <item name="android:textColor">@color/blue</item>
+        <item name="android:textColor">@color/clickableTextView</item>
     </style>
 
     <style name="snackbarTextView" parent="Widget.MaterialComponents.Snackbar.TextView">
         <item name="android:textAppearance">@style/textViewH2</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+        <item name="cornerSize">30%</item>
+    </style>
+
+    <style name="stockImage">
+        <item name="android:layout_width">@dimen/stockWidth</item>
+        <item name="android:layout_height">@dimen/stockHeight</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:contentDescription">@string/descriptionCompanyIcon</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.CornerSize50Percent
+        </item>
+    </style>
+
+    <style name="clickableTextViewBody" parent="textViewBodyConstrainedWidth">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textColor">@color/clickableTextView</item>
+        <item name="android:background">@drawable/ripple_text</item>
+    </style>
+
+    <style name="clickableTextViewH2" parent="textViewH2ConstrainedWidth">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textColor">@color/clickableTextView</item>
+        <item name="android:background">@drawable/ripple_text</item>
     </style>
 
 </resources>

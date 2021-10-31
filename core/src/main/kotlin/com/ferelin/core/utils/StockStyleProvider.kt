@@ -34,8 +34,8 @@ class StockStyleProvider @Inject constructor(
     private val drawableFavouriteForegroundIconActive: Int = R.drawable.ic_star_active
     private val drawableRippleLight: Int = R.drawable.ripple_light
     private val drawableRippleDark: Int = R.drawable.ripple_dark
-    private val colorProfitPlus: Int = R.color.green
-    private val colorProfitMinus: Int = R.color.red
+    private val colorProfitPlus: Int = R.color.profitPlus
+    private val colorProfitMinus: Int = R.color.profitMinus
     private val colorHolderFirst: Int = R.color.white
     private val colorHolderSecond: Int = R.color.whiteDark
 

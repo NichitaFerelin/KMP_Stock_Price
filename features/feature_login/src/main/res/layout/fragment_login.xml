@@ -24,38 +24,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/amazon"
-            style="@style/loadingCard">
+            android:src="@mipmap/msft"
+            style="@style/stockImage" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/amazon" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/facebook"
-            style="@style/loadingCard">
+            android:src="@mipmap/facebook"
+            style="@style/stockImage" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/facebook" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/tesla"
-            style="@style/loadingCard">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/tesla" />
-
-        </androidx.cardview.widget.CardView>
+            android:src="@mipmap/tesla"
+            style="@style/stockImage" />
 
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/flowCardsTop"

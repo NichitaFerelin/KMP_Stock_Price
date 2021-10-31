@@ -30,11 +30,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
+import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.core.params.ChartParams
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.view.BaseFragment
-import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_chart.R
 import com.ferelin.feature_chart.databinding.FragmentChartBinding
@@ -254,9 +254,6 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
         val profitBackground = stockStyleProvider.getProfitBackground(profit)
         viewBinding.textViewDayProfit.text = profit
         viewBinding.textViewDayProfit.setTextColor(profitBackground)
-
-        viewBinding.textViewBuyPrice.text =
-            String.format(getString(R.string.hintBuyFor), price)
     }
 
     private fun showChart() {

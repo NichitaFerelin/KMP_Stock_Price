@@ -179,7 +179,7 @@ class ChartView @JvmOverloads constructor(
 
         tooManyPoints = newList.size > 100
         tooManyPointsMargin =
-            if (tooManyPoints) resources.getDimension(R.dimen.fakePointPadding) else 0F
+            if (tooManyPoints) resources.getDimension(R.dimen.chartPointPadding) else 0F
 
         maxPointValue = newList.maxByOrNull { it.price }!!.price
         minPointValue = newList.minByOrNull { it.price }!!.price
