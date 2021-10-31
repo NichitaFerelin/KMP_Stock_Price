@@ -77,6 +77,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override fun initUx() {
         viewBinding.textViewWebUrl.setOnClick(this::onWebUrlClick)
         viewBinding.textViewPhone.setOnClick(this::onPhoneClick)
+        viewBinding.imageViewShare.setOnClick(this::onShareClick)
     }
 
     override fun initObservers() {
@@ -97,6 +98,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 else -> Unit
             }
         }
+    }
+
+    private fun onShareClick() {
+        viewModel.onShareClick(
+            nameHint = getString(R.string.hintName),
+            websiteHint = getString(R.string.hintWebsite),
+            countryHint = getString(R.string.hintCountry),
+            industryHint = getString(R.string.hintIndustry),
+            phoneHint = getString(R.string.hintPhone),
+            capitalizationHint = getString(R.string.hintCapitalization)
+        )
     }
 
     private fun onWebUrlClick() {

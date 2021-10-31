@@ -58,4 +58,26 @@ class ProfileViewModel @Inject constructor(
             router.openUrl(preparedState.data.webUrl)
         } ?: false
     }
+
+    fun onShareClick(
+        nameHint: String,
+        websiteHint: String,
+        countryHint: String,
+        industryHint: String,
+        phoneHint: String,
+        capitalizationHint: String
+    ) {
+        viewModelScope.launch {
+            _profileLoadState.value.ifPrepared { preparedState ->
+                val resultText = nameHint + ": " + profileParams.companyName + "\n" +
+                        websiteHint + ": " + preparedState.data.webUrl + "\n" +
+                        countryHint + " " + preparedState.data.country + "\n" +
+                        industryHint + " " + preparedState.data.industry + "\n" +
+                        phoneHint + " " + preparedState.data.phone + "\n" +
+                        capitalizationHint + " " + preparedState.data.capitalization
+
+                router.shareText(resultText)
+            }
+        }
+    }
 }

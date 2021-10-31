@@ -27,9 +27,11 @@ interface Router {
 
     fun back()
 
-    fun openUrl(url: String) : Boolean
+    fun openUrl(url: String): Boolean
 
-    fun openContacts(phone: String) : Boolean
+    fun openContacts(phone: String): Boolean
+
+    fun shareText(text: String)
 
     fun toStartFragment()
 

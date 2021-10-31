@@ -34,6 +34,16 @@
 
         </androidx.cardview.widget.CardView>
 
+        <ImageView
+            android:id="@+id/imageViewShare"
+            style="@style/clickableImage"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/descriptionShare"
+            android:src="@drawable/ic_share"
+            app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cardViewIcon" />
+
         <TextView
             android:id="@+id/textViewHintName"
             style="@style/textViewH3ConstrainedWidthShadowed"

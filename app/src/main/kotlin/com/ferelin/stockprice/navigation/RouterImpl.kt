@@ -58,6 +58,15 @@ class RouterImpl @Inject constructor(
         return launchIntent(intent)
     }
 
+    override fun shareText(text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(intent, null)
+        activity.startActivity(shareIntent)
+    }
+
     override fun toStartFragment() {
         screenResolver.toLoadingFragment(activity)
     }

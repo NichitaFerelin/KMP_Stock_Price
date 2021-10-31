@@ -84,4 +84,5 @@
     <string name="messageDownloadingWillStart">Downloading will be started soon</string>
     <string name="messageDownloadingNoNetwork">Download will start when connected to the network</string>
     <string name="titleSettings">App settings</string>
+    <string name="descriptionShare">Share</string>
 </resources>
