@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.utils
+package com.ferelin.feature_chart.viewData
 
-import com.ferelin.domain.entities.PastPrice
-
-fun extractPrice(str: String): Double? {
-    return str.filter { it.isDigit() || it == '.' }.toDoubleOrNull()
+enum class ChartViewMode {
+    All,
+    Year,
+    SixMonths,
+    Months,
+    Weeks,
+    Days
 }
 
-fun parseMonthFromDate(date: String): String {
-    return date.filter { it.isLetter() }
-}
-
-fun parseYearFromDate(date: String): String {
-    return date.split(" ").getOrNull(2) ?: ""
-}
-
-fun List<PastPrice>.sum(from: Int, to: Int): Double {
-    var amount = 0.0
-    for (index in from..to) {
-        amount += this[index].closePrice
-    }
-    return amount
-}
+data class PastPriceViewData(
+    val closePrice: Double,
+    val closePriceStr: String,
+    val month: String,
+    val year: String,
+    var date: String
+)

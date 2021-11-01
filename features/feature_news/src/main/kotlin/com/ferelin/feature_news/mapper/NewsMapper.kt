@@ -16,6 +16,7 @@
 
 package com.ferelin.feature_news.mapper
 
+import com.ferelin.core.utils.toDateStr
 import com.ferelin.domain.entities.News
 import com.ferelin.feature_news.viewData.NewsViewData
 import javax.inject.Inject
@@ -25,10 +26,9 @@ class NewsMapper @Inject constructor() {
     fun map(news: News): NewsViewData {
         return NewsViewData(
             id = news.id,
-            relationId = news.relationCompanyId,
             cloudId = news.cloudId,
             headline = news.headline,
-            date = news.date,
+            date = news.dateMillis.toDateStr(),
             previewImageUrl = news.previewImageUrl,
             source = news.source,
             sourceUrl = news.sourceUrl,

@@ -18,12 +18,11 @@ package com.ferelin.domain.entities
 
 data class StockPrice(
     val relationCompanyId: Int = 0,
-    var currentPrice: String,
-    var previousClosePrice: String,
-    var openPrice: String,
-    var highPrice: String,
-    var lowPrice: String,
-    var profit: String,
+    var currentPrice: Double,
+    var previousClosePrice: Double,
+    var openPrice: Double,
+    var highPrice: Double,
+    var lowPrice: Double
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is StockPrice) {

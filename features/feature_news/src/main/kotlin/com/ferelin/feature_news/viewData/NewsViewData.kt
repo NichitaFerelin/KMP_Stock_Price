@@ -21,14 +21,13 @@ import com.ferelin.feature_news.adapter.NEWS_VIEW_TYPE
 
 data class NewsViewData(
     val id: Long = 0L,
-    val relationId: Int = 0,
     val cloudId: String,
     val headline: String,
-    val date: String,
     val previewImageUrl: String,
     val source: String,
     val sourceUrl: String,
-    val summary: String
+    val summary: String,
+    val date: String
 ) : ViewDataType(NEWS_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {

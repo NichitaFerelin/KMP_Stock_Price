@@ -31,6 +31,6 @@ interface NewsDao {
     @Query("SELECT * FROM `companies_news` WHERE relation_company_id = :relationCompanyId")
     suspend fun getAll(relationCompanyId: Int): List<NewsDBO>
 
-    @Query("DELETE FROM `companies_news` WHERE relation_company_id = :relationId")
-    suspend fun eraseBy(relationId: Int)
+    @Query("DELETE FROM `companies_news` WHERE relation_company_id = :relationCompanyId")
+    suspend fun eraseBy(relationCompanyId: Int)
 }

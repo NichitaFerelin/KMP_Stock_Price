@@ -16,10 +16,9 @@
 
 package com.ferelin.data_network_api.mappers
 
-import com.ferelin.domain.entities.News
 import com.ferelin.data_network_api.entities.NewsResponse
 import com.ferelin.data_network_api.utils.toBasicMillisTime
-import com.ferelin.data_network_api.utils.toDateStr
+import com.ferelin.domain.entities.News
 import javax.inject.Inject
 
 class NewsMapper @Inject constructor() {
@@ -27,9 +26,9 @@ class NewsMapper @Inject constructor() {
     fun map(newsResponse: NewsResponse, companyId: Int): News {
         return News(
             relationCompanyId = companyId,
-            cloudId = newsResponse.id.toString().substringBefore('.'),
+            cloudId = newsResponse.id.toString(),
             headline = newsResponse.headline,
-            date = newsResponse.dateTime.toLong().toBasicMillisTime().toDateStr(),
+            dateMillis = newsResponse.dateTime.toLong().toBasicMillisTime(),
             previewImageUrl = newsResponse.previewImageUrl,
             source = newsResponse.source,
             sourceUrl = newsResponse.sourceUrl,

@@ -45,13 +45,16 @@ class StockStyleProvider @Inject constructor(
             rippleForeground = getRippleForeground(company.id),
             favouriteBackgroundIconResource = getBackgroundIconDrawable(company.isFavourite),
             favouriteForegroundIconResource = getForegroundIconDrawable(company.isFavourite),
-            dayProfitBackground = stockPrice?.let { getProfitBackground(it.profit) } ?: 0
+            dayProfitBackground = stockPrice?.let {
+                getProfitBackground(it.currentPrice - it.previousClosePrice)
+            } ?: 0
         )
     }
 
     fun updateProfit(stockViewData: StockViewData) {
-        stockViewData.stockPrice?.let { stockPrice ->
-            stockViewData.style.dayProfitBackground = getProfitBackground(stockPrice.profit)
+        stockViewData.stockPriceViewData?.let { stockPrice ->
+            stockViewData.style.dayProfitBackground =
+                getProfitBackground(stockPrice.currentPrice - stockPrice.previousClosePrice)
         }
     }
 
@@ -75,6 +78,14 @@ class StockStyleProvider @Inject constructor(
         return if (prefix == '+') {
             getColor(colorProfitPlus)
         } else getColor(colorProfitMinus)
+    }
+
+    private fun getProfitBackground(profit: Double): Int {
+        return if (profit > 0) {
+            getColor(colorProfitPlus)
+        } else {
+            getColor(colorProfitMinus)
+        }
     }
 
     private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {

@@ -59,7 +59,7 @@ class StockPriceRepoTest {
 
     @Test
     fun insert() = testCoroutineDispatcher.runBlockingTest {
-        val stockPrice = StockPrice(0, "", "", "", "", "", "")
+        val stockPrice = StockPrice(0, 0.0, 0.0, 0.0, 0.0, 0.0)
         stockPriceRepo.insert(stockPrice)
 
         val actual = stockPriceRepo.getBy(0)
@@ -78,14 +78,13 @@ class StockPriceRepoTest {
 
     @Test
     fun update() = testCoroutineDispatcher.runBlockingTest {
-        val stockPrice = StockPrice(0, "", "", "", "", "", "")
+        val stockPrice = StockPrice(0, 0.0, 0.0, 0.0, 0.0, 0.0)
         stockPriceRepo.insert(stockPrice)
 
-        val stockPriceUpdated = stockPrice.copy(currentPrice = "123", profit = "456")
-        stockPriceRepo.update(0, stockPriceUpdated.currentPrice, stockPriceUpdated.profit)
+        val stockPriceUpdated = stockPrice.copy(currentPrice = 123.0)
+        stockPriceRepo.update(0, stockPriceUpdated.currentPrice)
 
         val actual = stockPriceRepo.getBy(0)
         Assert.assertEquals(stockPriceUpdated.currentPrice, actual?.currentPrice)
-        Assert.assertEquals(stockPriceUpdated.profit, actual?.profit)
     }
 }

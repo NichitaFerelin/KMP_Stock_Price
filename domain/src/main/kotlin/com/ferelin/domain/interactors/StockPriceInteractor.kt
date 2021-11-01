@@ -46,8 +46,9 @@ class StockPriceInteractor @Inject constructor(
      * @return flow of [LoadState] with [StockPrice] if [LoadState] is successful
      * */
     fun observeActualStockPriceResponses(): Flow<LoadState<StockPrice>> {
-        return stockPriceSource.observeActualStockPriceResponses()
-            .onEach { cacheIfLoaded(it) }
+        return stockPriceSource
+            .observeActualStockPriceResponses()
+            .onEach { cacheIfPrepared(it) }
     }
 
     /**
@@ -71,12 +72,14 @@ class StockPriceInteractor @Inject constructor(
         )
     }
 
-    private fun cacheIfLoaded(loadState: LoadState<StockPrice>) {
+    private fun cacheIfPrepared(loadState: LoadState<StockPrice>) {
         loadState.ifPrepared { preparedState ->
             externalScope.launch {
                 stockPriceRepo.insert(preparedState.data)
 
-                priceListeners.forEach { it.onStockPriceChanged(preparedState.data) }
+                priceListeners.forEach {
+                    it.onStockPriceChanged(preparedState.data)
+                }
             }
         }
     }

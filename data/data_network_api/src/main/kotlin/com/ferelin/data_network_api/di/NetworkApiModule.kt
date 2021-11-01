@@ -35,7 +35,7 @@ class NetworkApiModule {
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit {
-        val retrofit by RetrofitDelegate
+        val retrofit by RetrofitDelegate()
         return retrofit
     }
 

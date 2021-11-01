@@ -46,25 +46,13 @@ fun <T, R> withExceptionHandle(
 }
 
 /*
-* Builds profit string. Example:
-* Call:    buildProfitString (100.0, 50.0)
-* Result:  "+$50.0 (50,0%)"
+* API used not basic millis-time. Converts millis-time to standard format
+* Example:
+*   Before from response: 12345678
+*   After:                12345678000
 * */
-fun buildProfitString(currentPrice: Double, previousPrice: Double): String {
-    val numberProfit = currentPrice - previousPrice
-    val numberProfitStr = numberProfit.toString()
-
-    val digitNumberProfit = numberProfitStr.substringBefore('.').filter { it.isDigit() }
-    val remainderNumberProfit = with(numberProfitStr.substringAfter('.')) {
-        if (length >= 2) substring(0, 2) else this
-    }
-
-    val percentProfit = (100 * (currentPrice - previousPrice) / currentPrice).toString()
-    val digitPercentProfit = percentProfit.substringBefore('.').filter { it.isDigit() }
-    val remainderPercentProfit = with(percentProfit.substringAfter('.')) {
-        if (length >= 2) substring(0, 2) else this
-    }
-
-    val prefix = if (currentPrice > previousPrice) "+" else "-"
-    return "$prefix$$digitNumberProfit.$remainderNumberProfit ($digitPercentProfit,$remainderPercentProfit%)"
+fun Long.toBasicMillisTime(): Long {
+    val timeStr = this.toString()
+    val resultStr = "${timeStr}000"
+    return resultStr.toLong()
 }

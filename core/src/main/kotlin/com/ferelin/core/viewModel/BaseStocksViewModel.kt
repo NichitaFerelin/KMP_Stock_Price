@@ -23,7 +23,8 @@ import com.ferelin.core.adapter.stocks.PAYLOAD_FAVOURITE_UPDATED
 import com.ferelin.core.adapter.stocks.PAYLOAD_PRICE_UPDATED
 import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.adapter.stocks.createStocksAdapter
-import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.mapper.CompanyWithStockPriceMapper
+import com.ferelin.core.mapper.StockPriceMapper
 import com.ferelin.core.params.AboutParams
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
@@ -33,7 +34,9 @@ import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.navigation.Router
-import com.ferelin.shared.*
+import com.ferelin.shared.LoadState
+import com.ferelin.shared.NULL_INDEX
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -45,11 +48,12 @@ enum class StocksMode {
 }
 
 abstract class BaseStocksViewModel(
-    protected val stockMapper: StockMapper,
+    protected val companyWithStockPriceMapper: CompanyWithStockPriceMapper,
     protected val router: Router,
     private val companiesInteractor: CompaniesInteractor,
     private val stockPriceInteractor: StockPriceInteractor,
     private val stockStyleProvider: StockStyleProvider,
+    private val stockPriceMapper: StockPriceMapper,
     private val stocksMode: StocksMode
 ) : ViewModel() {
 
@@ -97,18 +101,19 @@ abstract class BaseStocksViewModel(
         companyWithStockPrice: CompanyWithStockPrice
     ) {
         stockLoadState.value.ifPrepared { preparedLoad ->
-            val uniqueId = companyWithStockPrice.company.id.toLong()
 
-            preparedLoad.data.ifExist<StockViewData>(
-                selector = { uniqueId == it.getUniqueId() },
-                action = { companyPosition ->
-                    val companyToReplace = preparedLoad.data[companyPosition]
-                    companyToReplace.isFavourite = companyWithStockPrice.company.isFavourite
-                    stockStyleProvider.updateFavourite(companyToReplace)
+            val targetIndex = preparedLoad
+                .data
+                .indexOfFirst { companyWithStockPrice.company.id == it.id }
 
-                    updateItemAtAdapter(companyToReplace, PAYLOAD_FAVOURITE_UPDATED)
-                }
-            )
+            if (targetIndex != NULL_INDEX) {
+                val targetCompany = preparedLoad.data[targetIndex]
+                targetCompany.isFavourite = companyWithStockPrice.company.isFavourite
+
+                stockStyleProvider.updateFavourite(targetCompany)
+
+                updateItemAtAdapter(targetCompany, PAYLOAD_FAVOURITE_UPDATED)
+            }
         }
     }
 
@@ -122,7 +127,7 @@ abstract class BaseStocksViewModel(
                 companiesInteractor.getAllFavourites()
             }
 
-            val viewData = companies.map(stockMapper::map)
+            val viewData = companies.map(companyWithStockPriceMapper::map)
 
             stockLoadState.value = LoadState.Prepared(viewData)
 
@@ -134,11 +139,6 @@ abstract class BaseStocksViewModel(
 
     private fun onStockClick(stockViewData: StockViewData) {
         viewModelScope.launch {
-            val (price, profit) = stockViewData
-                .stockPrice
-                ?.let { arrayOf(it.currentPrice, it.profit) }
-                ?: arrayOf("", "")
-
             router.fromDefaultStocksToAbout(
                 params = AboutParams(
                     companyId = stockViewData.id,
@@ -146,8 +146,8 @@ abstract class BaseStocksViewModel(
                     companyName = stockViewData.name,
                     logoUrl = stockViewData.logoUrl,
                     isFavourite = stockViewData.isFavourite,
-                    stockPrice = price,
-                    stockProfit = profit
+                    stockPrice = stockViewData.stockPriceViewData?.price ?: "",
+                    stockProfit = stockViewData.stockPriceViewData?.profit ?: ""
                 )
             )
         }
@@ -155,7 +155,7 @@ abstract class BaseStocksViewModel(
 
     private fun onFavouriteIconClick(stockViewData: StockViewData) {
         viewModelScope.launch {
-            val company = stockMapper.map(stockViewData)
+            val company = companyWithStockPriceMapper.map(stockViewData)
 
             if (company.isFavourite) {
                 companiesInteractor.eraseCompanyFromFavourites(company)
@@ -176,19 +176,23 @@ abstract class BaseStocksViewModel(
     }
 
     private fun onStockPriceUpdate(companyWithStockPrice: CompanyWithStockPrice) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             stockLoadState.value.ifPrepared { preparedLoad ->
 
-                preparedLoad.data.ifExist<StockViewData>(
-                    selector = { companyWithStockPrice.company.id == it.id },
-                    action = { companyPosition ->
-                        val stockViewData = preparedLoad.data[companyPosition]
-                        stockViewData.stockPrice = companyWithStockPrice.stockPrice
-                        stockStyleProvider.updateProfit(stockViewData)
+                val targetIndex = preparedLoad
+                    .data
+                    .indexOfFirst { companyWithStockPrice.company.id == it.id }
 
-                        updateItemAtAdapter(stockViewData, PAYLOAD_PRICE_UPDATED)
+                if (targetIndex != NULL_INDEX) {
+                    val stockViewData = preparedLoad.data[targetIndex]
+
+                    companyWithStockPrice.stockPrice?.let {
+                        stockViewData.stockPriceViewData = stockPriceMapper.map(it)
                     }
-                )
+
+                    stockStyleProvider.updateProfit(stockViewData)
+                    updateItemAtAdapter(stockViewData, PAYLOAD_PRICE_UPDATED)
+                }
             }
         }
     }

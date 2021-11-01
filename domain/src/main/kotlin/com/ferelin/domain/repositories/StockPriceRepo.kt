@@ -24,5 +24,5 @@ interface StockPriceRepo {
 
     suspend fun getBy(relationCompanyId: Int) : StockPrice?
 
-    suspend fun update(relationCompanyId: Int, price: String, profit: String)
+    suspend fun update(relationCompanyId: Int, price: Double)
 }

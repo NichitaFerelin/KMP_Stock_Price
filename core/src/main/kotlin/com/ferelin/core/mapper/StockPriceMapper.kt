@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.ferelin.data_network_api.mappers
+package com.ferelin.core.mapper
 
-import com.ferelin.data_network_api.entities.StockPriceResponse
+import com.ferelin.core.utils.buildProfitString
+import com.ferelin.core.utils.toStrPrice
+import com.ferelin.core.viewData.StockPriceViewData
 import com.ferelin.domain.entities.StockPrice
 import javax.inject.Inject
 
 class StockPriceMapper @Inject constructor() {
 
-    fun map(stockPriceResponse: StockPriceResponse, companyId: Int): StockPrice {
-        return StockPrice(
-            relationCompanyId = companyId,
-            currentPrice = stockPriceResponse.currentPrice,
-            previousClosePrice = stockPriceResponse.previousClosePrice,
-            openPrice = stockPriceResponse.openPrice,
-            highPrice = stockPriceResponse.highPrice,
-            lowPrice = stockPriceResponse.lowPrice
+    fun map(stockPrice: StockPrice): StockPriceViewData {
+        return StockPriceViewData(
+            price = stockPrice.currentPrice.toStrPrice(),
+            profit = buildProfitString(
+                stockPrice.currentPrice,
+                stockPrice.previousClosePrice
+            ),
+            currentPrice = stockPrice.currentPrice,
+            previousClosePrice = stockPrice.previousClosePrice
         )
     }
 }

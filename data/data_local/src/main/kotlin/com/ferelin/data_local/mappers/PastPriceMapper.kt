@@ -16,8 +16,8 @@
 
 package com.ferelin.data_local.mappers
 
-import com.ferelin.domain.entities.PastPrice
 import com.ferelin.data_local.entities.PastPriceDBO
+import com.ferelin.domain.entities.PastPrice
 import javax.inject.Inject
 
 class PastPriceMapper @Inject constructor() {
@@ -27,12 +27,10 @@ class PastPriceMapper @Inject constructor() {
             id = pastPrice.id,
             relationCompanyId = pastPrice.relationCompanyId,
             openPrice = pastPrice.openPrice,
-            openPriceStr = pastPrice.openPriceStr,
             highPrice = pastPrice.highPrice,
             lowPrice = pastPrice.lowPrice,
             closePrice = pastPrice.closePrice,
-            closePriceStr = pastPrice.closePriceStr,
-            date = pastPrice.date
+            dateMillis = pastPrice.dateMillis
         )
     }
 
@@ -41,12 +39,10 @@ class PastPriceMapper @Inject constructor() {
             id = pastPriceDBO.id,
             relationCompanyId = pastPriceDBO.relationCompanyId,
             openPrice = pastPriceDBO.openPrice,
-            openPriceStr = pastPriceDBO.openPriceStr,
             highPrice = pastPriceDBO.highPrice,
             lowPrice = pastPriceDBO.lowPrice,
             closePrice = pastPriceDBO.closePrice,
-            closePriceStr = pastPriceDBO.closePriceStr,
-            date = pastPriceDBO.date
+            dateMillis = pastPriceDBO.dateMillis
         )
     }
 }

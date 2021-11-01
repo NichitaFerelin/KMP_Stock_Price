@@ -18,7 +18,8 @@ package com.ferelin.feature_search.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
-import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.mapper.CompanyWithStockPriceMapper
+import com.ferelin.core.mapper.StockPriceMapper
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewData.StockViewData
@@ -48,14 +49,16 @@ class SearchViewModel @Inject constructor(
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
     router: Router,
-    stockMapper: StockMapper,
+    companyWithStockPriceMapper: CompanyWithStockPriceMapper,
+    stockPriceMapper: StockPriceMapper,
     stockStyleProvider: StockStyleProvider,
 ) : BaseStocksViewModel(
-    stockMapper,
+    companyWithStockPriceMapper,
     router,
     companiesInteractor,
     stockPriceInteractor,
     stockStyleProvider,
+    stockPriceMapper,
     StocksMode.ALL
 ) {
     private val mPopularSearchRequestsState =

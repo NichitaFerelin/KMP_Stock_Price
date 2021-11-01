@@ -47,16 +47,18 @@ class PastPriceLoadAllByUseCase @Inject constructor(
     ): LoadState<List<PastPrice>> {
         return pastPriceSource
             .loadBy(relationCompanyId, relationCompanyTicker)
-            .also { loadState ->
-                loadState.ifPrepared { preparedState ->
-                    externalScope.launch {
+            .also { cacheIfPrepared(relationCompanyId, it) }
+    }
 
-                        // Erase previous
-                        pastPriceRepo.eraseBy(relationCompanyId)
+    private fun cacheIfPrepared(relationCompanyId: Int, loadState: LoadState<List<PastPrice>>) {
+        loadState.ifPrepared { preparedState ->
+            externalScope.launch {
 
-                        pastPriceRepo.insertAll(preparedState.data)
-                    }
-                }
+                // Erase previous
+                pastPriceRepo.eraseBy(relationCompanyId)
+
+                pastPriceRepo.insertAll(preparedState.data)
             }
+        }
     }
 }

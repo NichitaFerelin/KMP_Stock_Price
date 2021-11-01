@@ -115,9 +115,9 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private suspend fun observeActualStockPrice() {
-        viewModel.actualStockPrice.collect { stockPrice ->
+        viewModel.actualStockPrice.collect { stockPriceViewData ->
             withContext(Dispatchers.Main) {
-                setPriceFields(stockPrice.currentPrice, stockPrice.profit)
+                setPriceFields(stockPriceViewData.price, stockPriceViewData.profit)
             }
         }
     }
@@ -250,9 +250,9 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
     private fun setPriceFields(price: String, profit: String) {
         viewBinding.textViewCurrentPrice.text = price
+        viewBinding.textViewDayProfit.text = profit
 
         val profitBackground = stockStyleProvider.getProfitBackground(profit)
-        viewBinding.textViewDayProfit.text = profit
         viewBinding.textViewDayProfit.setTextColor(profitBackground)
     }
 

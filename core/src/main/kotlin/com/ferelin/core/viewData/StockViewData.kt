@@ -18,7 +18,6 @@ package com.ferelin.core.viewData
 
 import com.ferelin.core.adapter.base.ViewDataType
 import com.ferelin.core.adapter.stocks.STOCK_VIEW_TYPE
-import com.ferelin.domain.entities.StockPrice
 
 data class StockViewData(
     val id: Int,
@@ -26,7 +25,7 @@ data class StockViewData(
     val ticker: String,
     val logoUrl: String,
     val style: StockStyle,
-    var stockPrice: StockPrice? = null,
+    var stockPriceViewData: StockPriceViewData? = null,
     var isFavourite: Boolean = false,
     var addedByIndex: Int = 0
 ) : ViewDataType(STOCK_VIEW_TYPE) {
@@ -47,3 +46,10 @@ data class StockViewData(
         return id.toLong()
     }
 }
+
+data class StockPriceViewData(
+    val price: String,
+    val profit: String,
+    val currentPrice: Double,
+    val previousClosePrice: Double
+)

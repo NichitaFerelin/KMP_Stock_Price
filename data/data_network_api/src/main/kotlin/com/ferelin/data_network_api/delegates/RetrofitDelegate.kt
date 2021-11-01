@@ -24,11 +24,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import kotlin.reflect.KProperty
 
-object RetrofitDelegate {
+class RetrofitDelegate {
 
-    const val FINNHUB_WEB_SOCKET_URL = "wss://ws.finnhub.io?token="
-
-    private const val finnhubBaseUrl = "https://finnhub.io/api/v1/"
+    companion object {
+        private const val finnhubBaseUrl = "https://finnhub.io/api/v1/"
+        const val FINNHUB_WEB_SOCKET_URL = "wss://ws.finnhub.io?token="
+    }
 
     operator fun getValue(nothing: Nothing?, property: KProperty<*>): Retrofit {
         val moshi = Moshi

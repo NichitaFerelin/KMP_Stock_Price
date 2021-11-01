@@ -27,20 +27,17 @@ data class StockPriceDBO(
     val relationCompanyId: Int,
 
     @ColumnInfo(name = "current_price")
-    var currentPrice: String,
+    var currentPrice: Double,
 
     @ColumnInfo(name = "previous_close_price")
-    var previousClosePrice: String,
+    var previousClosePrice: Double,
 
     @ColumnInfo(name = "open_price")
-    var openPrice: String,
+    var openPrice: Double,
 
     @ColumnInfo(name = "high_price")
-    var highPrice: String,
+    var highPrice: Double,
 
     @ColumnInfo(name = "low_price")
-    var lowPrice: String,
-
-    @ColumnInfo(name = "profit")
-    var profit: String,
+    var lowPrice: Double
 )

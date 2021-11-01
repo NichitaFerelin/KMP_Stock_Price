@@ -33,8 +33,8 @@ interface StockPriceDao {
 
     @Query(
         "UPDATE `companies_stock_price` " +
-                "SET current_price = :price ,profit = :profit " +
-                "WHERE relation_company_id = :companyId"
+                "SET current_price = :price " +
+                "WHERE relation_company_id = :relationCompanyId"
     )
-    suspend fun update(companyId: Int, price: String, profit: String)
+    suspend fun update(relationCompanyId: Int, price: Double)
 }

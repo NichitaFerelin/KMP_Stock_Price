@@ -16,10 +16,8 @@
 
 package com.ferelin.data_network_api.mappers
 
-import com.ferelin.domain.entities.LiveTimePrice
 import com.ferelin.data_network_api.entities.LivePrice
-import com.ferelin.data_network_api.utils.buildProfitString
-import com.ferelin.shared.toStrPrice
+import com.ferelin.domain.entities.LiveTimePrice
 import javax.inject.Inject
 
 class LivePriceMapper @Inject constructor() {
@@ -28,8 +26,7 @@ class LivePriceMapper @Inject constructor() {
         return livePrice?.let {
             LiveTimePrice(
                 relationCompanyTicker = livePrice.companyTicker,
-                price = livePrice.lastPrice.toStrPrice(),
-                profit = buildProfitString(livePrice.lastPrice, /*TODO*/0.0)
+                price = livePrice.lastPrice
             )
         }
     }

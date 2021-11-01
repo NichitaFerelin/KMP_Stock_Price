@@ -25,8 +25,8 @@ import javax.inject.Inject
 class FirstLaunchGetUseCase @Inject constructor(
     private val firstLaunchRepo: FirstLaunchRepo,
 ) {
-    private companion object {
-        const val DEFAULT_FIRST_LAUNCH_STATE = true
+    companion object {
+        private const val defaultFirstLaunchState = true
     }
 
     /**
@@ -34,6 +34,6 @@ class FirstLaunchGetUseCase @Inject constructor(
      * @return first time application launch
      * */
     suspend fun get(): Boolean {
-        return firstLaunchRepo.get() ?: DEFAULT_FIRST_LAUNCH_STATE
+        return firstLaunchRepo.get() ?: defaultFirstLaunchState
     }
 }

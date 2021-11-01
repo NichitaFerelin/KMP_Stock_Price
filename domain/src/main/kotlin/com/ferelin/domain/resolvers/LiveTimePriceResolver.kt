@@ -22,9 +22,9 @@ import com.ferelin.domain.utils.StockPriceListener
 import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.NetworkListener
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -40,19 +40,21 @@ class LiveTimePriceResolver @Inject constructor(
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) : NetworkListener {
 
-    override suspend fun onNetworkAvailable() {
-        externalScope.launch {
+    private var collectLivePriceJob: Job? = null
 
+    override suspend fun onNetworkAvailable() {
+        collectLivePriceJob?.cancel()
+        collectLivePriceJob = externalScope.launch {
             // Creates new observer when network is available
             livePriceSource.observeLiveTimePriceUpdates()
                 .filter { it != null }
-                .map { it!! }
-                .collect { onLiveTimePrice(it) }
+                .collect { onLiveTimePrice(it!!) }
         }
     }
 
     override suspend fun onNetworkLost() {
         livePriceSource.cancelLiveTimeUpdates()
+        collectLivePriceJob?.cancel()
     }
 
     private suspend fun onLiveTimePrice(liveTimePrice: LiveTimePrice) {

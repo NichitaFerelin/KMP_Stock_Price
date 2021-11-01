@@ -28,18 +28,21 @@ class AppWebSocketListener(
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
         Timber.d("on message (text = $text)")
+
         mOnResponse(text)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
         Timber.d("on failure (throwable = $t)")
+
         mOnResponse("")
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
         Timber.d("on closing (reason = $reason)")
+
         webSocket.cancel()
     }
 }

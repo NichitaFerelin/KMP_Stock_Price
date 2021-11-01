@@ -19,8 +19,9 @@ package com.ferelin.feature_profile.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ProfileParams
-import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.useCases.ProfileGetByUseCase
+import com.ferelin.feature_profile.mapper.ProfileMapper
+import com.ferelin.feature_profile.viewData.ProfileViewData
 import com.ferelin.navigation.Router
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.ifPrepared
@@ -32,11 +33,12 @@ import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
     private val profileGetByUseCase: ProfileGetByUseCase,
+    private val profileMapper: ProfileMapper,
     private val router: Router
 ) : ViewModel() {
 
-    private val _profileLoadState = MutableStateFlow<LoadState<Profile>>(LoadState.None())
-    val profileLoadState: StateFlow<LoadState<Profile>> = _profileLoadState.asStateFlow()
+    private val _profileLoadState = MutableStateFlow<LoadState<ProfileViewData>>(LoadState.None())
+    val profileLoadState: StateFlow<LoadState<ProfileViewData>> = _profileLoadState.asStateFlow()
 
     var profileParams = ProfileParams()
 
@@ -44,8 +46,9 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _profileLoadState.value = LoadState.Loading()
 
-            val response = profileGetByUseCase.getBy(profileParams.companyId)
-            _profileLoadState.value = LoadState.Prepared(response)
+            val responseProfile = profileGetByUseCase.getBy(profileParams.companyId)
+            val mapped = profileMapper.map(responseProfile)
+            _profileLoadState.value = LoadState.Prepared(mapped)
         }
     }
 

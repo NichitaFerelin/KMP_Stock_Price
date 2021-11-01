@@ -35,9 +35,6 @@ class NewsDBO(
     @ColumnInfo(name = "headline")
     val headline: String,
 
-    @ColumnInfo(name = "date")
-    val date: String,
-
     @ColumnInfo(name = "preview_image_url")
     val previewImageUrl: String,
 
@@ -48,5 +45,8 @@ class NewsDBO(
     val sourceUrl: String,
 
     @ColumnInfo(name = "summary")
-    val summary: String
+    val summary: String,
+
+    @ColumnInfo(name = "date_millis")
+    val dateMillis: Long
 )

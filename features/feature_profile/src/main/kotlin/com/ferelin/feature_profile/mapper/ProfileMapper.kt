@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_chart.viewData
+package com.ferelin.feature_profile.mapper
 
-enum class ChartViewMode {
-    All,
-    Year,
-    SixMonths,
-    Months,
-    Weeks,
-    Days
+import com.ferelin.core.utils.toStrPrice
+import com.ferelin.domain.entities.Profile
+import com.ferelin.feature_profile.viewData.ProfileViewData
+import javax.inject.Inject
+
+class ProfileMapper @Inject constructor() {
+
+    fun map(profile: Profile): ProfileViewData {
+        return ProfileViewData(
+            country = profile.country,
+            phone = profile.phone,
+            webUrl = profile.webUrl,
+            industry = profile.industry,
+            capitalization = profile.capitalization.toDouble().toStrPrice()
+        )
+    }
 }

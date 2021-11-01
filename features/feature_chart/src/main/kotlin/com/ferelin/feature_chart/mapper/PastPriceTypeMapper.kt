@@ -17,18 +17,33 @@
 package com.ferelin.feature_chart.mapper
 
 import com.ferelin.core.customView.chart.ChartPastPrices
+import com.ferelin.core.utils.parseMonthFromDate
+import com.ferelin.core.utils.parseYearFromDate
+import com.ferelin.core.utils.toDateStr
+import com.ferelin.core.utils.toStrPrice
 import com.ferelin.domain.entities.PastPrice
-import com.ferelin.feature_chart.utils.extractPrice
-import com.ferelin.feature_chart.utils.parseMonthFromDate
-import com.ferelin.feature_chart.utils.parseYearFromDate
-import com.ferelin.feature_chart.utils.sum
 import com.ferelin.feature_chart.viewData.ChartViewMode
-import com.ferelin.shared.toStrPrice
+import com.ferelin.feature_chart.viewData.PastPriceViewData
 import javax.inject.Inject
 
 class PastPriceTypeMapper @Inject constructor() {
 
-    fun mapByViewMode(viewMode: ChartViewMode, pastPrices: List<PastPrice>): ChartPastPrices? {
+    fun map(pastPrice: PastPrice): PastPriceViewData {
+        val date = pastPrice.dateMillis.toDateStr()
+
+        return PastPriceViewData(
+            closePrice = pastPrice.closePrice,
+            closePriceStr = pastPrice.closePrice.toStrPrice(),
+            month = parseMonthFromDate(date),
+            year = parseYearFromDate(date),
+            date = date
+        )
+    }
+
+    fun mapByViewMode(
+        viewMode: ChartViewMode,
+        pastPrices: List<PastPriceViewData>
+    ): ChartPastPrices? {
         return when (viewMode) {
             ChartViewMode.All -> mapFull(pastPrices)
             ChartViewMode.Days -> mapFull(pastPrices)
@@ -39,24 +54,24 @@ class PastPriceTypeMapper @Inject constructor() {
         }
     }
 
-    private fun mapFull(pastPrice: List<PastPrice>): ChartPastPrices {
-        val prices = List(pastPrice.size) { extractPrice(pastPrice[it].closePriceStr) ?: 0.0 }
+    private fun mapFull(pastPrice: List<PastPriceViewData>): ChartPastPrices {
+        val prices = List(pastPrice.size) { pastPrice[it].closePrice }
         val pricesStr = List(pastPrice.size) { pastPrice[it].closePriceStr }
         val dates = List(pastPrice.size) { pastPrice[it].date }
         return ChartPastPrices(prices, pricesStr, dates)
     }
 
-    private fun mapToYear(pastPrices: List<PastPrice>): ChartPastPrices? {
+    private fun mapToYear(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
         if (pastPrices.size < 2) {
             return null
         }
 
-        val startMonth = parseMonthFromDate(pastPrices[0].date)
-        val startYear = parseYearFromDate(pastPrices[0].date)
+        val startMonth = pastPrices[0].month
+        val startYear = pastPrices[0].year
         val startDate = "$startMonth $startYear"
 
-        val endMonth = parseMonthFromDate(pastPrices.last().date)
-        val endYear = parseYearFromDate(pastPrices.last().date)
+        val endMonth = pastPrices.last().month
+        val endYear = pastPrices.last().year
         val endDate = "$endMonth $endYear"
 
         return ChartPastPrices(
@@ -66,29 +81,39 @@ class PastPriceTypeMapper @Inject constructor() {
         )
     }
 
-    private fun mapToHalfYear(pastPrices: List<PastPrice>): ChartPastPrices? {
+    private fun mapToHalfYear(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
         if (pastPrices.isEmpty()) {
             return null
         }
 
         val firstHalfBorder = pastPrices.size / 2
-        val firstHalfAverage = pastPrices.sum(0, firstHalfBorder) / (firstHalfBorder + 1)
-        val firstHalfFrom = parseMonthFromDate(pastPrices[0].date)
-        val firstHalfTo = parseMonthFromDate(pastPrices[firstHalfBorder].date)
 
-        val secondHalfAmount = pastPrices.sum(firstHalfBorder + 1, pastPrices.lastIndex)
+        val firstHalfAverage = pastPrices
+            .subList(0, firstHalfBorder)
+            .sumOf { it.closePrice } / (firstHalfBorder + 1)
+
+        val firstHalfFrom = pastPrices[0].month
+        val firstHalfTo = pastPrices[firstHalfBorder].month
+
+        val secondHalfAmount = pastPrices
+            .subList(firstHalfBorder + 1, pastPrices.lastIndex)
+            .sumOf { it.closePrice }
+
         val secondHalfAverage = secondHalfAmount / (pastPrices.size - firstHalfBorder + 1)
-        val secondHalfFrom = parseMonthFromDate(pastPrices[firstHalfBorder + 1].date)
-        val secondHalfTo = parseMonthFromDate(pastPrices[pastPrices.lastIndex].date)
+        val secondHalfFrom = pastPrices[firstHalfBorder + 1].month
+        val secondHalfTo = pastPrices[pastPrices.lastIndex].month
 
         return ChartPastPrices(
             prices = listOf(firstHalfAverage, secondHalfAverage),
-            pricesStr = listOf(firstHalfAverage.toStrPrice(), secondHalfAverage.toStrPrice()),
+            pricesStr = listOf(
+                firstHalfAverage.toStrPrice(),
+                secondHalfAverage.toStrPrice()
+            ),
             dates = listOf("$firstHalfFrom - $firstHalfTo", "$secondHalfFrom - $secondHalfTo")
         )
     }
 
-    private fun mapToMonths(pastPrices: List<PastPrice>): ChartPastPrices? {
+    private fun mapToMonths(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
         if (pastPrices.isEmpty()) {
             return null
         }
@@ -97,7 +122,7 @@ class PastPriceTypeMapper @Inject constructor() {
         val pricesStr = mutableListOf<String>()
         val dates = mutableListOf<String>()
 
-        var stepMonth = parseMonthFromDate(pastPrices[0].date)
+        var stepMonth = pastPrices[0].month
         var pastPricesCounter = 0
         var stepAmount = 0.0
 
@@ -105,7 +130,7 @@ class PastPriceTypeMapper @Inject constructor() {
             stepAmount += pastPrice.closePrice
             pastPricesCounter++
 
-            val currentMonth = parseMonthFromDate(pastPrice.date)
+            val currentMonth = pastPrice.month
 
             if (stepMonth != currentMonth) {
                 val average = stepAmount / pastPricesCounter
@@ -122,7 +147,7 @@ class PastPriceTypeMapper @Inject constructor() {
         return ChartPastPrices(prices, pricesStr, dates)
     }
 
-    private fun mapToWeeks(pastPrices: List<PastPrice>): ChartPastPrices? {
+    private fun mapToWeeks(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
         if (pastPrices.isEmpty()) {
             return null
         }

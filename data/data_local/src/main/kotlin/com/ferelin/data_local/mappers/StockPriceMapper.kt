@@ -16,8 +16,8 @@
 
 package com.ferelin.data_local.mappers
 
-import com.ferelin.domain.entities.StockPrice
 import com.ferelin.data_local.entities.StockPriceDBO
+import com.ferelin.domain.entities.StockPrice
 import javax.inject.Inject
 
 class StockPriceMapper @Inject constructor() {
@@ -29,8 +29,7 @@ class StockPriceMapper @Inject constructor() {
             previousClosePrice = stockPrice.previousClosePrice,
             openPrice = stockPrice.openPrice,
             highPrice = stockPrice.highPrice,
-            lowPrice = stockPrice.lowPrice,
-            profit = stockPrice.profit
+            lowPrice = stockPrice.lowPrice
         )
     }
 
@@ -41,8 +40,7 @@ class StockPriceMapper @Inject constructor() {
             previousClosePrice = stockPriceDBO.previousClosePrice,
             openPrice = stockPriceDBO.openPrice,
             highPrice = stockPriceDBO.highPrice,
-            lowPrice = stockPriceDBO.lowPrice,
-            profit = stockPriceDBO.profit
+            lowPrice = stockPriceDBO.lowPrice
         )
     }
 }

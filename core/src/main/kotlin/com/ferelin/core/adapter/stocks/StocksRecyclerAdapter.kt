@@ -79,8 +79,8 @@ fun createStocksAdapter(
     }
 
     fun ItemStockBinding.setCompanyPrice(item: StockViewData) {
-        textViewCurrentPrice.text = item.stockPrice?.currentPrice ?: ""
-        textViewDayProfit.text = item.stockPrice?.profit ?: ""
+        textViewCurrentPrice.text = item.stockPriceViewData?.price ?: ""
+        textViewDayProfit.text = item.stockPriceViewData?.profit ?: ""
         textViewDayProfit.setTextColor(item.style.dayProfitBackground)
     }
 

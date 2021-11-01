@@ -21,6 +21,4 @@ dependencies {
 
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
-
-    testImplementation(Dependencies.testJunitKtx)
 }

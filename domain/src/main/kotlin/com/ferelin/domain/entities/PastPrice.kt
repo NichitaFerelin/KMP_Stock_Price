@@ -20,10 +20,8 @@ data class PastPrice(
     val id: Long = 0L,
     val relationCompanyId: Int = 0,
     val openPrice: Double,
-    val openPriceStr: String,
-    val highPrice: String,
-    val lowPrice: String,
+    var highPrice: Double,
+    var lowPrice: Double,
     val closePrice: Double,
-    val closePriceStr: String,
-    val date: String
+    var dateMillis: Long
 )

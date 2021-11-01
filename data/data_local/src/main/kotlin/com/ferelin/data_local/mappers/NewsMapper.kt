@@ -16,8 +16,8 @@
 
 package com.ferelin.data_local.mappers
 
-import com.ferelin.domain.entities.News
 import com.ferelin.data_local.entities.NewsDBO
+import com.ferelin.domain.entities.News
 import javax.inject.Inject
 
 class NewsMapper @Inject constructor() {
@@ -28,7 +28,7 @@ class NewsMapper @Inject constructor() {
             relationCompanyId = news.relationCompanyId,
             cloudId = news.cloudId,
             headline = news.headline,
-            date = news.date,
+            dateMillis = news.dateMillis,
             previewImageUrl = news.previewImageUrl,
             source = news.source,
             sourceUrl = news.sourceUrl,
@@ -42,7 +42,7 @@ class NewsMapper @Inject constructor() {
             relationCompanyId = newsDBO.relationCompanyId,
             cloudId = newsDBO.cloudId,
             headline = newsDBO.headline,
-            date = newsDBO.date,
+            dateMillis = newsDBO.dateMillis,
             previewImageUrl = newsDBO.previewImageUrl,
             source = newsDBO.source,
             sourceUrl = newsDBO.sourceUrl,

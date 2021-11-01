@@ -19,11 +19,11 @@ package com.ferelin.domain.entities
 data class News(
     val id: Long = 0L,
     val relationCompanyId: Int = 0,
-    val cloudId: String,
+    var cloudId: String,
     val headline: String,
-    val date: String,
     val previewImageUrl: String,
     val source: String,
     val sourceUrl: String,
-    val summary: String
+    val summary: String,
+    var dateMillis: Long
 )

@@ -22,8 +22,9 @@ import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import javax.inject.Inject
 
-class StockMapper @Inject constructor(
-    private val stockStyleProvider: StockStyleProvider
+class CompanyWithStockPriceMapper @Inject constructor(
+    private val stockStyleProvider: StockStyleProvider,
+    private val stockPriceMapper: StockPriceMapper
 ) {
     fun map(companyWithStockPrice: CompanyWithStockPrice): StockViewData {
         return StockViewData(
@@ -35,7 +36,7 @@ class StockMapper @Inject constructor(
                 companyWithStockPrice.company,
                 companyWithStockPrice.stockPrice
             ),
-            stockPrice = companyWithStockPrice.stockPrice,
+            stockPriceViewData = companyWithStockPrice.stockPrice?.let { stockPriceMapper.map(it) },
             isFavourite = companyWithStockPrice.company.isFavourite,
             addedByIndex = companyWithStockPrice.company.addedByIndex
         )

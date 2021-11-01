@@ -16,7 +16,8 @@
 
 package com.ferelin.feature_stocks_favourite.viewModel
 
-import com.ferelin.core.mapper.StockMapper
+import com.ferelin.core.mapper.CompanyWithStockPriceMapper
+import com.ferelin.core.mapper.StockPriceMapper
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.viewModel.BaseStocksViewModel
 import com.ferelin.core.viewModel.StocksMode
@@ -31,23 +32,25 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FavouriteViewModel @Inject constructor(
-    stockMapper: StockMapper,
+    companyWithStockPriceMapper: CompanyWithStockPriceMapper,
     companiesInteractor: CompaniesInteractor,
     stockPriceInteractor: StockPriceInteractor,
     stockStyleProvider: StockStyleProvider,
+    stockPriceMapper: StockPriceMapper,
     router: Router
 ) : BaseStocksViewModel(
-    stockMapper,
+    companyWithStockPriceMapper,
     router,
     companiesInteractor,
     stockPriceInteractor,
     stockStyleProvider,
+    stockPriceMapper,
     StocksMode.ONLY_FAVOURITES
 ) {
     override suspend fun onFavouriteCompanyUpdate(companyWithStockPrice: CompanyWithStockPrice) {
         stockLoadState.value.ifPrepared { preparedLoad ->
             val favouriteCompanies = preparedLoad.data.toMutableList()
-            val stockViewData = stockMapper.map(companyWithStockPrice)
+            val stockViewData = companyWithStockPriceMapper.map(companyWithStockPrice)
 
             if (companyWithStockPrice.company.isFavourite) {
                 favouriteCompanies.add(0, stockViewData)

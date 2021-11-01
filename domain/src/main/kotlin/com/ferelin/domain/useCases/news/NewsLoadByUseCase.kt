@@ -37,23 +37,24 @@ class NewsLoadByUseCase @Inject constructor(
 ) {
     /**
      * Allows to load actual news
-     * @param companyId is a company id for which need to load company news
+     * @param relationCompanyId is a company id for which need to load company news
      * @param companyTicker is a company ticker by which need to load company news
      * @return [LoadState] with list of company news if [LoadState] is successful
      * */
-    suspend fun loadBy(companyId: Int, companyTicker: String): LoadState<List<News>> {
+    suspend fun loadBy(relationCompanyId: Int, companyTicker: String): LoadState<List<News>> {
         return newsSource
-            .loadBy(companyId, companyTicker)
-            .also { loadState ->
-                loadState.ifPrepared { preparedState ->
-                    externalScope.launch {
+            .loadBy(relationCompanyId, companyTicker)
+            .also { cacheIfPrepared(relationCompanyId, it) }
+    }
 
-                        // Erase previous
-                        newsRepo.eraseBy(companyId)
+    private fun cacheIfPrepared(relationCompanyId: Int, loadState: LoadState<List<News>>) {
+        loadState.ifPrepared { preparedState ->
+            externalScope.launch {
+                // Erase previous
+                newsRepo.eraseBy(relationCompanyId)
 
-                        newsRepo.insertAll(preparedState.data)
-                    }
-                }
+                newsRepo.insertAll(preparedState.data)
             }
+        }
     }
 }

@@ -29,7 +29,7 @@ import com.ferelin.data_local.entities.*
         NewsDBO::class,
         PastPriceDBO::class,
         ProfileDBO::class
-    ], version = 2
+    ], version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -46,10 +46,12 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "stock.price.db"
 
-        fun buildDatabase(context: Context) : AppDatabase {
+        fun buildDatabase(context: Context): AppDatabase {
             return Room
                 .databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(AppDatabaseMigrations.migration_1_to_2)
+                .addMigrations(
+                    AppDatabaseMigrations.migration_1_to_2
+                )
                 .build()
         }
     }

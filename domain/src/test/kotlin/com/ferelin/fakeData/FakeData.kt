@@ -31,14 +31,14 @@ object FakeData {
     )
 
     val stockPrices = listOf(
-        StockPrice(1, "", "", "", "", "", ""),
-        StockPrice(2, "", "", "", "", "", ""),
-        StockPrice(3, "", "", "", "", "", ""),
-        StockPrice(4, "", "", "", "", "", ""),
-        StockPrice(relationId, "", "", "", "", "", ""),
-        StockPrice(6, "", "", "", "", "", ""),
-        StockPrice(7, "", "", "", "", "", ""),
-        StockPrice(8, "", "", "", "", "", "")
+        StockPrice(1, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(2, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(3, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(4, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(relationId, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(6, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(7, 0.0, 0.0, 0.0, 0.0, 0.0),
+        StockPrice(8, 0.0, 0.0, 0.0, 0.0, 0.0)
     )
 
     val uniqueSearchRequests = setOf(
@@ -68,22 +68,22 @@ object FakeData {
     )
 
     val news = listOf(
-        News(1, 0, "", "", "", "", "", "", ""),
-        News(2, relationId, "", "", "", "", "", "", ""),
-        News(3, 0, "", "", "", "", "", "", ""),
-        News(4, relationId, "", "", "", "", "", "", ""),
-        News(5, 0, "", "", "", "", "", "", ""),
-        News(6, relationId, "", "", "", "", "", "", ""),
-        News(7, 0, "", "", "", "", "", "", "")
+        News(1, 0, "", "", "", "", "", "", 0L),
+        News(2, relationId, "", "", "", "", "", "", 0L),
+        News(3, 0, "", "", "", "", "", "", 0L),
+        News(4, relationId, "", "", "", "", "", "", 0L),
+        News(5, 0, "", "", "", "", "", "", 0L),
+        News(6, relationId, "", "", "", "", "", "", 0L),
+        News(7, 0, "", "", "", "", "", "", 0L)
     )
 
     val pastPrices = listOf(
-        PastPrice(1, 0, 0.0, "", "", "", 0.0, "", ""),
-        PastPrice(2, relationId, 0.0, "", "", "", 0.0, "", ""),
-        PastPrice(3, 0, 0.0, "", "", "", 0.0, "", ""),
-        PastPrice(4, relationId, 0.0, "", "", "", 0.0, "", ""),
-        PastPrice(5, 0, 0.0, "", "", "", 0.0, "", ""),
-        PastPrice(6, relationId, 0.0, "", "", "", 0.0, "", "")
+        PastPrice(1, 0, 0.0, 0.0, 0.0, 0.0, 0L),
+        PastPrice(2, relationId, 0.0, 0.0, 0.0, 0.0, 0L),
+        PastPrice(3, 0, 0.0, 0.0, 0.0, 0.0, 0L),
+        PastPrice(4, relationId, 0.0, 0.0, 0.0, 0.0, 0L),
+        PastPrice(5, 0, 0.0, 0.0, 0.0, 0.0, 0L),
+        PastPrice(6, relationId, 0.0, 0.0, 0.0, 0.0, 0L)
     )
 
     val profiles = listOf(

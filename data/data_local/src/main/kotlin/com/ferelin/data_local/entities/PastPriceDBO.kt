@@ -32,21 +32,15 @@ data class PastPriceDBO(
     @ColumnInfo(name = "open_price")
     val openPrice: Double,
 
-    @ColumnInfo(name = "open_price_str")
-    val openPriceStr: String,
-
     @ColumnInfo(name = "high_price")
-    val highPrice: String,
+    val highPrice: Double,
 
     @ColumnInfo(name = "low_price")
-    val lowPrice: String,
+    val lowPrice: Double,
 
     @ColumnInfo(name = "close_price")
     val closePrice: Double,
 
-    @ColumnInfo(name = "close_price_Str")
-    val closePriceStr: String,
-
     @ColumnInfo(name = "date")
-    val date: String
+    val dateMillis: Long
 )

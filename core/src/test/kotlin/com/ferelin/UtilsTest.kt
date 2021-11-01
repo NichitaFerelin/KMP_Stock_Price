@@ -16,7 +16,7 @@
 
 package com.ferelin
 
-import com.ferelin.shared.toStrPrice
+import com.ferelin.core.utils.toStrPrice
 import org.junit.Assert
 import org.junit.Test
 
@@ -56,5 +56,12 @@ class UtilsTest {
 
         val result11 = 1.0.toStrPrice()
         Assert.assertEquals("$1", result11)
+    }
+
+    @Test
+    fun buildProfitString() {
+        val actual = com.ferelin.core.utils.buildProfitString(100.0, 50.0)
+        val expected = "+$50.0 (50,0%)"
+        Assert.assertEquals(expected, actual)
     }
 }

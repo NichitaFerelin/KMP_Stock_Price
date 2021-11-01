@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.entities
+package com.ferelin.feature_profile.viewData
 
-class LiveTimePrice(
-    var relationCompanyId: Int = 0,
-    val relationCompanyTicker: String,
-    val price: Double
+data class ProfileViewData(
+    val country: String,
+    val phone: String,
+    val webUrl: String,
+    val industry: String,
+    var capitalization: String
 )

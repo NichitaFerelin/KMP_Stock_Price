@@ -72,7 +72,7 @@ class PastPriceRepoTest {
 
     @Test
     fun insert() = testCoroutineDispatcher.runBlockingTest {
-        val pastPrice = PastPrice(1, 0, 0.0, "", "", "", 0.0, "", "")
+        val pastPrice = PastPrice(1, 0, 0.0, 0.0, 0.0, 0.0, 0L)
         pastPriceRepo.insert(pastPrice)
 
         val actual = pastPriceRepo.getAllBy(0)

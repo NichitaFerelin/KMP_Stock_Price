@@ -30,9 +30,9 @@ import com.ferelin.core.params.ProfileParams
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
-import com.ferelin.domain.entities.Profile
 import com.ferelin.feature_profile.R
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
+import com.ferelin.feature_profile.viewData.ProfileViewData
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
 import com.ferelin.shared.LoadState
 import kotlinx.coroutines.Dispatchers
@@ -126,14 +126,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         }
     }
 
-    private fun setProfile(profile: Profile) {
+    private fun setProfile(profileViewData: ProfileViewData) {
         with(viewBinding) {
             TransitionManager.beginDelayedTransition(viewBinding.root)
-            textViewWebUrl.text = profile.webUrl
-            textViewCountry.text = profile.country
-            textViewIndustry.text = profile.industry
-            textViewPhone.text = profile.phone
-            textViewCapitalization.text = profile.capitalization
+            textViewWebUrl.text = profileViewData.webUrl
+            textViewCountry.text = profileViewData.country
+            textViewIndustry.text = profileViewData.industry
+            textViewPhone.text = profileViewData.phone
+            textViewCapitalization.text = profileViewData.capitalization
         }
     }
 

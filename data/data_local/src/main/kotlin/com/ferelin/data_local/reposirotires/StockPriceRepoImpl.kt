@@ -16,10 +16,10 @@
 
 package com.ferelin.data_local.reposirotires
 
-import com.ferelin.domain.entities.StockPrice
-import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.data_local.database.StockPriceDao
 import com.ferelin.data_local.mappers.StockPriceMapper
+import com.ferelin.domain.entities.StockPrice
+import com.ferelin.domain.repositories.StockPriceRepo
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -47,13 +47,12 @@ class StockPriceRepoImpl @Inject constructor(
             return@withContext stockPriceDbo?.let(mStockPriceMapper::map)
         }
 
-    override suspend fun update(relationCompanyId: Int, price: String, profit: String) =
+    override suspend fun update(relationCompanyId: Int, price: Double) =
         withContext(mDispatchersProvider.IO) {
             Timber.d(
-                "update (relation company id = $relationCompanyId, " +
-                        "price = $price, profit = $profit)"
+                "update (relation company id = $relationCompanyId, price = $price)"
             )
 
-            mStockPriceDao.update(relationCompanyId, price, profit)
+            mStockPriceDao.update(relationCompanyId, price)
         }
 }

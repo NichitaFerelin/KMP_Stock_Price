@@ -18,18 +18,19 @@ package com.ferelin.feature_chart.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.core.customView.chart.ChartPastPrices
+import com.ferelin.core.mapper.StockPriceMapper
 import com.ferelin.core.params.ChartParams
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.ifNotEmpty
-import com.ferelin.core.customView.chart.ChartPastPrices
-import com.ferelin.domain.entities.PastPrice
-import com.ferelin.domain.entities.StockPrice
+import com.ferelin.core.viewData.StockPriceViewData
 import com.ferelin.domain.interactors.StockPriceInteractor
 import com.ferelin.domain.useCases.pastPrice.PastPriceGetAllByUseCase
 import com.ferelin.domain.useCases.pastPrice.PastPriceLoadAllByUseCase
 import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
 import com.ferelin.feature_chart.viewData.ChartViewMode
+import com.ferelin.feature_chart.viewData.PastPriceViewData
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NetworkListener
 import com.ferelin.shared.ifPrepared
@@ -42,10 +43,11 @@ class ChartViewModel @Inject constructor(
     private val pastPriceGetAllByUseCase: PastPriceGetAllByUseCase,
     private val pastPriceLoadAllByUseCase: PastPriceLoadAllByUseCase,
     private val pastPriceTypeMapper: PastPriceTypeMapper,
+    private val stockPriceMapper: StockPriceMapper,
     private val networkResolver: NetworkResolver
 ) : ViewModel(), NetworkListener {
 
-    private var pastPrices: List<PastPrice> = emptyList()
+    private var pastPrices: List<PastPriceViewData> = emptyList()
 
     private val _pastPriceLoad = MutableStateFlow<LoadState<ChartPastPrices>>(LoadState.None())
     val pastPriceLoadState: StateFlow<LoadState<ChartPastPrices>> = _pastPriceLoad.asStateFlow()
@@ -55,10 +57,10 @@ class ChartViewModel @Inject constructor(
 
     var chartParams = ChartParams()
 
-    val actualStockPrice: SharedFlow<StockPrice> = stockPriceInteractor
+    val actualStockPrice: SharedFlow<StockPriceViewData> = stockPriceInteractor
         .observeActualStockPriceResponses()
         .filter { it is LoadState.Prepared && it.data.relationCompanyId == chartParams.companyId }
-        .map { (it as LoadState.Prepared).data }
+        .map { stockPriceMapper.map((it as LoadState.Prepared).data) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
 
     var chartMode: ChartViewMode = ChartViewMode.All
@@ -101,28 +103,27 @@ class ChartViewModel @Inject constructor(
     private suspend fun loadFromDb() {
         pastPriceGetAllByUseCase
             .getAllBy(chartParams.companyId)
+            .map(pastPriceTypeMapper::map)
             .ifNotEmpty { dbPrices -> onNewPastPrices(dbPrices) }
     }
 
     private suspend fun loadFromNetwork() {
         pastPriceLoadAllByUseCase
             .loadAllBy(chartParams.companyId, chartParams.companyTicker)
-            .let { responseState ->
-                if (responseState is LoadState.Prepared) {
-                    onNewPastPrices(responseState.data)
-                } else if (_pastPriceLoad.value !is LoadState.Prepared) {
-                    _pastPriceLoad.value = LoadState.Error()
-                }
-            }
+            .ifPrepared { preparedState ->
+                onNewPastPrices(
+                    pastPrices = preparedState.data.map(pastPriceTypeMapper::map)
+                )
+            } ?: run {
+            _pastPriceLoad.value = LoadState.Error()
+        }
     }
 
-    private fun onNewPastPrices(pastPrices: List<PastPrice>) {
+    private fun onNewPastPrices(pastPrices: List<PastPriceViewData>) {
         this.pastPrices = pastPrices
 
         pastPriceTypeMapper
             .mapByViewMode(chartMode, pastPrices)
-            ?.let { chartPastPrices ->
-                _pastPriceLoad.value = LoadState.Prepared(chartPastPrices)
-            }
+            ?.let { _pastPriceLoad.value = LoadState.Prepared(it) }
     }
 }

@@ -16,16 +16,14 @@
 
 package com.ferelin.data_network_api.mappers
 
-import com.ferelin.domain.entities.PastPrice
 import com.ferelin.data_network_api.entities.PastPricesResponse
 import com.ferelin.data_network_api.utils.toBasicMillisTime
-import com.ferelin.data_network_api.utils.toDateStr
-import com.ferelin.shared.toStrPrice
+import com.ferelin.domain.entities.PastPrice
 import javax.inject.Inject
 
 class PastPriceMapper @Inject constructor() {
 
-    fun map(pastPriceResponse: PastPricesResponse, relationCompanyId: Int): List<PastPrice> {
+    fun map(pastPriceResponse: PastPricesResponse, companyId: Int): List<PastPrice> {
         with(pastPriceResponse) {
             if (
                 closePrices.size != highPrices.size
@@ -43,14 +41,12 @@ class PastPriceMapper @Inject constructor() {
                 val timestamp = timestamps[index]
 
                 PastPrice(
-                    relationCompanyId = relationCompanyId,
+                    relationCompanyId = companyId,
                     openPrice = openPrice,
-                    openPriceStr = openPrice.toStrPrice(),
-                    highPrice = highPrice.toStrPrice(),
-                    lowPrice = lowPrice.toStrPrice(),
+                    highPrice = highPrice,
+                    lowPrice = lowPrice,
                     closePrice = closePrice,
-                    closePriceStr = closePrice.toStrPrice(),
-                    date = timestamp.toBasicMillisTime().toDateStr()
+                    dateMillis = timestamp.toBasicMillisTime()
                 )
             }
         }
