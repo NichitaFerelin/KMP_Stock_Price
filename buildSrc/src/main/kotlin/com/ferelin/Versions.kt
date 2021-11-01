@@ -24,6 +24,7 @@ object Versions {
     const val kotlinCoroutines = "1.5.2"
     const val gradleTools = "7.1.0-beta02"
     const val versionsChecker = "0.38.0"
+    const val firebaseCrashlytic = "2.8.0"
 
     const val timber = "5.0.1"
 

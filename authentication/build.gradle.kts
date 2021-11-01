@@ -31,6 +31,5 @@ dependencies {
     kapt(Dependencies.daggerCompilerKapt)
 
     implementation(platform(Dependencies.firebasePlatform))
-    implementation(Dependencies.firebaseAnalyticsKtx)
     implementation(Dependencies.firebaseAuthenticationKtx)
 }

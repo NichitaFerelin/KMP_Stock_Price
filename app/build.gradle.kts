@@ -8,6 +8,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("com.github.ben-manes.versions")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -43,6 +44,9 @@ android {
 dependencies {
     implementation(Dependencies.androidCore)
     implementation(Dependencies.timber)
+
+    implementation(platform(Dependencies.firebasePlatform))
+    implementation(Dependencies.firebaseCrashlyticsKtx)
 
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)

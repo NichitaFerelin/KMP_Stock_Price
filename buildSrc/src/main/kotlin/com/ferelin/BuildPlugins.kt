@@ -22,4 +22,6 @@ object BuildPlugins {
     const val googleServices = "com.google.gms:google-services:${Versions.googleServices}"
     const val versionsChecker =
         "com.github.ben-manes:gradle-versions-plugin:${Versions.versionsChecker}"
+    const val firebaseCrashlytics =
+        "com.google.firebase:firebase-crashlytics-gradle:${Versions.firebaseCrashlytic}"
 }

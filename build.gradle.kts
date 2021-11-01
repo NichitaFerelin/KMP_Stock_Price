@@ -9,6 +9,7 @@ buildscript {
         classpath(com.ferelin.BuildPlugins.kotlin)
         classpath(com.ferelin.BuildPlugins.googleServices)
         classpath(com.ferelin.BuildPlugins.versionsChecker)
+        classpath(com.ferelin.BuildPlugins.firebaseCrashlytics)
     }
 }
 allprojects {
