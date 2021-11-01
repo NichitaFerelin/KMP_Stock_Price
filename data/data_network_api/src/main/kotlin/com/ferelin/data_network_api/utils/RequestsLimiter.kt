@@ -18,7 +18,6 @@ package com.ferelin.data_network_api.utils
 
 import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -34,7 +33,7 @@ import kotlin.math.abs
  * */
 @Singleton
 class RequestsLimiter @Inject constructor(
-    @Named(NAMED_EXTERNAL_SCOPE) externalScope: CoroutineScope
+    @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     private var stockPriceApi: ((Int, String) -> Unit)? = null
 
@@ -46,15 +45,13 @@ class RequestsLimiter @Inject constructor(
 
     private var isRunning = true
 
-    private var workerJob: Job? = null
-
     private companion object {
-        const val PER_SECOND_REQUESTS_LIMIT = 1050L
-        const val ALREADY_NOT_ACTUAL_REQUEST = 13
+        const val perSecondRequestsLimit = 1050L
+        const val alreadyNotActualIndex = 13
     }
 
     init {
-        workerJob = externalScope.launch {
+        externalScope.launch {
             start()
         }
     }
@@ -66,6 +63,8 @@ class RequestsLimiter @Inject constructor(
         eraseIfNotActual: Boolean,
         ignoreDuplicates: Boolean
     ) {
+        Timber.d("add request to order (company ticker = $companyTicker)")
+
         if (ignoreDuplicates || isNotDuplicatedMessage(companyId)) {
             acceptMessage(companyId, companyTicker, keyPosition, eraseIfNotActual)
         }
@@ -75,20 +74,16 @@ class RequestsLimiter @Inject constructor(
         stockPriceApi = onExecute
     }
 
-    fun invalidate() {
-        workerJob?.cancel()
-        workerJob = null
-        requestsQueue.clear()
-        isRunning = false
-    }
-
     private suspend fun start() {
         while (isRunning) {
             try {
                 requestsQueue.firstOrNull()?.let { task ->
+                    Timber.d("task processing $task")
 
                     // Check if is duplicate
                     if (requestsHistory[task.companyId] == Unit) {
+                        Timber.d("remove duplicated task $task")
+
                         requestsQueue.remove(task)
                         return@let
                     }
@@ -97,17 +92,22 @@ class RequestsLimiter @Inject constructor(
                     requestsQueue.remove(task)
 
                     if (isNotActual(task.keyPosition, lastPosition, task.eraseIfNotActual)) {
+                        Timber.d("remove not actual task $task")
+
+                        requestsQueue.remove(task)
                         return@let
                     }
 
-                    Timber.d(
-                        "execute request for ${task.companyTicker}" +
-                                ". Api: $stockPriceApi"
-                    )
-                    stockPriceApi?.invoke(task.companyId, task.companyTicker)
+                    externalScope.launch {
+                        Timber.d(
+                            "execute request for ${task.companyTicker}" +
+                                    ". Api: $stockPriceApi"
+                        )
+                        stockPriceApi?.invoke(task.companyId, task.companyTicker)
+                    }
 
                     requestsHistory[task.companyId] = Unit
-                    delay(PER_SECOND_REQUESTS_LIMIT)
+                    delay(perSecondRequestsLimit)
                 }
             } catch (exception: ConcurrentModificationException) {
                 // Do nothing. Request will not be removed
@@ -121,6 +121,8 @@ class RequestsLimiter @Inject constructor(
         position: Int,
         eraseIfNotActual: Boolean
     ) {
+        Timber.d("accept message (company ticker = $companyTicker)")
+
         requestsQueue.add(
             CachedMessage(
                 companyId,
@@ -140,12 +142,12 @@ class RequestsLimiter @Inject constructor(
         lastPosition: Int,
         eraseIfNotActual: Boolean
     ): Boolean {
-        return abs(currentPosition - lastPosition) >= ALREADY_NOT_ACTUAL_REQUEST
+        return abs(currentPosition - lastPosition) >= alreadyNotActualIndex
                 && eraseIfNotActual
     }
 }
 
-internal data class CachedMessage(
+internal class CachedMessage(
     val companyId: Int,
     val companyTicker: String,
     val keyPosition: Int,
@@ -161,5 +163,9 @@ internal data class CachedMessage(
 
     override fun hashCode(): Int {
         return companyId.hashCode()
+    }
+
+    override fun toString(): String {
+        return "|cached message: $companyTicker|"
     }
 }

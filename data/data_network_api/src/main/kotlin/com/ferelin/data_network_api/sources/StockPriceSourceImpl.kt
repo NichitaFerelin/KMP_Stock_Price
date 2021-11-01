@@ -82,6 +82,6 @@ class StockPriceSourceImpl @Inject constructor(
                     }
                 )
             }
-            awaitClose { requestsLimiter.invalidate() }
+            awaitClose()
         }
 }
