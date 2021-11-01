@@ -113,7 +113,7 @@
         <item name="android:layout_margin">16dp</item>
         <item name="android:backgroundTint">@color/whiteDark</item>
         <item name="android:visibility">invisible</item>
-        <item name="android:src">@drawable/ic_arrow_up</item>
+        <item name="android:src">@drawable/outline_arrow_upward_24</item>
         <item name="layout_behavior">com.ferelin.core.customView.FabBehaviourScrollable</item>
         <item name="tint">@color/black</item>
     </style>
@@ -126,7 +126,7 @@
         <item name="android:inputType">text</item>
         <item name="android:lines">1</item>
         <item name="android:textColorHint">@color/black</item>
-        <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_edit_text</item>
     </style>
 
     <style name="recyclerViewSearchRequests">

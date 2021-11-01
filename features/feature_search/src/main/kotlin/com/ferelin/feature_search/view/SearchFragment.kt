@@ -54,6 +54,12 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         factoryProducer = { viewModelFactory }
     )
 
+    /**
+     * Updating the data is not required for every change in the fragment's
+     * lifecycle, as search queries will get confused
+     * */
+    override val updateStocksEveryLifecycle: Boolean = false
+
     private val backPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

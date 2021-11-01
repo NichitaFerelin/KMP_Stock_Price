@@ -20,7 +20,7 @@
             style="@style/clickableImage"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_back"
+            android:src="@drawable/outline_arrow_back_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -113,7 +113,7 @@
             android:contentDescription="@string/descriptionApply"
             android:scaleX="0"
             android:scaleY="0"
-            android:src="@drawable/ic_check_circle"
+            android:src="@drawable/outline_check_circle_24"
             app:layout_constraintBottom_toBottomOf="@id/editTextPhoneLayout"
             app:layout_constraintStart_toEndOf="@id/editTextPhoneLayout" />
 

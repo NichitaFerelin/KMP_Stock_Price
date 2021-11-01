@@ -58,10 +58,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
-        android:contentDescription="@string/descriptionLogOut"
         app:layout_constraintBottom_toBottomOf="@id/textViewSource"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewTitle"
-        tools:src="@drawable/ic_login" />
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/outline_login_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

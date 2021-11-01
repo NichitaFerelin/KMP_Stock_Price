@@ -87,9 +87,13 @@ class CompaniesInteractorImpl @Inject constructor(
             }
             .also { loadedCompanies ->
                 companiesState = LoadState.Prepared(loadedCompanies)
-                favouriteCompaniesState = LoadState.Prepared(
-                    data = loadedCompanies.filter { it.company.isFavourite }
-                )
+
+                val favouriteCompanies = loadedCompanies.filter { it.company.isFavourite }
+                favouriteCompaniesState = LoadState.Prepared(favouriteCompanies)
+
+                favouriteCompanies.forEach {
+                    livePriceSource.subscribeCompanyOnUpdates(it.company.ticker)
+                }
 
                 tryToSync()
             }
@@ -225,6 +229,7 @@ class CompaniesInteractorImpl @Inject constructor(
 
     override suspend fun onNetworkAvailable() {
         tryToSync()
+        livePriceSource.resubscribeCompaniesOnUpdates()
     }
 
     override suspend fun onNetworkLost() {

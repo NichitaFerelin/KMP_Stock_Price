@@ -51,6 +51,12 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
     abstract val viewModel: VM
 
+    /**
+     * Updating data for each lifecycle change may not be necessary
+     * (for example SearchFragment)
+     * */
+    protected open val updateStocksEveryLifecycle = true
+
     protected var stocksRecyclerView: RecyclerView? = null
 
     private var scaleIn: Animation? = null
@@ -79,6 +85,10 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
 
     override fun initObservers() {
         launchAndRepeatWithViewLifecycle {
+            if (updateStocksEveryLifecycle) {
+                viewModel.updateStocksData()
+            }
+
             launch { viewModel.companiesStockPriceUpdates.collect() }
             launch { viewModel.favouriteCompaniesUpdates.collect() }
             launch { viewModel.actualStockPrice.collect() }

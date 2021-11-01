@@ -108,6 +108,8 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
 
         viewBinding.imageViewBack.setOnClick(viewModel::onBackBtnClick)
         viewBinding.imageViewStar.setOnClick(viewModel::onFavouriteIconClick)
+
+        setDescriptionToFavouriteIcon()
     }
 
     override fun initObservers() {
@@ -125,6 +127,7 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     private suspend fun observeFavouriteCompaniesUpdate() {
         viewModel.favouriteCompaniesUpdate.collect {
             withContext(Dispatchers.Main) {
+                setDescriptionToFavouriteIcon()
                 viewBinding.imageViewStar.setImageResource(viewModel.favouriteIconRes)
             }
         }
@@ -139,6 +142,14 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
                     showSnackbar(getString(R.string.messageNetworkNotAvailable))
                 }
             }
+        }
+    }
+
+    private fun setDescriptionToFavouriteIcon() {
+        viewBinding.imageViewStar.contentDescription = if (viewModel.isFavourite) {
+            getString(R.string.descriptionRemoveFromFavourites)
+        } else {
+            getString(R.string.descriptionAddToFavourites)
         }
     }
 

@@ -26,12 +26,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LivePriceSourceImpl @Inject constructor(
     private val livePriceSocketResolver: LivePriceSocketResolver,
     private val livePriceMapper: LivePriceMapper,
     private val dispatchersProvider: DispatchersProvider
 ) : LivePriceSource {
+
+    private val subscribedItems = HashSet<String>()
 
     override fun observeLiveTimePriceUpdates(): Flow<LiveTimePrice?> {
         Timber.d("observe live time price updates")
@@ -52,6 +56,7 @@ class LivePriceSourceImpl @Inject constructor(
         withContext(dispatchersProvider.IO) {
             Timber.d("subscribe (company ticker = $companyTicker)")
 
+            subscribedItems.add(companyTicker)
             livePriceSocketResolver.subscribe(companyTicker)
         }
 
@@ -59,6 +64,16 @@ class LivePriceSourceImpl @Inject constructor(
         withContext(dispatchersProvider.IO) {
             Timber.d("unsubscribe (company ticker = $companyTicker)")
 
+            subscribedItems.remove(companyTicker)
             livePriceSocketResolver.unsubscribe(companyTicker)
+        }
+
+    override suspend fun resubscribeCompaniesOnUpdates(): Unit =
+        withContext(dispatchersProvider.IO) {
+            Timber.d("resubscribe companies (size = ${subscribedItems.size})")
+
+            subscribedItems
+                .toList()
+                .forEach { subscribeCompanyOnUpdates(it) }
         }
 }

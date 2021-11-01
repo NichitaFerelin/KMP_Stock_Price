@@ -107,6 +107,7 @@ class SearchViewModel @Inject constructor(
     }
 
     init {
+        updateStocksData()
         loadSearchRequests()
     }
 

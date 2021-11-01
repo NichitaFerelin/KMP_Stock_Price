@@ -34,7 +34,7 @@
         style="@style/clickableImage"
         android:layout_marginStart="9dp"
         android:contentDescription="@string/descriptionBack"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/outline_arrow_back_24"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker" />
@@ -43,11 +43,11 @@
         android:id="@+id/imageViewStar"
         style="@style/clickableImage"
         android:layout_marginEnd="9dp"
-        android:contentDescription="@string/descriptionAddToFavourite"
         android:src="@drawable/ic_star"
         app:layout_constraintBottom_toBottomOf="@id/textViewCompanyName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker" />
+        app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker"
+        tools:ignore="ContentDescription" />
 
     <com.ferelin.core.customView.tabs.CustomTabLayout
         android:id="@+id/tabLayout"

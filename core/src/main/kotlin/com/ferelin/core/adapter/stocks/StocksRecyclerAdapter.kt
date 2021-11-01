@@ -74,6 +74,7 @@ fun createStocksAdapter(
     }
 
     fun ItemStockBinding.setFavourite(item: StockViewData) {
+        imageViewFavourite.contentDescription = item.style.iconContentDescription
         imageViewFavourite.setImageResource(item.style.favouriteBackgroundIconResource)
         imageViewBoundedIcon.setImageResource(item.style.favouriteForegroundIconResource)
     }

@@ -21,5 +21,6 @@ class StockStyle(
     var favouriteBackgroundIconResource: Int = 0,
     var favouriteForegroundIconResource: Int = 0,
     var dayProfitBackground: Int = 0,
-    var rippleForeground: Int = 0
+    var rippleForeground: Int = 0,
+    var iconContentDescription: String = ""
 )

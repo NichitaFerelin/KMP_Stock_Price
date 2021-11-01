@@ -34,5 +34,6 @@ fun createOptionsAdapter(
     viewBinding.textViewTitle.text = item.title
     viewBinding.textViewSource.text = item.source
     viewBinding.image.setImageResource(item.iconRes)
+    viewBinding.image.contentDescription = item.iconContentDescription
     viewBinding.cardHolder.setOnClickListener { onOptionClick.invoke(item) }
 }

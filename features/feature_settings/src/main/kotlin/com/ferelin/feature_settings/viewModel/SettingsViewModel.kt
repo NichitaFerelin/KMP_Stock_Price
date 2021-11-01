@@ -77,12 +77,19 @@ class SettingsViewModel @Inject constructor(
         ).apply { setHasStableIds(true) }
     }
 
-    init {
-        loadOptions()
-    }
-
     fun onBackClick() {
         router.back()
+    }
+
+    fun loadOptions() {
+        viewModelScope.launch {
+            val isUserAuth = authenticationInteractor.isUserAuthenticated()
+            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
+
+            withContext(Dispatchers.Main) {
+                optionsAdapter.setData(menuOptions)
+            }
+        }
     }
 
     fun onPathSelected(uri: Uri?) {
@@ -150,17 +157,6 @@ class SettingsViewModel @Inject constructor(
             _messageEvent.emit(SettingsEvent.ASK_FOR_PATH)
         } else {
             initSourceProjectDownload(storagePath, pathAuthority)
-        }
-    }
-
-    private fun loadOptions() {
-        viewModelScope.launch {
-            val isUserAuth = authenticationInteractor.isUserAuthenticated()
-            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
-
-            withContext(Dispatchers.Main) {
-                optionsAdapter.setData(menuOptions)
-            }
         }
     }
 

@@ -27,7 +27,7 @@
             style="@style/clickableImage"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/descriptionShare"
-            android:src="@drawable/ic_share"
+            android:src="@drawable/outline_share_24"
             app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/imageViewIcon" />

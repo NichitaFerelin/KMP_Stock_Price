@@ -33,7 +33,7 @@
         android:background="@null"
         android:contentDescription="@string/descriptionBack"
         android:elevation="@dimen/searchFragmentElevation"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/outline_arrow_back_24"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintStart_toStartOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
@@ -61,7 +61,7 @@
         android:paddingVertical="10dp"
         android:scaleX="0"
         android:scaleY="0"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/outline_close_24"
         app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
         app:layout_constraintEnd_toEndOf="@id/cardViewSearch"
         app:layout_constraintTop_toTopOf="@id/cardViewSearch"

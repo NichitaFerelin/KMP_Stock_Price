@@ -79,6 +79,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun initObservers() {
         launchAndRepeatWithViewLifecycle {
+            viewModel.loadOptions()
             observeMessageEvent()
         }
     }

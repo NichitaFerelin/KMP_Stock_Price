@@ -35,7 +35,6 @@
 
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
-    <string name="descriptionAddToFavourite">Add or remove from favourite</string>
     <string name="descriptionCompanyIcon">Company icon</string>
     <string name="descriptionScrollToTop">Scroll to top</string>
     <string name="descriptionIconClose">Clear search request</string>
@@ -46,6 +45,9 @@
     <string name="descriptionSettings">Settings</string>
     <string name="descriptionDownload">Downloading project</string>
     <string name="descriptionShare">Share</string>
+    <string name="descriptionDelete">Delete all user data</string>
+    <string name="descriptionAddToFavourites">Click to add to favourites</string>
+    <string name="descriptionRemoveFromFavourites">Click to remove from favourites</string>
 
     <!-- Hints -->
     <string name="hintFindCompany">Find company or ticker</string>
@@ -62,9 +64,10 @@
     <string name="hintEnterCode">Enter code</string>
     <string name="hintOk">OK</string>
     <string name="hintAuthentication">Authentication by phone number</string>
-    <string name="hintAuthenticationHelp">Authentication allows us to store your favorites
-        companies in the cloud database. You will be able to log in from another device and
-        sync this list</string>
+    <string name="hintAuthenticationHelp">After successful authorization, the current shareholding
+        and search queries will be saved in the cloud database. If in the past any data was
+        associated with your phone number, they will also be downloaded to you locally. All
+        subsequent changes will affect the cloud database</string>
     <string name="hintChoose">Choose</string>
 
     <!-- Messages -->
@@ -81,7 +84,10 @@
     <string name="transitionAboutPager">Transition container about fragment pager</string>
 
     <string name="sourceNotAuthorized">You are not authorized. Login</string>
-    <string name="sourceAuthorized">You are logged in. Log off</string>
-    <string name="sourceClearData">Clear all added stocks, search history, etc.</string>
+    <string name="sourceAuthorized">You are logged in. Log off.\nYour current shareholding
+        and searches will only be deleted locally. The next time you sign in, you
+        will be able to sync your data</string>
+    <string name="sourceClearData">Clear the shareholding and search queries. If you are authorized,
+        the data will also be deleted from the cloud database.</string>
     <string name="sourceDownload">Download source project code from GitHub</string>
 </resources>

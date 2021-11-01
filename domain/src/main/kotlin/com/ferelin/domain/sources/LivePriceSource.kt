@@ -32,4 +32,6 @@ interface LivePriceSource {
     suspend fun subscribeCompanyOnUpdates(companyTicker: String)
 
     suspend fun unsubscribeCompanyFromUpdates(companyTicker: String)
+
+    suspend fun resubscribeCompaniesOnUpdates()
 }

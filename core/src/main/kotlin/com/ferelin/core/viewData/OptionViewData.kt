@@ -25,7 +25,8 @@ data class OptionViewData(
     val type: OptionType,
     val title: String,
     val source: String,
-    val iconRes: Int
+    val iconRes: Int,
+    val iconContentDescription: String
 ) : ViewDataType(OPTION_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {

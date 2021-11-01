@@ -47,7 +47,8 @@ class StockStyleProvider @Inject constructor(
             favouriteForegroundIconResource = getForegroundIconDrawable(company.isFavourite),
             dayProfitBackground = stockPrice?.let {
                 getProfitBackground(it.currentPrice - it.previousClosePrice)
-            } ?: 0
+            } ?: 0,
+            iconContentDescription = getContentDescription(company.isFavourite)
         )
     }
 
@@ -62,6 +63,7 @@ class StockStyleProvider @Inject constructor(
         stockViewData.style.apply {
             favouriteBackgroundIconResource = getBackgroundIconDrawable(stockViewData.isFavourite)
             favouriteForegroundIconResource = getForegroundIconDrawable(stockViewData.isFavourite)
+            iconContentDescription = getContentDescription(stockViewData.isFavourite)
         }
     }
 
@@ -78,6 +80,16 @@ class StockStyleProvider @Inject constructor(
         return if (prefix == '+') {
             getColor(colorProfitPlus)
         } else getColor(colorProfitMinus)
+    }
+
+    private fun getContentDescription(isFavourite: Boolean): String {
+        return context.getString(
+            if (isFavourite) {
+                R.string.descriptionRemoveFromFavourites
+            } else {
+                R.string.descriptionAddToFavourites
+            }
+        )
     }
 
     private fun getProfitBackground(profit: Double): Int {

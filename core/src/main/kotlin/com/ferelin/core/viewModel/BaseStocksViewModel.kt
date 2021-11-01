@@ -84,15 +84,31 @@ abstract class BaseStocksViewModel(
         .observeActualStockPriceResponses()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT), 1)
 
-    init {
-        prepareStocksData()
-    }
-
     fun onHolderUntouched(stockViewHolder: StockViewHolder) {
         viewModelScope.launch {
             val viewData = stocksAdapter.getByPosition(stockViewHolder.layoutPosition)
             if (viewData is StockViewData) {
                 onFavouriteIconClick(viewData)
+            }
+        }
+    }
+
+    fun updateStocksData() {
+        viewModelScope.launch {
+            stockLoadState.value = LoadState.Loading()
+
+            val companies = if (stocksMode == StocksMode.ALL) {
+                companiesInteractor.getAll()
+            } else {
+                companiesInteractor.getAllFavourites()
+            }
+
+            val viewData = companies.map(companyWithStockPriceMapper::map)
+
+            stockLoadState.value = LoadState.Prepared(viewData)
+
+            withContext(Dispatchers.Main) {
+                stocksAdapter.setData(viewData)
             }
         }
     }
@@ -113,26 +129,6 @@ abstract class BaseStocksViewModel(
                 stockStyleProvider.updateFavourite(targetCompany)
 
                 updateItemAtAdapter(targetCompany, PAYLOAD_FAVOURITE_UPDATED)
-            }
-        }
-    }
-
-    private fun prepareStocksData() {
-        viewModelScope.launch {
-            stockLoadState.value = LoadState.Loading()
-
-            val companies = if (stocksMode == StocksMode.ALL) {
-                companiesInteractor.getAll()
-            } else {
-                companiesInteractor.getAllFavourites()
-            }
-
-            val viewData = companies.map(companyWithStockPriceMapper::map)
-
-            stockLoadState.value = LoadState.Prepared(viewData)
-
-            withContext(Dispatchers.Main) {
-                stocksAdapter.setData(viewData)
             }
         }
     }

@@ -41,21 +41,32 @@ class MenuOptionsProvider @Inject constructor(
                         R.string.sourceAuthorized
                     } else R.string.sourceNotAuthorized
                 ),
-                iconRes = if (isUserAuthenticated) R.drawable.ic_logout else R.drawable.ic_login
+                iconRes = if (isUserAuthenticated) {
+                    R.drawable.outline_logout_24
+                } else {
+                    R.drawable.outline_login_24
+                },
+                iconContentDescription = if (isUserAuthenticated) {
+                    context.getString(R.string.descriptionLogOut)
+                } else {
+                    context.getString(R.string.descriptionLogIn)
+                }
             ),
             OptionViewData(
                 id = 1,
                 type = OptionType.SOURCE_CODE,
                 title = context.getString(R.string.titleSourceCode),
                 source = context.getString(R.string.sourceDownload),
-                iconRes = R.drawable.ic_download
+                iconRes = R.drawable.outline_file_download_24,
+                iconContentDescription = context.getString(R.string.descriptionDownload)
             ),
             OptionViewData(
                 id = 2,
                 type = OptionType.CLEAR_DATA,
                 title = context.getString(R.string.titleClearData),
                 source = context.getString(R.string.sourceClearData),
-                iconRes = R.drawable.ic_delete
+                iconRes = R.drawable.outline_delete_24,
+                iconContentDescription = context.getString(R.string.descriptionDelete)
             )
         )
     }
