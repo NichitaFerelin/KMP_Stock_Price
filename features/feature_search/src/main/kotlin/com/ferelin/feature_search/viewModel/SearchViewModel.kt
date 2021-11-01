@@ -61,7 +61,12 @@ class SearchViewModel @Inject constructor(
     stockPriceMapper,
     StocksMode.ALL
 ) {
-    private val mPopularSearchRequestsState =
+    private companion object {
+        const val searchTaskTimeout = 350L
+        const val maxRequestsResult = 5
+    }
+
+    private val popularSearchRequestsState =
         MutableStateFlow<LoadState<List<SearchViewData>>>(LoadState.None())
 
     private val _onNewSearchText = MutableSharedFlow<String>()
@@ -101,24 +106,8 @@ class SearchViewModel @Inject constructor(
         ).apply { setHasStableIds(true) }
     }
 
-    private companion object {
-        const val SEARCH_TASK_TIMEOUT = 350L
-        const val MAX_REQUESTS_RESULT = 5
-    }
-
-    fun loadSearchRequests() {
-        viewModelScope.launch {
-            mPopularSearchRequestsState.value = LoadState.Loading()
-
-            launch {
-                val dbSearchRequests = searchRequestsInteractor.getAll()
-                onSearchRequestsChanged(dbSearchRequests)
-            }
-            launch {
-                val dbPopularSearchRequests = searchRequestsInteractor.getAllPopular()
-                onPopularSearchRequestsChanged(dbPopularSearchRequests)
-            }
-        }
+    init {
+        loadSearchRequests()
     }
 
     fun onSearchTextChanged(searchText: String) {
@@ -131,12 +120,27 @@ class SearchViewModel @Inject constructor(
                 viewModelScope.launch {
                     initSearch(searchText)
                 }
-            }, SEARCH_TASK_TIMEOUT)
+            }, searchTaskTimeout)
         }
     }
 
     fun onBackClick() {
         router.back()
+    }
+
+    private fun loadSearchRequests() {
+        viewModelScope.launch {
+            popularSearchRequestsState.value = LoadState.Loading()
+
+            launch {
+                val dbSearchRequests = searchRequestsInteractor.getAll()
+                onSearchRequestsChanged(dbSearchRequests)
+            }
+            launch {
+                val dbPopularSearchRequests = searchRequestsInteractor.getAllPopular()
+                onPopularSearchRequestsChanged(dbPopularSearchRequests)
+            }
+        }
     }
 
     private fun onTickerClick(searchViewData: SearchViewData) {
@@ -181,7 +185,7 @@ class SearchViewModel @Inject constructor(
 
     private suspend fun onPopularSearchRequestsChanged(searchRequests: Set<String>) {
         val mappedRequests = searchRequestMapper.map(searchRequests)
-        mPopularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
+        popularSearchRequestsState.value = LoadState.Prepared(mappedRequests)
 
         withContext(Dispatchers.Main) {
             popularSearchRequestsAdapter.setData(mappedRequests)
@@ -189,7 +193,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private suspend fun onNewSearchRequest(text: String, results: Int) {
-        if (results in 1..MAX_REQUESTS_RESULT) {
+        if (results in 1..maxRequestsResult) {
             searchRequestsInteractor.cache(text)
         }
     }

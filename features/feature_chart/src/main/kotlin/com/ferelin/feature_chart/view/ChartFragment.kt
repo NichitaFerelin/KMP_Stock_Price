@@ -28,12 +28,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.ferelin.core.customView.chart.ChartPastPrices
 import com.ferelin.core.params.ChartParams
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.invalidate
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_chart.R
@@ -82,7 +82,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             launch { observePastPrice() }
             launch { observeActualStockPrice() }
         }
@@ -104,11 +104,11 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
                         onPastPriceChanged(pastPriceLoad.data)
                     }
                     is LoadState.Loading -> showProgressBar()
-                    is LoadState.None -> viewModel.loadPastPrices()
-                    else -> {
+                    is LoadState.Error -> {
                         hideProgressBar()
                         onError()
                     }
+                    else -> Unit
                 }
             }
         }
@@ -149,9 +149,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>() {
     }
 
     private fun onError() {
-        if (!viewModel.isNetworkAvailable) {
-            showSnackbar(getString(R.string.messageNetworkNotAvailable))
-        } else {
+        if (viewModel.isNetworkAvailable) {
             showTempSnackbar(getString(R.string.errorUndefined))
         }
     }

@@ -24,10 +24,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.utils.isOut
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
@@ -90,7 +90,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             launch { observeAuthenticationState() }
             launch { observeNetworkState() }
         }

@@ -39,9 +39,7 @@ class LoadingViewModel @Inject constructor(
     private var isFirstTimeLaunch = false
 
     init {
-        viewModelScope.launch {
-            prepareLaunch()
-        }
+        prepareLaunch()
     }
 
     fun onAnimationsStopped() {
@@ -55,8 +53,10 @@ class LoadingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun prepareLaunch() {
-        isFirstTimeLaunch = firstLaunchGetUseCase.get()
-        _loadPreparedState.value = true
+    private fun prepareLaunch() {
+        viewModelScope.launch {
+            isFirstTimeLaunch = firstLaunchGetUseCase.get()
+            _loadPreparedState.value = true
+        }
     }
 }

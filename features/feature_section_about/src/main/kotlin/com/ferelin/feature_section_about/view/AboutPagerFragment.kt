@@ -22,8 +22,8 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.params.AboutParams
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
@@ -111,7 +111,7 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             launch { observeFavouriteCompaniesUpdate() }
             launch { observeNetworkState() }
         }
@@ -143,7 +143,7 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[ABOUT_PARAMS_KEY]?.let { params ->
+        args[aboutParamsKey]?.let { params ->
             if (params is AboutParams) {
                 viewModel.aboutParams = params
                 viewModel.isFavourite = params.isFavourite
@@ -153,12 +153,12 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
 
     companion object {
 
-        private const val ABOUT_PARAMS_KEY = "about-params"
+        private const val aboutParamsKey = "about-params"
 
         fun newInstance(data: Any?): AboutPagerFragment {
             return AboutPagerFragment().also {
                 if (data is AboutParams) {
-                    it.arguments = bundleOf(ABOUT_PARAMS_KEY to data)
+                    it.arguments = bundleOf(aboutParamsKey to data)
                 }
             }
         }

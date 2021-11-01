@@ -42,14 +42,8 @@ class ProfileViewModel @Inject constructor(
 
     var profileParams = ProfileParams()
 
-    fun loadProfile() {
-        viewModelScope.launch {
-            _profileLoadState.value = LoadState.Loading()
-
-            val responseProfile = profileGetByUseCase.getBy(profileParams.companyId)
-            val mapped = profileMapper.map(responseProfile)
-            _profileLoadState.value = LoadState.Prepared(mapped)
-        }
+    init {
+        loadProfile()
     }
 
     fun onPhoneClick(phone: String): Boolean {
@@ -81,6 +75,16 @@ class ProfileViewModel @Inject constructor(
 
                 router.shareText(resultText)
             }
+        }
+    }
+
+    private fun loadProfile() {
+        viewModelScope.launch {
+            _profileLoadState.value = LoadState.Loading()
+
+            val responseProfile = profileGetByUseCase.getBy(profileParams.companyId)
+            val mapped = profileMapper.map(responseProfile)
+            _profileLoadState.value = LoadState.Prepared(mapped)
         }
     }
 }

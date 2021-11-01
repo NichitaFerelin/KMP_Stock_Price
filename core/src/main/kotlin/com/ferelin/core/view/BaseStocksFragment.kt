@@ -16,11 +16,9 @@
 
 package com.ferelin.core.view
 
-import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -34,6 +32,7 @@ import com.ferelin.core.adapter.stocks.StockViewHolder
 import com.ferelin.core.utils.StockStyleProvider
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.swipe.SwipeActionCallback
 import com.ferelin.core.viewData.StockViewData
 import com.ferelin.core.viewModel.BaseStocksViewModel
@@ -63,15 +62,6 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
         private const val scrollWithAnimAfter = 40
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            launch { viewModel.companiesStockPriceUpdates.collect() }
-            launch { viewModel.favouriteCompaniesUpdates.collect() }
-            launch { viewModel.actualStockPrice.collect() }
-        }
-    }
-
     override fun initUi() {
         stocksRecyclerView?.apply {
             adapter = viewModel.stocksAdapter
@@ -84,6 +74,14 @@ abstract class BaseStocksFragment<VB : ViewBinding, VM : BaseStocksViewModel> : 
                     onHolderUntouched = this@BaseStocksFragment::onHolderUntouched
                 )
             ).attachToRecyclerView(this)
+        }
+    }
+
+    override fun initObservers() {
+        launchAndRepeatWithViewLifecycle {
+            launch { viewModel.companiesStockPriceUpdates.collect() }
+            launch { viewModel.favouriteCompaniesUpdates.collect() }
+            launch { viewModel.actualStockPrice.collect() }
         }
     }
 

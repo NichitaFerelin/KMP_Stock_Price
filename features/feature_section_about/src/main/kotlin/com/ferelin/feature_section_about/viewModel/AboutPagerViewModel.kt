@@ -73,7 +73,7 @@ class AboutPagerViewModel @Inject constructor(
             .filter { it.company.id == aboutParams.companyId }
             .onEach { isFavourite = it.company.isFavourite }
             .map { /*to unit*/ }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT), 1)
     }
 
     fun onFavouriteIconClick() {

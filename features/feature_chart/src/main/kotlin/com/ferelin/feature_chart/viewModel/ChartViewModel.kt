@@ -61,11 +61,12 @@ class ChartViewModel @Inject constructor(
         .observeActualStockPriceResponses()
         .filter { it is LoadState.Prepared && it.data.relationCompanyId == chartParams.companyId }
         .map { stockPriceMapper.map((it as LoadState.Prepared).data) }
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT), 1)
 
     var chartMode: ChartViewMode = ChartViewMode.All
 
     init {
+        loadPastPrices()
         networkResolver.registerNetworkListener(this)
     }
 
@@ -86,7 +87,12 @@ class ChartViewModel @Inject constructor(
         super.onCleared()
     }
 
-    fun loadPastPrices() {
+    fun onNewChartMode(chartViewMode: ChartViewMode) {
+        this.chartMode = chartViewMode
+        onNewPastPrices(pastPrices)
+    }
+
+    private fun loadPastPrices() {
         viewModelScope.launch {
             _pastPriceLoad.value = LoadState.Loading()
 
@@ -95,9 +101,12 @@ class ChartViewModel @Inject constructor(
         }
     }
 
-    fun onNewChartMode(chartViewMode: ChartViewMode) {
-        this.chartMode = chartViewMode
-        onNewPastPrices(pastPrices)
+    private fun onNewPastPrices(pastPrices: List<PastPriceViewData>) {
+        this.pastPrices = pastPrices
+
+        pastPriceTypeMapper
+            .mapByViewMode(chartMode, pastPrices)
+            ?.let { _pastPriceLoad.value = LoadState.Prepared(it) }
     }
 
     private suspend fun loadFromDb() {
@@ -117,13 +126,5 @@ class ChartViewModel @Inject constructor(
             } ?: run {
             _pastPriceLoad.value = LoadState.Error()
         }
-    }
-
-    private fun onNewPastPrices(pastPrices: List<PastPriceViewData>) {
-        this.pastPrices = pastPrices
-
-        pastPriceTypeMapper
-            .mapByViewMode(chartMode, pastPrices)
-            ?.let { _pastPriceLoad.value = LoadState.Prepared(it) }
     }
 }

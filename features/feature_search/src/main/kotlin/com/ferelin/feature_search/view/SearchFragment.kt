@@ -37,7 +37,6 @@ import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecoration
 import com.ferelin.feature_search.adapter.itemDecoration.SearchItemDecorationLandscape
 import com.ferelin.feature_search.databinding.FragmentSearchBinding
 import com.ferelin.feature_search.viewModel.SearchViewModel
-import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -135,8 +134,8 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
     override fun initObservers() {
         super.initObservers()
-        viewLifecycleOwner.lifecycleScope.launch {
-            launch { observeSearchRequestsState() }
+        launchAndRepeatWithViewLifecycle {
+            launch { viewModel.searchRequestsState.collect() }
             launch { observeSearchResults() }
             launch { observeSearchTextChanges() }
         }
@@ -159,14 +158,6 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
         }
 
         super.onDestroyView()
-    }
-
-    private suspend fun observeSearchRequestsState() {
-        viewModel.searchRequestsState.collect { loadState ->
-            if (loadState is LoadState.None) {
-                viewModel.loadSearchRequests()
-            }
-        }
     }
 
     private suspend fun observeSearchResults() {

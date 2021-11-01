@@ -33,15 +33,16 @@ import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.domain.useCases.DownloadProjectUseCase
 import com.ferelin.navigation.Router
-import com.ferelin.shared.LoadState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
-enum class Event {
+enum class SettingsEvent {
     LOG_OUT_COMPLETE,
 
     DATA_CLEARED,
@@ -67,11 +68,8 @@ class SettingsViewModel @Inject constructor(
     private val menuOptionsProvider: MenuOptionsProvider
 ) : ViewModel() {
 
-    private val _optionsLoadState = MutableStateFlow<LoadState<Unit>>(LoadState.None())
-    val optionsLoadState: StateFlow<LoadState<Unit>> = _optionsLoadState.asStateFlow()
-
-    private val _messageEvent = MutableSharedFlow<Event>()
-    val messageEvent: SharedFlow<Event> = _messageEvent.asSharedFlow()
+    private val _messageEvent = MutableSharedFlow<SettingsEvent>()
+    val messageSettingsEvent: SharedFlow<SettingsEvent> = _messageEvent.asSharedFlow()
 
     val optionsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
@@ -79,15 +77,8 @@ class SettingsViewModel @Inject constructor(
         ).apply { setHasStableIds(true) }
     }
 
-    fun loadOptions() {
-        viewModelScope.launch {
-            val isUserAuth = authenticationInteractor.isUserAuthenticated()
-            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
-
-            withContext(Dispatchers.Main) {
-                optionsAdapter.setData(menuOptions)
-            }
-        }
+    init {
+        loadOptions()
     }
 
     fun onBackClick() {
@@ -97,7 +88,7 @@ class SettingsViewModel @Inject constructor(
     fun onPathSelected(uri: Uri?) {
         viewModelScope.launch {
             if (uri == null || uri.path == null || uri.authority == null) {
-                _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
+                _messageEvent.emit(SettingsEvent.DOWNLOAD_PATH_ERROR)
                 return@launch
             }
 
@@ -130,7 +121,7 @@ class SettingsViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 optionsAdapter.setData(updatedMenuOptions)
             }
-            _messageEvent.emit(Event.LOG_OUT_COMPLETE)
+            _messageEvent.emit(SettingsEvent.LOG_OUT_COMPLETE)
         } else {
             router.fromSettingsToLogin()
         }
@@ -144,9 +135,9 @@ class SettingsViewModel @Inject constructor(
             networkResolver.isNetworkAvailable
             || !authenticationInteractor.isUserAuthenticated()
         ) {
-            Event.DATA_CLEARED
+            SettingsEvent.DATA_CLEARED
         } else {
-            Event.DATA_CLEARED_NO_NETWORK
+            SettingsEvent.DATA_CLEARED_NO_NETWORK
         }
         _messageEvent.emit(event)
     }
@@ -156,9 +147,20 @@ class SettingsViewModel @Inject constructor(
         val pathAuthority = storagePathInteractor.getStoragePathAuthority()
 
         if (storagePath == null || pathAuthority == null) {
-            _messageEvent.emit(Event.ASK_FOR_PATH)
+            _messageEvent.emit(SettingsEvent.ASK_FOR_PATH)
         } else {
             initSourceProjectDownload(storagePath, pathAuthority)
+        }
+    }
+
+    private fun loadOptions() {
+        viewModelScope.launch {
+            val isUserAuth = authenticationInteractor.isUserAuthenticated()
+            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
+
+            withContext(Dispatchers.Main) {
+                optionsAdapter.setData(menuOptions)
+            }
         }
     }
 
@@ -171,9 +173,9 @@ class SettingsViewModel @Inject constructor(
             val resultFile = File(path)
 
             if (networkResolver.isNetworkAvailable) {
-                _messageEvent.emit(Event.DOWNLOAD_STARTING)
+                _messageEvent.emit(SettingsEvent.DOWNLOAD_STARTING)
             } else {
-                _messageEvent.emit(Event.DOWNLOAD_WILL_BE_STARTED)
+                _messageEvent.emit(SettingsEvent.DOWNLOAD_WILL_BE_STARTED)
             }
 
             downloadProjectUseCase.download(
@@ -182,7 +184,7 @@ class SettingsViewModel @Inject constructor(
                 notificationsResolver.downloadDescription
             )
         } else {
-            _messageEvent.emit(Event.DOWNLOAD_PATH_ERROR)
+            _messageEvent.emit(SettingsEvent.DOWNLOAD_PATH_ERROR)
         }
     }
 }

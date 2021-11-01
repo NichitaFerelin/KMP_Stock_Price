@@ -24,12 +24,12 @@ import android.view.animation.AnimationUtils
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.R
 import com.ferelin.core.adapter.base.ifLinear
 import com.ferelin.core.adapter.base.scrollToTopWithCustomAnim
 import com.ferelin.core.params.NewsParams
 import com.ferelin.core.utils.animManager.invalidate
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
@@ -74,7 +74,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             launch { observeNewsState() }
             launch { observeOpenUrlEventError() }
         }
@@ -91,10 +91,13 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     private suspend fun observeNewsState() {
         viewModel.newsLoadState.collect { loadState ->
             when (loadState) {
-                is LoadState.None -> viewModel.loadData()
                 is LoadState.Loading -> showProgressBar()
                 is LoadState.Prepared -> hideProgressBar()
-                is LoadState.Error -> onError()
+                is LoadState.Error -> {
+                    hideProgressBar()
+                    onError()
+                }
+                else -> Unit
             }
         }
     }
@@ -108,9 +111,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun onError() {
-        if (!viewModel.isNetworkAvailable) {
-            showSnackbar(getString(R.string.messageNetworkNotAvailable))
-        } else {
+        if (viewModel.isNetworkAvailable) {
             showTempSnackbar(getString(R.string.errorUndefined))
         }
     }
@@ -129,7 +130,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
     private fun scrollToTop() {
         viewBinding.recyclerViewNews.layoutManager.ifLinear { layoutManager ->
-            if (layoutManager.findFirstVisibleItemPosition() < SCROLL_WITH_ANIM_AFTER) {
+            if (layoutManager.findFirstVisibleItemPosition() < scrollWithAnimAfter) {
                 viewBinding.recyclerViewNews.smoothScrollToPosition(0)
             } else {
                 initFadeAnims()
@@ -150,7 +151,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[NEWS_PARAMS_KEY]?.let { params ->
+        args[newsParamsKey]?.let { params ->
             if (params is NewsParams) {
                 viewModel.newsParams = params
             }
@@ -159,13 +160,13 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
     companion object {
 
-        private const val NEWS_PARAMS_KEY = "n"
-        private const val SCROLL_WITH_ANIM_AFTER = 7
+        private const val newsParamsKey = "n"
+        private const val scrollWithAnimAfter = 7
 
         fun newInstance(data: Any?): NewsFragment {
             return NewsFragment().also {
                 if (data is NewsParams) {
-                    it.arguments = bundleOf(NEWS_PARAMS_KEY to data)
+                    it.arguments = bundleOf(newsParamsKey to data)
                 }
             }
         }

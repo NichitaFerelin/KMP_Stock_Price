@@ -36,6 +36,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     protected val viewBinding: VB
         get() = checkNotNull(_viewBinding)
 
+    private var activeSnackbar: Snackbar? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,6 +53,11 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         initUi()
         initUx()
         initObservers()
+    }
+
+    override fun onPause() {
+        activeSnackbar?.dismiss()
+        super.onPause()
     }
 
     override fun onDestroyView() {
@@ -71,23 +78,24 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     fun showSnackbar(message: String) {
-        Snackbar
+        activeSnackbar = Snackbar
             .make(viewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
             .setAction(R.string.hintOk) { /*dismiss by default*/ }
-            .show()
+
+        activeSnackbar!!.show()
     }
 
     fun showActionSnackbar(message: String, actionMessage: String, action: () -> Unit) {
-        Snackbar
+        activeSnackbar = Snackbar
             .make(viewBinding.root, message, Snackbar.LENGTH_INDEFINITE)
             .setAction(actionMessage) { action.invoke() }
-            .show()
+
+        activeSnackbar!!.show()
     }
 
     fun showTempSnackbar(message: String) {
-        Snackbar
-            .make(viewBinding.root, message, Snackbar.LENGTH_LONG)
-            .show()
+        activeSnackbar = Snackbar.make(viewBinding.root, message, Snackbar.LENGTH_LONG)
+        activeSnackbar!!.show()
     }
 
     fun hideKeyboard() {

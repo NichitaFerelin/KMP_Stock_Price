@@ -22,11 +22,11 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.params.ProfileParams
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
@@ -34,10 +34,9 @@ import com.ferelin.feature_profile.R
 import com.ferelin.feature_profile.databinding.FragmentProfileBinding
 import com.ferelin.feature_profile.viewData.ProfileViewData
 import com.ferelin.feature_profile.viewModel.ProfileViewModel
-import com.ferelin.shared.LoadState
+import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -81,21 +80,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             observeProfileState()
         }
     }
 
     private suspend fun observeProfileState() {
         viewModel.profileLoadState.collect { loadState ->
-            when (loadState) {
-                is LoadState.None -> viewModel.loadProfile()
-                is LoadState.Prepared -> {
-                    withContext(Dispatchers.Main) {
-                        setProfile(loadState.data)
-                    }
+            loadState.ifPrepared {
+                withContext(Dispatchers.Main) {
+                    setProfile(it.data)
                 }
-                else -> Unit
             }
         }
     }
@@ -138,7 +133,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     private fun unpackArgs(args: Bundle) {
-        args[PROFILE_PARAMS_KEY]?.let { params ->
+        args[profileParamsKey]?.let { params ->
             if (params is ProfileParams) {
                 viewModel.profileParams = params
             }
@@ -147,12 +142,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     companion object {
 
-        private const val PROFILE_PARAMS_KEY = "p"
+        private const val profileParamsKey = "p"
 
         fun newInstance(data: Any?): ProfileFragment {
             return ProfileFragment().also {
                 if (data is ProfileParams) {
-                    it.arguments = bundleOf(PROFILE_PARAMS_KEY to data)
+                    it.arguments = bundleOf(profileParamsKey to data)
                 }
             }
         }

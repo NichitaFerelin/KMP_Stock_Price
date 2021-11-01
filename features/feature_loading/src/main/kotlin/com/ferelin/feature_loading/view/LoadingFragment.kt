@@ -21,8 +21,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.utils.animManager.MotionManager
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_loading.R
@@ -30,7 +30,6 @@ import com.ferelin.feature_loading.databinding.FragmentLoadingBinding
 import com.ferelin.feature_loading.viewModel.LoadingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -48,7 +47,7 @@ class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
 
     override fun initObservers() {
         super.initObservers()
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchAndRepeatWithViewLifecycle {
             observeFirstTimeLaunch()
         }
     }
@@ -81,7 +80,6 @@ class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
     }
 
     companion object {
-
         fun newInstance(data: Any?): LoadingFragment {
             return LoadingFragment()
         }

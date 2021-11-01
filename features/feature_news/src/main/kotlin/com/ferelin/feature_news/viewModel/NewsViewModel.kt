@@ -64,6 +64,7 @@ class NewsViewModel @Inject constructor(
     }
 
     init {
+        loadData()
         networkResolver.registerNetworkListener(this)
     }
 
@@ -84,7 +85,7 @@ class NewsViewModel @Inject constructor(
         super.onCleared()
     }
 
-    fun loadData() {
+    private fun loadData() {
         viewModelScope.launch {
             _newsLoadState.value = LoadState.Loading()
 

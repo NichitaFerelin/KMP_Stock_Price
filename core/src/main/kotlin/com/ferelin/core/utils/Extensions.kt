@@ -21,6 +21,12 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 val Int.px: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -42,6 +48,17 @@ var View.isOut: Boolean
             scaleY = 1F
         }
     }
+
+inline fun Fragment.launchAndRepeatWithViewLifecycle(
+    activeState: Lifecycle.State = Lifecycle.State.STARTED,
+    crossinline block: suspend CoroutineScope.() -> Unit
+) {
+    viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycle.repeatOnLifecycle(activeState) {
+            block()
+        }
+    }
+}
 
 inline fun <T> List<T>.ifNotEmpty(defaultValue: (data: List<T>) -> Unit) {
     if (this.isNotEmpty()) {

@@ -26,6 +26,8 @@ object Dependencies {
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
     // UI
+    const val androidLifecycle =
+        "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidLifecycle}"
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val fragments = "androidx.fragment:fragment-ktx:${Versions.fragments}"
     const val browser = "androidx.browser:browser:${Versions.browser}"
@@ -45,6 +47,7 @@ object Dependencies {
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
     const val roomCompilerKapt = "androidx.room:room-compiler:${Versions.room}"
+
     // SPECIAL FOR TESTS
     const val roomTestLiveData =
         "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.roomLiveDataTest}"

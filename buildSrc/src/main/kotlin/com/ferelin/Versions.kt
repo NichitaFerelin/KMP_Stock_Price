@@ -29,6 +29,7 @@ object Versions {
     const val timber = "5.0.1"
 
     // UI
+    const val androidLifecycle = "2.4.0-alpha01"
     const val appCompat = "1.3.1"
     const val fragments = "1.3.6"
     const val browser = "1.3.0"

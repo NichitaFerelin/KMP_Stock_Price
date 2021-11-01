@@ -73,7 +73,7 @@ abstract class BaseStocksViewModel(
     val companiesStockPriceUpdates: SharedFlow<CompanyWithStockPrice> = companiesInteractor
         .companyWithStockPriceUpdates
         .onEach { onStockPriceUpdate(it) }
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT), 1)
 
     val favouriteCompaniesUpdates: SharedFlow<CompanyWithStockPrice> = companiesInteractor
         .favouriteCompaniesUpdates
@@ -82,7 +82,7 @@ abstract class BaseStocksViewModel(
 
     val actualStockPrice: SharedFlow<LoadState<StockPrice>> = stockPriceInteractor
         .observeActualStockPriceResponses()
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT))
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT), 1)
 
     init {
         prepareStocksData()

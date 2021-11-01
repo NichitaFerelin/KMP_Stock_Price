@@ -23,20 +23,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_settings.R
 import com.ferelin.feature_settings.databinding.FragmentSettingsBinding
-import com.ferelin.feature_settings.viewModel.Event
+import com.ferelin.feature_settings.viewModel.SettingsEvent
 import com.ferelin.feature_settings.viewModel.SettingsViewModel
-import com.ferelin.shared.LoadState
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -80,9 +78,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            launch { observeMenuOptions() }
-            launch { observeMessageEvent() }
+        launchAndRepeatWithViewLifecycle {
+            observeMessageEvent()
         }
     }
 
@@ -91,31 +88,23 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         super.onDestroyView()
     }
 
-    private suspend fun observeMenuOptions() {
-        viewModel.optionsLoadState.collect { loadState ->
-            if (loadState is LoadState.None) {
-                viewModel.loadOptions()
-            }
-        }
-    }
-
     private suspend fun observeMessageEvent() {
-        viewModel.messageEvent.collect { event ->
+        viewModel.messageSettingsEvent.collect { event ->
             withContext(Dispatchers.Main) {
                 when (event) {
-                    Event.LOG_OUT_COMPLETE -> {
+                    SettingsEvent.LOG_OUT_COMPLETE -> {
                         showTempSnackbar(getString(R.string.messageLogOutComplete))
                     }
-                    Event.DATA_CLEARED_NO_NETWORK -> {
+                    SettingsEvent.DATA_CLEARED_NO_NETWORK -> {
                         showTempSnackbar(getString(R.string.messageDataClearedNoNetwork))
                     }
-                    Event.DATA_CLEARED -> {
+                    SettingsEvent.DATA_CLEARED -> {
                         showTempSnackbar(getString(R.string.messageDataCleared))
                     }
-                    Event.ASK_FOR_PATH -> {
+                    SettingsEvent.ASK_FOR_PATH -> {
                         launchAskPath()
                     }
-                    Event.DOWNLOAD_PATH_ERROR -> {
+                    SettingsEvent.DOWNLOAD_PATH_ERROR -> {
                         showActionSnackbar(
                             getString(R.string.errorPath),
                             getString(R.string.hintChoose)
@@ -123,10 +112,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                             launchAskPath()
                         }
                     }
-                    Event.DOWNLOAD_STARTING -> {
+                    SettingsEvent.DOWNLOAD_STARTING -> {
                         showTempSnackbar(getString(R.string.messageDownloadingWillStart))
                     }
-                    Event.DOWNLOAD_WILL_BE_STARTED -> {
+                    SettingsEvent.DOWNLOAD_WILL_BE_STARTED -> {
                         showTempSnackbar(getString(R.string.messageDownloadingNoNetwork))
                     }
                 }
