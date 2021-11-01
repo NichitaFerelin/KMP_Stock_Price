@@ -159,8 +159,10 @@ class SearchFragment : BaseStocksFragment<FragmentSearchBinding, SearchViewModel
 
         // Graphic bug
         withTimer {
-            recyclerViewPopulars.adapter = null
-            recyclerViewSearch.adapter = null
+            lifecycleScope.launch(Dispatchers.Main) {
+                recyclerViewSearch.adapter = null
+                recyclerViewPopulars.adapter = null
+            }
         }
 
         super.onDestroyView()
