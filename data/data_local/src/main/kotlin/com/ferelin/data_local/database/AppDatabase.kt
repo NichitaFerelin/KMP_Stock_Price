@@ -29,7 +29,7 @@ import com.ferelin.data_local.entities.*
         NewsDBO::class,
         PastPriceDBO::class,
         ProfileDBO::class
-    ], version = 3
+    ], version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
 

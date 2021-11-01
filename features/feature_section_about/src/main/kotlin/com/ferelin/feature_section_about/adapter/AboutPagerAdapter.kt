@@ -37,7 +37,7 @@ class AboutPagerAdapter(
 ) : FragmentStateAdapter(fm, lifecycle) {
 
     override fun getItemCount(): Int {
-        return 5
+        return 3
     }
 
     override fun createFragment(position: Int): Fragment {

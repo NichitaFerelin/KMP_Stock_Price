@@ -18,8 +18,8 @@ package com.ferelin.core.di
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import com.ferelin.core.resolvers.NetworkResolver
 import dagger.Module
 import dagger.Provides
 
@@ -33,9 +33,6 @@ class NetworkModule {
 
     @Provides
     fun provideNetworkRequest(): NetworkRequest {
-        return NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .build()
+        return NetworkResolver.buildNetworkRequest()
     }
 }

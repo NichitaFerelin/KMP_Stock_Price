@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.customView.chart.points
+package com.ferelin.authentication.delegate
 
+import com.google.firebase.auth.FirebaseAuth
+import kotlin.reflect.KProperty
 
-/**
- * [BezierPoint] represents model to build chart
- */
-data class BezierPoint(val x1: Float, val y1: Float, val x2: Float, val y2: Float)
+class FirebaseAuthDelegate {
+
+    operator fun getValue(nothing: Nothing?, property: KProperty<*>): FirebaseAuth {
+        return FirebaseAuth
+            .getInstance()
+            .apply { useAppLanguage() }
+    }
+}

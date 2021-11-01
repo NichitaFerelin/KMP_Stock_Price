@@ -33,8 +33,8 @@ class SearchRequestsRepoImpl @Inject constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : SearchRequestsLocalRepo {
 
-    private companion object {
-        val searchRequestsKey = stringSetPreferencesKey("search-requests")
+    companion object {
+        private val searchRequestsKey = stringSetPreferencesKey("search-requests")
     }
 
     override suspend fun insert(searchRequests: Set<String>): Unit =

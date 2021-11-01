@@ -19,8 +19,9 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ferelin.data_local.entities.ProfileDBO.Companion.TABLE_NAME
 
-@Entity(tableName = "companies_profile")
+@Entity(tableName = TABLE_NAME)
 data class ProfileDBO(
     @PrimaryKey
     @ColumnInfo(name = "relation_company_id")
@@ -43,4 +44,8 @@ data class ProfileDBO(
 
     @ColumnInfo(name = "capitalization")
     val capitalization: String
-)
+) {
+    companion object {
+        const val TABLE_NAME = "companies_profile"
+    }
+}

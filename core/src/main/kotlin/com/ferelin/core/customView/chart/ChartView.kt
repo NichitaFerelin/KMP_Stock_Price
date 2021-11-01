@@ -26,12 +26,9 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.ferelin.core.R
-import com.ferelin.core.customView.chart.points.BezierPoint
-import com.ferelin.core.customView.chart.points.Marker
 import com.ferelin.core.customView.chart.utils.ChartAttrs
 import com.ferelin.core.customView.chart.utils.SuggestionAttrs
 import kotlin.math.abs
-
 
 /**
  * [ChartView] provides the ability to display data that has fields like date and number.

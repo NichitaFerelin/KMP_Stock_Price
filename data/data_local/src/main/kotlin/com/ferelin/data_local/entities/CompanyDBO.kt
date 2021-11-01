@@ -19,8 +19,9 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ferelin.data_local.entities.CompanyDBO.Companion.TABLE_NAME
 
-@Entity(tableName = "companies")
+@Entity(tableName = TABLE_NAME)
 data class CompanyDBO(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
@@ -42,6 +43,7 @@ data class CompanyDBO(
     var addedByIndex: Int = 0
 ) {
     companion object {
+        const val TABLE_NAME = "companies"
         const val ID_COLUMN = "company_id"
     }
 }

@@ -45,17 +45,17 @@ class MenuOptionsProvider @Inject constructor(
             ),
             OptionViewData(
                 id = 1,
-                type = OptionType.CLEAR_DATA,
-                title = context.getString(R.string.titleClearData),
-                source = context.getString(R.string.sourceClearData),
-                iconRes = R.drawable.ic_delete
-            ),
-            OptionViewData(
-                id = 2,
                 type = OptionType.SOURCE_CODE,
                 title = context.getString(R.string.titleSourceCode),
                 source = context.getString(R.string.sourceDownload),
                 iconRes = R.drawable.ic_download
+            ),
+            OptionViewData(
+                id = 2,
+                type = OptionType.CLEAR_DATA,
+                title = context.getString(R.string.titleClearData),
+                source = context.getString(R.string.sourceClearData),
+                iconRes = R.drawable.ic_delete
             )
         )
     }

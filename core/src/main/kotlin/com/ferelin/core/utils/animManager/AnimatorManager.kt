@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
-
 package com.ferelin.core.utils.animManager
 
 import android.animation.Animator

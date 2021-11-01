@@ -19,8 +19,9 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ferelin.data_local.entities.PastPriceDBO.Companion.TABLE_NAME
 
-@Entity(tableName = "companies_past_prices")
+@Entity(tableName = TABLE_NAME)
 data class PastPriceDBO(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -43,4 +44,8 @@ data class PastPriceDBO(
 
     @ColumnInfo(name = "date")
     val dateMillis: Long
-)
+) {
+    companion object {
+        const val TABLE_NAME = "companies_past_prices"
+    }
+}

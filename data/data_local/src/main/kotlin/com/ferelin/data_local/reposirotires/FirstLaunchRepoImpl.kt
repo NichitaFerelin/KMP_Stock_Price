@@ -18,8 +18,8 @@ package com.ferelin.data_local.reposirotires
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.ferelin.domain.repositories.FirstLaunchRepo
 import com.ferelin.data_local.preferences.PreferencesProvider
+import com.ferelin.domain.repositories.FirstLaunchRepo
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -32,8 +32,8 @@ class FirstLaunchRepoImpl @Inject constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : FirstLaunchRepo {
 
-    private companion object {
-        val FIRST_TIME_LAUNCH_KEY = booleanPreferencesKey("first-launch")
+    companion object {
+        private val firstTimeLaunchKey = booleanPreferencesKey("first-launch")
     }
 
     override suspend fun get(): Boolean? =
@@ -41,7 +41,7 @@ class FirstLaunchRepoImpl @Inject constructor(
             Timber.d("get")
 
             return@withContext preferencesProvider.dataStore.data.map {
-                it[FIRST_TIME_LAUNCH_KEY]
+                it[firstTimeLaunchKey]
             }.firstOrNull()
         }
 
@@ -50,7 +50,7 @@ class FirstLaunchRepoImpl @Inject constructor(
             Timber.d("cache (isFirstLaunch = $isFirstLaunch)")
 
             preferencesProvider.dataStore.edit {
-                it[FIRST_TIME_LAUNCH_KEY] = isFirstLaunch
+                it[firstTimeLaunchKey] = isFirstLaunch
             }
         }
 }

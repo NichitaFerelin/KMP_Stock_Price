@@ -16,6 +16,7 @@
 
 package com.ferelin.authentication.di
 
+import com.ferelin.authentication.delegate.FirebaseAuthDelegate
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -25,8 +26,7 @@ class AuthenticationModule {
 
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth
-            .getInstance()
-            .apply { useAppLanguage() }
+        val firebaseAuth by FirebaseAuthDelegate()
+        return firebaseAuth
     }
 }

@@ -87,15 +87,15 @@ class AboutPagerFragment : BaseFragment<FragmentAboutPagerBinding>() {
                 fm = childFragmentManager,
                 lifecycle = viewLifecycleOwner.lifecycle
             )
-            viewPager.offscreenPageLimit = 5
+            viewPager.offscreenPageLimit = 3
 
             tabLayout.attachViewPager(
                 viewPager,
                 getString(R.string.titleProfile),
                 getString(R.string.titleChart),
-                getString(R.string.titleNews),
-                getString(R.string.titleForecasts),
-                getString(R.string.titleIdeas)
+                getString(R.string.titleNews)
+                /*getString(R.string.titleForecasts),
+                getString(R.string.titleIdeas)*/
             )
         }
     }

@@ -16,17 +16,16 @@
 
 package com.ferelin.data_local.mappers
 
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.CompanyWithStockPrice
 import com.ferelin.data_local.entities.CompanyDBO
 import com.ferelin.data_local.entities.CompanyWithStockPriceDBO
 import com.ferelin.data_local.utils.CompanyPojo
+import com.ferelin.domain.entities.Company
+import com.ferelin.domain.entities.CompanyWithStockPrice
 import javax.inject.Inject
 
 class CompanyMapper @Inject constructor(
-    private val mStockPriceMapper: StockPriceMapper
+    private val stockPriceMapper: StockPriceMapper
 ) {
-
     fun map(companyDBO: CompanyDBO): Company {
         return Company(
             id = companyDBO.id,
@@ -63,7 +62,7 @@ class CompanyMapper @Inject constructor(
             company = map(companyWithStockPriceDBO.companyDBO),
             stockPrice = companyWithStockPriceDBO
                 .stockPriceDBO
-                ?.let { mStockPriceMapper.map(it) }
+                ?.let { stockPriceMapper.map(it) }
         )
     }
 }

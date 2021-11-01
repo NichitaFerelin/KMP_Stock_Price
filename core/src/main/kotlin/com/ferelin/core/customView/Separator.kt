@@ -30,8 +30,12 @@ class Separator @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    companion object {
+        private const val initialCornerRadius = 8F
+    }
+
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val cornerRadius = CORNER_RADIUS * resources.displayMetrics.density
+    private val cornerRadius = initialCornerRadius * resources.displayMetrics.density
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -46,9 +50,5 @@ class Separator @JvmOverloads constructor(
             cornerRadius,
             paint
         )
-    }
-
-    private companion object {
-        const val CORNER_RADIUS = 8F
     }
 }

@@ -41,9 +41,9 @@ class AuthenticationSourceImpl @Inject constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : AuthenticationSource {
 
-    private companion object {
-        const val CODE_REQUIRED_SIZE = 6
-        const val AUTH_TIMEOUT = 30L
+    companion object {
+        private const val codeRequiredSize = 6
+        private const val authTimeout = 30L
     }
 
     // User ID is used to complete verification
@@ -103,7 +103,7 @@ class AuthenticationSourceImpl @Inject constructor(
         authCallbacks?.let { authCallbacks ->
             val options = PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(phone)
-                .setTimeout(AUTH_TIMEOUT, TimeUnit.SECONDS)
+                .setTimeout(authTimeout, TimeUnit.SECONDS)
                 .setActivity(holderActivity)
                 .setCallbacks(authCallbacks)
                 .build()
@@ -138,7 +138,7 @@ class AuthenticationSourceImpl @Inject constructor(
     }
 
     override fun getCodeRequiredSize(): Int {
-        return CODE_REQUIRED_SIZE
+        return codeRequiredSize
     }
 }
 

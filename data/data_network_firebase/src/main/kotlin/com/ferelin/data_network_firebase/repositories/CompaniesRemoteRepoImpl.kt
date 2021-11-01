@@ -32,8 +32,8 @@ class CompaniesRemoteRepoImpl @Inject constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : CompaniesRemoteRepo {
 
-    private companion object {
-        const val FAVOURITE_COMPANIES_REF = "favourite-companies"
+    companion object {
+        private const val favouriteCompaniesRef = "favourite-companies"
     }
 
     override suspend fun insertBy(
@@ -43,7 +43,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         Timber.d("insert by (company id = $companyId)")
 
         firebaseReference
-            .child(FAVOURITE_COMPANIES_REF)
+            .child(favouriteCompaniesRef)
             .child(userToken)
             .child(companyId.toString())
             .setValue(companyId)
@@ -55,7 +55,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         Timber.d("get all")
 
         firebaseReference
-            .child(FAVOURITE_COMPANIES_REF)
+            .child(favouriteCompaniesRef)
             .child(userToken)
             .get()
             .addOnCompleteListener { resultSnapshot ->
@@ -83,7 +83,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         Timber.d("erase all")
 
         firebaseReference
-            .child(FAVOURITE_COMPANIES_REF)
+            .child(favouriteCompaniesRef)
             .child(userToken)
             .removeValue()
     }
@@ -95,7 +95,7 @@ class CompaniesRemoteRepoImpl @Inject constructor(
         Timber.d("erase by (company id = $companyId)")
 
         firebaseReference
-            .child(FAVOURITE_COMPANIES_REF)
+            .child(favouriteCompaniesRef)
             .child(userToken)
             .child(companyId.toString())
             .removeValue()

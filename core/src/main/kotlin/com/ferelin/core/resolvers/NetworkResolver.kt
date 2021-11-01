@@ -19,6 +19,7 @@ package com.ferelin.core.resolvers
 import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
@@ -74,7 +75,7 @@ class NetworkResolver @Inject constructor(
                 override fun onUnavailable() {
                     externalScope.launch {
                         Timber.d("on network unavailable")
-                        
+
                         _isNetworkAvailable = false
                         networkDeps.forEach { it.onNetworkLost() }
                     }
@@ -88,5 +89,14 @@ class NetworkResolver @Inject constructor(
 
     fun unregisterNetworkListener(networkListener: NetworkListener) {
         networkDeps.remove(networkListener)
+    }
+
+    companion object {
+        fun buildNetworkRequest(): NetworkRequest {
+            return NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .build()
+        }
     }
 }

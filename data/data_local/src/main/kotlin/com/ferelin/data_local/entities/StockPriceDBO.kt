@@ -19,8 +19,9 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ferelin.data_local.entities.StockPriceDBO.Companion.TABLE_NAME
 
-@Entity(tableName = "companies_stock_price")
+@Entity(tableName = TABLE_NAME)
 data class StockPriceDBO(
     @PrimaryKey
     @ColumnInfo(name = "relation_company_id")
@@ -40,4 +41,8 @@ data class StockPriceDBO(
 
     @ColumnInfo(name = "low_price")
     var lowPrice: Double
-)
+) {
+    companion object {
+        const val TABLE_NAME = "companies_stock_price"
+    }
+}

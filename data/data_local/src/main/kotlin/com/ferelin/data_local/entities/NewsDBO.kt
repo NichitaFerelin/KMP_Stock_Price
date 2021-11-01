@@ -19,8 +19,9 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ferelin.data_local.entities.NewsDBO.Companion.TABLE_NAME
 
-@Entity(tableName = "companies_news")
+@Entity(tableName = TABLE_NAME)
 class NewsDBO(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -49,4 +50,8 @@ class NewsDBO(
 
     @ColumnInfo(name = "date_millis")
     val dateMillis: Long
-)
+) {
+    companion object {
+        const val TABLE_NAME = "companies_news"
+    }
+}
