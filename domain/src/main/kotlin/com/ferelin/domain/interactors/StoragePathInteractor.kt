@@ -28,7 +28,7 @@ class StoragePathInteractor @Inject constructor(
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope,
 ) {
     companion object {
-        const val SOURCE_CODE_FILE_NAME = "Stock-Price-Project"
+        const val SOURCE_CODE_FILE_NAME = "/Stock-Price-Project.zip"
     }
 
     /**

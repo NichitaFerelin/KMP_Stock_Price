@@ -48,11 +48,13 @@ enum class SettingsEvent {
     DATA_CLEARED,
     DATA_CLEARED_NO_NETWORK,
 
+    DOWNLOAD_ERROR,
     DOWNLOAD_PATH_ERROR,
     DOWNLOAD_STARTING,
     DOWNLOAD_WILL_BE_STARTED,
 
-    ASK_FOR_PATH_AND_PERMISSIONS
+    REQUEST_PATH,
+    REQUEST_PERMISSIONS
 }
 
 class SettingsViewModel @Inject constructor(
@@ -92,6 +94,16 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onPermissionsGranted() {
+        viewModelScope.launch {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                downloadProjectToDefaultStorage()
+            } else {
+                downloadProjectToUserStorage()
+            }
+        }
+    }
+
     fun onPathSelected(uri: Uri?) {
         viewModelScope.launch {
             if (uri == null || uri.path == null || uri.authority == null) {
@@ -114,7 +126,7 @@ class SettingsViewModel @Inject constructor(
             when (optionViewData.type) {
                 OptionType.AUTH -> onAuthClick()
                 OptionType.CLEAR_DATA -> onClearClick()
-                OptionType.SOURCE_CODE -> onSourceClick()
+                OptionType.SOURCE_CODE -> onDownloadProjectClick()
             }
         }
     }
@@ -149,12 +161,31 @@ class SettingsViewModel @Inject constructor(
         _messageEvent.emit(event)
     }
 
-    private suspend fun onSourceClick() {
+    private suspend fun onDownloadProjectClick() {
+        _messageEvent.emit(SettingsEvent.REQUEST_PERMISSIONS)
+    }
+
+    private suspend fun downloadProjectToDefaultStorage() {
+        try {
+            notifyDownloading()
+
+            downloadProjectUseCase.download(
+                notificationsResolver.downloadTitle,
+                notificationsResolver.downloadDescription,
+                null,
+                StoragePathInteractor.SOURCE_CODE_FILE_NAME
+            )
+        } catch (e: Exception) {
+            _messageEvent.emit(SettingsEvent.DOWNLOAD_ERROR)
+        }
+    }
+
+    private suspend fun downloadProjectToUserStorage() {
         val storagePath = storagePathInteractor.getSelectedStoragePath()
         val pathAuthority = storagePathInteractor.getStoragePathAuthority()
 
         if (storagePath == null || pathAuthority == null) {
-            _messageEvent.emit(SettingsEvent.ASK_FOR_PATH_AND_PERMISSIONS)
+            _messageEvent.emit(SettingsEvent.REQUEST_PATH)
         } else {
             initSourceProjectDownload(storagePath, pathAuthority)
         }
@@ -165,22 +196,32 @@ class SettingsViewModel @Inject constructor(
 
         if (destinationFile != null) {
             val path = localFilesResolver.buildFilePath(destinationFile) +
-                    "/${StoragePathInteractor.SOURCE_CODE_FILE_NAME}.zip"
+                    StoragePathInteractor.SOURCE_CODE_FILE_NAME
             val resultFile = File(path)
 
-            if (networkResolver.isNetworkAvailable) {
-                _messageEvent.emit(SettingsEvent.DOWNLOAD_STARTING)
-            } else {
-                _messageEvent.emit(SettingsEvent.DOWNLOAD_WILL_BE_STARTED)
-            }
+            notifyDownloading()
 
-            downloadProjectUseCase.download(
-                resultFile,
-                notificationsResolver.downloadTitle,
-                notificationsResolver.downloadDescription
-            )
+            try {
+                downloadProjectUseCase.download(
+                    notificationsResolver.downloadTitle,
+                    notificationsResolver.downloadDescription,
+                    resultFile
+                )
+            } catch (exception: SecurityException) {
+                _messageEvent.emit(SettingsEvent.DOWNLOAD_PATH_ERROR)
+            } catch (e: Exception) {
+                _messageEvent.emit(SettingsEvent.DOWNLOAD_ERROR)
+            }
         } else {
             _messageEvent.emit(SettingsEvent.DOWNLOAD_PATH_ERROR)
+        }
+    }
+
+    private suspend fun notifyDownloading() {
+        if (networkResolver.isNetworkAvailable) {
+            _messageEvent.emit(SettingsEvent.DOWNLOAD_STARTING)
+        } else {
+            _messageEvent.emit(SettingsEvent.DOWNLOAD_WILL_BE_STARTED)
         }
     }
 }

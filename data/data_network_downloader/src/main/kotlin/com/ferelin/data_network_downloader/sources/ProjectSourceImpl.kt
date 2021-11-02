@@ -19,6 +19,7 @@ package com.ferelin.data_network_downloader.sources
 import android.app.DownloadManager
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import com.ferelin.domain.sources.ProjectSource
 import com.ferelin.shared.DispatchersProvider
 import kotlinx.coroutines.withContext
@@ -37,20 +38,31 @@ class ProjectSourceImpl @Inject constructor(
     }
 
     override suspend fun download(
-        destinationFile: File,
         downloadTitle: String,
-        downloadDescription: String
+        downloadDescription: String,
+        destinationFile: File?,
+        resultFileName: String?
     ): Unit = withContext(dispatchersProvider.IO) {
-
-        Timber.d("download")
 
         val request = DownloadManager.Request(Uri.parse(projectSourceUrl))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationUri(Uri.fromFile(destinationFile))
             .setTitle(downloadTitle)
             .setDescription(downloadDescription)
             .setAllowedOverRoaming(true)
             .setAllowedOverMetered(true)
+
+        if (destinationFile == null) {
+            Timber.d("download to default dir")
+
+            request.setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS,
+                resultFileName ?: ""
+            )
+        } else {
+            Timber.d("download to user dir")
+
+            request.setDestinationUri(Uri.fromFile(destinationFile))
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             request.setRequiresCharging(false)

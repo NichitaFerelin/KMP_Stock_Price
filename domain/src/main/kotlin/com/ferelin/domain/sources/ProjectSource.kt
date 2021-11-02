@@ -21,10 +21,18 @@ import java.io.File
 interface ProjectSource {
 
     /**
-     * Loads source project code from github
-     * @param destinationFile is a document file to start .zip downloading
+     * Loads source project code from github.
+     * Download can be done by File object or using default device storage. In this
+     * case [resultFileName] is required
      * @param downloadTitle is a title of download-notification
      * @param downloadDescription is a description of download-notification
+     * @param destinationFile is a document file to start .zip downloading
+     * @param resultFileName is a result file name
      * */
-    suspend fun download(destinationFile: File, downloadTitle: String, downloadDescription: String)
+    suspend fun download(
+        downloadTitle: String,
+        downloadDescription: String,
+        destinationFile: File? = null,
+        resultFileName: String? = null
+    )
 }

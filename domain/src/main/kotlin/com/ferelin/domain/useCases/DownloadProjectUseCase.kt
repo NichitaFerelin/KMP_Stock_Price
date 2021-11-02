@@ -28,10 +28,11 @@ class DownloadProjectUseCase @Inject constructor(
      * @param destinationFile is a document file to start .zip downloading
      * */
     suspend fun download(
-        destinationFile: File,
         downloadTitle: String,
-        downloadDescription: String
+        downloadDescription: String,
+        destinationFile: File? = null,
+        resultFileName: String? = null
     ) {
-        projectSource.download(destinationFile, downloadTitle, downloadDescription)
+        projectSource.download(downloadTitle, downloadDescription, destinationFile, resultFileName)
     }
 }

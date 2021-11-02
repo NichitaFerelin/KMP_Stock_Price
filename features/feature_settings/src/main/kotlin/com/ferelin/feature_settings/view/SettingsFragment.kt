@@ -62,7 +62,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            launchAskPathAndPermissions()
+            viewModel.onPermissionsGranted()
         } else {
             showTempSnackbar(getString(R.string.messagePermissionsNotGranted))
         }
@@ -114,15 +114,18 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                     SettingsEvent.DATA_CLEARED -> {
                         showTempSnackbar(getString(R.string.messageDataCleared))
                     }
-                    SettingsEvent.ASK_FOR_PATH_AND_PERMISSIONS -> {
-                        launchAskPathAndPermissions()
+                    SettingsEvent.REQUEST_PATH -> {
+                        requestPath()
+                    }
+                    SettingsEvent.REQUEST_PERMISSIONS -> {
+                        requestPermissions()
                     }
                     SettingsEvent.DOWNLOAD_PATH_ERROR -> {
                         showActionSnackbar(
                             getString(R.string.errorPath),
                             getString(R.string.hintChoose)
                         ) {
-                            launchAskPathAndPermissions()
+                            requestPermissions()
                         }
                     }
                     SettingsEvent.DOWNLOAD_STARTING -> {
@@ -131,21 +134,28 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                     SettingsEvent.DOWNLOAD_WILL_BE_STARTED -> {
                         showTempSnackbar(getString(R.string.messageDownloadingNoNetwork))
                     }
+                    SettingsEvent.DOWNLOAD_ERROR -> {
+                        showTempSnackbar(getString(R.string.errorUndefined))
+                    }
                 }
             }
         }
     }
 
-    private fun launchAskPathAndPermissions() {
+    private fun requestPermissions() {
         val hasPermissions = PermissionsResolver.writeExternalStorage(requireContext())
-        if (hasPermissions) {
-            try {
-                requestPathLauncher.launch(Uri.EMPTY)
-            } catch (exception: ActivityNotFoundException) {
-                showTempSnackbar(getString(R.string.errorNoAppToResolve))
-            }
-        } else {
+        if (!hasPermissions) {
             requestPermissionsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            viewModel.onPermissionsGranted()
+        }
+    }
+
+    private fun requestPath() {
+        try {
+            requestPathLauncher.launch(Uri.EMPTY)
+        } catch (exception: ActivityNotFoundException) {
+            showTempSnackbar(getString(R.string.errorNoAppToResolve))
         }
     }
 
