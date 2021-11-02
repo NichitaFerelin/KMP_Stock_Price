@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:background="@color/white"
-        android:elevation="@dimen/searchFragmentElevation"
+        android:elevation="@dimen/searchFragmentSubElevation"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
