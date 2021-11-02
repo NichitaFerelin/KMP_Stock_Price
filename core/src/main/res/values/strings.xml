@@ -78,6 +78,7 @@
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
     <string name="messageDownloadingWillStart">Downloading will be started soon</string>
     <string name="messageDownloadingNoNetwork">Download will start when connected to the network</string>
+    <string name="messagePermissionsNotGranted">Permissions not granted</string>
 
     <!-- Others -->
     <string name="transitionSearchFragment">searchContainer</string>

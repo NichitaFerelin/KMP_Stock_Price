@@ -16,6 +16,7 @@
 
 package com.ferelin.feature_settings.view
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.os.Bundle
@@ -24,6 +25,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
+import com.ferelin.core.resolvers.PermissionsResolver
 import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
@@ -50,10 +52,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         factoryProducer = { viewModelFactory }
     )
 
-    private val askForPath = registerForActivityResult(
+    private val requestPathLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocumentTree()
-    ) { resultUri ->
+    ) { resultUri: Uri? ->
         viewModel.onPathSelected(resultUri)
+    }
+
+    private val requestPermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            launchAskPathAndPermissions()
+        } else {
+            showTempSnackbar(getString(R.string.messagePermissionsNotGranted))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,15 +114,15 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                     SettingsEvent.DATA_CLEARED -> {
                         showTempSnackbar(getString(R.string.messageDataCleared))
                     }
-                    SettingsEvent.ASK_FOR_PATH -> {
-                        launchAskPath()
+                    SettingsEvent.ASK_FOR_PATH_AND_PERMISSIONS -> {
+                        launchAskPathAndPermissions()
                     }
                     SettingsEvent.DOWNLOAD_PATH_ERROR -> {
                         showActionSnackbar(
                             getString(R.string.errorPath),
                             getString(R.string.hintChoose)
                         ) {
-                            launchAskPath()
+                            launchAskPathAndPermissions()
                         }
                     }
                     SettingsEvent.DOWNLOAD_STARTING -> {
@@ -124,11 +136,16 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         }
     }
 
-    private fun launchAskPath() {
-        try {
-            askForPath.launch(Uri.EMPTY)
-        } catch (exception: ActivityNotFoundException) {
-            showTempSnackbar(getString(R.string.errorNoAppToResolve))
+    private fun launchAskPathAndPermissions() {
+        val hasPermissions = PermissionsResolver.writeExternalStorage(requireContext())
+        if (hasPermissions) {
+            try {
+                requestPathLauncher.launch(Uri.EMPTY)
+            } catch (exception: ActivityNotFoundException) {
+                showTempSnackbar(getString(R.string.errorNoAppToResolve))
+            }
+        } else {
+            requestPermissionsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 

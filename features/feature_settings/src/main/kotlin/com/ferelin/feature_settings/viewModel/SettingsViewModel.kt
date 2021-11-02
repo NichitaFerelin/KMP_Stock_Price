@@ -52,7 +52,7 @@ enum class SettingsEvent {
     DOWNLOAD_STARTING,
     DOWNLOAD_WILL_BE_STARTED,
 
-    ASK_FOR_PATH
+    ASK_FOR_PATH_AND_PERMISSIONS
 }
 
 class SettingsViewModel @Inject constructor(
@@ -154,7 +154,7 @@ class SettingsViewModel @Inject constructor(
         val pathAuthority = storagePathInteractor.getStoragePathAuthority()
 
         if (storagePath == null || pathAuthority == null) {
-            _messageEvent.emit(SettingsEvent.ASK_FOR_PATH)
+            _messageEvent.emit(SettingsEvent.ASK_FOR_PATH_AND_PERMISSIONS)
         } else {
             initSourceProjectDownload(storagePath, pathAuthority)
         }
