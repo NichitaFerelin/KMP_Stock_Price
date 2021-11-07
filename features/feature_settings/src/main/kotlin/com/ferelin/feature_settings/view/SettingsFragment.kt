@@ -125,7 +125,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                             getString(R.string.errorPath),
                             getString(R.string.hintChoose)
                         ) {
-                            requestPermissions()
+                            requestPath()
                         }
                     }
                     SettingsEvent.DOWNLOAD_STARTING -> {
