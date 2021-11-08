@@ -24,7 +24,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import com.ferelin.core.adapter.options.itemDecoration.OptionDecoration
+import com.ferelin.feature_settings.adapter.itemDecoration.OptionDecoration
 import com.ferelin.core.resolvers.PermissionsResolver
 import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.viewData
+package com.ferelin.feature_settings.viewData
 
 import com.ferelin.core.adapter.base.ViewDataType
-import com.ferelin.core.adapter.options.OPTION_VIEW_TYPE
-import com.ferelin.core.utils.OptionType
+import com.ferelin.feature_settings.adapter.OPTION_VIEW_TYPE
+import com.ferelin.feature_settings.utils.OptionType
 
 data class OptionViewData(
     val id: Long,

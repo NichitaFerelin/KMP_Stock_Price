@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.utils
+package com.ferelin.feature_settings.utils
 
 import android.content.Context
 import com.ferelin.core.R
-import com.ferelin.core.viewData.OptionViewData
+import com.ferelin.feature_settings.viewData.OptionViewData
 import javax.inject.Inject
 
 enum class OptionType {

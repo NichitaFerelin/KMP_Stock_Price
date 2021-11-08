@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.options
+package com.ferelin.feature_settings.adapter
 
 import com.ferelin.core.adapter.base.createRecyclerAdapter
-import com.ferelin.core.databinding.ItemOptionBinding
-import com.ferelin.core.viewData.OptionViewData
+import com.ferelin.feature_settings.databinding.ItemOptionBinding
+import com.ferelin.feature_settings.viewData.OptionViewData
 
 const val OPTION_VIEW_TYPE = 0
 

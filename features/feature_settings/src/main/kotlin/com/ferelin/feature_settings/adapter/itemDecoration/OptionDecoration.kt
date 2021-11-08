@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.core.adapter.options.itemDecoration
+package com.ferelin.feature_settings.adapter.itemDecoration
 
 import android.content.Context
 import android.graphics.Rect

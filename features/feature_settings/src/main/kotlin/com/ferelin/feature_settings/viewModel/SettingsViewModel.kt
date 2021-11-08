@@ -20,13 +20,13 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
-import com.ferelin.core.adapter.options.createOptionsAdapter
+import com.ferelin.feature_settings.adapter.createOptionsAdapter
 import com.ferelin.core.resolvers.LocalFilesResolver
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.resolvers.NotificationsResolver
-import com.ferelin.core.utils.MenuOptionsProvider
-import com.ferelin.core.utils.OptionType
-import com.ferelin.core.viewData.OptionViewData
+import com.ferelin.feature_settings.utils.MenuOptionsProvider
+import com.ferelin.feature_settings.utils.OptionType
+import com.ferelin.feature_settings.viewData.OptionViewData
 import com.ferelin.domain.interactors.AuthenticationInteractor
 import com.ferelin.domain.interactors.StoragePathInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
