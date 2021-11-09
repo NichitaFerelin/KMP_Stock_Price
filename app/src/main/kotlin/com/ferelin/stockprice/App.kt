@@ -17,18 +17,29 @@
 package com.ferelin.stockprice
 
 import android.app.Application
+import androidx.work.Configuration
+import com.ferelin.stockprice.config.WorkersConfig
 import com.ferelin.stockprice.di.AppComponent
 import com.ferelin.stockprice.di.DaggerAppComponent
 import timber.log.Timber
+import javax.inject.Inject
 
-class App : Application() {
+class App : Application(), Configuration.Provider {
 
     val appComponent: AppComponent by lazy(LazyThreadSafetyMode.NONE) {
         DaggerAppComponent.factory().create(applicationContext)
     }
 
+    @Inject
+    lateinit var workersConfig: WorkersConfig
+
     override fun onCreate() {
         super.onCreate()
+        appComponent.inject(this)
         Timber.plant(Timber.DebugTree())
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return workersConfig.config()
     }
 }

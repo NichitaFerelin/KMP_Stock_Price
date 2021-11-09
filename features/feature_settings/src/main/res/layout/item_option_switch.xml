@@ -28,7 +28,7 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@id/textViewSource"
-        app:layout_constraintEnd_toEndOf="@id/image"
+        app:layout_constraintEnd_toEndOf="@id/switchNotify"
         app:layout_constraintStart_toStartOf="@id/textViewTitle"
         app:layout_constraintTop_toTopOf="@id/textViewTitle" />
 
@@ -38,7 +38,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
         android:textColor="@color/blue"
-        app:layout_constraintEnd_toStartOf="@id/image"
+        app:layout_constraintEnd_toStartOf="@id/switchNotify"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/separator"
         tools:text="Authentication" />
@@ -48,20 +48,20 @@
         style="@style/textViewH3"
         android:layout_marginTop="6dp"
         android:textColor="@color/grey"
-        app:layout_constraintEnd_toStartOf="@id/image"
+        app:layout_constraintEnd_toStartOf="@id/switchNotify"
         app:layout_constraintStart_toStartOf="@id/textViewTitle"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         tools:text="You are not authorized" />
 
-    <ImageView
-        android:id="@+id/image"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchNotify"
+        style="@style/ButtonStyle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
         app:layout_constraintBottom_toBottomOf="@id/textViewSource"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewTitle"
-        tools:ignore="ContentDescription"
-        tools:src="@drawable/outline_login_24" />
+        app:useMaterialThemeColors="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

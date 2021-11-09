@@ -20,18 +20,23 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.adapter.base.BaseRecyclerAdapter
-import com.ferelin.feature_settings.adapter.createOptionsAdapter
 import com.ferelin.core.resolvers.LocalFilesResolver
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.core.resolvers.NotificationsResolver
-import com.ferelin.feature_settings.utils.MenuOptionsProvider
-import com.ferelin.feature_settings.utils.OptionType
-import com.ferelin.feature_settings.viewData.OptionViewData
+import com.ferelin.core.services.priceCheck.PriceCheckScheduler
 import com.ferelin.domain.interactors.AuthenticationInteractor
 import com.ferelin.domain.interactors.StoragePathInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.domain.useCases.DownloadProjectUseCase
+import com.ferelin.domain.useCases.notifyPrice.NotifyPriceGetUseCase
+import com.ferelin.domain.useCases.notifyPrice.NotifyPriceSetUseCase
+import com.ferelin.feature_settings.adapter.createOptionsAdapter
+import com.ferelin.feature_settings.adapter.createSwitchOptionAdapter
+import com.ferelin.feature_settings.utils.MenuOptionsProvider
+import com.ferelin.feature_settings.utils.OptionType
+import com.ferelin.feature_settings.viewData.OptionViewData
+import com.ferelin.feature_settings.viewData.SwitchOptionViewData
 import com.ferelin.navigation.Router
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -67,15 +72,21 @@ class SettingsViewModel @Inject constructor(
     private val notificationsResolver: NotificationsResolver,
     private val localFilesResolver: LocalFilesResolver,
     private val router: Router,
-    private val menuOptionsProvider: MenuOptionsProvider
+    private val menuOptionsProvider: MenuOptionsProvider,
+    private val notifyPriceGetUseCase: NotifyPriceGetUseCase,
+    private val notifyPriceSetUseCase: NotifyPriceSetUseCase,
+    private val priceChekScheduler: PriceCheckScheduler
 ) : ViewModel() {
 
     private val _messageEvent = MutableSharedFlow<SettingsEvent>()
-    val messageSettingsEvent: SharedFlow<SettingsEvent> = _messageEvent.asSharedFlow()
+    val messageEvent: SharedFlow<SettingsEvent> = _messageEvent.asSharedFlow()
+
+    private var shouldSendNotifications = false
 
     val optionsAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         BaseRecyclerAdapter(
-            createOptionsAdapter(this::onOptionClick)
+            createOptionsAdapter(this::onOptionClick),
+            createSwitchOptionAdapter(this::onSwitched)
         ).apply { setHasStableIds(true) }
     }
 
@@ -86,7 +97,10 @@ class SettingsViewModel @Inject constructor(
     fun loadOptions() {
         viewModelScope.launch {
             val isUserAuth = authenticationInteractor.isUserAuthenticated()
-            val menuOptions = menuOptionsProvider.buildMenuOptions(isUserAuth)
+            shouldSendNotifications = notifyPriceGetUseCase.get()
+
+            val menuOptions =
+                menuOptionsProvider.buildMenuOptions(isUserAuth, shouldSendNotifications)
 
             withContext(Dispatchers.Main) {
                 optionsAdapter.setData(menuOptions)
@@ -127,6 +141,15 @@ class SettingsViewModel @Inject constructor(
                 OptionType.AUTH -> onAuthClick()
                 OptionType.CLEAR_DATA -> onClearClick()
                 OptionType.SOURCE_CODE -> onDownloadProjectClick()
+                else -> Unit
+            }
+        }
+    }
+
+    private fun onSwitched(switchOptionViewData: SwitchOptionViewData, isChecked: Boolean) {
+        viewModelScope.launch {
+            if (switchOptionViewData.type == OptionType.NOTIFY_PRICE) {
+                onNotifyPriceSwitched(isChecked)
             }
         }
     }
@@ -135,7 +158,8 @@ class SettingsViewModel @Inject constructor(
         if (authenticationInteractor.isUserAuthenticated()) {
             authenticationInteractor.logOut()
 
-            val updatedMenuOptions = menuOptionsProvider.buildMenuOptions(false)
+            val updatedMenuOptions =
+                menuOptionsProvider.buildMenuOptions(false, shouldSendNotifications)
 
             withContext(Dispatchers.Main) {
                 optionsAdapter.setData(updatedMenuOptions)
@@ -163,6 +187,17 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun onDownloadProjectClick() {
         _messageEvent.emit(SettingsEvent.REQUEST_PERMISSIONS)
+    }
+
+    private suspend fun onNotifyPriceSwitched(shouldSendNotifications: Boolean) {
+        this.shouldSendNotifications = shouldSendNotifications
+        notifyPriceSetUseCase.set(shouldSendNotifications)
+
+        if (shouldSendNotifications) {
+            priceChekScheduler.schedule()
+        } else {
+            priceChekScheduler.cancel()
+        }
     }
 
     private suspend fun downloadProjectToDefaultStorage() {

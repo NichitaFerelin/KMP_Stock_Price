@@ -18,9 +18,12 @@ package com.ferelin.feature_settings.adapter
 
 import com.ferelin.core.adapter.base.createRecyclerAdapter
 import com.ferelin.feature_settings.databinding.ItemOptionBinding
+import com.ferelin.feature_settings.databinding.ItemOptionSwitchBinding
 import com.ferelin.feature_settings.viewData.OptionViewData
+import com.ferelin.feature_settings.viewData.SwitchOptionViewData
 
 const val OPTION_VIEW_TYPE = 0
+const val SWITCH_OPTION_VIEW_TYPE = 1
 
 fun createOptionsAdapter(
     onOptionClick: (OptionViewData) -> Unit
@@ -36,4 +39,22 @@ fun createOptionsAdapter(
     viewBinding.image.setImageResource(item.iconRes)
     viewBinding.image.contentDescription = item.iconContentDescription
     viewBinding.cardHolder.setOnClickListener { onOptionClick.invoke(item) }
+}
+
+fun createSwitchOptionAdapter(
+    onOptionSwitched: (SwitchOptionViewData, Boolean) -> Unit
+) = createRecyclerAdapter(
+    SWITCH_OPTION_VIEW_TYPE,
+    ItemOptionSwitchBinding::inflate
+) { viewBinding, item, _, _ ->
+
+    item as SwitchOptionViewData
+
+    viewBinding.textViewTitle.text = item.title
+    viewBinding.textViewSource.text = item.source
+    viewBinding.switchNotify.isChecked = item.isChecked
+
+    viewBinding.switchNotify.setOnCheckedChangeListener { _, isChecked ->
+        onOptionSwitched.invoke(item, isChecked)
+    }
 }

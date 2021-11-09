@@ -25,6 +25,8 @@ android {
 dependencies {
     implementation(project(Projects.core))
 
+    implementation(Dependencies.workManager)
+
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 }

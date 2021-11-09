@@ -29,6 +29,7 @@ import com.ferelin.feature_settings.view.SettingsFragment
 import com.ferelin.feature_stocks_default.view.StocksFragment
 import com.ferelin.feature_stocks_favourite.view.FavouriteFragment
 import com.ferelin.shared.di.ScopeModule
+import com.ferelin.stockprice.App
 import com.ferelin.stockprice.di.modules.NavigationBindsModule
 import com.ferelin.stockprice.ui.MainActivity
 import dagger.BindsInstance
@@ -62,6 +63,8 @@ interface AppComponent {
     interface Factory {
         fun create(@BindsInstance context: Context): AppComponent
     }
+
+    fun inject(app: App)
 
     fun inject(activity: MainActivity)
 

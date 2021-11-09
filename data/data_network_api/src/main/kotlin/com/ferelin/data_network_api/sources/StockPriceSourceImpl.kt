@@ -38,6 +38,13 @@ class StockPriceSourceImpl @Inject constructor(
     private val requestsLimiter: RequestsLimiter
 ) : StockPriceSource {
 
+    override suspend fun loadStockPrice(
+        companyId: Int,
+        companyTicker: String
+    ): LoadState<StockPrice> {
+        return executeRequest(companyId, companyTicker)
+    }
+
     override suspend fun addRequestToGetStockPrice(
         companyId: Int,
         companyTicker: String,
@@ -63,25 +70,28 @@ class StockPriceSourceImpl @Inject constructor(
             Timber.d("observe actual stock price responses")
 
             requestsLimiter.onExecuteRequest { companyId, tickerToExecute ->
-                withExceptionHandle(
-                    request = {
-                        stockPriceApi
-                            .loadBy(tickerToExecute, token)
-                            .execute()
-                    },
-                    onSuccess = {
-                        trySend(
-                            LoadState.Prepared(
-                                data = stockPriceMapper.map(it, companyId)
-                            )
-                        )
-                    },
-                    onFail = {
-                        trySend(LoadState.Error())
-                        Unit
-                    }
+                trySend(
+                    executeRequest(companyId, tickerToExecute)
                 )
             }
             awaitClose()
         }
+
+    private fun executeRequest(companyId: Int, companyToken: String): LoadState<StockPrice> {
+        return withExceptionHandle(
+            request = {
+                stockPriceApi
+                    .loadBy(companyToken, token)
+                    .execute()
+            },
+            onSuccess = {
+                LoadState.Prepared(
+                    data = stockPriceMapper.map(it, companyId)
+                )
+            },
+            onFail = {
+                LoadState.Error()
+            }
+        )
+    }
 }

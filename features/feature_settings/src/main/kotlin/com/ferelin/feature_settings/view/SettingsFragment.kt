@@ -24,13 +24,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import com.ferelin.feature_settings.adapter.itemDecoration.OptionDecoration
 import com.ferelin.core.resolvers.PermissionsResolver
 import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_settings.R
+import com.ferelin.feature_settings.adapter.itemDecoration.OptionDecoration
 import com.ferelin.feature_settings.databinding.FragmentSettingsBinding
 import com.ferelin.feature_settings.viewModel.SettingsEvent
 import com.ferelin.feature_settings.viewModel.SettingsViewModel
@@ -102,7 +102,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
 
     private suspend fun observeMessageEvent() {
-        viewModel.messageSettingsEvent.collect { event ->
+        viewModel.messageEvent.collect { event ->
             withContext(Dispatchers.Main) {
                 when (event) {
                     SettingsEvent.LOG_OUT_COMPLETE -> {

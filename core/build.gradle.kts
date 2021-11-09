@@ -24,6 +24,8 @@ android {
 }
 
 dependencies {
+    implementation(Dependencies.androidCore)
+
     api(project(Projects.shared))
     api(project(Projects.domain))
     api(project(Projects.navigation))
@@ -36,6 +38,8 @@ dependencies {
     api(Dependencies.viewPager)
     api(Dependencies.constraintLayout)
     api(Dependencies.material)
+
+    implementation(Dependencies.workManager)
 
     implementation(Dependencies.glide)
     kapt(Dependencies.glideCompilerKapt)

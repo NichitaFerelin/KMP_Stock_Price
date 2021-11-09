@@ -18,19 +18,25 @@ package com.ferelin.feature_settings.utils
 
 import android.content.Context
 import com.ferelin.core.R
+import com.ferelin.core.adapter.base.ViewDataType
 import com.ferelin.feature_settings.viewData.OptionViewData
+import com.ferelin.feature_settings.viewData.SwitchOptionViewData
 import javax.inject.Inject
 
 enum class OptionType {
     AUTH,
     CLEAR_DATA,
-    SOURCE_CODE
+    SOURCE_CODE,
+    NOTIFY_PRICE
 }
 
 class MenuOptionsProvider @Inject constructor(
     private val context: Context
 ) {
-    fun buildMenuOptions(isUserAuthenticated: Boolean): List<OptionViewData> {
+    fun buildMenuOptions(
+        isUserAuthenticated: Boolean,
+        isNotifyChecked: Boolean
+    ): List<ViewDataType> {
         return listOf(
             OptionViewData(
                 id = 0,
@@ -52,8 +58,15 @@ class MenuOptionsProvider @Inject constructor(
                     context.getString(R.string.descriptionLogIn)
                 }
             ),
-            OptionViewData(
+            SwitchOptionViewData(
                 id = 1,
+                type = OptionType.NOTIFY_PRICE,
+                title = context.getString(R.string.titleNotifyPriceUpdates),
+                source = context.getString(R.string.sourceNotify),
+                isChecked = isNotifyChecked
+            ),
+            OptionViewData(
+                id = 2,
                 type = OptionType.SOURCE_CODE,
                 title = context.getString(R.string.titleSourceCode),
                 source = context.getString(R.string.sourceDownload),
@@ -61,7 +74,7 @@ class MenuOptionsProvider @Inject constructor(
                 iconContentDescription = context.getString(R.string.descriptionDownload)
             ),
             OptionViewData(
-                id = 2,
+                id = 3,
                 type = OptionType.CLEAR_DATA,
                 title = context.getString(R.string.titleClearData),
                 source = context.getString(R.string.sourceClearData),

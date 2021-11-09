@@ -58,4 +58,7 @@ interface DataLocalModuleBinds {
 
     @Binds
     fun provideStoragePathRepo(storagePathRepoImpl: StoragePathRepoImpl) : StoragePathRepo
+
+    @Binds
+    fun provideNotifyPriceRepo(notifyPriceRepoImpl: NotifyPriceRepoImpl) : NotifyPriceRepo
 }

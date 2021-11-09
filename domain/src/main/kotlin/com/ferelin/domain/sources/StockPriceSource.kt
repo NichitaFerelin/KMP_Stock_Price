@@ -23,6 +23,13 @@ import kotlinx.coroutines.flow.Flow
 interface StockPriceSource {
 
     /**
+     * Executes single request out of queue to load stock price
+     * @param companyId is a company for which need to load stock price
+     * @param companyTicker is a company ticker for which need to load stock price
+     * */
+    suspend fun loadStockPrice(companyId: Int, companyTicker: String): LoadState<StockPrice>
+
+    /**
      * Allows to add request to load actual stock price for company
      * @param companyId is a company for which need to load stock price
      * @param companyTicker is a company ticker for which need to load stock price

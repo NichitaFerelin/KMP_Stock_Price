@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(Dependencies.androidCore)
     implementation(Dependencies.timber)
+    implementation(Dependencies.workManager)
 
     implementation(platform(Dependencies.firebasePlatform))
     implementation(Dependencies.firebaseCrashlyticsKtx)

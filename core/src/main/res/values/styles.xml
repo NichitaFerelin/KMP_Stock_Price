@@ -202,7 +202,7 @@
     </style>
 
     <style name="snackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-        <item name="android:textColor">@color/clickableTextView</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
 
     <style name="snackbarTextView" parent="Widget.MaterialComponents.Snackbar.TextView">
@@ -228,15 +228,20 @@
     <style name="clickableTextViewBody" parent="textViewBodyConstrainedWidth">
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
-        <item name="android:textColor">@color/clickableTextView</item>
+        <item name="android:textColor">@color/blue</item>
         <item name="android:background">@drawable/ripple_text</item>
     </style>
 
     <style name="clickableTextViewH2" parent="textViewH2ConstrainedWidth">
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
-        <item name="android:textColor">@color/clickableTextView</item>
+        <item name="android:textColor">@color/blue</item>
         <item name="android:background">@drawable/ripple_text</item>
+    </style>
+
+    <style name="ButtonStyle2" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/selector_checked_thumb</item>
+        <item name="trackTint">@color/selector_checked_track</item>
     </style>
 
 </resources>
