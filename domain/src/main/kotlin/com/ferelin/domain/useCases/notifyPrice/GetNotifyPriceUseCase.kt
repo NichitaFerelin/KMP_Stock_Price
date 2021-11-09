@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.useCases
+package com.ferelin.domain.useCases.notifyPrice
 
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.repositories.ProfileRepo
+import com.ferelin.domain.repositories.NotifyPriceRepo
 import javax.inject.Inject
 
-/**
- * [ProfileGetByUseCase] allows to interactor with companies profile
- * */
-class ProfileGetByUseCase @Inject constructor(
-    private val profileRepo: ProfileRepo
+class GetNotifyPriceUseCase @Inject constructor(
+    private val notifyPriceRepo: NotifyPriceRepo
 ) {
-    /**
-     * Get profile
-     * @param relationCompanyId is a company for which need to get profile
-     * @return company profile
-     * */
-    suspend fun getBy(relationCompanyId: Int): Profile {
-        return profileRepo.getBy(relationCompanyId)
+    companion object {
+        private const val defaultNotifyState = false
+    }
+
+    suspend fun get(): Boolean {
+        return notifyPriceRepo.get() ?: defaultNotifyState
     }
 }

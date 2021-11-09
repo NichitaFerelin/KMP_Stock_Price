@@ -28,7 +28,7 @@ import com.ferelin.repoTests.*
 import com.ferelin.useCaseTests.FirstLaunchUseCaseTest
 import com.ferelin.useCaseTests.NewsUseCaseTest
 import com.ferelin.useCaseTests.PastPriceUseCaseTest
-import com.ferelin.useCaseTests.ProfileGetByUseCaseTest
+import com.ferelin.useCaseTests.GetProfileUseCaseTest
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -56,7 +56,7 @@ interface TestAppComponent {
     fun inject(firstLaunchUseCaseTest: FirstLaunchUseCaseTest)
     fun inject(newsUseCaseTest: NewsUseCaseTest)
     fun inject(pastPriceUseCaseTest: PastPriceUseCaseTest)
-    fun inject(profileUseCaseTest: ProfileGetByUseCaseTest)
+    fun inject(profileUseCaseTest: GetProfileUseCaseTest)
 
     fun inject(companiesLocalRepoTest: CompaniesLocalRepoTest)
     fun inject(firstLaunchRepoTest: FirstLaunchRepoTest)

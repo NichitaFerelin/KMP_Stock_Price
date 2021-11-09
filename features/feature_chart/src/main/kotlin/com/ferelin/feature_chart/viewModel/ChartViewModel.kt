@@ -26,8 +26,8 @@ import com.ferelin.core.utils.SHARING_STOP_TIMEOUT
 import com.ferelin.core.utils.ifNotEmpty
 import com.ferelin.core.viewData.StockPriceViewData
 import com.ferelin.domain.interactors.StockPriceInteractor
-import com.ferelin.domain.useCases.pastPrice.PastPriceGetAllByUseCase
-import com.ferelin.domain.useCases.pastPrice.PastPriceLoadAllByUseCase
+import com.ferelin.domain.useCases.pastPrice.GetPastPriceUseCase
+import com.ferelin.domain.useCases.pastPrice.LoadPastPriceUseCase
 import com.ferelin.feature_chart.mapper.PastPriceTypeMapper
 import com.ferelin.feature_chart.viewData.ChartViewMode
 import com.ferelin.feature_chart.viewData.PastPriceViewData
@@ -40,8 +40,8 @@ import javax.inject.Inject
 
 class ChartViewModel @Inject constructor(
     stockPriceInteractor: StockPriceInteractor,
-    private val pastPriceGetAllByUseCase: PastPriceGetAllByUseCase,
-    private val pastPriceLoadAllByUseCase: PastPriceLoadAllByUseCase,
+    private val getPastPriceUseCase: GetPastPriceUseCase,
+    private val loadPastPriceUseCase: LoadPastPriceUseCase,
     private val pastPriceTypeMapper: PastPriceTypeMapper,
     private val stockPriceMapper: StockPriceMapper,
     private val networkResolver: NetworkResolver
@@ -110,14 +110,14 @@ class ChartViewModel @Inject constructor(
     }
 
     private suspend fun loadFromDb() {
-        pastPriceGetAllByUseCase
+        getPastPriceUseCase
             .getAllBy(chartParams.companyId)
             .map(pastPriceTypeMapper::map)
             .ifNotEmpty { dbPrices -> onNewPastPrices(dbPrices) }
     }
 
     private suspend fun loadFromNetwork() {
-        pastPriceLoadAllByUseCase
+        loadPastPriceUseCase
             .loadAllBy(chartParams.companyId, chartParams.companyTicker)
             .ifPrepared { preparedState ->
                 onNewPastPrices(

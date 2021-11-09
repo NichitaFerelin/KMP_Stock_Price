@@ -19,8 +19,8 @@ package com.ferelin.useCaseTests
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
-import com.ferelin.domain.useCases.firstLaunch.FirstLaunchGetUseCase
-import com.ferelin.domain.useCases.firstLaunch.FirstLaunchSetUseCase
+import com.ferelin.domain.useCases.firstLaunch.GetFirstLaunchUseCase
+import com.ferelin.domain.useCases.firstLaunch.SetFirstLaunchUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.After
@@ -37,10 +37,10 @@ class FirstLaunchUseCaseTest {
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var firstLaunchSetUseCase: FirstLaunchSetUseCase
+    lateinit var setFirstLaunchUseCase: SetFirstLaunchUseCase
 
     @Inject
-    lateinit var firstLaunchGetUseCase: FirstLaunchGetUseCase
+    lateinit var getFirstLaunchUseCase: GetFirstLaunchUseCase
 
     @Before
     fun before() {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.useCases.pastPrice
+package com.ferelin.domain.useCases.news
 
-import com.ferelin.domain.entities.PastPrice
-import com.ferelin.domain.repositories.PastPriceRepo
-import com.ferelin.domain.sources.PastPriceSource
+import com.ferelin.domain.entities.News
+import com.ferelin.domain.repositories.NewsRepo
+import com.ferelin.domain.sources.NewsSource
 import com.ferelin.shared.LoadState
 import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import com.ferelin.shared.ifPrepared
@@ -28,36 +28,32 @@ import javax.inject.Inject
 import javax.inject.Named
 
 /**
- * [PastPriceLoadAllByUseCase] allows to interact with stock past prices
+ * [LoadNewsUseCase] allows to interact with companies news
  * */
-class PastPriceLoadAllByUseCase @Inject constructor(
-    private val pastPriceRepo: PastPriceRepo,
-    private val pastPriceSource: PastPriceSource,
+class LoadNewsUseCase @Inject constructor(
+    private val newsRepo: NewsRepo,
+    private val newsSource: NewsSource,
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
     /**
-     * Load past prices
-     * @param relationCompanyId is a company id for which need to load past prices
-     * @param relationCompanyTicker is a company ticker for which need to load past prices
-     * @return [LoadState] with list of past prices if [LoadState] is successful
+     * Allows to load actual news
+     * @param relationCompanyId is a company id for which need to load company news
+     * @param companyTicker is a company ticker by which need to load company news
+     * @return [LoadState] with list of company news if [LoadState] is successful
      * */
-    suspend fun loadAllBy(
-        relationCompanyId: Int,
-        relationCompanyTicker: String
-    ): LoadState<List<PastPrice>> {
-        return pastPriceSource
-            .loadBy(relationCompanyId, relationCompanyTicker)
+    suspend fun loadBy(relationCompanyId: Int, companyTicker: String): LoadState<List<News>> {
+        return newsSource
+            .loadBy(relationCompanyId, companyTicker)
             .also { cacheIfPrepared(relationCompanyId, it) }
     }
 
-    private fun cacheIfPrepared(relationCompanyId: Int, loadState: LoadState<List<PastPrice>>) {
+    private fun cacheIfPrepared(relationCompanyId: Int, loadState: LoadState<List<News>>) {
         loadState.ifPrepared { preparedState ->
             externalScope.launch {
-
                 // Erase previous
-                pastPriceRepo.eraseBy(relationCompanyId)
+                newsRepo.eraseBy(relationCompanyId)
 
-                pastPriceRepo.insertAll(preparedState.data)
+                newsRepo.insertAll(preparedState.data)
             }
         }
     }

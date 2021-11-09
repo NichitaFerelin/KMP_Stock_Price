@@ -24,9 +24,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 /**
- * [FirstLaunchSetUseCase] allows to interact with first time application launch
+ * [SetFirstLaunchUseCase] allows to interact with first time application launch
  * */
-class FirstLaunchSetUseCase @Inject constructor(
+class SetFirstLaunchUseCase @Inject constructor(
     private val firstLaunchRepo: FirstLaunchRepo,
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
@@ -35,7 +35,7 @@ class FirstLaunchSetUseCase @Inject constructor(
      * */
     suspend fun set(isFirstLaunch: Boolean) {
         externalScope.launch {
-            firstLaunchRepo.cache(isFirstLaunch)
+            firstLaunchRepo.set(isFirstLaunch)
         }
     }
 }

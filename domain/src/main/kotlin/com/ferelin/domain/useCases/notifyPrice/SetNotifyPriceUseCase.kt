@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
-class NotifyPriceSetUseCase @Inject constructor(
+class SetNotifyPriceUseCase @Inject constructor(
     private val notifyPriceRepo: NotifyPriceRepo,
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {

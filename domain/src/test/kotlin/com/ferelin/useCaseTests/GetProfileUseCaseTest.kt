@@ -21,7 +21,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
 import com.ferelin.domain.entities.Profile
 import com.ferelin.domain.repositories.ProfileRepo
-import com.ferelin.domain.useCases.ProfileGetByUseCase
+import com.ferelin.domain.useCases.GetProfileUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -36,12 +36,12 @@ import javax.inject.Inject
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class ProfileGetByUseCaseTest {
+class GetProfileUseCaseTest {
 
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var profileGetByUseCase: ProfileGetByUseCase
+    lateinit var getProfileUseCase: GetProfileUseCase
 
     @Inject
     lateinit var profileRepo: ProfileRepo
@@ -73,7 +73,7 @@ class ProfileGetByUseCaseTest {
 
         profileRepo.insertAll(fakeProfiles)
 
-        val actual = profileGetByUseCase.getBy(2)
+        val actual = getProfileUseCase.getBy(2)
         Assert.assertEquals(fakeProfiles[1], actual)
     }
 }

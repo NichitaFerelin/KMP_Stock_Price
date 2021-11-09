@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.useCases.news
+package com.ferelin.domain.useCases.pastPrice
 
-import com.ferelin.domain.entities.News
-import com.ferelin.domain.repositories.NewsRepo
+import com.ferelin.domain.entities.PastPrice
+import com.ferelin.domain.repositories.PastPriceRepo
 import javax.inject.Inject
 
 /**
- * [NewsGetAllByUseCase] allows to interact with companies news
+ * [GetPastPriceUseCase] allows to interact with stock past prices
  * */
-class NewsGetAllByUseCase @Inject constructor(
-    private val newsRepo: NewsRepo
+class GetPastPriceUseCase @Inject constructor(
+    private val pastPriceRepo: PastPriceRepo
 ) {
     /**
-     * Allows to get all cached news
-     * @param relationCompanyId is an company id for which need to get cached company news
-     * @return list of cached news
+     * Get all cached past prices
+     * @param relationCompanyId is a company id for which need to get past prices
+     * @return list of cached past prices
      * */
-    suspend fun getAllBy(relationCompanyId: Int): List<News> {
-        return newsRepo.getAllBy(relationCompanyId)
+    suspend fun getAllBy(relationCompanyId: Int): List<PastPrice> {
+        return pastPriceRepo.getAllBy(relationCompanyId)
     }
 }

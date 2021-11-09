@@ -19,7 +19,7 @@ package com.ferelin.feature_profile.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.params.ProfileParams
-import com.ferelin.domain.useCases.ProfileGetByUseCase
+import com.ferelin.domain.useCases.GetProfileUseCase
 import com.ferelin.feature_profile.mapper.ProfileMapper
 import com.ferelin.feature_profile.viewData.ProfileViewData
 import com.ferelin.navigation.Router
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val profileGetByUseCase: ProfileGetByUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
     private val profileMapper: ProfileMapper,
     private val router: Router
 ) : ViewModel() {
@@ -82,7 +82,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _profileLoadState.value = LoadState.Loading()
 
-            val responseProfile = profileGetByUseCase.getBy(profileParams.companyId)
+            val responseProfile = getProfileUseCase.getBy(profileParams.companyId)
             val mapped = profileMapper.map(responseProfile)
             _profileLoadState.value = LoadState.Prepared(mapped)
         }

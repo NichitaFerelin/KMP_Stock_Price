@@ -18,8 +18,8 @@ package com.ferelin.feature_loading.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ferelin.domain.useCases.firstLaunch.FirstLaunchGetUseCase
-import com.ferelin.domain.useCases.firstLaunch.FirstLaunchSetUseCase
+import com.ferelin.domain.useCases.firstLaunch.GetFirstLaunchUseCase
+import com.ferelin.domain.useCases.firstLaunch.SetFirstLaunchUseCase
 import com.ferelin.navigation.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,8 +28,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LoadingViewModel @Inject constructor(
-    private val firstLaunchGetUseCase: FirstLaunchGetUseCase,
-    private val firstLaunchSetUseCase: FirstLaunchSetUseCase,
+    private val getFirstLaunchUseCase: GetFirstLaunchUseCase,
+    private val setFirstLaunchUseCase: SetFirstLaunchUseCase,
     private val router: Router
 ) : ViewModel() {
 
@@ -46,7 +46,7 @@ class LoadingViewModel @Inject constructor(
         viewModelScope.launch {
             if (isFirstTimeLaunch) {
                 router.fromLoadingToStocksPager()
-                firstLaunchSetUseCase.set(false)
+                setFirstLaunchUseCase.set(false)
             } else {
                 router.fromLoadingToStocksPager()
             }
@@ -55,7 +55,7 @@ class LoadingViewModel @Inject constructor(
 
     private fun prepareLaunch() {
         viewModelScope.launch {
-            isFirstTimeLaunch = firstLaunchGetUseCase.get()
+            isFirstTimeLaunch = getFirstLaunchUseCase.get()
             _loadPreparedState.value = true
         }
     }

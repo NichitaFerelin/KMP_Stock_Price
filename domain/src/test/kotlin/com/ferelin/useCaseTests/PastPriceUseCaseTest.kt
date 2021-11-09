@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
 import com.ferelin.domain.repositories.PastPriceRepo
-import com.ferelin.domain.useCases.pastPrice.PastPriceGetAllByUseCase
+import com.ferelin.domain.useCases.pastPrice.GetPastPriceUseCase
 import com.ferelin.fakeData.FakeData
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -41,7 +41,7 @@ class PastPriceUseCaseTest {
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var pastPriceGetAllByUseCase: PastPriceGetAllByUseCase
+    lateinit var getPastPriceUseCase: GetPastPriceUseCase
 
     @Inject
     lateinit var pastPriceRepo: PastPriceRepo
@@ -64,7 +64,7 @@ class PastPriceUseCaseTest {
     fun getAllBy() = testCoroutineDispatcher.runBlockingTest {
 
         pastPriceRepo.insertAll(FakeData.pastPrices)
-        val actual = pastPriceGetAllByUseCase.getAllBy(FakeData.relationId)
+        val actual = getPastPriceUseCase.getAllBy(FakeData.relationId)
 
         Assert.assertEquals(FakeData.defaultSizeByRelationId, actual.size)
 

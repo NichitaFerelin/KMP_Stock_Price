@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.useCases.notifyPrice
+package com.ferelin.domain.useCases.news
 
-import com.ferelin.domain.repositories.NotifyPriceRepo
+import com.ferelin.domain.entities.News
+import com.ferelin.domain.repositories.NewsRepo
 import javax.inject.Inject
 
-class NotifyPriceGetUseCase @Inject constructor(
-    private val notifyPriceRepo: NotifyPriceRepo
+/**
+ * [GetAllNewsUseCase] allows to interact with companies news
+ * */
+class GetAllNewsUseCase @Inject constructor(
+    private val newsRepo: NewsRepo
 ) {
-    companion object {
-        private const val defaultNotifyState = false
-    }
-
-    suspend fun get(): Boolean {
-        return notifyPriceRepo.get() ?: defaultNotifyState
+    /**
+     * Allows to get all cached news
+     * @param relationCompanyId is an company id for which need to get cached company news
+     * @return list of cached news
+     * */
+    suspend fun getAllBy(relationCompanyId: Int): List<News> {
+        return newsRepo.getAllBy(relationCompanyId)
     }
 }

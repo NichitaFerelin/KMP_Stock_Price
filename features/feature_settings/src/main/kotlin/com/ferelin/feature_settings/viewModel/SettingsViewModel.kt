@@ -29,8 +29,8 @@ import com.ferelin.domain.interactors.StoragePathInteractor
 import com.ferelin.domain.interactors.companies.CompaniesInteractor
 import com.ferelin.domain.interactors.searchRequests.SearchRequestsInteractor
 import com.ferelin.domain.useCases.DownloadProjectUseCase
-import com.ferelin.domain.useCases.notifyPrice.NotifyPriceGetUseCase
-import com.ferelin.domain.useCases.notifyPrice.NotifyPriceSetUseCase
+import com.ferelin.domain.useCases.notifyPrice.GetNotifyPriceUseCase
+import com.ferelin.domain.useCases.notifyPrice.SetNotifyPriceUseCase
 import com.ferelin.feature_settings.adapter.createOptionsAdapter
 import com.ferelin.feature_settings.adapter.createSwitchOptionAdapter
 import com.ferelin.feature_settings.utils.MenuOptionsProvider
@@ -73,8 +73,8 @@ class SettingsViewModel @Inject constructor(
     private val localFilesResolver: LocalFilesResolver,
     private val router: Router,
     private val menuOptionsProvider: MenuOptionsProvider,
-    private val notifyPriceGetUseCase: NotifyPriceGetUseCase,
-    private val notifyPriceSetUseCase: NotifyPriceSetUseCase,
+    private val getNotifyPriceUseCase: GetNotifyPriceUseCase,
+    private val setNotifyPriceUseCase: SetNotifyPriceUseCase,
     private val priceChekScheduler: PriceCheckScheduler
 ) : ViewModel() {
 
@@ -97,7 +97,7 @@ class SettingsViewModel @Inject constructor(
     fun loadOptions() {
         viewModelScope.launch {
             val isUserAuth = authenticationInteractor.isUserAuthenticated()
-            shouldSendNotifications = notifyPriceGetUseCase.get()
+            shouldSendNotifications = getNotifyPriceUseCase.get()
 
             val menuOptions =
                 menuOptionsProvider.buildMenuOptions(isUserAuth, shouldSendNotifications)
@@ -191,7 +191,7 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun onNotifyPriceSwitched(shouldSendNotifications: Boolean) {
         this.shouldSendNotifications = shouldSendNotifications
-        notifyPriceSetUseCase.set(shouldSendNotifications)
+        setNotifyPriceUseCase.set(shouldSendNotifications)
 
         if (shouldSendNotifications) {
             priceChekScheduler.schedule()

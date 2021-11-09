@@ -27,5 +27,5 @@ interface FirstLaunchRepo {
      * */
     suspend fun get(): Boolean?
 
-    suspend fun cache(isFirstLaunch: Boolean)
+    suspend fun set(isFirstLaunch: Boolean)
 }

@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.ferelin.di.DaggerTestAppComponent
 import com.ferelin.domain.repositories.NewsRepo
-import com.ferelin.domain.useCases.news.NewsGetAllByUseCase
+import com.ferelin.domain.useCases.news.GetAllNewsUseCase
 import com.ferelin.fakeData.FakeData
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -41,7 +41,7 @@ class NewsUseCaseTest {
     lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Inject
-    lateinit var newsGetAllByUseCase: NewsGetAllByUseCase
+    lateinit var getAllNewsUseCase: GetAllNewsUseCase
 
     @Inject
     lateinit var newsRepo: NewsRepo
@@ -64,7 +64,7 @@ class NewsUseCaseTest {
     fun getAllBy() = testCoroutineDispatcher.runBlockingTest {
 
         newsRepo.insertAll(FakeData.news)
-        val actual = newsGetAllByUseCase.getAllBy(FakeData.relationId)
+        val actual = getAllNewsUseCase.getAllBy(FakeData.relationId)
 
         Assert.assertEquals(FakeData.defaultSizeByRelationId, actual.size)
 

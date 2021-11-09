@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.ferelin.domain.useCases.pastPrice
+package com.ferelin.domain.useCases.firstLaunch
 
-import com.ferelin.domain.entities.PastPrice
-import com.ferelin.domain.repositories.PastPriceRepo
+import com.ferelin.domain.repositories.FirstLaunchRepo
 import javax.inject.Inject
 
 /**
- * [PastPriceGetAllByUseCase] allows to interact with stock past prices
+ * [GetFirstLaunchUseCase] allows to interact with first time application launch
  * */
-class PastPriceGetAllByUseCase @Inject constructor(
-    private val pastPriceRepo: PastPriceRepo
+class GetFirstLaunchUseCase @Inject constructor(
+    private val firstLaunchRepo: FirstLaunchRepo,
 ) {
+    companion object {
+        private const val defaultFirstLaunchState = true
+    }
+
     /**
-     * Get all cached past prices
-     * @param relationCompanyId is a company id for which need to get past prices
-     * @return list of cached past prices
+     * Allows to get first time application launch
+     * @return first time application launch
      * */
-    suspend fun getAllBy(relationCompanyId: Int): List<PastPrice> {
-        return pastPriceRepo.getAllBy(relationCompanyId)
+    suspend fun get(): Boolean {
+        return firstLaunchRepo.get() ?: defaultFirstLaunchState
     }
 }

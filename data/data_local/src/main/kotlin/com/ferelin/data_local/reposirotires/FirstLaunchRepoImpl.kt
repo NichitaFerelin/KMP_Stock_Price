@@ -16,6 +16,7 @@
 
 package com.ferelin.data_local.reposirotires
 
+import android.util.Log
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.ferelin.data_local.preferences.PreferencesProvider
@@ -32,6 +33,10 @@ class FirstLaunchRepoImpl @Inject constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : FirstLaunchRepo {
 
+    init {
+        Log.d("Test", "init first launch repo")
+    }
+
     companion object {
         private val firstTimeLaunchKey = booleanPreferencesKey("first-launch")
     }
@@ -45,7 +50,7 @@ class FirstLaunchRepoImpl @Inject constructor(
             }.firstOrNull()
         }
 
-    override suspend fun cache(isFirstLaunch: Boolean): Unit =
+    override suspend fun set(isFirstLaunch: Boolean): Unit =
         withContext(dispatchersProvider.IO) {
             Timber.d("cache (isFirstLaunch = $isFirstLaunch)")
 
