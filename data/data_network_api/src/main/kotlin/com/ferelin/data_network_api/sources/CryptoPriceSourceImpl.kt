@@ -16,45 +16,43 @@
 
 package com.ferelin.data_network_api.sources
 
-import com.ferelin.data_network_api.entities.NewsApi
-import com.ferelin.data_network_api.mappers.NewsMapper
+import com.ferelin.data_network_api.entities.CryptoPriceApi
+import com.ferelin.data_network_api.mappers.CryptoPriceMapper
 import com.ferelin.data_network_api.utils.withExceptionHandle
-import com.ferelin.domain.entities.News
-import com.ferelin.domain.sources.NewsSource
+import com.ferelin.domain.entities.CryptoPrice
+import com.ferelin.domain.sources.CryptoPriceSource
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
-import com.ferelin.shared.NAMED_STOCKS_TOKEN
+import com.ferelin.shared.NAMED_CRYPTO_TOKEN
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
-@Suppress("BlockingMethodInNonBlockingContext")
-class NewsSourceImpl @Inject constructor(
-    @Named(NAMED_STOCKS_TOKEN) private val token: String,
-    private val newsApi: NewsApi,
-    private val newsMapper: NewsMapper,
-    private val dispatchersProvider: DispatchersProvider
-) : NewsSource {
+class CryptoPriceSourceImpl @Inject constructor(
+    private val cryptoPriceApi: CryptoPriceApi,
+    private val cryptoPriceMapper: CryptoPriceMapper,
+    private val dispatchersProvider: DispatchersProvider,
+    @Named(NAMED_CRYPTO_TOKEN) private val token: String
+) : CryptoPriceSource {
 
-    override suspend fun loadBy(
-        companyId: Int,
-        companyTicker: String,
-        from: String,
-        to: String
-    ): LoadState<List<News>> = withContext(dispatchersProvider.IO) {
-        Timber.d("load by (company ticker: $companyTicker)")
+    override suspend fun load(
+        cryptoSymbols: List<String>
+    ): LoadState<List<CryptoPrice>> = withContext(dispatchersProvider.IO) {
+        Timber.d("load (crypto symbols: $cryptoSymbols)")
+
+        val cryptoSymbolsStr = cryptoSymbols.joinToString(separator = ",")
 
         withExceptionHandle(
             request = {
-                newsApi
-                    .loadBy(companyTicker, token, from, to)
+                cryptoPriceApi
+                    .load(cryptoSymbolsStr, token)
                     .execute()
             },
             onSuccess = { responseBody ->
                 LoadState.Prepared(
                     data = responseBody.map {
-                        newsMapper.map(it, companyId)
+                        cryptoPriceMapper.map(it)
                     }
                 )
             },

@@ -16,9 +16,9 @@
 
 package com.ferelin.data_local.mappers
 
-import com.ferelin.domain.entities.Profile
 import com.ferelin.data_local.entities.ProfileDBO
-import com.ferelin.data_local.utils.CompanyPojo
+import com.ferelin.data_local.pojo.CompanyPojo
+import com.ferelin.domain.entities.Profile
 import javax.inject.Inject
 
 class ProfileMapper @Inject constructor() {

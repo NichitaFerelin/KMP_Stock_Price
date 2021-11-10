@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.data_local.database
 
-const val NULL_INDEX = -1
-const val NAMED_EXTERNAL_SCOPE = "External Scope"
-const val NAMED_STOCKS_TOKEN = "Finnhub Token"
-const val NAMED_STOCKS_RETROFIT = "Stocks Retrofit"
-const val NAMED_CRYPTO_TOKEN = "Crypto Token"
-const val NAMED_CRYPTO_RETROFIT = "Crypto Retrofit"
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import com.ferelin.data_local.entities.CryptoDBO
+
+@Dao
+interface CryptoDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(cryptosDBO: List<CryptoDBO>)
+}

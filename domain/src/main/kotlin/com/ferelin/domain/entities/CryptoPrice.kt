@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.domain.entities
 
-const val NULL_INDEX = -1
-const val NAMED_EXTERNAL_SCOPE = "External Scope"
-const val NAMED_STOCKS_TOKEN = "Finnhub Token"
-const val NAMED_STOCKS_RETROFIT = "Stocks Retrofit"
-const val NAMED_CRYPTO_TOKEN = "Crypto Token"
-const val NAMED_CRYPTO_RETROFIT = "Crypto Retrofit"
+data class CryptoPrice(
+    var relationCryptoId: Int = 0,
+    val relationCryptoSymbol: String = "",
+    val price: Double,
+    val priceTimestamp: String,
+    val highPrice: Double,
+    val highPriceTimestamp: String,
+    val priceChange: Double,
+    val priceChangePercents: Double
+)

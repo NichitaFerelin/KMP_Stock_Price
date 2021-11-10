@@ -15,7 +15,7 @@ android {
 
     val properties: Properties? = try {
         // project.rootProject.file -> Cannot access class java.io.File
-         Properties().apply {
+        Properties().apply {
             load(
                 FileInputStream(project.file("local.properties"))
             )
@@ -25,20 +25,31 @@ android {
     }
 
     buildTypes {
-        val publicDebugKey = "c5n906iad3ido15tstu0"
+        val publicFinnhubDebugToken = "c5n906iad3ido15tstu0"
+        val publicNomicsDebugToken = "cb99d1ebf28482d6fb54f7c9002319aea14401c7"
 
         debug {
             resValue(
                 "string",
-                "api_key",
-                (properties?.get("apiKey") as String?) ?: publicDebugKey
+                "api_finnhub_token",
+                (properties?.get("apiFinnhubToken") as String?) ?: publicFinnhubDebugToken
+            )
+            resValue(
+                "string",
+                "api_nomics_token",
+                (properties?.get("apiNomicsToken") as String?) ?: publicNomicsDebugToken
             )
         }
         release {
             resValue(
                 "string",
-                "api_key",
-                (properties?.get("apiKey") as String?) ?: publicDebugKey
+                "api_finnhub_token",
+                (properties?.get("apiFinnhubToken") as String?) ?: publicFinnhubDebugToken
+            )
+            resValue(
+                "string",
+                "api_nomics_token",
+                (properties?.get("apiNomicsToken") as String?) ?: publicNomicsDebugToken
             )
         }
     }

@@ -16,14 +16,8 @@
 
 package com.ferelin.data_network_api.di
 
-import com.ferelin.domain.sources.LivePriceSource
-import com.ferelin.domain.sources.NewsSource
-import com.ferelin.domain.sources.PastPriceSource
-import com.ferelin.domain.sources.StockPriceSource
-import com.ferelin.data_network_api.sources.LivePriceSourceImpl
-import com.ferelin.data_network_api.sources.NewsSourceImpl
-import com.ferelin.data_network_api.sources.PastPriceSourceImpl
-import com.ferelin.data_network_api.sources.StockPriceSourceImpl
+import com.ferelin.data_network_api.sources.*
+import com.ferelin.domain.sources.*
 import dagger.Binds
 import dagger.Module
 
@@ -41,4 +35,7 @@ interface NetworkApiBindsModule {
 
     @Binds
     fun provideStockPriceSource(stockPriceSourceImpl: StockPriceSourceImpl): StockPriceSource
+
+    @Binds
+    fun provideCryptoPriceSource(cryptoPriceSourceImpl: CryptoPriceSourceImpl) : CryptoPriceSource
 }

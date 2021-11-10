@@ -28,8 +28,10 @@ import com.ferelin.data_local.entities.*
         StockPriceDBO::class,
         NewsDBO::class,
         PastPriceDBO::class,
-        ProfileDBO::class
-    ], version = 2
+        ProfileDBO::class,
+        CryptoDBO::class,
+        CryptoPriceDBO::class
+    ], version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -43,14 +45,19 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun profileDao(): ProfileDao
 
+    abstract fun cryptoDao(): CryptoDao
+
+    abstract fun cryptoPricesDao(): CryptoPriceDao
+
     companion object {
-        const val DB_NAME = "stock.price.db"
+        private const val dbName = "stock.price.db"
 
         fun buildDatabase(context: Context): AppDatabase {
             return Room
-                .databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+                .databaseBuilder(context, AppDatabase::class.java, dbName)
                 .addMigrations(
-                    AppDatabaseMigrations.migration_1_to_2
+                    AppDatabaseMigrations.migration_1_to_2,
+                    AppDatabaseMigrations.migration_2_to_3
                 )
                 .build()
         }

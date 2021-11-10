@@ -16,11 +16,10 @@
 
 package com.ferelin.data_network_api.resolvers
 
-import com.ferelin.data_network_api.delegates.RetrofitDelegate
 import com.ferelin.data_network_api.entities.LivePrice
 import com.ferelin.data_network_api.utils.AppWebSocketListener
 import com.ferelin.shared.DispatchersProvider
-import com.ferelin.shared.NAMED_FINNHUB_TOKEN
+import com.ferelin.shared.NAMED_STOCKS_TOKEN
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +37,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LivePriceSocketResolver @Inject constructor(
-    @Named(NAMED_FINNHUB_TOKEN) private val token: String,
+    @Named(NAMED_STOCKS_TOKEN) private val token: String,
     private val livePriceJsonResolver: LivePriceJsonResolver,
     private val dispatchersProvider: DispatchersProvider
 ) {
@@ -53,6 +52,7 @@ class LivePriceSocketResolver @Inject constructor(
     companion object {
         // Close code must be in range [1000-4000]
         private const val defaultCloseCode = 4000
+        private const val finnhubWebSocketUrl = "wss://ws.finnhub.io?token="
     }
 
     suspend fun subscribe(companyTicker: String) =
@@ -76,7 +76,7 @@ class LivePriceSocketResolver @Inject constructor(
 
         val request = Request
             .Builder()
-            .url(RetrofitDelegate.FINNHUB_WEB_SOCKET_URL + token)
+            .url(finnhubWebSocketUrl + token)
             .build()
 
         val okHttp = OkHttpClient()

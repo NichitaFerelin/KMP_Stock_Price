@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.domain.repositories
 
-const val NULL_INDEX = -1
-const val NAMED_EXTERNAL_SCOPE = "External Scope"
-const val NAMED_STOCKS_TOKEN = "Finnhub Token"
-const val NAMED_STOCKS_RETROFIT = "Stocks Retrofit"
-const val NAMED_CRYPTO_TOKEN = "Crypto Token"
-const val NAMED_CRYPTO_RETROFIT = "Crypto Retrofit"
+import com.ferelin.domain.entities.CryptoPrice
+import com.ferelin.domain.entities.CryptoWithPrice
+
+interface CryptoPriceRepo {
+
+    suspend fun insertAll(cryptosPrice: List<CryptoPrice>)
+
+    suspend fun getAll() : List<CryptoWithPrice>
+}

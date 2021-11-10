@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.domain.sources
 
-const val NULL_INDEX = -1
-const val NAMED_EXTERNAL_SCOPE = "External Scope"
-const val NAMED_STOCKS_TOKEN = "Finnhub Token"
-const val NAMED_STOCKS_RETROFIT = "Stocks Retrofit"
-const val NAMED_CRYPTO_TOKEN = "Crypto Token"
-const val NAMED_CRYPTO_RETROFIT = "Crypto Retrofit"
+import com.ferelin.domain.entities.CryptoPrice
+import com.ferelin.shared.LoadState
+
+interface CryptoPriceSource {
+
+    /**
+     * Load crypto price
+     * @param cryptoSymbols is c crypto symbols for which need to load prices
+     * @return [LoadState] with crypto obj
+     * */
+    suspend fun load(cryptoSymbols: List<String>): LoadState<List<CryptoPrice>>
+}

@@ -18,11 +18,15 @@ package com.ferelin.data_network_api.di
 
 import android.content.Context
 import com.ferelin.data_network_api.R
-import com.ferelin.data_network_api.delegates.RetrofitDelegate
+import com.ferelin.data_network_api.builder.RetrofitBuilder
+import com.ferelin.data_network_api.entities.CryptoPriceApi
 import com.ferelin.data_network_api.entities.NewsApi
 import com.ferelin.data_network_api.entities.PastPricesApi
 import com.ferelin.data_network_api.entities.StockPriceApi
-import com.ferelin.shared.NAMED_FINNHUB_TOKEN
+import com.ferelin.shared.NAMED_CRYPTO_RETROFIT
+import com.ferelin.shared.NAMED_CRYPTO_TOKEN
+import com.ferelin.shared.NAMED_STOCKS_RETROFIT
+import com.ferelin.shared.NAMED_STOCKS_TOKEN
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -32,31 +36,49 @@ import javax.inject.Singleton
 @Module
 class NetworkApiModule {
 
+    @Named(NAMED_STOCKS_RETROFIT)
     @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit {
-        val retrofit by RetrofitDelegate()
-        return retrofit
+    fun provideStocksRetrofit(): Retrofit {
+        return RetrofitBuilder.build(RetrofitBuilder.FINNHUB_BASE_URL)
+    }
+
+    @Named(NAMED_CRYPTO_RETROFIT)
+    @Singleton
+    @Provides
+    fun provideCryptoRetrofit(): Retrofit {
+        return RetrofitBuilder.build(RetrofitBuilder.NOMICS_BASE_URL)
     }
 
     @Provides
-    fun provideNewsApi(retrofit: Retrofit): NewsApi {
+    fun provideNewsApi(@Named(NAMED_STOCKS_RETROFIT) retrofit: Retrofit): NewsApi {
         return retrofit.create(NewsApi::class.java)
     }
 
     @Provides
-    fun provideStockPriceApi(retrofit: Retrofit): StockPriceApi {
+    fun provideStockPriceApi(@Named(NAMED_STOCKS_RETROFIT) retrofit: Retrofit): StockPriceApi {
         return retrofit.create(StockPriceApi::class.java)
     }
 
     @Provides
-    fun providePastPriceApi(retrofit: Retrofit): PastPricesApi {
+    fun providePastPriceApi(@Named(NAMED_STOCKS_RETROFIT) retrofit: Retrofit): PastPricesApi {
         return retrofit.create(PastPricesApi::class.java)
     }
 
-    @Named(NAMED_FINNHUB_TOKEN)
+    @Provides
+    fun provideCryptoPriceApi(@Named(NAMED_CRYPTO_RETROFIT) retrofit: Retrofit): CryptoPriceApi {
+        return retrofit.create(CryptoPriceApi::class.java)
+    }
+
+    @Named(NAMED_STOCKS_TOKEN)
     @Provides
     fun provideFinnhubToken(context: Context): String {
-        return context.resources.getString(R.string.api_key)
+        return context.resources.getString(R.string.api_finnhub_token)
+    }
+
+    @Named(NAMED_CRYPTO_TOKEN)
+    @Provides
+    fun provideCryptoToken(context: Context): String {
+        return context.resources.getString(R.string.api_nomics_token)
     }
 }

@@ -23,14 +23,14 @@ import com.ferelin.domain.entities.PastPrice
 import com.ferelin.domain.sources.PastPriceSource
 import com.ferelin.shared.DispatchersProvider
 import com.ferelin.shared.LoadState
-import com.ferelin.shared.NAMED_FINNHUB_TOKEN
+import com.ferelin.shared.NAMED_STOCKS_TOKEN
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
 class PastPriceSourceImpl @Inject constructor(
-    @Named(NAMED_FINNHUB_TOKEN) private val token: String,
+    @Named(NAMED_STOCKS_TOKEN) private val token: String,
     private val pastPricesApi: PastPricesApi,
     private val pastPriceMapper: PastPriceMapper,
     private val dispatchersProvider: DispatchersProvider

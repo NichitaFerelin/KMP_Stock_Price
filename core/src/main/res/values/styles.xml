@@ -209,7 +209,7 @@
         <item name="android:textAppearance">@style/textViewH2</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+    <style name="ShapeAppearanceOverlay.App.CornerSize30Percent" parent="">
         <item name="cornerSize">30%</item>
     </style>
 
@@ -221,7 +221,7 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:background">@color/white</item>
         <item name="android:contentDescription">@string/descriptionCompanyIcon</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.CornerSize50Percent
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.CornerSize30Percent
         </item>
     </style>
 

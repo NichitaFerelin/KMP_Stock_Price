@@ -18,7 +18,7 @@ package com.ferelin.data_local.mappers
 
 import com.ferelin.data_local.entities.CompanyDBO
 import com.ferelin.data_local.entities.CompanyWithStockPriceDBO
-import com.ferelin.data_local.utils.CompanyPojo
+import com.ferelin.data_local.pojo.CompanyPojo
 import com.ferelin.domain.entities.Company
 import com.ferelin.domain.entities.CompanyWithStockPrice
 import javax.inject.Inject

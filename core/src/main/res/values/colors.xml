@@ -6,11 +6,11 @@
     <color name="grey">#BABABA</color>
     <color name="blue">#187BCD</color>
     <color name="blueLight">#75B2E4</color>
+    <color name="yellow">#FFCA1C</color>
 
     <color name="profitPlus">#FF24B25D</color>
     <color name="profitMinus">#FFB22424</color>
 
-    <color name="star">#FFCA1C</color>
 
     <color name="chartGradientStart">#00EBEBEB</color>
     <color name="chartGradientEnd">#DCDCDC</color>

@@ -33,5 +33,7 @@
 
     <dimen name="newsItemOffset">8dp</dimen>
 
+    <dimen name="cryptoItemOffset">12dp</dimen>
+
     <dimen name="textViewBody">12sp</dimen>
 </resources>

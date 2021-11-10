@@ -1,0 +1,52 @@
+[
+  {
+    "symbol": "BTC",
+    "name": "Bitcoin",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fbtc.svg&w=48&q=75"
+  },
+  {
+    "symbol": "ETH",
+    "name": "Ethereum",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Feth.svg&w=48&q=75"
+  },
+  {
+    "symbol": "BNB",
+    "name": "Binance Coin",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fbnb.svg&w=48&q=75"
+  },
+  {
+    "symbol": "USDT",
+    "name": "Tether",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fusdt.svg&w=48&q=75"
+  },
+  {
+    "symbol": "SOL",
+    "name": "Solana",
+    "logo_url": "https://nomics-api.s3.us-east-2.amazonaws.com/static/images/currencies/SOL2.jpg"
+  },
+  {
+    "symbol": "ADA",
+    "name": "Cardano",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fada.svg&w=48&q=75"
+  },
+  {
+    "symbol": "XRP",
+    "name": "XRP",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FXRP.svg&w=48&q=75"
+  },
+  {
+    "symbol": "DOT",
+    "name": "Polkadot",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FDOT.svg&w=48&q=75"
+  },
+  {
+    "symbol": "DOGE",
+    "name": "Dogecoin",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fdoge.svg&w=48&q=75"
+  },
+  {
+    "symbol": "USDC",
+    "name": "USD Coin",
+    "logo_url": "https://nomics.com/_next/image?url=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2Fusdc.svg&w=48&q=75"
+  }
+]

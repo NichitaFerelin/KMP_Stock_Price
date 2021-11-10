@@ -23,9 +23,18 @@
             android:layout_height="wrap_content"
             android:transitionName="transitionCardContainer">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardViewSearch"
-                style="@style/cardSearch">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardViewSearch"
+                    style="@style/cardSearch"
+                    android:layout_width="0dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -33,20 +42,46 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="20dp"
                     android:contentDescription="@string/descriptionImageSearch"
-                    android:src="@drawable/ic_search" />
+                    android:src="@drawable/ic_search"
+                    app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+                    app:layout_constraintStart_toStartOf="@id/cardViewSearch"
+                    app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
 
                 <TextView
                     android:id="@+id/textViewSearchHint"
                     style="@style/textViewH3"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="48dp"
                     android:layout_marginEnd="20dp"
                     android:text="@string/hintFindCompany"
-                    android:textColorHint="@color/black" />
+                    android:textColorHint="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/cardViewSearch"
+                    app:layout_constraintStart_toStartOf="@id/cardViewSearch"
+                    app:layout_constraintTop_toTopOf="@id/cardViewSearch" />
 
-            </com.google.android.material.card.MaterialCardView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewCrypto"
+                    android:layout_width="0dp"
+                    android:layout_height="90dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressBarCrypto"
+                    style="@style/progressBar"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/recyclerViewCrypto"
+                    app:layout_constraintEnd_toEndOf="@id/recyclerViewCrypto"
+                    app:layout_constraintStart_toStartOf="@id/recyclerViewCrypto"
+                    app:layout_constraintTop_toTopOf="@id/recyclerViewCrypto" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -54,7 +89,7 @@
             android:id="@+id/linearHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/textViewHintStocks"

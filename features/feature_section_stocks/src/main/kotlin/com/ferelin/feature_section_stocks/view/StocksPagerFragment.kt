@@ -26,22 +26,28 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.core.utils.animManager.AnimationManager
 import com.ferelin.core.utils.animManager.invalidate
 import com.ferelin.core.utils.isOut
+import com.ferelin.core.utils.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.utils.setOnClick
 import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.view.BaseStocksFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_section_stocks.R
+import com.ferelin.feature_section_stocks.adapter.CryptoItemDecoration
 import com.ferelin.feature_section_stocks.adapter.StocksPagerAdapter
 import com.ferelin.feature_section_stocks.databinding.FragmentStocksPagerBinding
 import com.ferelin.feature_section_stocks.viewModel.StocksPagerViewModel
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
@@ -96,6 +102,12 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
             viewLifecycleOwner.lifecycle
         )
         viewBinding.viewPager.registerOnPageChangeCallback(viewPagerChangeCallback)
+
+        viewBinding.recyclerViewCrypto.apply {
+            adapter = viewModel.cryptoAdapter
+            addItemDecoration(CryptoItemDecoration(requireContext()))
+            setHasFixedSize(true)
+        }
     }
 
     override fun initUx() {
@@ -119,11 +131,25 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
         }
     }
 
+    override fun initObservers() {
+        launchAndRepeatWithViewLifecycle {
+            observeCryptoLoading()
+        }
+    }
+
     override fun onDestroyView() {
         viewBinding.viewPager.unregisterOnPageChangeCallback(viewPagerChangeCallback)
         scaleInOut?.invalidate()
         scaleOut?.invalidate()
         super.onDestroyView()
+    }
+
+    private suspend fun observeCryptoLoading() {
+        viewModel.cryptoLoading.collect { isLoading ->
+            withContext(Dispatchers.Main) {
+                viewBinding.progressBarCrypto.isVisible = isLoading
+            }
+        }
     }
 
     private fun onHintStocksClick() {

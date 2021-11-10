@@ -25,6 +25,9 @@ android {
 dependencies {
     implementation(project(Projects.core))
 
+    implementation(Dependencies.glide)
+    kapt(Dependencies.glideCompilerKapt)
+
     implementation(Dependencies.dagger)
     kapt(Dependencies.daggerCompilerKapt)
 

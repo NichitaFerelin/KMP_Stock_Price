@@ -18,14 +18,63 @@ package com.ferelin.feature_section_stocks.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ferelin.core.adapter.base.BaseRecyclerAdapter
+import com.ferelin.core.resolvers.NetworkResolver
+import com.ferelin.domain.useCases.crypto.GetCryptoPriceUseCase
+import com.ferelin.domain.useCases.crypto.LoadCryptoUseCase
+import com.ferelin.feature_section_stocks.adapter.createCryptoAdapter
+import com.ferelin.feature_section_stocks.mapper.CryptoWithPriceMapper
 import com.ferelin.navigation.Router
+import com.ferelin.shared.NetworkListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StocksPagerViewModel @Inject constructor(
-    private val router: Router
-) : ViewModel() {
+    private val router: Router,
+    private val getCryptoPriceUseCase: GetCryptoPriceUseCase,
+    private val loadCryptoUseCase: LoadCryptoUseCase,
+    private val cryptoWithPriceMapper: CryptoWithPriceMapper,
+    private val networkResolver: NetworkResolver
+) : ViewModel(), NetworkListener {
+
+    private var cryptoLoaded = false
+
+    private val _cryptoLoading = MutableStateFlow(false)
+    val cryptoLoading: StateFlow<Boolean> = _cryptoLoading.asStateFlow()
+
+    val cryptoAdapter: BaseRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        BaseRecyclerAdapter(
+            createCryptoAdapter()
+        ).apply { setHasStableIds(true) }
+    }
 
     var lastSelectedPage = 0
+
+    init {
+        loadCrypto()
+        networkResolver.registerNetworkListener(this)
+    }
+
+    override suspend fun onNetworkAvailable() {
+        if (!cryptoLoaded) {
+            loadCrypto()
+        }
+    }
+
+    override suspend fun onNetworkLost() {
+        // Do nothing
+    }
+
+    override fun onCleared() {
+        networkResolver.unregisterNetworkListener(this)
+        super.onCleared()
+    }
 
     fun onSettingsClick() {
         router.fromStocksPagerToSettings()
@@ -34,6 +83,27 @@ class StocksPagerViewModel @Inject constructor(
     fun onSearchCardClick(sharedElement: View, name: String) {
         router.fromStocksPagerToSearch { fragmentTransaction ->
             fragmentTransaction.addSharedElement(sharedElement, name)
+        }
+    }
+
+    private fun loadCrypto() {
+        viewModelScope.launch {
+            _cryptoLoading.value = true
+
+            val localCryptoPrices = getCryptoPriceUseCase.getAll()
+            val loaded = loadCryptoUseCase.loadInto(localCryptoPrices)
+
+            if (loaded) {
+                cryptoLoaded = true
+            }
+
+            _cryptoLoading.value = false
+
+            withContext(Dispatchers.Main) {
+                cryptoAdapter.setData(
+                    data = localCryptoPrices.map(cryptoWithPriceMapper::map)
+                )
+            }
         }
     }
 }

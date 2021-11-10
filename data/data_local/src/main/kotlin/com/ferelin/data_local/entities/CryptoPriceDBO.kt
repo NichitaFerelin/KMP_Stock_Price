@@ -19,31 +19,34 @@ package com.ferelin.data_local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ferelin.data_local.entities.StockPriceDBO.Companion.TABLE_NAME
+import com.ferelin.data_local.entities.CryptoPriceDBO.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME)
-data class StockPriceDBO(
+data class CryptoPriceDBO(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    val relationCompanyId: Int = 0,
+    val relationCryptoId: Int = 0,
 
-    @ColumnInfo(name = "current_price")
-    var currentPrice: Double,
+    @ColumnInfo(name = "price")
+    val price: Double,
 
-    @ColumnInfo(name = "previous_close_price")
-    var previousClosePrice: Double,
-
-    @ColumnInfo(name = "open_price")
-    var openPrice: Double,
+    @ColumnInfo(name = "price_timestamp")
+    val priceTimestamp: String,
 
     @ColumnInfo(name = "high_price")
-    var highPrice: Double,
+    val highPrice: Double,
 
-    @ColumnInfo(name = "low_price")
-    var lowPrice: Double
+    @ColumnInfo(name = "high_price_timestamp")
+    val highPriceTimestamp: String,
+
+    @ColumnInfo(name = "price_change")
+    val priceChange: Double,
+
+    @ColumnInfo(name = "price_change_percents")
+    val priceChangePercents: Double
 ) {
     companion object {
-        const val TABLE_NAME = "companies_stock_price"
-        const val ID_COLUMN = "relation_company_id"
+        const val TABLE_NAME = "crypto_prices"
+        const val ID_COLUMN = "relation_crypto_id"
     }
 }

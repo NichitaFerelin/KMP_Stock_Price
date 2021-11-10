@@ -55,4 +55,14 @@ class DataLocalModule {
     fun provideStockPriceDao(appDatabase: AppDatabase): StockPriceDao {
         return appDatabase.stockPriceDao()
     }
+
+    @Provides
+    fun provideCryptoDao(appDatabase: AppDatabase): CryptoDao {
+        return appDatabase.cryptoDao()
+    }
+
+    @Provides
+    fun provideCryptoPriceDao(appDatabase: AppDatabase): CryptoPriceDao {
+        return appDatabase.cryptoPricesDao()
+    }
 }

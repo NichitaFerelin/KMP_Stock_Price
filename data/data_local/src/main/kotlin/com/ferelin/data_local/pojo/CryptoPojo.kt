@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.ferelin.shared
+package com.ferelin.data_local.pojo
 
-const val NULL_INDEX = -1
-const val NAMED_EXTERNAL_SCOPE = "External Scope"
-const val NAMED_STOCKS_TOKEN = "Finnhub Token"
-const val NAMED_STOCKS_RETROFIT = "Stocks Retrofit"
-const val NAMED_CRYPTO_TOKEN = "Crypto Token"
-const val NAMED_CRYPTO_RETROFIT = "Crypto Retrofit"
+data class CryptoPojo(
+    val symbol: String,
+    val name: String,
+    val logo_url: String
+)

@@ -18,10 +18,12 @@ package com.ferelin.data_local.di
 
 import com.ferelin.data_local.reposirotires.*
 import com.ferelin.data_local.sources.CompaniesJsonSourceImpl
+import com.ferelin.data_local.sources.CryptoJsonSourceImpl
 import com.ferelin.domain.repositories.*
 import com.ferelin.domain.repositories.companies.CompaniesLocalRepo
 import com.ferelin.domain.repositories.searchRequests.SearchRequestsLocalRepo
 import com.ferelin.domain.sources.CompaniesJsonSource
+import com.ferelin.domain.sources.CryptoJsonSource
 import dagger.Binds
 import dagger.Module
 
@@ -57,8 +59,17 @@ interface DataLocalModuleBinds {
     ): CompaniesJsonSource
 
     @Binds
-    fun provideStoragePathRepo(storagePathRepoImpl: StoragePathRepoImpl) : StoragePathRepo
+    fun provideStoragePathRepo(storagePathRepoImpl: StoragePathRepoImpl): StoragePathRepo
 
     @Binds
-    fun provideNotifyPriceRepo(notifyPriceRepoImpl: NotifyPriceRepoImpl) : NotifyPriceRepo
+    fun provideNotifyPriceRepo(notifyPriceRepoImpl: NotifyPriceRepoImpl): NotifyPriceRepo
+
+    @Binds
+    fun provideCryptoRepo(cryptoRepoImpl: CryptoRepoImpl): CryptoRepo
+
+    @Binds
+    fun provideCryptoPriceRepo(cryptoPriceRepoImpl: CryptoPriceRepoImpl): CryptoPriceRepo
+
+    @Binds
+    fun provideCryptoJsonSource(cryptoJsonSourceImpl: CryptoJsonSourceImpl): CryptoJsonSource
 }

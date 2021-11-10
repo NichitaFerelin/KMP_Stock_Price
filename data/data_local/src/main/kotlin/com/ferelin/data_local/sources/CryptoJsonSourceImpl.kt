@@ -17,12 +17,10 @@
 package com.ferelin.data_local.sources
 
 import android.content.Context
-import com.ferelin.data_local.mappers.CompanyMapper
-import com.ferelin.data_local.mappers.ProfileMapper
-import com.ferelin.data_local.pojo.CompanyPojo
-import com.ferelin.domain.entities.Company
-import com.ferelin.domain.entities.Profile
-import com.ferelin.domain.sources.CompaniesJsonSource
+import com.ferelin.data_local.mappers.CryptoMapper
+import com.ferelin.data_local.pojo.CryptoPojo
+import com.ferelin.domain.entities.Crypto
+import com.ferelin.domain.sources.CryptoJsonSource
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -30,14 +28,13 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import timber.log.Timber
 import javax.inject.Inject
 
-class CompaniesJsonSourceImpl @Inject constructor(
+class CryptoJsonSourceImpl @Inject constructor(
     private val context: Context,
-    private val companyMapper: CompanyMapper,
-    private val profileMapper: ProfileMapper
-) : CompaniesJsonSource {
+    private val cryptoMapper: CryptoMapper
+) : CryptoJsonSource {
 
     companion object {
-        private const val companiesJsonFileName = "companies.json"
+        private const val cryptoJsonFileName = "crypto.json"
     }
 
     private val moshi by lazy(LazyThreadSafetyMode.NONE) {
@@ -47,32 +44,27 @@ class CompaniesJsonSourceImpl @Inject constructor(
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun parse(): Pair<List<Company>, List<Profile>> =
+    override suspend fun parse(): List<Crypto> =
         try {
             Timber.d("parse")
 
-            val type = Types.newParameterizedType(List::class.java, CompanyPojo::class.java)
+            val type = Types.newParameterizedType(List::class.java, CryptoPojo::class.java)
 
             val json = context.assets
-                .open(companiesJsonFileName)
+                .open(cryptoJsonFileName)
                 .bufferedReader()
                 .use { it.readText() }
 
-            val adapter = moshi.adapter<List<CompanyPojo>?>(type)
+            val adapter = moshi.adapter<List<CryptoPojo>?>(type)
             val parsedItems = adapter.fromJson(json) ?: emptyList()
 
             Timber.d("parse result size = ${parsedItems.size}")
 
-            val companies = List(parsedItems.size) { index ->
-                companyMapper.map(index, parsedItems[index])
+            List(parsedItems.size) { index ->
+                cryptoMapper.map(parsedItems[index], index)
             }
-            val profiles = List(parsedItems.size) { index ->
-                profileMapper.map(index, parsedItems[index])
-            }
-
-            Pair(companies, profiles)
         } catch (exception: JsonDataException) {
             Timber.d("parse exception $exception")
-            Pair(emptyList(), emptyList())
+            emptyList()
         }
 }

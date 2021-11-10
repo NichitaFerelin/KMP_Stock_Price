@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package com.ferelin.data_local.utils
+package com.ferelin.feature_section_stocks.viewData
 
-// Pojo model for json parse
-data class CompanyPojo(
+import androidx.annotation.ColorRes
+import com.ferelin.core.adapter.base.ViewDataType
+
+data class CryptoViewData(
+    val id: Int,
     val name: String,
-    val symbol: String,
-    val logo: String,
-    val country: String,
-    val phone: String,
-    val weburl: String,
-    val finnhubIndustry: String,
-    val currency: String,
-    val marketCapitalization: String
-)
+    val logoUrl: String,
+    val price: String,
+    val profit: String,
+    @ColorRes val profitColor: Int
+) : ViewDataType(com.ferelin.feature_section_stocks.adapter.CRYPTO_VIEW_TYPE) {
+
+    override fun getUniqueId(): Long {
+        return id.toLong()
+    }
+}

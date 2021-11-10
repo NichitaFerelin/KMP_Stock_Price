@@ -23,7 +23,7 @@ import com.ferelin.data_network_api.utils.withExceptionHandle
 import com.ferelin.domain.entities.StockPrice
 import com.ferelin.domain.sources.StockPriceSource
 import com.ferelin.shared.LoadState
-import com.ferelin.shared.NAMED_FINNHUB_TOKEN
+import com.ferelin.shared.NAMED_STOCKS_TOKEN
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -32,7 +32,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class StockPriceSourceImpl @Inject constructor(
-    @Named(NAMED_FINNHUB_TOKEN) private val token: String,
+    @Named(NAMED_STOCKS_TOKEN) private val token: String,
     private val stockPriceApi: StockPriceApi,
     private val stockPriceMapper: StockPriceMapper,
     private val requestsLimiter: RequestsLimiter
