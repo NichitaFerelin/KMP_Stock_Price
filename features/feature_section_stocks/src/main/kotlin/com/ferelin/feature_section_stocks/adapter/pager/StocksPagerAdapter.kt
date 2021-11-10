@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_section_stocks.adapter
+package com.ferelin.feature_section_stocks.adapter.pager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

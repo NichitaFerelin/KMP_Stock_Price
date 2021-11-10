@@ -29,6 +29,10 @@ import com.ferelin.shared.ifPrepared
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Worker that makes a request to the network to check the
+ * current stock prices and notifies about it
+ * */
 class PriceCheckWorker constructor(
     context: Context,
     params: WorkerParameters,

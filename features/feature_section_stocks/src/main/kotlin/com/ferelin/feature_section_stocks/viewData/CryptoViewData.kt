@@ -18,6 +18,7 @@ package com.ferelin.feature_section_stocks.viewData
 
 import androidx.annotation.ColorRes
 import com.ferelin.core.adapter.base.ViewDataType
+import com.ferelin.feature_section_stocks.adapter.crypto.CRYPTO_VIEW_TYPE
 
 data class CryptoViewData(
     val id: Int,
@@ -26,7 +27,7 @@ data class CryptoViewData(
     val price: String,
     val profit: String,
     @ColorRes val profitColor: Int
-) : ViewDataType(com.ferelin.feature_section_stocks.adapter.CRYPTO_VIEW_TYPE) {
+) : ViewDataType(CRYPTO_VIEW_TYPE) {
 
     override fun getUniqueId(): Long {
         return id.toLong()

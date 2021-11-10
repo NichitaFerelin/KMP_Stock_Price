@@ -27,7 +27,7 @@ class GetProfileUseCase @Inject constructor(
     private val profileRepo: ProfileRepo
 ) {
     /**
-     * Get profile
+     * Get profile by relation company id
      * @param relationCompanyId is a company for which need to get profile
      * @return company profile
      * */

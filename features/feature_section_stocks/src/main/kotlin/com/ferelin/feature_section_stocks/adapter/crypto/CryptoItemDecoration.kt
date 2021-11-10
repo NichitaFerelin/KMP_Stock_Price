@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ferelin.feature_section_stocks.adapter
+package com.ferelin.feature_section_stocks.adapter.crypto
 
 import android.content.Context
 import android.graphics.Rect

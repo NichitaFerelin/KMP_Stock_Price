@@ -33,9 +33,15 @@ class LoadCryptoUseCase @Inject constructor(
     private val cryptoPriceRepo: CryptoPriceRepo,
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
+    /**
+     * Loads prices for crypto into list
+     * @param cryptosWithPrice is an list with crypto for which need to load price
+     * and in which the loaded price will be written
+     * @return [Boolean] which means successful request or not
+     * */
     suspend fun loadInto(cryptosWithPrice: List<CryptoWithPrice>): Boolean {
         val cryptosSymbols = cryptosWithPrice.map { it.crypto.symbol }
-        val loadState = cryptoPriceSource.load(cryptosSymbols)
+        val loadState = cryptoPriceSource.loadBy(cryptosSymbols)
 
         updateIfPrepared(cryptosWithPrice, loadState)
 
@@ -53,12 +59,13 @@ class LoadCryptoUseCase @Inject constructor(
 
                 preparedState
                     .data
+                    // Find crypto price owner
                     .find { cryptoWithPrice.crypto.symbol == it.relationCryptoSymbol }
                     ?.let {
-                        // set relations data to cache
+                        // Set relation id to correct cache
                         it.relationCryptoId = cryptoWithPrice.crypto.id
 
-                        // update source crypto
+                        // Update source crypto
                         cryptoWithPrice.cryptoPrice = it
                     }
             }

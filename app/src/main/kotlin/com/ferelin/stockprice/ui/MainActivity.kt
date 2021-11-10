@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
         ActivityMainBinding.inflate(layoutInflater).also {
             viewBinding = it
             setContentView(it.root)

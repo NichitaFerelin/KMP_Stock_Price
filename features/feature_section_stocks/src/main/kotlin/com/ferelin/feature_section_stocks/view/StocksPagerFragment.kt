@@ -39,8 +39,8 @@ import com.ferelin.core.view.BaseFragment
 import com.ferelin.core.view.BaseStocksFragment
 import com.ferelin.core.viewModel.BaseViewModelFactory
 import com.ferelin.feature_section_stocks.R
-import com.ferelin.feature_section_stocks.adapter.CryptoItemDecoration
-import com.ferelin.feature_section_stocks.adapter.StocksPagerAdapter
+import com.ferelin.feature_section_stocks.adapter.crypto.CryptoItemDecoration
+import com.ferelin.feature_section_stocks.adapter.pager.StocksPagerAdapter
 import com.ferelin.feature_section_stocks.databinding.FragmentStocksPagerBinding
 import com.ferelin.feature_section_stocks.viewModel.StocksPagerViewModel
 import com.google.android.material.transition.MaterialFadeThrough
@@ -139,8 +139,11 @@ class StocksPagerFragment : BaseFragment<FragmentStocksPagerBinding>() {
 
     override fun onDestroyView() {
         viewBinding.viewPager.unregisterOnPageChangeCallback(viewPagerChangeCallback)
+        viewBinding.recyclerViewCrypto.adapter = null
+
         scaleInOut?.invalidate()
         scaleOut?.invalidate()
+
         super.onDestroyView()
     }
 

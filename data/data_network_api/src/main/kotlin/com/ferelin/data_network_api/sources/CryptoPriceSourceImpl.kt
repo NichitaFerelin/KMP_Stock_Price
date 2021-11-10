@@ -36,7 +36,7 @@ class CryptoPriceSourceImpl @Inject constructor(
     @Named(NAMED_CRYPTO_TOKEN) private val token: String
 ) : CryptoPriceSource {
 
-    override suspend fun load(
+    override suspend fun loadBy(
         cryptoSymbols: List<String>
     ): LoadState<List<CryptoPrice>> = withContext(dispatchersProvider.IO) {
         Timber.d("load (crypto symbols: $cryptoSymbols)")

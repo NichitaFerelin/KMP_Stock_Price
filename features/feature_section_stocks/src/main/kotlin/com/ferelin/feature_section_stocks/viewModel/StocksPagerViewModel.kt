@@ -23,7 +23,7 @@ import com.ferelin.core.adapter.base.BaseRecyclerAdapter
 import com.ferelin.core.resolvers.NetworkResolver
 import com.ferelin.domain.useCases.crypto.GetCryptoPriceUseCase
 import com.ferelin.domain.useCases.crypto.LoadCryptoUseCase
-import com.ferelin.feature_section_stocks.adapter.createCryptoAdapter
+import com.ferelin.feature_section_stocks.adapter.crypto.createCryptoAdapter
 import com.ferelin.feature_section_stocks.mapper.CryptoWithPriceMapper
 import com.ferelin.navigation.Router
 import com.ferelin.shared.NetworkListener

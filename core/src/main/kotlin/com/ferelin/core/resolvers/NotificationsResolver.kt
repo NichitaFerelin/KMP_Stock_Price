@@ -35,10 +35,10 @@ class NotificationsResolver @Inject constructor(
         private const val updateNotificationsGroup = "update-group"
     }
 
+    private var isFirstNotification = true
+
     val downloadTitle = context.getString(R.string.titleDownload)
     val downloadDescription = context.getString(R.string.descriptionDownload)
-
-    var isFirstNotification = true
 
     fun notifyAboutPriceUpdate(companyWithStockPrice: CompanyWithStockPrice) {
         createNotificationChannel()

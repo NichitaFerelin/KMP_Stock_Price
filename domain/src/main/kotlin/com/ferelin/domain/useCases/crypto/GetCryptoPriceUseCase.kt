@@ -32,10 +32,15 @@ class GetCryptoPriceUseCase @Inject constructor(
     private val cryptoJsonSource: CryptoJsonSource,
     @Named(NAMED_EXTERNAL_SCOPE) private val externalScope: CoroutineScope
 ) {
+    /**
+     * Get crypto list with price
+     * @return list of [CryptoWithPrice]
+     * */
     suspend fun getAll(): List<CryptoWithPrice> {
         return cryptoPriceRepo
             .getAll()
             .ifEmpty {
+                // If crypto db is empty -> parses data from .json
                 val parsedItems = cryptoJsonSource.parse()
                 externalScope.launch { cryptoRepo.insertAll(parsedItems) }
 

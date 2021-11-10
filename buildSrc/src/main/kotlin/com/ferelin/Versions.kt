@@ -17,7 +17,6 @@
 package com.ferelin
 
 object Versions {
-
     const val androidCore = "1.7.0-rc01"
     const val kotlinLib = "1.5.21"
     const val kotlinCoroutines = "1.5.2"

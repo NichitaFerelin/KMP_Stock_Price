@@ -24,7 +24,7 @@ interface CryptoPriceSource {
     /**
      * Load crypto price
      * @param cryptoSymbols is c crypto symbols for which need to load prices
-     * @return [LoadState] with crypto obj
+     * @return [LoadState] with [CryptoPrice]'s as list
      * */
-    suspend fun load(cryptoSymbols: List<String>): LoadState<List<CryptoPrice>>
+    suspend fun loadBy(cryptoSymbols: List<String>): LoadState<List<CryptoPrice>>
 }
