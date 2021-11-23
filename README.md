@@ -1,11 +1,11 @@
 # Android Stock Price
 
 ## About
-The application allows you to keep track of the stock prices of companies. You can analyze the history of these prices through the chart. By adding stocks to your favorites, you can track their price in real time.
+An application whose main purpose is to display stock prices. Using the chart, you can analyze the history of price changes. It is possible to add a stock to your favorites list. After that, the price for the selected stock will be displayed in real time using Web Socket (available only if the exchange market is open at the time of viewing). You can log in to the app through your phone number. In this case, all favourite stocks and search requests will be saved in the cloud. 
 
-App API: [finnhub](https://finnhub.io/)
+App API: [Stocks](https://finnhub.io/) | [Crypto](https://nomics.com/docs/)
 
-GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
+Google Play: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
 
 
 ## Stack
@@ -31,7 +31,7 @@ GooglePlay: [Stock Price](https://play.google.com/store/apps/details?id=com.fere
 </p>
 
 
-## Phones for tests
+## Phone numbers for test login
 - +16505555555 . Code [123456]
 - +16504444444 . Code [123456]
 - +16503333333 . Code [123456]
