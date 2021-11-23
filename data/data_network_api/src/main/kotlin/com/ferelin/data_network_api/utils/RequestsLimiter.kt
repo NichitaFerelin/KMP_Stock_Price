@@ -18,6 +18,7 @@ package com.ferelin.data_network_api.utils
 
 import com.ferelin.shared.NAMED_EXTERNAL_SCOPE
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,23 +38,17 @@ class RequestsLimiter @Inject constructor(
 ) {
     private var stockPriceApi: ((Int, String) -> Unit)? = null
 
+    private var runningJob: Job? = null
+
     // Main queue with requests
     private val requestsQueue = LinkedHashSet<CachedMessage>(100)
 
     // Requests history with which duplicate requests can be excluded
     private var requestsHistory = HashMap<Int, Unit>(300, 0.5F)
 
-    private var isRunning = true
-
     private companion object {
         const val perSecondRequestsLimit = 1050L
         const val alreadyNotActualIndex = 13
-    }
-
-    init {
-        externalScope.launch {
-            start()
-        }
     }
 
     fun addRequestToOrder(
@@ -67,6 +62,10 @@ class RequestsLimiter @Inject constructor(
 
         if (ignoreDuplicates || isNotDuplicatedMessage(companyId)) {
             acceptMessage(companyId, companyTicker, keyPosition, eraseIfNotActual)
+
+            if (runningJob == null || runningJob?.isActive == false) {
+                runningJob = externalScope.launch { start() }
+            }
         }
     }
 
@@ -75,7 +74,7 @@ class RequestsLimiter @Inject constructor(
     }
 
     private suspend fun start() {
-        while (isRunning) {
+        while (requestsQueue.isNotEmpty()) {
             try {
                 requestsQueue.firstOrNull()?.let { task ->
                     Timber.d("task processing $task")
