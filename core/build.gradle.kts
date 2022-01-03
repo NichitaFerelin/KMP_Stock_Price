@@ -1,51 +1,49 @@
-import com.ferelin.Base
-import com.ferelin.Dependencies
-import com.ferelin.Projects
+import com.ferelin.Deps
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("kotlin-kapt")
+  id("com.android.library")
+  id("kotlin-android")
+  id("kotlin-parcelize")
+  id("kotlin-kapt")
 }
 
 android {
-    compileSdk = Base.currentSDK
+  compileSdk = Deps.currentSDK
 
-    defaultConfig {
-        minSdk = Base.minSDK
-    }
-    buildFeatures.apply {
-        viewBinding = true
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
+  defaultConfig {
+    minSdk = Deps.minSDK
+  }
+  buildFeatures.apply {
+    viewBinding = true
+  }
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+  }
 }
 
 dependencies {
-    implementation(Dependencies.androidCore)
+  implementation(Deps.androidCore)
 
-    api(project(Projects.shared))
-    api(project(Projects.domain))
-    api(project(Projects.navigation))
+  api(project(":shared"))
+  api(project(":domain"))
+  api(project(":navigation"))
 
-    api(Dependencies.androidLifecycle)
-    api(Dependencies.timber)
-    api(Dependencies.appCompat)
-    api(Dependencies.browser)
-    api(Dependencies.fragments)
-    api(Dependencies.viewPager)
-    api(Dependencies.constraintLayout)
-    api(Dependencies.material)
+  api(Deps.androidLifecycle)
+  api(Deps.timber)
+  api(Deps.appCompat)
+  api(Deps.browser)
+  api(Deps.fragments)
+  api(Deps.viewPager)
+  api(Deps.constraintLayout)
+  api(Deps.material)
 
-    implementation(Dependencies.workManager)
+  implementation(Deps.workManager)
 
-    implementation(Dependencies.glide)
-    kapt(Dependencies.glideCompilerKapt)
+  implementation(Deps.glide)
+  kapt(Deps.glideCompilerKapt)
 
-    implementation(Dependencies.dagger)
-    kapt(Dependencies.daggerCompilerKapt)
+  implementation(Deps.dagger)
+  kapt(Deps.daggerCompilerKapt)
 
-    testImplementation(Dependencies.testJunitKtx)
+  testImplementation(Deps.testJunitKtx)
 }

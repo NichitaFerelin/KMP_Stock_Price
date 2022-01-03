@@ -1,56 +1,53 @@
-import com.ferelin.Base
-import com.ferelin.Dependencies
-import com.ferelin.Projects
+import com.ferelin.Deps
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-kapt")
+  id("com.android.library")
+  id("kotlin-android")
+  id("kotlin-kapt")
 }
 
 android {
-    compileSdk = Base.currentSDK
-
-    defaultConfig {
-        minSdk = Base.minSDK
+  compileSdk = Deps.currentSDK
+  defaultConfig {
+    minSdk = Deps.minSDK
+  }
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    freeCompilerArgs = freeCompilerArgs +
+      ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
+  }
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = freeCompilerArgs +
-                ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
-    }
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
+  }
 }
 
 dependencies {
-    implementation(project(Projects.shared))
+  implementation(project(":shared"))
 
-    implementation(Dependencies.kotlinLib)
-    implementation(Dependencies.kotlinCoroutines)
+  implementation(Deps.kotlinLib)
+  implementation(Deps.kotlinCoroutines)
 
-    implementation(Dependencies.dagger)
-    kapt(Dependencies.daggerCompilerKapt)
+  implementation(Deps.dagger)
+  kapt(Deps.daggerCompilerKapt)
 
-    // Tests
-    testImplementation(project(Projects.dataLocal))
+  // Tests
+  testImplementation(project(":data:data_local"))
 
-    testImplementation(Dependencies.dagger)
-    kaptTest(Dependencies.daggerCompilerKapt)
+  testImplementation(Deps.dagger)
+  kaptTest(Deps.daggerCompilerKapt)
 
-    testImplementation(Dependencies.roomKtx)
-    testImplementation(Dependencies.roomRuntime)
-    kaptTest(Dependencies.roomCompilerKapt)
+  testImplementation(Deps.roomKtx)
+  testImplementation(Deps.roomRuntime)
+  kaptTest(Deps.roomCompilerKapt)
 
-    // Build Room Exception without live data implementation:
-    // DefClassNotFound androidx/lifecycle/livedata
-    testImplementation(Dependencies.roomTestLiveData)
+  // Build Room Exception without live data implementation:
+  // DefClassNotFound androidx/lifecycle/livedata
+  testImplementation(Deps.roomTestLiveData)
 
-    testImplementation(Dependencies.testRobolectric)
-    testImplementation(Dependencies.testJunitKtx)
-    testImplementation(Dependencies.testCoroutines)
-    testImplementation(Dependencies.testMockito)
+  testImplementation(Deps.testRobolectric)
+  testImplementation(Deps.testJunitKtx)
+  testImplementation(Deps.testCoroutines)
+  testImplementation(Deps.testMockito)
 }

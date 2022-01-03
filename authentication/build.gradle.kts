@@ -1,35 +1,37 @@
-import com.ferelin.Base
-import com.ferelin.Dependencies
-import com.ferelin.Projects
+import com.ferelin.Deps
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("com.google.gms.google-services")
+  id("com.android.library")
+  id("kotlin-android")
+  id("kotlin-kapt")
+  id("com.google.gms.google-services")
 }
 
 android {
-    compileSdk = Base.currentSDK
+  compileSdk = Deps.currentSDK
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = freeCompilerArgs +
-                ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
-    }
+  defaultConfig {
+    minSdk = Deps.minSDK
+  }
+
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    freeCompilerArgs = freeCompilerArgs +
+      ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
+  }
 }
 
 dependencies {
-    implementation(project(Projects.domain))
-    implementation(project(Projects.shared))
-    implementation(Dependencies.timber)
+  implementation(project(":domain"))
+  implementation(project(":shared"))
+  implementation(Deps.timber)
 
-    implementation(Dependencies.kotlinLib)
-    implementation(Dependencies.kotlinCoroutines)
+  implementation(Deps.kotlinLib)
+  implementation(Deps.kotlinCoroutines)
 
-    implementation(Dependencies.dagger)
-    kapt(Dependencies.daggerCompilerKapt)
+  implementation(Deps.dagger)
+  kapt(Deps.daggerCompilerKapt)
 
-    implementation(platform(Dependencies.firebasePlatform))
-    implementation(Dependencies.firebaseAuthenticationKtx)
+  implementation(platform(Deps.firebasePlatform))
+  implementation(Deps.firebaseAuthenticationKtx)
 }
