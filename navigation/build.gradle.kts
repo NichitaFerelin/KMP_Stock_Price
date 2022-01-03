@@ -1,22 +1,20 @@
-import com.ferelin.Base
-import com.ferelin.Dependencies
+import com.ferelin.Deps
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
+  id("com.android.library")
+  id("kotlin-android")
 }
 
 android {
-    compileSdk = Base.currentSDK
-
-    defaultConfig {
-        minSdk = Base.minSDK
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
+  compileSdk = Deps.currentSDK
+  defaultConfig {
+    minSdk = Deps.minSDK
+  }
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+  }
 }
 
 dependencies {
-    implementation(Dependencies.fragments)
+  implementation(Deps.fragments)
 }
