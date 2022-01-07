@@ -23,20 +23,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.ferelin.core.resolvers.NetworkResolver
-import com.ferelin.feature_chart.view.ChartFragment
+import com.ferelin.core.network.NetworkListener
+import com.ferelin.features.about.ui.chart.ChartFragment
 import com.ferelin.feature_forecasts.ForecastsFragment
 import com.ferelin.feature_ideas.IdeasFragment
-import com.ferelin.feature_loading.view.LoadingFragment
-import com.ferelin.feature_login.view.LoginFragment
-import com.ferelin.feature_news.view.NewsFragment
-import com.ferelin.feature_profile.view.ProfileFragment
-import com.ferelin.feature_search.view.SearchFragment
-import com.ferelin.feature_section_about.view.AboutPagerFragment
-import com.ferelin.feature_section_stocks.view.StocksPagerFragment
-import com.ferelin.feature_settings.view.SettingsFragment
-import com.ferelin.feature_stocks_default.view.StocksFragment
-import com.ferelin.feature_stocks_favourite.view.FavouriteFragment
+import com.ferelin.features.splash.ui.LoadingFragment
+import com.ferelin.features.authentication.ui.LoginFragment
+import com.ferelin.features.about.ui.news.NewsFragment
+import com.ferelin.features.about.ui.profile.ProfileFragment
+import com.ferelin.features.search.ui.SearchFragment
+import com.ferelin.features.about.ui.about.AboutFragment
+import com.ferelin.features.stocks.ui.main.MainFragment
+import com.ferelin.features.settings.ui.SettingsFragment
+import com.ferelin.features.stocks.ui.defaults.StocksFragment
+import com.ferelin.features.stocks.ui.favourites.FavouriteStocksFragment
 import com.ferelin.navigation.Router
 import com.ferelin.stockprice.App
 import com.ferelin.stockprice.databinding.ActivityMainBinding
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var router: Router
 
     @Inject
-    lateinit var networkResolver: NetworkResolver
+    lateinit var networkListener: NetworkListener
 
     private val fragmentLifecycleCallbacks by lazy(LazyThreadSafetyMode.NONE) {
         object : FragmentManager.FragmentLifecycleCallbacks() {
@@ -69,10 +69,10 @@ class MainActivity : AppCompatActivity() {
 
                     when (f) {
                         is LoadingFragment -> app.appComponent.inject(f)
-                        is StocksPagerFragment -> app.appComponent.inject(f)
+                        is MainFragment -> app.appComponent.inject(f)
                         is StocksFragment -> app.appComponent.inject(f)
-                        is FavouriteFragment -> app.appComponent.inject(f)
-                        is AboutPagerFragment -> app.appComponent.inject(f)
+                        is FavouriteStocksFragment -> app.appComponent.inject(f)
+                        is AboutFragment -> app.appComponent.inject(f)
                         is ProfileFragment -> app.appComponent.inject(f)
                         is ChartFragment -> app.appComponent.inject(f)
                         is NewsFragment -> app.appComponent.inject(f)

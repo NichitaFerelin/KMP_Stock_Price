@@ -33,26 +33,20 @@ object Deps {
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
   const val roomKtx = "androidx.room:room-ktx:$roomVersion"
   const val roomCompilerKapt = "androidx.room:room-compiler:$roomVersion"
+  const val documentFile = "androidx.documentfile:documentfile:1.0.1"
   const val dataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
 
   private const val retrofitVersion = "2.9.0"
-  private const val okHttpVersion = "4.9.1"
-  private const val moshiVersion = "1.12.0"
   const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
   const val retrofitMoshiConverter = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
+  private const val okHttpVersion = "4.9.1"
   const val okHttp = "com.squareup.okhttp3:okhttp:$okHttpVersion"
   const val okHttpInterceptor = "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+
+  private const val moshiVersion = "1.12.0"
   const val moshi = "com.squareup.moshi:moshi-kotlin:1.12.0"
   const val moshiProcessor = "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
-
-  val networkKit = arrayOf(
-    retrofit,
-    retrofitMoshiConverter,
-    okHttp,
-    okHttpInterceptor,
-    moshi,
-    moshiProcessor
-  )
 
   const val firebasePlatform = "com.google.firebase:firebase-bom:28.0.1"
   const val firebaseAnalyticsKtx = "com.google.firebase:firebase-analytics-ktx"
