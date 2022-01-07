@@ -3,7 +3,6 @@ import com.ferelin.Deps
 plugins {
   id("com.android.library")
   id("kotlin-android")
-  id("kotlin-parcelize")
   id("kotlin-kapt")
 }
 
@@ -13,9 +12,6 @@ android {
   defaultConfig {
     minSdk = Deps.minSDK
   }
-  buildFeatures.apply {
-    viewBinding = true
-  }
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
   }
@@ -23,27 +19,11 @@ android {
 
 dependencies {
   implementation(Deps.androidCore)
+  implementation(Deps.documentFile)
 
-  api(project(":shared"))
-  api(project(":domain"))
-  api(project(":navigation"))
-
-  api(Deps.androidLifecycle)
-  api(Deps.timber)
-  api(Deps.appCompat)
-  api(Deps.browser)
-  api(Deps.fragments)
-  api(Deps.viewPager)
-  api(Deps.constraintLayout)
-  api(Deps.material)
-
-  implementation(Deps.workManager)
-
-  implementation(Deps.glide)
-  kapt(Deps.glideCompilerKapt)
+  api(Deps.kotlinCoroutinesCore)
+  api(Deps.kotlinCoroutines)
 
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)
-
-  testImplementation(Deps.testJunitKtx)
 }

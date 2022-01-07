@@ -7,6 +7,7 @@ plugins {
 
 android {
   compileSdk = Deps.currentSDK
+
   defaultConfig {
     minSdk = Deps.minSDK
   }
