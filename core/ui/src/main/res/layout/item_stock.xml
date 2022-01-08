@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="26dp"
-        android:src="@drawable/ic_star"
+        android:src="@drawable/ic_star_20x19"
         tools:ignore="ContentDescription" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,7 +50,7 @@
             app:layout_constraintBottom_toBottomOf="@id/textViewCompanyTicker"
             app:layout_constraintStart_toEndOf="@id/textViewCompanyTicker"
             app:layout_constraintTop_toTopOf="@id/textViewCompanyTicker"
-            tools:src="@drawable/ic_favourite"
+            tools:src="@drawable/ic_favourite_16"
             tools:ignore="ContentDescription" />
 
         <TextView

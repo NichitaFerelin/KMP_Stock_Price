@@ -47,7 +47,9 @@ fun createStocksAdapter(
   }
 
   private fun ItemStockBinding.setBackground(item: StockViewData) {
-    root.setCardBackgroundColor(item.style.holderBackground)
+    root.setCardBackgroundColor(
+      ContextCompat.getColor(root.context, item.style.holderBackground)
+    )
     root.foreground = ContextCompat.getDrawable(root.context, item.style.rippleForeground)
     root.setOnClickListener { onStockClick.invoke(item) }
     imageViewFavourite.setOnClickListener { onFavouriteIconClick.invoke(item) }
@@ -59,7 +61,7 @@ fun createStocksAdapter(
       .error(
         AppCompatResources.getDrawable(
           rootLayout.context,
-          R.drawable.ic_load_error
+          R.drawable.ic_load_error_20
         )
       )
       .into(imageViewIcon)
@@ -84,5 +86,7 @@ internal fun ItemStockBinding.setFavourite(item: StockViewData) {
 internal fun ItemStockBinding.setCompanyPrice(item: StockViewData) {
   textViewCurrentPrice.text = item.stockPriceViewData?.price ?: ""
   textViewDayProfit.text = item.stockPriceViewData?.profit ?: ""
-  textViewDayProfit.setTextColor(item.style.dayProfitBackground)
+  textViewDayProfit.setTextColor(
+    ContextCompat.getColor(root.context, item.style.dayProfitBackground)
+  )
 }

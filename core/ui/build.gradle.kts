@@ -23,7 +23,6 @@ android {
 
 dependencies {
   api(project(":core:domain"))
-  api(project(":navigation"))
 
   implementation(Deps.androidCore)
   api(Deps.androidLifecycle)

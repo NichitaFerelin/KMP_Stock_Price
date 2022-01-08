@@ -2,9 +2,9 @@ package com.ferelin.core.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ferelin.core.domain.entities.CompanyUseCase
-import com.ferelin.core.domain.entities.FavouriteCompanyUseCase
-import com.ferelin.core.domain.entities.StockPriceUseCase
+import com.ferelin.core.domain.usecase.CompanyUseCase
+import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
+import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.ui.mapper.CompanyMapper
 import com.ferelin.core.ui.mapper.StockPriceMapper
 import com.ferelin.core.ui.view.adapter.BaseRecyclerAdapter
@@ -12,7 +12,6 @@ import com.ferelin.core.ui.view.stocks.adapter.StockViewHolder
 import com.ferelin.core.ui.view.stocks.adapter.createStocksAdapter
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewData.utils.StockStyleProvider
-import com.ferelin.navigation.Router
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlin.LazyThreadSafetyMode.NONE
@@ -21,7 +20,6 @@ open class StocksViewModel(
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val stockPriceUseCase: StockPriceUseCase,
   private val stockStyleProvider: StockStyleProvider,
-  protected val router: Router,
   companyUseCase: CompanyUseCase,
 ) : ViewModel() {
   val companies = companyUseCase.companies

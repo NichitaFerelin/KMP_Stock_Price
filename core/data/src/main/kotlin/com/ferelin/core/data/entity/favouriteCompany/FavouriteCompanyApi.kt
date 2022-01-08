@@ -10,10 +10,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-internal class FavouriteCompanyApi @Inject constructor(
+internal interface FavouriteCompanyApi {
+  fun load(userToken: String): Flow<FavouriteCompanyResponse>
+  fun putBy(userToken: String, companyId: Int)
+  fun eraseAll(userToken: String)
+  fun eraseBy(userToken: String, companyId: Int)
+}
+
+internal class FavouriteCompanyApiImpl @Inject constructor(
   private val firebaseReference: DatabaseReference,
-) {
-  fun load(userToken: String): Flow<FavouriteCompanyResponse> = callbackFlow {
+) : FavouriteCompanyApi {
+  override fun load(userToken: String): Flow<FavouriteCompanyResponse> = callbackFlow {
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
       .child(userToken)
@@ -34,7 +41,7 @@ internal class FavouriteCompanyApi @Inject constructor(
     awaitClose()
   }
 
-  fun putBy(userToken: String, companyId: Int) {
+  override fun putBy(userToken: String, companyId: Int) {
     checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
@@ -43,7 +50,7 @@ internal class FavouriteCompanyApi @Inject constructor(
       .setValue(companyId)
   }
 
-  fun eraseAll(userToken: String) {
+  override fun eraseAll(userToken: String) {
     checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
@@ -51,7 +58,7 @@ internal class FavouriteCompanyApi @Inject constructor(
       .removeValue()
   }
 
-  fun eraseBy(userToken: String, companyId: Int) {
+  override fun eraseBy(userToken: String, companyId: Int) {
     checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)

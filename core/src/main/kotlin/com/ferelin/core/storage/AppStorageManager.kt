@@ -3,12 +3,11 @@ package com.ferelin.core.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import com.ferelin.core.ApplicationContext
 import java.io.File
 import javax.inject.Inject
 
 class AppStorageManager @Inject constructor(
-  @ApplicationContext private val context: Context
+  private val context: Context
 ) {
   fun buildDownloadFile(
     treePath: String,
