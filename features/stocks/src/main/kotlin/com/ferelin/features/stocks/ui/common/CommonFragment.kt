@@ -15,7 +15,7 @@ import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
 import com.ferelin.features.stocks.R
-import com.ferelin.features.stocks.databinding.FragmentStocksPagerBinding
+import com.ferelin.features.stocks.databinding.FragmentCommonBinding
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.Lazy
@@ -26,9 +26,9 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class CommonFragment : BaseFragment<FragmentStocksPagerBinding>() {
-  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
-    get() = FragmentStocksPagerBinding::inflate
+internal class CommonFragment : BaseFragment<FragmentCommonBinding>() {
+  override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentCommonBinding
+    get() = FragmentCommonBinding::inflate
 
   @Inject
   lateinit var viewModelFactory: Lazy<BaseViewModelFactory<CommonViewModel>>
