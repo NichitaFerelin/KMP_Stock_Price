@@ -37,7 +37,7 @@ internal class AboutViewModel(
   }
 
   fun onBackBtnClick() {
-    coordinator.onEvent(AboutRouteEvents.Event.BackRequested)
+    coordinator.onEvent(AboutScreenEvent.BackRequested)
   }
 
   private suspend fun switchRequested(isFavourite: Boolean) {

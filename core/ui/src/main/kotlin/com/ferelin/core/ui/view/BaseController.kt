@@ -2,7 +2,6 @@ package com.ferelin.core.ui.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.ferelin.core.ui.view.routing.RouteEvents
 
 abstract class BaseController : Fragment()
 

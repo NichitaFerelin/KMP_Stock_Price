@@ -21,9 +21,9 @@ internal class AboutViewAdapter(
 
   override fun createFragment(position: Int): Fragment {
     return when (position) {
-      0 -> ProfileFragment(ProfileParams(params.companyId))
+      /*0 -> ProfileFragment(ProfileParams(params.companyId))
       1 -> ChartFragment(ChartParams(params.companyId, params.companyTicker))
-      2 -> NewsFragment(NewsParams(params.companyId, params.companyTicker))
+      2 -> NewsFragment(NewsParams(params.companyId, params.companyTicker))*/
       else -> error("No fragment for position: $position")
     }
   }
