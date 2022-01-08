@@ -9,7 +9,7 @@ buildscript {
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${com.ferelin.Deps.kotlinVersion}")
     classpath("com.google.gms:google-services:4.3.10")
     classpath("com.google.firebase:firebase-crashlytics-gradle:2.8.1")
-    classpath("com.github.ben-manes:gradle-versions-plugin:0.40.0")
+    classpath("com.github.ben-manes:gradle-versions-plugin:0.41.0")
   }
 }
 allprojects {
