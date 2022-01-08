@@ -3,7 +3,6 @@ package com.ferelin.core.network
 import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.Network
-import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import kotlinx.coroutines.flow.Flow
@@ -45,15 +44,5 @@ internal class NetworkListenerImpl @Inject constructor(
           _networkState.value = false
         }
       })
-  }
-
-  companion object {
-    // TODO вынести где-то рядом с di
-    fun buildNetworkRequest(): NetworkRequest {
-      return NetworkRequest.Builder()
-        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-        .build()
-    }
   }
 }

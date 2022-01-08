@@ -11,9 +11,48 @@ android {
 
   defaultConfig {
     minSdk = Deps.minSDK
+
+    buildConfigField("boolean", "DEV", "Boolean.parseBoolean(\"false\")")
+    buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"false\")")
   }
+
+  buildTypes {
+    val publicFinnhubDebugToken = "c5n906iad3ido15tstu0"
+    val publicNomicsDebugToken = "cb99d1ebf28482d6fb54f7c9002319aea14401c7"
+
+    debug {
+      resValue(
+        "string",
+        "api_finnhub_token",
+        (properties["apiFinnhubToken"] as String?) ?: publicFinnhubDebugToken
+      )
+      resValue(
+        "string",
+        "api_nomics_token",
+        (properties["apiNomicsToken"] as String?) ?: publicNomicsDebugToken
+      )
+      buildConfigField("boolean", "DEV", "Boolean.parseBoolean(\"true\")")
+    }
+
+    release {
+      resValue(
+        "string",
+        "api_finnhub_token",
+        (properties["apiFinnhubToken"] as String?) ?: publicFinnhubDebugToken
+      )
+      resValue(
+        "string",
+        "api_nomics_token",
+        (properties["apiNomicsToken"] as String?) ?: publicNomicsDebugToken
+      )
+      buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"true\")")
+    }
+  }
+  
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
+    freeCompilerArgs = freeCompilerArgs +
+      ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
   }
 }
 
@@ -35,11 +74,12 @@ dependencies {
   api(Deps.okHttp)
   api(Deps.okHttpInterceptor)
   api(Deps.moshi)
-  api(Deps.moshiProcessor)
+  kapt(Deps.moshiProcessor)
 
   api(Deps.dataStorePreferences)
   api(Deps.roomKtx)
   api(Deps.roomRuntime)
+  kapt(Deps.roomCompilerKapt)
 
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)

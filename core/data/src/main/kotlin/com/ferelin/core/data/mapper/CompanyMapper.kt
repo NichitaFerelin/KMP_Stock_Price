@@ -1,8 +1,8 @@
 package com.ferelin.core.data.mapper
 
-import com.ferelin.core.data.entity.ProfileDBO
-import com.ferelin.core.domain.entities.entity.Company
-import com.ferelin.core.domain.entities.entity.CompanyId
+import com.ferelin.core.data.entity.profile.ProfileDBO
+import com.ferelin.core.domain.entity.Company
+import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.data.entity.company.CompanyDBO
 import com.ferelin.core.data.entity.company.CompanyJson
 

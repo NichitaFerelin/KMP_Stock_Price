@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <declare-styleable name="ChartView">
         <attr name="chartBackgroundGradientStart" format="color" />
         <attr name="chartBackgroundGradientEnd" format="color" />
@@ -13,5 +12,4 @@
         <attr name="suggestionPriceColor" format="color" />
         <attr name="suggestionDateColor" format="color" />
     </declare-styleable>
-
 </resources>

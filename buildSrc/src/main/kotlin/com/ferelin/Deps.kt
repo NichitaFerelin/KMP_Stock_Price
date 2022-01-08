@@ -29,10 +29,11 @@ object Deps {
   const val glide = "com.github.bumptech.glide:glide:4.12.0"
   const val glideCompilerKapt = "com.github.bumptech.glide:compiler:4.12.0"
 
-  const val roomVersion = "2.3.0"
+  const val roomVersion = "2.4.0"
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
   const val roomKtx = "androidx.room:room-ktx:$roomVersion"
   const val roomCompilerKapt = "androidx.room:room-compiler:$roomVersion"
+
   const val documentFile = "androidx.documentfile:documentfile:1.0.1"
   const val dataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
 
@@ -44,8 +45,8 @@ object Deps {
   const val okHttp = "com.squareup.okhttp3:okhttp:$okHttpVersion"
   const val okHttpInterceptor = "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
 
-  private const val moshiVersion = "1.12.0"
-  const val moshi = "com.squareup.moshi:moshi-kotlin:1.12.0"
+  private const val moshiVersion = "1.13.0"
+  const val moshi = "com.squareup.moshi:moshi-kotlin:$moshiVersion"
   const val moshiProcessor = "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
 
   const val firebasePlatform = "com.google.firebase:firebase-bom:28.0.1"
@@ -64,7 +65,6 @@ object Deps {
   const val testUiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
   const val testRobolectric = "org.robolectric:robolectric:4.6.1"
   const val testMockito = "org.mockito:mockito-core:4.0.0"
-  const val testCoroutines =
-    "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
+  const val testCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
   const val roomTestLiveData = "androidx.lifecycle:lifecycle-livedata-ktx:$roomVersion"
 }

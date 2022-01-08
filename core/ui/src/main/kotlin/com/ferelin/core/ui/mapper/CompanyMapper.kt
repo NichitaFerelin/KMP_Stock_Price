@@ -1,9 +1,9 @@
 package com.ferelin.core.ui.mapper
 
-import com.ferelin.core.domain.entities.entity.Company
-import com.ferelin.core.domain.entities.entity.CompanyId
+import com.ferelin.core.domain.entity.Company
+import com.ferelin.core.domain.entity.CompanyId
+import com.ferelin.core.ui.viewData.StockStyle
 import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.core.ui.viewData.utils.StockStyleProvider
 
 internal object CompanyMapper {
   fun map(
@@ -19,7 +19,7 @@ internal object CompanyMapper {
         ticker = company.ticker,
         logoUrl = company.logoUrl,
         isFavourite = isFavourite,
-        style = null,
+        style = StockStyle(),
         stockPriceViewData = null
       )
     }

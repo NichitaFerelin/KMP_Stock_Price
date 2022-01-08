@@ -12,7 +12,7 @@ import androidx.viewbinding.ViewBinding
 import com.ferelin.core.ui.R
 import com.google.android.material.snackbar.Snackbar
 
-abstract class BaseFragment<VB : ViewBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding> : BaseController() {
   abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
   private var _viewBinding: VB? = null

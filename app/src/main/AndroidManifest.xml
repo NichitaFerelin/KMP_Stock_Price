@@ -20,18 +20,13 @@
         android:theme="@style/Theme.StockPrice">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.ferelin.stockprice.androidx-startup"
-            tools:node="remove" />
 
     </application>
 

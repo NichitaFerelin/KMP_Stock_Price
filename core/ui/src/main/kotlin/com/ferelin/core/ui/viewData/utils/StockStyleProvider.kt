@@ -2,15 +2,14 @@ package com.ferelin.core.ui.viewData.utils
 
 import android.content.Context
 import androidx.core.content.ContextCompat
-import com.ferelin.core.ApplicationContext
-import com.ferelin.core.domain.entities.entity.StockPrice
+import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.viewData.StockStyle
 import com.ferelin.core.ui.viewData.StockViewData
 import javax.inject.Inject
 
 class StockStyleProvider @Inject constructor(
-  @ApplicationContext private val context: Context
+  private val context: Context
 ) {
   fun createStyle(
     stockViewData: StockViewData,
@@ -71,10 +70,10 @@ class StockStyleProvider @Inject constructor(
   }
 }
 
-internal val drawableFavouriteBackgroundIcon: Int = R.drawable.ic_favourite
-internal val drawableFavouriteBackgroundIconActive: Int = R.drawable.ic_favourite_active
-internal val drawableFavouriteForegroundIcon: Int = R.drawable.ic_star
-internal val drawableFavouriteForegroundIconActive: Int = R.drawable.ic_star_active
+internal val drawableFavouriteBackgroundIcon: Int = R.drawable.ic_favourite_16
+internal val drawableFavouriteBackgroundIconActive: Int = R.drawable.ic_favourite_active_16
+internal val drawableFavouriteForegroundIcon: Int = R.drawable.ic_star_20x19
+internal val drawableFavouriteForegroundIconActive: Int = R.drawable.ic_star_active_20x19
 internal val drawableRippleLight: Int = R.drawable.ripple_light
 internal val drawableRippleDark: Int = R.drawable.ripple_dark
 internal val colorProfitPlus: Int = R.color.profitPlus

@@ -1,5 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.StockPrice" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/white</item>
@@ -19,7 +18,5 @@
         <item name="snackbarStyle">@style/snackbar</item>
         <item name="snackbarButtonStyle">@style/snackbarButton</item>
         <item name="snackbarTextViewStyle">@style/snackbarTextView</item>
-
     </style>
-
 </resources>

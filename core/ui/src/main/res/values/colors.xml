@@ -11,7 +11,6 @@
     <color name="profitPlus">#FF24B25D</color>
     <color name="profitMinus">#FFB22424</color>
 
-
     <color name="chartGradientStart">#00EBEBEB</color>
     <color name="chartGradientEnd">#DCDCDC</color>
 </resources>

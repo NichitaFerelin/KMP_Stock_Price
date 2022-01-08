@@ -21,6 +21,8 @@ dependencies {
   implementation(Deps.androidCore)
   implementation(Deps.documentFile)
 
+  api(Deps.fragments)
+  api(Deps.appCompat)
   api(Deps.kotlinCoroutinesCore)
   api(Deps.kotlinCoroutines)
 

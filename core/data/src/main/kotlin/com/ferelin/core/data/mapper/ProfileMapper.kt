@@ -1,10 +1,10 @@
 package com.ferelin.core.data.mapper
 
-import com.ferelin.core.data.entity.ProfileDBO
-import com.ferelin.core.domain.entities.entity.CompanyId
-import com.ferelin.core.domain.entities.entity.Profile
+import com.ferelin.core.data.entity.profile.ProfileDBO
+import com.ferelin.core.domain.entity.CompanyId
+import com.ferelin.core.domain.entity.Profile
 
-object ProfileMapper {
+internal object ProfileMapper {
   fun map(profile: Profile): ProfileDBO {
     return ProfileDBO(
       id = profile.id.value,

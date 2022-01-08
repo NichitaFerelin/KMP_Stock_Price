@@ -19,6 +19,9 @@ android {
     versionCode = 12
     versionName = "4.2.0"
   }
+  buildFeatures.apply {
+    viewBinding = true
+  }
   buildTypes {
     release {
       isMinifyEnabled = true
@@ -31,13 +34,17 @@ android {
 }
 
 dependencies {
+  implementation(project(":core"))
+  implementation(project(":core:ui"))
+  implementation(project(":core:domain"))
+  implementation(project(":core:data"))
   implementation(project(":navigation"))
-  implementation(project(":features:about:ui"))
-  implementation(project(":features:authentication:ui"))
-  implementation(project(":features:search:ui"))
-  implementation(project(":features:settings:ui"))
-  implementation(project(":features:splash:ui"))
-  implementation(project(":features:stocks:ui"))
+  implementation(project(":features:about"))
+  implementation(project(":features:authentication"))
+  implementation(project(":features:search"))
+  implementation(project(":features:settings"))
+  implementation(project(":features:splash"))
+  implementation(project(":features:stocks"))
 
   implementation(Deps.androidCore)
   implementation(platform(Deps.firebasePlatform))

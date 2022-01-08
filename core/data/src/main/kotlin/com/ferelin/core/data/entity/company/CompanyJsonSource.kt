@@ -1,13 +1,11 @@
 package com.ferelin.core.data.entity.company
 
 import android.content.Context
-import com.ferelin.core.ApplicationContext
 import com.ferelin.core.checkBackgroundThread
-import com.ferelin.core.data.entity.ProfileDBO
+import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.data.mapper.CompanyMapper
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import javax.inject.Inject
 
 internal interface CompanyJsonSource {
@@ -15,14 +13,9 @@ internal interface CompanyJsonSource {
 }
 
 internal class CompanyJsonSourceImpl @Inject constructor(
-  @ApplicationContext private val context: Context
+  private val context: Context,
+  private val moshi: Moshi
 ) : CompanyJsonSource {
-  private val moshi by lazy(LazyThreadSafetyMode.NONE) {
-    Moshi.Builder()
-      .add(KotlinJsonAdapterFactory())
-      .build()
-  }
-
   override fun parseJson(): List<Pair<CompanyDBO, ProfileDBO>> {
     checkBackgroundThread()
     val type = Types.newParameterizedType(List::class.java, CompanyJson::class.java)
