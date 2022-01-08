@@ -1,18 +1,19 @@
 package com.ferelin.features.search.ui
 
-import com.ferelin.core.ui.view.routing.Event
-import com.ferelin.core.ui.view.routing.RouteEvents
 import com.ferelin.core.ui.view.ControllerConfig
 import com.ferelin.core.ui.view.ScreenKey
+import com.ferelin.core.ui.view.routing.Event
 
 object SearchScreenKey : ScreenKey() {
   override val controllerConfig = ControllerConfig(
-    name = SearchFragment::class.java.simpleName,
+    key = SEARCH_SCREEN_KEY,
     controllerClass = SearchFragment::class.java,
-    routeEvents = SearchRouteEvents
   )
 }
 
-object SearchRouteEvents : RouteEvents() {
-  object OpenEvent : Event(SearchRouteEvents::class.java)
+sealed class SearchRouteEvent : Event() {
+  object BackRequested : SearchRouteEvent()
+  object OpenStockInfoRequested : SearchRouteEvent()
 }
+
+internal val SEARCH_SCREEN_KEY = SearchFragment::class.java.simpleName

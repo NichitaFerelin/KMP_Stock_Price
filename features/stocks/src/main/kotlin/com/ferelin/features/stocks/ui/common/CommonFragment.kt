@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.ui.main
+package com.ferelin.features.stocks.ui.common
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,13 +26,13 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class MainFragment : BaseFragment<FragmentStocksPagerBinding>() {
+internal class CommonFragment : BaseFragment<FragmentStocksPagerBinding>() {
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentStocksPagerBinding
     get() = FragmentStocksPagerBinding::inflate
 
   @Inject
-  lateinit var viewModelFactory: Lazy<BaseViewModelFactory<MainViewModel>>
-  private val viewModel: MainViewModel by viewModels(
+  lateinit var viewModelFactory: Lazy<BaseViewModelFactory<CommonViewModel>>
+  private val viewModel: CommonViewModel by viewModels(
     factoryProducer = { viewModelFactory.get() }
   )
 
@@ -89,9 +89,9 @@ internal class MainFragment : BaseFragment<FragmentStocksPagerBinding>() {
     )
 
     with(viewBinding) {
-      textViewHintStocks.setOnClick(this@MainFragment::onHintStocksClick)
-      textViewHintFavourite.setOnClick(this@MainFragment::onHistFavouritesClick)
-      fab.setOnClick(this@MainFragment::onFabClick)
+      textViewHintStocks.setOnClick(this@CommonFragment::onHintStocksClick)
+      textViewHintFavourite.setOnClick(this@CommonFragment::onHistFavouritesClick)
+      fab.setOnClick(this@CommonFragment::onFabClick)
       imageSettings.setOnClick(viewModel::onSettingsClick)
 
       cardViewSearch.setOnClick {
@@ -108,17 +108,17 @@ internal class MainFragment : BaseFragment<FragmentStocksPagerBinding>() {
       launchAndRepeatWithViewLifecycle {
         cryptos
           .flowOn(Dispatchers.Main)
-          .onEach(this@MainFragment::onCryptos)
+          .onEach(this@CommonFragment::onCryptos)
           .launchIn(this)
 
         cryptosLce
           .flowOn(Dispatchers.Main)
-          .onEach(this@MainFragment::onCryptosLce)
+          .onEach(this@CommonFragment::onCryptosLce)
           .launchIn(this)
 
         networkState
           .flowOn(Dispatchers.Main)
-          .onEach(this@MainFragment::onNetwork)
+          .onEach(this@CommonFragment::onNetwork)
           .launchIn(this)
       }
     }

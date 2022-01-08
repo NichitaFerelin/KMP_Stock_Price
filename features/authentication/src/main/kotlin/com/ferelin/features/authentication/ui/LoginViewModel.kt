@@ -27,6 +27,7 @@ internal class LoginViewModel @Inject constructor(
     authUseCase.userAuth
       .distinctUntilChanged()
       .filter { it }
+      .map { }
       .onEach(this::onUserAuthenticated)
       .launchIn(viewModelScope)
 
@@ -53,11 +54,11 @@ internal class LoginViewModel @Inject constructor(
   }
 
   fun onBack() {
-    // back
+    coordinator.onEvent(LoginRouteEvent.BackRequested)
   }
 
-  private fun onUserAuthenticated(isAuthenticated: Boolean) {
-    // notify and back
+  private fun onUserAuthenticated(unit: Unit) {
+    coordinator.onEvent(LoginRouteEvent.UserAuthenticated)
   }
 
   private suspend fun authProcessing(): Boolean {

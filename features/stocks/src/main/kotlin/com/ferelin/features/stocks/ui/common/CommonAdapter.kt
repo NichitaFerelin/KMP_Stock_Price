@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.ui.main
+package com.ferelin.features.stocks.ui.common
 
 import android.content.Context
 import android.graphics.Rect

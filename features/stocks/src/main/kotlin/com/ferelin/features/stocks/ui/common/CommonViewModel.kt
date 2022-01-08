@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.ui.main
+package com.ferelin.features.stocks.ui.common
 
 import android.view.View
 import androidx.lifecycle.ViewModel
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class MainViewModel @Inject constructor(
+internal class CommonViewModel @Inject constructor(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val coordinator: Coordinator,
   cryptoUseCase: CryptoUseCase,
@@ -64,14 +64,11 @@ internal class MainViewModel @Inject constructor(
   var lastSelectedPage = 0
 
   fun onSettingsClick() {
-    // navigate
+    coordinator.onEvent(CommonRouteEvent.SettingsRequested)
   }
 
   fun onSearchCardClick(sharedElement: View, name: String) {
-    // navigate
-    /*router.fromStocksPagerToSearch { fragmentTransaction ->
-      fragmentTransaction.addSharedElement(sharedElement, name)
-    }*/
+    coordinator.onEvent(CommonRouteEvent.SearchRequested)
   }
 
   private fun onNetworkAvailable(cryptos: List<Crypto>) {

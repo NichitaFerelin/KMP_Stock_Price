@@ -3,13 +3,13 @@ package com.ferelin.features.search.ui
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
+import com.ferelin.core.domain.usecase.SearchRequestsUseCase
 import com.ferelin.core.domain.usecase.StockPriceUseCase
-import com.ferelin.core.ui.view.routing.Coordinator
 import com.ferelin.core.ui.view.adapter.BaseRecyclerAdapter
+import com.ferelin.core.ui.view.routing.Coordinator
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewData.utils.StockStyleProvider
 import com.ferelin.core.ui.viewModel.StocksViewModel
-import com.ferelin.core.domain.usecase.SearchRequestsUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -71,13 +71,11 @@ internal class SearchViewModel @Inject constructor(
   }
 
   fun onSearchTextChanged(searchText: String) {
-    viewModelScope.launch {
-
-    }
+    viewModelScope.launch { searchRequest.value = searchText }
   }
 
   fun onBack() {
-    // navigate
+    coordinator.onEvent(SearchRouteEvent.BackRequested)
   }
 
   private fun onTickerClick(searchViewData: SearchViewData) {

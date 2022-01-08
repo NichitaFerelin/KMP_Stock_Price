@@ -1,6 +1,5 @@
 package com.ferelin.features.about.ui.about
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -11,7 +10,6 @@ import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.features.about.R
 import com.ferelin.features.about.databinding.FragmentAboutPagerBinding
-import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -19,16 +17,15 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-internal class AboutFragment(
-  private val aboutParams: AboutParams
-) : BaseFragment<FragmentAboutPagerBinding>() {
+internal class AboutFragment : BaseFragment<FragmentAboutPagerBinding>() {
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAboutPagerBinding
     get() = FragmentAboutPagerBinding::inflate
 
   @Inject
   lateinit var viewModelFactory: AboutViewModelFactory.Factory
   private val viewModel: AboutViewModel by viewModels {
-    viewModelFactory.create(aboutParams)
+    val params = requireArguments()[ABOUT_SCREEN_KEY] as AboutParams
+    viewModelFactory.create(params)
   }
 
   private val backPressedCallback by lazy(NONE) {
@@ -38,18 +35,10 @@ internal class AboutFragment(
           viewBinding.viewPager.setCurrentItem(0, true)
         } else {
           this.remove()
-          requireActivity().onBackPressed()
+          viewModel.onBackBtnClick()
         }
       }
     }
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-      .apply { duration = 200L }
-    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
   }
 
   override fun initUi() {
@@ -100,11 +89,8 @@ internal class AboutFragment(
   }
 
   private fun onCompanyFavourite(isFavourite: Boolean) {
-    /*
-    * if() else
-    * setContentDescription
-    * setIcon
-    * anim
-    * */
+    viewBinding.imageViewStar.setImageResource(
+      if (isFavourite) R.drawable.ic_favourite_active_16 else R.drawable.ic_favourite_16
+    )
   }
 }
