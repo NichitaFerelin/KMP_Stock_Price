@@ -18,7 +18,6 @@ internal class ChartViewModel(
   pastPricesUseCase: PastPricesUseCase,
   stockPricesUseCase: StockPriceUseCase,
 ) : ViewModel() {
-
   val networkState = networkListener.networkState
     .distinctUntilChanged()
     .onEach {

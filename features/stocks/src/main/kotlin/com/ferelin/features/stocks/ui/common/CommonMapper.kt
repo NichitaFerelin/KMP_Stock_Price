@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.ui.main
+package com.ferelin.features.stocks.ui.common
 
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoPrice

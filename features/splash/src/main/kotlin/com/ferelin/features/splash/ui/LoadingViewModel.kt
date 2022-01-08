@@ -24,6 +24,6 @@ internal class LoadingViewModel @Inject constructor(
   }
 
   fun onPrepared() {
-    // navigate
+    coordinator.onEvent(LoadingRouteEvent.Loaded)
   }
 }

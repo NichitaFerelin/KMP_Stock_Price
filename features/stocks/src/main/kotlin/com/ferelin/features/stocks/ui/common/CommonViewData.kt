@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.ui.main
+package com.ferelin.features.stocks.ui.common
 
 import androidx.annotation.ColorRes
 import com.ferelin.core.ui.view.adapter.ViewDataType

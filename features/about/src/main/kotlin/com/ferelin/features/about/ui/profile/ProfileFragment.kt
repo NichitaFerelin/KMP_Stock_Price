@@ -19,15 +19,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-internal class ProfileFragment(
-  params: ProfileParams
-) : BaseFragment<FragmentProfileBinding>() {
+internal class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentProfileBinding
     get() = FragmentProfileBinding::inflate
 
   @Inject
   lateinit var viewModelFactory: ProfileViewModelFactory.Factory
   private val viewModel: ProfileViewModel by viewModels {
+    val params = requireArguments()[PROFILE_SCREEN_KEY] as ProfileParams
     viewModelFactory.create(params)
   }
 

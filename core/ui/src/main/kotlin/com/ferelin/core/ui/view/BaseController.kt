@@ -16,7 +16,6 @@ abstract class ScreenKey {
 }
 
 data class ControllerConfig(
-  val name: String,
-  val controllerClass: Class<out BaseController>,
-  val routeEvents: RouteEvents
+  val key: String,
+  val controllerClass: Class<out BaseController>
 )

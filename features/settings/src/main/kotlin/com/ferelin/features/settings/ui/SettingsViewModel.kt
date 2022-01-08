@@ -67,7 +67,7 @@ internal class SettingsViewModel @Inject constructor(
   }
 
   fun onBack() {
-    // navigate
+    coordinator.onEvent(SettingsRouteEvent.BackRequested)
   }
 
   fun onStoragePathSelected(path: String, authority: String) {
@@ -83,7 +83,7 @@ internal class SettingsViewModel @Inject constructor(
   private fun onOptionClick(settingsViewData: SettingsViewData) {
     viewModelScope.launch {
       when (settingsViewData.type) {
-        OptionType.AUTH -> Unit
+        OptionType.AUTH -> coordinator.onEvent(SettingsRouteEvent.AuthenticationRequested)
         OptionType.CLEAR_DATA -> Unit
         OptionType.SOURCE_CODE -> requestDownloadCode.emit(Unit)
         else -> Unit

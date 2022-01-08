@@ -6,7 +6,7 @@ import com.ferelin.core.ui.view.routing.RouterHost
 import com.ferelin.stockprice.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), RouterHost {
-  override var routerHost: AppCompatActivity? = null
+  override var host: AppCompatActivity? = null
   override val containerViewId: Int = R.id.container
 
   private var viewBinding: ActivityMainBinding? = null
@@ -20,12 +20,12 @@ class MainActivity : AppCompatActivity(), RouterHost {
       viewBinding = it
       setContentView(it.root)
     }
-    routerHost = this
+    host = this
   }
 
   override fun onDestroy() {
     viewBinding = null
-    routerHost = null
+    host = null
     super.onDestroy()
   }
 }
