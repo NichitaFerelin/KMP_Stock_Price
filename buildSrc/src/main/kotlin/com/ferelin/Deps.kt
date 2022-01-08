@@ -5,29 +5,30 @@ object Deps {
   const val minSDK = 21
   const val currentSDK = 31
 
-  const val kotlinVersion = "1.6.0"
+  const val kotlinVersion = "1.6.10"
   const val kotlinCoroutinesVersion = "1.5.2"
 
-  const val androidCore = "androidx.core:core-ktx:1.7.0-rc01"
+  const val androidCore = "androidx.core:core-ktx:1.7.0"
   const val kotlinLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   const val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
   const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
   const val timber = "com.jakewharton.timber:timber:5.0.1"
 
-  const val androidLifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01"
-  const val appCompat = "androidx.appcompat:appcompat:1.3.1"
-  const val fragments = "androidx.fragment:fragment-ktx:1.3.6"
-  const val browser = "androidx.browser:browser:1.3.0"
+  const val androidLifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+  const val appCompat = "androidx.appcompat:appcompat:1.4.0"
+  const val fragments = "androidx.fragment:fragment-ktx:1.4.0"
+  const val browser = "androidx.browser:browser:1.4.0"
   const val viewPager = "androidx.viewpager2:viewpager2:1.0.0"
-  const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.0"
-  const val material = "com.google.android.material:material:1.4.0"
-  const val workManager = "androidx.work:work-runtime-ktx:2.7.0"
+  const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
+  const val material = "com.google.android.material:material:1.5.0-rc01"
 
-  const val dagger = "com.google.dagger:dagger:2.39.1"
-  const val daggerCompilerKapt = "com.google.dagger:dagger-compiler:2.39.1"
+  private const val daggerVersion = "2.40.5"
+  const val dagger = "com.google.dagger:dagger:$daggerVersion"
+  const val daggerCompilerKapt = "com.google.dagger:dagger-compiler:$daggerVersion"
 
-  const val glide = "com.github.bumptech.glide:glide:4.12.0"
-  const val glideCompilerKapt = "com.github.bumptech.glide:compiler:4.12.0"
+  private const val glideVersion = "4.12.0"
+  const val glide = "com.github.bumptech.glide:glide:$glideVersion"
+  const val glideCompilerKapt = "com.github.bumptech.glide:compiler:$glideVersion"
 
   const val roomVersion = "2.4.0"
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
@@ -49,7 +50,7 @@ object Deps {
   const val moshi = "com.squareup.moshi:moshi-kotlin:$moshiVersion"
   const val moshiProcessor = "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
 
-  const val firebasePlatform = "com.google.firebase:firebase-bom:28.0.1"
+  const val firebasePlatform = "com.google.firebase:firebase-bom:29.0.3"
   const val firebaseAnalyticsKtx = "com.google.firebase:firebase-analytics-ktx"
   const val firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx"
   const val firebaseAuthenticationKtx = "com.google.firebase:firebase-auth-ktx"
