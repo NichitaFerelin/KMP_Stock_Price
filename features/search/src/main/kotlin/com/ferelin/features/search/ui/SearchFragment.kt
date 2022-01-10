@@ -1,5 +1,6 @@
 package com.ferelin.features.search.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.view.BaseFragment
 import com.ferelin.core.ui.view.animManager.MotionManager
@@ -17,27 +20,26 @@ import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
-import com.ferelin.core.ui.viewModel.StocksViewModel
 import com.ferelin.features.search.databinding.FragmentSearchBinding
-import com.google.android.material.transition.MaterialSharedAxis
 import dagger.Lazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.LazyThreadSafetyMode.NONE
 
 internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
   override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding
     get() = FragmentSearchBinding::inflate
 
   @Inject
-  lateinit var viewModelFactory: Lazy<BaseViewModelFactory<StocksViewModel>>
+  lateinit var viewModelFactory: Lazy<BaseViewModelFactory<SearchViewModel>>
   private val viewModel: SearchViewModel by viewModels(
     factoryProducer = { viewModelFactory.get() }
   )
 
-  private val backPressedCallback by lazy(LazyThreadSafetyMode.NONE) {
+  private val backPressedCallback by lazy(NONE) {
     object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         if (viewBinding.root.progress == 1F) {
@@ -50,14 +52,11 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-      .apply { duration = 200L }
-    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
-    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<SearchComponentViewModel>()
+      .searchComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

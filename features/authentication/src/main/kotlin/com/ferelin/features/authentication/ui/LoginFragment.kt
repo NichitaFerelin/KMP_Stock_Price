@@ -1,12 +1,14 @@
 package com.ferelin.features.authentication.ui
 
-import android.os.Bundle
+import android.content.Context
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.ferelin.core.domain.repository.AuthState
 import com.ferelin.core.ui.view.BaseFragment
@@ -14,7 +16,6 @@ import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
 import com.ferelin.features.authentication.databinding.FragmentLoginBinding
-import com.google.android.material.transition.MaterialSharedAxis
 import dagger.Lazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -32,12 +33,11 @@ internal class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     factoryProducer = { viewModelFactory.get() }
   )
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-      .apply { duration = 200L }
-    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<LoginComponentViewModel>()
+      .loginComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUi() {

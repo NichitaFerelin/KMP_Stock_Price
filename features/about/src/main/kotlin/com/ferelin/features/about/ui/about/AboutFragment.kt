@@ -1,9 +1,12 @@
 package com.ferelin.features.about.ui.about
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.view.BaseFragment
 import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
@@ -39,6 +42,13 @@ internal class AboutFragment : BaseFragment<FragmentAboutPagerBinding>() {
         }
       }
     }
+  }
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<AboutComponentViewModel>()
+      .aboutComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUi() {

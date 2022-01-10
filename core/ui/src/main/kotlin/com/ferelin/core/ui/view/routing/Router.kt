@@ -17,6 +17,7 @@ interface RouterHost {
 }
 
 interface Coordinator {
+  fun initialRoute()
   fun onEvent(event: Event)
 }
 

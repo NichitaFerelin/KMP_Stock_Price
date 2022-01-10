@@ -1,9 +1,12 @@
 package com.ferelin.features.about.ui.profile
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ferelin.core.domain.entity.LceState
@@ -28,6 +31,13 @@ internal class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
   private val viewModel: ProfileViewModel by viewModels {
     val params = requireArguments()[PROFILE_SCREEN_KEY] as ProfileParams
     viewModelFactory.create(params)
+  }
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<ProfileComponentViewModel>()
+      .profileComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUx() {

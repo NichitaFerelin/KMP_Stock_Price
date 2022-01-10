@@ -24,9 +24,7 @@ android {
 dependencies {
   api(project(":core:domain"))
 
-  implementation(Deps.androidCore)
   api(Deps.androidLifecycle)
-  api(Deps.timber)
   api(Deps.appCompat)
   api(Deps.browser)
   api(Deps.fragments)

@@ -8,18 +8,21 @@ import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.ui.mapper.CompanyMapper
 import com.ferelin.core.ui.mapper.StockPriceMapper
 import com.ferelin.core.ui.view.adapter.BaseRecyclerAdapter
+import com.ferelin.core.ui.view.routing.Coordinator
 import com.ferelin.core.ui.view.stocks.adapter.StockViewHolder
 import com.ferelin.core.ui.view.stocks.adapter.createStocksAdapter
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewData.utils.StockStyleProvider
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-open class StocksViewModel(
+open class StocksViewModel @Inject constructor(
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val stockPriceUseCase: StockPriceUseCase,
   private val stockStyleProvider: StockStyleProvider,
+  protected val coordinator: Coordinator,
   companyUseCase: CompanyUseCase,
 ) : ViewModel() {
   val companies = companyUseCase.companies
@@ -48,7 +51,6 @@ open class StocksViewModel(
       createStocksAdapter(
         onStockClick = this::onStockClick,
         onFavouriteIconClick = this::onFavouriteIconClick,
-        onBindCallback = this::onBind
       )
     ).apply { setHasStableIds(true) }
   }
@@ -62,8 +64,8 @@ open class StocksViewModel(
     }
   }
 
-  private fun onStockClick(stockViewData: StockViewData) {
-    // navigate
+  open fun onStockClick(stockViewData: StockViewData) {
+
   }
 
   private fun onFavouriteIconClick(stockViewData: StockViewData) {
@@ -73,12 +75,6 @@ open class StocksViewModel(
       } else {
         favouriteCompanyUseCase.removeFromFavourite(stockViewData.id)
       }
-    }
-  }
-
-  private fun onBind(stockViewData: StockViewData, position: Int) {
-    viewModelScope.launch {
-      stockPriceUseCase.fetchPrice(stockViewData.id, stockViewData.ticker)
     }
   }
 }

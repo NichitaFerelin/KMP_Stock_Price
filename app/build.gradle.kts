@@ -34,10 +34,12 @@ android {
 }
 
 dependencies {
-  implementation(project(":core"))
-  implementation(project(":core:ui"))
-  implementation(project(":core:domain"))
-  implementation(project(":core:data"))
+  implementation(Deps.androidCore)
+
+  api(project(":core"))
+  api(project(":core:ui"))
+  api(project(":core:domain"))
+  api(project(":core:data"))
   implementation(project(":navigation"))
   implementation(project(":features:about"))
   implementation(project(":features:authentication"))
@@ -46,7 +48,6 @@ dependencies {
   implementation(project(":features:splash"))
   implementation(project(":features:stocks"))
 
-  implementation(Deps.androidCore)
   implementation(platform(Deps.firebasePlatform))
   implementation(Deps.firebaseCrashlyticsKtx)
 

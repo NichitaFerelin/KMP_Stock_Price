@@ -19,7 +19,7 @@ import kotlin.concurrent.timerTask
 
 internal class SearchViewModel @Inject constructor(
   private val searchRequestsUseCase: SearchRequestsUseCase,
-  private val coordinator: Coordinator,
+  coordinator: Coordinator,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   stockPriceUseCase: StockPriceUseCase,
   stockStyleProvider: StockStyleProvider,
@@ -28,6 +28,7 @@ internal class SearchViewModel @Inject constructor(
   favouriteCompanyUseCase,
   stockPriceUseCase,
   stockStyleProvider,
+  coordinator,
   companyUseCase
 ) {
   private val _searchResults = MutableStateFlow<List<StockViewData>>(emptyList())
@@ -68,6 +69,16 @@ internal class SearchViewModel @Inject constructor(
   override fun onCleared() {
     searchTaskTimer?.cancel()
     super.onCleared()
+  }
+
+  override fun onStockClick(stockViewData: StockViewData) {
+    coordinator.onEvent(
+      event = SearchRouteEvent.OpenStockInfoRequested(
+        companyId = stockViewData.id,
+        ticker = stockViewData.ticker,
+        name = stockViewData.name
+      )
+    )
   }
 
   fun onSearchTextChanged(searchText: String) {

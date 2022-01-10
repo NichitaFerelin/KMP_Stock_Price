@@ -48,7 +48,7 @@ android {
       buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"true\")")
     }
   }
-  
+
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
     freeCompilerArgs = freeCompilerArgs +
@@ -59,10 +59,6 @@ android {
 dependencies {
   api(project(":core:domain"))
 
-  api(Deps.timber)
-  api(Deps.kotlinLib)
-  api(Deps.kotlinCoroutines)
-
   api(platform(Deps.firebasePlatform))
   api(Deps.firebaseDatabaseKtx)
   api(Deps.firebaseAnalyticsKtx)
@@ -71,12 +67,15 @@ dependencies {
 
   api(Deps.retrofit)
   api(Deps.retrofitMoshiConverter)
+
   api(Deps.okHttp)
   api(Deps.okHttpInterceptor)
+
   api(Deps.moshi)
   kapt(Deps.moshiProcessor)
 
   api(Deps.dataStorePreferences)
+
   api(Deps.roomKtx)
   api(Deps.roomRuntime)
   kapt(Deps.roomCompilerKapt)

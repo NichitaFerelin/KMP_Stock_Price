@@ -2,12 +2,14 @@ package com.ferelin.features.settings.ui
 
 import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.view.BaseFragment
 import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
@@ -15,7 +17,6 @@ import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
 import com.ferelin.features.settings.R
 import com.ferelin.features.settings.databinding.FragmentSettingsBinding
-import com.google.android.material.transition.MaterialSharedAxis
 import dagger.Lazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -54,14 +55,11 @@ internal class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     }
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-      .apply { duration = 200L }
-    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
-    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<SettingsComponentViewModel>()
+      .settingsComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUi() {

@@ -28,10 +28,10 @@ internal class SettingsViewModel @Inject constructor(
   private val notifyPriceUseCase: NotifyPriceUseCase,
   private val storagePathUseCase: StoragePathUseCase,
   private val downloadProjectUseCase: DownloadProjectUseCase,
-  private val authUserStateRepository: AuthUserStateRepository,
   private val permissionManager: PermissionManager,
   private val storageManager: AppStorageManager,
-  private val coordinator: Coordinator
+  private val coordinator: Coordinator,
+  authUserStateRepository: AuthUserStateRepository
 ) : ViewModel() {
 
   private val _event = MutableSharedFlow<SettingsEvent>()
