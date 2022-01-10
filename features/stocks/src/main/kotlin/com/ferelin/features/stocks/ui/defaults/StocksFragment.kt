@@ -1,8 +1,11 @@
 package com.ferelin.features.stocks.ui.defaults
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.ferelin.core.ui.view.BaseFragment
@@ -30,6 +33,13 @@ internal class StocksFragment : BaseFragment<FragmentStocksBinding>() {
   private val viewModel: StocksViewModel by viewModels(
     factoryProducer = { viewModelFactory }
   )
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<StocksComponentViewModel>()
+      .stocksComponent
+      .inject(this)
+    super.onAttach(context)
+  }
 
   override fun initUi() {
     viewBinding.recyclerViewStocks.apply {

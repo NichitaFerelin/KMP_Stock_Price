@@ -1,9 +1,11 @@
 package com.ferelin.features.about.ui.chart
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.view.BaseFragment
@@ -24,6 +26,13 @@ internal class ChartFragment : BaseFragment<FragmentChartBinding>() {
   private val viewModel: ChartViewModel by viewModels {
     val params = requireArguments()[CHART_SCREEN_KEY] as ChartParams
     viewModelFactory.create(params)
+  }
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<ChartComponentViewModel>()
+      .chartComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUx() {

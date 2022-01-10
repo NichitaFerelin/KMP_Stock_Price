@@ -1,10 +1,13 @@
 package com.ferelin.features.splash.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.ui.view.BaseFragment
 import com.ferelin.core.ui.view.animManager.MotionManager
 import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
@@ -25,6 +28,13 @@ internal class LoadingFragment : BaseFragment<FragmentLoadingBinding>() {
   private val viewModel: LoadingViewModel by viewModels(
     factoryProducer = { viewModelFactory.get() }
   )
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<LoadingComponentViewModel>()
+      .loadingComponent
+      .inject(this)
+    super.onAttach(context)
+  }
 
   override fun initObservers() {
     launchAndRepeatWithViewLifecycle {

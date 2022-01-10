@@ -20,6 +20,11 @@ android {
 dependencies {
   implementation(project(":core:ui"))
   implementation(project(":features:search"))
+  implementation(project(":features:about"))
+  implementation(project(":features:authentication"))
+  implementation(project(":features:settings"))
+  implementation(project(":features:splash"))
+  implementation(project(":features:stocks"))
 
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)

@@ -1,6 +1,6 @@
 package com.ferelin.features.stocks.ui.common
 
-import android.os.Bundle
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -8,6 +8,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.viewpager2.widget.ViewPager2
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.view.BaseFragment
@@ -16,8 +18,6 @@ import com.ferelin.core.ui.view.setOnClick
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
 import com.ferelin.features.stocks.R
 import com.ferelin.features.stocks.databinding.FragmentCommonBinding
-import com.google.android.material.transition.MaterialFadeThrough
-import com.google.android.material.transition.MaterialSharedAxis
 import dagger.Lazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -57,14 +57,11 @@ internal class CommonFragment : BaseFragment<FragmentCommonBinding>() {
     }
   }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enterTransition = MaterialFadeThrough()
-      .apply { duration = 300L }
-    exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-      .apply { duration = 200L }
-    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-      .apply { duration = 200L }
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<CommonComponentViewModel>()
+      .commonComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUi() {

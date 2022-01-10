@@ -1,8 +1,11 @@
 package com.ferelin.features.about.ui.news
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.params.NewsParams
 import com.ferelin.core.ui.view.BaseFragment
@@ -23,6 +26,13 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding>() {
   private val viewModel: NewsViewModel by viewModels {
     val params = requireArguments()[NEWS_SCREEN_KEY] as NewsParams
     viewModelFactory.create(params)
+  }
+
+  override fun onAttach(context: Context) {
+    ViewModelProvider(this).get<NewsComponentViewModel>()
+      .newsComponent
+      .inject(this)
+    super.onAttach(context)
   }
 
   override fun initUi() {
