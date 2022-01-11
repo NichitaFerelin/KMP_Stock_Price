@@ -14,10 +14,18 @@ android {
     minSdk = Deps.minSDK
   }
   buildFeatures.apply {
+    compose = true
     viewBinding = true
   }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion  = Deps.composeVersion
+  }
   kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = "1.8"
   }
 }
 
@@ -31,6 +39,18 @@ dependencies {
   api(Deps.viewPager)
   api(Deps.constraintLayout)
   api(Deps.material)
+
+  api(Deps.composeUi)
+  api(Deps.composeUtil)
+  api(Deps.composeMaterial)
+  api(Deps.composeMaterialIcons)
+  api(Deps.composeTooling)
+  api(Deps.composeRuntime)
+
+  api(Deps.accompanistInsets)
+  api(Deps.accompanistSystemUiController)
+  api(Deps.accompanistPager)
+  api(Deps.accompanistPagerIndicators)
 
   implementation(Deps.glide)
   kapt(Deps.glideCompilerKapt)
