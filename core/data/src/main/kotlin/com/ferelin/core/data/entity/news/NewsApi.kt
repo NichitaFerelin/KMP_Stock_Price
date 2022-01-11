@@ -1,6 +1,7 @@
 package com.ferelin.core.data.entity.news
 
 import com.ferelin.core.ONE_YEAR_MILLIS
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -9,30 +10,25 @@ import java.util.*
 
 internal interface NewsApi {
   @GET("company-news")
-  fun load(
+  suspend fun load(
+    @Query("token") token: String,
     @Query("symbol") companyTicker: String,
-    @Query("from") from: String = NewsApiSettings.yearAgoDate,
-    @Query("to") to: String = NewsApiSettings.currentDate
-  ): NewsResponse
+    @Query("from") from: String = NewsApiSpecifications.yearAgoDate,
+    @Query("to") to: String = NewsApiSpecifications.currentDate
+  ): List<NewsPojo>
 }
 
 @JsonClass(generateAdapter = true)
-internal data class NewsResponse(
-  val data: List<NewsPojo>
-)
-
-@JsonClass(generateAdapter = true)
 internal data class NewsPojo(
-  val id: String,
-  val datetime: Double,
-  val headline: String,
-  val image: String,
-  val source: String,
-  val url: String,
-  val summary: String
+  @Json(name = "id") val id: String,
+  @Json(name = "datetime") val datetime: Double,
+  @Json(name = "headline") val headline: String,
+  @Json(name = "source") val source: String,
+  @Json(name = "url") val url: String,
+  @Json(name = "summary") val summary: String
 )
 
-internal object NewsApiSettings {
+internal object NewsApiSpecifications {
   val currentDate: String
     get() {
       val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)

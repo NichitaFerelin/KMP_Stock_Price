@@ -5,7 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class PreferencesProvider @Inject constructor(
   context: Context
 ) {

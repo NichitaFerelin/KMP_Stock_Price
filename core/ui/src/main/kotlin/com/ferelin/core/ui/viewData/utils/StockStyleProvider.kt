@@ -1,7 +1,6 @@
 package com.ferelin.core.ui.viewData.utils
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.viewData.StockStyle
@@ -13,13 +12,14 @@ class StockStyleProvider @Inject constructor(
 ) {
   fun createStyle(
     stockViewData: StockViewData,
-    stockPrice: StockPrice?
+    stockPrice: StockPrice?,
+    index: Int
   ): StockStyle {
     val currentPrice = stockPrice?.currentPrice ?: 0.0
     val previousClosePrice = stockPrice?.previousClosePrice ?: 0.0
     return StockStyle(
-      holderBackground = getHolderBackground(stockViewData.id.value),
-      rippleForeground = getRippleForeground(stockViewData.id.value),
+      holderBackground = getHolderBackground(index),
+      rippleForeground = getRippleForeground(index),
       favouriteBackgroundIcon = getBackgroundIconDrawable(stockViewData.isFavourite),
       favouriteForegroundIcon = getForegroundIconDrawable(stockViewData.isFavourite),
       dayProfitBackground = getProfitBackground(currentPrice - previousClosePrice),
@@ -44,9 +44,7 @@ class StockStyleProvider @Inject constructor(
   }
 
   private fun getProfitBackground(profit: Double): Int {
-    return if (profit > 0) {
-      getColor(colorProfitPlus)
-    } else getColor(colorProfitMinus)
+    return if (profit > 0) colorProfitPlus else colorProfitMinus
   }
 
   private fun getBackgroundIconDrawable(isFavourite: Boolean): Int {
@@ -56,17 +54,11 @@ class StockStyleProvider @Inject constructor(
   }
 
   private fun getHolderBackground(index: Int): Int {
-    return if (index % 2 == 0) {
-      getColor(colorHolderFirst)
-    } else getColor(colorHolderSecond)
+    return if (index % 2 == 0) colorHolderFirst else colorHolderSecond
   }
 
   private fun getRippleForeground(index: Int): Int {
     return if (index % 2 == 0) drawableRippleDark else drawableRippleLight
-  }
-
-  private fun getColor(color: Int): Int {
-    return ContextCompat.getColor(context, color)
   }
 }
 

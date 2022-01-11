@@ -16,7 +16,6 @@ import com.ferelin.core.ui.view.stocks.adapter.StockItemDecoration
 import com.ferelin.core.ui.view.stocks.adapter.StockViewHolder
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
-import com.ferelin.core.ui.viewModel.StocksViewModel
 import com.ferelin.features.stocks.databinding.FragmentFavouriteBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -30,8 +29,8 @@ internal class FavouriteStocksFragment : BaseFragment<FragmentFavouriteBinding>(
     get() = FragmentFavouriteBinding::inflate
 
   @Inject
-  lateinit var viewModelFactory: BaseViewModelFactory<StocksViewModel>
-  private val viewModel: StocksViewModel by viewModels(
+  lateinit var viewModelFactory: BaseViewModelFactory<FavouriteStocksViewModel>
+  private val viewModel: FavouriteStocksViewModel by viewModels(
     factoryProducer = { viewModelFactory }
   )
 

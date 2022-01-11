@@ -9,7 +9,6 @@ internal object NewsMapper {
       id = news.id,
       headline = news.headline,
       date = news.date.toLong().toDateStr(),
-      previewImageUrl = news.previewImageUrl,
       source = news.source,
       sourceUrl = news.sourceUrl,
       summary = news.summary

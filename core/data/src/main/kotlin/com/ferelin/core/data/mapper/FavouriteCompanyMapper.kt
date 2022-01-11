@@ -13,7 +13,7 @@ internal object FavouriteCompanyMapper {
     return CompanyId(favouriteCompanyDBO.id)
   }
 
-  fun map(favouriteCompanyResponse: FavouriteCompanyResponse): List<CompanyId> {
-    return favouriteCompanyResponse.data.map { CompanyId(it) }
+  fun map(favouriteCompanyResponse: FavouriteCompanyResponse): List<FavouriteCompanyDBO> {
+    return favouriteCompanyResponse.data.map { FavouriteCompanyDBO(it) }
   }
 }

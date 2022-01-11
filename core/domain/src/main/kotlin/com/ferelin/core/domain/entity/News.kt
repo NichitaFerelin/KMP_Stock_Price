@@ -4,7 +4,6 @@ data class News(
   val id: NewsId,
   val companyId: CompanyId,
   val headline: String,
-  val previewImageUrl: String,
   val source: String,
   val sourceUrl: String,
   val summary: String,

@@ -1,6 +1,7 @@
 package com.ferelin.core.ui.view.routing
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.ferelin.core.ui.view.ScreenKey
@@ -28,7 +29,9 @@ internal class AppRouter @Inject constructor(
 ) : Router {
   override fun push(screenKey: ScreenKey, args: Bundle?) {
     routerHost.host?.supportFragmentManager?.commit {
+      setReorderingAllowed(true)
       replace(routerHost.containerViewId, screenKey.createController(args))
+      addToBackStack(null)
     }
   }
 

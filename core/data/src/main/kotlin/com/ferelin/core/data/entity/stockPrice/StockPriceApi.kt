@@ -7,7 +7,8 @@ import retrofit2.http.Query
 
 internal interface StockPriceApi {
   @GET("quote")
-  fun load(
+  suspend fun load(
+    @Query("token") token: String,
     @Query("symbol") companyTicker: String,
   ): StockPriceResponse
 }

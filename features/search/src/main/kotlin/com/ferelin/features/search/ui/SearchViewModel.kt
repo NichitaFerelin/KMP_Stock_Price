@@ -1,15 +1,15 @@
 package com.ferelin.features.search.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.domain.usecase.SearchRequestsUseCase
-import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.ui.view.adapter.BaseRecyclerAdapter
 import com.ferelin.core.ui.view.routing.Coordinator
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewData.utils.StockStyleProvider
-import com.ferelin.core.ui.viewModel.StocksViewModel
+import com.ferelin.core.ui.viewModel.BaseStocksViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -19,22 +19,23 @@ import kotlin.concurrent.timerTask
 
 internal class SearchViewModel @Inject constructor(
   private val searchRequestsUseCase: SearchRequestsUseCase,
-  coordinator: Coordinator,
-  favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  stockPriceUseCase: StockPriceUseCase,
+  private val coordinator: Coordinator,
   stockStyleProvider: StockStyleProvider,
+  favouriteCompanyUseCase: FavouriteCompanyUseCase,
   companyUseCase: CompanyUseCase,
-) : StocksViewModel(
+  dispatchersProvider: DispatchersProvider
+) : BaseStocksViewModel(
+  companyUseCase,
   favouriteCompanyUseCase,
-  stockPriceUseCase,
   stockStyleProvider,
-  coordinator,
-  companyUseCase
+  dispatchersProvider
 ) {
   private val _searchResults = MutableStateFlow<List<StockViewData>>(emptyList())
   val searchResults: Flow<List<StockViewData>> = _searchResults.asStateFlow()
 
-  private val searchRequest = MutableStateFlow("")
+  private val _searchRequest = MutableStateFlow("")
+  val searchRequest: Flow<String> = _searchRequest.asStateFlow()
+
   private var searchTaskTimer: Timer? = null
 
   val searchRequests = searchRequestsUseCase.searchRequests
@@ -57,7 +58,7 @@ internal class SearchViewModel @Inject constructor(
   }
 
   init {
-    searchRequest
+    _searchRequest
       .combine(
         flow = companies,
         transform = { searchRequest, stocks -> searchRequest to stocks }
@@ -71,6 +72,20 @@ internal class SearchViewModel @Inject constructor(
     super.onCleared()
   }
 
+  fun onSearchTextChanged(searchText: String) {
+    viewModelScope.launch(dispatchersProvider.IO) {
+      _searchRequest.value = searchText
+    }
+  }
+
+  fun onBack() {
+    coordinator.onEvent(SearchRouteEvent.BackRequested)
+  }
+
+  private fun onTickerClick(searchViewData: SearchViewData) {
+    _searchRequest.value = searchViewData.text
+  }
+
   override fun onStockClick(stockViewData: StockViewData) {
     coordinator.onEvent(
       event = SearchRouteEvent.OpenStockInfoRequested(
@@ -79,18 +94,6 @@ internal class SearchViewModel @Inject constructor(
         name = stockViewData.name
       )
     )
-  }
-
-  fun onSearchTextChanged(searchText: String) {
-    viewModelScope.launch { searchRequest.value = searchText }
-  }
-
-  fun onBack() {
-    coordinator.onEvent(SearchRouteEvent.BackRequested)
-  }
-
-  private fun onTickerClick(searchViewData: SearchViewData) {
-    // navigate
   }
 
   private fun onSearchRequest(requestWithStocks: Pair<String, List<StockViewData>>) {
@@ -104,12 +107,10 @@ internal class SearchViewModel @Inject constructor(
     }
     searchTaskTimer = Timer().apply {
       schedule(timerTask {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.IO) {
           _searchResults.value = stocks.filterBySearch(searchText)
             .also { results ->
-              if (results.size >= SearchRequestsUseCase.REQUIRED_RESULTS_FOR_CACHE) {
-                searchRequestsUseCase.add(searchText)
-              }
+              searchRequestsUseCase.onNewSearchRequest(searchText, results.size)
             }
         }
       }, SEARCH_TASK_TIMEOUT)

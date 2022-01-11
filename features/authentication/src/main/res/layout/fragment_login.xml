@@ -111,8 +111,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:contentDescription="@string/descriptionApply"
-            android:scaleX="0"
-            android:scaleY="0"
             android:src="@drawable/ic_check_20"
             app:layout_constraintBottom_toBottomOf="@id/editTextPhoneLayout"
             app:layout_constraintStart_toEndOf="@id/editTextPhoneLayout" />
@@ -122,7 +120,6 @@
             style="@style/materialEditTextInputLayout"
             android:layout_width="150dp"
             android:layout_marginTop="30dp"
-            android:alpha="0"
             android:gravity="center_horizontal"
             android:hint="@string/hintEnterCode"
             app:layout_constraintEnd_toEndOf="@id/editTextPhoneLayout"
@@ -143,8 +140,6 @@
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
             style="@style/progressBar"
-            android:scaleX="0"
-            android:scaleY="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editTextCodeLayout"

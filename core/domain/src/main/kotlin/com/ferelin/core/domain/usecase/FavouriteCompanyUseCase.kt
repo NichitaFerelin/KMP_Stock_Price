@@ -1,12 +1,9 @@
 package com.ferelin.core.domain.usecase
 
-import com.ferelin.core.ExternalScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.repository.AuthUserStateRepository
 import com.ferelin.core.domain.repository.FavouriteCompanyRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -20,17 +17,8 @@ interface FavouriteCompanyUseCase {
 
 internal class FavouriteCompanyUseCaseImpl @Inject constructor(
   private val favouriteCompanyRepository: FavouriteCompanyRepository,
-  authUserStateRepository: AuthUserStateRepository,
-  @ExternalScope scope: CoroutineScope,
   dispatchersProvider: DispatchersProvider
 ) : FavouriteCompanyUseCase {
-  init {
-    authUserStateRepository.userAuthenticated
-      .filter { !it }
-      .onEach { favouriteCompanyRepository.eraseAll(clearCloud = false) }
-      .launchIn(scope)
-  }
-
   override val favouriteCompanies: Flow<List<CompanyId>> = favouriteCompanyRepository.favouriteCompanies
     .onStart { favouriteCompaniesLceState.value = LceState.Loading }
     .onEach { favouriteCompaniesLceState.value = LceState.Content }

@@ -42,7 +42,7 @@ internal class ProfileViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-    require(modelClass == ProfileViewModel::class)
+    require(modelClass == ProfileViewModel::class.java)
     return ProfileViewModel(profileParams, profileUseCase, companyUseCase) as T
   }
 

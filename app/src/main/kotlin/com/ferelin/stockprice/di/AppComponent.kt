@@ -65,7 +65,6 @@ interface AppComponent :
   override val coordinator: Coordinator
   override val searchRequestsUseCase: SearchRequestsUseCase
   override val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  override val stockPriceUseCase: StockPriceUseCase
   override val companyUseCase: CompanyUseCase
   override val networkListener: NetworkListener
   override val pastPricesUseCase: PastPricesUseCase

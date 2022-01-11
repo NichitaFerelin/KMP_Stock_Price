@@ -9,9 +9,14 @@ import com.ferelin.core.ui.view.routing.Router
 import com.ferelin.features.about.ui.about.AboutScreenEvent
 import com.ferelin.features.about.ui.about.AboutScreenKey
 import com.ferelin.features.authentication.ui.LoginRouteEvent
+import com.ferelin.features.authentication.ui.LoginScreenKey
 import com.ferelin.features.search.ui.SearchRouteEvent
+import com.ferelin.features.search.ui.SearchScreenKey
+import com.ferelin.features.settings.ui.SettingsRouteEvent
+import com.ferelin.features.settings.ui.SettingsScreenKey
 import com.ferelin.features.splash.ui.LoadingRouteEvent
 import com.ferelin.features.splash.ui.LoadingScreenKey
+import com.ferelin.features.stocks.ui.common.CommonRouteEvent
 import com.ferelin.features.stocks.ui.common.CommonScreenKey
 import com.ferelin.features.stocks.ui.defaults.StocksRouteEvent
 import com.ferelin.features.stocks.ui.favourites.FavouriteStocksRouteEvent
@@ -31,6 +36,18 @@ internal class AppCoordinator @Inject constructor(
     Timber.d("On route event $event")
     when (event) {
       is LoadingRouteEvent.Loaded -> router.push(CommonScreenKey)
+      is CommonRouteEvent -> {
+        when (event) {
+          is CommonRouteEvent.SearchRequested -> router.push(SearchScreenKey)
+          is CommonRouteEvent.SettingsRequested -> router.push(SettingsScreenKey)
+        }
+      }
+      is SettingsRouteEvent -> {
+        when (event) {
+          is SettingsRouteEvent.BackRequested -> router.pop()
+          is SettingsRouteEvent.AuthenticationRequested -> router.push(LoginScreenKey)
+        }
+      }
       is LoginRouteEvent -> {
         when (event) {
           is LoginRouteEvent.BackRequested -> router.pop()

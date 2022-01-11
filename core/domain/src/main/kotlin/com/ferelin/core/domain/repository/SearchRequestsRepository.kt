@@ -7,5 +7,6 @@ interface SearchRequestsRepository {
   val searchRequests: Flow<List<SearchRequest>>
   val popularSearchRequests: Flow<List<SearchRequest>>
   suspend fun add(request: String)
+  suspend fun erase(searchRequest: SearchRequest)
   suspend fun eraseAll()
 }

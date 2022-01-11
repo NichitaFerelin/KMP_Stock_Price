@@ -21,10 +21,10 @@ data class StockViewData(
 
 data class StockStyle(
   @ColorRes val holderBackground: Int = colorHolderSecond,
+  @ColorRes val dayProfitBackground: Int = colorProfitPlus,
   @DrawableRes val favouriteBackgroundIcon: Int = drawableFavouriteBackgroundIcon,
   @DrawableRes val favouriteForegroundIcon: Int = drawableFavouriteForegroundIcon,
-  @ColorRes val dayProfitBackground: Int = colorProfitPlus,
-  @ColorRes val rippleForeground: Int = drawableRippleLight,
+  @DrawableRes val rippleForeground: Int = drawableRippleLight,
   val iconContentDescription: String = ""
 )
 

@@ -2,51 +2,20 @@ package com.ferelin.features.settings.ui
 
 import android.content.Context
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.view.adapter.ViewDataType
 
 internal enum class OptionType {
   AUTH,
+  LOG_OUT,
   CLEAR_DATA,
   SOURCE_CODE,
   NOTIFY_PRICE
 }
 
 internal object MenuOptionsProvider {
-  fun buildMenuOptions(
-    context: Context,
-    isUserAuthenticated: Boolean,
-    isNotifyChecked: Boolean
-  ): List<ViewDataType> {
+  fun defaultSettings(context: Context): List<SettingsViewData> {
     return listOf(
       SettingsViewData(
-        id = 0,
-        type = OptionType.AUTH,
-        title = context.getString(R.string.titleAuthorization),
-        source = context.getString(
-          if (isUserAuthenticated) {
-            R.string.sourceAuthorized
-          } else R.string.sourceNotAuthorized
-        ),
-        iconRes = if (isUserAuthenticated) {
-          R.drawable.ic_logout_30
-        } else {
-          R.drawable.ic_login_30
-        },
-        iconContentDescription = if (isUserAuthenticated) {
-          context.getString(R.string.descriptionLogOut)
-        } else {
-          context.getString(R.string.descriptionLogIn)
-        }
-      ),
-      SwitchOptionViewData(
-        id = 1,
-        type = OptionType.NOTIFY_PRICE,
-        title = context.getString(R.string.titleNotifyPriceUpdates),
-        source = context.getString(R.string.sourceNotify),
-        isChecked = isNotifyChecked
-      ),
-      SettingsViewData(
-        id = 2,
+        id = DOWNLOAD_INDEX,
         type = OptionType.SOURCE_CODE,
         title = context.getString(R.string.titleSourceCode),
         source = context.getString(R.string.sourceDownload),
@@ -54,7 +23,7 @@ internal object MenuOptionsProvider {
         iconContentDescription = context.getString(R.string.descriptionDownload)
       ),
       SettingsViewData(
-        id = 3,
+        id = ERASE_INDEX,
         type = OptionType.CLEAR_DATA,
         title = context.getString(R.string.titleClearData),
         source = context.getString(R.string.sourceClearData),
@@ -63,4 +32,31 @@ internal object MenuOptionsProvider {
       )
     )
   }
+
+  fun userAuthenticated(context: Context, isUserAuthenticated: Boolean): SettingsViewData {
+    return SettingsViewData(
+      id = AUTH_INDEX,
+      type = if (isUserAuthenticated) OptionType.LOG_OUT else OptionType.AUTH,
+      title = context.getString(R.string.titleAuthorization),
+      source = context.getString(
+        if (isUserAuthenticated) {
+          R.string.sourceAuthorized
+        } else R.string.sourceNotAuthorized
+      ),
+      iconRes = if (isUserAuthenticated) {
+        R.drawable.ic_logout_30
+      } else {
+        R.drawable.ic_login_30
+      },
+      iconContentDescription = if (isUserAuthenticated) {
+        context.getString(R.string.descriptionLogOut)
+      } else {
+        context.getString(R.string.descriptionLogIn)
+      }
+    )
+  }
 }
+
+internal const val DOWNLOAD_INDEX = 0L
+internal const val ERASE_INDEX = 1L
+internal const val AUTH_INDEX = 2L

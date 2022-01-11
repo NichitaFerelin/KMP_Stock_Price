@@ -11,4 +11,11 @@ internal object SearchRequestMapper {
       request = searchRequestsDBO.request
     )
   }
+
+  fun map(searchRequest: SearchRequest): SearchRequestDBO {
+    return SearchRequestDBO(
+      id = searchRequest.id.value,
+      request = searchRequest.request
+    )
+  }
 }

@@ -3,17 +3,20 @@ package com.ferelin.features.authentication.ui
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.AuthState
 import com.ferelin.core.domain.usecase.AuthUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.view.routing.Coordinator
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class LoginViewModel @Inject constructor(
   private val authUseCase: AuthUseCase,
   private val coordinator: Coordinator,
+  private val dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener,
 ) : ViewModel() {
   private val _inputCode = MutableStateFlow("")
@@ -32,6 +35,7 @@ internal class LoginViewModel @Inject constructor(
       .launchIn(viewModelScope)
 
     networkState
+      .flowOn(dispatchersProvider.IO)
       .filter { networkAvailable -> networkAvailable }
       .combine(
         flow = _inputCode,
@@ -40,12 +44,13 @@ internal class LoginViewModel @Inject constructor(
       .filter { it.length == authCodeRequiredSize }
       .filterNot { authProcessing() }
       .onEach(authUseCase::completeAuthentication)
+      .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
   }
 
   fun tryAuthenticate(authHolder: Activity, phoneNumber: String) {
-    viewModelScope.launch {
-      authUseCase.tryAuthentication(authHolder, phoneNumber)
+    viewModelScope.launch(dispatchersProvider.IO) {
+      authUseCase.tryAuthentication(authHolder, "+$phoneNumber")
     }
   }
 

@@ -38,9 +38,9 @@ internal object CompanyMapper {
           id = index,
           country = json.country,
           phone = json.phone,
-          webUrl = json.weburl,
-          industry = json.finnhubIndustry,
-          capitalization = json.marketCapitalization
+          webUrl = json.webUrl,
+          industry = json.industry,
+          capitalization = json.capitalization
         )
       )
     }

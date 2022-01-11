@@ -57,7 +57,7 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding>() {
 
         networkState
           .flowOn(Dispatchers.Main)
-          .onEach { /*TODO*/ }
+          .onEach { /**/ }
           .launchIn(this)
       }
     }

@@ -16,7 +16,6 @@ import com.ferelin.core.ui.view.stocks.adapter.StockItemDecoration
 import com.ferelin.core.ui.view.stocks.adapter.StockViewHolder
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
-import com.ferelin.core.ui.viewModel.StocksViewModel
 import com.ferelin.features.stocks.databinding.FragmentStocksBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn

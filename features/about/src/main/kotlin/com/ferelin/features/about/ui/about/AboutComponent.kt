@@ -1,6 +1,7 @@
 package com.ferelin.features.about.ui.about
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.view.routing.Coordinator
 import dagger.Component
@@ -26,6 +27,7 @@ internal interface AboutComponent {
 interface AboutDeps {
   val coordinator: Coordinator
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface AboutDepsProvider {

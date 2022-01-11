@@ -3,6 +3,7 @@ package com.ferelin.features.stocks.ui.common
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.usecase.CryptoPriceUseCase
@@ -21,6 +22,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 internal class CommonViewModel @Inject constructor(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val coordinator: Coordinator,
+  private val dispatchersProvider: DispatchersProvider,
   cryptoUseCase: CryptoUseCase,
   networkListener: NetworkListener
 ) : ViewModel() {
@@ -43,7 +45,6 @@ internal class CommonViewModel @Inject constructor(
         cryptos.map { CryptoMapper.map(it, pricesContainer[it.id]) }
       }
     )
-
   val cryptosLce = cryptoUseCase.cryptosLce
     .combine(
       flow = cryptoPriceUseCase.cryptoPricesLce,
@@ -72,7 +73,7 @@ internal class CommonViewModel @Inject constructor(
   }
 
   private fun onNetworkAvailable(cryptos: List<Crypto>) {
-    viewModelScope.launch {
+    viewModelScope.launch(dispatchersProvider.IO) {
       cryptoPriceUseCase.fetchPriceFor(cryptos)
     }
   }

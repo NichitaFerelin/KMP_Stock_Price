@@ -79,12 +79,12 @@ internal class ChartFragment : BaseFragment<FragmentChartBinding>() {
 
         networkState
           .flowOn(Dispatchers.Main)
-          .onEach { /*TODO*/ }
+          .onEach { /**/ }
           .launchIn(this)
 
         chartMode
           .flowOn(Dispatchers.Main)
-          .onEach { /*TODO*/ }
+          .onEach { /**/ }
           .launchIn(this)
       }
     }
@@ -95,7 +95,6 @@ internal class ChartFragment : BaseFragment<FragmentChartBinding>() {
   }
 
   private fun onPastPricesLce(lceState: LceState) {
-    // TODO
     when (lceState) {
       is LceState.Content -> Unit
       is LceState.Loading -> Unit
@@ -110,7 +109,6 @@ internal class ChartFragment : BaseFragment<FragmentChartBinding>() {
   }
 
   private fun onStockPriceLce(lceState: LceState) {
-    // TODO
     when (lceState) {
       is LceState.Content -> Unit
       is LceState.Loading -> Unit

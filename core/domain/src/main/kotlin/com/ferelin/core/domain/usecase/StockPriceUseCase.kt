@@ -18,10 +18,10 @@ internal class StockPriceUseCaseImpl @Inject constructor(
   private val stockPriceRepository: StockPriceRepository,
   dispatchersProvider: DispatchersProvider
 ) : StockPriceUseCase {
-  override val stockPrice: Flow<List<StockPrice>> = stockPriceRepository.fetchError
-    .combine(
-      flow = stockPriceRepository.stockPrice,
-      transform = { exception, stockPrices ->
+  override val stockPrice: Flow<List<StockPrice>> = stockPriceRepository.stockPrice
+    .zip(
+      other = stockPriceRepository.fetchError,
+      transform = { stockPrices, exception ->
         if (exception != null) {
           stockPriceLceState.value = LceState.Error(exception.message)
         }

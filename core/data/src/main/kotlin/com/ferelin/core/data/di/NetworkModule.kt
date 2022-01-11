@@ -1,6 +1,7 @@
 package com.ferelin.core.data.di
 
 import android.content.Context
+import android.util.Log
 import com.ferelin.core.data.R
 import com.ferelin.core.data.api.*
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -32,9 +34,7 @@ class NetworkModule {
   ): Retrofit {
     return RetrofitBuilder(
       baseUrl = STOCKS_BASE_URL,
-      httpClient = OkHttpBuilder {
-        this.addInterceptor(StocksTokenInterceptor(token))
-      }.build(),
+      httpClient =  OkHttpBuilder().build(),
       moshi = moshi
     ).build()
   }
@@ -48,9 +48,7 @@ class NetworkModule {
   ): Retrofit {
     return RetrofitBuilder(
       baseUrl = CRYPTOS_BASE_URL,
-      httpClient = OkHttpBuilder {
-        this.addInterceptor(CryptosTokenInterceptor(token))
-      }.build(),
+      httpClient = OkHttpBuilder().build(),
       moshi = moshi
     ).build()
   }
@@ -70,7 +68,9 @@ class NetworkModule {
   @Provides
   @Reusable
   internal fun moshi(): Moshi {
-    return Moshi.Builder().build()
+    return Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .build()
   }
 
   @Provides
@@ -102,12 +102,14 @@ class NetworkModule {
   }
 
   @Provides
+  @Singleton
   internal fun firebaseAuth(): FirebaseAuth {
     return FirebaseAuth.getInstance()
       .apply { useAppLanguage() }
   }
 
   @Provides
+  @Singleton
   internal fun firebaseReference() : DatabaseReference {
     return FirebaseDatabase.getInstance().reference
   }

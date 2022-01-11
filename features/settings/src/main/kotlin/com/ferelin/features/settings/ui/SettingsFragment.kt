@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,7 +49,7 @@ internal class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
   private val requestPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestPermission()
   ) { isGranted: Boolean ->
-    if (!isGranted) {
+    if (isGranted) {
       viewModel.onPermissionsGranted()
     } else {
       showTempSnackbar(getString(R.string.messagePermissionsNotGranted))
@@ -67,6 +68,9 @@ internal class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
       adapter = viewModel.optionsAdapter
       addItemDecoration(OptionDecoration(requireContext()))
     }
+    viewModel.optionsAdapter.setData(
+      data = MenuOptionsProvider.defaultSettings(requireContext())
+    )
   }
 
   override fun initUx() {
@@ -107,20 +111,15 @@ internal class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
   private fun onEvent(event: SettingsEvent) {
     when (event) {
       SettingsEvent.DATA_CLEARED -> Unit
-      SettingsEvent.DATA_CLEARED_NO_NETWORK -> Unit
       SettingsEvent.PATH_ERROR -> Unit
-      SettingsEvent.REQUEST_PATH -> Unit
-      SettingsEvent.REQUEST_PERMISSIONS -> Unit
+      SettingsEvent.REQUEST_PATH -> requestPath()
+      SettingsEvent.REQUEST_PERMISSIONS -> requestPermissions()
     }
   }
 
 
   private fun onNotifyPriceState(notify: Boolean) {
-    if (notify) {
 
-    } else {
-
-    }
   }
 
   private fun onDownloadLce(lceState: LceState) {
@@ -133,11 +132,10 @@ internal class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
   }
 
   private fun onAuthState(isAuthenticated: Boolean) {
-    if (isAuthenticated) {
-
-    } else {
-
-    }
+    viewModel.optionsAdapter.add(
+      position = AUTH_INDEX.toInt(),
+      viewDataType = MenuOptionsProvider.userAuthenticated(requireContext(), isAuthenticated)
+    )
   }
 
   private fun requestPermissions() {

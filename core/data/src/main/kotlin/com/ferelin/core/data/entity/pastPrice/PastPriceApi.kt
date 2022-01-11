@@ -8,11 +8,12 @@ import retrofit2.http.Query
 
 internal interface PastPricesApi {
   @GET("stock/candle")
-  fun load(
+  suspend fun load(
+    @Query("token") token: String,
     @Query("symbol") companyTicker: String,
-    @Query("from") from: Long = PastPricesApiSettings.yearAgoMillis,
-    @Query("to") to: Long = PastPricesApiSettings.currentMillis,
-    @Query("resolution") resolution: String = PastPricesApiSettings.resolution
+    @Query("from") from: Long = PastPricesApiSpecifics.yearAgoMillis,
+    @Query("to") to: Long = PastPricesApiSpecifics.currentMillis,
+    @Query("resolution") resolution: String = PastPricesApiSpecifics.resolution
   ): PastPricesResponse
 }
 
@@ -22,19 +23,23 @@ internal data class PastPricesResponse(
   @Json(name = "t") val timestamps: List<Long>,
 )
 
-internal object PastPricesApiSettings {
+internal object PastPricesApiSpecifics {
   const val resolution = "D"
 
   val currentMillis: Long
-    get() = convertForRequest(System.currentTimeMillis())
+    get() = System.currentTimeMillis().toRequestFormat()
 
   val yearAgoMillis: Long
-    get() = convertForRequest(System.currentTimeMillis() - ONE_YEAR_MILLIS)
+    get() = (System.currentTimeMillis() - ONE_YEAR_MILLIS).toRequestFormat()
 
-  private fun convertForRequest(value: Long): Long {
-    val str = value.toString()
+  fun Long.fromRequestFormat(): Long {
+    return "${this}000".toLong()
+  }
+
+  private fun Long.toRequestFormat(): Long {
+    val str = this.toString()
     return when {
-      str.length < 3 -> value
+      str.length < 3 -> this
       else -> str.substring(0, str.length - 3).toLong()
     }
   }

@@ -6,7 +6,6 @@ import com.ferelin.core.domain.entity.NewsId
 data class NewsViewData(
   val id: NewsId,
   val headline: String,
-  val previewImageUrl: String,
   val source: String,
   val sourceUrl: String,
   val summary: String,
