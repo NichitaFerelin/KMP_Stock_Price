@@ -5,7 +5,7 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.viewData.StockStyle
 import com.ferelin.core.ui.viewData.StockViewData
 
-internal object CompanyMapper {
+object CompanyMapper {
   fun map(
     companies: List<Company>,
     favouriteCompaniesIds: List<CompanyId>

@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 interface PastPricesUseCase {
   fun getAllBy(companyId: CompanyId): Flow<List<PastPrice>>
-  suspend fun fetchPastPrices(companyId: CompanyId)
+  suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String)
   val pastPricesLce: Flow<LceState>
 }
 
@@ -26,8 +26,8 @@ internal class PastPricesUseCaseImpl @Inject constructor(
       .flowOn(dispatchersProvider.IO)
   }
 
-  override suspend fun fetchPastPrices(companyId: CompanyId) {
-    // todo
+  override suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String) {
+    pastPriceRepository.fetchPastPrices(companyId, companyTicker)
   }
 
   private val pastPricesLceState = MutableStateFlow<LceState>(LceState.None)

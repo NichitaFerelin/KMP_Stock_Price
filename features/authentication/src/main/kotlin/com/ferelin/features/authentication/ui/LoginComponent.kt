@@ -1,6 +1,7 @@
 package com.ferelin.features.authentication.ui
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.AuthUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.view.routing.Coordinator
@@ -28,6 +29,7 @@ interface LoginDeps {
   val authUseCase: AuthUseCase
   val coordinator: Coordinator
   val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface LoginDepsProvider {

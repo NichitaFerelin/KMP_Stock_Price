@@ -1,6 +1,7 @@
 package com.ferelin.features.about.ui.news
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.NewsUseCase
 import com.ferelin.core.network.NetworkListener
 import dagger.Component
@@ -26,6 +27,7 @@ internal interface NewsComponent {
 interface NewsDeps {
   val newsUseCase: NewsUseCase
   val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface NewsDepsProvider {

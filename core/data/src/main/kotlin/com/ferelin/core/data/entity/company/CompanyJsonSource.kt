@@ -4,6 +4,7 @@ import android.content.Context
 import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.data.mapper.CompanyMapper
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import javax.inject.Inject
@@ -31,15 +32,15 @@ internal class CompanyJsonSourceImpl @Inject constructor(
 }
 
 internal data class CompanyJson(
-  val name: String,
-  val symbol: String,
-  val logo: String,
-  val country: String,
-  val phone: String,
-  val weburl: String,
-  val finnhubIndustry: String,
-  val currency: String,
-  val marketCapitalization: String
+  @Json(name = "name") val name: String,
+  @Json(name = "symbol") val symbol: String,
+  @Json(name = "logo") val logo: String,
+  @Json(name = "country") val country: String,
+  @Json(name = "phone") val phone: String,
+  @Json(name = "weburl") val webUrl: String,
+  @Json(name = "finnhubIndustry") val industry: String,
+  @Json(name = "currency") val currency: String,
+  @Json(name = "marketCapitalization") val capitalization: String
 )
 
 internal const val COMPANY_JSON_FILE = "companies.json"

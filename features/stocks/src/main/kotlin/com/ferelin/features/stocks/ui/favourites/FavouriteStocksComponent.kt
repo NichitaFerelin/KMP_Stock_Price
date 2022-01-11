@@ -1,6 +1,7 @@
 package com.ferelin.features.stocks.ui.favourites
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.domain.usecase.StockPriceUseCase
@@ -28,9 +29,9 @@ internal interface FavouriteStocksComponent {
 
 interface FavouriteStocksDeps {
   val coordinator: Coordinator
+  val dispatchersProvider: DispatchersProvider
   val stockStyleProvider: StockStyleProvider
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  val stockPriceUseCase: StockPriceUseCase
   val companyUseCase: CompanyUseCase
 }
 

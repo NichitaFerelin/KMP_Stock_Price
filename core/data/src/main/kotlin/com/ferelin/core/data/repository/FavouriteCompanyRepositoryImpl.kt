@@ -1,33 +1,35 @@
 package com.ferelin.core.data.repository
 
+import com.ferelin.core.ExternalScope
 import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApi
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyDao
 import com.ferelin.core.data.mapper.FavouriteCompanyMapper
 import com.ferelin.core.domain.entity.CompanyId
+import com.ferelin.core.domain.repository.AuthUserStateRepository
 import com.ferelin.core.domain.repository.FavouriteCompanyRepository
 import com.ferelin.core.itemsNotIn
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 internal class FavouriteCompanyRepositoryImpl @Inject constructor(
   private val dao: FavouriteCompanyDao,
   private val api: FavouriteCompanyApi,
   private val firebaseAuth: FirebaseAuth,
+  @ExternalScope private val externalScope: CoroutineScope,
+  authUserStateRepository: AuthUserStateRepository
 ) : FavouriteCompanyRepository {
+  init {
+    authUserStateRepository.userToken
+      .filterNot { it.isEmpty() }
+      .onEach(this::onTokenChanged)
+      .launchIn(externalScope)
+  }
+
   override val favouriteCompanies: Flow<List<CompanyId>>
-    get() = api.load(firebaseAuth.uid ?: "")
-      .combine(
-        flow = dao.getAll(),
-        transform = { apiCompaniesResponse, dbCompaniesDBO ->
-          val apiCompanies = FavouriteCompanyMapper.map(apiCompaniesResponse)
-          val dbCompanies = dbCompaniesDBO.map(FavouriteCompanyMapper::map)
-          syncData(apiCompanies, dbCompanies)
-          dbCompanies
-        }
-      )
+    get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
 
   override suspend fun addToFavourite(companyId: CompanyId) {
     checkBackgroundThread()
@@ -55,17 +57,14 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
     }
   }
 
-  private suspend fun syncData(
-    apiCompanies: List<CompanyId>,
-    dbCompanies: List<CompanyId>
-  ) {
-    apiCompanies.itemsNotIn(dbCompanies).forEach {
-      dao.insert(FavouriteCompanyMapper.map(it))
-    }
-    firebaseAuth.uid?.let { userToken ->
-      dbCompanies.itemsNotIn(apiCompanies).forEach {
-        api.putBy(userToken, it.value)
-      }
-    }
+  private suspend fun onTokenChanged(token: String) {
+    val apiResponse = api.load(token).firstOrNull() ?: return
+    val apiFavouriteCompanies = FavouriteCompanyMapper.map(apiResponse)
+    val dbFavouriteCompanies = dao.getAll().firstOrNull() ?: emptyList()
+    dao.insertAll(
+      companies = apiFavouriteCompanies.itemsNotIn(dbFavouriteCompanies)
+    )
+    dbFavouriteCompanies.itemsNotIn(apiFavouriteCompanies)
+      .forEach { api.putBy(token, it.id) }
   }
 }

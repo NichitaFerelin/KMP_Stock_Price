@@ -47,6 +47,14 @@
           }
         },
         {
+          "client_id": "647354253543-jhj6qjkicdtg1g31thn4161fhrbvnopn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ferelin.stockprice",
+            "certificate_hash": "b06ddf680bc2d4a63535bcda3b3982eb56199199"
+          }
+        },
+        {
           "client_id": "647354253543-l9p18l8h4q157d38okss4nf1lbemm2nk.apps.googleusercontent.com",
           "client_type": 3
         }

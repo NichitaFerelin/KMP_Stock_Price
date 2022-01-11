@@ -49,9 +49,6 @@ internal class LoginFragment : BaseFragment<FragmentLoginBinding>() {
       editTextCode.addTextChangedListener { charSequence ->
         viewModel.onCodeChanged(charSequence.toString())
       }
-      editTextPhone.addTextChangedListener { charSequence ->
-        onPhoneChanged(charSequence.toString())
-      }
 
       imageViewBack.setOnClick(viewModel::onBack)
       imageViewIconCheck.setOnClickListener {
@@ -99,26 +96,5 @@ internal class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     } else {
       // notify
     }
-  }
-
-  private fun onPhoneChanged(phone: String) {
-    if (phone.isEmpty()) hideCheckIcon() else showCheckIcon()
-    hideEnterCodeField()
-  }
-
-  private fun hideCheckIcon() {
-    viewBinding.imageViewIconCheck.isVisible = false
-  }
-
-  private fun showCheckIcon() {
-    viewBinding.imageViewIconCheck.isVisible = true
-  }
-
-  private fun showEnterCodeField() {
-    viewBinding.editTextCodeLayout.alpha = 1F
-  }
-
-  private fun hideEnterCodeField() {
-    viewBinding.editTextCodeLayout.alpha = 0F
   }
 }

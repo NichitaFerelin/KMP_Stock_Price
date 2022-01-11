@@ -1,5 +1,6 @@
 package com.ferelin.core.domain.usecase
 
+import android.util.Log
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.LceState

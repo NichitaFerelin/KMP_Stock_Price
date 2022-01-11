@@ -1,6 +1,7 @@
 package com.ferelin.core.data.repository
 
 import android.app.Activity
+import android.util.Log
 import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.domain.repository.AuthRepository
 import com.ferelin.core.domain.repository.AuthState
@@ -13,6 +14,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

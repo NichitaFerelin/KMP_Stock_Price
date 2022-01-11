@@ -1,5 +1,6 @@
 package com.ferelin.core.ui.view.stocks.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -14,8 +15,7 @@ import com.ferelin.core.ui.viewData.StockViewData
 
 fun createStocksAdapter(
   onStockClick: (StockViewData) -> Unit,
-  onFavouriteIconClick: (StockViewData) -> Unit,
-  onBindCallback: (StockViewData, Int) -> Unit
+  onFavouriteIconClick: (StockViewData) -> Unit
 ) = object : RecyclerAdapterDelegate(STOCK_VIEW_TYPE) {
   override fun onCreateViewHolder(parent: ViewGroup): BaseRecyclerViewHolder {
     return StockViewHolder(
@@ -24,10 +24,8 @@ fun createStocksAdapter(
         parent,
         false
       ),
-      onBind = { viewBinding, item, position, payloads ->
+      onBind = { viewBinding, item, _, payloads ->
         item as StockViewData
-
-        onBindCallback.invoke(item, position)
 
         with(viewBinding) {
           if (payloads.isEmpty()) {

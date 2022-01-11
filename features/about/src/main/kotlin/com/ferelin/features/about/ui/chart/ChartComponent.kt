@@ -1,6 +1,7 @@
 package com.ferelin.features.about.ui.chart
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.PastPricesUseCase
 import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.network.NetworkListener
@@ -28,6 +29,7 @@ interface ChartDeps {
   val networkListener: NetworkListener
   val pastPricesUseCase: PastPricesUseCase
   val stockPricesUseCase: StockPriceUseCase
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface ChartDepsProvider {

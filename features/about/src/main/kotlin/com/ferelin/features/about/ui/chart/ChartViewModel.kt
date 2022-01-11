@@ -2,6 +2,7 @@ package com.ferelin.features.about.ui.chart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.PastPricesUseCase
 import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.network.NetworkListener
@@ -14,16 +15,20 @@ import kotlinx.coroutines.flow.*
 
 internal class ChartViewModel(
   private val chartParams: ChartParams,
+  private val dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener,
   pastPricesUseCase: PastPricesUseCase,
   stockPricesUseCase: StockPriceUseCase,
 ) : ViewModel() {
   val networkState = networkListener.networkState
     .distinctUntilChanged()
-    .onEach {
-      stockPricesUseCase.fetchPrice(chartParams.companyId, chartParams.companyTicker)
-      pastPricesUseCase.fetchPastPrices(chartParams.companyId)
+    .onEach { isNetworkAvailable ->
+      if (isNetworkAvailable) {
+        stockPricesUseCase.fetchPrice(chartParams.companyId, chartParams.companyTicker)
+        pastPricesUseCase.fetchPastPrices(chartParams.companyId, chartParams.companyTicker)
+      }
     }
+    .flowOn(dispatchersProvider.IO)
 
   val pastPricesLce = pastPricesUseCase.pastPricesLce
   val pastPrices = pastPricesUseCase.getAllBy(chartParams.companyId)
@@ -48,11 +53,18 @@ internal class ChartViewModelFactory @AssistedInject constructor(
   private val networkListener: NetworkListener,
   private val pastPricesUseCase: PastPricesUseCase,
   private val stockPricesUseCase: StockPriceUseCase,
+  private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-    require(modelClass == ChartViewModel::class)
-    return ChartViewModel(chartParams, networkListener, pastPricesUseCase, stockPricesUseCase) as T
+    require(modelClass == ChartViewModel::class.java)
+    return ChartViewModel(
+      chartParams,
+      dispatchersProvider,
+      networkListener,
+      pastPricesUseCase,
+      stockPricesUseCase
+    ) as T
   }
 
   @AssistedFactory

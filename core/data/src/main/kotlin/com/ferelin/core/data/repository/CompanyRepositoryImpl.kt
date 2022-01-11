@@ -1,8 +1,8 @@
 package com.ferelin.core.data.repository
 
-import com.ferelin.core.data.entity.profile.ProfileDao
 import com.ferelin.core.data.entity.company.CompanyDao
 import com.ferelin.core.data.entity.company.CompanyJsonSource
+import com.ferelin.core.data.entity.profile.ProfileDao
 import com.ferelin.core.data.mapper.CompanyMapper
 import com.ferelin.core.domain.entity.Company
 import com.ferelin.core.domain.repository.CompanyRepository

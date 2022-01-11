@@ -11,6 +11,9 @@ internal interface SearchRequestDao {
   @Query("SELECT * FROM `search_requests`")
   fun getAll(): Flow<List<SearchRequestDBO>>
 
+  @Delete
+  suspend fun erase(searchRequestDBO: SearchRequestDBO)
+
   @Query("DELETE FROM `search_requests`")
   suspend fun eraseAll()
 }

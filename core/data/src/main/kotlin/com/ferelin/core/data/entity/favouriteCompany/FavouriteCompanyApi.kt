@@ -8,6 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import timber.log.Timber
 import javax.inject.Inject
 
 internal interface FavouriteCompanyApi {
@@ -21,24 +22,24 @@ internal class FavouriteCompanyApiImpl @Inject constructor(
   private val firebaseReference: DatabaseReference,
 ) : FavouriteCompanyApi {
   override fun load(userToken: String): Flow<FavouriteCompanyResponse> = callbackFlow {
+    val valueEventListener = object : ValueEventListener {
+      override fun onDataChange(resultSnapshot: DataSnapshot) {
+        val response = FavouriteCompanyResponse(
+          data = resultSnapshot.children.map { idSnapshot ->
+            idSnapshot.key!!.toInt()
+          }
+        )
+        trySend(response)
+      }
+
+      override fun onCancelled(error: DatabaseError) = Unit
+    }
+
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
       .child(userToken)
-      .addValueEventListener(object : ValueEventListener {
-        override fun onDataChange(resultSnapshot: DataSnapshot) {
-          val response = FavouriteCompanyResponse(
-            data = resultSnapshot.children.map { idSnapshot ->
-              idSnapshot.key!!.toInt()
-            }
-          )
-          trySend(response)
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-          // Do nothing
-        }
-      })
-    awaitClose()
+      .addValueEventListener(valueEventListener)
+    awaitClose { firebaseReference.removeEventListener(valueEventListener) }
   }
 
   override fun putBy(userToken: String, companyId: Int) {

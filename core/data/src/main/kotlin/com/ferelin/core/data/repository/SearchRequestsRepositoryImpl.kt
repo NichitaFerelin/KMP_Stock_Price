@@ -4,9 +4,9 @@ import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDBO
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
 import com.ferelin.core.data.mapper.SearchRequestMapper
-import com.ferelin.core.domain.repository.SearchRequestsRepository
 import com.ferelin.core.domain.entity.SearchId
 import com.ferelin.core.domain.entity.SearchRequest
+import com.ferelin.core.domain.repository.SearchRequestsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
@@ -28,6 +28,13 @@ internal class SearchRequestsRepositoryImpl @Inject constructor(
     checkBackgroundThread()
     dao.insert(
       searchRequestsDBO = SearchRequestDBO(request = request)
+    )
+  }
+
+  override suspend fun erase(searchRequest: SearchRequest) {
+    checkBackgroundThread()
+    dao.erase(
+      searchRequestDBO = SearchRequestMapper.map(searchRequest)
     )
   }
 

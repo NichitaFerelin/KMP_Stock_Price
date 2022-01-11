@@ -1,11 +1,9 @@
 package com.ferelin.features.settings.ui
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.AuthUserStateRepository
-import com.ferelin.core.domain.usecase.DownloadProjectUseCase
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
-import com.ferelin.core.domain.usecase.NotifyPriceUseCase
-import com.ferelin.core.domain.usecase.StoragePathUseCase
+import com.ferelin.core.domain.usecase.*
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.AppStorageManager
 import com.ferelin.core.ui.view.routing.Coordinator
@@ -37,6 +35,10 @@ interface SettingsDeps {
   val notifyPriceUseCase: NotifyPriceUseCase
   val storagePathUseCase: StoragePathUseCase
   val downloadProjectUseCase: DownloadProjectUseCase
+  val searchRequestsUseCase: SearchRequestsUseCase
+  val favouriteCompanyUseCase: FavouriteCompanyUseCase
+  val dispatchersProvider: DispatchersProvider
+  val authUseCase: AuthUseCase
 }
 
 interface SettingsDepsProvider {

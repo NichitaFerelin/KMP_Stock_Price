@@ -1,6 +1,7 @@
 package com.ferelin.features.stocks.ui.common
 
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CryptoPriceUseCase
 import com.ferelin.core.domain.usecase.CryptoUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
@@ -31,6 +32,7 @@ interface CommonDeps {
   val coordinator: Coordinator
   val cryptoUseCase: CryptoUseCase
   val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface CommonDepsProvider {

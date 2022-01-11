@@ -2,6 +2,7 @@ package com.ferelin.features.search.ui
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.domain.usecase.SearchRequestsUseCase
@@ -32,8 +33,8 @@ interface SearchDeps {
   val coordinator: Coordinator
   val searchRequestsUseCase: SearchRequestsUseCase
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  val stockPriceUseCase: StockPriceUseCase
   val companyUseCase: CompanyUseCase
+  val dispatchersProvider: DispatchersProvider
 }
 
 interface SearchDepsProvider {

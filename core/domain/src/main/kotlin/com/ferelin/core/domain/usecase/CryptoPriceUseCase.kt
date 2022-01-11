@@ -19,10 +19,10 @@ internal class CryptoPriceUseCaseImpl @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : CryptoPriceUseCase {
   override val cryptoPrices: Flow<List<CryptoPrice>>
-    get() = cryptoPriceRepository.fetchError
-      .combine(
-        flow = cryptoPriceRepository.cryptoPrices,
-        transform = { exception, cryptoPrices ->
+    get() = cryptoPriceRepository.cryptoPrices
+      .zip(
+        other = cryptoPriceRepository.fetchError,
+        transform = { cryptoPrices, exception ->
           if (exception != null) {
             cryptoPricesLceState.value = LceState.Error(exception.message)
           }

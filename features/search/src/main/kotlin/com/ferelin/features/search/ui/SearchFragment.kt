@@ -18,6 +18,7 @@ import com.ferelin.core.ui.view.animManager.MotionManager
 import com.ferelin.core.ui.view.isLandscapeOrientation
 import com.ferelin.core.ui.view.launchAndRepeatWithViewLifecycle
 import com.ferelin.core.ui.view.setOnClick
+import com.ferelin.core.ui.view.stocks.adapter.StockItemDecoration
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseViewModelFactory
 import com.ferelin.features.search.databinding.FragmentSearchBinding
@@ -66,6 +67,10 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
   override fun initUi() {
     with(viewBinding) {
+      recyclerViewSearchResults.apply {
+        adapter = viewModel.stocksAdapter
+        addItemDecoration(StockItemDecoration(requireContext()))
+      }
       recyclerViewSearchedHistory.apply {
         adapter = viewModel.searchRequestsAdapter
         addItemDecoration(provideItemDecoration())
@@ -84,7 +89,7 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     )
     with(viewBinding) {
       imageViewIconClose.setOnClick(this@SearchFragment::onCloseIconClick)
-      imageViewBack.setOnClick(this@SearchFragment::onBackClick)
+      imageViewBack.setOnClick(viewModel::onBack)
 
       editTextSearch.addTextChangedListener {
         onSearchTextChanged(it.toString())
@@ -98,6 +103,11 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         searchResults
           .flowOn(Dispatchers.Main)
           .onEach(this@SearchFragment::onSearchResults)
+          .launchIn(this)
+
+        searchRequest
+          .flowOn(Dispatchers.Main)
+          .onEach(this@SearchFragment::onSearchText)
           .launchIn(this)
 
         searchRequests
@@ -138,6 +148,11 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     viewModel.stocksAdapter.setData(results)
   }
 
+  private fun onSearchText(searchText: String) {
+    viewBinding.editTextSearch.setText(searchText)
+    viewBinding.editTextSearch.setSelection(searchText.length)
+  }
+
   private fun onSearchRequests(searchRequests: List<SearchViewData>) {
     viewModel.searchRequestsAdapter.setData(searchRequests)
   }
@@ -167,19 +182,6 @@ internal class SearchFragment : BaseFragment<FragmentSearchBinding>() {
   private fun onSearchTextChanged(searchText: String) {
     viewModel.onSearchTextChanged(searchText)
     if (searchText.isEmpty()) hideCloseIcon() else showCloseIcon()
-  }
-
-  private fun onBackClick() {
-    if (viewBinding.root.progress == 0F) {
-      viewModel.onBack()
-    } else {
-      viewBinding.root.addTransitionListener(object : MotionManager() {
-        override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-          viewModel.onBack()
-        }
-      })
-      viewBinding.root.transitionToStart()
-    }
   }
 
   private fun hideCloseIcon() {

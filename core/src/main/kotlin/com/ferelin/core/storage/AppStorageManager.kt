@@ -11,7 +11,8 @@ class AppStorageManager @Inject constructor(
 ) {
   fun buildDownloadFile(
     treePath: String,
-    pathAuthority: String
+    pathAuthority: String,
+    fileName: String
   ): File? {
     return try {
       val uriByPath = Uri.Builder()
@@ -20,7 +21,7 @@ class AppStorageManager @Inject constructor(
         .build()
 
       val docFile = DocumentFile.fromTreeUri(context, uriByPath)
-      val filePath = buildFilePath(docFile!!)
+      val filePath = buildFilePath(docFile!!) + "/$fileName.zip"
       File(filePath)
     } catch (e: Exception) {
       null

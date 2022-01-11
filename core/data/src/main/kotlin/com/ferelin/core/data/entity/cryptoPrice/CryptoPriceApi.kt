@@ -7,15 +7,11 @@ import retrofit2.http.Query
 
 internal interface CryptoPriceApi {
   @GET("currencies/ticker")
-  fun load(
+  suspend fun load(
+    @Query("key") token: String,
     @Query("ids") cryptoTickers: String,
-  ): CryptoPriceResponse
+  ): List<CryptoPricePojo>
 }
-
-@JsonClass(generateAdapter = true)
-internal data class CryptoPriceResponse(
-  val data: List<CryptoPricePojo>
-)
 
 @JsonClass(generateAdapter = true)
 internal data class CryptoPricePojo(

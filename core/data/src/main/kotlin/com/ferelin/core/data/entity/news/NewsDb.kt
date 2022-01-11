@@ -21,7 +21,6 @@ internal data class NewsDBO(
   val id: String,
   val companyId: Int,
   val headline: String,
-  val previewImageUrl: String,
   val source: String,
   val sourceUrl: String,
   val summary: String,
