@@ -19,9 +19,22 @@ android {
     versionCode = 12
     versionName = "4.2.0"
   }
+
   buildFeatures.apply {
+    compose = true
     viewBinding = true
   }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion  = Deps.composeVersion
+  }
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+
   buildTypes {
     release {
       isMinifyEnabled = true

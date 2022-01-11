@@ -5,7 +5,7 @@ object Deps {
   const val minSDK = 21
   const val currentSDK = 31
 
-  const val kotlinVersion = "1.6.10"
+  const val kotlinVersion = "1.6.0"
   const val kotlinCoroutinesVersion = "1.5.2"
 
   const val androidCore = "androidx.core:core-ktx:1.7.0"
@@ -21,6 +21,22 @@ object Deps {
   const val viewPager = "androidx.viewpager2:viewpager2:1.0.0"
   const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
   const val material = "com.google.android.material:material:1.5.0-rc01"
+
+  const val composeVersion = "1.1.0-rc01"
+  const val composeUi = "androidx.compose.ui:ui:$composeVersion"
+  const val composeUtil = "androidx.compose.ui:ui-util:$composeVersion"
+  const val composeMaterial = "androidx.compose.material:material:$composeVersion"
+  const val composeMaterialIcons = "androidx.compose.material:material-icons-core:$composeVersion"
+  const val composeTooling = "androidx.compose.ui:ui-tooling:$composeVersion"
+  const val composeRuntime = "androidx.compose.runtime:runtime:$composeVersion"
+
+  private const val accompanistVersion = "0.22.0-rc"
+  const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"
+  const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+  const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
+  const val accompanistPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
+  const val accompanistSwipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
+  const val accompanistFlowLayout = "com.google.accompanist:accompanist-flowlayout:$accompanistVersion"
 
   private const val daggerVersion = "2.40.5"
   const val dagger = "com.google.dagger:dagger:$daggerVersion"
