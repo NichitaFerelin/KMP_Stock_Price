@@ -22,7 +22,6 @@ android {
 
   buildFeatures.apply {
     compose = true
-    viewBinding = true
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -53,7 +52,6 @@ dependencies {
   api(project(":core:ui"))
   api(project(":core:domain"))
   api(project(":core:data"))
-  implementation(project(":navigation"))
   implementation(project(":features:about"))
   implementation(project(":features:authentication"))
   implementation(project(":features:search"))

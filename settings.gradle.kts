@@ -1,7 +1,6 @@
 rootProject.name = "Stock Price"
 include(
   ":app",
-  ":navigation",
   ":core",
   ":core:ui",
   ":core:data",

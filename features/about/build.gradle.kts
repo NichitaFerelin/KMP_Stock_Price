@@ -8,14 +8,22 @@ plugins {
 
 android {
   compileSdk = Deps.currentSDK
+
   defaultConfig {
     minSdk = Deps.minSDK
   }
-  buildFeatures {
-    viewBinding = true
+  buildFeatures.apply {
+    compose = true
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion  = Deps.composeVersion
   }
   kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = "1.8"
   }
 }
 
