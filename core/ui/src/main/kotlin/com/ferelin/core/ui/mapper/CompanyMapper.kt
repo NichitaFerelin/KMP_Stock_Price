@@ -2,7 +2,6 @@ package com.ferelin.core.ui.mapper
 
 import com.ferelin.core.domain.entity.Company
 import com.ferelin.core.domain.entity.CompanyId
-import com.ferelin.core.ui.viewData.StockStyle
 import com.ferelin.core.ui.viewData.StockViewData
 
 object CompanyMapper {
@@ -19,7 +18,6 @@ object CompanyMapper {
         ticker = company.ticker,
         logoUrl = company.logoUrl,
         isFavourite = isFavourite,
-        style = StockStyle(),
         stockPriceViewData = null
       )
     }
