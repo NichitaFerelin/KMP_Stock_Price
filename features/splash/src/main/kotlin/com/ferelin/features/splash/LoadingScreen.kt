@@ -13,7 +13,7 @@ import com.ferelin.features.splash.component.LoadingItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun LoadingScreen() {
+fun LoadingScreen() {
   Column(
     modifier = Modifier
       .statusBarsPadding()

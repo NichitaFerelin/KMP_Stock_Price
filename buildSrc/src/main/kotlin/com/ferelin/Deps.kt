@@ -30,6 +30,8 @@ object Deps {
   const val composeMaterialIcons = "androidx.compose.material:material-icons-core:$composeVersion"
   const val composeTooling = "androidx.compose.ui:ui-tooling:$composeVersion"
   const val composeRuntime = "androidx.compose.runtime:runtime:$composeVersion"
+  const val composeActivity = "androidx.activity:activity-compose:$composeVersion"
+  const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
 
   private const val accompanistVersion = "0.22.0-rc"
   const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"

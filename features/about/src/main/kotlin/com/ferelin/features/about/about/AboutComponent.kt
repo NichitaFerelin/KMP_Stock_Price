@@ -10,7 +10,7 @@ import kotlin.properties.Delegates
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class AboutScope
+internal annotation class AboutScope
 
 @AboutScope
 @Component(dependencies = [AboutDeps::class])
@@ -18,7 +18,7 @@ interface AboutComponent {
   @Component.Builder
   interface Builder {
     @BindsInstance
-    fun aboutParams(aboutParams: AboutParams): Builder
+    fun params(aboutParams: AboutParams): Builder
 
     fun dependencies(deps: AboutDeps): Builder
     fun build(): AboutComponent
@@ -30,14 +30,4 @@ interface AboutComponent {
 interface AboutDeps {
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
   val dispatchersProvider: DispatchersProvider
-}
-
-interface AboutDepsProvider {
-  var deps: AboutDeps
-
-  companion object : AboutDepsProvider by AboutDepsStore
-}
-
-object AboutDepsStore : AboutDepsProvider {
-  override var deps: AboutDeps by Delegates.notNull()
 }

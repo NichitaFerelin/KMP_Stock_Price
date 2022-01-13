@@ -2,6 +2,7 @@ package com.ferelin.features.authentication
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.AuthState
@@ -18,7 +19,7 @@ data class LoginStateUi(
   val showNetworkError: Boolean = false
 )
 
-class LoginViewModel @Inject constructor(
+class LoginViewModel(
   private val authUseCase: AuthUseCase,
   private val dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener,
@@ -79,5 +80,17 @@ internal fun AuthState.isProcessing(): Boolean {
   return when (this) {
     AuthState.None, AuthState.Error -> true
     else -> false
+  }
+}
+
+class LoginViewModelFactory @Inject constructor(
+  private val authUseCase: AuthUseCase,
+  private val networkListener: NetworkListener,
+  private val dispatchersProvider: DispatchersProvider
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == LoginViewModel::class.java)
+    return LoginViewModel(authUseCase, dispatchersProvider, networkListener) as T
   }
 }

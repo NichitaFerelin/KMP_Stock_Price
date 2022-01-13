@@ -1,6 +1,7 @@
 package com.ferelin.features.stocks.common
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
@@ -19,7 +20,7 @@ data class CommonStateUi(
   val selectedScreenIndex: Int = STOCKS_INDEX
 )
 
-class CommonViewModel @Inject constructor(
+class CommonViewModel(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val dispatchersProvider: DispatchersProvider,
   cryptoUseCase: CryptoUseCase,
@@ -85,5 +86,18 @@ class CommonViewModel @Inject constructor(
     viewModelScope.launch(dispatchersProvider.IO) {
       cryptoPriceUseCase.fetchPriceFor(cryptos)
     }
+  }
+}
+
+class CommonViewModelFactory @Inject constructor(
+  private val cryptoPriceUseCase: CryptoPriceUseCase,
+  private val cryptoUseCase: CryptoUseCase,
+  private val networkListener: NetworkListener,
+  private val dispatchersProvider: DispatchersProvider
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == CommonViewModel::class.java)
+    return CommonViewModel(cryptoPriceUseCase, dispatchersProvider, cryptoUseCase, networkListener) as T
   }
 }

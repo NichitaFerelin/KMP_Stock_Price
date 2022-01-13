@@ -19,7 +19,7 @@ import com.ferelin.core.ui.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun LoginRoute(loginViewModel: LoginViewModel) {
+fun LoginRoute(loginViewModel: LoginViewModel) {
   val uiState by loginViewModel.uiState.collectAsState()
 
   LoginScreen(

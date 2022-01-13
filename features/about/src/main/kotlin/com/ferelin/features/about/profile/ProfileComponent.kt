@@ -11,11 +11,11 @@ import kotlin.properties.Delegates
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ProfileScope
+internal annotation class ProfileScope
 
 @ProfileScope
 @Component(dependencies = [ProfileDeps::class])
-internal interface ProfileComponent {
+interface ProfileComponent {
   @Component.Builder
   interface Builder {
     @BindsInstance
@@ -32,14 +32,4 @@ interface ProfileDeps {
   val profileUseCase: ProfileUseCase
   val companyUseCase: CompanyUseCase
   val dispatchersProvider: DispatchersProvider
-}
-
-interface ProfileDepsProvider {
-  var deps: ProfileDeps
-
-  companion object : ProfileDepsProvider by ProfileDepsStore
-}
-
-object ProfileDepsStore : ProfileDepsProvider {
-  override var deps: ProfileDeps by Delegates.notNull()
 }
