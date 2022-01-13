@@ -1,5 +1,7 @@
 package com.ferelin.features.stocks.defaults
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -15,7 +17,7 @@ data class StocksStateUi(
   val companiesLce: LceState = LceState.None
 )
 
-class StocksViewModel @Inject constructor(
+class StocksViewModel(
   companyUseCase: CompanyUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
@@ -43,5 +45,17 @@ class StocksViewModel @Inject constructor(
 
   private fun onCompaniesLce(lceState: LceState) {
     viewModelState.update { it.copy(companiesLce = lceState) }
+  }
+}
+
+class StocksViewModelFactory @Inject constructor(
+  private val dispatchersProvider: DispatchersProvider,
+  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
+  private val companyUseCase: CompanyUseCase
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == StocksViewModel::class.java)
+    return StocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

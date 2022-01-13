@@ -14,13 +14,13 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-internal data class NewsStateUi(
+data class NewsStateUi(
   val news: List<NewsViewData> = emptyList(),
   val newsLce: LceState = LceState.None,
   val showNetworkError: Boolean = false
 )
 
-internal class NewsViewModel(
+class NewsViewModel(
   private val newsParams: NewsParams,
   dispatchersProvider: DispatchersProvider,
   private val newsUseCase: NewsUseCase,

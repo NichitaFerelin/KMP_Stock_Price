@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-internal data class ChartScreenStateUi(
+data class ChartScreenStateUi(
   val stockPrice: String = "",
   val stockPriceLce: LceState = LceState.None,
   val stockProfit: String = "",
@@ -25,7 +25,7 @@ internal data class ChartScreenStateUi(
   val showNetworkError: Boolean = false
 )
 
-internal class ChartViewModel(
+class ChartViewModel(
   private val chartParams: ChartParams,
   dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener,

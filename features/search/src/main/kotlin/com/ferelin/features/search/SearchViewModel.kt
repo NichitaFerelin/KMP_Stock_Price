@@ -1,5 +1,7 @@
 package com.ferelin.features.search
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -23,7 +25,7 @@ data class SearchStateUi(
   val popularSearchRequestsLce: LceState = LceState.None
 )
 
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
   private val searchRequestsUseCase: SearchRequestsUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   companyUseCase: CompanyUseCase,
@@ -132,5 +134,23 @@ internal fun List<StockViewData>.filterBySearch(searchText: String): List<StockV
       || item.ticker
       .lowercase(Locale.ROOT)
       .contains(searchText.lowercase(Locale.ROOT))
+  }
+}
+
+class SearchViewModelFactory @Inject constructor(
+  private val searchRequestsUseCase: SearchRequestsUseCase,
+  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
+  private val companyUseCase: CompanyUseCase,
+  private val dispatchersProvider: DispatchersProvider
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == SearchViewModel::class.java)
+    return SearchViewModel(
+      searchRequestsUseCase,
+      favouriteCompanyUseCase,
+      companyUseCase,
+      dispatchersProvider
+    ) as T
   }
 }

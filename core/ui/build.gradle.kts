@@ -46,6 +46,8 @@ dependencies {
   api(Deps.composeMaterialIcons)
   api(Deps.composeTooling)
   api(Deps.composeRuntime)
+  api(Deps.composeActivity)
+  api(Deps.composeNavigation)
 
   api(Deps.accompanistInsets)
   api(Deps.accompanistSystemUiController)

@@ -1,19 +1,27 @@
 package com.ferelin.stockprice
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.rememberNavController
+import com.ferelin.core.ui.theme.AppTheme
+import com.ferelin.stockprice.navigation.AppNavigationGraph
 
-class MainActivity : AppCompatActivity() {
+internal class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    injectDeps()
+    setContent { StockPriceApp() }
   }
 
-  private fun injectDeps() {
-    application.let { app ->
-      if (app is App) {
-        app.appComponent.inject(this)
-      }
+  @Composable
+  private fun StockPriceApp() {
+    AppTheme {
+      val navController = rememberNavController()
+      AppNavigationGraph(
+        navHostController = navController,
+        appComponent = (application as App).appComponent
+      )
     }
   }
 }
