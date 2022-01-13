@@ -1,6 +1,7 @@
 package com.ferelin.features.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -22,7 +23,7 @@ data class SettingsStateUi(
   val requestPath: Boolean = false
 )
 
-class SettingsViewModel @Inject constructor(
+class SettingsViewModel(
   private val notifyPriceUseCase: NotifyPriceUseCase,
   private val storagePathUseCase: StoragePathUseCase,
   private val downloadProjectUseCase: DownloadProjectUseCase,
@@ -126,3 +127,33 @@ internal val StoragePath.isValid: Boolean
   get() = this.path.isNotEmpty() && this.authority.isNotEmpty()
 
 internal const val DOWNLOAD_FILE_NAME = "Stock-Price"
+
+class SettingsViewModelFactory @Inject constructor(
+  private val permissionManager: PermissionManager,
+  private val storageManager: AppStorageManager,
+  private val authUserStateRepository: AuthUserStateRepository,
+  private val notifyPriceUseCase: NotifyPriceUseCase,
+  private val storagePathUseCase: StoragePathUseCase,
+  private val downloadProjectUseCase: DownloadProjectUseCase,
+  private val searchRequestsUseCase: SearchRequestsUseCase,
+  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
+  private val dispatchersProvider: DispatchersProvider,
+  private val authUseCase: AuthUseCase
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == SettingsViewModel::class.java)
+    return SettingsViewModel(
+      notifyPriceUseCase,
+      storagePathUseCase,
+      downloadProjectUseCase,
+      permissionManager,
+      storageManager,
+      favouriteCompanyUseCase,
+      searchRequestsUseCase,
+      authUseCase,
+      dispatchersProvider,
+      authUserStateRepository
+    ) as T
+  }
+}

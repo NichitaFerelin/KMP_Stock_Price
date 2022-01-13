@@ -11,7 +11,7 @@ import kotlin.properties.Delegates
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class NewsScope
+internal annotation class NewsScope
 
 @NewsScope
 @Component(dependencies = [NewsDeps::class])
@@ -32,14 +32,4 @@ interface NewsDeps {
   val newsUseCase: NewsUseCase
   val networkListener: NetworkListener
   val dispatchersProvider: DispatchersProvider
-}
-
-interface NewsDepsProvider {
-  var deps: NewsDeps
-
-  companion object : NewsDepsProvider by NewsDepsStore
-}
-
-object NewsDepsStore : NewsDepsProvider {
-  override var deps: NewsDeps by Delegates.notNull()
 }

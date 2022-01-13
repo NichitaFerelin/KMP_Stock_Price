@@ -19,7 +19,7 @@ import com.ferelin.features.settings.ui.component.SettingsItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun SettingsRoute(settingsViewModel: SettingsViewModel) {
+fun SettingsRoute(settingsViewModel: SettingsViewModel) {
   val uiState by settingsViewModel.uiState.collectAsState()
 
   SettingsScreen(

@@ -1,5 +1,7 @@
 package com.ferelin.features.stocks.favourites
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -7,6 +9,7 @@ import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
+import com.ferelin.features.stocks.defaults.StocksViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -15,7 +18,7 @@ data class FavouriteStocksStateUi(
   val companiesLce: LceState = LceState.None
 )
 
-class FavouriteStocksViewModel @Inject constructor(
+class FavouriteStocksViewModel(
   companyUseCase: CompanyUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
@@ -50,5 +53,17 @@ class FavouriteStocksViewModel @Inject constructor(
 internal fun Flow<List<StockViewData>>.filterFavouritesOnly(): Flow<List<StockViewData>> {
   return this.map { companies ->
     companies.filter { stock -> stock.isFavourite }
+  }
+}
+
+class FavouriteStocksViewModelFactory @Inject constructor(
+  private val dispatchersProvider: DispatchersProvider,
+  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
+  private val companyUseCase: CompanyUseCase
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == FavouriteStocksViewModel::class.java)
+    return FavouriteStocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

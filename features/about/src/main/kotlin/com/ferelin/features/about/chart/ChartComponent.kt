@@ -12,7 +12,7 @@ import kotlin.properties.Delegates
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ChartScope
+internal annotation class ChartScope
 
 @ChartScope
 @Component(dependencies = [ChartDeps::class])
@@ -20,7 +20,7 @@ interface ChartComponent {
   @Component.Builder
   interface Builder {
     @BindsInstance
-    fun chartParams(chartParams: ChartParams): Builder
+    fun params(chartParams: ChartParams): Builder
 
     fun dependencies(deps: ChartDeps): Builder
     fun build(): ChartComponent
@@ -34,14 +34,4 @@ interface ChartDeps {
   val pastPricesUseCase: PastPricesUseCase
   val stockPricesUseCase: StockPriceUseCase
   val dispatchersProvider: DispatchersProvider
-}
-
-interface ChartDepsProvider {
-  var deps: ChartDeps
-
-  companion object : ChartDepsProvider by ChartDepsStore
-}
-
-object ChartDepsStore : ChartDepsProvider {
-  override var deps: ChartDeps by Delegates.notNull()
 }

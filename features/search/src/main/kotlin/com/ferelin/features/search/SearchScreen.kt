@@ -22,7 +22,7 @@ import com.ferelin.features.search.ui.component.SearchItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun SearchRoute(searchViewModel: SearchViewModel) {
+fun SearchRoute(searchViewModel: SearchViewModel) {
   val uiState by searchViewModel.uiState.collectAsState()
 
   SearchScreen(

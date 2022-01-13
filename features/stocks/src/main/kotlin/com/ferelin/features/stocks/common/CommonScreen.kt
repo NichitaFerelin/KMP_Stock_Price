@@ -24,7 +24,7 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-internal fun CommonRoute(commonViewModel: CommonViewModel) {
+fun CommonRoute(commonViewModel: CommonViewModel) {
   val uiState by commonViewModel.uiState.collectAsState()
 
   CommonScreen(
