@@ -1,14 +1,5 @@
 package com.ferelin.core.ui.viewData.utils
 
-import java.util.*
-import kotlin.concurrent.timerTask
-
-fun withTimer(time: Long = 200L, body: () -> Unit) {
-  Timer().schedule(timerTask {
-    body.invoke()
-  }, time)
-}
-
 /*
 * buildProfitString (100.0, 50.0) = "+$50.0 (50,0%)"
 * */

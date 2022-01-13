@@ -21,6 +21,7 @@ object Deps {
   const val viewPager = "androidx.viewpager2:viewpager2:1.0.0"
   const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
   const val material = "com.google.android.material:material:1.5.0-rc01"
+  const val viewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
 
   const val composeVersion = "1.1.0-rc01"
   const val composeUi = "androidx.compose.ui:ui:$composeVersion"

@@ -15,7 +15,6 @@ android {
   }
   buildFeatures.apply {
     compose = true
-    viewBinding = true
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -39,6 +38,7 @@ dependencies {
   api(Deps.viewPager)
   api(Deps.constraintLayout)
   api(Deps.material)
+  api(Deps.viewModelCompose)
 
   api(Deps.composeUi)
   api(Deps.composeUtil)
