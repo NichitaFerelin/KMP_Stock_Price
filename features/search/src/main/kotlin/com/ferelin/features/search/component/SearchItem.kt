@@ -1,4 +1,4 @@
-package com.ferelin.features.search.ui.component
+package com.ferelin.features.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +22,6 @@ internal fun SearchItem(
   Box(
     modifier = modifier
       .height(30.dp)
-      .background(AppTheme.colors.backgroundSecondary)
       .clip(RoundedCornerShape(35.dp))
       .clickable(onClick = onClick),
     contentAlignment = Alignment.Center

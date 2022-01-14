@@ -25,7 +25,7 @@ fun AppTheme(
   val sysUiController = rememberSystemUiController()
   SideEffect {
     sysUiController.setSystemBarsColor(
-      color = Color.Transparent,
+      color = colors.statusBar,
       darkIcons = !useDarkTheme,
     )
   }
@@ -37,19 +37,10 @@ fun AppTheme(
     CompositionLocalProvider(
       LocalAppColors provides colorPalette,
       LocalAppTypography provides typography,
-      LocalContentColor provides colors.textPrimary,
-      LocalTextSelectionColors provides textSelectionColors(colors),
       LocalRippleTheme provides AppRippleTheme(colors),
       content = content,
     )
   }
-}
-
-private fun textSelectionColors(colors: AppColors): TextSelectionColors {
-  return TextSelectionColors(
-    handleColor = colors.contendAccentPrimary,
-    backgroundColor = colors.contendAccentPrimary.copy(alpha = 0.4f)
-  )
 }
 
 object AppTheme {

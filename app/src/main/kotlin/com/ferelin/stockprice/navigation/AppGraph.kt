@@ -24,8 +24,23 @@ internal fun AppNavigationGraph(
 ) {
   NavHost(
     navController = navHostController,
-    startDestination = AboutDestination.key
+    startDestination = SplashDestination.key
   ) {
+    composable(route = SplashDestination.key) {
+      LoadingScreen()
+    }
+    composable(route = StocksDestination.key) {
+      CommonRoute(commonDeps = appComponent)
+    }
+    composable(route = SettingsDestination.key) {
+      SettingsRoute(settingsDeps = appComponent)
+    }
+    composable(route = AuthenticationDestination.key) {
+      LoginRoute(loginDeps = appComponent)
+    }
+    composable(route = SearchDestination.key) {
+      SearchRoute(searchDeps = appComponent)
+    }
     composable(
       route = AboutDestination.key,
       arguments = listOf(
@@ -43,31 +58,6 @@ internal fun AppNavigationGraph(
         aboutDeps = appComponent,
         aboutParams = AboutParams(CompanyId(id), ticker, name)
       )
-    }
-    composable(
-      route = AuthenticationDestination.key
-    ) {
-      LoginRoute(loginDeps = appComponent)
-    }
-    composable(
-      route = SearchDestination.key
-    ) {
-      SearchRoute(searchDeps = appComponent)
-    }
-    composable(
-      route = SettingsDestination.key
-    ) {
-      SettingsRoute(settingsDeps = appComponent)
-    }
-    composable(
-      route = SplashDestination.key
-    ) {
-      LoadingScreen()
-    }
-    composable(
-      route = StocksDestination.key
-    ) {
-      CommonRoute(commonDeps = appComponent)
     }
   }
 }

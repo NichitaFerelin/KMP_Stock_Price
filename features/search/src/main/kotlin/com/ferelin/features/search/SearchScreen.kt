@@ -19,7 +19,7 @@ import com.ferelin.core.ui.R
 import com.ferelin.core.ui.component.SearchField
 import com.ferelin.core.ui.component.StockItem
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.search.ui.component.SearchItem
+import com.ferelin.features.search.component.SearchItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
