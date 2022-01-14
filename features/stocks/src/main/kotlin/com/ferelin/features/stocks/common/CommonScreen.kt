@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.component.SearchField
 import com.ferelin.core.ui.theme.AppTheme
@@ -24,12 +25,19 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-fun CommonRoute(commonViewModel: CommonViewModel) {
-  val uiState by commonViewModel.uiState.collectAsState()
+fun CommonRoute(commonDeps: CommonDeps) {
+  val commonComponent = DaggerCommonComponent.builder()
+    .dependencies(commonDeps)
+    .build()
+
+  val viewModel: CommonViewModel by viewModel(
+    factory = commonComponent.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   CommonScreen(
     commonStateUi = uiState,
-    onScreenSelected = commonViewModel::onScreenSelected,
+    onScreenSelected = viewModel::onScreenSelected,
     onSearchFieldClick = { }
   )
 }

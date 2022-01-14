@@ -1,6 +1,5 @@
 package com.ferelin.features.search
 
-import android.content.Context
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
@@ -14,14 +13,14 @@ internal annotation class SearchScope
 
 @SearchScope
 @Component(dependencies = [SearchDeps::class])
-interface SearchComponent {
+internal interface SearchComponent {
   @Component.Builder
   interface Builder {
     fun dependencies(deps: SearchDeps): Builder
     fun build(): SearchComponent
   }
 
-  fun viewModelFactory() : SearchViewModelFactory
+  fun viewModelFactory(): SearchViewModelFactory
 }
 
 interface SearchDeps {

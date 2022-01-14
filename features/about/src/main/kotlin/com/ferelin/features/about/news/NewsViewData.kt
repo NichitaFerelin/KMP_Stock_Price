@@ -2,7 +2,7 @@ package com.ferelin.features.about.news
 
 import com.ferelin.core.domain.entity.NewsId
 
-data class NewsViewData(
+internal data class NewsViewData(
   val id: NewsId,
   val headline: String,
   val source: String,

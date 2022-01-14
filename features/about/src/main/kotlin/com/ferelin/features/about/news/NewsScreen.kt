@@ -7,11 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ferelin.core.ui.params.NewsParams
 import com.ferelin.features.about.news.component.NewsItem
 
 @Composable
-internal fun NewsRoute(newsViewModel: NewsViewModel) {
-  val uiState by newsViewModel.uiState.collectAsState()
+internal fun NewsRoute(deps: NewsDeps, params: NewsParams) {
+  val component = DaggerNewsComponent.builder()
+    .dependencies(deps)
+    .newsParams(params)
+    .build()
+
+  val viewModel: NewsViewModel by viewModel(
+    factory = component.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   NewsScreen(
     newsStateUi = uiState,

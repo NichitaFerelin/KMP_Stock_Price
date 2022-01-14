@@ -15,7 +15,7 @@ internal annotation class ProfileScope
 
 @ProfileScope
 @Component(dependencies = [ProfileDeps::class])
-interface ProfileComponent {
+internal interface ProfileComponent {
   @Component.Builder
   interface Builder {
     @BindsInstance
