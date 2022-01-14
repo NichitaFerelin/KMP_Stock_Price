@@ -10,17 +10,19 @@ internal class AppRippleTheme(private val colors: AppColors): RippleTheme {
 
   @Composable
   override fun defaultColor(): Color {
-    return RippleTheme.defaultRippleColor(
+    return RippleTheme.defaultRippleColor(Color.Magenta, !colors.isDark)
+  /*RippleTheme.defaultRippleColor(
       colors.contendAccentPrimary,
       lightTheme = !colors.isDark
-    )
+    )*/
   }
 
   @Composable
   override fun rippleAlpha(): RippleAlpha {
-    return RippleTheme.defaultRippleAlpha(
+    return RippleTheme.defaultRippleAlpha(Color.Magenta, !colors.isDark)
+  /*RippleTheme.defaultRippleAlpha(
       colors.contendAccentPrimary,
       lightTheme = !colors.isDark
-    )
+    )*/
   }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.stockprice.navigation.AppNavigationGraph
+import com.google.accompanist.insets.ProvideWindowInsets
 
 internal class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,11 +18,13 @@ internal class MainActivity : AppCompatActivity() {
   @Composable
   private fun StockPriceApp() {
     AppTheme {
-      val navController = rememberNavController()
-      AppNavigationGraph(
-        navHostController = navController,
-        appComponent = (application as App).appComponent
-      )
+      ProvideWindowInsets(consumeWindowInsets = true) {
+        val navController = rememberNavController()
+        AppNavigationGraph(
+          navHostController = navController,
+          appComponent = (application as App).appComponent
+        )
+      }
     }
   }
 }

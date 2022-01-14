@@ -63,7 +63,6 @@ internal fun ProfileScreen(
     Spacer(modifier = Modifier.height(4.dp))
     Divider(
       modifier = Modifier.fillMaxWidth(),
-      color = AppTheme.colors.backgroundSecondary
     )
     Spacer(modifier = Modifier.height(8.dp))
 
