@@ -12,7 +12,7 @@ internal annotation class StocksScope
 
 @StocksScope
 @Component(dependencies = [StocksDeps::class])
-interface StocksComponent {
+internal interface StocksComponent {
   @Component.Builder
   interface Builder {
     fun dependencies(deps: StocksDeps): Builder

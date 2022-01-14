@@ -1,4 +1,4 @@
-package com.ferelin.features.about.about
+package com.ferelin.features.about
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class AboutStateUi(
+internal data class AboutStateUi(
   val companyTicker: String,
   val companyName: String,
   val isFavourite: Boolean = false,
   val selectedScreenIndex: Int = PROFILE_INDEX
 )
 
-class AboutViewModel(
+internal class AboutViewModel(
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val dispatchersProvider: DispatchersProvider,
   private val aboutParams: AboutParams,
@@ -73,7 +73,7 @@ class AboutViewModel(
   }
 }
 
-class AboutViewModelFactory @Inject constructor(
+internal class AboutViewModelFactory @Inject constructor(
   private val params: AboutParams,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val dispatchersProvider: DispatchersProvider

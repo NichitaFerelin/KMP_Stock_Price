@@ -15,18 +15,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun LoginRoute(loginViewModel: LoginViewModel) {
-  val uiState by loginViewModel.uiState.collectAsState()
+fun LoginRoute(loginDeps: LoginDeps) {
+  val component = DaggerLoginComponent.builder()
+    .dependencies(loginDeps)
+    .build()
+
+  val viewModel: LoginViewModel by viewModel(
+    factory = component.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   LoginScreen(
     loginStateUi = uiState,
     onSendCodeClick = { },
-    onPhoneChanged = loginViewModel::onPhoneChanged,
-    onCodeChanged = loginViewModel::onCodeChanged
+    onPhoneChanged = viewModel::onPhoneChanged,
+    onCodeChanged = viewModel::onCodeChanged
   )
 }
 

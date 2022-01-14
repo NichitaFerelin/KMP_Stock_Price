@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.settings.ui.component.SettingsDivider
@@ -19,15 +20,22 @@ import com.ferelin.features.settings.ui.component.SettingsItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun SettingsRoute(settingsViewModel: SettingsViewModel) {
-  val uiState by settingsViewModel.uiState.collectAsState()
+fun SettingsRoute(settingsDeps: SettingsDeps) {
+  val component = DaggerSettingsComponent.builder()
+    .dependencies(settingsDeps)
+    .build()
+
+  val viewModel: SettingsViewModel by viewModel(
+    factory = component.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   SettingsScreen(
     settingsStateUi = uiState,
-    onLogOutClick = settingsViewModel::onLogOutClick,
-    onClearDataClick = settingsViewModel::onClearDataClick,
-    onDownloadCodeClick = settingsViewModel::onDownloadCodeClick,
-    onPermissionsGranted = settingsViewModel::onPermissionsGranted
+    onLogOutClick = viewModel::onLogOutClick,
+    onClearDataClick = viewModel::onClearDataClick,
+    onDownloadCodeClick = viewModel::onDownloadCodeClick,
+    onPermissionsGranted = viewModel::onPermissionsGranted
   )
 }
 

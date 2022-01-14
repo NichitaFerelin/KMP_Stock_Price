@@ -1,4 +1,4 @@
-package com.ferelin.features.about.about
+package com.ferelin.features.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,13 +7,22 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.params.AboutParams
+import com.ferelin.core.ui.params.ChartParams
+import com.ferelin.core.ui.params.NewsParams
+import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
+import com.ferelin.features.about.chart.ChartRoute
+import com.ferelin.features.about.news.NewsRoute
+import com.ferelin.features.about.profile.ProfileRoute
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -21,13 +30,33 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-fun AboutRoute(aboutViewModel: AboutViewModel) {
+fun AboutRoute(aboutDeps: AboutDeps, aboutParams: AboutParams) {
+  val aboutComponent = DaggerAboutComponent.builder()
+    .dependencies(aboutDeps)
+    .params(aboutParams)
+    .build()
+
+  val aboutViewModel: AboutViewModel = viewModel(
+    factory = aboutComponent.viewModelFactory()
+  )
   val uiState by aboutViewModel.uiState.collectAsState()
 
   AboutScreen(
     aboutStateUi = uiState,
     onFavouriteIconClick = aboutViewModel::switchFavourite,
-    onScreenTabClicked = aboutViewModel::onScreenSelected
+    onScreenTabClicked = aboutViewModel::onScreenSelected,
+    onProfileRoute = {
+      val params = remember { ProfileParams(aboutParams.companyId) }
+      ProfileRoute(deps = aboutDeps, params = params)
+    },
+    onChartRoute = {
+      val params = remember { ChartParams(aboutParams.companyId, aboutParams.companyTicker) }
+      ChartRoute(chartDeps = aboutDeps, chartParams = params)
+    },
+    onNewsRoute = {
+      val params = remember { NewsParams(aboutParams.companyId, aboutParams.companyTicker) }
+      NewsRoute(deps = aboutDeps, params = params)
+    }
   )
 }
 
@@ -35,7 +64,10 @@ fun AboutRoute(aboutViewModel: AboutViewModel) {
 internal fun AboutScreen(
   aboutStateUi: AboutStateUi,
   onFavouriteIconClick: () -> Unit,
-  onScreenTabClicked: (Int) -> Unit
+  onScreenTabClicked: (Int) -> Unit,
+  onProfileRoute: @Composable () -> Unit,
+  onChartRoute: @Composable () -> Unit,
+  onNewsRoute: @Composable () -> Unit
 ) {
   Column(
     modifier = Modifier
@@ -54,7 +86,10 @@ internal fun AboutScreen(
     )
     ScreensPager(
       selectedScreenIndex = aboutStateUi.selectedScreenIndex,
-      onScreenTabClicked = onScreenTabClicked
+      onScreenTabClicked = onScreenTabClicked,
+      onProfileRoute = onProfileRoute,
+      onChartRoute = onChartRoute,
+      onNewsRoute = onNewsRoute
     )
   }
 }
@@ -107,7 +142,10 @@ private fun TopBar(
 @Composable
 private fun ScreensPager(
   selectedScreenIndex: Int,
-  onScreenTabClicked: (Int) -> Unit
+  onScreenTabClicked: (Int) -> Unit,
+  onProfileRoute: @Composable () -> Unit,
+  onChartRoute: @Composable () -> Unit,
+  onNewsRoute: @Composable () -> Unit
 ) {
   val pagerState = rememberPagerState(initialPage = selectedScreenIndex)
 
@@ -166,9 +204,9 @@ private fun ScreensPager(
     state = pagerState
   ) { pageIndex ->
     when (pageIndex) {
-      PROFILE_INDEX -> {}
-      CHART_INDEX -> {}
-      NEWS_INDEX -> {}
+      PROFILE_INDEX -> onProfileRoute()
+      CHART_INDEX -> onChartRoute()
+      NEWS_INDEX -> onNewsRoute()
       else -> error("There is no screen for the screen index [$pageIndex]")
     }
   }

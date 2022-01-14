@@ -12,7 +12,7 @@ internal annotation class LoginScope
 
 @LoginScope
 @Component(dependencies = [LoginDeps::class])
-interface LoginComponent {
+internal interface LoginComponent {
   @Component.Builder
   interface Builder {
     fun dependencies(deps: LoginDeps): Builder

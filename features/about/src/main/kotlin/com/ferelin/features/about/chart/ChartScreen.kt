@@ -10,18 +10,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.ui.component.ChartButton
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun ChartRoute(chartViewModel: ChartViewModel) {
-  val uiState by chartViewModel.uiState.collectAsState()
+internal fun ChartRoute(chartDeps: ChartDeps, chartParams: ChartParams) {
+  val component = DaggerChartComponent.builder()
+    .dependencies(chartDeps)
+    .params(chartParams)
+    .build()
+  val viewModel: ChartViewModel by viewModel(
+    factory = component.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   ChartScreen(
     chartScreenStateUi = uiState,
-    onChartModeSelected = chartViewModel::onChartModeSelect
+    onChartModeSelected = viewModel::onChartModeSelect
   )
 }
 
