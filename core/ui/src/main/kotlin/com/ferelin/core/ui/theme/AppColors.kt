@@ -8,37 +8,30 @@ import androidx.compose.ui.graphics.Color
 
 @Stable
 class AppColors(
+  statusBar: Color,
   backgroundPrimary: Color,
-  backgroundSecondary: Color,
   contendPrimary: Color,
   contendSecondary: Color,
-  contendTertiary: Color,
-  contendAccentPrimary: Color,
-  contendAccentSecondary: Color,
-  contendAccentTertiary: Color,
   textPrimary: Color,
   textSecondary: Color,
   textTertiary: Color,
   indicatorContendError: Color,
   indicatorContendDone: Color,
-  primaryButton: Color,
+  buttonPrimary: Color,
+  buttonSecondary: Color,
+  iconActive: Color,
+  iconDisabled: Color,
+  textPositive: Color,
+  textNegative: Color,
   isDark: Boolean,
 ) {
-  var backgroundPrimary by mutableStateOf(backgroundPrimary)
+  var statusBar by mutableStateOf(statusBar)
     private set
-  var backgroundSecondary by mutableStateOf(backgroundSecondary)
+  var backgroundPrimary by mutableStateOf(backgroundPrimary)
     private set
   var contendPrimary by mutableStateOf(contendPrimary)
     private set
   var contendSecondary by mutableStateOf(contendSecondary)
-    private set
-  var contendTertiary by mutableStateOf(contendTertiary)
-    private set
-  var contendAccentPrimary by mutableStateOf(contendAccentPrimary)
-    private set
-  var contendAccentSecondary by mutableStateOf(contendAccentSecondary)
-    private set
-  var contendAccentTertiary by mutableStateOf(contendAccentTertiary)
     private set
   var textPrimary by mutableStateOf(textPrimary)
     private set
@@ -50,26 +43,36 @@ class AppColors(
     private set
   var indicatorContendDone by mutableStateOf(indicatorContendDone)
     private set
-  var primaryButton by mutableStateOf(primaryButton)
+  var buttonPrimary by mutableStateOf(buttonPrimary)
+    private set
+  var buttonSecondary by mutableStateOf(buttonSecondary)
+    private set
+  var iconActive by mutableStateOf(iconActive)
+    private set
+  var iconDisabled by mutableStateOf(iconDisabled)
+    private set
+  var textPositive by mutableStateOf(textPositive)
+    private set
+  var textNegative by mutableStateOf(textNegative)
     private set
   var isDark by mutableStateOf(isDark)
     private set
 
   fun update(other: AppColors) {
     backgroundPrimary = other.backgroundPrimary
-    backgroundSecondary = other.backgroundSecondary
     contendPrimary = other.contendPrimary
     contendSecondary = other.contendSecondary
-    contendTertiary = other.contendTertiary
-    contendAccentPrimary = other.contendAccentPrimary
-    contendAccentSecondary = other.contendAccentSecondary
-    contendAccentTertiary = other.contendAccentTertiary
     textPrimary = other.textPrimary
     textSecondary = other.textSecondary
     textTertiary = other.textTertiary
     indicatorContendError = other.indicatorContendError
     indicatorContendDone = other.indicatorContendDone
-    primaryButton = other.primaryButton
+    buttonPrimary = other.buttonPrimary
+    buttonSecondary = other.buttonSecondary
+    iconActive = other.iconActive
+    iconDisabled = other.iconDisabled
+    textPositive = other.textPositive
+    textNegative = other.textNegative
     isDark = other.isDark
   }
 }
