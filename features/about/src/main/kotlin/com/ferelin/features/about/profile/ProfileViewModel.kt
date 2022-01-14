@@ -11,12 +11,12 @@ import com.ferelin.core.ui.params.ProfileParams
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-data class ProfileStateUi(
+internal data class ProfileStateUi(
   val profile: ProfileViewData = ProfileViewData(),
   val profileLce: LceState = LceState.None
 )
 
-class ProfileViewModel(
+internal class ProfileViewModel(
   profileParams: ProfileParams,
   profileUseCase: ProfileUseCase,
   companyUseCase: CompanyUseCase,
@@ -51,7 +51,7 @@ class ProfileViewModel(
   }
 }
 
-class ProfileViewModelFactory @Inject constructor(
+internal class ProfileViewModelFactory @Inject constructor(
   private val profileParams: ProfileParams,
   private val profileUseCase: ProfileUseCase,
   private val companyUseCase: CompanyUseCase,

@@ -1,6 +1,6 @@
 package com.ferelin.features.about.chart
 
-enum class ChartViewMode {
+internal enum class ChartViewMode {
   All,
   Year,
   SixMonths,
@@ -9,7 +9,7 @@ enum class ChartViewMode {
   Days
 }
 
-data class PastPriceViewData(
+internal data class PastPriceViewData(
   val closePrice: Double,
   val closePriceStr: String,
   val month: String,
@@ -17,7 +17,7 @@ data class PastPriceViewData(
   val date: String
 )
 
-data class ChartPastPrices(
+internal data class ChartPastPrices(
   val prices: List<Double> = emptyList(),
   val pricesStr: List<String> = emptyList(),
   val dates: List<String> = emptyList()

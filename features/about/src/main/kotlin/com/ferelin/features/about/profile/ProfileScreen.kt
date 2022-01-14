@@ -11,14 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.ui.component.ProfileInfoRow
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-internal fun ProfileRoute(profileViewModel: ProfileViewModel) {
-  val uiState by profileViewModel.uiState.collectAsState()
+internal fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
+  val component = DaggerProfileComponent.builder()
+    .dependencies(deps)
+    .profileParams(params)
+    .build()
+
+  val viewModel: ProfileViewModel by viewModel(
+    factory = component.viewModelFactory()
+  )
+  val uiState by viewModel.uiState.collectAsState()
 
   ProfileScreen(
     profileStateUi = uiState,

@@ -12,14 +12,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class LoginStateUi(
+internal data class LoginStateUi(
   val inputPhone: String = "",
   val inputCode: String = "",
   val authState: AuthState = AuthState.None,
   val showNetworkError: Boolean = false
 )
 
-class LoginViewModel(
+internal class LoginViewModel(
   private val authUseCase: AuthUseCase,
   private val dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener,

@@ -14,7 +14,7 @@ internal annotation class SettingsScope
 
 @SettingsScope
 @Component(dependencies = [SettingsDeps::class])
-interface SettingsComponent {
+internal interface SettingsComponent {
   @Component.Builder
   interface Builder {
     fun dependencies(deps: SettingsDeps): Builder

@@ -14,7 +14,7 @@ import com.ferelin.core.domain.usecase.*
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.AppStorageManager
-import com.ferelin.features.about.about.AboutDeps
+import com.ferelin.features.about.AboutDeps
 import com.ferelin.features.about.chart.ChartDeps
 import com.ferelin.features.about.news.NewsDeps
 import com.ferelin.features.about.profile.ProfileDeps
@@ -42,9 +42,6 @@ import javax.inject.Singleton
 )
 interface AppComponent :
   AboutDeps,
-  ProfileDeps,
-  ChartDeps,
-  NewsDeps,
   LoginDeps,
   SearchDeps,
   SettingsDeps,

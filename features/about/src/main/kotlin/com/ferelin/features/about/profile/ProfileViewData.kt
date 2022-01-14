@@ -1,6 +1,6 @@
 package com.ferelin.features.about.profile
 
-data class ProfileViewData(
+internal data class ProfileViewData(
   val companyName: String = "",
   val logoUrl: String = "",
   val country: String = "",

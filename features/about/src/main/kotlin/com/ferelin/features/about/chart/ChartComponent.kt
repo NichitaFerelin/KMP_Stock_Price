@@ -16,7 +16,7 @@ internal annotation class ChartScope
 
 @ChartScope
 @Component(dependencies = [ChartDeps::class])
-interface ChartComponent {
+internal interface ChartComponent {
   @Component.Builder
   interface Builder {
     @BindsInstance
