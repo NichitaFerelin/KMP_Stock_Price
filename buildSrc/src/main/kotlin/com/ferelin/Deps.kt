@@ -45,9 +45,7 @@ object Deps {
   const val dagger = "com.google.dagger:dagger:$daggerVersion"
   const val daggerCompilerKapt = "com.google.dagger:dagger-compiler:$daggerVersion"
 
-  private const val glideVersion = "4.12.0"
-  const val glide = "com.github.bumptech.glide:glide:$glideVersion"
-  const val glideCompilerKapt = "com.github.bumptech.glide:compiler:$glideVersion"
+  const val glideCompose = "com.github.skydoves:landscapist-glide:1.4.5"
 
   const val roomVersion = "2.4.0"
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"

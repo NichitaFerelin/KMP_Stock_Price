@@ -11,5 +11,5 @@ internal sealed class Destination(val key: String) {
   object AuthenticationDestination : Destination("authentication")
   object SearchDestination : Destination("search")
   object SettingsDestination : Destination("settings")
-  object StocksDestination : Destination("stocks")
+  object OverviewDestination : Destination("overview")
 }

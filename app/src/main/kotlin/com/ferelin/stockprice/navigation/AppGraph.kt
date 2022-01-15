@@ -13,7 +13,7 @@ import com.ferelin.features.authentication.LoginRoute
 import com.ferelin.features.search.SearchRoute
 import com.ferelin.features.settings.SettingsRoute
 import com.ferelin.features.splash.LoadingScreen
-import com.ferelin.features.stocks.common.CommonRoute
+import com.ferelin.features.stocks.overview.OverviewRoute
 import com.ferelin.stockprice.di.AppComponent
 import com.ferelin.stockprice.navigation.Destination.*
 
@@ -24,25 +24,42 @@ internal fun AppNavigationGraph(
 ) {
   NavHost(
     navController = navHostController,
-    startDestination = SplashDestination.key
+    startDestination = OverviewDestination.key
   ) {
     composable(route = SplashDestination.key) {
-      LoadingScreen()
+      LoadingScreen {
+        navHostController.navigate(OverviewDestination.key)
+      }
     }
-    composable(route = StocksDestination.key) {
-      CommonRoute(commonDeps = appComponent)
+    composable(route = OverviewDestination.key) {
+      OverviewRoute(
+        deps = appComponent,
+        onSettingsRoute = { navHostController.navigate(route = SettingsDestination.key) },
+        onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
+        onStockRoute = {
+          navHostController.navigate(
+            route = AboutDestination.key +
+              "/${it.id.value}" +
+              "/${it.name}" +
+              "/${it.ticker}"
+          )
+        }
+      )
     }
     composable(route = SettingsDestination.key) {
-      SettingsRoute(settingsDeps = appComponent)
+      SettingsRoute(deps = appComponent)
     }
     composable(route = AuthenticationDestination.key) {
-      LoginRoute(loginDeps = appComponent)
+      LoginRoute(deps = appComponent)
     }
     composable(route = SearchDestination.key) {
-      SearchRoute(searchDeps = appComponent)
+      SearchRoute(deps = appComponent)
     }
     composable(
-      route = AboutDestination.key,
+      route = AboutDestination.key +
+        "/{${AboutDestination.ARG_ID}}" +
+        "/{${AboutDestination.ARG_NAME}}" +
+        "/{${AboutDestination.ARG_TICKER}}",
       arguments = listOf(
         navArgument(AboutDestination.ARG_ID) { type = NavType.IntType },
         navArgument(AboutDestination.ARG_NAME) { type = NavType.StringType },
@@ -55,8 +72,8 @@ internal fun AppNavigationGraph(
       val ticker = requireNotNull(args.getString(AboutDestination.ARG_TICKER))
 
       AboutRoute(
-        aboutDeps = appComponent,
-        aboutParams = AboutParams(CompanyId(id), ticker, name)
+        deps = appComponent,
+        params = AboutParams(CompanyId(id), ticker, name)
       )
     }
   }

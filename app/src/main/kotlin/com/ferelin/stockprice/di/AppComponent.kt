@@ -15,15 +15,10 @@ import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.AppStorageManager
 import com.ferelin.features.about.AboutDeps
-import com.ferelin.features.about.chart.ChartDeps
-import com.ferelin.features.about.news.NewsDeps
-import com.ferelin.features.about.profile.ProfileDeps
 import com.ferelin.features.authentication.LoginDeps
 import com.ferelin.features.search.SearchDeps
 import com.ferelin.features.settings.SettingsDeps
-import com.ferelin.features.stocks.common.CommonDeps
-import com.ferelin.features.stocks.defaults.StocksDeps
-import com.ferelin.features.stocks.favourites.FavouriteStocksDeps
+import com.ferelin.features.stocks.overview.OverviewDeps
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -45,9 +40,8 @@ interface AppComponent :
   LoginDeps,
   SearchDeps,
   SettingsDeps,
-  CommonDeps,
-  StocksDeps,
-  FavouriteStocksDeps {
+  OverviewDeps {
+
   override val favouriteCompanyUseCase: FavouriteCompanyUseCase
   override val dispatchersProvider: DispatchersProvider
   override val networkListener: NetworkListener
