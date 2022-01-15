@@ -1,5 +1,6 @@
-package com.ferelin.features.stocks.common
+package com.ferelin.features.stocks.overview
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,20 +14,21 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CommonStateUi(
+@Immutable
+internal data class OverviewStateUi(
   val cryptos: List<CryptoViewData> = emptyList(),
   val cryptosLce: LceState = LceState.None,
   val showNetworkError: Boolean = false,
-  val selectedScreenIndex: Int = STOCKS_INDEX
+  val selectedScreenIndex: Int = DEFAULT_STOCKS_INDEX
 )
 
-class CommonViewModel(
+internal class OverviewViewModel(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val dispatchersProvider: DispatchersProvider,
   cryptoUseCase: CryptoUseCase,
   networkListener: NetworkListener
 ) : ViewModel() {
-  private val viewModelState = MutableStateFlow(CommonStateUi())
+  private val viewModelState = MutableStateFlow(OverviewStateUi())
   val uiState = viewModelState.asStateFlow()
 
   init {
@@ -89,7 +91,7 @@ class CommonViewModel(
   }
 }
 
-class CommonViewModelFactory @Inject constructor(
+internal class OverviewViewModelFactory @Inject constructor(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val cryptoUseCase: CryptoUseCase,
   private val networkListener: NetworkListener,
@@ -97,7 +99,7 @@ class CommonViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-    require(modelClass == CommonViewModel::class.java)
-    return CommonViewModel(cryptoPriceUseCase, dispatchersProvider, cryptoUseCase, networkListener) as T
+    require(modelClass == OverviewViewModel::class.java)
+    return OverviewViewModel(cryptoPriceUseCase, dispatchersProvider, cryptoUseCase, networkListener) as T
   }
 }

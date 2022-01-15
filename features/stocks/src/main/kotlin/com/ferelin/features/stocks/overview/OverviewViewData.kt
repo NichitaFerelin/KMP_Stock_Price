@@ -1,9 +1,10 @@
-package com.ferelin.features.stocks.common
+package com.ferelin.features.stocks.overview
 
-import androidx.annotation.ColorRes
+import androidx.compose.runtime.Immutable
 import com.ferelin.core.domain.entity.CryptoId
 
-data class CryptoViewData(
+@Immutable
+internal data class CryptoViewData(
   val id: CryptoId,
   val name: String,
   val logoUrl: String,
