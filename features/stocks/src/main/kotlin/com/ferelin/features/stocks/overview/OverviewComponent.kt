@@ -1,31 +1,30 @@
-package com.ferelin.features.stocks.common
+package com.ferelin.features.stocks.overview
 
-import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CryptoPriceUseCase
 import com.ferelin.core.domain.usecase.CryptoUseCase
 import com.ferelin.core.network.NetworkListener
-import com.ferelin.features.stocks.defaults.StocksDeps
+import com.ferelin.features.stocks.defaults.DefaultStocksDeps
 import com.ferelin.features.stocks.favourites.FavouriteStocksDeps
 import dagger.Component
 import javax.inject.Scope
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-internal annotation class CommonScope
+internal annotation class OverviewScope
 
-@CommonScope
-@Component(dependencies = [CommonDeps::class])
-internal interface CommonComponent {
+@OverviewScope
+@Component(dependencies = [OverviewDeps::class])
+internal interface OverviewComponent {
   @Component.Builder
   interface Builder {
-    fun dependencies(deps: CommonDeps): Builder
-    fun build(): CommonComponent
+    fun dependencies(deps: OverviewDeps): Builder
+    fun build(): OverviewComponent
   }
 
-  fun viewModelFactory() : CommonViewModelFactory
+  fun viewModelFactory(): OverviewViewModelFactory
 }
 
-interface CommonDeps : StocksDeps, FavouriteStocksDeps {
+interface OverviewDeps : DefaultStocksDeps, FavouriteStocksDeps {
   val cryptoPriceUseCase: CryptoPriceUseCase
   val cryptoUseCase: CryptoUseCase
   val networkListener: NetworkListener

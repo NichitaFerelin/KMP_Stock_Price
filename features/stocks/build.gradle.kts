@@ -30,9 +30,6 @@ android {
 dependencies {
   implementation(project(":core:ui"))
 
-  implementation(Deps.glide)
-  kapt(Deps.glideCompilerKapt)
-
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)
 }

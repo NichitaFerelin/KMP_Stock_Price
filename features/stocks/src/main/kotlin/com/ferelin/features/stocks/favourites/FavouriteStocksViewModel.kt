@@ -1,5 +1,6 @@
 package com.ferelin.features.stocks.favourites
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,16 +10,16 @@ import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
-import com.ferelin.features.stocks.defaults.StocksViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-data class FavouriteStocksStateUi(
+@Immutable
+internal data class FavouriteStocksStateUi(
   val companies: List<StockViewData> = emptyList(),
   val companiesLce: LceState = LceState.None
 )
 
-class FavouriteStocksViewModel(
+internal class FavouriteStocksViewModel(
   companyUseCase: CompanyUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
@@ -56,7 +57,7 @@ internal fun Flow<List<StockViewData>>.filterFavouritesOnly(): Flow<List<StockVi
   }
 }
 
-class FavouriteStocksViewModelFactory @Inject constructor(
+internal class FavouriteStocksViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val companyUseCase: CompanyUseCase
