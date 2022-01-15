@@ -29,6 +29,7 @@
     <string name="titleNotificationChannelUpdates">Stock price updates</string>
 
     <!-- Errors -->
+    <string name="errorDownload">Data loading error</string>
     <string name="errorNoAppToResolve">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
     <string name="errorUndefined">Undefined error</string>

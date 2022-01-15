@@ -4,25 +4,23 @@ import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.ferelin.core.ui.theme.AppColors
 
-internal class AppRippleTheme(private val colors: AppColors): RippleTheme {
-
+internal class AppRippleTheme(
+  private val colors: AppColors
+) : RippleTheme {
   @Composable
   override fun defaultColor(): Color {
-    return RippleTheme.defaultRippleColor(Color.Magenta, !colors.isDark)
-  /*RippleTheme.defaultRippleColor(
+    return RippleTheme.defaultRippleColor(
       colors.contendAccentPrimary,
       lightTheme = !colors.isDark
-    )*/
+    )
   }
 
   @Composable
   override fun rippleAlpha(): RippleAlpha {
-    return RippleTheme.defaultRippleAlpha(Color.Magenta, !colors.isDark)
-  /*RippleTheme.defaultRippleAlpha(
+    return RippleTheme.defaultRippleAlpha(
       colors.contendAccentPrimary,
       lightTheme = !colors.isDark
-    )*/
+    )
   }
 }

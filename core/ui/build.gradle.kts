@@ -39,6 +39,7 @@ dependencies {
   api(Deps.constraintLayout)
   api(Deps.material)
   api(Deps.viewModelCompose)
+  api(Deps.glideCompose)
 
   api(Deps.composeUi)
   api(Deps.composeUtil)
@@ -53,9 +54,6 @@ dependencies {
   api(Deps.accompanistSystemUiController)
   api(Deps.accompanistPager)
   api(Deps.accompanistPagerIndicators)
-
-  implementation(Deps.glide)
-  kapt(Deps.glideCompilerKapt)
 
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)

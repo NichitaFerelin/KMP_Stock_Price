@@ -9,9 +9,11 @@ import androidx.compose.ui.graphics.Color
 @Stable
 class AppColors(
   statusBar: Color,
+  contendAccentPrimary: Color,
   backgroundPrimary: Color,
   contendPrimary: Color,
   contendSecondary: Color,
+  contendTertiary: Color,
   textPrimary: Color,
   textSecondary: Color,
   textTertiary: Color,
@@ -27,11 +29,15 @@ class AppColors(
 ) {
   var statusBar by mutableStateOf(statusBar)
     private set
+  var contendAccentPrimary by mutableStateOf(contendAccentPrimary)
+    private set
   var backgroundPrimary by mutableStateOf(backgroundPrimary)
     private set
   var contendPrimary by mutableStateOf(contendPrimary)
     private set
   var contendSecondary by mutableStateOf(contendSecondary)
+    private set
+  var contendTertiary by mutableStateOf(contendTertiary)
     private set
   var textPrimary by mutableStateOf(textPrimary)
     private set
@@ -60,8 +66,10 @@ class AppColors(
 
   fun update(other: AppColors) {
     backgroundPrimary = other.backgroundPrimary
+    contendAccentPrimary = other.contendAccentPrimary
     contendPrimary = other.contendPrimary
     contendSecondary = other.contendSecondary
+    contendTertiary = other.contendTertiary
     textPrimary = other.textPrimary
     textSecondary = other.textSecondary
     textTertiary = other.textTertiary
