@@ -8,21 +8,21 @@ import javax.inject.Scope
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-internal annotation class StocksScope
+internal annotation class DefaultStocksScope
 
-@StocksScope
-@Component(dependencies = [StocksDeps::class])
-internal interface StocksComponent {
+@DefaultStocksScope
+@Component(dependencies = [DefaultStocksDeps::class])
+internal interface DefaultStocksComponent {
   @Component.Builder
   interface Builder {
-    fun dependencies(deps: StocksDeps): Builder
-    fun build(): StocksComponent
+    fun dependencies(deps: DefaultStocksDeps): Builder
+    fun build(): DefaultStocksComponent
   }
 
-  fun viewModelFactory(): StocksViewModelFactory
+  fun viewModelFactory(): DefaultStocksViewModelFactory
 }
 
-interface StocksDeps {
+interface DefaultStocksDeps {
   val dispatchersProvider: DispatchersProvider
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
   val companyUseCase: CompanyUseCase

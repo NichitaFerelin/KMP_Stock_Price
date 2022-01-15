@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.favourites
+package com.ferelin.features.stocks.defaults
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,25 +8,28 @@ import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.features.stocks.components.StocksList
 
 @Composable
-fun FavouriteStocksRoute(deps: FavouriteStocksDeps) {
-  val component = DaggerFavouriteStocksComponent.builder()
+fun DefaultStocksRoute(
+  deps: DefaultStocksDeps,
+  onStockRoute: (StockViewData) -> Unit
+) {
+  val component = DaggerDefaultStocksComponent.builder()
     .dependencies(deps)
     .build()
-  val viewModel = viewModel<FavouriteStocksViewModel>(
+  val viewModel = viewModel<DefaultStocksViewModel>(
     factory = component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 
-  FavouriteStocksScreen(
+  DefaultStocksScreen(
     uiState = uiState,
     onFavouriteIconClick = viewModel::onFavouriteIconClick,
-    onStockClick = { }
+    onStockClick = onStockRoute
   )
 }
 
 @Composable
-private fun FavouriteStocksScreen(
-  uiState: FavouriteStocksStateUi,
+private fun DefaultStocksScreen(
+  uiState: DefaultStocksStateUi,
   onFavouriteIconClick: (StockViewData) -> Unit,
   onStockClick: (StockViewData) -> Unit
 ) {

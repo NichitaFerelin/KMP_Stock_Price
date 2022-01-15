@@ -1,7 +1,9 @@
 package com.ferelin.core.ui.viewData
 
+import androidx.compose.runtime.Immutable
 import com.ferelin.core.domain.entity.CompanyId
 
+@Immutable
 data class StockViewData(
   val id: CompanyId,
   val name: String,
@@ -11,6 +13,7 @@ data class StockViewData(
   val stockPriceViewData: StockPriceViewData?,
 )
 
+@Immutable
 data class StockPriceViewData(
   val price: String,
   val profit: String,

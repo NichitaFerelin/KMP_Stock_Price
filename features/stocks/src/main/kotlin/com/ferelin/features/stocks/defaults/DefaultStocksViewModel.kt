@@ -1,5 +1,7 @@
 package com.ferelin.features.stocks.defaults
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,12 +14,13 @@ import com.ferelin.core.ui.viewModel.BaseStocksViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-data class StocksStateUi(
+@Immutable
+internal data class DefaultStocksStateUi(
   val companies: List<StockViewData> = emptyList(),
   val companiesLce: LceState = LceState.None
 )
 
-class StocksViewModel(
+internal class DefaultStocksViewModel(
   companyUseCase: CompanyUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
@@ -26,7 +29,7 @@ class StocksViewModel(
   favouriteCompanyUseCase,
   dispatchersProvider
 ) {
-  private val viewModelState = MutableStateFlow(StocksStateUi())
+  private val viewModelState = MutableStateFlow(DefaultStocksStateUi())
   val uiState = viewModelState.asStateFlow()
 
   init {
@@ -48,14 +51,14 @@ class StocksViewModel(
   }
 }
 
-class StocksViewModelFactory @Inject constructor(
+internal class DefaultStocksViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val companyUseCase: CompanyUseCase
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-    require(modelClass == StocksViewModel::class.java)
-    return StocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
+    require(modelClass == DefaultStocksViewModel::class.java)
+    return DefaultStocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

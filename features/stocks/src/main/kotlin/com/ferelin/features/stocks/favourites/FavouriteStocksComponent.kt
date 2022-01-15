@@ -8,11 +8,11 @@ import javax.inject.Scope
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-internal annotation class StocksScope
+internal annotation class FavouriteStocksScope
 
-@StocksScope
+@FavouriteStocksScope
 @Component(dependencies = [FavouriteStocksDeps::class])
-interface FavouriteStocksComponent {
+internal interface FavouriteStocksComponent {
   @Component.Builder
   interface Builder {
     fun dependencies(deps: FavouriteStocksDeps): Builder
