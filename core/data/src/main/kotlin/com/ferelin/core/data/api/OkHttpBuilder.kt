@@ -24,4 +24,4 @@ internal class OkHttpBuilder {
 }
 
 internal const val HTTP_CONNECT_TIMEOUT = 60_000L
-internal val HTTP_LOG_LEVEL = if (BuildConfig.RELEASE) Level.NONE else Level.BASIC
+internal val HTTP_LOG_LEVEL = if (BuildConfig.DEBUG) Level.BASIC else Level.NONE

@@ -1,7 +1,6 @@
 package com.ferelin.core.data.repository
 
 import com.ferelin.core.ExternalScope
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApi
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyDao
 import com.ferelin.core.data.mapper.FavouriteCompanyMapper
@@ -32,7 +31,6 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
     get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
 
   override suspend fun addToFavourite(companyId: CompanyId) {
-    checkBackgroundThread()
     dao.insert(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.putBy(userToken, companyId.value)
@@ -40,7 +38,6 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
   }
 
   override suspend fun removeFromFavourite(companyId: CompanyId) {
-    checkBackgroundThread()
     dao.erase(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.eraseBy(userToken, companyId.value)
@@ -48,7 +45,6 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
   }
 
   override suspend fun eraseAll(clearCloud: Boolean) {
-    checkBackgroundThread()
     dao.eraseAll()
     if (clearCloud) {
       firebaseAuth.uid?.let { userToken ->

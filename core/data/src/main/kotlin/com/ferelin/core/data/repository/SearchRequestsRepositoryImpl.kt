@@ -1,6 +1,5 @@
 package com.ferelin.core.data.repository
 
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDBO
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
 import com.ferelin.core.data.mapper.SearchRequestMapper
@@ -25,21 +24,18 @@ internal class SearchRequestsRepositoryImpl @Inject constructor(
     get() = Mock.popularSearchRequests()
 
   override suspend fun add(request: String) {
-    checkBackgroundThread()
     dao.insert(
       searchRequestsDBO = SearchRequestDBO(request = request)
     )
   }
 
   override suspend fun erase(searchRequest: SearchRequest) {
-    checkBackgroundThread()
     dao.erase(
       searchRequestDBO = SearchRequestMapper.map(searchRequest)
     )
   }
 
   override suspend fun eraseAll() {
-    checkBackgroundThread()
     dao.eraseAll()
   }
 }
