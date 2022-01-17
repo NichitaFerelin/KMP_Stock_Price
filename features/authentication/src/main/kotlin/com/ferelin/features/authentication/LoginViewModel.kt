@@ -83,7 +83,7 @@ internal fun AuthState.isProcessing(): Boolean {
   }
 }
 
-class LoginViewModelFactory @Inject constructor(
+internal class LoginViewModelFactory @Inject constructor(
   private val authUseCase: AuthUseCase,
   private val networkListener: NetworkListener,
   private val dispatchersProvider: DispatchersProvider
