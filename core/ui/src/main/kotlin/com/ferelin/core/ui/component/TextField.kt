@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
@@ -41,6 +43,13 @@ fun TextField(
     keyboardActions = keyboardActions,
     singleLine = true,
     maxLines = 1,
+    leadingIcon = {
+      Icon(
+        painter = painterResource(id = R.drawable.ic_close_24),
+        contentDescription = "",
+        tint = AppTheme.colors.backgroundPrimary
+      )
+    },
     placeholder = {
       Text(
         text = placeholder,
@@ -69,8 +78,8 @@ fun TextField(
       errorLeadingIconColor = Color.Transparent,
       errorTrailingIconColor = Color.Transparent,
       trailingIconColor = Color.Transparent,
-      focusedLabelColor =  AppTheme.colors.contendAccentPrimary,
-      unfocusedLabelColor =  AppTheme.colors.contendAccentPrimary
+      focusedLabelColor = AppTheme.colors.contendAccentPrimary,
+      unfocusedLabelColor = AppTheme.colors.contendAccentPrimary
     )
   )
 }
