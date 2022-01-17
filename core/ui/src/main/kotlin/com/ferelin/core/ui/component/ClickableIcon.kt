@@ -12,7 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
@@ -40,5 +43,19 @@ fun ClickableIcon(
         tint = tint
       )
     }
+  }
+}
+
+@Preview
+@Composable
+private fun ClickableIconPreview() {
+  AppTheme {
+    ClickableIcon(
+      backgroundColor = AppTheme.colors.backgroundPrimary,
+      painter = painterResource(id = R.drawable.ic_close_24),
+      tint = AppTheme.colors.buttonPrimary,
+      contentDescription = "",
+      onClick = { /**/ }
+    )
   }
 }
