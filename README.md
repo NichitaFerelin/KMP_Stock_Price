@@ -22,9 +22,18 @@ Google Play[XML VERSION]: [Stock Price](https://play.google.com/store/apps/detai
 - Firebase Realtime Db
 - Firebase Authorization
 
+
+## Compose UI
 <p float="middle">
 <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/Preview_1.gif" height="400" width = "200"/>
 <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/Preview_2.gif" height="400" width = "200"/>
+</p>
+
+## XML Version
+<p float="middle">
+<img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
+  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
+  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
 </p>
 
 
