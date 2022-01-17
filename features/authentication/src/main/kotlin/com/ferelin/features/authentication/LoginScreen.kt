@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
+  ExperimentalComposeUiApi::class
+)
 
 package com.ferelin.features.authentication
 
@@ -14,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -38,9 +41,11 @@ fun LoginRoute(
   deps: LoginDeps,
   onBackRoute: () -> Unit
 ) {
-  val component = DaggerLoginComponent.builder()
-    .dependencies(deps)
-    .build()
+  val component = remember {
+    DaggerLoginComponent.builder()
+      .dependencies(deps)
+      .build()
+  }
   val viewModel = viewModel<LoginViewModel>(
     factory = component.viewModelFactory()
   )

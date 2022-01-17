@@ -8,10 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,9 +29,11 @@ fun SettingsRoute(
   onLogInRoute: () -> Unit,
   onBackRoute: () -> Unit
 ) {
-  val component = DaggerSettingsComponent.builder()
-    .dependencies(deps)
-    .build()
+  val component = remember {
+    DaggerSettingsComponent.builder()
+      .dependencies(deps)
+      .build()
+  }
   val viewModel = viewModel<SettingsViewModel>(
     factory = component.viewModelFactory()
   )

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,10 +17,12 @@ import com.ferelin.features.about.components.NewsItem
 
 @Composable
 fun NewsRoute(deps: NewsDeps, params: NewsParams) {
-  val component = DaggerNewsComponent.builder()
-    .dependencies(deps)
-    .newsParams(params)
-    .build()
+  val component = remember {
+    DaggerNewsComponent.builder()
+      .dependencies(deps)
+      .newsParams(params)
+      .build()
+  }
   val viewModel = viewModel<NewsViewModel>(
     factory = component.viewModelFactory()
   )
