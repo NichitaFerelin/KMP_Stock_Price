@@ -69,14 +69,13 @@
     <string name="hintEnterCode">Enter code</string>
     <string name="hintOk">OK</string>
     <string name="hintAuthentication">Authentication by phone number</string>
-    <string name="hintAuthenticationHelp">After successful authorization, the current shareholding
-        and search queries will be saved in the cloud database. If in the past any data was
-        associated with your phone number, they will also be downloaded to you locally. All
-        subsequent changes will affect the cloud database</string>
+    <string name="hintAuthenticationHelp">Save a list of your favorite stocks in the cloud. To
+        do this, you need to log in</string>
     <string name="hintChoose">Choose</string>
     <string name="hintEnterSearchRequest">Enter search request</string>
     <string name="hintNoSearchResults">No search results</string>
     <string name="hintNoSearchRequestsHistory">No search requests history</string>
+    <string name="hintSendCode">Send code</string>
 
     <!-- Messages -->
     <string name="messageNetworkNotAvailable">Network is not available</string>
@@ -93,7 +92,7 @@
     <string name="transitionAboutPager">Transition container about fragment pager</string>
 
     <string name="sourceNotAuthorized">You are not authorized. Login</string>
-    <string name="sourceAuthorized">You are logged in. Log off.\nYour current shareholding
+    <string name="sourceAuthorized">You are logged in. Log off.\nYour current favourite stocks
         and searches will only be deleted locally. The next time you sign in, you
         will be able to sync your data</string>
     <string name="sourceClearData">Clear the shareholding and search queries. If you are authorized,

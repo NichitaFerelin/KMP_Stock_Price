@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal data class LoginStateUi(
-  val inputPhone: String = "",
+  val inputPhone: String = "+16505555555",
   val inputCode: String = "",
   val authState: AuthState = AuthState.None,
   val showNetworkError: Boolean = false

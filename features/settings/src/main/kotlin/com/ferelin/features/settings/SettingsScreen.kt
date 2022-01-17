@@ -2,6 +2,7 @@ package com.ferelin.features.settings
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -127,6 +129,7 @@ private fun SettingsScreen(
       Spacer(modifier = Modifier.height(8.dp))
 
       val isAuthenticated = uiState.isUserAuthenticated
+      val context = LocalContext.current
       SettingsItem(
         title = stringResource(
           id = if (isAuthenticated) {
@@ -143,9 +146,11 @@ private fun SettingsScreen(
             R.drawable.ic_logout_30
           } else R.drawable.ic_login_30
         ),
-        onClick = if (isAuthenticated) {
+        onClick = {
+          Toast.makeText(context, "Not complete yeat. TODO", Toast.LENGTH_SHORT).show()
+        }/*if (isAuthenticated) {
           onLogOutClick
-        } else onLogInClick
+        } else onLogInClick*/
       )
       Spacer(modifier = Modifier.height(8.dp))
     }
