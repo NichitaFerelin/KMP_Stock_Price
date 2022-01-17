@@ -21,6 +21,7 @@ internal class SearchRequestsUseCaseImpl @Inject constructor(
   dispatchersProvider: DispatchersProvider
 ) : SearchRequestsUseCase {
   override val searchRequests: Flow<List<SearchRequest>> = searchRequestsRepository.searchRequests
+    .map { it.reversed() }
     .onStart { searchRequestsLceState.value = LceState.Loading }
     .onEach { searchRequestsLceState.value = LceState.Content }
     .catch { e -> searchRequestsLceState.value = LceState.Error(e.message) }
