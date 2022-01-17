@@ -14,16 +14,17 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class SettingsStateUi(
+internal data class SettingsStateUi(
   val isUserAuthenticated: Boolean = false,
   val downloadLce: LceState = LceState.None,
   val showDataCleared: Boolean = false,
   val showPathError: Boolean = false,
+  val showNoPermissionsError: Boolean = false,
   val requestPermissions: Boolean = false,
-  val requestPath: Boolean = false
+  val requestStoragePath: Boolean = false
 )
 
-class SettingsViewModel(
+internal class SettingsViewModel(
   private val notifyPriceUseCase: NotifyPriceUseCase,
   private val storagePathUseCase: StoragePathUseCase,
   private val downloadProjectUseCase: DownloadProjectUseCase,
@@ -46,7 +47,7 @@ class SettingsViewModel(
       .combine(
         flow = permissionsGranted,
         transform = { _, isGranted ->
-          viewModelState.update { it.copy(requestPermissions = !isGranted) }
+          if (!isGranted) viewModelState.update { it.copy(requestPermissions = true) }
           isGranted
         }
       )
@@ -54,7 +55,7 @@ class SettingsViewModel(
       .combine(
         flow = storagePathUseCase.storagePath,
         transform = { _, storagePath ->
-          viewModelState.update { it.copy(requestPath = !storagePath.isValid) }
+          if (!storagePath.isValid) viewModelState.update { it.copy(requestStoragePath = true) }
           storagePath
         }
       )
@@ -72,12 +73,18 @@ class SettingsViewModel(
       .launchIn(viewModelScope)
   }
 
-
-  fun onPermissionsGranted() {
+  fun onPermissions(isGranted: Boolean) {
+    viewModelState.update {
+      it.copy(
+        requestPermissions = false,
+        showNoPermissionsError = !isGranted
+      )
+    }
     permissionsGranted.value = permissionManager.writeExternalStorage()
   }
 
   fun onStoragePathSelected(path: String, authority: String) {
+    viewModelState.update { it.copy(requestStoragePath = false) }
     viewModelScope.launch(dispatchersProvider.IO) {
       storagePathUseCase.setStoragePath(path, authority)
     }
@@ -128,7 +135,7 @@ internal val StoragePath.isValid: Boolean
 
 internal const val DOWNLOAD_FILE_NAME = "Stock-Price"
 
-class SettingsViewModelFactory @Inject constructor(
+internal class SettingsViewModelFactory @Inject constructor(
   private val permissionManager: PermissionManager,
   private val storageManager: AppStorageManager,
   private val authUserStateRepository: AuthUserStateRepository,

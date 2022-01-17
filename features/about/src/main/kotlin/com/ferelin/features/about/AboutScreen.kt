@@ -1,13 +1,16 @@
+@file:OptIn(ExperimentalPagerApi::class)
+
 package com.ferelin.features.about
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -15,6 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.component.APP_TOP_PADDING
+import com.ferelin.core.ui.component.ClickableIcon
+import com.ferelin.core.ui.component.ConstrainedText
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.params.NewsParams
@@ -24,51 +30,64 @@ import com.ferelin.features.about.chart.ChartRoute
 import com.ferelin.features.about.news.NewsRoute
 import com.ferelin.features.about.profile.ProfileRoute
 import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.*
 
 @Composable
-fun AboutRoute(aboutDeps: AboutDeps, aboutParams: AboutParams) {
-  val aboutComponent = DaggerAboutComponent.builder()
-    .dependencies(aboutDeps)
-    .params(aboutParams)
-    .build()
-
-  val aboutViewModel: AboutViewModel = viewModel(
-    factory = aboutComponent.viewModelFactory()
+fun AboutRoute(
+  deps: AboutDeps,
+  params: AboutParams,
+  onBackRoute: () -> Unit
+) {
+  val component = remember {
+    DaggerAboutComponent.builder()
+      .dependencies(deps)
+      .params(params)
+      .build()
+  }
+  val viewModel: AboutViewModel = viewModel(
+    factory = component.viewModelFactory()
   )
-  val uiState by aboutViewModel.uiState.collectAsState()
+  val uiState by viewModel.uiState.collectAsState()
 
   AboutScreen(
-    aboutStateUi = uiState,
-    onFavouriteIconClick = aboutViewModel::switchFavourite,
-    onScreenTabClicked = aboutViewModel::onScreenSelected,
+    uiState = uiState,
+    onFavouriteIconClick = viewModel::switchFavourite,
+    onScreenSelected = viewModel::onScreenSelected,
+    onBackRoute = onBackRoute,
     onProfileRoute = {
-      val params = remember { ProfileParams(aboutParams.companyId) }
-      ProfileRoute(deps = aboutDeps, params = params)
+      val profileParams = remember { ProfileParams(params.companyId) }
+      ProfileRoute(deps, profileParams)
     },
     onChartRoute = {
-      val params = remember { ChartParams(aboutParams.companyId, aboutParams.companyTicker) }
-      ChartRoute(chartDeps = aboutDeps, chartParams = params)
+      val chartParams = remember { ChartParams(params.companyId, params.companyTicker) }
+      ChartRoute(deps, chartParams)
     },
     onNewsRoute = {
-      val params = remember { NewsParams(aboutParams.companyId, aboutParams.companyTicker) }
-      NewsRoute(deps = aboutDeps, params = params)
+      val newsParams = remember { NewsParams(params.companyId, params.companyTicker) }
+      NewsRoute(deps, newsParams)
     }
   )
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-internal fun AboutScreen(
-  aboutStateUi: AboutStateUi,
+private fun AboutScreen(
+  uiState: AboutStateUi,
   onFavouriteIconClick: () -> Unit,
-  onScreenTabClicked: (Int) -> Unit,
+  onScreenSelected: (Int) -> Unit,
+  onBackRoute: () -> Unit,
   onProfileRoute: @Composable () -> Unit,
   onChartRoute: @Composable () -> Unit,
   onNewsRoute: @Composable () -> Unit
 ) {
+  val pagerState = rememberPagerState(initialPage = uiState.selectedScreenIndex)
+  LaunchedEffect(key1 = uiState.selectedScreenIndex) {
+    pagerState.animateScrollToPage(uiState.selectedScreenIndex)
+  }
+  BackHandler(enabled = uiState.selectedScreenIndex != PROFILE_INDEX) {
+    onScreenSelected(PROFILE_INDEX)
+  }
+
   Column(
     modifier = Modifier
       .statusBarsPadding()
@@ -78,15 +97,21 @@ internal fun AboutScreen(
     TopBar(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 9.dp, vertical = 4.dp),
-      companyTicker = aboutStateUi.companyTicker,
-      companyName = aboutStateUi.companyName,
-      isFavourite = aboutStateUi.isFavourite,
-      onFavouriteIconClick = onFavouriteIconClick
+        .padding(APP_TOP_PADDING),
+      companyTicker = uiState.companyTicker,
+      companyName = uiState.companyName,
+      isFavourite = uiState.isFavourite,
+      onFavouriteIconClick = onFavouriteIconClick,
+      onBackClick = onBackRoute
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Tabs(
+      modifier = Modifier.fillMaxWidth(),
+      pagerState = pagerState,
+      onScreenTabClicked = onScreenSelected
     )
     ScreensPager(
-      selectedScreenIndex = aboutStateUi.selectedScreenIndex,
-      onScreenTabClicked = onScreenTabClicked,
+      pagerState = pagerState,
       onProfileRoute = onProfileRoute,
       onChartRoute = onChartRoute,
       onNewsRoute = onNewsRoute
@@ -100,57 +125,67 @@ private fun TopBar(
   companyTicker: String,
   companyName: String,
   isFavourite: Boolean,
-  onFavouriteIconClick: () -> Unit
+  onFavouriteIconClick: () -> Unit,
+  onBackClick: () -> Unit
 ) {
   Row(
-    modifier = modifier,
+    modifier = modifier.padding(horizontal = 12.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
-    Icon(
+    ClickableIcon(
+      modifier = Modifier.weight(0.2f),
       painter = painterResource(id = R.drawable.ic_arrow_back_24),
-      tint = AppTheme.colors.contendPrimary,
-      contentDescription = stringResource(R.string.descriptionBack)
+      backgroundColor = AppTheme.colors.backgroundPrimary,
+      tint = AppTheme.colors.buttonPrimary,
+      contentDescription = stringResource(R.string.descriptionBack),
+      onClick = onBackClick
     )
+    Spacer(modifier = Modifier.width(12.dp))
     Column(
-      verticalArrangement = Arrangement.Center
+      modifier = Modifier.weight(0.6f),
+      verticalArrangement = Arrangement.SpaceAround,
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Text(
+      ConstrainedText(
         text = companyTicker,
-        style = AppTheme.typography.largeTitle,
-        color = AppTheme.colors.textPrimary
+        color = AppTheme.colors.textPrimary,
+        style = AppTheme.typography.body1
       )
-      Spacer(modifier = Modifier.height(4.dp))
-      Text(
+      ConstrainedText(
         text = companyName,
-        style = AppTheme.typography.subtitle,
-        color = AppTheme.colors.textPrimary
+        color = AppTheme.colors.textPrimary,
+        style = AppTheme.typography.body2
       )
     }
-    Icon(
-      modifier = Modifier.clickable(onClick = onFavouriteIconClick),
+    Spacer(modifier = Modifier.width(12.dp))
+    ClickableIcon(
+      modifier = Modifier
+        .clickable(onClick = onFavouriteIconClick)
+        .weight(0.2f),
+      backgroundColor = AppTheme.colors.backgroundPrimary,
       painter = painterResource(R.drawable.ic_favourite_16),
-      tint = if (isFavourite) AppTheme.colors.contendSecondary else AppTheme.colors.contendPrimary,
+      tint = if (isFavourite) {
+        AppTheme.colors.iconActive
+      } else AppTheme.colors.iconDisabled,
       contentDescription = if (isFavourite) {
         stringResource(R.string.descriptionRemoveFromFavourites)
-      } else stringResource(R.string.descriptionAddToFavourites)
+      } else stringResource(R.string.descriptionAddToFavourites),
+      onClick = onFavouriteIconClick
     )
   }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun ScreensPager(
-  selectedScreenIndex: Int,
-  onScreenTabClicked: (Int) -> Unit,
-  onProfileRoute: @Composable () -> Unit,
-  onChartRoute: @Composable () -> Unit,
-  onNewsRoute: @Composable () -> Unit
+private fun Tabs(
+  modifier: Modifier = Modifier,
+  pagerState: PagerState,
+  onScreenTabClicked: (Int) -> Unit
 ) {
-  val pagerState = rememberPagerState(initialPage = selectedScreenIndex)
-
   TabRow(
-    selectedTabIndex = selectedScreenIndex,
+    modifier = modifier,
+    backgroundColor = AppTheme.colors.backgroundPrimary,
+    selectedTabIndex = pagerState.currentPage,
     indicator = { tabPositions ->
       TabRowDefaults.Indicator(
         Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
@@ -164,7 +199,8 @@ private fun ScreensPager(
             text = {
               Text(
                 text = stringResource(R.string.titleProfile),
-                style = AppTheme.typography.caption1
+                style = AppTheme.typography.title2,
+                color = AppTheme.colors.textTertiary
               )
             },
             selected = pagerState.currentPage == index,
@@ -176,7 +212,8 @@ private fun ScreensPager(
             text = {
               Text(
                 text = stringResource(R.string.titleChart),
-                style = AppTheme.typography.caption1
+                style = AppTheme.typography.title2,
+                color = AppTheme.colors.textTertiary
               )
             },
             selected = pagerState.currentPage == index,
@@ -188,7 +225,8 @@ private fun ScreensPager(
             text = {
               Text(
                 text = stringResource(R.string.titleNews),
-                style = AppTheme.typography.caption1
+                style = AppTheme.typography.title2,
+                color = AppTheme.colors.textTertiary
               )
             },
             selected = pagerState.currentPage == index,
@@ -199,8 +237,17 @@ private fun ScreensPager(
       }
     }
   }
+}
+
+@Composable
+private fun ScreensPager(
+  pagerState: PagerState,
+  onProfileRoute: @Composable () -> Unit,
+  onChartRoute: @Composable () -> Unit,
+  onNewsRoute: @Composable () -> Unit
+) {
   HorizontalPager(
-    count = 3,
+    count = TOTAL_PAGES,
     state = pagerState
   ) { pageIndex ->
     when (pageIndex) {
@@ -212,7 +259,7 @@ private fun ScreensPager(
   }
 }
 
-internal const val TOTAL_PAGES = 3
+private const val TOTAL_PAGES = 3
 internal const val PROFILE_INDEX = 0
 internal const val CHART_INDEX = 1
 internal const val NEWS_INDEX = 2

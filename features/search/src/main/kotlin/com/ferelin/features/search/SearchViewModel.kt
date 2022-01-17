@@ -1,5 +1,6 @@
 package com.ferelin.features.search
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,8 +17,11 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.timerTask
 
-data class SearchStateUi(
+@Immutable
+internal data class SearchStateUi(
   val searchResults: List<StockViewData> = emptyList(),
+  val searchResultsLce: LceState = LceState.None,
+  val showCloseIcon: Boolean = false,
   val inputSearchRequest: String = "",
   val searchRequests: List<SearchViewData> = emptyList(),
   val searchRequestsLce: LceState = LceState.None,
@@ -25,7 +29,7 @@ data class SearchStateUi(
   val popularSearchRequestsLce: LceState = LceState.None
 )
 
-class SearchViewModel(
+internal class SearchViewModel(
   private val searchRequestsUseCase: SearchRequestsUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   companyUseCase: CompanyUseCase,
@@ -77,6 +81,7 @@ class SearchViewModel(
   }
 
   fun onSearchTextChanged(searchText: String) {
+    viewModelState.update { it.copy(showCloseIcon = searchText.isNotEmpty()) }
     viewModelScope.launch {
       searchRequest.value = searchText
       viewModelState.update { it.copy(inputSearchRequest = searchText) }
@@ -106,17 +111,30 @@ class SearchViewModel(
   private fun doSearch(requestWithStocks: Pair<String, List<StockViewData>>) {
     val searchText = requestWithStocks.first
     val stocks = requestWithStocks.second
+
+    viewModelState.update { it.copy(searchResultsLce = LceState.None) }
     searchTaskTimer?.cancel()
 
     if (searchText.isEmpty()) {
-      viewModelState.update { it.copy(searchResults = emptyList()) }
+      viewModelState.update {
+        it.copy(
+          searchResults = emptyList(),
+          searchResultsLce = LceState.Content
+        )
+      }
       return
     }
     searchTaskTimer = Timer().apply {
+      viewModelState.update { it.copy(searchResultsLce = LceState.Loading) }
       schedule(timerTask {
         viewModelScope.launch(dispatchersProvider.IO) {
           val results = stocks.filterBySearch(searchText)
-          viewModelState.update { it.copy(searchResults = results) }
+          viewModelState.update {
+            it.copy(
+              searchResults = results,
+              searchResultsLce = LceState.Content
+            )
+          }
           searchRequestsUseCase.onNewSearchRequest(searchText, results.size)
         }
       }, SEARCH_TASK_TIMEOUT)
@@ -137,7 +155,7 @@ internal fun List<StockViewData>.filterBySearch(searchText: String): List<StockV
   }
 }
 
-class SearchViewModelFactory @Inject constructor(
+internal class SearchViewModelFactory @Inject constructor(
   private val searchRequestsUseCase: SearchRequestsUseCase,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val companyUseCase: CompanyUseCase,

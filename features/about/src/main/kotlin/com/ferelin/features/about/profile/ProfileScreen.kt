@@ -2,94 +2,142 @@ package com.ferelin.features.about.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.component.ClickableIcon
 import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.about.ui.component.ProfileInfoRow
+import com.ferelin.features.about.components.ProfileInfoColumn
+import com.ferelin.features.about.components.ProfileInfoRow
 import com.google.accompanist.insets.statusBarsPadding
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-internal fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
+fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
   val component = DaggerProfileComponent.builder()
     .dependencies(deps)
     .profileParams(params)
     .build()
-
-  val viewModel: ProfileViewModel by viewModel(
+  val viewModel = viewModel<ProfileViewModel>(
     factory = component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 
   ProfileScreen(
-    profileStateUi = uiState,
+    uiState = uiState,
     onUrlClick = { },
     onPhoneClick = { }
   )
 }
 
 @Composable
-internal fun ProfileScreen(
-  profileStateUi: ProfileStateUi,
+private fun ProfileScreen(
+  uiState: ProfileStateUi,
   onUrlClick: (String) -> Unit,
   onPhoneClick: (String) -> Unit
 ) {
-  Column(
+  Box(
     modifier = Modifier
       .statusBarsPadding()
       .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary),
-    horizontalAlignment = Alignment.CenterHorizontally
+      .background(AppTheme.colors.backgroundPrimary)
+      .verticalScroll(rememberScrollState())
   ) {
-    /*
-    * Glide load im
-    * */
-    Text(text = stringResource(R.string.hintName))
-    Spacer(modifier = Modifier.height(4.dp))
-    Text(text = profileStateUi.profile.companyName)
-    Spacer(modifier = Modifier.height(4.dp))
-    Text(text = stringResource(R.string.hintWebsite))
-    Spacer(modifier = Modifier.height(4.dp))
-    Text(text = profileStateUi.profile.webUrl)
-    Spacer(modifier = Modifier.height(4.dp))
-    Divider(
-      modifier = Modifier.fillMaxWidth(),
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Box(
+    ClickableIcon(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp)
+        .align(Alignment.TopEnd)
+        .padding(top = 6.dp, end = 16.dp),
+      backgroundColor = AppTheme.colors.backgroundPrimary,
+      painter = painterResource(id = R.drawable.ic_share_24),
+      contentDescription = stringResource(id = R.string.descriptionShare),
+      tint = AppTheme.colors.buttonPrimary,
+      onClick = { }
+    )
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      ProfileInfoRow(
-        name = stringResource(R.string.hintCountry),
-        content = profileStateUi.profile.country
+      Spacer(modifier = Modifier.height(12.dp))
+      GlideImage(
+        modifier = Modifier
+          .size(50.dp)
+          .clip(CircleShape),
+        imageModel = uiState.profile.logoUrl
       )
-      Spacer(modifier = Modifier.height(4.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintIndustry),
-        content = profileStateUi.profile.industry
+      Spacer(modifier = Modifier.height(12.dp))
+      TopSection(
+        name = uiState.profile.companyName,
+        url = uiState.profile.webUrl
       )
-      Spacer(modifier = Modifier.height(4.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintPhone),
-        content = profileStateUi.profile.phone
+      Spacer(modifier = Modifier.height(6.dp))
+      Divider(
+        modifier = Modifier.fillMaxWidth(),
+        color = AppTheme.colors.contendSecondary
       )
-      Spacer(modifier = Modifier.height(4.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintCapitalization),
-        content = profileStateUi.profile.capitalization
+      Spacer(modifier = Modifier.height(6.dp))
+      BottomSection(
+        country = uiState.profile.country,
+        industry = uiState.profile.industry,
+        phone = uiState.profile.phone,
+        capitalization = uiState.profile.capitalization
       )
     }
   }
+}
+
+@Composable
+private fun ColumnScope.TopSection(
+  name: String,
+  url: String
+) {
+  ProfileInfoColumn(
+    name = stringResource(R.string.hintName),
+    content = name
+  )
+  Spacer(modifier = Modifier.height(12.dp))
+  ProfileInfoColumn(
+    name = stringResource(R.string.hintWebsite),
+    content = url
+  )
+}
+
+@Composable
+private fun ColumnScope.BottomSection(
+  country: String,
+  industry: String,
+  phone: String,
+  capitalization: String
+) {
+  ProfileInfoRow(
+    name = stringResource(R.string.hintCountry),
+    content = country
+  )
+  Spacer(modifier = Modifier.height(14.dp))
+  ProfileInfoRow(
+    name = stringResource(R.string.hintIndustry),
+    content = industry
+  )
+  Spacer(modifier = Modifier.height(14.dp))
+  ProfileInfoRow(
+    name = stringResource(R.string.hintPhone),
+    content = phone
+  )
+  Spacer(modifier = Modifier.height(14.dp))
+  ProfileInfoRow(
+    name = stringResource(R.string.hintCapitalization),
+    content = capitalization
+  )
+  Spacer(modifier = Modifier.height(30.dp))
 }

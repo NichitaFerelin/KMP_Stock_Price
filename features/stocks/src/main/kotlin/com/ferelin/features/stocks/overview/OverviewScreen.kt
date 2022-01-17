@@ -3,6 +3,7 @@
 package com.ferelin.features.stocks.overview
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -154,46 +155,51 @@ private fun Cryptos(
   cryptos: List<CryptoViewData>,
   cryptosLce: LceState
 ) {
-  when (cryptosLce) {
-    is LceState.Content -> {
-      LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-      ) {
-        items(
-          items = cryptos
-        ) { viewData ->
-          CryptoItem(
-            name = viewData.name,
-            iconUrl = viewData.logoUrl,
-            price = viewData.price,
-            profit = viewData.profit
+  Crossfade(targetState = cryptosLce) { lce ->
+    when (lce) {
+      is LceState.Content -> {
+        LazyRow(
+          modifier = modifier.fillMaxWidth(),
+          contentPadding = PaddingValues(horizontal = 12.dp),
+          horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+          items(
+            items = cryptos
+          ) { viewData ->
+            CryptoItem(
+              name = viewData.name,
+              iconUrl = viewData.logoUrl,
+              price = viewData.price,
+              profit = viewData.profit
+            )
+          }
+        }
+      }
+      is LceState.Loading -> {
+        Box(
+          modifier = Modifier
+            .fillMaxWidth()
+            .height(CRYPTO_HEIGHT),
+          contentAlignment = Alignment.Center
+        ) {
+          CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+        }
+      }
+      is LceState.Error -> {
+        Box(
+          modifier = Modifier
+            .fillMaxWidth()
+            .height(CRYPTO_HEIGHT),
+          contentAlignment = Alignment.Center
+        ) {
+          Text(
+            text = stringResource(id = R.string.errorDownload),
+            style = AppTheme.typography.body1,
+            color = AppTheme.colors.textPrimary
           )
         }
       }
-    }
-    else -> {
-      Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .height(CRYPTO_HEIGHT),
-        contentAlignment = Alignment.Center
-      ) {
-        when (cryptosLce) {
-          is LceState.Loading -> {
-            CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
-          }
-          is LceState.Error -> {
-            Text(
-              text = stringResource(id = R.string.errorDownload),
-              style = AppTheme.typography.body1,
-              color = AppTheme.colors.textPrimary
-            )
-          }
-          else -> Unit
-        }
-      }
+      else -> Unit
     }
   }
 }
