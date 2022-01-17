@@ -65,7 +65,7 @@ internal class ChartViewModel(
       .launchIn(viewModelScope)
   }
 
-  fun onChartModeSelect(chartViewMode: ChartViewMode) {
+  fun onChartModeSelected(chartViewMode: ChartViewMode) {
     viewModelScope.launch {
       val pastPrices = pastPrices.firstOrNull() ?: emptyList()
       viewModelState.update {

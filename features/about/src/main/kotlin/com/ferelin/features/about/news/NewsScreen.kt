@@ -1,50 +1,59 @@
 package com.ferelin.features.about.news
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.params.NewsParams
-import com.ferelin.features.about.news.component.NewsItem
+import com.ferelin.features.about.components.NewsItem
 
 @Composable
-internal fun NewsRoute(deps: NewsDeps, params: NewsParams) {
+fun NewsRoute(deps: NewsDeps, params: NewsParams) {
   val component = DaggerNewsComponent.builder()
     .dependencies(deps)
     .newsParams(params)
     .build()
-
-  val viewModel: NewsViewModel by viewModel(
+  val viewModel = viewModel<NewsViewModel>(
     factory = component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 
   NewsScreen(
-    newsStateUi = uiState,
+    uiState = uiState,
     onUrlClick = { }
   )
 }
 
 @Composable
-internal fun NewsScreen(
-  newsStateUi: NewsStateUi,
+private fun NewsScreen(
+  uiState: NewsStateUi,
   onUrlClick: (String) -> Unit
 ) {
-  LazyRow {
-    items(
-      items = newsStateUi.news
-    ) { newsViewData ->
+  LazyColumn(
+    modifier = Modifier.fillMaxWidth(),
+    contentPadding = PaddingValues(
+      start = 6.dp,
+      end = 6.dp,
+      top = 12.dp,
+      bottom = 70.dp
+    ),
+    verticalArrangement = Arrangement.spacedBy(8.dp)
+  ) {
+    items(items = uiState.news) { newsViewData ->
       NewsItem(
-        modifier = Modifier.clickable { onUrlClick.invoke(newsViewData.sourceUrl) },
         source = newsViewData.source,
-        sourceUrl = newsViewData.sourceUrl,
+        url = newsViewData.sourceUrl,
         date = newsViewData.date,
         title = newsViewData.headline,
-        content = newsViewData.summary
+        content = newsViewData.summary,
+        onUrlClick = onUrlClick
       )
     }
   }
