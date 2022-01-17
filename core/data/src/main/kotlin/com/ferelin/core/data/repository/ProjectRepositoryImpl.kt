@@ -4,7 +4,6 @@ import android.app.DownloadManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.domain.repository.ProjectRepository
 import java.io.File
 import javax.inject.Inject
@@ -16,7 +15,6 @@ internal class ProjectRepositoryImpl @Inject constructor(
     resultFileName: String,
     destinationFile: File?
   ) {
-    checkBackgroundThread()
     val request = DownloadManager.Request(Uri.parse(PROJECT_SOURCE_URL))
       .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
       .setTitle(DOWNLOAD_TITLE)

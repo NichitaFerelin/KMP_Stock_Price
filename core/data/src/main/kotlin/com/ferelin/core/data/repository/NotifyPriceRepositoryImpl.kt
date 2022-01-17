@@ -2,7 +2,6 @@ package com.ferelin.core.data.repository
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.storage.PreferencesProvider
 import com.ferelin.core.domain.repository.NotifyPriceRepository
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +19,6 @@ internal class NotifyPriceRepositoryImpl @Inject constructor(
     .distinctUntilChanged()
 
   override suspend fun setNotifyPrice(notify: Boolean) {
-    checkBackgroundThread()
     preferencesProvider.dataStore.edit {
       it[notifyPriceKey] = notify
     }

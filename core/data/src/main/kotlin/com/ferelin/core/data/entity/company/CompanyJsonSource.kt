@@ -1,7 +1,6 @@
 package com.ferelin.core.data.entity.company
 
 import android.content.Context
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.data.mapper.CompanyMapper
 import com.squareup.moshi.Json
@@ -18,7 +17,6 @@ internal class CompanyJsonSourceImpl @Inject constructor(
   private val moshi: Moshi
 ) : CompanyJsonSource {
   override fun parseJson(): List<Pair<CompanyDBO, ProfileDBO>> {
-    checkBackgroundThread()
     val type = Types.newParameterizedType(List::class.java, CompanyJson::class.java)
     val json = context.assets
       .open(COMPANY_JSON_FILE)
