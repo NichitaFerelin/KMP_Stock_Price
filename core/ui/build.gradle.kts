@@ -31,14 +31,9 @@ android {
 dependencies {
   api(project(":core:domain"))
 
-  api(Deps.androidLifecycle)
-  api(Deps.appCompat)
-  api(Deps.browser)
-  api(Deps.fragments)
-  api(Deps.viewPager)
-  api(Deps.constraintLayout)
   api(Deps.material)
-  api(Deps.viewModelCompose)
+  api(Deps.browser)
+  api(Deps.composeViewModel)
   api(Deps.glideCompose)
 
   api(Deps.composeUi)
@@ -49,6 +44,7 @@ dependencies {
   api(Deps.composeRuntime)
   api(Deps.composeActivity)
   api(Deps.composeNavigation)
+  api(Deps.composeAnimations)
 
   api(Deps.accompanistInsets)
   api(Deps.accompanistSystemUiController)

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.params.AboutParams
+import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.features.about.AboutRoute
 import com.ferelin.features.authentication.LoginRoute
 import com.ferelin.features.search.SearchRoute
@@ -38,22 +39,31 @@ internal fun AppNavigationGraph(
         onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
         onStockRoute = {
           navHostController.navigate(
-            route = AboutDestination.key +
-              "/${it.id.value}" +
-              "/${it.name}" +
-              "/${it.ticker}"
+            route = AboutDestination.buildNavigationPath(it)
           )
         }
       )
     }
     composable(route = SettingsDestination.key) {
-      SettingsRoute(deps = appComponent)
+      SettingsRoute(
+        deps = appComponent,
+        onLogInRoute = { navHostController.navigate(route = AuthenticationDestination.key) },
+        onBackRoute = { navHostController.popBackStack() }
+      )
     }
     composable(route = AuthenticationDestination.key) {
       LoginRoute(deps = appComponent)
     }
     composable(route = SearchDestination.key) {
-      SearchRoute(deps = appComponent)
+      SearchRoute(
+        deps = appComponent,
+        onBackRoute = { navHostController.popBackStack() },
+        onStockRoute = {
+          navHostController.navigate(
+            route = AboutDestination.buildNavigationPath(it)
+          )
+        }
+      )
     }
     composable(
       route = AboutDestination.key +
@@ -73,8 +83,16 @@ internal fun AppNavigationGraph(
 
       AboutRoute(
         deps = appComponent,
-        params = AboutParams(CompanyId(id), ticker, name)
+        params = AboutParams(CompanyId(id), ticker, name),
+        onBackRoute = { navHostController.popBackStack() }
       )
     }
   }
+}
+
+private fun AboutDestination.buildNavigationPath(stockViewData: StockViewData): String {
+  return AboutDestination.key +
+    "/${stockViewData.id.value}" +
+    "/${stockViewData.name}" +
+    "/${stockViewData.ticker}"
 }

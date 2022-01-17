@@ -1,4 +1,4 @@
-package com.ferelin.features.settings.ui.component
+package com.ferelin.features.settings.component
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
@@ -12,7 +12,7 @@ internal fun SettingsDivider(
   modifier: Modifier = Modifier
 ) {
   Divider(
-    modifier = modifier.width(50.dp),
-    color = AppTheme.colors.contendPrimary
+    modifier = modifier.width(200.dp),
+    color = AppTheme.colors.contendSecondary
   )
 }

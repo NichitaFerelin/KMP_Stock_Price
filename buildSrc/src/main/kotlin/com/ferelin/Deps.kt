@@ -14,14 +14,10 @@ object Deps {
   const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
   const val timber = "com.jakewharton.timber:timber:5.0.1"
 
-  const val androidLifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
-  const val appCompat = "androidx.appcompat:appcompat:1.4.0"
-  const val fragments = "androidx.fragment:fragment-ktx:1.4.0"
-  const val browser = "androidx.browser:browser:1.4.0"
-  const val viewPager = "androidx.viewpager2:viewpager2:1.0.0"
-  const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
   const val material = "com.google.android.material:material:1.5.0-rc01"
-  const val viewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
+  const val browser = "androidx.browser:browser:1.4.0"
+
+
 
   const val composeVersion = "1.1.0-rc01"
   const val composeUi = "androidx.compose.ui:ui:$composeVersion"
@@ -31,7 +27,9 @@ object Deps {
   const val composeTooling = "androidx.compose.ui:ui-tooling:$composeVersion"
   const val composeRuntime = "androidx.compose.runtime:runtime:$composeVersion"
   const val composeActivity = "androidx.activity:activity-compose:$composeVersion"
+  const val composeAnimations = "androidx.compose.animation:animation:$composeVersion"
   const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
+  const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
 
   private const val accompanistVersion = "0.22.0-rc"
   const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"
