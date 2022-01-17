@@ -1,6 +1,5 @@
 package com.ferelin.core.data.entity.favouriteCompany
 
-import com.ferelin.core.checkBackgroundThread
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -8,7 +7,6 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import timber.log.Timber
 import javax.inject.Inject
 
 internal interface FavouriteCompanyApi {
@@ -43,7 +41,6 @@ internal class FavouriteCompanyApiImpl @Inject constructor(
   }
 
   override fun putBy(userToken: String, companyId: Int) {
-    checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
       .child(userToken)
@@ -52,7 +49,6 @@ internal class FavouriteCompanyApiImpl @Inject constructor(
   }
 
   override fun eraseAll(userToken: String) {
-    checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
       .child(userToken)
@@ -60,7 +56,6 @@ internal class FavouriteCompanyApiImpl @Inject constructor(
   }
 
   override fun eraseBy(userToken: String, companyId: Int) {
-    checkBackgroundThread()
     firebaseReference
       .child(FAVOURITE_COMPANIES_REFERENCE)
       .child(userToken)

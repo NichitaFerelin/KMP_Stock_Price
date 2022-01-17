@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.navigation
 
+import android.window.SplashScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,7 +26,7 @@ internal fun AppNavigationGraph(
 ) {
   NavHost(
     navController = navHostController,
-    startDestination = OverviewDestination.key
+    startDestination = SplashDestination.key
   ) {
     composable(route = SplashDestination.key) {
       LoadingScreen {

@@ -1,15 +1,13 @@
 package com.ferelin.core.data.repository
 
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.data.api.STOCKS_TOKEN
 import com.ferelin.core.data.entity.pastPrice.PastPriceDao
 import com.ferelin.core.data.entity.pastPrice.PastPricesApi
 import com.ferelin.core.data.mapper.PastPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
-import com.ferelin.core.domain.repository.PastPriceRepository
 import com.ferelin.core.domain.entity.PastPrice
+import com.ferelin.core.domain.repository.PastPriceRepository
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -25,7 +23,6 @@ internal class PastPriceRepositoryImpl @Inject constructor(
   }
 
   override suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String) {
-    checkBackgroundThread()
     try {
       val response = api.load(token, companyTicker)
       dao.eraseAllBy(companyId.value)

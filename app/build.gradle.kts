@@ -22,6 +22,7 @@ android {
 
   buildFeatures.apply {
     compose = true
+    buildConfig = true
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -41,6 +42,11 @@ android {
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro"
       )
+      buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"true\")")
+    }
+
+    debug {
+      buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"false\")")
     }
   }
 }

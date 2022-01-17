@@ -11,9 +11,6 @@ android {
 
   defaultConfig {
     minSdk = Deps.minSDK
-
-    buildConfigField("boolean", "DEV", "Boolean.parseBoolean(\"false\")")
-    buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"false\")")
   }
 
   buildTypes {
@@ -31,9 +28,7 @@ android {
         "api_nomics_token",
         (properties["apiNomicsToken"] as String?) ?: publicNomicsDebugToken
       )
-      buildConfigField("boolean", "DEV", "Boolean.parseBoolean(\"true\")")
     }
-
     release {
       resValue(
         "string",
@@ -45,7 +40,6 @@ android {
         "api_nomics_token",
         (properties["apiNomicsToken"] as String?) ?: publicNomicsDebugToken
       )
-      buildConfigField("boolean", "RELEASE", "Boolean.parseBoolean(\"true\")")
     }
   }
 

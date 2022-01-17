@@ -1,8 +1,6 @@
 package com.ferelin.core.data.repository
 
 import android.app.Activity
-import android.util.Log
-import com.ferelin.core.checkBackgroundThread
 import com.ferelin.core.domain.repository.AuthRepository
 import com.ferelin.core.domain.repository.AuthState
 import com.google.firebase.FirebaseException
@@ -14,7 +12,6 @@ import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -32,7 +29,6 @@ internal class AuthRepositoryImpl @Inject constructor(
   private var authCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
   override suspend fun tryAuthentication(holder: Activity, phone: String) {
-    checkBackgroundThread()
     authProcessingState.value = AuthState.PhoneProcessing
 
     if (phone.isEmpty()) {
@@ -77,7 +73,6 @@ internal class AuthRepositoryImpl @Inject constructor(
   }
 
   override suspend fun completeAuthentication(code: String) {
-    checkBackgroundThread()
     userVerificationId?.let { userVerificationId ->
       val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
       authCallbacks?.onVerificationCompleted(credential)
@@ -85,7 +80,6 @@ internal class AuthRepositoryImpl @Inject constructor(
   }
 
   override suspend fun logOut() {
-    checkBackgroundThread()
     firebaseAuth.signOut()
   }
 }
