@@ -43,13 +43,6 @@ fun TextField(
     keyboardActions = keyboardActions,
     singleLine = true,
     maxLines = 1,
-    leadingIcon = {
-      Icon(
-        painter = painterResource(id = R.drawable.ic_close_24),
-        contentDescription = "",
-        tint = AppTheme.colors.backgroundPrimary
-      )
-    },
     placeholder = {
       Text(
         text = placeholder,
