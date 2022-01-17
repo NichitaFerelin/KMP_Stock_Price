@@ -93,8 +93,11 @@ private fun Chart(chartPastPrices: ChartPastPrices) {
     modifier = Modifier
       .fillMaxWidth()
       .height(250.dp)
-      .background(Color.Magenta)
-  )
+      .background(Color.Magenta),
+    contentAlignment = Alignment.Center
+  ) {
+    Text(text = "TODO. Custom Chart view")
+  }
 }
 
 @Composable

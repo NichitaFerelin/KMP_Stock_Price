@@ -52,7 +52,10 @@ internal fun AppNavigationGraph(
       )
     }
     composable(route = AuthenticationDestination.key) {
-      LoginRoute(deps = appComponent)
+      LoginRoute(
+        deps = appComponent,
+        onBackRoute = { navHostController.popBackStack() }
+      )
     }
     composable(route = SearchDestination.key) {
       SearchRoute(
