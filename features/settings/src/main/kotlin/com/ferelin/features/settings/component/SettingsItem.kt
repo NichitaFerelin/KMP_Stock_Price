@@ -1,7 +1,8 @@
-package com.ferelin.features.settings.ui.component
+package com.ferelin.features.settings.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -10,36 +11,56 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.ui.component.ConstrainedText
 import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
 internal fun SettingsItem(
   modifier: Modifier = Modifier,
   title: String,
-  subtitle: String,
+  text: String,
   painter: Painter,
   onClick: () -> Unit
 ) {
   Card(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
-      .height(100.dp)
-      .clickable(onClick = onClick),
-    backgroundColor = AppTheme.colors.backgroundPrimary
+      .padding(horizontal = 20.dp),
+    backgroundColor = AppTheme.colors.backgroundPrimary,
+    shape = RoundedCornerShape(15.dp),
+    elevation = 0.dp
   ) {
     Row(
+      modifier = Modifier
+        .clickable(onClick = onClick)
+        .padding(
+          horizontal = 16.dp,
+          vertical = 10.dp
+        ),
       verticalAlignment = Alignment.CenterVertically
     ) {
-      Column {
-        Text(text = title)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = subtitle)
+      Column(
+        modifier = Modifier.weight(0.8f)
+      ) {
+        ConstrainedText(
+          text = title,
+          style = AppTheme.typography.body1,
+          color = AppTheme.colors.textPrimary
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+          text = text,
+          style = AppTheme.typography.body2,
+          color = AppTheme.colors.textPrimary
+        )
       }
-      Spacer(modifier = Modifier.width(4.dp))
       Icon(
+        modifier = Modifier
+          .weight(0.2f)
+          .padding(end = 16.dp),
         painter = painter,
-        contentDescription = "",
-        tint = AppTheme.colors.backgroundPrimary
+        contentDescription = null,
+        tint = AppTheme.colors.buttonPrimary
       )
     }
   }
