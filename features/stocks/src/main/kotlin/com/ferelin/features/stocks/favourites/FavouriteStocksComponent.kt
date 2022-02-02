@@ -1,5 +1,7 @@
 package com.ferelin.features.stocks.favourites
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
@@ -26,4 +28,20 @@ interface FavouriteStocksDeps {
   val dispatchersProvider: DispatchersProvider
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
   val companyUseCase: CompanyUseCase
+}
+
+internal class FavouriteStocksComponentViewModel(deps: FavouriteStocksDeps) : ViewModel() {
+  val component = DaggerFavouriteStocksComponent.builder()
+    .dependencies(deps)
+    .build()
+}
+
+internal class FavouriteStocksComponentViewModelFactory constructor(
+  private val deps: FavouriteStocksDeps
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == FavouriteStocksComponentViewModel::class.java)
+    return FavouriteStocksComponentViewModel(deps) as T
+  }
 }

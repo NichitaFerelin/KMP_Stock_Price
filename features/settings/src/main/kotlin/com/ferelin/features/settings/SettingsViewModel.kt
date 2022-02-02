@@ -39,7 +39,7 @@ internal class SettingsViewModel(
   private val viewModelState = MutableStateFlow(SettingsStateUi())
   val uiState = viewModelState.asStateFlow()
 
-  private val permissionsGranted = MutableStateFlow(permissionManager.writeExternalStorage())
+  private val permissionsGranted = MutableStateFlow(permissionManager.writeExternalStorage)
   private val requestDownloadCode = MutableSharedFlow<Unit>()
 
   init {
@@ -80,7 +80,7 @@ internal class SettingsViewModel(
         showNoPermissionsError = !isGranted
       )
     }
-    permissionsGranted.value = permissionManager.writeExternalStorage()
+    permissionsGranted.value = permissionManager.writeExternalStorage
   }
 
   fun onStoragePathSelected(path: String, authority: String) {

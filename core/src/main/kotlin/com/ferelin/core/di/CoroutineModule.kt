@@ -18,7 +18,7 @@ class CoroutineModule {
   }
 
   @Provides
-  @Singleton
+  @Reusable
   @ExternalScope
   fun externalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
     return CoroutineScope(SupervisorJob() + dispatchersProvider.IO)

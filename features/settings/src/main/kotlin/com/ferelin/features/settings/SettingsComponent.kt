@@ -1,5 +1,7 @@
 package com.ferelin.features.settings
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.AuthUserStateRepository
 import com.ferelin.core.domain.usecase.*
@@ -35,4 +37,20 @@ interface SettingsDeps {
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
   val dispatchersProvider: DispatchersProvider
   val authUseCase: AuthUseCase
+}
+
+internal class SettingsComponentViewModel(deps: SettingsDeps) : ViewModel() {
+  val component = DaggerSettingsComponent.builder()
+    .dependencies(deps)
+    .build()
+}
+
+internal class SettingsComponentViewModelFactory constructor(
+  private val deps: SettingsDeps
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == SettingsComponentViewModel::class.java)
+    return SettingsComponentViewModel(deps) as T
+  }
 }

@@ -1,5 +1,7 @@
 package com.ferelin.features.stocks.overview
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.ferelin.core.domain.usecase.CryptoPriceUseCase
 import com.ferelin.core.domain.usecase.CryptoUseCase
 import com.ferelin.core.network.NetworkListener
@@ -28,4 +30,20 @@ interface OverviewDeps : DefaultStocksDeps, FavouriteStocksDeps {
   val cryptoPriceUseCase: CryptoPriceUseCase
   val cryptoUseCase: CryptoUseCase
   val networkListener: NetworkListener
+}
+
+internal class OverviewComponentViewModel(deps: OverviewDeps) : ViewModel() {
+  val component = DaggerOverviewComponent.builder()
+    .dependencies(deps)
+    .build()
+}
+
+internal class OverviewComponentViewModelFactory constructor(
+  private val deps: OverviewDeps
+) : ViewModelProvider.Factory {
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    require(modelClass == OverviewComponentViewModel::class.java)
+    return OverviewComponentViewModel(deps) as T
+  }
 }

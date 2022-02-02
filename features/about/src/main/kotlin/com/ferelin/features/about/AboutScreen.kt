@@ -38,14 +38,11 @@ fun AboutRoute(
   params: AboutParams,
   onBackRoute: () -> Unit
 ) {
-  val component = remember {
-    DaggerAboutComponent.builder()
-      .dependencies(deps)
-      .params(params)
-      .build()
-  }
-  val viewModel: AboutViewModel = viewModel(
-    factory = component.viewModelFactory()
+  val componentViewModel = viewModel<AboutComponentViewModel>(
+    factory = AboutComponentViewModelFactory(deps, params)
+  )
+  val viewModel = viewModel<AboutViewModel>(
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

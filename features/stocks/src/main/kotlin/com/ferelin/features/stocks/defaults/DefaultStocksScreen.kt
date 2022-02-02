@@ -13,13 +13,11 @@ fun DefaultStocksRoute(
   deps: DefaultStocksDeps,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val component = remember {
-    DaggerDefaultStocksComponent.builder()
-      .dependencies(deps)
-      .build()
-  }
+  val componentViewModel = viewModel<DefaultStocksComponentViewModel>(
+    factory = DefaultStocksComponentViewModelFactory(deps)
+  )
   val viewModel = viewModel<DefaultStocksViewModel>(
-    factory = component.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

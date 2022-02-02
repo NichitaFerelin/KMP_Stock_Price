@@ -9,7 +9,6 @@ import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,14 +27,11 @@ import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
-  val component = remember {
-    DaggerProfileComponent.builder()
-      .dependencies(deps)
-      .profileParams(params)
-      .build()
-  }
+  val componentViewModel = viewModel<ProfileComponentViewModel>(
+    factory = ProfileComponentViewModelFactory(deps, params)
+  )
   val viewModel = viewModel<ProfileViewModel>(
-    factory = component.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class, ExperimentalPagerApi::class)
+@file:OptIn(ExperimentalPagerApi::class)
 
 package com.ferelin.features.stocks.overview
 
@@ -45,13 +45,11 @@ fun OverviewRoute(
   onSearchRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val commonComponent = remember {
-    DaggerOverviewComponent.builder()
-      .dependencies(deps)
-      .build()
-  }
+  val componentViewModel = viewModel<OverviewComponentViewModel>(
+    factory = OverviewComponentViewModelFactory(deps)
+  )
   val viewModel = viewModel<OverviewViewModel>(
-    factory = commonComponent.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

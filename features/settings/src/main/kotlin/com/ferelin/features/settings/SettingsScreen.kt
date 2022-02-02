@@ -29,13 +29,11 @@ fun SettingsRoute(
   onLogInRoute: () -> Unit,
   onBackRoute: () -> Unit
 ) {
-  val component = remember {
-    DaggerSettingsComponent.builder()
-      .dependencies(deps)
-      .build()
-  }
+  val componentViewModel = viewModel<SettingsComponentViewModel>(
+    factory = SettingsComponentViewModelFactory(deps)
+  )
   val viewModel = viewModel<SettingsViewModel>(
-    factory = component.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

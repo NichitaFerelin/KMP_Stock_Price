@@ -22,14 +22,11 @@ import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun ChartRoute(deps: ChartDeps, params: ChartParams) {
-  val component = remember {
-    DaggerChartComponent.builder()
-      .dependencies(deps)
-      .params(params)
-      .build()
-  }
+  val componentViewModel = viewModel<ChartComponentViewModel>(
+    factory = ChartComponentViewModelFactory(deps, params)
+  )
   val viewModel = viewModel<ChartViewModel>(
-    factory = component.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

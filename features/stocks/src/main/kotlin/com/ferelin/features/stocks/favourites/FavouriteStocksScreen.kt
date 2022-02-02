@@ -10,13 +10,11 @@ import com.ferelin.core.ui.component.StocksList
 
 @Composable
 fun FavouriteStocksRoute(deps: FavouriteStocksDeps) {
-  val component = remember {
-    DaggerFavouriteStocksComponent.builder()
-      .dependencies(deps)
-      .build()
-  }
+  val componentViewModel = viewModel<FavouriteStocksComponentViewModel>(
+    factory = FavouriteStocksComponentViewModelFactory(deps)
+  )
   val viewModel = viewModel<FavouriteStocksViewModel>(
-    factory = component.viewModelFactory()
+    factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
 

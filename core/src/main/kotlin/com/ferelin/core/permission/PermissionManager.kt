@@ -8,11 +8,10 @@ import javax.inject.Inject
 
 class PermissionManager @Inject constructor(
   private val context: Context
-  ) {
-  fun writeExternalStorage(): Boolean {
-    return ContextCompat.checkSelfPermission(
+) {
+  val writeExternalStorage
+    get() = ContextCompat.checkSelfPermission(
       context,
       Manifest.permission.WRITE_EXTERNAL_STORAGE
     ) == PackageManager.PERMISSION_GRANTED
-  }
 }
