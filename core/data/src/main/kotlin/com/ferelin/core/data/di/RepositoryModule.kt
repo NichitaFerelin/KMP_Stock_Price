@@ -11,72 +11,44 @@ class RepositoryModule
 @Module
 internal interface RepositoryModuleBinds {
   @Binds
-  fun authRepository(
-    authRepositoryImpl: AuthRepositoryImpl
-  ): AuthRepository
+  fun authRepository(impl: AuthRepositoryImpl): AuthRepository
 
   @Binds
-  fun authUserStateRepository(
-    authUserStateRepositoryImpl: AuthUserStateRepositoryImpl
-  ): AuthUserStateRepository
+  fun authUserStateRepository(impl: AuthUserStateRepositoryImpl): AuthUserStateRepository
 
   @Binds
-  fun companyRepository(
-    companyRepositoryImpl: CompanyRepositoryImpl
-  ): CompanyRepository
+  fun companyRepository(impl: CompanyRepositoryImpl): CompanyRepository
 
   @Binds
-  fun cryptoPriceRepository(
-    cryptoPriceRepositoryImpl: CryptoPriceRepositoryImpl
-  ): CryptoPriceRepository
+  fun cryptoPriceRepository(impl: CryptoPriceRepositoryImpl): CryptoPriceRepository
 
   @Binds
-  fun cryptoRepository(
-    cryptoRepositoryImpl: CryptoRepositoryImpl
-  ): CryptoRepository
+  fun cryptoRepository(impl: CryptoRepositoryImpl): CryptoRepository
 
   @Binds
-  fun favouriteCompanyRepository(
-    favouriteCompanyRepositoryImpl: FavouriteCompanyRepositoryImpl
-  ): FavouriteCompanyRepository
+  fun favouriteCompanyRepository(impl: FavouriteCompanyRepositoryImpl): FavouriteCompanyRepository
 
   @Binds
-  fun newsRepository(
-    newsRepositoryImpl: NewsRepositoryImpl
-  ): NewsRepository
+  fun newsRepository(impl: NewsRepositoryImpl): NewsRepository
 
   @Binds
-  fun notifyPriceRepository(
-    notifyPriceRepositoryImpl: NotifyPriceRepositoryImpl
-  ): NotifyPriceRepository
+  fun notifyPriceRepository(impl: NotifyPriceRepositoryImpl): NotifyPriceRepository
 
   @Binds
-  fun pastPriceRepository(
-    pastPriceRepositoryImpl: PastPriceRepositoryImpl
-  ): PastPriceRepository
+  fun pastPriceRepository(impl: PastPriceRepositoryImpl): PastPriceRepository
 
   @Binds
-  fun profileRepository(
-    profileRepositoryImpl: ProfileRepositoryImpl
-  ): ProfileRepository
+  fun profileRepository(impl: ProfileRepositoryImpl): ProfileRepository
 
   @Binds
-  fun projectRepository(
-    projectRepositoryImpl: ProjectRepositoryImpl
-  ): ProjectRepository
+  fun projectRepository(impl: ProjectRepositoryImpl): ProjectRepository
 
   @Binds
-  fun searchRequestsRepository(
-    searchRequestsRepositoryImpl: SearchRequestsRepositoryImpl
-  ): SearchRequestsRepository
+  fun searchRequestsRepository(impl: SearchRequestsRepositoryImpl): SearchRequestsRepository
 
   @Binds
-  fun stockPriceRepository(
-    stockPriceRepositoryImpl: StockPriceRepositoryImpl
-  ): StockPriceRepository
+  fun stockPriceRepository(impl: StockPriceRepositoryImpl): StockPriceRepository
 
   @Binds
-  fun storagePathRepository(
-    storagePathRepositoryImpl: StoragePathRepositoryImpl
-  ): StoragePathRepository
+  fun storagePathRepository(impl: StoragePathRepositoryImpl): StoragePathRepository
 }

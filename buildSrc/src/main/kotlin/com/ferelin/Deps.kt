@@ -17,8 +17,6 @@ object Deps {
   const val material = "com.google.android.material:material:1.5.0-rc01"
   const val browser = "androidx.browser:browser:1.4.0"
 
-
-
   const val composeVersion = "1.1.0-rc01"
   const val composeUi = "androidx.compose.ui:ui:$composeVersion"
   const val composeUtil = "androidx.compose.ui:ui-util:$composeVersion"

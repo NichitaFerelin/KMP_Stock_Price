@@ -19,7 +19,7 @@ internal class CompanyJsonSourceImpl @Inject constructor(
   override fun parseJson(): List<Pair<CompanyDBO, ProfileDBO>> {
     val type = Types.newParameterizedType(List::class.java, CompanyJson::class.java)
     val json = context.assets
-      .open(COMPANY_JSON_FILE)
+      .open(COMPANIES_JSON_FILE)
       .bufferedReader()
       .use { it.readText() }
 
@@ -41,4 +41,4 @@ internal data class CompanyJson(
   @Json(name = "marketCapitalization") val capitalization: String
 )
 
-internal const val COMPANY_JSON_FILE = "companies.json"
+internal const val COMPANIES_JSON_FILE = "companies.json"

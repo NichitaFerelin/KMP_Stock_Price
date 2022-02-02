@@ -10,67 +10,41 @@ class UseCaseModule
 @Module
 internal interface UseCaseModuleBinds {
   @Binds
-  fun authUseCase(
-    authUseCaseImpl: AuthUseCaseImpl
-  ): AuthUseCase
+  fun authUseCase(impl: AuthUseCaseImpl): AuthUseCase
 
   @Binds
-  fun companyUseCase(
-    companyUseCaseImpl: CompanyUseCaseImpl
-  ): CompanyUseCase
+  fun companyUseCase(impl: CompanyUseCaseImpl): CompanyUseCase
 
   @Binds
-  fun cryptoPriceUseCase(
-    cryptoPriceUseCaseImpl: CryptoPriceUseCaseImpl
-  ): CryptoPriceUseCase
+  fun cryptoPriceUseCase(impl: CryptoPriceUseCaseImpl): CryptoPriceUseCase
 
   @Binds
-  fun cryptoUseCase(
-    cryptoUseCaseImpl: CryptoUseCaseImpl
-  ): CryptoUseCase
+  fun cryptoUseCase(impl: CryptoUseCaseImpl): CryptoUseCase
 
   @Binds
-  fun downloadProjectUseCase(
-    downloadProjectUseCaseImpl: DownloadProjectUseCaseImpl
-  ): DownloadProjectUseCase
+  fun downloadProjectUseCase(impl: DownloadProjectUseCaseImpl): DownloadProjectUseCase
 
   @Binds
-  fun favouriteCompanyUseCase(
-    favouriteCompanyUseCaseImpl: FavouriteCompanyUseCaseImpl
-  ): FavouriteCompanyUseCase
+  fun favouriteCompanyUseCase(impl: FavouriteCompanyUseCaseImpl): FavouriteCompanyUseCase
 
   @Binds
-  fun newsUseCase(
-    newsUseCaseImpl: NewsUseCaseImpl
-  ): NewsUseCase
+  fun newsUseCase(impl: NewsUseCaseImpl): NewsUseCase
 
   @Binds
-  fun notifyPriceUseCase(
-    notifyPriceUseCaseImpl: NotifyPriceUseCaseImpl
-  ): NotifyPriceUseCase
+  fun notifyPriceUseCase(impl: NotifyPriceUseCaseImpl): NotifyPriceUseCase
 
   @Binds
-  fun pastPricesUseCase(
-    pastPricesUseCaseImpl: PastPricesUseCaseImpl
-  ): PastPricesUseCase
+  fun pastPricesUseCase(impl: PastPricesUseCaseImpl): PastPricesUseCase
 
   @Binds
-  fun profileUseCase(
-    profileUseCaseImpl: ProfileUseCaseImpl
-  ): ProfileUseCase
+  fun profileUseCase(impl: ProfileUseCaseImpl): ProfileUseCase
 
   @Binds
-  fun searchRequestsUseCase(
-    searchRequestsUseCaseImpl: SearchRequestsUseCaseImpl
-  ): SearchRequestsUseCase
+  fun searchRequestsUseCase(impl: SearchRequestsUseCaseImpl): SearchRequestsUseCase
 
   @Binds
-  fun stockPriceUseCase(
-    stockPriceUseCaseImpl: StockPriceUseCaseImpl
-  ): StockPriceUseCase
+  fun stockPriceUseCase(impl: StockPriceUseCaseImpl): StockPriceUseCase
 
   @Binds
-  fun storagePathUseCase(
-    storagePathUseCaseImpl: StoragePathUseCaseImpl
-  ): StoragePathUseCase
+  fun storagePathUseCase(impl: StoragePathUseCaseImpl): StoragePathUseCase
 }

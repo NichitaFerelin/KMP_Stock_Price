@@ -82,8 +82,8 @@ class StorageModule {
 @Module
 internal interface StorageModuleBinds {
   @Binds
-  fun companyJsonSource(companyJsonSourceImpl: CompanyJsonSourceImpl): CompanyJsonSource
+  fun companyJsonSource(impl: CompanyJsonSourceImpl): CompanyJsonSource
 
   @Binds
-  fun cryptoJsonSource(cryptoJsonSourceImpl: CryptoJsonSourceImpl): CryptoJsonSource
+  fun cryptoJsonSource(impl: CryptoJsonSourceImpl): CryptoJsonSource
 }
