@@ -4,6 +4,7 @@ import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.SearchRequest
 import com.ferelin.core.domain.repository.SearchRequestsRepository
+import dagger.Reusable
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -16,6 +17,7 @@ interface SearchRequestsUseCase {
   suspend fun eraseAll()
 }
 
+@Reusable
 internal class SearchRequestsUseCaseImpl @Inject constructor(
   private val searchRequestsRepository: SearchRequestsRepository,
   dispatchersProvider: DispatchersProvider

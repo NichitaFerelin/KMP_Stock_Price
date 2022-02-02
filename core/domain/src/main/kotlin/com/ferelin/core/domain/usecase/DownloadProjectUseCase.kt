@@ -1,8 +1,8 @@
 package com.ferelin.core.domain.usecase
 
-import android.util.Log
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.repository.ProjectRepository
+import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +14,7 @@ interface DownloadProjectUseCase {
   val downloadLce: Flow<LceState>
 }
 
+@Reusable
 internal class DownloadProjectUseCaseImpl @Inject constructor(
   private val projectRepository: ProjectRepository
 ) : DownloadProjectUseCase {

@@ -5,6 +5,7 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.domain.repository.StockPriceRepository
+import dagger.Reusable
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ interface StockPriceUseCase {
   val stockPriceLce: Flow<LceState>
 }
 
+@Reusable
 internal class StockPriceUseCaseImpl @Inject constructor(
   private val stockPriceRepository: StockPriceRepository,
   dispatchersProvider: DispatchersProvider

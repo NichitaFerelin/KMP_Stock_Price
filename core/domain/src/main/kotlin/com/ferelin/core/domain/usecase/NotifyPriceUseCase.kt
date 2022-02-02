@@ -2,6 +2,7 @@ package com.ferelin.core.domain.usecase
 
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.NotifyPriceRepository
+import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -12,6 +13,7 @@ interface NotifyPriceUseCase {
   suspend fun setNotifyPrice(notify: Boolean)
 }
 
+@Reusable
 internal class NotifyPriceUseCaseImpl @Inject constructor(
   private val notifyPriceRepository: NotifyPriceRepository,
   dispatchersProvider: DispatchersProvider

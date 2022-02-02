@@ -3,6 +3,7 @@ package com.ferelin.core.domain.usecase
 import android.app.Activity
 import com.ferelin.core.ExternalScope
 import com.ferelin.core.domain.repository.*
+import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,6 +22,7 @@ interface AuthUseCase {
   }
 }
 
+@Reusable
 internal class AuthUseCaseImpl @Inject constructor(
   private val authRepository: AuthRepository,
   private val searchRequestsRepository: SearchRequestsRepository,
