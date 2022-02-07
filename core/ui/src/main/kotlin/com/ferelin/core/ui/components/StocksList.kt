@@ -2,12 +2,14 @@ package com.ferelin.core.ui.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,13 +46,16 @@ fun StocksList(
     }
   }
 
-  Box(
-    Modifier
+  Crossfade(
+    modifier = Modifier
       .fillMaxSize()
       .background(AppTheme.colors.backgroundPrimary),
-    contentAlignment = Alignment.Center
-  ) {
-    Crossfade(targetState = stocksLce) { lce ->
+    targetState = stocksLce
+  ) { lce ->
+    Box(
+      modifier = Modifier.fillMaxSize(),
+      contentAlignment = Alignment.Center
+    ) {
       when (lce) {
         is LceState.Content -> {
           LazyColumn(
@@ -106,10 +111,14 @@ fun StocksList(
           }
         }
         is LceState.Loading -> {
-          CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+          CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+            color = AppTheme.colors.contendTertiary
+          )
         }
         is LceState.Error -> {
           Text(
+            modifier = Modifier.align(Alignment.Center),
             text = stringResource(id = R.string.errorDownload),
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
