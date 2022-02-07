@@ -1,4 +1,4 @@
-package com.ferelin.features.about
+package com.ferelin.features.about.about
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,15 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.component.ClickableIcon
-import com.ferelin.core.ui.component.ConstrainedText
-import com.ferelin.core.ui.component.SearchField
+import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.ConstrainedText
+import com.ferelin.core.ui.components.SearchField
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.features.stocks.components.CRYPTO_HEIGHT
-import com.ferelin.features.stocks.components.CryptoItem
 import com.ferelin.features.stocks.defaults.DefaultStocksRoute
 import com.ferelin.features.stocks.favourites.FavouriteStocksRoute
+import com.ferelin.features.stocks.uiComponents.CRYPTO_HEIGHT
+import com.ferelin.features.stocks.uiComponents.CryptoItem
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -258,8 +260,8 @@ private fun Titles(
     ClickableIcon(
       modifier = Modifier.align(Alignment.CenterEnd),
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      tint = AppTheme.colors.buttonPrimary,
-      painter = painterResource(id = R.drawable.ic_settings_26),
+      iconTint = AppTheme.colors.buttonPrimary,
+      imageVector = Icons.Default.Settings,
       contentDescription = stringResource(id = R.string.descriptionSettings),
       onClick = onSettingsClick
     )

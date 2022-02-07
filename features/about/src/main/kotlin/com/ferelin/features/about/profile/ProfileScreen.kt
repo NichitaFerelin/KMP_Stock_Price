@@ -6,22 +6,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.component.ClickableIcon
+import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.about.components.ProfileInfoColumn
-import com.ferelin.features.about.components.ProfileInfoRow
+import com.ferelin.features.about.uiComponents.ProfileInfoColumn
+import com.ferelin.features.about.uiComponents.ProfileInfoRow
 import com.google.accompanist.insets.statusBarsPadding
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -60,9 +61,9 @@ private fun ProfileScreen(
         .align(Alignment.TopEnd)
         .padding(top = 6.dp, end = 16.dp),
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      painter = painterResource(id = R.drawable.ic_share_24),
+      imageVector = Icons.Default.Share,
       contentDescription = stringResource(id = R.string.descriptionShare),
-      tint = AppTheme.colors.buttonPrimary,
+      iconTint = AppTheme.colors.buttonPrimary,
       onClick = { }
     )
     Column(

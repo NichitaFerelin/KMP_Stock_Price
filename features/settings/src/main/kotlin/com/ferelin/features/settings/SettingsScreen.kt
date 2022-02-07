@@ -8,7 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,10 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.component.ClickableIcon
+import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.settings.component.SettingsDivider
-import com.ferelin.features.settings.component.SettingsItem
+import com.ferelin.features.settings.uiComponents.SettingsDivider
+import com.ferelin.features.settings.uiComponents.SettingsItem
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
@@ -91,8 +96,8 @@ private fun SettingsScreen(
         .align(Alignment.TopStart)
         .padding(12.dp),
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      tint = AppTheme.colors.buttonPrimary,
-      painter = painterResource(R.drawable.ic_arrow_back_24),
+      iconTint = AppTheme.colors.buttonPrimary,
+      imageVector = Icons.Default.ArrowBack,
       contentDescription = "",
       onClick = onBackClick
     )

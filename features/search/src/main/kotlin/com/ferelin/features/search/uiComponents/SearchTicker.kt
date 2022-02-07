@@ -1,4 +1,4 @@
-package com.ferelin.features.search.component
+package com.ferelin.features.search.uiComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

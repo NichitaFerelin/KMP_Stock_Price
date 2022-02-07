@@ -1,4 +1,4 @@
-package com.ferelin.features.settings.component
+package com.ferelin.features.settings.uiComponents
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.ui.component.ConstrainedText
+import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.theme.AppTheme
 
 @Composable

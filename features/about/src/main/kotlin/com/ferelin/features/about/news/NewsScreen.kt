@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.params.NewsParams
-import com.ferelin.features.about.components.NewsItem
+import com.ferelin.features.about.uiComponents.NewsItem
 
 @Composable
 fun NewsRoute(deps: NewsDeps, params: NewsParams) {

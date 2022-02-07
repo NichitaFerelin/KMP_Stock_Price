@@ -14,6 +14,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,13 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.component.ClickableIcon
-import com.ferelin.core.ui.component.SearchField
-import com.ferelin.core.ui.component.StocksList
-import com.ferelin.core.ui.component.TextField
+import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.SearchField
+import com.ferelin.core.ui.components.StocksList
+import com.ferelin.core.ui.components.TextField
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.features.search.component.SearchRequests
+import com.ferelin.features.search.uiComponents.SearchRequests
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
@@ -141,10 +144,10 @@ private fun TopSearchField(
     ) {
       Spacer(modifier = Modifier.padding(start = 12.dp))
       ClickableIcon(
-        painter = painterResource(R.drawable.ic_arrow_back_24),
+        imageVector = Icons.Default.ArrowBack,
         backgroundColor = AppTheme.colors.backgroundPrimary,
         contentDescription = stringResource(R.string.descriptionBack),
-        tint = AppTheme.colors.buttonPrimary,
+        iconTint = AppTheme.colors.buttonPrimary,
         onClick = onBackClick
       )
       Spacer(modifier = Modifier.width(8.dp))
@@ -162,8 +165,8 @@ private fun TopSearchField(
           ) {
             ClickableIcon(
               backgroundColor = AppTheme.colors.backgroundPrimary,
-              painter = painterResource(id = R.drawable.ic_close_24),
-              tint = AppTheme.colors.buttonPrimary,
+              imageVector = Icons.Default.Close,
+              iconTint = AppTheme.colors.buttonPrimary,
               contentDescription = stringResource(id = R.string.descriptionIconClose),
               onClick = { onTextChanged("") }
             )

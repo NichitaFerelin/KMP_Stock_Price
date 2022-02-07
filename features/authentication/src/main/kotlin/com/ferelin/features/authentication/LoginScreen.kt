@@ -9,6 +9,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,9 +27,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ferelin.core.ui.component.APP_TOP_PADDING
-import com.ferelin.core.ui.component.ClickableIcon
-import com.ferelin.core.ui.component.TextField
+import com.ferelin.core.ui.components.APP_TOP_PADDING
+import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.TextField
 import com.ferelin.core.ui.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 
@@ -75,9 +77,9 @@ private fun LoginScreen(
         .align(Alignment.TopStart)
         .padding(APP_TOP_PADDING),
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      painter = painterResource(R.drawable.ic_arrow_back_24),
+      imageVector = Icons.Default.ArrowBack,
       contentDescription = stringResource(R.string.descriptionBack),
-      tint = AppTheme.colors.buttonPrimary,
+      iconTint = AppTheme.colors.buttonPrimary,
       onClick = onBackClick
     )
     Column(

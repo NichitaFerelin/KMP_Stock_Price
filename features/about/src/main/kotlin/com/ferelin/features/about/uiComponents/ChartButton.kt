@@ -1,4 +1,4 @@
-package com.ferelin.features.about.components
+package com.ferelin.features.about.uiComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

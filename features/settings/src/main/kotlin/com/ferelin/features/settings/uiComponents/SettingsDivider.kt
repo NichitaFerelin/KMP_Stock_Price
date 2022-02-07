@@ -1,4 +1,4 @@
-package com.ferelin.features.settings.component
+package com.ferelin.features.settings.uiComponents
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider

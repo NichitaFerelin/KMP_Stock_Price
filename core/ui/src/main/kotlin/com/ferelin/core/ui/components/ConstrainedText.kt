@@ -1,6 +1,6 @@
-package com.ferelin.core.ui.component
+package com.ferelin.core.ui.components
 
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +40,7 @@ fun ConstrainedText(
 ) {
   Text(
     text = text,
-    modifier = modifier.sizeIn(maxWidth = maxWidth),
+    modifier = modifier.widthIn(max = maxWidth),
     color = color,
     fontSize = fontSize,
     fontStyle = fontStyle,

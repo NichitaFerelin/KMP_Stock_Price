@@ -9,11 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.splash.component.LoadingItem
+import com.ferelin.features.splash.uiComponents.LoadingItem
 import com.google.accompanist.insets.statusBarsPadding
-import kotlinx.coroutines.delay
 
 @Composable
 fun LoadingScreen(onNavigationRequested: () -> Unit) {

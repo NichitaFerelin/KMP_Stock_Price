@@ -1,4 +1,4 @@
-package com.ferelin.features.splash.component
+package com.ferelin.features.splash.uiComponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape

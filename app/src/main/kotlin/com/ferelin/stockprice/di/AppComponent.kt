@@ -14,7 +14,7 @@ import com.ferelin.core.domain.usecase.*
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.AppStorageManager
-import com.ferelin.features.about.AboutDeps
+import com.ferelin.features.about.about.AboutDeps
 import com.ferelin.features.authentication.LoginDeps
 import com.ferelin.features.search.SearchDeps
 import com.ferelin.features.settings.SettingsDeps

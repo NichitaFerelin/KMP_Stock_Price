@@ -28,6 +28,7 @@ object Deps {
   const val composeAnimations = "androidx.compose.animation:animation:$composeVersion"
   const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
   const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
+  const val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
   private const val accompanistVersion = "0.22.0-rc"
   const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"

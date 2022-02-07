@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.features.about.AboutRoute
+import com.ferelin.features.about.about.AboutRoute
 import com.ferelin.features.authentication.LoginRoute
 import com.ferelin.features.search.SearchRoute
 import com.ferelin.features.settings.SettingsRoute

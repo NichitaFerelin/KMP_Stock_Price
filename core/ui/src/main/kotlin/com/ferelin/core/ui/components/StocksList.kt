@@ -1,4 +1,4 @@
-package com.ferelin.core.ui.component
+package com.ferelin.core.ui.components
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*

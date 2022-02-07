@@ -1,14 +1,13 @@
-package com.ferelin.features.stocks.components
+package com.ferelin.features.stocks.uiComponents
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.ui.component.ConstrainedText
+import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.theme.AppTheme
 import com.skydoves.landscapist.glide.GlideImage
 

@@ -1,4 +1,4 @@
-package com.ferelin.features.search.component
+package com.ferelin.features.search.uiComponents
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow

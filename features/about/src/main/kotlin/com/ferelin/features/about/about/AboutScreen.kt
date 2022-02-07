@@ -1,6 +1,6 @@
-@file:OptIn(ExperimentalPagerApi::class)
+@file:OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class)
 
-package com.ferelin.features.about
+package com.ferelin.features.about.about
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -10,6 +10,8 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,9 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
-import com.ferelin.core.ui.component.APP_TOP_PADDING
-import com.ferelin.core.ui.component.ClickableIcon
-import com.ferelin.core.ui.component.ConstrainedText
+import com.ferelin.core.ui.components.APP_TOP_PADDING
+import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.params.NewsParams
@@ -131,16 +133,13 @@ private fun TopBar(
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
     ClickableIcon(
-      modifier = Modifier.weight(0.2f),
-      painter = painterResource(id = R.drawable.ic_arrow_back_24),
+      imageVector = Icons.Default.ArrowBack,
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      tint = AppTheme.colors.buttonPrimary,
+      iconTint = AppTheme.colors.buttonPrimary,
       contentDescription = stringResource(R.string.descriptionBack),
       onClick = onBackClick
     )
-    Spacer(modifier = Modifier.width(12.dp))
     Column(
-      modifier = Modifier.weight(0.6f),
       verticalArrangement = Arrangement.SpaceAround,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -155,16 +154,10 @@ private fun TopBar(
         style = AppTheme.typography.body2
       )
     }
-    Spacer(modifier = Modifier.width(12.dp))
     ClickableIcon(
-      modifier = Modifier
-        .clickable(onClick = onFavouriteIconClick)
-        .weight(0.2f),
       backgroundColor = AppTheme.colors.backgroundPrimary,
       painter = painterResource(R.drawable.ic_favourite_16),
-      tint = if (isFavourite) {
-        AppTheme.colors.iconActive
-      } else AppTheme.colors.iconDisabled,
+      iconTint = if (isFavourite) AppTheme.colors.iconActive else AppTheme.colors.iconDisabled,
       contentDescription = if (isFavourite) {
         stringResource(R.string.descriptionRemoveFromFavourites)
       } else stringResource(R.string.descriptionAddToFavourites),

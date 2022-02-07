@@ -45,6 +45,7 @@ dependencies {
   api(Deps.composeActivity)
   api(Deps.composeNavigation)
   api(Deps.composeAnimations)
+  api(Deps.composeConstraintLayout)
 
   api(Deps.accompanistInsets)
   api(Deps.accompanistSystemUiController)
