@@ -8,7 +8,7 @@ internal object NewsMapper {
     return NewsViewData(
       id = news.id,
       headline = news.headline,
-      date = news.date.toLong().toDateStr(),
+      date = news.date.toDateStr(),
       source = news.source,
       sourceUrl = news.sourceUrl,
       summary = news.summary

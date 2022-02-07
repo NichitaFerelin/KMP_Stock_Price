@@ -21,7 +21,7 @@ internal interface NewsApi {
 @JsonClass(generateAdapter = true)
 internal data class NewsPojo(
   @Json(name = "id") val id: String,
-  @Json(name = "datetime") val datetime: Double,
+  @Json(name = "datetime") val datetime: Long,
   @Json(name = "headline") val headline: String,
   @Json(name = "source") val source: String,
   @Json(name = "url") val url: String,
@@ -45,4 +45,10 @@ internal object NewsApiSpecifications {
       val yearAgoDate = Date(yearAgoTimeMillis)
       return dateFormat.format(yearAgoDate)
     }
+
+  fun convertToUnixTime(pojo: NewsPojo): NewsPojo {
+    return pojo.copy(
+      datetime = (pojo.datetime.toString() + "000").toLong()
+    )
+  }
 }

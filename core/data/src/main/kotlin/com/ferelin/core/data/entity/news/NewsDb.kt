@@ -24,7 +24,7 @@ internal data class NewsDBO(
   val source: String,
   val sourceUrl: String,
   val summary: String,
-  val date: Double
+  val date: Long
 )
 
 internal const val NEWS_DB_TABLE = "news"
