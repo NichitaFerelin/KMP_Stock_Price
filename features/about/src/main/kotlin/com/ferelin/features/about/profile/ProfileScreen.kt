@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.FailIcon
 import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.uiComponents.ProfileInfoColumn
@@ -78,7 +79,8 @@ private fun ProfileScreen(
         modifier = Modifier
           .size(50.dp)
           .clip(CircleShape),
-        imageModel = uiState.profile.logoUrl
+        imageModel = uiState.profile.logoUrl,
+        failure = { FailIcon() }
       )
       Spacer(modifier = Modifier.height(12.dp))
       ProfileInfoColumn(

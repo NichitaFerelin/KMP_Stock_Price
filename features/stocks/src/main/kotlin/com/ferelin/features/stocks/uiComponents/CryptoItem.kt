@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.ui.components.ConstrainedText
+import com.ferelin.core.ui.components.FailIcon
 import com.ferelin.core.ui.theme.AppTheme
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -44,7 +45,8 @@ internal fun CryptoItem(
         )
         GlideImage(
           modifier = Modifier.size(20.dp),
-          imageModel = iconUrl
+          imageModel = iconUrl,
+          failure = { FailIcon() }
         )
       }
       ConstrainedText(

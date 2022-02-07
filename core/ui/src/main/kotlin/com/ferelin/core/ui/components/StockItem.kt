@@ -57,7 +57,8 @@ fun StockItem(
             start.linkTo(parent.start, margin = HORIZONTAL_MARGIN)
           },
         imageModel = iconUrl,
-        contentScale = ContentScale.Inside
+        contentScale = ContentScale.Inside,
+        failure = { FailIcon() }
       )
       ConstrainedText(
         modifier = Modifier.constrainAs(title) {
