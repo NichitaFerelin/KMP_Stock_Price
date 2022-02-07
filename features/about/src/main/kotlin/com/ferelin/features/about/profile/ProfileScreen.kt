@@ -22,7 +22,9 @@ import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.params.ProfileParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.uiComponents.ProfileInfoColumn
+import com.ferelin.features.about.uiComponents.ProfileInfoColumnClickable
 import com.ferelin.features.about.uiComponents.ProfileInfoRow
+import com.ferelin.features.about.uiComponents.ProfileInfoRowClickable
 import com.google.accompanist.insets.statusBarsPadding
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -38,6 +40,7 @@ fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
 
   ProfileScreen(
     uiState = uiState,
+    onShareClick = { },
     onUrlClick = { },
     onPhoneClick = { }
   )
@@ -46,8 +49,9 @@ fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
 @Composable
 private fun ProfileScreen(
   uiState: ProfileStateUi,
-  onUrlClick: (String) -> Unit,
-  onPhoneClick: (String) -> Unit
+  onShareClick: () -> Unit,
+  onUrlClick: () -> Unit,
+  onPhoneClick: () -> Unit
 ) {
   Box(
     modifier = Modifier
@@ -64,7 +68,7 @@ private fun ProfileScreen(
       imageVector = Icons.Default.Share,
       contentDescription = stringResource(id = R.string.descriptionShare),
       iconTint = AppTheme.colors.buttonPrimary,
-      onClick = { }
+      onClick = onShareClick
     )
     Column(
       horizontalAlignment = Alignment.CenterHorizontally
@@ -77,9 +81,15 @@ private fun ProfileScreen(
         imageModel = uiState.profile.logoUrl
       )
       Spacer(modifier = Modifier.height(12.dp))
-      TopSection(
-        name = uiState.profile.companyName,
-        url = uiState.profile.webUrl
+      ProfileInfoColumn(
+        name = stringResource(R.string.hintName),
+        content = uiState.profile.companyName
+      )
+      Spacer(modifier = Modifier.height(12.dp))
+      ProfileInfoColumnClickable(
+        name = stringResource(R.string.hintWebsite),
+        content = uiState.profile.webUrl,
+        onClick = onUrlClick
       )
       Spacer(modifier = Modifier.height(6.dp))
       Divider(
@@ -87,57 +97,27 @@ private fun ProfileScreen(
         color = AppTheme.colors.contendSecondary
       )
       Spacer(modifier = Modifier.height(6.dp))
-      BottomSection(
-        country = uiState.profile.country,
-        industry = uiState.profile.industry,
-        phone = uiState.profile.phone,
-        capitalization = uiState.profile.capitalization
+      ProfileInfoRow(
+        name = stringResource(R.string.hintCountry),
+        content = uiState.profile.country
       )
+      Spacer(modifier = Modifier.height(14.dp))
+      ProfileInfoRow(
+        name = stringResource(R.string.hintIndustry),
+        content = uiState.profile.industry
+      )
+      Spacer(modifier = Modifier.height(14.dp))
+      ProfileInfoRowClickable(
+        name = stringResource(R.string.hintPhone),
+        content = uiState.profile.phone,
+        onClick = onPhoneClick
+      )
+      Spacer(modifier = Modifier.height(14.dp))
+      ProfileInfoRow(
+        name = stringResource(R.string.hintCapitalization),
+        content = uiState.profile.capitalization
+      )
+      Spacer(modifier = Modifier.height(30.dp))
     }
   }
-}
-
-@Composable
-private fun ColumnScope.TopSection(
-  name: String,
-  url: String
-) {
-  ProfileInfoColumn(
-    name = stringResource(R.string.hintName),
-    content = name
-  )
-  Spacer(modifier = Modifier.height(12.dp))
-  ProfileInfoColumn(
-    name = stringResource(R.string.hintWebsite),
-    content = url
-  )
-}
-
-@Composable
-private fun ColumnScope.BottomSection(
-  country: String,
-  industry: String,
-  phone: String,
-  capitalization: String
-) {
-  ProfileInfoRow(
-    name = stringResource(R.string.hintCountry),
-    content = country
-  )
-  Spacer(modifier = Modifier.height(14.dp))
-  ProfileInfoRow(
-    name = stringResource(R.string.hintIndustry),
-    content = industry
-  )
-  Spacer(modifier = Modifier.height(14.dp))
-  ProfileInfoRow(
-    name = stringResource(R.string.hintPhone),
-    content = phone
-  )
-  Spacer(modifier = Modifier.height(14.dp))
-  ProfileInfoRow(
-    name = stringResource(R.string.hintCapitalization),
-    content = capitalization
-  )
-  Spacer(modifier = Modifier.height(30.dp))
 }

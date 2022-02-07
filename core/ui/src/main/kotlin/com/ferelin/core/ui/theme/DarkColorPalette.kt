@@ -18,5 +18,6 @@ internal val DarkColorPalette = AppColors(
   iconDisabled = Light3,
   textPositive = Green1,
   textNegative = Red1,
+  textClickable = Blue1,
   isDark = true
 )

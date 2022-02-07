@@ -2,10 +2,12 @@ package com.ferelin.features.about.uiComponents
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.ui.R
@@ -71,11 +73,12 @@ internal fun NewsItem(
         )
         ConstrainedText(
           modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
             .clickable { onUrlClick(url) }
             .widthIn(max = 150.dp),
           text = url,
           style = AppTheme.typography.caption1,
-          color = AppTheme.colors.textTertiary
+          color = AppTheme.colors.textClickable
         )
       }
     }

@@ -25,6 +25,7 @@ class AppColors(
   iconDisabled: Color,
   textPositive: Color,
   textNegative: Color,
+  textClickable: Color,
   isDark: Boolean,
 ) {
   var statusBar by mutableStateOf(statusBar)
@@ -61,6 +62,8 @@ class AppColors(
     private set
   var textNegative by mutableStateOf(textNegative)
     private set
+  var textClickable by mutableStateOf(textClickable)
+    private set
   var isDark by mutableStateOf(isDark)
     private set
 
@@ -81,6 +84,7 @@ class AppColors(
     iconDisabled = other.iconDisabled
     textPositive = other.textPositive
     textNegative = other.textNegative
+    textClickable = other.textClickable
     isDark = other.isDark
   }
 }
