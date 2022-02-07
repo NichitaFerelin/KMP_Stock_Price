@@ -22,6 +22,13 @@ fun AppTheme(
   val colorPalette = remember { colors }
   colorPalette.update(colors)
 
+  val selectionColors =  remember {
+    TextSelectionColors(
+      handleColor = colors.textPrimary,
+      backgroundColor = colors.contendAccentPrimary
+    )
+  }
+
   val sysUiController = rememberSystemUiController()
   SideEffect {
     sysUiController.setSystemBarsColor(
@@ -38,6 +45,7 @@ fun AppTheme(
       LocalAppColors provides colorPalette,
       LocalAppTypography provides typography,
       LocalRippleTheme provides AppRippleTheme(colors),
+      LocalTextSelectionColors provides selectionColors,
       content = content,
     )
   }
