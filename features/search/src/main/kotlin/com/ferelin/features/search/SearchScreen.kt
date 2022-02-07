@@ -148,7 +148,10 @@ private fun TopSearchField(
         backgroundColor = AppTheme.colors.backgroundPrimary,
         contentDescription = stringResource(R.string.descriptionBack),
         iconTint = AppTheme.colors.buttonPrimary,
-        onClick = onBackClick
+        onClick = {
+          keyboardController?.hide()
+          onBackClick.invoke()
+        }
       )
       Spacer(modifier = Modifier.width(8.dp))
       TextField(
