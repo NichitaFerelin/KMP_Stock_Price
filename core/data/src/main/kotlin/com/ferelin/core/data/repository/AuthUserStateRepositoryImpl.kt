@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class AuthUserStateRepositoryImpl @Inject constructor(
   private val firebaseAuth: FirebaseAuth
 ) : AuthUserStateRepository {

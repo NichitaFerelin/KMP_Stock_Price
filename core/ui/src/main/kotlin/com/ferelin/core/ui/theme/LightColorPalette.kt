@@ -4,6 +4,7 @@ internal val LightColorPalette = AppColors(
   statusBar = Light1,
   contendAccentPrimary = Dark2,
   backgroundPrimary = Light1,
+  backgroundSecondary = Light2,
   contendPrimary = Light1,
   contendSecondary = Light2,
   contendTertiary = Dark1,

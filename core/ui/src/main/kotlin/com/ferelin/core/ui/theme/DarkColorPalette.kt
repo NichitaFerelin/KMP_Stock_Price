@@ -4,6 +4,7 @@ internal val DarkColorPalette = AppColors(
   statusBar = Dark1,
   contendAccentPrimary = Dark2,
   backgroundPrimary = Dark1,
+  backgroundSecondary = Dark2,
   contendPrimary = Dark1,
   contendSecondary = Dark2,
   contendTertiary = Light3,

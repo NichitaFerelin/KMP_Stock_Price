@@ -53,6 +53,7 @@
     <string name="descriptionRemoveFromFavourites">Click to remove from favourites</string>
     <string name="descriptionNotificationChannelUpdates">Notifies about stock price updates</string>
     <string name="descriptionNoSearchResults">No request results</string>
+    <string name="descriptionDecorative">decorative icon</string>
 
     <!-- Hints -->
     <string name="hintFindCompany">Find company or ticker</string>
@@ -75,7 +76,7 @@
     <string name="hintEnterSearchRequest">Enter search request</string>
     <string name="hintNoSearchResults">No search results</string>
     <string name="hintNoSearchRequestsHistory">No search requests history</string>
-    <string name="hintSendCode">Send code</string>
+    <string name="hintSendCode">GET CODE</string>
 
     <!-- Messages -->
     <string name="messageNetworkNotAvailable">Network is not available</string>

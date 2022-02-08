@@ -11,6 +11,7 @@ class AppColors(
   statusBar: Color,
   contendAccentPrimary: Color,
   backgroundPrimary: Color,
+  backgroundSecondary: Color,
   contendPrimary: Color,
   contendSecondary: Color,
   contendTertiary: Color,
@@ -33,6 +34,8 @@ class AppColors(
   var contendAccentPrimary by mutableStateOf(contendAccentPrimary)
     private set
   var backgroundPrimary by mutableStateOf(backgroundPrimary)
+    private set
+  var backgroundSecondary by mutableStateOf(backgroundSecondary)
     private set
   var contendPrimary by mutableStateOf(contendPrimary)
     private set
@@ -69,6 +72,7 @@ class AppColors(
 
   fun update(other: AppColors) {
     backgroundPrimary = other.backgroundPrimary
+    backgroundSecondary = other.backgroundSecondary
     contendAccentPrimary = other.contendAccentPrimary
     contendPrimary = other.contendPrimary
     contendSecondary = other.contendSecondary

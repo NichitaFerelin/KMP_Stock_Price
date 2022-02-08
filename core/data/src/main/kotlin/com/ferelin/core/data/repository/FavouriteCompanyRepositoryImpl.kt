@@ -12,7 +12,9 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class FavouriteCompanyRepositoryImpl @Inject constructor(
   private val dao: FavouriteCompanyDao,
   private val api: FavouriteCompanyApi,
@@ -22,7 +24,7 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
 ) : FavouriteCompanyRepository {
   init {
     authUserStateRepository.userToken
-      .filterNot { it.isEmpty() }
+      .filterNot(String::isEmpty)
       .onEach(this::onTokenChanged)
       .launchIn(externalScope)
   }
@@ -60,7 +62,8 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
     dao.insertAll(
       companies = apiFavouriteCompanies.itemsNotIn(dbFavouriteCompanies)
     )
-    dbFavouriteCompanies.itemsNotIn(apiFavouriteCompanies)
+    dbFavouriteCompanies
+      .itemsNotIn(apiFavouriteCompanies)
       .forEach { api.putBy(token, it.id) }
   }
 }

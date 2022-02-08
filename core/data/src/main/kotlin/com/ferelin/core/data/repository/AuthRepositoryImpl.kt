@@ -80,6 +80,7 @@ internal class AuthRepositoryImpl @Inject constructor(
   }
 
   override suspend fun logOut() {
+    authProcessingState.value = AuthState.None
     firebaseAuth.signOut()
   }
 }
