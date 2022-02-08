@@ -1,5 +1,7 @@
 package com.ferelin.features.about.news
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,10 +14,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.domain.entity.LceState
+import com.ferelin.core.startActivitySafety
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.params.NewsParams
 import com.ferelin.core.ui.theme.AppTheme
@@ -30,10 +34,15 @@ fun NewsRoute(deps: NewsDeps, params: NewsParams) {
     factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
+  val context = LocalContext.current
 
   NewsScreen(
     uiState = uiState,
-    onUrlClick = { }
+    onUrlClick = { url ->
+      val intent = Intent(Intent.ACTION_VIEW)
+      intent.data = Uri.parse(url)
+      context.startActivitySafety(intent)
+    }
   )
 }
 

@@ -1,5 +1,7 @@
 package com.ferelin.features.about.profile
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,9 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ferelin.core.startActivitySafety
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.components.FailIcon
@@ -38,12 +42,32 @@ fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
     factory = componentViewModel.component.viewModelFactory()
   )
   val uiState by viewModel.uiState.collectAsState()
+  val context = LocalContext.current
 
   ProfileScreen(
     uiState = uiState,
-    onShareClick = { },
-    onUrlClick = { },
-    onPhoneClick = { }
+    onShareClick = {
+      with(uiState.profile) {
+        val shareText = "$companyName [$country]\n$phone\n$webUrl"
+        val intent = Intent(Intent.ACTION_SEND).apply {
+          putExtra(Intent.EXTRA_TEXT, shareText)
+          type = "text/plain"
+        }
+        context.startActivitySafety(intent)
+      }
+    },
+    onUrlClick = {
+      val intent = Intent(Intent.ACTION_VIEW)
+      intent.data = Uri.parse(uiState.profile.webUrl)
+      context.startActivitySafety(intent)
+    },
+    onPhoneClick = {
+      val intent = Intent(
+        Intent.ACTION_DIAL,
+        Uri.fromParts("tel", uiState.profile.phone, null)
+      )
+      context.startActivitySafety(intent)
+    }
   )
 }
 
