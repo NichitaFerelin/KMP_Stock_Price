@@ -112,38 +112,50 @@ private fun ProfileScreen(
         content = uiState.profile.companyName
       )
       Spacer(modifier = Modifier.height(12.dp))
-      ProfileInfoColumnClickable(
-        name = stringResource(R.string.hintWebsite),
-        content = uiState.profile.webUrl,
-        onClick = onUrlClick
-      )
-      Spacer(modifier = Modifier.height(6.dp))
+
+      if (uiState.profile.webUrl.isNotEmpty()) {
+        ProfileInfoColumnClickable(
+          name = stringResource(R.string.hintWebsite),
+          content = uiState.profile.webUrl,
+          onClick = onUrlClick
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+      }
       Divider(
         modifier = Modifier.fillMaxWidth(),
         color = AppTheme.colors.contendSecondary
       )
       Spacer(modifier = Modifier.height(6.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintCountry),
-        content = uiState.profile.country
-      )
-      Spacer(modifier = Modifier.height(14.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintIndustry),
-        content = uiState.profile.industry
-      )
-      Spacer(modifier = Modifier.height(14.dp))
-      ProfileInfoRowClickable(
-        name = stringResource(R.string.hintPhone),
-        content = uiState.profile.phone,
-        onClick = onPhoneClick
-      )
-      Spacer(modifier = Modifier.height(14.dp))
-      ProfileInfoRow(
-        name = stringResource(R.string.hintCapitalization),
-        content = uiState.profile.capitalization
-      )
-      Spacer(modifier = Modifier.height(30.dp))
+
+      if (uiState.profile.country.isNotEmpty()) {
+        ProfileInfoRow(
+          name = stringResource(R.string.hintCountry),
+          content = uiState.profile.country
+        )
+        Spacer(modifier = Modifier.height(14.dp))
+      }
+      if (uiState.profile.industry.isNotEmpty()) {
+        ProfileInfoRow(
+          name = stringResource(R.string.hintIndustry),
+          content = uiState.profile.industry
+        )
+        Spacer(modifier = Modifier.height(14.dp))
+      }
+      if (uiState.profile.phone.isNotEmpty()) {
+        ProfileInfoRowClickable(
+          name = stringResource(R.string.hintPhone),
+          content = uiState.profile.phone,
+          onClick = onPhoneClick
+        )
+        Spacer(modifier = Modifier.height(14.dp))
+      }
+      if (uiState.profile.capitalization.isNotEmpty()) {
+        ProfileInfoRow(
+          name = stringResource(R.string.hintCapitalization),
+          content = uiState.profile.capitalization
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+      }
     }
   }
 }
