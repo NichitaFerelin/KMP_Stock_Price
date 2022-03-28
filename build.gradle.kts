@@ -5,7 +5,7 @@ buildscript {
     gradlePluginPortal()
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:7.2.0-beta01")
+    classpath("com.android.tools.build:gradle:7.1.2")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${com.ferelin.Deps.kotlinVersion}")
     classpath("com.google.gms:google-services:4.3.10")
     classpath("com.google.firebase:firebase-crashlytics-gradle:2.8.1")
