@@ -29,7 +29,9 @@ internal fun AppNavigationGraph(
   ) {
     composable(route = SplashDestination.key) {
       LoadingScreen {
-        navHostController.navigate(OverviewDestination.key)
+        navHostController.navigate(OverviewDestination.key) {
+          popUpTo(SplashDestination.key) { inclusive = true }
+        }
       }
     }
     composable(route = OverviewDestination.key) {
