@@ -18,9 +18,8 @@ android {
 }
 
 dependencies {
-  implementation(Deps.androidCore)
-  implementation(Deps.documentFile)
-
+  api(Deps.androidCore)
+  api(Deps.documentFile)
   api(Deps.timber)
   api(Deps.kotlinLib)
   api(Deps.kotlinCoroutinesCore)

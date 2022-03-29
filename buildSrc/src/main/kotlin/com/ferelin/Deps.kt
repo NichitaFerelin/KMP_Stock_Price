@@ -5,8 +5,8 @@ object Deps {
   const val minSDK = 21
   const val currentSDK = 31
 
-  const val kotlinVersion = "1.6.0"
-  const val kotlinCoroutinesVersion = "1.5.2"
+  const val kotlinVersion = "1.6.10"
+  const val kotlinCoroutinesVersion = "1.6.0"
 
   const val androidCore = "androidx.core:core-ktx:1.7.0"
   const val kotlinLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
@@ -14,10 +14,10 @@ object Deps {
   const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
   const val timber = "com.jakewharton.timber:timber:5.0.1"
 
-  const val material = "com.google.android.material:material:1.5.0-rc01"
+  const val material = "com.google.android.material:material:1.5.0"
   const val browser = "androidx.browser:browser:1.4.0"
 
-  const val composeVersion = "1.1.0-rc01"
+  const val composeVersion = "1.1.1"
   const val composeUi = "androidx.compose.ui:ui:$composeVersion"
   const val composeUtil = "androidx.compose.ui:ui-util:$composeVersion"
   const val composeMaterial = "androidx.compose.material:material:$composeVersion"
@@ -26,11 +26,11 @@ object Deps {
   const val composeRuntime = "androidx.compose.runtime:runtime:$composeVersion"
   const val composeActivity = "androidx.activity:activity-compose:$composeVersion"
   const val composeAnimations = "androidx.compose.animation:animation:$composeVersion"
-  const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
-  const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
+  const val composeNavigation = "androidx.navigation:navigation-compose:2.4.1"
+  const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
   const val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
-  private const val accompanistVersion = "0.22.0-rc"
+  private const val accompanistVersion = "0.23.1"
   const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"
   const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
   const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
@@ -38,13 +38,13 @@ object Deps {
   const val accompanistSwipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
   const val accompanistFlowLayout = "com.google.accompanist:accompanist-flowlayout:$accompanistVersion"
 
-  private const val daggerVersion = "2.40.5"
+  private const val daggerVersion = "2.41"
   const val dagger = "com.google.dagger:dagger:$daggerVersion"
   const val daggerCompilerKapt = "com.google.dagger:dagger-compiler:$daggerVersion"
 
-  const val glideCompose = "com.github.skydoves:landscapist-glide:1.4.5"
+  const val glideCompose = "com.github.skydoves:landscapist-glide:1.5.0"
 
-  const val roomVersion = "2.4.0"
+  const val roomVersion = "2.4.2"
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
   const val roomKtx = "androidx.room:room-ktx:$roomVersion"
   const val roomCompilerKapt = "androidx.room:room-compiler:$roomVersion"
@@ -64,7 +64,7 @@ object Deps {
   const val moshi = "com.squareup.moshi:moshi-kotlin:$moshiVersion"
   const val moshiProcessor = "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
 
-  const val firebasePlatform = "com.google.firebase:firebase-bom:29.0.3"
+  const val firebasePlatform = "com.google.firebase:firebase-bom:29.3.0"
   const val firebaseAnalyticsKtx = "com.google.firebase:firebase-analytics-ktx"
   const val firebaseCrashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx"
   const val firebaseAuthenticationKtx = "com.google.firebase:firebase-auth-ktx"

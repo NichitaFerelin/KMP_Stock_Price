@@ -29,7 +29,7 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   composeOptions {
-    kotlinCompilerExtensionVersion  = Deps.composeVersion
+    kotlinCompilerExtensionVersion = Deps.composeVersion
   }
   kotlinOptions {
     jvmTarget = "1.8"
@@ -52,12 +52,10 @@ android {
 }
 
 dependencies {
-  implementation(Deps.androidCore)
-
-  api(project(":core"))
-  api(project(":core:ui"))
-  api(project(":core:domain"))
-  api(project(":core:data"))
+  implementation(project(":core"))
+  implementation(project(":core:ui"))
+  implementation(project(":core:domain"))
+  implementation(project(":core:data"))
   implementation(project(":features:about"))
   implementation(project(":features:authentication"))
   implementation(project(":features:search"))
