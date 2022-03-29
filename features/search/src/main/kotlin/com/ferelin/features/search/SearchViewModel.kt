@@ -35,9 +35,9 @@ internal class SearchViewModel(
   companyUseCase: CompanyUseCase,
   dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
-  companyUseCase,
   favouriteCompanyUseCase,
-  dispatchersProvider
+  dispatchersProvider,
+  companyUseCase
 ) {
   private val viewModelState = MutableStateFlow(SearchStateUi())
   val uiState = viewModelState.asStateFlow()
@@ -149,7 +149,7 @@ internal fun List<StockViewData>.filterBySearch(searchText: String): List<StockV
     item.name
       .lowercase(Locale.ROOT)
       .contains(searchText.lowercase(Locale.ROOT))
-      || item.ticker
+            || item.ticker
       .lowercase(Locale.ROOT)
       .contains(searchText.lowercase(Locale.ROOT))
   }
@@ -162,7 +162,7 @@ internal class SearchViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == SearchViewModel::class.java)
     return SearchViewModel(
       searchRequestsUseCase,

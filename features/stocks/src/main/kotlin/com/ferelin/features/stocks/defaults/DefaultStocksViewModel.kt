@@ -1,7 +1,6 @@
 package com.ferelin.features.stocks.defaults
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -25,9 +24,9 @@ internal class DefaultStocksViewModel(
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
-  companyUseCase,
   favouriteCompanyUseCase,
-  dispatchersProvider
+  dispatchersProvider,
+  companyUseCase
 ) {
   private val viewModelState = MutableStateFlow(DefaultStocksStateUi())
   val uiState = viewModelState.asStateFlow()
@@ -57,7 +56,7 @@ internal class DefaultStocksViewModelFactory @Inject constructor(
   private val companyUseCase: CompanyUseCase
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == DefaultStocksViewModel::class.java)
     return DefaultStocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }

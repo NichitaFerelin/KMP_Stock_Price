@@ -8,9 +8,6 @@ import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.usecase.NewsUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.params.NewsParams
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -22,8 +19,8 @@ internal data class NewsStateUi(
 
 internal class NewsViewModel(
   private val newsParams: NewsParams,
-  dispatchersProvider: DispatchersProvider,
   private val newsUseCase: NewsUseCase,
+  dispatchersProvider: DispatchersProvider,
   networkListener: NetworkListener
 ) : ViewModel() {
   private val viewModelState = MutableStateFlow(NewsStateUi())
@@ -68,8 +65,8 @@ internal class NewsViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == NewsViewModel::class.java)
-    return NewsViewModel(newsParams, dispatchersProvider, newsUseCase, networkListener) as T
+    return NewsViewModel(newsParams, newsUseCase, dispatchersProvider, networkListener) as T
   }
 }

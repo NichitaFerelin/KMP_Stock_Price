@@ -42,7 +42,7 @@ internal class LoginComponentViewModelFactory(
   private val deps: LoginDeps,
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == LoginComponentViewModel::class.java)
     return LoginComponentViewModel(deps) as T
   }

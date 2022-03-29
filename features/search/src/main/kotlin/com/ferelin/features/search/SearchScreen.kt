@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 
 package com.ferelin.features.search
 
@@ -94,8 +94,7 @@ private fun SearchScreen(
     when {
       uiState.searchResultsLce is LceState.Loading -> {
         Box(
-          modifier = Modifier.fillMaxSize(),
-          contentAlignment = Alignment.Center
+          modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
           CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
         }
@@ -123,7 +122,6 @@ private fun SearchScreen(
   }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun TopSearchField(
   modifier: Modifier = Modifier,
@@ -134,48 +132,36 @@ private fun TopSearchField(
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
 
-  SearchField(
-    modifier = modifier,
-    borderWidth = 2.dp,
-    onClick = { /**/ }
-  ) {
+  SearchField(modifier = modifier, borderWidth = 2.dp, onClick = { /**/ }) {
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
       Spacer(modifier = Modifier.padding(start = 12.dp))
-      ClickableIcon(
-        imageVector = Icons.Default.ArrowBack,
+      ClickableIcon(imageVector = Icons.Default.ArrowBack,
         backgroundColor = AppTheme.colors.backgroundPrimary,
         contentDescription = stringResource(R.string.descriptionBack),
         iconTint = AppTheme.colors.buttonPrimary,
         onClick = {
           keyboardController?.hide()
           onBackClick.invoke()
-        }
-      )
+        })
       Spacer(modifier = Modifier.width(8.dp))
-      TextField(
-        inputValue = inputText,
+      TextField(inputValue = inputText,
         placeholder = stringResource(id = R.string.hintEnterSearchRequest),
         onValueChange = onTextChanged,
         keyboardActions = KeyboardActions { keyboardController?.hide() },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         trailingIcon = {
           AnimatedVisibility(
-            visible = showCloseIcon,
-            enter = scaleIn(),
-            exit = scaleOut()
+            visible = showCloseIcon, enter = scaleIn(), exit = scaleOut()
           ) {
-            ClickableIcon(
-              backgroundColor = AppTheme.colors.backgroundPrimary,
+            ClickableIcon(backgroundColor = AppTheme.colors.backgroundPrimary,
               imageVector = Icons.Default.Close,
               iconTint = AppTheme.colors.buttonPrimary,
               contentDescription = stringResource(id = R.string.descriptionIconClose),
-              onClick = { onTextChanged("") }
-            )
+              onClick = { onTextChanged("") })
           }
-        }
-      )
+        })
     }
   }
 }
@@ -223,8 +209,7 @@ private fun SearchResultsSection(
 private fun NoSearchResultsSection() {
   Spacer(modifier = Modifier.height(30.dp))
   Column(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Image(
       painter = painterResource(id = R.mipmap.ic_pointing_glass),

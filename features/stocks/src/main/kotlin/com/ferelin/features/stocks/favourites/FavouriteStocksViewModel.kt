@@ -24,9 +24,9 @@ internal class FavouriteStocksViewModel(
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
-  companyUseCase,
   favouriteCompanyUseCase,
-  dispatchersProvider
+  dispatchersProvider,
+  companyUseCase
 ) {
   private val viewModelState = MutableStateFlow(FavouriteStocksStateUi())
   val uiState = viewModelState.asStateFlow()
@@ -63,7 +63,7 @@ internal class FavouriteStocksViewModelFactory @Inject constructor(
   private val companyUseCase: CompanyUseCase
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == FavouriteStocksViewModel::class.java)
     return FavouriteStocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }

@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 open class BaseStocksViewModel(
-  private val companyUseCase: CompanyUseCase,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  protected val dispatchersProvider: DispatchersProvider
+  protected val dispatchersProvider: DispatchersProvider,
+  companyUseCase: CompanyUseCase
 ) : ViewModel() {
   protected val companies = companyUseCase.companies
     .combine(

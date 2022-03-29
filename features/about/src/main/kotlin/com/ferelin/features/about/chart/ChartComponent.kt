@@ -52,7 +52,7 @@ internal class ChartComponentViewModelFactory(
   private val params: ChartParams
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == ChartComponentViewModel::class.java)
     return ChartComponentViewModel(deps, params) as T
   }

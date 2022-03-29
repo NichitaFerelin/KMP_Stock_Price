@@ -8,6 +8,7 @@ import dagger.Module
 @Module(includes = [RepositoryModuleBinds::class])
 class RepositoryModule
 
+@Suppress("unused")
 @Module
 internal interface RepositoryModuleBinds {
   @Binds

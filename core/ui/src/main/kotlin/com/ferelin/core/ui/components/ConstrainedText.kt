@@ -81,7 +81,7 @@ private fun ConstrainedTextLinesPreview() {
   ConstrainedText(
     maxLines = 3,
     text = "An do on frankness so cordially immediate recommend contained. Imprudence insensible be literature " +
-      "unsatiable do. Of or imprudence solicitude affronting in mr possession. Compass journey he request on " +
-      "suppose limited of or."
+            "unsatiable do. Of or imprudence solicitude affronting in mr possession. Compass journey he request on " +
+            "suppose limited of or."
   )
 }

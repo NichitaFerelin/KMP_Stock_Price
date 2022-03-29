@@ -73,7 +73,6 @@ fun LoginRoute(
   )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun LoginScreen(
   uiState: LoginStateUi,

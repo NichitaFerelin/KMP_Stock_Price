@@ -1,6 +1,7 @@
 package com.ferelin.stockprice.navigation
 
 internal sealed class Destination(val key: String) {
+
   object AboutDestination : Destination("about") {
     const val ARG_ID = "id"
     const val ARG_NAME = "name"

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Theme.StockPrice" parent="Theme.MaterialComponents.NoActionBar"/>
+    <style name="Theme.StockPrice" parent="Theme.MaterialComponents.NoActionBar" />
 </resources>

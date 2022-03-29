@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.components.StocksList
+import com.ferelin.core.ui.viewData.StockViewData
 
 @Composable
 fun DefaultStocksRoute(

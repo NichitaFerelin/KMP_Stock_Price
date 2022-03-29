@@ -1,6 +1,9 @@
 package com.ferelin.core.ui.components
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +29,6 @@ import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.core.ui.viewData.StockViewData
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StocksList(
   stocks: List<StockViewData>,

@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.Colors
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -22,7 +21,7 @@ fun AppTheme(
   val colorPalette = remember { colors }
   colorPalette.update(colors)
 
-  val selectionColors =  remember {
+  val selectionColors = remember {
     TextSelectionColors(
       handleColor = colors.textPrimary,
       backgroundColor = colors.contendAccentPrimary

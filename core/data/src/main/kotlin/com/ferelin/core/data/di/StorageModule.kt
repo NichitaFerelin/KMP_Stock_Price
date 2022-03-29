@@ -79,6 +79,7 @@ class StorageModule {
   }
 }
 
+@Suppress("unused")
 @Module
 internal interface StorageModuleBinds {
   @Binds

@@ -170,7 +170,7 @@ internal class LoginViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == LoginViewModel::class.java)
     return LoginViewModel(authUseCase, dispatchersProvider, networkListener) as T
   }

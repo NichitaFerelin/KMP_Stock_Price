@@ -17,7 +17,7 @@ internal class AuthUserStateRepositoryImpl @Inject constructor(
   override val userAuthenticated: Flow<Boolean> = callbackFlow {
     trySend(firebaseAuth.currentUser != null)
 
-    val authListener = FirebaseAuth.AuthStateListener { _ ->
+    val authListener = FirebaseAuth.AuthStateListener {
       userTokenState.value = firebaseAuth.uid ?: ""
       trySend(firebaseAuth.currentUser != null)
     }

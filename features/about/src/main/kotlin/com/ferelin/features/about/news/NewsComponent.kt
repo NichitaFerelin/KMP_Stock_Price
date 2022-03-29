@@ -9,7 +9,6 @@ import com.ferelin.core.ui.params.NewsParams
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Scope
-import kotlin.properties.Delegates
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
@@ -27,7 +26,7 @@ internal interface NewsComponent {
     fun build(): NewsComponent
   }
 
-  fun viewModelFactory() : NewsViewModelFactory
+  fun viewModelFactory(): NewsViewModelFactory
 }
 
 interface NewsDeps {
@@ -51,7 +50,7 @@ internal class NewsComponentViewModelFactory(
   private val params: NewsParams
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == NewsComponentViewModel::class.java)
     return NewsComponentViewModel(deps, params) as T
   }

@@ -4,11 +4,8 @@
     <!-- Titles -->
     <string name="titleChart">Chart</string>
     <string name="titleNews">News</string>
-    <string name="titleForecasts">Forecasts</string>
-    <string name="titleIdeas">Ideas</string>
     <string name="titleStocks">Stocks</string>
     <string name="titleFavourite">Favourite</string>
-    <string name="titleSummary">Summary</string>
     <string name="titlePopularRequests">Popular requests</string>
     <string name="titleYourSearches">You\'ve searched for this</string>
     <string name="titleChartCardDays">D</string>
@@ -22,11 +19,8 @@
     <string name="titleNotAuthorized">Not authorized</string>
     <string name="titleAuthorization">Authorization</string>
     <string name="titleClearData">Clear data</string>
-    <string name="titleSourceCode">Project source code</string>
     <string name="titleDownload">Stock Price</string>
     <string name="titleSettings">App settings</string>
-    <string name="titleNotifyPriceUpdates">Notify about price changes for favorite stocks</string>
-    <string name="titleNotificationChannelUpdates">Stock price updates</string>
 
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
@@ -85,13 +79,9 @@
     <string name="messageDataCleared">Data has been cleared</string>
     <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
     <string name="messageDownloadingWillStart">Downloading will be started soon</string>
-    <string name="messageDownloadingNoNetwork">Download will start when connected to the network</string>
     <string name="messagePermissionsNotGranted">Permissions not granted</string>
 
     <!-- Others -->
-    <string name="transitionSearchFragment">searchContainer</string>
-    <string name="transitionAboutPager">Transition container about fragment pager</string>
-
     <string name="sourceNotAuthorized">You are not authorized. Login</string>
     <string name="sourceAuthorized">You are logged in. Log off.\nYour current favourite stocks
         and searches will only be deleted locally. The next time you sign in, you

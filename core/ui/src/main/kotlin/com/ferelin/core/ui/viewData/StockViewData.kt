@@ -10,7 +10,7 @@ data class StockViewData(
   val ticker: String,
   val logoUrl: String,
   val isFavourite: Boolean,
-  val stockPriceViewData: StockPriceViewData?,
+  val stockPriceViewData: StockPriceViewData?
 )
 
 @Immutable

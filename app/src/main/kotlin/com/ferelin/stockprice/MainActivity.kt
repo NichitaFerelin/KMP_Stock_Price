@@ -9,7 +9,8 @@ import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.stockprice.navigation.AppNavigationGraph
 import com.google.accompanist.insets.ProvideWindowInsets
 
-internal class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { StockPriceApp() }

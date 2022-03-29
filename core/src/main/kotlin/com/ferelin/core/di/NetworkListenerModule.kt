@@ -9,7 +9,6 @@ import com.ferelin.core.network.NetworkListenerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 
 @Module(includes = [NetworkListenerModuleBinds::class])
 class NetworkListenerModule {

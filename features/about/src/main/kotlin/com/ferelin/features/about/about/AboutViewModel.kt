@@ -18,9 +18,9 @@ internal data class AboutStateUi(
 )
 
 internal class AboutViewModel(
+  private val aboutParams: AboutParams,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val dispatchersProvider: DispatchersProvider,
-  private val aboutParams: AboutParams,
 ) : ViewModel() {
   private val viewModelState = MutableStateFlow(
     value = AboutStateUi(
@@ -79,8 +79,8 @@ internal class AboutViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == AboutViewModel::class.java)
-    return AboutViewModel(favouriteCompanyUseCase, dispatchersProvider, params) as T
+    return AboutViewModel(params, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

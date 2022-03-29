@@ -1,10 +1,9 @@
-@file:OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class)
+@file:OptIn(ExperimentalPagerApi::class)
 
 package com.ferelin.features.about.about
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -68,7 +67,6 @@ fun AboutRoute(
   )
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun AboutScreen(
   uiState: AboutStateUi,

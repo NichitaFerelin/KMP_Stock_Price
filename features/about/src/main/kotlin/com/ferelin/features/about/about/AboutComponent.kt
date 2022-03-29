@@ -34,7 +34,6 @@ interface AboutDeps : ChartDeps, NewsDeps, ProfileDeps {
   val favouriteCompanyUseCase: FavouriteCompanyUseCase
 }
 
-
 internal class AboutComponentViewModel(
   deps: AboutDeps,
   params: AboutParams
@@ -50,7 +49,7 @@ internal class AboutComponentViewModelFactory(
   private val params: AboutParams
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == AboutComponentViewModel::class.java)
     return AboutComponentViewModel(deps, params) as T
   }

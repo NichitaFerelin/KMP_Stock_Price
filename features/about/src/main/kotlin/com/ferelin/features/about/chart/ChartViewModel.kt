@@ -27,10 +27,10 @@ internal data class ChartScreenStateUi(
 
 internal class ChartViewModel(
   private val chartParams: ChartParams,
-  dispatchersProvider: DispatchersProvider,
-  networkListener: NetworkListener,
   private val pastPricesUseCase: PastPricesUseCase,
   private val stockPricesUseCase: StockPriceUseCase,
+  dispatchersProvider: DispatchersProvider,
+  networkListener: NetworkListener,
 ) : ViewModel() {
   private val viewModelState = MutableStateFlow(ChartScreenStateUi())
   val uiState = viewModelState.asStateFlow()
@@ -125,14 +125,14 @@ internal class ChartViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == ChartViewModel::class.java)
     return ChartViewModel(
       chartParams,
-      dispatchersProvider,
-      networkListener,
       pastPricesUseCase,
-      stockPricesUseCase
+      stockPricesUseCase,
+      dispatchersProvider,
+      networkListener
     ) as T
   }
 }

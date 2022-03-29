@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Singleton
 
 @Module
 class CoroutineModule {

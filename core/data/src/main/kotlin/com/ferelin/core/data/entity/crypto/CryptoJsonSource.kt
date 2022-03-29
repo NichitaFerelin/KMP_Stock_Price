@@ -4,7 +4,6 @@ import android.content.Context
 import com.ferelin.core.data.mapper.CryptoMapper
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import timber.log.Timber
 import javax.inject.Inject
 
 internal interface CryptoJsonSource {
@@ -16,7 +15,6 @@ internal class CryptoJsonSourceImpl @Inject constructor(
   private val moshi: Moshi
 ) : CryptoJsonSource {
   override fun parseJson(): List<CryptoDBO> {
-    Timber.d("Parse cryptos from json")
     val type = Types.newParameterizedType(List::class.java, CryptoJson::class.java)
     val json = context.assets
       .open(CRYPTO_JSON_FILE)

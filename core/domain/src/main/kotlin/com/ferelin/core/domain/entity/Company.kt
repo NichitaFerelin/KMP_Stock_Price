@@ -1,5 +1,8 @@
 package com.ferelin.core.domain.entity
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 data class Company(
   val id: CompanyId,
   val name: String,
@@ -7,5 +10,5 @@ data class Company(
   val logoUrl: String
 )
 
-@JvmInline
-value class CompanyId(val value: Int)
+@Parcelize
+data class CompanyId(val value: Int) : Parcelable

@@ -7,6 +7,7 @@ import dagger.Module
 @Module(includes = [UseCaseModuleBinds::class])
 class UseCaseModule
 
+@Suppress("unused")
 @Module
 internal interface UseCaseModuleBinds {
   @Binds

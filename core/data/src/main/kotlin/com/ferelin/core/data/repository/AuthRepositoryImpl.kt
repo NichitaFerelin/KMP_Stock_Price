@@ -76,7 +76,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     userVerificationId?.let { userVerificationId ->
       val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
       authCallbacks?.onVerificationCompleted(credential)
-    } ?: error("Attempt to complete authentication when user ID is null")
+    } ?: error("Attempt to complete authentication with null user ID")
   }
 
   override suspend fun logOut() {

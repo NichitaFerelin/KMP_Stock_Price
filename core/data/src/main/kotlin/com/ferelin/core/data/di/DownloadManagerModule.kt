@@ -8,7 +8,7 @@ import dagger.Provides
 @Module
 class DownloadManagerModule {
   @Provides
-  fun downloadManager(context: Context) : DownloadManager {
+  fun downloadManager(context: Context): DownloadManager {
     return context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
   }
 }

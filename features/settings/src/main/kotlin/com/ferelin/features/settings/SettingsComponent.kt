@@ -49,7 +49,7 @@ internal class SettingsComponentViewModelFactory constructor(
   private val deps: SettingsDeps
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == SettingsComponentViewModel::class.java)
     return SettingsComponentViewModel(deps) as T
   }

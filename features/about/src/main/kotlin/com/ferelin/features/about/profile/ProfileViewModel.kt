@@ -58,7 +58,7 @@ internal class ProfileViewModelFactory @Inject constructor(
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == ProfileViewModel::class.java)
     return ProfileViewModel(profileParams, profileUseCase, companyUseCase, dispatchersProvider) as T
   }

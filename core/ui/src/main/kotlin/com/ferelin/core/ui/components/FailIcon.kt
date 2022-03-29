@@ -14,7 +14,7 @@ fun BoxScope.FailIcon(
   modifier: Modifier = Modifier
 ) {
   Icon(
-    modifier = Modifier.align(Alignment.Center),
+    modifier = modifier.align(Alignment.Center),
     imageVector = Icons.Default.Close,
     contentDescription = null,
     tint = AppTheme.colors.contendTertiary

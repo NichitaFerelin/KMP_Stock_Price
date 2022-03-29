@@ -22,6 +22,7 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
   @ExternalScope private val externalScope: CoroutineScope,
   authUserStateRepository: AuthUserStateRepository
 ) : FavouriteCompanyRepository {
+
   init {
     authUserStateRepository.userToken
       .filterNot(String::isEmpty)

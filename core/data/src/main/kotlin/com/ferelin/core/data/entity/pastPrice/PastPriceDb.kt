@@ -1,7 +1,6 @@
 package com.ferelin.core.data.entity.pastPrice
 
 import androidx.room.*
-import com.ferelin.core.domain.entity.CompanyId
 import kotlinx.coroutines.flow.Flow
 
 @Dao

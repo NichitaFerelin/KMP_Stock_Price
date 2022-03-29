@@ -8,6 +8,7 @@ import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
 class App : Application() {
+
   val appComponent: AppComponent by lazy(NONE) {
     DaggerAppComponent.builder()
       .context(context = this)

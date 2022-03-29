@@ -148,7 +148,7 @@ internal class SettingsViewModelFactory @Inject constructor(
   private val authUseCase: AuthUseCase
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == SettingsViewModel::class.java)
     return SettingsViewModel(
       notifyPriceUseCase,

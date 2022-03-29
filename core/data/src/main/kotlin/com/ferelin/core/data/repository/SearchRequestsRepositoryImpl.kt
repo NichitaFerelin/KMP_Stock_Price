@@ -40,7 +40,7 @@ internal class SearchRequestsRepositoryImpl @Inject constructor(
   }
 }
 
-internal object Mock {
+private object Mock {
   fun popularSearchRequests(): Flow<List<SearchRequest>> = flow {
     emit(
       value = listOf(

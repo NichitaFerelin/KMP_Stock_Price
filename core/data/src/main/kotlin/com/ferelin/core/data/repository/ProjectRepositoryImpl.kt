@@ -39,6 +39,6 @@ internal class ProjectRepositoryImpl @Inject constructor(
 }
 
 internal const val PROJECT_SOURCE_URL = "https://github.com/NikitaFerelin" +
-  "/Android_Stock_Price/archive/refs/heads/master.zip"
+        "/Android_Stock_Price/archive/refs/heads/master.zip"
 internal const val DOWNLOAD_TITLE = "Stock Price Download Manager"
 internal const val DOWNLOAD_DESCRIPTION = "Downloading project source code"

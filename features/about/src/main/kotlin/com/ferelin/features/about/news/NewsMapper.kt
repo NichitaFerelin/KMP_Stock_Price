@@ -1,7 +1,7 @@
 package com.ferelin.features.about.news
 
-import com.ferelin.core.ui.viewData.utils.toDateStr
 import com.ferelin.core.domain.entity.News
+import com.ferelin.core.ui.viewData.utils.toDateStr
 
 internal object NewsMapper {
   fun map(news: News): NewsViewData {

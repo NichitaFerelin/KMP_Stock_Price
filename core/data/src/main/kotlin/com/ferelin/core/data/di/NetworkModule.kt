@@ -1,7 +1,6 @@
 package com.ferelin.core.data.di
 
 import android.content.Context
-import android.util.Log
 import com.ferelin.core.data.R
 import com.ferelin.core.data.api.*
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
@@ -28,13 +27,10 @@ class NetworkModule {
   @Provides
   @Singleton
   @Named(STOCKS_RETROFIT)
-  internal fun stocksRetrofit(
-    @Named(STOCKS_TOKEN) token: String,
-    moshi: Moshi
-  ): Retrofit {
+  internal fun stocksRetrofit(moshi: Moshi): Retrofit {
     return RetrofitBuilder(
       baseUrl = STOCKS_BASE_URL,
-      httpClient =  OkHttpBuilder().build(),
+      httpClient = OkHttpBuilder().build(),
       moshi = moshi
     ).build()
   }
@@ -42,10 +38,7 @@ class NetworkModule {
   @Provides
   @Singleton
   @Named(CRYPTOS_RETROFIT)
-  internal fun cryptosRetrofit(
-    @Named(CRYPTOS_TOKEN) token: String,
-    moshi: Moshi
-  ): Retrofit {
+  internal fun cryptosRetrofit(moshi: Moshi): Retrofit {
     return RetrofitBuilder(
       baseUrl = CRYPTOS_BASE_URL,
       httpClient = OkHttpBuilder().build(),
@@ -110,18 +103,17 @@ class NetworkModule {
 
   @Provides
   @Singleton
-  internal fun firebaseReference() : DatabaseReference {
+  internal fun firebaseReference(): DatabaseReference {
     return FirebaseDatabase.getInstance().reference
   }
 }
 
+@Suppress("unused")
 @Module
 internal interface NetworkModuleBinds {
   @Binds
-  fun favouriteCompanyApi(
-    favouriteCompanyApiImpl: FavouriteCompanyApiImpl
-  ) : FavouriteCompanyApi
+  fun favouriteCompanyApi(impl: FavouriteCompanyApiImpl): FavouriteCompanyApi
 }
 
-internal const val STOCKS_RETROFIT = "stocks-retrofit"
-internal const val CRYPTOS_RETROFIT = "cryptos-retrofit"
+private const val STOCKS_RETROFIT = "stocks-retrofit"
+private const val CRYPTOS_RETROFIT = "cryptos-retrofit"
