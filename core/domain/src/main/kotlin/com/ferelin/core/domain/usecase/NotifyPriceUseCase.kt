@@ -1,28 +1,22 @@
 package com.ferelin.core.domain.usecase
 
-import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.NotifyPriceRepository
 import dagger.Reusable
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 interface NotifyPriceUseCase {
-  val notifyPriceState: Flow<Boolean>
-  suspend fun setNotifyPrice(notify: Boolean)
+  val notifyPriceState: Observable<Boolean>
+  fun setNotifyPrice(notify: Boolean)
 }
 
 @Reusable
 internal class NotifyPriceUseCaseImpl @Inject constructor(
-  private val notifyPriceRepository: NotifyPriceRepository,
-  dispatchersProvider: DispatchersProvider
+  private val notifyPriceRepository: NotifyPriceRepository
 ) : NotifyPriceUseCase {
-  override val notifyPriceState: Flow<Boolean> = notifyPriceRepository.notifyPrice
-    .distinctUntilChanged()
-    .flowOn(dispatchersProvider.IO)
+  override val notifyPriceState: Observable<Boolean> = notifyPriceRepository.notifyPrice
 
-  override suspend fun setNotifyPrice(notify: Boolean) {
+  override fun setNotifyPrice(notify: Boolean) {
     notifyPriceRepository.setNotifyPrice(notify)
   }
 }

@@ -1,11 +1,11 @@
 package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.CompanyId
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface FavouriteCompanyRepository {
-  val favouriteCompanies: Flow<List<CompanyId>>
-  suspend fun addToFavourite(companyId: CompanyId)
-  suspend fun removeFromFavourite(companyId: CompanyId)
-  suspend fun eraseAll(clearCloud: Boolean)
+  val favouriteCompanies: Observable<List<CompanyId>>
+  fun addToFavourite(companyId: CompanyId)
+  fun removeFromFavourite(companyId: CompanyId)
+  fun eraseAll(clearCloud: Boolean)
 }

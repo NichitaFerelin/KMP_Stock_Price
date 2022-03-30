@@ -2,8 +2,8 @@ package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.Profile
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface ProfileRepository {
-  fun getBy(companyId: CompanyId): Flow<Profile>
+  fun getBy(companyId: CompanyId): Observable<Profile>
 }

@@ -1,45 +1,39 @@
 package com.ferelin.core.domain.usecase
 
-import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoPrice
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.repository.CryptoPriceRepository
 import dagger.Reusable
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 interface CryptoPriceUseCase {
-  val cryptoPrices: Flow<List<CryptoPrice>>
-  suspend fun fetchPriceFor(cryptos: List<Crypto>)
+  val cryptoPrices: Observable<List<CryptoPrice>>
   val cryptoPricesLce: Flow<LceState>
+  fun fetchPriceFor(cryptos: List<Crypto>)
 }
 
 @Reusable
 internal class CryptoPriceUseCaseImpl @Inject constructor(
-  private val cryptoPriceRepository: CryptoPriceRepository,
-  private val dispatchersProvider: DispatchersProvider
+  private val cryptoPriceRepository: CryptoPriceRepository
 ) : CryptoPriceUseCase {
-  override val cryptoPrices: Flow<List<CryptoPrice>>
+  override val cryptoPrices: Observable<List<CryptoPrice>>
     get() = cryptoPriceRepository.cryptoPrices
-      .zip(
-        other = cryptoPriceRepository.fetchError,
-        transform = { cryptoPrices, exception ->
-          if (exception != null) {
-            cryptoPricesLceState.value = LceState.Error(exception.message)
-          }
-          cryptoPrices
-        }
-      )
-      .onStart { cryptoPricesLceState.value = LceState.Loading }
-      .onEach { cryptoPricesLceState.value = LceState.Content }
-      .catch { e -> cryptoPricesLceState.value = LceState.Error(e.message) }
-      .flowOn(dispatchersProvider.IO)
+      .doOnSubscribe { cryptoPricesLceState.value = LceState.Loading }
+      .doOnEach { cryptoPricesLceState.value = LceState.Content }
+      .doOnError { e -> cryptoPricesLceState.value = LceState.Error(e.message) }
 
-  override suspend fun fetchPriceFor(cryptos: List<Crypto>) {
-    cryptoPricesLceState.value = LceState.Loading
-    cryptoPriceRepository.fetchPriceFor(cryptos)
-    cryptoPricesLceState.value = LceState.Content
+  override fun fetchPriceFor(cryptos: List<Crypto>) {
+    cryptoPriceRepository
+      .fetchPriceFor(cryptos)
+      .doOnSubscribe { cryptoPricesLceState.value = LceState.Loading }
+      .doOnComplete { cryptoPricesLceState.value = LceState.Content }
+      .doOnError { cryptoPricesLceState.value = LceState.Error(it.message) }
+      .blockingAwait()
   }
 
   private val cryptoPricesLceState = MutableStateFlow<LceState>(LceState.None)

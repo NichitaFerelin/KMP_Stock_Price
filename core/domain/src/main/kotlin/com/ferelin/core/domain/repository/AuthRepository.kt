@@ -1,13 +1,13 @@
 package com.ferelin.core.domain.repository
 
 import android.app.Activity
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AuthRepository {
-  val authProcessing: Flow<AuthState>
-  suspend fun tryAuthentication(holder: Activity, phone: String)
-  suspend fun completeAuthentication(code: String)
-  suspend fun logOut()
+  val authProcessing: StateFlow<AuthState>
+  fun tryAuthentication(holder: Activity, phone: String)
+  fun completeAuthentication(code: String)
+  fun logOut()
 }
 
 enum class AuthState {

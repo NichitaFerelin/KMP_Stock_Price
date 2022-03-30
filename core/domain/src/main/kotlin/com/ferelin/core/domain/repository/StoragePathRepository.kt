@@ -1,9 +1,9 @@
 package com.ferelin.core.domain.repository
 
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface StoragePathRepository {
-  val path: Flow<String>
-  val authority: Flow<String>
-  suspend fun setStoragePath(path: String, authority: String)
+  val path: Observable<String>
+  val authority: Observable<String>
+  fun setStoragePath(path: String, authority: String)
 }

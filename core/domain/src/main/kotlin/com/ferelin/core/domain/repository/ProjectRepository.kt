@@ -1,10 +1,11 @@
 package com.ferelin.core.domain.repository
 
+import io.reactivex.rxjava3.core.Completable
 import java.io.File
 
 interface ProjectRepository {
-  suspend fun download(
+  fun download(
     resultFileName: String,
     destinationFile: File? = null
-  )
+  ) : Completable
 }

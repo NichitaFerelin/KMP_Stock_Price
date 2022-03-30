@@ -1,8 +1,8 @@
 package com.ferelin.core.domain.repository
 
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface NotifyPriceRepository {
-  val notifyPrice: Flow<Boolean>
-  suspend fun setNotifyPrice(notify: Boolean)
+  val notifyPrice: Observable<Boolean>
+  fun setNotifyPrice(notify: Boolean)
 }

@@ -2,10 +2,10 @@ package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoPrice
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 
 interface CryptoPriceRepository {
-  val cryptoPrices: Flow<List<CryptoPrice>>
-  suspend fun fetchPriceFor(cryptos: List<Crypto>)
-  val fetchError: Flow<Exception?>
+  val cryptoPrices: Observable<List<CryptoPrice>>
+  fun fetchPriceFor(cryptos: List<Crypto>): Completable
 }

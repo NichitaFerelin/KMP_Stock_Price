@@ -10,7 +10,7 @@ import java.io.File
 import javax.inject.Inject
 
 interface DownloadProjectUseCase {
-  suspend fun download(destinationFile: File? = null)
+  fun download(destinationFile: File? = null)
   val downloadLce: Flow<LceState>
 }
 
@@ -18,14 +18,13 @@ interface DownloadProjectUseCase {
 internal class DownloadProjectUseCaseImpl @Inject constructor(
   private val projectRepository: ProjectRepository
 ) : DownloadProjectUseCase {
-  override suspend fun download(destinationFile: File?) {
-    try {
-      downloadLceState.value = LceState.Loading
-      projectRepository.download(RESULT_FILE_NAME, destinationFile)
-      downloadLceState.value = LceState.Content
-    } catch (e: Exception) {
-      downloadLceState.value = LceState.Error(e.message)
-    }
+  override fun download(destinationFile: File?) {
+    projectRepository
+      .download(RESULT_FILE_NAME, destinationFile)
+      .doOnSubscribe { downloadLceState.value = LceState.Loading }
+      .doOnComplete { downloadLceState.value = LceState.Content }
+      .doOnError { downloadLceState.value = LceState.Error(it.message) }
+      .blockingAwait()
   }
 
   private val downloadLceState = MutableStateFlow<LceState>(LceState.None)

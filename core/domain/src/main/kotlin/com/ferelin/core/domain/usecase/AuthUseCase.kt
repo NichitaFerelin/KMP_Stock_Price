@@ -31,7 +31,7 @@ internal class AuthUseCaseImpl @Inject constructor(
   authUserStateRepository: AuthUserStateRepository
 ) : AuthUseCase {
   override val userAuth: Flow<Boolean> = authUserStateRepository.userAuthenticated.distinctUntilChanged()
-  override val authState: Flow<AuthState> = authRepository.authProcessing.distinctUntilChanged()
+  override val authState: Flow<AuthState> = authRepository.authProcessing
 
   override suspend fun tryAuthentication(holder: Activity, phone: String) {
     authRepository.tryAuthentication(holder, phone)

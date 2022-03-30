@@ -1,8 +1,8 @@
 package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.Company
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface CompanyRepository {
-  val companies: Flow<List<Company>>
+  val companies: Observable<List<Company>>
 }

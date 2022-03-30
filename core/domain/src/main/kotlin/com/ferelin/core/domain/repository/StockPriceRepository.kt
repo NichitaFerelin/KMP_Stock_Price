@@ -2,10 +2,10 @@ package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.StockPrice
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 
 interface StockPriceRepository {
-  val stockPrice: Flow<List<StockPrice>>
-  suspend fun fetchPrice(companyId: CompanyId, companyTicker: String)
-  val fetchError: Flow<Exception?>
+  val stockPrice: Observable<List<StockPrice>>
+  fun fetchPrice(companyId: CompanyId, companyTicker: String): Completable
 }

@@ -1,42 +1,37 @@
 package com.ferelin.core.domain.usecase
 
-import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.domain.repository.StockPriceRepository
 import dagger.Reusable
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 interface StockPriceUseCase {
-  val stockPrice: Flow<List<StockPrice>>
-  suspend fun fetchPrice(companyId: CompanyId, companyTicker: String)
+  val stockPrice: Observable<List<StockPrice>>
   val stockPriceLce: Flow<LceState>
+  fun fetchPrice(companyId: CompanyId, companyTicker: String)
 }
 
 @Reusable
 internal class StockPriceUseCaseImpl @Inject constructor(
-  private val stockPriceRepository: StockPriceRepository,
-  dispatchersProvider: DispatchersProvider
+  private val stockPriceRepository: StockPriceRepository
 ) : StockPriceUseCase {
-  override val stockPrice: Flow<List<StockPrice>> = stockPriceRepository.stockPrice
-    .zip(
-      other = stockPriceRepository.fetchError,
-      transform = { stockPrices, exception ->
-        if (exception != null) {
-          stockPriceLceState.value = LceState.Error(exception.message)
-        }
-        stockPrices
-      }
-    )
-    .onStart { stockPriceLceState.value = LceState.Loading }
-    .onEach { stockPriceLceState.value = LceState.Content }
-    .catch { e -> stockPriceLceState.value = LceState.Error(e.message) }
-    .flowOn(dispatchersProvider.IO)
+  override val stockPrice: Observable<List<StockPrice>> = stockPriceRepository.stockPrice
+    .doOnSubscribe { stockPriceLceState.value = LceState.Loading }
+    .doOnEach { stockPriceLceState.value = LceState.Content }
+    .doOnError { e -> stockPriceLceState.value = LceState.Error(e.message) }
 
-  override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
+  override fun fetchPrice(companyId: CompanyId, companyTicker: String) {
     stockPriceRepository.fetchPrice(companyId, companyTicker)
+      .doOnSubscribe { stockPriceLceState.value = LceState.Loading }
+      .doOnComplete { stockPriceLceState.value = LceState.Content }
+      .doOnError { e -> stockPriceLceState.value = LceState.Error(e.message) }
+      .blockingAwait()
   }
 
   private val stockPriceLceState = MutableStateFlow<LceState>(LceState.None)

@@ -1,12 +1,12 @@
 package com.ferelin.core.domain.repository
 
 import com.ferelin.core.domain.entity.SearchRequest
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 interface SearchRequestsRepository {
-  val searchRequests: Flow<List<SearchRequest>>
-  val popularSearchRequests: Flow<List<SearchRequest>>
-  suspend fun add(request: String)
-  suspend fun erase(searchRequest: SearchRequest)
-  suspend fun eraseAll()
+  val searchRequests: Observable<List<SearchRequest>>
+  val popularSearchRequests: Observable<List<SearchRequest>>
+  fun add(request: String)
+  fun erase(searchRequest: SearchRequest)
+  fun eraseAll()
 }
