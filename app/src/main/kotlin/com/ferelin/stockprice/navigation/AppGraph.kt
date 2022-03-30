@@ -10,11 +10,11 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.features.about.about.AboutRoute
-import com.ferelin.features.authentication.LoginRoute
+import com.ferelin.features.home.home.HomeScreenRoute
+import com.ferelin.features.login.LoginRoute
 import com.ferelin.features.search.SearchRoute
 import com.ferelin.features.settings.SettingsRoute
 import com.ferelin.features.splash.LoadingScreen
-import com.ferelin.features.stocks.overview.OverviewRoute
 import com.ferelin.stockprice.di.AppComponent
 import com.ferelin.stockprice.navigation.Destination.*
 
@@ -29,13 +29,13 @@ internal fun AppNavigationGraph(
   ) {
     composable(route = SplashDestination.key) {
       LoadingScreen {
-        navHostController.navigate(OverviewDestination.key) {
+        navHostController.navigate(HomeDestination.key) {
           popUpTo(SplashDestination.key) { inclusive = true }
         }
       }
     }
-    composable(route = OverviewDestination.key) {
-      OverviewRoute(
+    composable(route = HomeDestination.key) {
+      HomeScreenRoute(
         deps = appComponent,
         onSettingsRoute = { navHostController.navigate(route = SettingsDestination.key) },
         onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
@@ -72,9 +72,9 @@ internal fun AppNavigationGraph(
     }
     composable(
       route = AboutDestination.key +
-        "/{${AboutDestination.ARG_ID}}" +
-        "/{${AboutDestination.ARG_NAME}}" +
-        "/{${AboutDestination.ARG_TICKER}}",
+              "/{${AboutDestination.ARG_ID}}" +
+              "/{${AboutDestination.ARG_NAME}}" +
+              "/{${AboutDestination.ARG_TICKER}}",
       arguments = listOf(
         navArgument(AboutDestination.ARG_ID) { type = NavType.IntType },
         navArgument(AboutDestination.ARG_NAME) { type = NavType.StringType },
@@ -97,7 +97,7 @@ internal fun AppNavigationGraph(
 
 private fun AboutDestination.buildNavigationPath(stockViewData: StockViewData): String {
   return AboutDestination.key +
-    "/${stockViewData.id.value}" +
-    "/${stockViewData.name}" +
-    "/${stockViewData.ticker}"
+          "/${stockViewData.id.value}" +
+          "/${stockViewData.name}" +
+          "/${stockViewData.ticker}"
 }
