@@ -15,10 +15,10 @@ import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.AppStorageManager
 import com.ferelin.features.about.about.AboutDeps
-import com.ferelin.features.authentication.LoginDeps
+import com.ferelin.features.home.home.HomeDeps
+import com.ferelin.features.login.LoginDeps
 import com.ferelin.features.search.SearchDeps
 import com.ferelin.features.settings.SettingsDeps
-import com.ferelin.features.stocks.overview.OverviewDeps
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -36,11 +36,11 @@ import javax.inject.Singleton
   ]
 )
 interface AppComponent :
+  HomeDeps,
   AboutDeps,
   LoginDeps,
   SearchDeps,
-  SettingsDeps,
-  OverviewDeps {
+  SettingsDeps {
 
   override val favouriteCompanyUseCase: FavouriteCompanyUseCase
   override val dispatchersProvider: DispatchersProvider
@@ -69,3 +69,4 @@ interface AppComponent :
     fun build(): AppComponent
   }
 }
+
