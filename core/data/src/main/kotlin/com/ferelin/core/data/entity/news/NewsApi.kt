@@ -3,6 +3,7 @@ package com.ferelin.core.data.entity.news
 import com.ferelin.core.ONE_YEAR_MILLIS
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.text.SimpleDateFormat
@@ -10,12 +11,12 @@ import java.util.*
 
 internal interface NewsApi {
   @GET("company-news")
-  suspend fun load(
+  fun load(
     @Query("token") token: String,
     @Query("symbol") companyTicker: String,
     @Query("from") from: String = NewsApiSpecifications.yearAgoDate,
     @Query("to") to: String = NewsApiSpecifications.currentDate
-  ): List<NewsPojo>
+  ): Single<List<NewsPojo>>
 }
 
 @JsonClass(generateAdapter = true)

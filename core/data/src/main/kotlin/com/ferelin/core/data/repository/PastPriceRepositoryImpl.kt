@@ -7,7 +7,8 @@ import com.ferelin.core.data.mapper.PastPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.PastPrice
 import com.ferelin.core.domain.repository.PastPriceRepository
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -16,23 +17,20 @@ internal class PastPriceRepositoryImpl @Inject constructor(
   private val dao: PastPriceDao,
   @Named(STOCKS_TOKEN) private val token: String
 ) : PastPriceRepository {
-  override fun getAllBy(companyId: CompanyId): Flow<List<PastPrice>> {
+  override fun getAllBy(companyId: CompanyId): Observable<List<PastPrice>> {
     return dao.getAllBy(companyId.value)
       .distinctUntilChanged()
       .map { it.map(PastPriceMapper::map) }
   }
 
-  override suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String) {
-    try {
-      val response = api.load(token, companyTicker)
+  override fun fetchPastPrices(companyId: CompanyId, companyTicker: String): Completable {
+    return try {
+      val response = api.load(token, companyTicker).blockingGet()
       dao.eraseAllBy(companyId.value)
       dao.insertAll(PastPriceMapper.map(response, companyId))
-      fetchErrorState.value = null
+      Completable.complete()
     } catch (e: Exception) {
-      fetchErrorState.value = e
+      Completable.error(e)
     }
   }
-
-  private val fetchErrorState = MutableStateFlow<Exception?>(null)
-  override val fetchError: Flow<Exception?> = fetchErrorState.asStateFlow()
 }

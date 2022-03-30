@@ -1,15 +1,15 @@
 package com.ferelin.core.data.entity.profile
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface ProfileDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(profilesDBO: List<ProfileDBO>)
+  fun insertAll(profilesDBO: List<ProfileDBO>)
 
   @Query("SELECT * FROM `profiles` WHERE id = :id")
-  fun getBy(id: Int): Flow<ProfileDBO>
+  fun getBy(id: Int): Observable<ProfileDBO>
 }
 
 @Entity(tableName = PROFILE_DB_TABLE)

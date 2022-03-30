@@ -1,21 +1,21 @@
 package com.ferelin.core.data.entity.searchRequest
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface SearchRequestDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(searchRequestsDBO: SearchRequestDBO)
+  fun insert(searchRequestsDBO: SearchRequestDBO)
 
   @Query("SELECT * FROM `search_requests`")
-  fun getAll(): Flow<List<SearchRequestDBO>>
+  fun getAll(): Observable<List<SearchRequestDBO>>
 
   @Delete
-  suspend fun erase(searchRequestDBO: SearchRequestDBO)
+  fun erase(searchRequestDBO: SearchRequestDBO)
 
   @Query("DELETE FROM `search_requests`")
-  suspend fun eraseAll()
+  fun eraseAll()
 }
 
 @Entity(tableName = SEARCH_REQUESTS_DB_TABLE)

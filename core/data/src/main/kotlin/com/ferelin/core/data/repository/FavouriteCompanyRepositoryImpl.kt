@@ -9,8 +9,11 @@ import com.ferelin.core.domain.repository.AuthUserStateRepository
 import com.ferelin.core.domain.repository.FavouriteCompanyRepository
 import com.ferelin.core.itemsNotIn
 import com.google.firebase.auth.FirebaseAuth
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,24 +33,24 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
       .launchIn(externalScope)
   }
 
-  override val favouriteCompanies: Flow<List<CompanyId>>
+  override val favouriteCompanies: Observable<List<CompanyId>>
     get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
 
-  override suspend fun addToFavourite(companyId: CompanyId) {
+  override fun addToFavourite(companyId: CompanyId) {
     dao.insert(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.putBy(userToken, companyId.value)
     }
   }
 
-  override suspend fun removeFromFavourite(companyId: CompanyId) {
+  override fun removeFromFavourite(companyId: CompanyId) {
     dao.erase(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.eraseBy(userToken, companyId.value)
     }
   }
 
-  override suspend fun eraseAll(clearCloud: Boolean) {
+  override fun eraseAll(clearCloud: Boolean) {
     dao.eraseAll()
     if (clearCloud) {
       firebaseAuth.uid?.let { userToken ->
@@ -56,10 +59,10 @@ internal class FavouriteCompanyRepositoryImpl @Inject constructor(
     }
   }
 
-  private suspend fun onTokenChanged(token: String) {
-    val apiResponse = api.load(token).firstOrNull() ?: return
+  private fun onTokenChanged(token: String) {
+    val apiResponse = api.load(token).blockingFirst() ?: return
     val apiFavouriteCompanies = FavouriteCompanyMapper.map(apiResponse)
-    val dbFavouriteCompanies = dao.getAll().firstOrNull() ?: emptyList()
+    val dbFavouriteCompanies = dao.getAll().blockingFirst()
     dao.insertAll(
       companies = apiFavouriteCompanies.itemsNotIn(dbFavouriteCompanies)
     )

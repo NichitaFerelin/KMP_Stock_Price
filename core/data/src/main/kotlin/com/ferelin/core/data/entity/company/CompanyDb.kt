@@ -1,15 +1,15 @@
 package com.ferelin.core.data.entity.company
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface CompanyDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(companiesDBO: List<CompanyDBO>)
+  fun insertAll(companiesDBO: List<CompanyDBO>)
 
   @Query("SELECT * FROM `companies`")
-  fun getAll(): Flow<List<CompanyDBO>>
+  fun getAll(): Observable<List<CompanyDBO>>
 }
 
 @Entity(tableName = COMPANY_DB_TABLE)

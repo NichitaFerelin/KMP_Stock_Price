@@ -5,36 +5,42 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import com.ferelin.core.domain.repository.ProjectRepository
+import io.reactivex.rxjava3.core.Completable
 import java.io.File
 import javax.inject.Inject
 
 internal class ProjectRepositoryImpl @Inject constructor(
   private val downloadManager: DownloadManager
 ) : ProjectRepository {
-  override suspend fun download(
+  override fun download(
     resultFileName: String,
     destinationFile: File?
-  ) {
-    val request = DownloadManager.Request(Uri.parse(PROJECT_SOURCE_URL))
-      .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-      .setTitle(DOWNLOAD_TITLE)
-      .setDescription(DOWNLOAD_DESCRIPTION)
-      .setAllowedOverRoaming(true)
-      .setAllowedOverMetered(true)
+  ): Completable {
+    return try {
+      val request = DownloadManager.Request(Uri.parse(PROJECT_SOURCE_URL))
+        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        .setTitle(DOWNLOAD_TITLE)
+        .setDescription(DOWNLOAD_DESCRIPTION)
+        .setAllowedOverRoaming(true)
+        .setAllowedOverMetered(true)
 
-    if (destinationFile == null) {
-      request.setDestinationInExternalPublicDir(
-        Environment.DIRECTORY_DOWNLOADS,
-        resultFileName
-      )
-    } else {
-      request.setDestinationUri(Uri.fromFile(destinationFile))
-    }
+      if (destinationFile == null) {
+        request.setDestinationInExternalPublicDir(
+          Environment.DIRECTORY_DOWNLOADS,
+          resultFileName
+        )
+      } else {
+        request.setDestinationUri(Uri.fromFile(destinationFile))
+      }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      request.setRequiresCharging(false)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        request.setRequiresCharging(false)
+      }
+      downloadManager.enqueue(request)
+      Completable.complete()
+    } catch (e: Exception) {
+      Completable.error(e)
     }
-    downloadManager.enqueue(request)
   }
 }
 

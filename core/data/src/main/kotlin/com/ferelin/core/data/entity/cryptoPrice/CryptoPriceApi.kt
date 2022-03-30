@@ -2,15 +2,16 @@ package com.ferelin.core.data.entity.cryptoPrice
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 internal interface CryptoPriceApi {
   @GET("currencies/ticker")
-  suspend fun load(
+  fun load(
     @Query("key") token: String,
     @Query("ids") cryptoTickers: String,
-  ): List<CryptoPricePojo>
+  ): Single<List<CryptoPricePojo>>
 }
 
 @JsonClass(generateAdapter = true)

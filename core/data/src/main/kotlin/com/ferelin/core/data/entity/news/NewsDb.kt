@@ -1,18 +1,18 @@
 package com.ferelin.core.data.entity.news
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface NewsDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(newsDBO: List<NewsDBO>)
+  fun insertAll(newsDBO: List<NewsDBO>)
 
   @Query("SELECT * FROM `news` WHERE companyId = :companyId")
-  fun getAllBy(companyId: Int): Flow<List<NewsDBO>>
+  fun getAllBy(companyId: Int): Observable<List<NewsDBO>>
 
   @Query("DELETE FROM `news` WHERE companyId = :companyId")
-  suspend fun eraseAllBy(companyId: Int)
+  fun eraseAllBy(companyId: Int)
 }
 
 @Entity(tableName = NEWS_DB_TABLE)

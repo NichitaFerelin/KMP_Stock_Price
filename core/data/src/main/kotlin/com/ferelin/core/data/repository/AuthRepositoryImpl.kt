@@ -9,8 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -19,7 +19,7 @@ internal class AuthRepositoryImpl @Inject constructor(
   private val firebaseAuth: FirebaseAuth,
 ) : AuthRepository {
   private val authProcessingState = MutableStateFlow(AuthState.None)
-  override val authProcessing: Flow<AuthState> = authProcessingState.asStateFlow()
+  override val authProcessing: StateFlow<AuthState> = authProcessingState.asStateFlow()
 
   // User ID is used to complete verification
   @Volatile
@@ -28,7 +28,7 @@ internal class AuthRepositoryImpl @Inject constructor(
   @Volatile
   private var authCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
 
-  override suspend fun tryAuthentication(holder: Activity, phone: String) {
+  override fun tryAuthentication(holder: Activity, phone: String) {
     authProcessingState.value = AuthState.PhoneProcessing
 
     if (phone.isEmpty()) {
@@ -72,14 +72,14 @@ internal class AuthRepositoryImpl @Inject constructor(
     authCallbacks = verificationCallbacks
   }
 
-  override suspend fun completeAuthentication(code: String) {
+  override fun completeAuthentication(code: String) {
     userVerificationId?.let { userVerificationId ->
       val credential = PhoneAuthProvider.getCredential(userVerificationId, code)
       authCallbacks?.onVerificationCompleted(credential)
     } ?: error("Attempt to complete authentication with null user ID")
   }
 
-  override suspend fun logOut() {
+  override fun logOut() {
     authProcessingState.value = AuthState.None
     firebaseAuth.signOut()
   }

@@ -1,24 +1,24 @@
 package com.ferelin.core.data.entity.favouriteCompany
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface FavouriteCompanyDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(favouriteCompanyDBO: FavouriteCompanyDBO)
+  fun insert(favouriteCompanyDBO: FavouriteCompanyDBO)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(companies: List<FavouriteCompanyDBO>)
+  fun insertAll(companies: List<FavouriteCompanyDBO>)
 
   @Query("SELECT * FROM `favourite_companies`")
-  fun getAll(): Flow<List<FavouriteCompanyDBO>>
+  fun getAll(): Observable<List<FavouriteCompanyDBO>>
 
   @Delete
-  suspend fun erase(favouriteCompanyDBO: FavouriteCompanyDBO)
+  fun erase(favouriteCompanyDBO: FavouriteCompanyDBO)
 
   @Query("DELETE FROM `favourite_companies`")
-  suspend fun eraseAll()
+  fun eraseAll()
 }
 
 @Entity(tableName = FAVOURITE_COMPANIES_DB_TABLE)

@@ -7,7 +7,8 @@ import com.ferelin.core.data.mapper.StockPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.domain.repository.StockPriceRepository
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -16,23 +17,20 @@ internal class StockPriceRepositoryImpl @Inject constructor(
   private val api: StockPriceApi,
   @Named(STOCKS_TOKEN) private val token: String
 ) : StockPriceRepository {
-  override val stockPrice: Flow<List<StockPrice>>
+  override val stockPrice: Observable<List<StockPrice>>
     get() = dao.getAll()
       .distinctUntilChanged()
       .map { it.map(StockPriceMapper::map) }
 
-  override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
-    try {
-      val response = api.load(token, companyTicker)
+  override fun fetchPrice(companyId: CompanyId, companyTicker: String): Completable {
+    return try {
+      val response = api.load(token, companyTicker).blockingGet()
       dao.insert(
         stockPriceDBO = StockPriceMapper.map(response, companyId)
       )
-      fetchErrorState.emit(null)
+      Completable.complete()
     } catch (e: Exception) {
-      fetchErrorState.emit(e)
+      Completable.error(e)
     }
   }
-
-  private val fetchErrorState = MutableSharedFlow<Exception?>()
-  override val fetchError: Flow<Exception?> = fetchErrorState.asSharedFlow()
 }

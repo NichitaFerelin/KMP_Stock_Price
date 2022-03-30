@@ -5,25 +5,21 @@ import com.ferelin.core.data.entity.crypto.CryptoJsonSource
 import com.ferelin.core.data.mapper.CryptoMapper
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.repository.CryptoRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 internal class CryptoRepositoryImpl @Inject constructor(
   private val dao: CryptoDao,
   private val jsonSource: CryptoJsonSource
 ) : CryptoRepository {
-  override val cryptos: Flow<List<Crypto>>
+  override val cryptos: Observable<List<Crypto>>
     get() = dao.getAll()
       .distinctUntilChanged()
       .map { it.map(CryptoMapper::map) }
-      .onEach { dbCryptos ->
+      .doOnEach { dbCryptosNotification ->
+        val dbCryptos = dbCryptosNotification.value ?: emptyList()
         if (dbCryptos.isEmpty()) {
-          dao.insertAll(
-            cryptosDBO = jsonSource.parseJson()
-          )
+          dao.insertAll(cryptosDBO = jsonSource.parseJson())
         }
       }
 }

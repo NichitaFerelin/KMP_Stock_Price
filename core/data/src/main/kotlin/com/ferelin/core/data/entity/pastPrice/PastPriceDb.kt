@@ -1,18 +1,18 @@
 package com.ferelin.core.data.entity.pastPrice
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface PastPriceDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(pastPrices: List<PastPriceDBO>)
+  fun insertAll(pastPrices: List<PastPriceDBO>)
 
   @Query("SELECT * FROM `past_prices` WHERE companyId = :companyId")
-  fun getAllBy(companyId: Int): Flow<List<PastPriceDBO>>
+  fun getAllBy(companyId: Int): Observable<List<PastPriceDBO>>
 
   @Query("DELETE FROM `past_prices` WHERE companyId = :companyId")
-  suspend fun eraseAllBy(companyId: Int)
+  fun eraseAllBy(companyId: Int)
 }
 
 @Entity(tableName = PAST_PRICE_DB_TABLE)

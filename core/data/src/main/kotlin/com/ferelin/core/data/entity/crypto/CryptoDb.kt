@@ -1,15 +1,15 @@
 package com.ferelin.core.data.entity.crypto
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface CryptoDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(cryptosDBO: List<CryptoDBO>)
+  fun insertAll(cryptosDBO: List<CryptoDBO>)
 
   @Query("SELECT * FROM `crypto`")
-  fun getAll(): Flow<List<CryptoDBO>>
+  fun getAll(): Observable<List<CryptoDBO>>
 }
 
 @Entity(tableName = CRYPTO_DB_TABLE)

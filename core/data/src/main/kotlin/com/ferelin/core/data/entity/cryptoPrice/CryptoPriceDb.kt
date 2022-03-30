@@ -1,15 +1,15 @@
 package com.ferelin.core.data.entity.cryptoPrice
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface CryptoPriceDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(cryptoPrices: List<CryptoPriceDBO>)
+  fun insertAll(cryptoPrices: List<CryptoPriceDBO>)
 
   @Query("SELECT * FROM `crypto_prices`")
-  fun getAll(): Flow<List<CryptoPriceDBO>>
+  fun getAll(): Observable<List<CryptoPriceDBO>>
 }
 
 @Entity(tableName = CRYPTO_PRICES_DB_TABLE)

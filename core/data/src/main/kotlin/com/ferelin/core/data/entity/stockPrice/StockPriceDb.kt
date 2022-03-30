@@ -1,15 +1,15 @@
 package com.ferelin.core.data.entity.stockPrice
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 
 @Dao
 internal interface StockPriceDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(stockPriceDBO: StockPriceDBO)
+  fun insert(stockPriceDBO: StockPriceDBO)
 
   @Query("SELECT * FROM `stock_price`")
-  fun getAll(): Flow<List<StockPriceDBO>>
+  fun getAll(): Observable<List<StockPriceDBO>>
 }
 
 @Entity(tableName = STOCK_PRICE_DB_TABLE)

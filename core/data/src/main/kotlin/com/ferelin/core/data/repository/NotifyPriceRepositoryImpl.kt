@@ -1,12 +1,10 @@
 package com.ferelin.core.data.repository
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import com.ferelin.core.data.storage.PreferencesProvider
 import com.ferelin.core.domain.repository.NotifyPriceRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 internal class NotifyPriceRepositoryImpl @Inject constructor(
@@ -14,13 +12,18 @@ internal class NotifyPriceRepositoryImpl @Inject constructor(
 ) : NotifyPriceRepository {
   private val notifyPriceKey = booleanPreferencesKey("notify-price")
 
-  override val notifyPrice: Flow<Boolean> = preferencesProvider.dataStore.data
+  override val notifyPrice: Observable<Boolean> = preferencesProvider.dataStore
+    .data()
     .map { it[notifyPriceKey] ?: false }
     .distinctUntilChanged()
+    .toObservable()
 
-  override suspend fun setNotifyPrice(notify: Boolean) {
-    preferencesProvider.dataStore.edit {
-      it[notifyPriceKey] = notify
+  override fun setNotifyPrice(notify: Boolean) {
+    preferencesProvider.dataStore.updateDataAsync {
+      val result = it.toMutablePreferences().apply {
+        this[notifyPriceKey] = notify
+      }
+      Single.just(result)
     }
   }
 }

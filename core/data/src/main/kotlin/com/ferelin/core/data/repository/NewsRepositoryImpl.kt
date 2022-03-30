@@ -8,7 +8,8 @@ import com.ferelin.core.data.mapper.NewsMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.News
 import com.ferelin.core.domain.repository.NewsRepository
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -17,26 +18,24 @@ internal class NewsRepositoryImpl @Inject constructor(
   private val dao: NewsDao,
   @Named(STOCKS_TOKEN) private val token: String
 ) : NewsRepository {
-  override fun getAllBy(companyId: CompanyId): Flow<List<News>> {
+  override fun getAllBy(companyId: CompanyId): Observable<List<News>> {
     return dao.getAllBy(companyId.value)
       .distinctUntilChanged()
       .map { it.map(NewsMapper::map) }
   }
 
-  override suspend fun fetchNews(companyId: CompanyId, companyTicker: String) {
-    try {
+  override fun fetchNews(companyId: CompanyId, companyTicker: String): Completable {
+    return try {
       val response = api
         .load(token, companyTicker)
+        .blockingGet()
         .map(NewsApiSpecifications::convertToUnixTime)
 
       dao.eraseAllBy(companyId.value)
       dao.insertAll(NewsMapper.map(response, companyId))
-      fetchErrorState.value = null
+      Completable.complete()
     } catch (e: Exception) {
-      fetchErrorState.value = e
+      Completable.error(e)
     }
   }
-
-  private val fetchErrorState = MutableStateFlow<Exception?>(null)
-  override val fetchError: Flow<Exception?> = fetchErrorState.asStateFlow()
 }
