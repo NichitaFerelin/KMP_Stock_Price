@@ -1,4 +1,4 @@
-import com.ferelin.Deps
+import com.ferelin.Libs
 
 plugins {
   id("com.android.library")
@@ -7,10 +7,10 @@ plugins {
 }
 
 android {
-  compileSdk = Deps.currentSDK
+  compileSdk = Libs.Project.currentSDK
 
   defaultConfig {
-    minSdk = Deps.minSDK
+    minSdk = Libs.Project.minSDK
   }
   buildFeatures.apply {
     compose = true
@@ -20,7 +20,7 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   composeOptions {
-    kotlinCompilerExtensionVersion  = Deps.composeVersion
+    kotlinCompilerExtensionVersion = Libs.Compose.version
   }
   kotlinOptions {
     jvmTarget = "1.8"
@@ -30,6 +30,6 @@ android {
 dependencies {
   implementation(project(":core:ui"))
 
-  implementation(Deps.dagger)
-  kapt(Deps.daggerCompilerKapt)
+  implementation(Libs.Dagger.core)
+  kapt(Libs.Dagger.compilerKapt)
 }

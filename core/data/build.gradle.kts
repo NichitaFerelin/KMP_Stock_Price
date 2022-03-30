@@ -1,4 +1,4 @@
-import com.ferelin.Deps
+import com.ferelin.Libs
 
 plugins {
   id("com.android.library")
@@ -7,10 +7,10 @@ plugins {
 }
 
 android {
-  compileSdk = Deps.currentSDK
+  compileSdk = Libs.Project.currentSDK
 
   defaultConfig {
-    minSdk = Deps.minSDK
+    minSdk = Libs.Project.minSDK
   }
 
   buildTypes {
@@ -46,34 +46,34 @@ android {
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
     freeCompilerArgs = freeCompilerArgs +
-      ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
+            ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
   }
 }
 
 dependencies {
   api(project(":core:domain"))
 
-  api(platform(Deps.firebasePlatform))
-  api(Deps.firebaseDatabaseKtx)
-  api(Deps.firebaseAnalyticsKtx)
-  api(Deps.firebaseAuthenticationKtx)
-  api(Deps.firebaseCrashlyticsKtx)
+  api(platform(Libs.Firebase.platform))
+  api(Libs.Firebase.databaseKtx)
+  api(Libs.Firebase.analyticsKtx)
+  api(Libs.Firebase.authenticationKtx)
+  api(Libs.Firebase.crashlyticsKtx)
 
-  api(Deps.retrofit)
-  api(Deps.retrofitMoshiConverter)
+  api(Libs.Retrofit.core)
+  api(Libs.Retrofit.converter)
 
-  api(Deps.okHttp)
-  api(Deps.okHttpInterceptor)
+  api(Libs.OkHttp.core)
+  api(Libs.OkHttp.interceptor)
 
-  api(Deps.moshi)
-  kapt(Deps.moshiProcessor)
+  api(Libs.Moshi.core)
+  kapt(Libs.Moshi.compilerKapt)
 
-  api(Deps.dataStorePreferences)
+  api(Libs.dataStorePreferences)
 
-  api(Deps.roomKtx)
-  api(Deps.roomRuntime)
-  kapt(Deps.roomCompilerKapt)
+  api(Libs.Room.core)
+  api(Libs.Room.ktx)
+  kapt(Libs.Room.compilerKapt)
 
-  implementation(Deps.dagger)
-  kapt(Deps.daggerCompilerKapt)
+  implementation(Libs.Dagger.core)
+  kapt(Libs.Dagger.compilerKapt)
 }

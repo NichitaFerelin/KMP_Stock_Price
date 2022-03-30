@@ -1,4 +1,4 @@
-import com.ferelin.Deps
+import com.ferelin.Libs
 
 plugins {
   id("com.android.library")
@@ -8,10 +8,10 @@ plugins {
 }
 
 android {
-  compileSdk = Deps.currentSDK
+  compileSdk = Libs.Project.currentSDK
 
   defaultConfig {
-    minSdk = Deps.minSDK
+    minSdk = Libs.Project.minSDK
   }
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
@@ -21,6 +21,6 @@ android {
 dependencies {
   api(project(":core"))
 
-  implementation(Deps.dagger)
-  kapt(Deps.daggerCompilerKapt)
+  implementation(Libs.Dagger.core)
+  kapt(Libs.Dagger.compilerKapt)
 }

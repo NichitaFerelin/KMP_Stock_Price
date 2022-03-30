@@ -1,4 +1,4 @@
-import com.ferelin.Deps
+import com.ferelin.Libs
 
 plugins {
   id("com.android.library")
@@ -8,10 +8,10 @@ plugins {
 }
 
 android {
-  compileSdk = Deps.currentSDK
+  compileSdk = Libs.Project.currentSDK
 
   defaultConfig {
-    minSdk = Deps.minSDK
+    minSdk = Libs.Project.minSDK
   }
   buildFeatures.apply {
     compose = true
@@ -21,7 +21,7 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   composeOptions {
-    kotlinCompilerExtensionVersion  = Deps.composeVersion
+    kotlinCompilerExtensionVersion = Libs.Compose.version
   }
   kotlinOptions {
     jvmTarget = "1.8"
@@ -31,27 +31,27 @@ android {
 dependencies {
   api(project(":core:domain"))
 
-  api(Deps.material)
-  api(Deps.browser)
-  api(Deps.composeViewModel)
-  api(Deps.glideCompose)
+  api(Libs.material)
+  api(Libs.browser)
 
-  api(Deps.composeUi)
-  api(Deps.composeUtil)
-  api(Deps.composeMaterial)
-  api(Deps.composeMaterialIcons)
-  api(Deps.composeTooling)
-  api(Deps.composeRuntime)
-  api(Deps.composeActivity)
-  api(Deps.composeNavigation)
-  api(Deps.composeAnimations)
-  api(Deps.composeConstraintLayout)
+  api(Libs.Compose.ui)
+  api(Libs.Compose.util)
+  api(Libs.Compose.material)
+  api(Libs.Compose.materialIcons)
+  api(Libs.Compose.tooling)
+  api(Libs.Compose.runtime)
+  api(Libs.Compose.activity)
+  api(Libs.Compose.navigation)
+  api(Libs.Compose.animations)
+  api(Libs.Compose.constraintLayout)
+  api(Libs.Compose.viewModel)
+  api(Libs.Compose.glide)
 
-  api(Deps.accompanistInsets)
-  api(Deps.accompanistSystemUiController)
-  api(Deps.accompanistPager)
-  api(Deps.accompanistPagerIndicators)
+  api(Libs.Accompanist.insets)
+  api(Libs.Accompanist.systemUiController)
+  api(Libs.Accompanist.pager)
+  api(Libs.Accompanist.pagerIndicators)
 
-  implementation(Deps.dagger)
-  kapt(Deps.daggerCompilerKapt)
+  implementation(Libs.Dagger.core)
+  kapt(Libs.Dagger.compilerKapt)
 }

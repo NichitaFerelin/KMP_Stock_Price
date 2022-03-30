@@ -1,23 +1,22 @@
-import com.ferelin.Deps
+import com.ferelin.Libs
 
 plugins {
   id("com.android.application")
   id("kotlin-android")
   id("kotlin-kapt")
   id("com.google.gms.google-services")
-  id("com.github.ben-manes.versions")
   id("com.google.firebase.crashlytics")
 }
 
 android {
-  compileSdk = Deps.currentSDK
+  compileSdk = Libs.Project.currentSDK
 
   defaultConfig {
     applicationId = "com.ferelin.stockprice"
-    minSdk = Deps.minSDK
-    targetSdk = Deps.currentSDK
-    versionCode = 12
-    versionName = "4.2.0"
+    minSdk = Libs.Project.minSDK
+    targetSdk = Libs.Project.currentSDK
+    versionCode = Libs.Project.codeVersion
+    versionName = Libs.Project.codeVersionName
   }
 
   buildFeatures.apply {
@@ -29,7 +28,7 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = Deps.composeVersion
+    kotlinCompilerExtensionVersion = Libs.Compose.version
   }
   kotlinOptions {
     jvmTarget = "1.8"
@@ -63,9 +62,9 @@ dependencies {
   implementation(project(":features:splash"))
   implementation(project(":features:stocks"))
 
-  implementation(platform(Deps.firebasePlatform))
-  implementation(Deps.firebaseCrashlyticsKtx)
+  implementation(platform(Libs.Firebase.platform))
+  implementation(Libs.Firebase.crashlyticsKtx)
 
-  implementation(Deps.dagger)
-  kapt(Deps.daggerCompilerKapt)
+  implementation(Libs.Dagger.core)
+  kapt(Libs.Dagger.compilerKapt)
 }
