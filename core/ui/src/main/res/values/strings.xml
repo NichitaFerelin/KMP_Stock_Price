@@ -2,10 +2,11 @@
     <string name="app_name">Stock Price</string>
 
     <!-- Titles -->
+    <string name="titleHome">Home</string>
     <string name="titleChart">Chart</string>
     <string name="titleNews">News</string>
     <string name="titleStocks">Stocks</string>
-    <string name="titleFavourite">Favourite</string>
+    <string name="titleFavourite">Favourites</string>
     <string name="titlePopularRequests">Popular requests</string>
     <string name="titleYourSearches">You\'ve searched for this</string>
     <string name="titleChartCardDays">D</string>
@@ -21,6 +22,7 @@
     <string name="titleClearData">Clear data</string>
     <string name="titleDownload">Stock Price</string>
     <string name="titleSettings">App settings</string>
+    <string name="titleCryptos">Cryptos</string>
 
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
