@@ -2,13 +2,11 @@ package com.ferelin.features.about.chart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,7 +51,7 @@ private fun ChartScreen(
       profit = uiState.stockProfit
     )
     Spacer(modifier = Modifier.height(16.dp))
-    Chart(chartPastPrices = uiState.priceHistory)
+    Chart(candles = uiState.priceHistory)
     Spacer(modifier = Modifier.height(16.dp))
     ChartControlButtons(
       modifier = Modifier.fillMaxWidth(),
@@ -84,16 +82,8 @@ private fun ColumnScope.PriceField(
 }
 
 @Composable
-private fun Chart(chartPastPrices: ChartPastPrices) {
-  Box(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(250.dp)
-      .background(Color.Magenta),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(text = "TODO. Custom Chart view")
-  }
+private fun Chart(candles: Candles) {
+  /**/
 }
 
 @Composable

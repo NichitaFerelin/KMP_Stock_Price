@@ -17,7 +17,7 @@ internal data class PastPriceViewData(
   val date: String
 )
 
-internal data class ChartPastPrices(
+internal data class Candles(
   val prices: List<Double> = emptyList(),
   val pricesStr: List<String> = emptyList(),
   val dates: List<String> = emptyList()

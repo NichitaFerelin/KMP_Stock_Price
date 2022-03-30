@@ -21,7 +21,7 @@ internal object ChartMapper {
   fun mapByViewMode(
     viewMode: ChartViewMode,
     pastPrices: List<PastPriceViewData>
-  ): ChartPastPrices? {
+  ): Candles? {
     return when (viewMode) {
       ChartViewMode.All -> mapDays(pastPrices)
       ChartViewMode.Days -> mapDays(pastPrices)
@@ -33,14 +33,14 @@ internal object ChartMapper {
   }
 }
 
-internal fun mapDays(pastPrice: List<PastPriceViewData>): ChartPastPrices {
+internal fun mapDays(pastPrice: List<PastPriceViewData>): Candles {
   val prices = List(pastPrice.size) { pastPrice[it].closePrice }
   val pricesStr = List(pastPrice.size) { pastPrice[it].closePriceStr }
   val dates = List(pastPrice.size) { pastPrice[it].date }
-  return ChartPastPrices(prices, pricesStr, dates)
+  return Candles(prices, pricesStr, dates)
 }
 
-internal fun mapToYear(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
+internal fun mapToYear(pastPrices: List<PastPriceViewData>): Candles? {
   if (pastPrices.size < 2) {
     return null
   }
@@ -53,14 +53,14 @@ internal fun mapToYear(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
   val endYear = pastPrices.last().year
   val endDate = "$endMonth $endYear"
 
-  return ChartPastPrices(
+  return Candles(
     prices = listOf(pastPrices[0].closePrice, pastPrices.last().closePrice),
     pricesStr = listOf(pastPrices[0].closePriceStr, pastPrices.last().closePriceStr),
     dates = listOf(startDate, endDate)
   )
 }
 
-internal fun mapToHalfYear(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
+internal fun mapToHalfYear(pastPrices: List<PastPriceViewData>): Candles? {
   if (pastPrices.isEmpty()) {
     return null
   }
@@ -82,7 +82,7 @@ internal fun mapToHalfYear(pastPrices: List<PastPriceViewData>): ChartPastPrices
   val secondHalfFrom = pastPrices[firstHalfBorder + 1].month
   val secondHalfTo = pastPrices[pastPrices.lastIndex].month
 
-  return ChartPastPrices(
+  return Candles(
     prices = listOf(firstHalfAverage, secondHalfAverage),
     pricesStr = listOf(
       firstHalfAverage.toStrPrice(),
@@ -92,7 +92,7 @@ internal fun mapToHalfYear(pastPrices: List<PastPriceViewData>): ChartPastPrices
   )
 }
 
-internal fun mapToMonths(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
+internal fun mapToMonths(pastPrices: List<PastPriceViewData>): Candles? {
   if (pastPrices.isEmpty()) {
     return null
   }
@@ -123,10 +123,10 @@ internal fun mapToMonths(pastPrices: List<PastPriceViewData>): ChartPastPrices? 
       stepAmount = 0.0
     }
   }
-  return ChartPastPrices(prices, pricesStr, dates)
+  return Candles(prices, pricesStr, dates)
 }
 
-internal fun mapToWeeks(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
+internal fun mapToWeeks(pastPrices: List<PastPriceViewData>): Candles? {
   if (pastPrices.isEmpty()) {
     return null
   }
@@ -154,5 +154,5 @@ internal fun mapToWeeks(pastPrices: List<PastPriceViewData>): ChartPastPrices? {
       pastPricesCounter = 0
     }
   }
-  return ChartPastPrices(prices, pricesStr, dates)
+  return Candles(prices, pricesStr, dates)
 }

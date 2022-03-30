@@ -19,7 +19,7 @@ internal data class ChartScreenStateUi(
   val stockPrice: String = "",
   val stockPriceLce: LceState = LceState.None,
   val stockProfit: String = "",
-  val priceHistory: ChartPastPrices = ChartPastPrices(),
+  val priceHistory: Candles = Candles(),
   val priceHistoryLce: LceState = LceState.None,
   val selectedChartMode: ChartViewMode = ChartViewMode.All,
   val showNetworkError: Boolean = false
@@ -71,7 +71,7 @@ internal class ChartViewModel(
       viewModelState.update {
         it.copy(
           selectedChartMode = chartViewMode,
-          priceHistory = ChartMapper.mapByViewMode(chartViewMode, pastPrices) ?: ChartPastPrices()
+          priceHistory = ChartMapper.mapByViewMode(chartViewMode, pastPrices) ?: Candles()
         )
       }
     }
@@ -84,7 +84,7 @@ internal class ChartViewModel(
           priceHistory = ChartMapper.mapByViewMode(
             viewMode = viewModelState.value.selectedChartMode,
             pastPrices = pastPrices
-          ) ?: ChartPastPrices()
+          ) ?: Candles()
         )
       }
     }
