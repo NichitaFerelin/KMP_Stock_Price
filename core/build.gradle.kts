@@ -24,6 +24,8 @@ dependencies {
   api(Deps.kotlinLib)
   api(Deps.kotlinCoroutinesCore)
   api(Deps.kotlinCoroutines)
+  api(Deps.rxJava)
+  api(Deps.rxAndroid)
 
   implementation(Deps.dagger)
   kapt(Deps.daggerCompilerKapt)

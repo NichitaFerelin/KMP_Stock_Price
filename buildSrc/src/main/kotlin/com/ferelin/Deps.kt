@@ -9,6 +9,8 @@ object Deps {
   const val kotlinCoroutinesVersion = "1.6.0"
 
   const val androidCore = "androidx.core:core-ktx:1.7.0"
+  const val rxJava = "io.reactivex.rxjava3:rxjava:3.1.4"
+  const val rxAndroid = "io.reactivex.rxjava3:rxandroid:3.0.0"
   const val kotlinLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   const val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
   const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
@@ -32,9 +34,11 @@ object Deps {
 
   private const val accompanistVersion = "0.23.1"
   const val accompanistInsets = "com.google.accompanist:accompanist-insets:$accompanistVersion"
-  const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+  const val accompanistSystemUiController =
+    "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
   const val accompanistPager = "com.google.accompanist:accompanist-pager:$accompanistVersion"
-  const val accompanistPagerIndicators = "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
+  const val accompanistPagerIndicators =
+    "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
   const val accompanistSwipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
   const val accompanistFlowLayout = "com.google.accompanist:accompanist-flowlayout:$accompanistVersion"
 
@@ -46,14 +50,19 @@ object Deps {
 
   const val roomVersion = "2.4.2"
   const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
+  const val roomRxJava = "androidx.room:room-rxjava3:$roomVersion"
   const val roomKtx = "androidx.room:room-ktx:$roomVersion"
   const val roomCompilerKapt = "androidx.room:room-compiler:$roomVersion"
 
   const val documentFile = "androidx.documentfile:documentfile:1.0.1"
-  const val dataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
+
+  private const val dataStoreVersion = "1.0.0"
+  const val dataStore = "androidx.datastore:datastore-preferences:$dataStoreVersion"
+  const val dataStoreRxJava = "androidx.datastore:datastore-preferences-rxjava3:$dataStoreVersion"
 
   private const val retrofitVersion = "2.9.0"
   const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+  const val retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava3:$retrofitVersion"
   const val retrofitMoshiConverter = "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
   private const val okHttpVersion = "4.9.1"

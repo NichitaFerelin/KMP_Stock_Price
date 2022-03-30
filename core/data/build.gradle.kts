@@ -60,6 +60,7 @@ dependencies {
   api(Deps.firebaseCrashlyticsKtx)
 
   api(Deps.retrofit)
+  api(Deps.retrofitRxJava)
   api(Deps.retrofitMoshiConverter)
 
   api(Deps.okHttp)
@@ -68,9 +69,11 @@ dependencies {
   api(Deps.moshi)
   kapt(Deps.moshiProcessor)
 
-  api(Deps.dataStorePreferences)
+  api(Deps.dataStore)
+  api(Deps.dataStoreRxJava)
 
   api(Deps.roomKtx)
+  api(Deps.roomRxJava)
   api(Deps.roomRuntime)
   kapt(Deps.roomCompilerKapt)
 
