@@ -5,10 +5,10 @@ include(
   ":core:ui",
   ":core:data",
   ":core:domain",
-  ":features:about",
-  ":features:stocks",
   ":features:splash",
-  ":features:authentication",
+  ":features:home",
   ":features:settings",
   ":features:search",
+  ":features:about",
+  ":features:login",
 )
