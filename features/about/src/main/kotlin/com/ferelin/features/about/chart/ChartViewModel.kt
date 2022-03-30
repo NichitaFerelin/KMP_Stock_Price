@@ -8,11 +8,12 @@ import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.usecase.PastPricesUseCase
 import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.network.NetworkListener
-import com.ferelin.core.ui.mapper.StockPriceMapper
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.viewData.StockPriceViewData
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 internal data class ChartScreenStateUi(
@@ -35,23 +36,18 @@ internal class ChartViewModel(
   private val viewModelState = MutableStateFlow(ChartScreenStateUi())
   val uiState = viewModelState.asStateFlow()
 
-  private val pastPrices = pastPricesUseCase.getAllBy(chartParams.companyId)
+  private val pastPrices = pastPricesUseCase
+    .getAllBy(chartParams.companyId)
     .map { it.map(ChartMapper::map) }
 
   init {
     pastPrices
-      .onEach(this::onPastPrices)
-      .launchIn(viewModelScope)
+      .subscribeOn(Schedulers.io())
+      .observeOn(Schedulers.io())
+      .subscribe(this::onPastPrices) { Timber.e(it) }
 
     pastPricesUseCase.pastPricesLce
       .onEach(this::onPastPricesLce)
-      .launchIn(viewModelScope)
-
-    stockPricesUseCase.stockPrice
-      .map { it.find { stockPrice -> stockPrice.id == chartParams.companyId } }
-      .filterNotNull()
-      .map(StockPriceMapper::map)
-      .onEach(this::onStockPrice)
       .launchIn(viewModelScope)
 
     stockPricesUseCase.stockPriceLce
@@ -66,15 +62,7 @@ internal class ChartViewModel(
   }
 
   fun onChartModeSelected(chartViewMode: ChartViewMode) {
-    viewModelScope.launch {
-      val pastPrices = pastPrices.firstOrNull() ?: emptyList()
-      viewModelState.update {
-        it.copy(
-          selectedChartMode = chartViewMode,
-          priceHistory = ChartMapper.mapByViewMode(chartViewMode, pastPrices) ?: Candles()
-        )
-      }
-    }
+    /**/
   }
 
   private fun onPastPrices(pastPrices: List<PastPriceViewData>) {
@@ -107,7 +95,7 @@ internal class ChartViewModel(
     viewModelState.update { it.copy(stockPriceLce = lceState) }
   }
 
-  private suspend fun onNetwork(available: Boolean) {
+  private fun onNetwork(available: Boolean) {
     viewModelState.update { it.copy(showNetworkError = !available) }
 
     if (available) {

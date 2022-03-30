@@ -6,8 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.params.AboutParams
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 internal data class AboutStateUi(
@@ -36,18 +41,9 @@ internal class AboutViewModel(
 
   init {
     isCompanyFavourite
-      .onEach(this::onCompanyIsFavourite)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
-
-    onFavouriteSwitchEvent
-      .zip(
-        other = isCompanyFavourite,
-        transform = { _, isFavourite -> isFavourite }
-      )
-      .onEach(this::switchRequested)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+      .subscribeOn(Schedulers.io())
+      .observeOn(Schedulers.io())
+      .subscribe(this::onCompanyIsFavourite) { Timber.e(it) }
   }
 
   fun onScreenSelected(index: Int) {
@@ -60,7 +56,7 @@ internal class AboutViewModel(
     }
   }
 
-  private suspend fun switchRequested(isFavourite: Boolean) {
+  private fun switchRequested(isFavourite: Boolean) {
     if (isFavourite) {
       favouriteCompanyUseCase.removeFromFavourite(aboutParams.companyId)
     } else {

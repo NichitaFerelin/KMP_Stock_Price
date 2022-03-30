@@ -7,8 +7,7 @@ import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.mapper.CompanyMapper
 import com.ferelin.core.ui.viewData.StockViewData
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.launch
 
 open class BaseStocksViewModel(
@@ -16,14 +15,13 @@ open class BaseStocksViewModel(
   protected val dispatchersProvider: DispatchersProvider,
   companyUseCase: CompanyUseCase
 ) : ViewModel() {
-  protected val companies = companyUseCase.companies
-    .combine(
-      flow = favouriteCompanyUseCase.favouriteCompanies,
-      transform = { companies, favouriteCompaniesIds ->
-        CompanyMapper.map(companies, favouriteCompaniesIds)
-      }
-    )
-    .flowOn(dispatchersProvider.IO)
+
+  protected val companies: Observable<List<StockViewData>> = Observable.combineLatest(
+    companyUseCase.companies,
+    favouriteCompanyUseCase.favouriteCompanies
+  ) { companies, favouriteCompaniesIds ->
+    CompanyMapper.map(companies, favouriteCompaniesIds)
+  }
 
   fun onFavouriteIconClick(stockViewData: StockViewData) {
     viewModelScope.launch(dispatchersProvider.IO) {

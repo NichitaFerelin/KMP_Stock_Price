@@ -11,8 +11,10 @@ import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.domain.usecase.SearchRequestsUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.timerTask
@@ -46,29 +48,21 @@ internal class SearchViewModel(
   private var searchTaskTimer: Timer? = null
 
   init {
-    searchRequest
-      .combine(
-        flow = companies,
-        transform = { searchRequest, stocks -> searchRequest to stocks }
-      )
-      .onEach(this::doSearch)
-      .launchIn(viewModelScope)
-
     searchRequestsUseCase.searchRequests
+      .subscribeOn(Schedulers.io())
+      .observeOn(Schedulers.io())
       .map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onSearchRequests)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+      .subscribe(this::onSearchRequests) { Timber.e(it) }
 
     searchRequestsUseCase.searchRequestsLce
       .onEach(this::onSearchRequestsLce)
       .launchIn(viewModelScope)
 
     searchRequestsUseCase.popularSearchRequests
+      .subscribeOn(Schedulers.io())
+      .observeOn(Schedulers.io())
       .map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onPopularSearchRequests)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+      .subscribe(this::onPopularSearchRequests) { Timber.e(it) }
 
     searchRequestsUseCase.popularSearchRequestsLce
       .onEach(this::onPopularSearchRequestsLce)

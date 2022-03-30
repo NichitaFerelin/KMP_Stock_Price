@@ -10,7 +10,10 @@ import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import javax.inject.Inject
 
 @Immutable
@@ -33,8 +36,9 @@ internal class DefaultStocksViewModel(
 
   init {
     companies
-      .onEach(this::onCompanies)
-      .launchIn(viewModelScope)
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe(this::onCompanies) { Timber.e(it) }
 
     companyUseCase.companiesLce
       .onEach(this::onCompaniesLce)

@@ -9,9 +9,10 @@ import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.usecase.CryptoPriceUseCase
 import com.ferelin.core.domain.usecase.CryptoUseCase
-import com.ferelin.core.network.NetworkListener
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @Immutable
@@ -25,24 +26,17 @@ internal data class OverviewStateUi(
 internal class OverviewViewModel(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val dispatchersProvider: DispatchersProvider,
-  cryptoUseCase: CryptoUseCase,
-  networkListener: NetworkListener
+  cryptoUseCase: CryptoUseCase
 ) : ViewModel() {
   private val viewModelState = MutableStateFlow(OverviewStateUi())
   val uiState = viewModelState.asStateFlow()
 
   init {
     cryptoUseCase.cryptos
-      .combine(
-        flow = cryptoPriceUseCase.cryptoPrices,
-        transform = { cryptos, prices ->
-          val pricesContainer = prices.associateBy { it.cryptoId }
-          cryptos.map { CryptoMapper.map(it, pricesContainer[it.id]) }
-        }
-      )
-      .onEach(this::onCryptos)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+      .subscribeOn(Schedulers.io())
+      .observeOn(Schedulers.io())
+      .map(CryptoMapper::map)
+      .subscribe(this::onCryptos) { Timber.e(it) }
 
     cryptoUseCase.cryptosLce
       .combine(
@@ -54,17 +48,6 @@ internal class OverviewViewModel(
         }
       )
       .onEach(this::onCryptosLce)
-      .launchIn(viewModelScope)
-
-    networkListener.networkState
-      .onEach(this::onNetwork)
-      .filter { it }
-      .combine(
-        flow = cryptoUseCase.cryptos,
-        transform = { _, cryptos -> cryptos }
-      )
-      .onEach(this::onNetworkAvailable)
-      .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
   }
 
@@ -94,12 +77,15 @@ internal class OverviewViewModel(
 internal class OverviewViewModelFactory @Inject constructor(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val cryptoUseCase: CryptoUseCase,
-  private val networkListener: NetworkListener,
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == OverviewViewModel::class.java)
-    return OverviewViewModel(cryptoPriceUseCase, dispatchersProvider, cryptoUseCase, networkListener) as T
+    return OverviewViewModel(
+      cryptoPriceUseCase,
+      dispatchersProvider,
+      cryptoUseCase,
+    ) as T
   }
 }

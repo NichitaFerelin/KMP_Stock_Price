@@ -43,26 +43,6 @@ internal class SettingsViewModel(
   private val requestDownloadCode = MutableSharedFlow<Unit>()
 
   init {
-    requestDownloadCode
-      .combine(
-        flow = permissionsGranted,
-        transform = { _, isGranted ->
-          if (!isGranted) viewModelState.update { it.copy(requestPermissions = true) }
-          isGranted
-        }
-      )
-      .filter { it }
-      .combine(
-        flow = storagePathUseCase.storagePath,
-        transform = { _, storagePath ->
-          if (!storagePath.isValid) viewModelState.update { it.copy(requestStoragePath = true) }
-          storagePath
-        }
-      )
-      .filter { it.isValid }
-      .onEach(this::tryDownloadSourceCode)
-      .launchIn(viewModelScope)
-
     downloadProjectUseCase.downloadLce
       .onEach(this::onDownloadLce)
       .launchIn(viewModelScope)
@@ -118,7 +98,7 @@ internal class SettingsViewModel(
     viewModelState.update { it.copy(isUserAuthenticated = isAuthenticated) }
   }
 
-  private suspend fun tryDownloadSourceCode(storagePath: StoragePath) {
+  private fun tryDownloadSourceCode(storagePath: StoragePath) {
     viewModelScope.launch(dispatchersProvider.IO) {
       val destinationFile = storageManager.buildDownloadFile(
         treePath = storagePath.path,

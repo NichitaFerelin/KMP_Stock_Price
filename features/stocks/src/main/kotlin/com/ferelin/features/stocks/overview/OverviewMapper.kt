@@ -18,4 +18,16 @@ internal object CryptoMapper {
       ),
     )
   }
+
+  fun map(cryptos: List<Crypto>): List<CryptoViewData> {
+    return cryptos.map { crypto ->
+      CryptoViewData(
+        id = crypto.id,
+        name = crypto.name,
+        logoUrl = crypto.logoUrl,
+        price = "0.0",
+        profit = "0.0"
+      )
+    }
+  }
 }

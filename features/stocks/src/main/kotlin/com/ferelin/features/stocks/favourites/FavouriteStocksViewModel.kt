@@ -10,7 +10,11 @@ import com.ferelin.core.domain.usecase.CompanyUseCase
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import javax.inject.Inject
 
 @Immutable
@@ -33,9 +37,10 @@ internal class FavouriteStocksViewModel(
 
   init {
     companies
+      .subscribeOn(Schedulers.io())
       .filterFavouritesOnly()
-      .onEach(this::onCompanies)
-      .launchIn(viewModelScope)
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe(this::onCompanies) { Timber.e(it) }
 
     companyUseCase.companiesLce
       .onEach(this::onCompaniesLce)
@@ -51,7 +56,7 @@ internal class FavouriteStocksViewModel(
   }
 }
 
-internal fun Flow<List<StockViewData>>.filterFavouritesOnly(): Flow<List<StockViewData>> {
+internal fun Observable<List<StockViewData>>.filterFavouritesOnly(): Observable<List<StockViewData>> {
   return this.map { companies ->
     companies.filter { stock -> stock.isFavourite }
   }
