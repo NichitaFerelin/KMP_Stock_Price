@@ -1,5 +1,6 @@
 package com.ferelin.features.about.news
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.ferelin.core.ui.params.NewsParams
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@Immutable
 internal data class NewsStateUi(
   val news: List<NewsViewData> = emptyList(),
   val newsLce: LceState = LceState.None,
@@ -63,7 +65,6 @@ internal class NewsViewModelFactory @Inject constructor(
   private val networkListener: NetworkListener,
   private val dispatchersProvider: DispatchersProvider
 ) : ViewModelProvider.Factory {
-
   @Suppress("UNCHECKED_CAST")
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == NewsViewModel::class.java)

@@ -10,6 +10,12 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Scope
 
+interface NewsDeps {
+  val newsUseCase: NewsUseCase
+  val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class NewsScope
@@ -27,12 +33,6 @@ internal interface NewsComponent {
   }
 
   fun viewModelFactory(): NewsViewModelFactory
-}
-
-interface NewsDeps {
-  val newsUseCase: NewsUseCase
-  val networkListener: NetworkListener
-  val dispatchersProvider: DispatchersProvider
 }
 
 internal class NewsComponentViewModel(

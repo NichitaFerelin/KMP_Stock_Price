@@ -1,5 +1,6 @@
 package com.ferelin.features.about.profile
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.ferelin.core.ui.params.ProfileParams
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@Immutable
 internal data class ProfileStateUi(
   val profile: ProfileViewData = ProfileViewData(),
   val profileLce: LceState = LceState.None

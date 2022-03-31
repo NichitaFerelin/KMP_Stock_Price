@@ -10,6 +10,19 @@ import com.ferelin.core.storage.AppStorageManager
 import dagger.Component
 import javax.inject.Scope
 
+interface SettingsDeps {
+  val permissionManager: PermissionManager
+  val storageManager: AppStorageManager
+  val authUserStateRepository: AuthUserStateRepository
+  val notifyPriceUseCase: NotifyPriceUseCase
+  val storagePathUseCase: StoragePathUseCase
+  val downloadProjectUseCase: DownloadProjectUseCase
+  val searchRequestsUseCase: SearchRequestsUseCase
+  val favouriteCompanyUseCase: FavouriteCompanyUseCase
+  val dispatchersProvider: DispatchersProvider
+  val authUseCase: AuthUseCase
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class SettingsScope
@@ -26,26 +39,13 @@ internal interface SettingsComponent {
   fun viewModelFactory(): SettingsViewModelFactory
 }
 
-interface SettingsDeps {
-  val permissionManager: PermissionManager
-  val storageManager: AppStorageManager
-  val authUserStateRepository: AuthUserStateRepository
-  val notifyPriceUseCase: NotifyPriceUseCase
-  val storagePathUseCase: StoragePathUseCase
-  val downloadProjectUseCase: DownloadProjectUseCase
-  val searchRequestsUseCase: SearchRequestsUseCase
-  val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  val dispatchersProvider: DispatchersProvider
-  val authUseCase: AuthUseCase
-}
-
 internal class SettingsComponentViewModel(deps: SettingsDeps) : ViewModel() {
   val component = DaggerSettingsComponent.builder()
     .dependencies(deps)
     .build()
 }
 
-internal class SettingsComponentViewModelFactory constructor(
+internal class SettingsComponentViewModelFactory(
   private val deps: SettingsDeps
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")

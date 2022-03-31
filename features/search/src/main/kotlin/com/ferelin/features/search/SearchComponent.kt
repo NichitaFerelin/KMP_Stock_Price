@@ -9,6 +9,13 @@ import com.ferelin.core.domain.usecase.SearchRequestsUseCase
 import dagger.Component
 import javax.inject.Scope
 
+interface SearchDeps {
+  val searchRequestsUseCase: SearchRequestsUseCase
+  val favouriteCompanyUseCase: FavouriteCompanyUseCase
+  val companyUseCase: CompanyUseCase
+  val dispatchersProvider: DispatchersProvider
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class SearchScope
@@ -25,24 +32,17 @@ internal interface SearchComponent {
   fun viewModelFactory(): SearchViewModelFactory
 }
 
-interface SearchDeps {
-  val searchRequestsUseCase: SearchRequestsUseCase
-  val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  val companyUseCase: CompanyUseCase
-  val dispatchersProvider: DispatchersProvider
-}
-
 internal class SearchComponentViewModel(deps: SearchDeps) : ViewModel() {
   val component = DaggerSearchComponent.builder()
     .dependencies(deps)
     .build()
 }
 
-internal class SearchComponentViewModelFactory constructor(
+internal class SearchComponentViewModelFactory(
   private val searchDeps: SearchDeps
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     require(modelClass == SearchComponentViewModel::class.java)
     return SearchComponentViewModel(searchDeps) as T
   }

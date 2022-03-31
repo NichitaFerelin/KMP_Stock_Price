@@ -11,6 +11,10 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Scope
 
+interface AboutDeps : ChartDeps, NewsDeps, ProfileDeps {
+  val favouriteCompanyUseCase: FavouriteCompanyUseCase
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class AboutScope
@@ -28,10 +32,6 @@ internal interface AboutComponent {
   }
 
   fun viewModelFactory(): AboutViewModelFactory
-}
-
-interface AboutDeps : ChartDeps, NewsDeps, ProfileDeps {
-  val favouriteCompanyUseCase: FavouriteCompanyUseCase
 }
 
 internal class AboutComponentViewModel(

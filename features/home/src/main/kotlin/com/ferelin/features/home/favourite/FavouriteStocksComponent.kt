@@ -8,6 +8,12 @@ import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import dagger.Component
 import javax.inject.Scope
 
+interface FavouriteStocksDeps {
+  val dispatchersProvider: DispatchersProvider
+  val favouriteCompanyUseCase: FavouriteCompanyUseCase
+  val companyUseCase: CompanyUseCase
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class FavouriteStocksScope
@@ -24,19 +30,13 @@ internal interface FavouriteStocksComponent {
   fun viewModelFactory(): FavouriteStocksViewModelFactory
 }
 
-interface FavouriteStocksDeps {
-  val dispatchersProvider: DispatchersProvider
-  val favouriteCompanyUseCase: FavouriteCompanyUseCase
-  val companyUseCase: CompanyUseCase
-}
-
 internal class FavouriteStocksComponentViewModel(deps: FavouriteStocksDeps) : ViewModel() {
   val component = DaggerFavouriteStocksComponent.builder()
     .dependencies(deps)
     .build()
 }
 
-internal class FavouriteStocksComponentViewModelFactory constructor(
+internal class FavouriteStocksComponentViewModelFactory(
   private val deps: FavouriteStocksDeps
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")

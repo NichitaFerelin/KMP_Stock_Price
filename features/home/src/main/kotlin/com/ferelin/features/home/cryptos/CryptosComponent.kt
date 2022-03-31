@@ -9,6 +9,13 @@ import com.ferelin.core.network.NetworkListener
 import dagger.Component
 import javax.inject.Scope
 
+interface CryptosDeps {
+  val cryptoPriceUseCase: CryptoPriceUseCase
+  val cryptoUseCase: CryptoUseCase
+  val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class CryptosScope
@@ -25,20 +32,13 @@ internal interface CryptosComponent {
   fun viewModelFactory(): CryptosViewModelFactory
 }
 
-interface CryptosDeps {
-  val cryptoPriceUseCase: CryptoPriceUseCase
-  val cryptoUseCase: CryptoUseCase
-  val networkListener: NetworkListener
-  val dispatchersProvider: DispatchersProvider
-}
-
 internal class CryptosComponentViewModel(deps: CryptosDeps) : ViewModel() {
   val component = DaggerCryptosComponent.builder()
     .dependencies(deps)
     .build()
 }
 
-internal class CryptosComponentViewModelFactory constructor(
+internal class CryptosComponentViewModelFactory(
   private val deps: CryptosDeps
 ) : ViewModelProvider.Factory {
   @Suppress("UNCHECKED_CAST")

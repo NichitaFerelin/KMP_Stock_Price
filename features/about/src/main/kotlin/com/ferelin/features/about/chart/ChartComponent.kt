@@ -11,6 +11,13 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Scope
 
+interface ChartDeps {
+  val networkListener: NetworkListener
+  val pastPricesUseCase: PastPricesUseCase
+  val stockPricesUseCase: StockPriceUseCase
+  val dispatchersProvider: DispatchersProvider
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class ChartScope
@@ -28,13 +35,6 @@ internal interface ChartComponent {
   }
 
   fun viewModelFactory(): ChartViewModelFactory
-}
-
-interface ChartDeps {
-  val networkListener: NetworkListener
-  val pastPricesUseCase: PastPricesUseCase
-  val stockPricesUseCase: StockPriceUseCase
-  val dispatchersProvider: DispatchersProvider
 }
 
 internal class ChartComponentViewModel(

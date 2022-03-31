@@ -6,6 +6,8 @@ import com.ferelin.features.home.stocks.StocksDeps
 import dagger.Component
 import javax.inject.Scope
 
+interface HomeDeps : StocksDeps, FavouriteStocksDeps, CryptosDeps
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class HomeScope
@@ -19,5 +21,3 @@ internal interface HomeComponent {
     fun build(): HomeComponent
   }
 }
-
-interface HomeDeps : StocksDeps, FavouriteStocksDeps, CryptosDeps

@@ -8,6 +8,12 @@ import com.ferelin.core.network.NetworkListener
 import dagger.Component
 import javax.inject.Scope
 
+interface LoginDeps {
+  val authUseCase: AuthUseCase
+  val networkListener: NetworkListener
+  val dispatchersProvider: DispatchersProvider
+}
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class LoginScope
@@ -22,12 +28,6 @@ internal interface LoginComponent {
   }
 
   fun viewModelFactory(): LoginViewModelFactory
-}
-
-interface LoginDeps {
-  val authUseCase: AuthUseCase
-  val networkListener: NetworkListener
-  val dispatchersProvider: DispatchersProvider
 }
 
 internal class LoginComponentViewModel(

@@ -1,5 +1,6 @@
 package com.ferelin.features.about.chart
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 internal data class ChartScreenStateUi(
   val stockPrice: String = "",
   val stockPriceLce: LceState = LceState.None,
