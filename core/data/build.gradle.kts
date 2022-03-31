@@ -3,6 +3,7 @@ import com.ferelin.Libs
 plugins {
   id("com.android.library")
   id("kotlin-android")
+  id("com.squareup.sqldelight")
   id("kotlin-kapt")
 }
 
@@ -49,7 +50,6 @@ android {
             ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
   }
 }
-
 dependencies {
   api(project(":core:domain"))
 
@@ -70,10 +70,14 @@ dependencies {
 
   api(Libs.dataStorePreferences)
 
-  api(Libs.Room.core)
-  api(Libs.Room.ktx)
-  kapt(Libs.Room.compilerKapt)
+  api(Libs.SqlDelight.core)
+  api(Libs.SqlDelight.coroutinesExt)
 
   implementation(Libs.Dagger.core)
   kapt(Libs.Dagger.compilerKapt)
+}
+sqldelight {
+  database("StockPriceDb") {
+    packageName = "com.ferelin.stockprice"
+  }
 }
