@@ -1,21 +1,21 @@
 package com.ferelin.core.data.repository
 
-import com.ferelin.core.data.api.STOCKS_TOKEN
+import com.ferelin.core.data.di.StocksToken
 import com.ferelin.core.data.entity.news.NewsApi
 import com.ferelin.core.data.entity.news.NewsApiSpecifications
 import com.ferelin.core.data.entity.news.NewsDao
+import com.ferelin.core.data.entity.news.NewsRequestOptions
 import com.ferelin.core.data.mapper.NewsMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.News
 import com.ferelin.core.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class NewsRepositoryImpl @Inject constructor(
   private val api: NewsApi,
   private val dao: NewsDao,
-  @Named(STOCKS_TOKEN) private val token: String
+  @StocksToken private val token: String
 ) : NewsRepository {
   override fun getAllBy(companyId: CompanyId): Flow<List<News>> {
     return dao.getAllBy(companyId.value)
@@ -25,9 +25,8 @@ internal class NewsRepositoryImpl @Inject constructor(
 
   override suspend fun fetchNews(companyId: CompanyId, companyTicker: String) {
     try {
-      val response = api
-        .load(token, companyTicker)
-        .map(NewsApiSpecifications::convertToUnixTime)
+      val newsOptions = NewsRequestOptions(token, companyTicker)
+      val response = api.load(newsOptions).map(NewsApiSpecifications::convertToUnixTime)
 
       dao.eraseAllBy(companyId.value)
       dao.insertAll(NewsMapper.map(response, companyId))
