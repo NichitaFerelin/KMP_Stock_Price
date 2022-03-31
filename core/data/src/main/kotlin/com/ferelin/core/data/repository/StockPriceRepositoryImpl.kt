@@ -24,9 +24,7 @@ internal class StockPriceRepositoryImpl @Inject constructor(
   override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
     try {
       val response = api.load(token, companyTicker)
-      dao.insert(
-        stockPriceDBO = StockPriceMapper.map(response, companyId)
-      )
+      dao.insert(stockPriceDBO = StockPriceMapper.map(response, companyId))
       fetchErrorState.emit(null)
     } catch (e: Exception) {
       fetchErrorState.emit(e)

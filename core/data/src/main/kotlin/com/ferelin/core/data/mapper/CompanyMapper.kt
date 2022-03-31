@@ -1,10 +1,10 @@
 package com.ferelin.core.data.mapper
 
-import com.ferelin.core.data.entity.company.CompanyDBO
 import com.ferelin.core.data.entity.company.CompanyJson
-import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.domain.entity.Company
 import com.ferelin.core.domain.entity.CompanyId
+import stockprice.CompanyDBO
+import stockprice.ProfileDBO
 
 internal object CompanyMapper {
   fun map(company: Company): CompanyDBO {
