@@ -1,0 +1,14 @@
+CREATE TABLE StockPriceDBO(
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    currentPrice REAL NOT NULL,
+    previousClosePrice REAL NOT NULL,
+    openPrice REAL NOT NULL,
+    highPrice REAL NOT NULL,
+    lowPrice REAL NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO StockPriceDBO VALUES ?;
+
+getAll:
+SELECT * FROM StockPriceDBO;
