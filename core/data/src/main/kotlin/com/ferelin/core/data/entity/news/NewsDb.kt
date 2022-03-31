@@ -18,7 +18,7 @@ internal interface NewsDao {
 @Entity(tableName = NEWS_DB_TABLE)
 internal data class NewsDBO(
   @PrimaryKey
-  val id: String,
+  val id: Long,
   val companyId: Int,
   val headline: String,
   val source: String,
