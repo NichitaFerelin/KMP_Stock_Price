@@ -2,7 +2,6 @@ package com.ferelin.features.home.cryptos
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
@@ -14,7 +13,6 @@ import com.ferelin.core.ui.mapper.CryptoMapper
 import com.ferelin.core.ui.viewData.CryptoViewData
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Immutable
 internal data class CryptosStateUi(
@@ -79,23 +77,5 @@ internal class CryptosViewModel(
     viewModelScope.launch(dispatchersProvider.IO) {
       cryptoPriceUseCase.fetchPriceFor(cryptos)
     }
-  }
-}
-
-internal class CryptosViewModelFactory @Inject constructor(
-  private val cryptoPriceUseCase: CryptoPriceUseCase,
-  private val cryptoUseCase: CryptoUseCase,
-  private val networkListener: NetworkListener,
-  private val dispatchersProvider: DispatchersProvider
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == CryptosViewModel::class.java)
-    return CryptosViewModel(
-      cryptoPriceUseCase,
-      dispatchersProvider,
-      cryptoUseCase,
-      networkListener
-    ) as T
   }
 }

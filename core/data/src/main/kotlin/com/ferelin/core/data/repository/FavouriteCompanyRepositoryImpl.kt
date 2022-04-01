@@ -1,6 +1,5 @@
 package com.ferelin.core.data.repository
 
-import com.ferelin.core.ExternalScope
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApi
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyDao
 import com.ferelin.core.data.mapper.FavouriteCompanyMapper
@@ -11,15 +10,12 @@ import com.ferelin.core.itemsNotIn
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class FavouriteCompanyRepositoryImpl @Inject constructor(
+internal class FavouriteCompanyRepositoryImpl(
   private val dao: FavouriteCompanyDao,
   private val api: FavouriteCompanyApi,
   private val firebaseAuth: FirebaseAuth,
-  @ExternalScope private val externalScope: CoroutineScope,
+  externalScope: CoroutineScope,
   authUserStateRepository: AuthUserStateRepository
 ) : FavouriteCompanyRepository {
 

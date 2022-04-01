@@ -9,21 +9,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.uiComponents.ChartButton
 import com.google.accompanist.insets.statusBarsPadding
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ChartRoute(deps: ChartDeps, params: ChartParams) {
-  val componentViewModel = viewModel<ChartComponentViewModel>(
-    factory = ChartComponentViewModelFactory(deps, params)
-  )
-  val viewModel = viewModel<ChartViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
+fun ChartRoute(params: ChartParams) {
+  val viewModel = getViewModel<ChartViewModel>(
+    parameters = {
+      parametersOf(params.companyId, params.companyTicker)
+    }
   )
   val uiState by viewModel.uiState.collectAsState()
 

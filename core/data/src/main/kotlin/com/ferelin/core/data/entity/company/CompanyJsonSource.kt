@@ -6,13 +6,12 @@ import com.ferelin.core.data.mapper.CompanyMapper
 import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import javax.inject.Inject
 
 internal interface CompanyJsonSource {
   fun parseJson(): List<Pair<CompanyDBO, ProfileDBO>>
 }
 
-internal class CompanyJsonSourceImpl @Inject constructor(
+internal class CompanyJsonSourceImpl(
   private val context: Context,
   private val moshi: Moshi
 ) : CompanyJsonSource {

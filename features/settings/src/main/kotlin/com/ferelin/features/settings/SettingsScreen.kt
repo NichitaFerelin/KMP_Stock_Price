@@ -19,26 +19,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.settings.uiComponents.SettingsDivider
 import com.ferelin.features.settings.uiComponents.SettingsItem
 import com.google.accompanist.insets.statusBarsPadding
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsRoute(
-  deps: SettingsDeps,
   onLogInRoute: () -> Unit,
   onBackRoute: () -> Unit
 ) {
-  val componentViewModel = viewModel<SettingsComponentViewModel>(
-    factory = SettingsComponentViewModelFactory(deps)
-  )
-  val viewModel = viewModel<SettingsViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
-  )
+  val viewModel = getViewModel<SettingsViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   val permissionsLauncher = rememberLauncherForActivityResult(

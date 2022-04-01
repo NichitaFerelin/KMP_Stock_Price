@@ -17,21 +17,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.startActivitySafety
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.params.NewsParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.uiComponents.NewsItem
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun NewsRoute(deps: NewsDeps, params: NewsParams) {
-  val componentViewModel = viewModel<NewsComponentViewModel>(
-    factory = NewsComponentViewModelFactory(deps, params)
-  )
-  val viewModel = viewModel<NewsViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
+fun NewsRoute(params: NewsParams) {
+  val viewModel = getViewModel<NewsViewModel>(
+    parameters = {
+      parametersOf(params.companyId, params.companyTicker)
+    }
   )
   val uiState by viewModel.uiState.collectAsState()
   val context = LocalContext.current

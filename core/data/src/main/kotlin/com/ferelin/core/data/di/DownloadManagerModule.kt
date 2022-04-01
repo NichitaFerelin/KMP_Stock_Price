@@ -2,13 +2,9 @@ package com.ferelin.core.data.di
 
 import android.app.DownloadManager
 import android.content.Context
-import dagger.Module
-import dagger.Provides
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-class DownloadManagerModule {
-  @Provides
-  fun downloadManager(context: Context): DownloadManager {
-    return context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-  }
+val downloadManagerModule = module {
+  factory { androidContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager }
 }

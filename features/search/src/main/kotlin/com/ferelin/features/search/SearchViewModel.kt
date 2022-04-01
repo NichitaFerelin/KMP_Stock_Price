@@ -1,8 +1,6 @@
 package com.ferelin.features.search
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -14,7 +12,6 @@ import com.ferelin.core.ui.viewModel.BaseStocksViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.inject.Inject
 import kotlin.concurrent.timerTask
 
 @Immutable
@@ -35,9 +32,7 @@ internal class SearchViewModel(
   companyUseCase: CompanyUseCase,
   dispatchersProvider: DispatchersProvider
 ) : BaseStocksViewModel(
-  favouriteCompanyUseCase,
-  dispatchersProvider,
-  companyUseCase
+  favouriteCompanyUseCase, dispatchersProvider, companyUseCase
 ) {
   private val viewModelState = MutableStateFlow(SearchStateUi())
   val uiState = viewModelState.asStateFlow()
@@ -46,32 +41,20 @@ internal class SearchViewModel(
   private var searchTaskTimer: Timer? = null
 
   init {
-    searchRequest
-      .combine(
-        flow = companies,
-        transform = { searchRequest, stocks -> searchRequest to stocks }
-      )
-      .onEach(this::doSearch)
+    searchRequest.combine(flow = companies,
+        transform = { searchRequest, stocks -> searchRequest to stocks }).onEach(this::doSearch)
       .launchIn(viewModelScope)
 
-    searchRequestsUseCase.searchRequests
-      .map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onSearchRequests)
-      .flowOn(dispatchersProvider.IO)
+    searchRequestsUseCase.searchRequests.map { requests -> requests.map(SearchRequestMapper::map) }
+      .onEach(this::onSearchRequests).flowOn(dispatchersProvider.IO).launchIn(viewModelScope)
+
+    searchRequestsUseCase.searchRequestsLce.onEach(this::onSearchRequestsLce)
       .launchIn(viewModelScope)
 
-    searchRequestsUseCase.searchRequestsLce
-      .onEach(this::onSearchRequestsLce)
-      .launchIn(viewModelScope)
+    searchRequestsUseCase.popularSearchRequests.map { requests -> requests.map(SearchRequestMapper::map) }
+      .onEach(this::onPopularSearchRequests).flowOn(dispatchersProvider.IO).launchIn(viewModelScope)
 
-    searchRequestsUseCase.popularSearchRequests
-      .map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onPopularSearchRequests)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
-
-    searchRequestsUseCase.popularSearchRequestsLce
-      .onEach(this::onPopularSearchRequestsLce)
+    searchRequestsUseCase.popularSearchRequestsLce.onEach(this::onPopularSearchRequestsLce)
       .launchIn(viewModelScope)
   }
 
@@ -118,8 +101,7 @@ internal class SearchViewModel(
     if (searchText.isEmpty()) {
       viewModelState.update {
         it.copy(
-          searchResults = emptyList(),
-          searchResultsLce = LceState.Content
+          searchResults = emptyList(), searchResultsLce = LceState.Content
         )
       }
       return
@@ -131,8 +113,7 @@ internal class SearchViewModel(
           val results = stocks.filterBySearch(searchText)
           viewModelState.update {
             it.copy(
-              searchResults = results,
-              searchResultsLce = LceState.Content
+              searchResults = results, searchResultsLce = LceState.Content
             )
           }
           searchRequestsUseCase.onNewSearchRequest(searchText, results.size)
@@ -146,29 +127,8 @@ internal const val SEARCH_TASK_TIMEOUT = 350L
 
 internal fun List<StockViewData>.filterBySearch(searchText: String): List<StockViewData> {
   return this.filter { item ->
-    item.name
-      .lowercase(Locale.ROOT)
+    item.name.lowercase(Locale.ROOT)
+      .contains(searchText.lowercase(Locale.ROOT)) || item.ticker.lowercase(Locale.ROOT)
       .contains(searchText.lowercase(Locale.ROOT))
-            || item.ticker
-      .lowercase(Locale.ROOT)
-      .contains(searchText.lowercase(Locale.ROOT))
-  }
-}
-
-internal class SearchViewModelFactory @Inject constructor(
-  private val searchRequestsUseCase: SearchRequestsUseCase,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  private val companyUseCase: CompanyUseCase,
-  private val dispatchersProvider: DispatchersProvider
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == SearchViewModel::class.java)
-    return SearchViewModel(
-      searchRequestsUseCase,
-      favouriteCompanyUseCase,
-      companyUseCase,
-      dispatchersProvider
-    ) as T
   }
 }

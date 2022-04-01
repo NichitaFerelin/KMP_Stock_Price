@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.startActivitySafety
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
@@ -32,14 +31,15 @@ import com.ferelin.features.about.uiComponents.ProfileInfoRow
 import com.ferelin.features.about.uiComponents.ProfileInfoRowClickable
 import com.google.accompanist.insets.statusBarsPadding
 import com.skydoves.landscapist.glide.GlideImage
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ProfileRoute(deps: ProfileDeps, params: ProfileParams) {
-  val componentViewModel = viewModel<ProfileComponentViewModel>(
-    factory = ProfileComponentViewModelFactory(deps, params)
-  )
-  val viewModel = viewModel<ProfileViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
+fun ProfileRoute(params: ProfileParams) {
+  val viewModel = getViewModel<ProfileViewModel>(
+    parameters = {
+      parametersOf(params.companyId)
+    }
   )
   val uiState by viewModel.uiState.collectAsState()
   val context = LocalContext.current

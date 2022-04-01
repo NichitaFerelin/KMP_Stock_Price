@@ -5,9 +5,7 @@ import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoPrice
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.repository.CryptoPriceRepository
-import dagger.Reusable
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 interface CryptoPriceUseCase {
   val cryptoPrices: Flow<List<CryptoPrice>>
@@ -15,8 +13,7 @@ interface CryptoPriceUseCase {
   val cryptoPricesLce: Flow<LceState>
 }
 
-@Reusable
-internal class CryptoPriceUseCaseImpl @Inject constructor(
+internal class CryptoPriceUseCaseImpl(
   private val cryptoPriceRepository: CryptoPriceRepository,
   private val dispatchersProvider: DispatchersProvider
 ) : CryptoPriceUseCase {

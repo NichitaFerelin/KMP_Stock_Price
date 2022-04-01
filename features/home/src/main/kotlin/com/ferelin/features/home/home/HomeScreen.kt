@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.components.SearchField
@@ -31,15 +30,15 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun HomeScreenRoute(
-  deps: HomeDeps,
   onSearchRoute: () -> Unit,
   onSettingsRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val viewModel = viewModel<HomeViewModel>()
+  val viewModel = getViewModel<HomeViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   HomeScreen(
@@ -47,9 +46,9 @@ fun HomeScreenRoute(
     onScreenSelected = viewModel::onScreenSelected,
     onSearchClick = onSearchRoute,
     onSettingsClick = onSettingsRoute,
-    onCryptosRoute = { CryptosRoute(deps = deps) },
-    onStocksRoute = { StocksRoute(deps = deps, onStockRoute = onStockRoute) },
-    onFavouriteStocksRoute = { FavouriteStocksRoute(deps = deps, onStockRoute = onStockRoute) }
+    onCryptosRoute = { CryptosRoute() },
+    onStocksRoute = { StocksRoute(onStockRoute = onStockRoute) },
+    onFavouriteStocksRoute = { FavouriteStocksRoute(onStockRoute = onStockRoute) }
   )
 }
 

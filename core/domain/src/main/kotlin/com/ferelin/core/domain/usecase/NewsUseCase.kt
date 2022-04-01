@@ -5,9 +5,7 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.News
 import com.ferelin.core.domain.repository.NewsRepository
-import dagger.Reusable
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 interface NewsUseCase {
   fun getNewsBy(companyId: CompanyId): Flow<List<News>>
@@ -15,8 +13,7 @@ interface NewsUseCase {
   val newsLce: Flow<LceState>
 }
 
-@Reusable
-internal class NewsUseCaseImpl @Inject constructor(
+internal class NewsUseCaseImpl(
   private val newsRepository: NewsRepository,
   private val dispatchersProvider: DispatchersProvider
 ) : NewsUseCase {

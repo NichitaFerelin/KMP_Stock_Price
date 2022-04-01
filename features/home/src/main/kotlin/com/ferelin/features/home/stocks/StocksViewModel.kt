@@ -1,8 +1,6 @@
 package com.ferelin.features.home.stocks
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -11,7 +9,6 @@ import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 @Immutable
 internal data class StocksStateUi(
@@ -47,17 +44,5 @@ internal class StocksViewModel(
 
   private fun onCompaniesLce(lceState: LceState) {
     viewModelState.update { it.copy(companiesLce = lceState) }
-  }
-}
-
-internal class StocksViewModelFactory @Inject constructor(
-  private val dispatchersProvider: DispatchersProvider,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  private val companyUseCase: CompanyUseCase
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == StocksViewModel::class.java)
-    return StocksViewModel(companyUseCase, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

@@ -2,7 +2,6 @@ package com.ferelin.features.settings
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -10,10 +9,9 @@ import com.ferelin.core.domain.entity.StoragePath
 import com.ferelin.core.domain.repository.AuthUserStateRepository
 import com.ferelin.core.domain.usecase.*
 import com.ferelin.core.permission.PermissionManager
-import com.ferelin.core.storage.AppStorageManager
+import com.ferelin.core.storage.StoragePathBuilder
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Immutable
 internal data class SettingsStateUi(
@@ -31,7 +29,7 @@ internal class SettingsViewModel(
   private val storagePathUseCase: StoragePathUseCase,
   private val downloadProjectUseCase: DownloadProjectUseCase,
   private val permissionManager: PermissionManager,
-  private val storageManager: AppStorageManager,
+  private val storageManager: StoragePathBuilder,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val searchRequestsUseCase: SearchRequestsUseCase,
   private val authUseCase: AuthUseCase,
@@ -136,33 +134,3 @@ internal val StoragePath.isValid: Boolean
   get() = this.path.isNotEmpty() && this.authority.isNotEmpty()
 
 internal const val DOWNLOAD_FILE_NAME = "Stock-Price"
-
-internal class SettingsViewModelFactory @Inject constructor(
-  private val permissionManager: PermissionManager,
-  private val storageManager: AppStorageManager,
-  private val authUserStateRepository: AuthUserStateRepository,
-  private val notifyPriceUseCase: NotifyPriceUseCase,
-  private val storagePathUseCase: StoragePathUseCase,
-  private val downloadProjectUseCase: DownloadProjectUseCase,
-  private val searchRequestsUseCase: SearchRequestsUseCase,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  private val dispatchersProvider: DispatchersProvider,
-  private val authUseCase: AuthUseCase
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == SettingsViewModel::class.java)
-    return SettingsViewModel(
-      notifyPriceUseCase,
-      storagePathUseCase,
-      downloadProjectUseCase,
-      permissionManager,
-      storageManager,
-      favouriteCompanyUseCase,
-      searchRequestsUseCase,
-      authUseCase,
-      dispatchersProvider,
-      authUserStateRepository
-    ) as T
-  }
-}

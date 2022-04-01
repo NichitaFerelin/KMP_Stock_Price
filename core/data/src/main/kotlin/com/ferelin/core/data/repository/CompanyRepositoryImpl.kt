@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
-internal class CompanyRepositoryImpl @Inject constructor(
+internal class CompanyRepositoryImpl(
   private val companyDao: CompanyDao,
   private val profileDao: ProfileDao,
   private val jsonSource: CompanyJsonSource

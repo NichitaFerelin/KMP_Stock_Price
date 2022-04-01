@@ -13,9 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-internal class AuthRepositoryImpl @Inject constructor(
+internal class AuthRepositoryImpl(
   private val firebaseAuth: FirebaseAuth,
 ) : AuthRepository {
   private val authProcessingState = MutableStateFlow(AuthState.None)

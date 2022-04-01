@@ -7,9 +7,8 @@ import com.ferelin.core.domain.repository.NotifyPriceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-internal class NotifyPriceRepositoryImpl @Inject constructor(
+internal class NotifyPriceRepositoryImpl(
   private val preferencesProvider: PreferencesProvider
 ) : NotifyPriceRepository {
   private val notifyPriceKey = booleanPreferencesKey("notify-price")

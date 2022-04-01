@@ -3,7 +3,6 @@ package com.ferelin.features.login
 import android.app.Activity
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.repository.AuthState
@@ -11,7 +10,6 @@ import com.ferelin.core.domain.usecase.AuthUseCase
 import com.ferelin.core.network.NetworkListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Immutable
 internal data class LoginStateUi(
@@ -163,17 +161,5 @@ internal class LoginViewModel(
 
   private fun onNetwork(isAvailable: Boolean) {
     viewModelState.update { it.copy(networkError = !isAvailable) }
-  }
-}
-
-internal class LoginViewModelFactory @Inject constructor(
-  private val authUseCase: AuthUseCase,
-  private val networkListener: NetworkListener,
-  private val dispatchersProvider: DispatchersProvider
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == LoginViewModel::class.java)
-    return LoginViewModel(authUseCase, dispatchersProvider, networkListener) as T
   }
 }

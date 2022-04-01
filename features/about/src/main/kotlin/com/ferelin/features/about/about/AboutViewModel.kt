@@ -2,14 +2,12 @@ package com.ferelin.features.about.about
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.params.AboutParams
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Immutable
 internal data class AboutStateUi(
@@ -72,17 +70,5 @@ internal class AboutViewModel(
 
   private fun onCompanyIsFavourite(isFavourite: Boolean) {
     viewModelState.update { it.copy(isFavourite = isFavourite) }
-  }
-}
-
-internal class AboutViewModelFactory @Inject constructor(
-  private val params: AboutParams,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  private val dispatchersProvider: DispatchersProvider
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == AboutViewModel::class.java)
-    return AboutViewModel(params, favouriteCompanyUseCase, dispatchersProvider) as T
   }
 }

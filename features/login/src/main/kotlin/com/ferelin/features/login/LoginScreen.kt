@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.APP_TOP_PADDING
 import com.ferelin.core.ui.components.ClickableIcon
@@ -41,18 +40,13 @@ import com.ferelin.core.ui.components.TextField
 import com.ferelin.core.ui.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LoginRoute(
-  deps: LoginDeps,
   onBackRoute: () -> Unit
 ) {
-  val componentViewModel = viewModel<LoginComponentViewModel>(
-    factory = LoginComponentViewModelFactory(deps)
-  )
-  val viewModel = viewModel<LoginViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
-  )
+  val viewModel = getViewModel<LoginViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   val context = LocalContext.current

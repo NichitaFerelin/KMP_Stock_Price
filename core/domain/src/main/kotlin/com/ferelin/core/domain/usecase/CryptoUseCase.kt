@@ -4,17 +4,14 @@ import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.repository.CryptoRepository
-import dagger.Reusable
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 interface CryptoUseCase {
   val cryptos: Flow<List<Crypto>>
   val cryptosLce: Flow<LceState>
 }
 
-@Reusable
-internal class CryptoUseCaseImpl @Inject constructor(
+internal class CryptoUseCaseImpl(
   cryptoRepository: CryptoRepository,
   dispatchersProvider: DispatchersProvider
 ) : CryptoUseCase {

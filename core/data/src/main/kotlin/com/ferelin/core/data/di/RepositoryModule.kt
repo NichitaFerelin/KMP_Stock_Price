@@ -1,55 +1,39 @@
 package com.ferelin.core.data.di
 
+import com.ferelin.core.NAMED_EXTERNAL_SCOPE
+import com.ferelin.core.data.api.CRYPTOS_TOKEN
+import com.ferelin.core.data.api.STOCKS_TOKEN
 import com.ferelin.core.data.repository.*
 import com.ferelin.core.domain.repository.*
-import dagger.Binds
-import dagger.Module
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-@Module(includes = [RepositoryModuleBinds::class])
-class RepositoryModule
+val repositoryModule = module {
+  single<AuthUserStateRepository> {
+    AuthUserStateRepositoryImpl(get())
+  }
+  single<FavouriteCompanyRepository> {
+    FavouriteCompanyRepositoryImpl(get(), get(), get(), get(named(NAMED_EXTERNAL_SCOPE)), get())
+  }
+  factory<CryptoPriceRepository> {
+    CryptoPriceRepositoryImpl(get(), get(), get(named(CRYPTOS_TOKEN)))
+  }
+  factory<NewsRepository> {
+    NewsRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+  }
+  factory<PastPriceRepository> {
+    PastPriceRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+  }
+  factory<StockPriceRepository> {
+    StockPriceRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+  }
 
-@Suppress("unused")
-@Module
-internal interface RepositoryModuleBinds {
-  @Binds
-  fun authRepository(impl: AuthRepositoryImpl): AuthRepository
-
-  @Binds
-  fun authUserStateRepository(impl: AuthUserStateRepositoryImpl): AuthUserStateRepository
-
-  @Binds
-  fun companyRepository(impl: CompanyRepositoryImpl): CompanyRepository
-
-  @Binds
-  fun cryptoPriceRepository(impl: CryptoPriceRepositoryImpl): CryptoPriceRepository
-
-  @Binds
-  fun cryptoRepository(impl: CryptoRepositoryImpl): CryptoRepository
-
-  @Binds
-  fun favouriteCompanyRepository(impl: FavouriteCompanyRepositoryImpl): FavouriteCompanyRepository
-
-  @Binds
-  fun newsRepository(impl: NewsRepositoryImpl): NewsRepository
-
-  @Binds
-  fun notifyPriceRepository(impl: NotifyPriceRepositoryImpl): NotifyPriceRepository
-
-  @Binds
-  fun pastPriceRepository(impl: PastPriceRepositoryImpl): PastPriceRepository
-
-  @Binds
-  fun profileRepository(impl: ProfileRepositoryImpl): ProfileRepository
-
-  @Binds
-  fun projectRepository(impl: ProjectRepositoryImpl): ProjectRepository
-
-  @Binds
-  fun searchRequestsRepository(impl: SearchRequestsRepositoryImpl): SearchRequestsRepository
-
-  @Binds
-  fun stockPriceRepository(impl: StockPriceRepositoryImpl): StockPriceRepository
-
-  @Binds
-  fun storagePathRepository(impl: StoragePathRepositoryImpl): StoragePathRepository
+  factory<AuthRepository> { AuthRepositoryImpl(get()) }
+  factory<CompanyRepository> { CompanyRepositoryImpl(get(), get(), get()) }
+  factory<CryptoRepository> { CryptoRepositoryImpl(get(), get()) }
+  factory<NotifyPriceRepository> { NotifyPriceRepositoryImpl(get()) }
+  factory<ProfileRepository> { ProfileRepositoryImpl(get()) }
+  factory<ProjectRepository> { ProjectRepositoryImpl(get()) }
+  factory<SearchRequestsRepository> { SearchRequestsRepositoryImpl(get()) }
+  factory<StoragePathRepository> { StoragePathRepositoryImpl(get()) }
 }

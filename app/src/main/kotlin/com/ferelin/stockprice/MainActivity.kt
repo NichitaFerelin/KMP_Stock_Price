@@ -22,8 +22,7 @@ class MainActivity : AppCompatActivity() {
       ProvideWindowInsets(consumeWindowInsets = true) {
         val navController = rememberNavController()
         AppNavigationGraph(
-          navHostController = navController,
-          appComponent = (application as App).appComponent
+          navHostController = navController
         )
       }
     }

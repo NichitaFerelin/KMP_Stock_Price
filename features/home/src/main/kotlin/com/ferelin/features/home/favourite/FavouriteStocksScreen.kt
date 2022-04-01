@@ -3,21 +3,15 @@ package com.ferelin.features.home.favourite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.components.StocksList
 import com.ferelin.core.ui.viewData.StockViewData
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun FavouriteStocksRoute(
-  deps: FavouriteStocksDeps,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val componentViewModel = viewModel<FavouriteStocksComponentViewModel>(
-    factory = FavouriteStocksComponentViewModelFactory(deps)
-  )
-  val viewModel = viewModel<FavouriteStocksViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
-  )
+  val viewModel = getViewModel<FavouriteStocksViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   FavouriteStocksScreen(

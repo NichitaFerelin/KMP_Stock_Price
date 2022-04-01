@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-internal class SearchRequestsRepositoryImpl @Inject constructor(
+internal class SearchRequestsRepositoryImpl(
   private val dao: SearchRequestDao
 ) : SearchRequestsRepository {
   override val searchRequests: Flow<List<SearchRequest>>

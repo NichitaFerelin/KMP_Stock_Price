@@ -1,25 +1,18 @@
 package com.ferelin.core.di
 
-import com.ferelin.core.ExternalScope
+import com.ferelin.core.NAMED_EXTERNAL_SCOPE
 import com.ferelin.core.coroutine.DispatchersProvider
-import dagger.Module
-import dagger.Provides
-import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-@Module
-class CoroutineModule {
-  @Provides
-  @Reusable
-  fun dispatchersProvider(): DispatchersProvider {
-    return DispatchersProvider()
-  }
+val coroutineModule = module {
+  factory { DispatchersProvider() }
 
-  @Provides
-  @Reusable
-  @ExternalScope
-  fun externalScope(dispatchersProvider: DispatchersProvider): CoroutineScope {
-    return CoroutineScope(SupervisorJob() + dispatchersProvider.IO)
+  factory(
+    qualifier = named(NAMED_EXTERNAL_SCOPE)
+  ) {
+    CoroutineScope(SupervisorJob() + get<DispatchersProvider>().IO)
   }
 }

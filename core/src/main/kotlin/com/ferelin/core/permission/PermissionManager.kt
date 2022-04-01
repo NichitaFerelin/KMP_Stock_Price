@@ -4,9 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
-import javax.inject.Inject
 
-class PermissionManager @Inject constructor(
+class PermissionManager(
   private val context: Context
 ) {
   val writeExternalStorage

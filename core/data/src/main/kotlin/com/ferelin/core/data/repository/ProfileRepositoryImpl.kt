@@ -8,9 +8,8 @@ import com.ferelin.core.domain.repository.ProfileRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-internal class ProfileRepositoryImpl @Inject constructor(
+internal class ProfileRepositoryImpl(
   private val dao: ProfileDao
 ) : ProfileRepository {
   override fun getBy(companyId: CompanyId): Flow<Profile> {

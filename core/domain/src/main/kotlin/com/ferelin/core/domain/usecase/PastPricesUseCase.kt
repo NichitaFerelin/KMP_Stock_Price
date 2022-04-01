@@ -5,9 +5,7 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.PastPrice
 import com.ferelin.core.domain.repository.PastPriceRepository
-import dagger.Reusable
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 interface PastPricesUseCase {
   fun getAllBy(companyId: CompanyId): Flow<List<PastPrice>>
@@ -15,8 +13,7 @@ interface PastPricesUseCase {
   val pastPricesLce: Flow<LceState>
 }
 
-@Reusable
-internal class PastPricesUseCaseImpl @Inject constructor(
+internal class PastPricesUseCaseImpl(
   private val pastPriceRepository: PastPriceRepository,
   private val dispatchersProvider: DispatchersProvider
 ) : PastPricesUseCase {

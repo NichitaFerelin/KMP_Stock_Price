@@ -3,21 +3,15 @@ package com.ferelin.features.home.stocks
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.components.StocksList
 import com.ferelin.core.ui.viewData.StockViewData
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun StocksRoute(
-  deps: StocksDeps,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val componentViewModel = viewModel<StocksComponentViewModel>(
-    factory = StocksComponentViewModelFactory(deps)
-  )
-  val viewModel = viewModel<StocksViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
-  )
+  val viewModel = getViewModel<StocksViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   StocksScreen(

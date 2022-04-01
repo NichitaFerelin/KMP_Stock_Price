@@ -2,7 +2,6 @@ package com.ferelin.features.about.chart
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
@@ -14,7 +13,6 @@ import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.viewData.StockPriceViewData
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @Immutable
 internal data class ChartScreenStateUi(
@@ -116,25 +114,5 @@ internal class ChartViewModel(
       stockPricesUseCase.fetchPrice(chartParams.companyId, chartParams.companyTicker)
       pastPricesUseCase.fetchPastPrices(chartParams.companyId, chartParams.companyTicker)
     }
-  }
-}
-
-internal class ChartViewModelFactory @Inject constructor(
-  private val chartParams: ChartParams,
-  private val networkListener: NetworkListener,
-  private val pastPricesUseCase: PastPricesUseCase,
-  private val stockPricesUseCase: StockPriceUseCase,
-  private val dispatchersProvider: DispatchersProvider
-) : ViewModelProvider.Factory {
-  @Suppress("UNCHECKED_CAST")
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    require(modelClass == ChartViewModel::class.java)
-    return ChartViewModel(
-      chartParams,
-      pastPricesUseCase,
-      stockPricesUseCase,
-      dispatchersProvider,
-      networkListener
-    ) as T
   }
 }

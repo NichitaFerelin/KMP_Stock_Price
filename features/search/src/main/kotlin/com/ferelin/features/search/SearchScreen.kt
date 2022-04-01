@@ -28,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
@@ -39,19 +38,14 @@ import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.features.search.uiComponents.SearchRequests
 import com.google.accompanist.insets.statusBarsPadding
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SearchRoute(
-  deps: SearchDeps,
   onBackRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val componentViewModel = viewModel<SearchComponentViewModel>(
-    factory = SearchComponentViewModelFactory(deps)
-  )
-  val viewModel = viewModel<SearchViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
-  )
+  val viewModel = getViewModel<SearchViewModel>()
   val uiState by viewModel.uiState.collectAsState()
 
   SearchScreen(

@@ -6,9 +6,8 @@ import android.os.Build
 import android.os.Environment
 import com.ferelin.core.domain.repository.ProjectRepository
 import java.io.File
-import javax.inject.Inject
 
-internal class ProjectRepositoryImpl @Inject constructor(
+internal class ProjectRepositoryImpl(
   private val downloadManager: DownloadManager
 ) : ProjectRepository {
   override suspend fun download(

@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.APP_TOP_PADDING
 import com.ferelin.core.ui.components.ClickableIcon
@@ -30,18 +29,22 @@ import com.ferelin.features.about.news.NewsRoute
 import com.ferelin.features.about.profile.ProfileRoute
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AboutRoute(
-  deps: AboutDeps,
   params: AboutParams,
   onBackRoute: () -> Unit
 ) {
-  val componentViewModel = viewModel<AboutComponentViewModel>(
-    factory = AboutComponentViewModelFactory(deps, params)
-  )
-  val viewModel = viewModel<AboutViewModel>(
-    factory = componentViewModel.component.viewModelFactory()
+  val viewModel = getViewModel<AboutViewModel>(
+    parameters = {
+      parametersOf(
+        params.companyId,
+        params.companyName,
+        params.companyTicker
+      )
+    }
   )
   val uiState by viewModel.uiState.collectAsState()
 
@@ -52,11 +55,11 @@ fun AboutRoute(
     onBackRoute = onBackRoute,
     onProfileRoute = {
       val profileParams = remember { ProfileParams(params.companyId) }
-      ProfileRoute(deps, profileParams)
+      ProfileRoute(profileParams)
     },
     onNewsRoute = {
       val newsParams = remember { NewsParams(params.companyId, params.companyTicker) }
-      NewsRoute(deps, newsParams)
+      NewsRoute(newsParams)
     }
   )
 }

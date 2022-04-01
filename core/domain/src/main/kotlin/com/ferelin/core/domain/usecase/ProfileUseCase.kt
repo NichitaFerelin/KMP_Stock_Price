@@ -5,17 +5,14 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.Profile
 import com.ferelin.core.domain.repository.ProfileRepository
-import dagger.Reusable
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
 interface ProfileUseCase {
   val profileLce: Flow<LceState>
   fun getProfileBy(companyId: CompanyId): Flow<Profile>
 }
 
-@Reusable
-internal class ProfileUseCaseImpl @Inject constructor(
+internal class ProfileUseCaseImpl(
   private val profileRepository: ProfileRepository,
   private val dispatchersProvider: DispatchersProvider
 ) : ProfileUseCase {

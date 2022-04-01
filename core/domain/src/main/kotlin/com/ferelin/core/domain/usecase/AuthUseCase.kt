@@ -1,14 +1,11 @@
 package com.ferelin.core.domain.usecase
 
 import android.app.Activity
-import com.ferelin.core.ExternalScope
 import com.ferelin.core.domain.repository.*
-import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 interface AuthUseCase {
   val userAuth: Flow<Boolean>
@@ -22,15 +19,16 @@ interface AuthUseCase {
   }
 }
 
-@Reusable
-internal class AuthUseCaseImpl @Inject constructor(
+internal class AuthUseCaseImpl(
   private val authRepository: AuthRepository,
   private val searchRequestsRepository: SearchRequestsRepository,
   private val favouriteCompanyRepository: FavouriteCompanyRepository,
-  @ExternalScope private val externalScope: CoroutineScope,
+  private val externalScope: CoroutineScope,
   authUserStateRepository: AuthUserStateRepository
 ) : AuthUseCase {
-  override val userAuth: Flow<Boolean> = authUserStateRepository.userAuthenticated.distinctUntilChanged()
+  override val userAuth: Flow<Boolean> =
+    authUserStateRepository.userAuthenticated.distinctUntilChanged()
+
   override val authState: Flow<AuthState> = authRepository.authProcessing.distinctUntilChanged()
 
   override suspend fun tryAuthentication(holder: Activity, phone: String) {

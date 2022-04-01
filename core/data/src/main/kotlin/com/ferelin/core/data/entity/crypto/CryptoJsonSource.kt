@@ -4,13 +4,12 @@ import android.content.Context
 import com.ferelin.core.data.mapper.CryptoMapper
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import javax.inject.Inject
 
 internal interface CryptoJsonSource {
   fun parseJson(): List<CryptoDBO>
 }
 
-internal class CryptoJsonSourceImpl @Inject constructor(
+internal class CryptoJsonSourceImpl(
   private val context: Context,
   private val moshi: Moshi
 ) : CryptoJsonSource {

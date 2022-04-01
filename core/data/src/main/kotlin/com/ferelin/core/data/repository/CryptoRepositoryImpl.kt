@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
-internal class CryptoRepositoryImpl @Inject constructor(
+internal class CryptoRepositoryImpl(
   private val dao: CryptoDao,
   private val jsonSource: CryptoJsonSource
 ) : CryptoRepository {

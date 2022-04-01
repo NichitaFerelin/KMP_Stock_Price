@@ -8,16 +8,13 @@ import android.os.Build
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 interface NetworkListener {
   val networkState: Flow<Boolean>
 }
 
 @SuppressLint("MissingPermission")
-@Singleton
-internal class NetworkListenerImpl @Inject constructor(
+internal class NetworkListenerImpl(
   service: ConnectivityManager,
   networkRequest: NetworkRequest
 ) : NetworkListener {

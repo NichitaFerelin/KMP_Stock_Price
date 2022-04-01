@@ -4,9 +4,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
-import javax.inject.Inject
 
-class AppStorageManager @Inject constructor(
+class StoragePathBuilder(
   private val context: Context
 ) {
   fun buildDownloadFile(

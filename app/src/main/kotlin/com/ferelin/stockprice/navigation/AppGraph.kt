@@ -15,13 +15,11 @@ import com.ferelin.features.login.LoginRoute
 import com.ferelin.features.search.SearchRoute
 import com.ferelin.features.settings.SettingsRoute
 import com.ferelin.features.splash.LoadingScreen
-import com.ferelin.stockprice.di.AppComponent
 import com.ferelin.stockprice.navigation.Destination.*
 
 @Composable
 internal fun AppNavigationGraph(
-  navHostController: NavHostController,
-  appComponent: AppComponent
+  navHostController: NavHostController
 ) {
   NavHost(
     navController = navHostController,
@@ -36,7 +34,6 @@ internal fun AppNavigationGraph(
     }
     composable(route = HomeDestination.key) {
       HomeScreenRoute(
-        deps = appComponent,
         onSettingsRoute = { navHostController.navigate(route = SettingsDestination.key) },
         onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
         onStockRoute = {
@@ -48,20 +45,17 @@ internal fun AppNavigationGraph(
     }
     composable(route = SettingsDestination.key) {
       SettingsRoute(
-        deps = appComponent,
         onLogInRoute = { navHostController.navigate(route = AuthenticationDestination.key) },
         onBackRoute = { navHostController.popBackStack() }
       )
     }
     composable(route = AuthenticationDestination.key) {
       LoginRoute(
-        deps = appComponent,
         onBackRoute = { navHostController.popBackStack() }
       )
     }
     composable(route = SearchDestination.key) {
       SearchRoute(
-        deps = appComponent,
         onBackRoute = { navHostController.popBackStack() },
         onStockRoute = {
           navHostController.navigate(
@@ -87,7 +81,6 @@ internal fun AppNavigationGraph(
       val ticker = requireNotNull(args.getString(AboutDestination.ARG_TICKER))
 
       AboutRoute(
-        deps = appComponent,
         params = AboutParams(CompanyId(id), ticker, name),
         onBackRoute = { navHostController.popBackStack() }
       )

@@ -6,27 +6,17 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.network.NetworkListenerImpl
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module(includes = [NetworkListenerModuleBinds::class])
-class NetworkListenerModule {
-  @Provides
-  fun networkRequest(): NetworkRequest {
-    return buildNetworkRequest()
+val networkListenerModule = module {
+  factory { buildNetworkRequest() }
+
+  factory {
+    androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
   }
 
-  @Provides
-  fun connectivityManager(context: Context): ConnectivityManager {
-    return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-  }
-}
-
-@Module
-internal interface NetworkListenerModuleBinds {
-  @Binds
-  fun networkListener(networkListenerImpl: NetworkListenerImpl): NetworkListener
+  single<NetworkListener> { NetworkListenerImpl(get(), get()) }
 }
 
 internal fun buildNetworkRequest(): NetworkRequest {
