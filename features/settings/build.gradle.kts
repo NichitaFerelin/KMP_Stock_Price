@@ -3,7 +3,6 @@ import com.ferelin.Libs
 plugins {
   id("com.android.library")
   id("kotlin-android")
-  id("kotlin-kapt")
 }
 
 android {
@@ -29,7 +28,4 @@ android {
 
 dependencies {
   implementation(project(":core:ui"))
-
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
 }

@@ -3,7 +3,6 @@ import com.ferelin.Libs
 plugins {
   id("com.android.library")
   id("kotlin-android")
-  id("kotlin-kapt")
 }
 
 android {
@@ -21,10 +20,11 @@ dependencies {
   api(Libs.androidCore)
   api(Libs.documentFile)
   api(Libs.timber)
+
   api(Libs.Kotlin.stdLib)
   api(Libs.Coroutines.core)
   api(Libs.Coroutines.android)
 
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
+  api(Libs.Koin.core)
+  api(Libs.Koin.android)
 }

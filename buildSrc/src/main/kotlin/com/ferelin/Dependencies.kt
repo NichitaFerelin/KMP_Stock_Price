@@ -63,10 +63,11 @@ object Libs {
     const val flowLayout = "com.google.accompanist:accompanist-flowlayout:$version"
   }
 
-  object Dagger {
-    const val version = "2.41"
-    const val core = "com.google.dagger:dagger:$version"
-    const val compilerKapt = "com.google.dagger:dagger-compiler:$version"
+  object Koin {
+    const val version = "3.1.5"
+    const val core = "io.insert-koin:koin-core:$version"
+    const val android = "io.insert-koin:koin-android:$version"
+    const val compose = "io.insert-koin:koin-androidx-compose:$version"
   }
 
   object Room {

@@ -4,7 +4,6 @@ plugins {
   id("com.android.library")
   id("kotlin-android")
   id("kotlin-parcelize")
-  id("kotlin-kapt")
 }
 
 android {
@@ -20,7 +19,4 @@ android {
 
 dependencies {
   api(project(":core"))
-
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
 }

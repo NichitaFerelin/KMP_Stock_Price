@@ -3,7 +3,6 @@ import com.ferelin.Libs
 plugins {
   id("com.android.application")
   id("kotlin-android")
-  id("kotlin-kapt")
   id("com.google.gms.google-services")
   id("com.google.firebase.crashlytics")
 }
@@ -64,7 +63,4 @@ dependencies {
 
   implementation(platform(Libs.Firebase.platform))
   implementation(Libs.Firebase.crashlyticsKtx)
-
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
 }

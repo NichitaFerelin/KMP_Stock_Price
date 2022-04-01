@@ -73,7 +73,4 @@ dependencies {
   api(Libs.Room.core)
   api(Libs.Room.ktx)
   kapt(Libs.Room.compilerKapt)
-
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
 }

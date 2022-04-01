@@ -4,7 +4,6 @@ plugins {
   id("com.android.library")
   id("kotlin-android")
   id("kotlin-parcelize")
-  id("kotlin-kapt")
 }
 
 android {
@@ -46,12 +45,10 @@ dependencies {
   api(Libs.Compose.constraintLayout)
   api(Libs.Compose.viewModel)
   api(Libs.Compose.glide)
+  api(Libs.Koin.compose)
 
   api(Libs.Accompanist.insets)
   api(Libs.Accompanist.systemUiController)
   api(Libs.Accompanist.pager)
   api(Libs.Accompanist.pagerIndicators)
-
-  implementation(Libs.Dagger.core)
-  kapt(Libs.Dagger.compilerKapt)
 }
