@@ -1,0 +1,12 @@
+CREATE TABLE CryptoDBO(
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    ticker TEXT NOT NULL,
+    logoUrl TEXT NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO CryptoDBO VALUES ?;
+
+getAll:
+SELECT * FROM CryptoDBO;

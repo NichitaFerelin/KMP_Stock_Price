@@ -1,13 +1,17 @@
 package com.ferelin.core.data.di
 
 import com.ferelin.core.data.R
-import com.ferelin.core.data.api.*
+import com.ferelin.core.data.api.buildKtorHttpClient
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
+import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApiImpl
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApi
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApiImpl
 import com.ferelin.core.data.entity.news.NewsApi
-import com.ferelin.core.data.entity.pastPrice.PastPricesApi
+import com.ferelin.core.data.entity.news.NewsApiImpl
+import com.ferelin.core.data.entity.pastPrice.PastPriceApi
+import com.ferelin.core.data.entity.pastPrice.PastPriceApiImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceApi
+import com.ferelin.core.data.entity.stockPrice.StockPriceApiImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.moshi.Moshi
@@ -56,6 +60,3 @@ val networkModule = module {
   single { FirebaseAuth.getInstance().apply { useAppLanguage() } }
   single { FirebaseDatabase.getInstance().reference }
 }
-
-private const val STOCKS_RETROFIT = "stocks-retrofit"
-private const val CRYPTOS_RETROFIT = "cryptos-retrofit"

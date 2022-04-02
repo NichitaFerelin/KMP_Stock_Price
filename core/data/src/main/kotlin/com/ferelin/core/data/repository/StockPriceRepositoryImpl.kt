@@ -2,6 +2,7 @@ package com.ferelin.core.data.repository
 
 import com.ferelin.core.data.entity.stockPrice.StockPriceApi
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
+import com.ferelin.core.data.entity.stockPrice.StockPriceOptions
 import com.ferelin.core.data.mapper.StockPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.StockPrice
@@ -20,10 +21,9 @@ internal class StockPriceRepositoryImpl(
 
   override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
     try {
-      val response = api.load(token, companyTicker)
-      dao.insert(
-        stockPriceDBO = StockPriceMapper.map(response, companyId)
-      )
+      val options = StockPriceOptions(token, companyTicker)
+      val response = api.load(options)
+      dao.insert(stockPriceDBO = StockPriceMapper.map(response, companyId))
       fetchErrorState.emit(null)
     } catch (e: Exception) {
       fetchErrorState.emit(e)

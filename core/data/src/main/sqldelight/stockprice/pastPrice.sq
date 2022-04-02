@@ -1,0 +1,15 @@
+CREATE TABLE PastPriceDBO(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    companyId INTEGER AS Int NOT NULL,
+    closePrice REAL NOT NULL,
+    dateMillis INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO PastPriceDBO VALUES (?, ?, ?, ?);
+
+getAllBy:
+SELECT * FROM PastPriceDBO WHERE companyId = :companyId;
+
+eraseAllBy:
+DELETE FROM PastPriceDBO WHERE companyId = :companyId;
