@@ -1,26 +1,27 @@
-# Android Stock Price
+# Stock Price
 
 ## About
-An application whose main purpose is to display stock prices. Using the chart, you can analyze the history of price changes. It is possible to add a stock to your favorites list. You can log into the app through your phone number. In this case, all favourite stocks and search requests will be saved in the cloud. 
+Stock Price - is an android application which displays actual price of stocks at marketplace. The application contains over 1000 companies from different industries. There is a base information such as website, country, industry and capitalization in company's profile. You can also analyze the history of price changes using the chart. It is possible to add companies to the list of favorites which will be saved by your phone number if you are logged in. 
 
-App API: [Stocks](https://finnhub.io/) | [Crypto](https://nomics.com/docs/)
+**Used API: [Stocks](https://finnhub.io/) | [Crypto](https://nomics.com/docs/)**
 
-Google Play[XML VERSION]: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)
+**Google Play [XML VERSION]: [Stock Price](https://play.google.com/store/apps/details?id=com.ferelin.stockprice)**
+
+**Phone number for test authentication: +16505555555. Code 123456**
 
 
 ## Stack
-- Jetpack Compose only. [XML version](https://github.com/NikitaFerelin/Android_Stock_Price/tree/18670da6124d0328b0d323b675d0bafdb4df45f6)
-- Clean Architecture try
-- MVVM / MVI
-- Kotlin Flow
-- Room
-- Dagger2
-- Glide
+- Compose UI | [XML](https://github.com/NichitaFerelin/Android_Stock_Price/tree/xml)
+- Clean Architecture
+- MVI
+- Kotlin Flow / Coroutines | [RXJava / Coroutines](https://github.com/NichitaFerelin/Android_Stock_Price/tree/rx_java_as_data_stream_instead_of_kotlin_flow)
+- Koin | [Dagger](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
+- Ktor | [Retrofit](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
+- SQLDelight | [Room](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
 - Data Store Preferences
-- Moshi
-- Retrofit + okHttp
-- Firebase Realtime Db
-- Firebase Authorization
+- Moshi / Kotlin Serialization
+- Glide
+- Firebase Realtime Database / Authorization
 
 
 ## Compose UI
@@ -35,9 +36,3 @@ Google Play[XML VERSION]: [Stock Price](https://play.google.com/store/apps/detai
   <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
   <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
 </p>
-
-
-## Phone numbers for test login
-- +16505555555 . Code [123456]
-- +16504444444 . Code [123456]
-- +16503333333 . Code [123456]
