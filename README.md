@@ -1,4 +1,8 @@
+## NOT DEVELOPING. USED FOR EXAMPLE ONLY. [ACTUAL VERSION](https://github.com/NichitaFerelin/Stock_Price)
+
+
 # Stock Price
+
 
 ## About
 Stock Price - is an android application which displays actual price of stocks at marketplace. The application contains over 1000 companies from different industries. There is a base information such as website, country, industry and capitalization in company's profile. You can also analyze the history of price changes using the chart. It is possible to add companies to the list of favorites which will be saved by your phone number if you are logged in. 
