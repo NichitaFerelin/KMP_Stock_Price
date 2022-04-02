@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/authentication" />
+            <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/data/data_local" />
+            <option value="$PROJECT_DIR$/data/data_network_api" />
+            <option value="$PROJECT_DIR$/data/data_network_downloader" />
+            <option value="$PROJECT_DIR$/data/data_network_firebase" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/feature_chart" />
+            <option value="$PROJECT_DIR$/features/feature_forecasts" />
+            <option value="$PROJECT_DIR$/features/feature_ideas" />
+            <option value="$PROJECT_DIR$/features/feature_loading" />
+            <option value="$PROJECT_DIR$/features/feature_login" />
+            <option value="$PROJECT_DIR$/features/feature_news" />
+            <option value="$PROJECT_DIR$/features/feature_profile" />
+            <option value="$PROJECT_DIR$/features/feature_search" />
+            <option value="$PROJECT_DIR$/features/feature_section_about" />
+            <option value="$PROJECT_DIR$/features/feature_section_stocks" />
+            <option value="$PROJECT_DIR$/features/feature_settings" />
+            <option value="$PROJECT_DIR$/features/feature_stocks_default" />
+            <option value="$PROJECT_DIR$/features/feature_stocks_favourite" />
+            <option value="$PROJECT_DIR$/navigation" />
+            <option value="$PROJECT_DIR$/shared" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
