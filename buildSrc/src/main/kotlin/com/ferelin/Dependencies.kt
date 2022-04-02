@@ -78,16 +78,12 @@ object Libs {
     const val compilerKapt = "androidx.room:room-compiler:$version"
   }
 
-  object Retrofit {
-    const val version = "2.9.0"
-    const val core = "com.squareup.retrofit2:retrofit:$version"
-    const val converter = "com.squareup.retrofit2:converter-moshi:$version"
-  }
-
-  object OkHttp {
-    const val version = "4.9.1"
-    const val core = "com.squareup.okhttp3:okhttp:$version"
-    const val interceptor = "com.squareup.okhttp3:logging-interceptor:$version"
+  object Ktor {
+    const val version = "1.6.8"
+    const val core = "io.ktor:ktor-client-core:$version"
+    const val android = "io.ktor:ktor-client-android:$version"
+    const val serialization = "io.ktor:ktor-client-serialization:$version"
+    const val logging = "io.ktor:ktor-client-logging:$version"
   }
 
   object Firebase {

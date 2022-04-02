@@ -1,26 +1,36 @@
 package com.ferelin.core.data.entity.pastPrice
 
 import com.ferelin.core.ONE_YEAR_MILLIS
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.ferelin.core.data.api.endPoints.pastPrice
+import io.ktor.client.*
+import io.ktor.client.request.*
+import kotlinx.serialization.SerialName
+import javax.inject.Inject
 
-internal interface PastPricesApi {
-  @GET("stock/candle")
-  suspend fun load(
-    @Query("token") token: String,
-    @Query("symbol") companyTicker: String,
-    @Query("from") from: Long = PastPricesApiSpecifics.yearAgoMillis,
-    @Query("to") to: Long = PastPricesApiSpecifics.currentMillis,
-    @Query("resolution") resolution: String = PastPricesApiSpecifics.resolution
-  ): PastPricesResponse
+internal interface PastPriceApi {
+  suspend fun load(options: PastPricesOptions): PastPricesResponse
 }
 
-@JsonClass(generateAdapter = true)
+internal class PastPriceApiImpl @Inject constructor(
+  private val client: HttpClient
+) : PastPriceApi {
+  override suspend fun load(options: PastPricesOptions): PastPricesResponse {
+    return client.get { pastPrice(options) }
+  }
+}
+
+internal data class PastPricesOptions(
+  val token: String,
+  val companyTicker: String,
+  val from: Long = PastPricesApiSpecifics.yearAgoMillis,
+  val to: Long = PastPricesApiSpecifics.currentMillis,
+  val resolution: String = PastPricesApiSpecifics.resolution
+)
+
+@kotlinx.serialization.Serializable
 internal data class PastPricesResponse(
-  @Json(name = "c") val closePrices: List<Double>,
-  @Json(name = "t") val timestamps: List<Long>,
+  @SerialName(value = "c") val closePrices: List<Double>,
+  @SerialName(value = "t") val timestamps: List<Long>,
 )
 
 internal object PastPricesApiSpecifics {

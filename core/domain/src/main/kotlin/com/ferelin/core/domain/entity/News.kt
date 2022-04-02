@@ -11,4 +11,4 @@ data class News(
 )
 
 @JvmInline
-value class NewsId(val value: String)
+value class NewsId(val value: Long)

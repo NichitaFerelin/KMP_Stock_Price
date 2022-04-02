@@ -4,6 +4,7 @@ plugins {
   id("com.android.library")
   id("kotlin-android")
   id("kotlin-kapt")
+  kotlin("plugin.serialization") version com.ferelin.Libs.Kotlin.version
 }
 
 android {
@@ -59,11 +60,10 @@ dependencies {
   api(Libs.Firebase.authenticationKtx)
   api(Libs.Firebase.crashlyticsKtx)
 
-  api(Libs.Retrofit.core)
-  api(Libs.Retrofit.converter)
-
-  api(Libs.OkHttp.core)
-  api(Libs.OkHttp.interceptor)
+  api(Libs.Ktor.core)
+  api(Libs.Ktor.android)
+  api(Libs.Ktor.serialization)
+  api(Libs.Ktor.logging)
 
   api(Libs.Moshi.core)
   kapt(Libs.Moshi.compilerKapt)
