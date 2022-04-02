@@ -2,7 +2,6 @@ package com.ferelin.core.data.repository
 
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceDao
-import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceOptions
 import com.ferelin.core.data.mapper.CryptoPriceMapper
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoPrice
@@ -23,8 +22,7 @@ internal class CryptoPriceRepositoryImpl(
     try {
       val cryptosContainer = cryptos.associateBy { it.ticker }
       val requestParam = cryptos.joinToString(separator = ",") { it.ticker }
-      val requestOptions = CryptoPriceOptions(token, requestParam)
-      val cryptosDbo = api.load(requestOptions).map { pojo ->
+      val cryptosDbo = api.load(token, requestParam).map { pojo ->
         CryptoPriceMapper.map(pojo, cryptosContainer[pojo.ticker]!!.id)
       }
       dao.insertAll(cryptosDbo)

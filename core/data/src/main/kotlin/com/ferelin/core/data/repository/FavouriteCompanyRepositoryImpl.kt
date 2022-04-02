@@ -30,14 +30,14 @@ internal class FavouriteCompanyRepositoryImpl(
     get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
 
   override suspend fun addToFavourite(companyId: CompanyId) {
-    dao.insert(companyId.value)
+    dao.insert(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.putBy(userToken, companyId.value)
     }
   }
 
   override suspend fun removeFromFavourite(companyId: CompanyId) {
-    dao.eraseBy(companyId.value)
+    dao.erase(FavouriteCompanyMapper.map(companyId))
     firebaseAuth.uid?.let { userToken ->
       api.eraseBy(userToken, companyId.value)
     }
@@ -54,12 +54,13 @@ internal class FavouriteCompanyRepositoryImpl(
 
   private suspend fun onTokenChanged(token: String) {
     val apiResponse = api.load(token).firstOrNull() ?: return
+    val apiFavouriteCompanies = FavouriteCompanyMapper.map(apiResponse)
     val dbFavouriteCompanies = dao.getAll().firstOrNull() ?: emptyList()
     dao.insertAll(
-      favouriteCompanyIds = apiResponse.data.itemsNotIn(dbFavouriteCompanies)
+      companies = apiFavouriteCompanies.itemsNotIn(dbFavouriteCompanies)
     )
     dbFavouriteCompanies
-      .itemsNotIn(apiResponse.data)
-      .forEach { api.putBy(token, it) }
+      .itemsNotIn(apiFavouriteCompanies)
+      .forEach { api.putBy(token, it.id) }
   }
 }

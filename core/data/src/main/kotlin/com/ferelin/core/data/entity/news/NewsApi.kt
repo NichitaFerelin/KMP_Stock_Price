@@ -1,41 +1,31 @@
 package com.ferelin.core.data.entity.news
 
 import com.ferelin.core.ONE_YEAR_MILLIS
-import com.ferelin.core.data.api.endPoints.news
-import io.ktor.client.*
-import io.ktor.client.request.*
-import kotlinx.serialization.SerialName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import retrofit2.http.GET
+import retrofit2.http.Query
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 internal interface NewsApi {
-  suspend fun load(options: NewsRequestOptions): List<NewsPojo>
+  @GET("company-news")
+  suspend fun load(
+    @Query("token") token: String,
+    @Query("symbol") companyTicker: String,
+    @Query("from") from: String = NewsApiSpecifications.yearAgoDate,
+    @Query("to") to: String = NewsApiSpecifications.currentDate
+  ): List<NewsPojo>
 }
 
-internal class NewsApiImpl @Inject constructor(
-  private val client: HttpClient
-) : NewsApi {
-  override suspend fun load(options: NewsRequestOptions): List<NewsPojo> {
-    return client.get { news(options) }
-  }
-}
-
-internal data class NewsRequestOptions(
-  val token: String,
-  val companyTicker: String,
-  val from: String = NewsApiSpecifications.yearAgoDate,
-  val to: String = NewsApiSpecifications.currentDate
-)
-
-@kotlinx.serialization.Serializable
+@JsonClass(generateAdapter = true)
 internal data class NewsPojo(
-  @SerialName(value = "id") val id: Long,
-  @SerialName(value = "datetime") val datetime: Long,
-  @SerialName(value = "headline") val headline: String,
-  @SerialName(value = "source") val source: String,
-  @SerialName(value = "url") val url: String,
-  @SerialName(value = "summary") val summary: String
+  @Json(name = "id") val id: String,
+  @Json(name = "datetime") val datetime: Long,
+  @Json(name = "headline") val headline: String,
+  @Json(name = "source") val source: String,
+  @Json(name = "url") val url: String,
+  @Json(name = "summary") val summary: String
 )
 
 internal object NewsApiSpecifications {

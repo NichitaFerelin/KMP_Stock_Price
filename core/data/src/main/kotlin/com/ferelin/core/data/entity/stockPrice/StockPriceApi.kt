@@ -1,33 +1,23 @@
 package com.ferelin.core.data.entity.stockPrice
 
-import com.ferelin.core.data.api.endPoints.stockPrice
-import io.ktor.client.*
-import io.ktor.client.request.*
-import kotlinx.serialization.SerialName
-import javax.inject.Inject
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 internal interface StockPriceApi {
-  suspend fun load(options: StockPriceOptions): StockPriceResponse
+  @GET("quote")
+  suspend fun load(
+    @Query("token") token: String,
+    @Query("symbol") companyTicker: String,
+  ): StockPriceResponse
 }
 
-internal class StockPriceApiImpl @Inject constructor(
-  private val client: HttpClient
-) : StockPriceApi {
-  override suspend fun load(options: StockPriceOptions): StockPriceResponse {
-    return client.get { stockPrice(options) }
-  }
-}
-
-internal data class StockPriceOptions(
-  val token: String,
-  val companyTicker: String
-)
-
-@kotlinx.serialization.Serializable
+@JsonClass(generateAdapter = true)
 internal data class StockPriceResponse(
-  @SerialName(value = "o") val openPrice: Double,
-  @SerialName(value = "h") val highPrice: Double,
-  @SerialName(value = "l") val lowPrice: Double,
-  @SerialName(value = "c") val currentPrice: Double,
-  @SerialName(value = "pc") val previousClosePrice: Double
+  @Json(name = "o") val openPrice: Double,
+  @Json(name = "h") val highPrice: Double,
+  @Json(name = "l") val lowPrice: Double,
+  @Json(name = "c") val currentPrice: Double,
+  @Json(name = "pc") val previousClosePrice: Double
 )

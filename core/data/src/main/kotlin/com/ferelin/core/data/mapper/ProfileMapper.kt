@@ -1,8 +1,8 @@
 package com.ferelin.core.data.mapper
 
+import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.Profile
-import stockprice.ProfileDBO
 
 internal object ProfileMapper {
   fun map(profile: Profile): ProfileDBO {

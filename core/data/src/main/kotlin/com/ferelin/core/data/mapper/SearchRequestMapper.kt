@@ -1,8 +1,8 @@
 package com.ferelin.core.data.mapper
 
+import com.ferelin.core.data.entity.searchRequest.SearchRequestDBO
 import com.ferelin.core.domain.entity.SearchId
 import com.ferelin.core.domain.entity.SearchRequest
-import stockprice.SearchRequestDBO
 
 internal object SearchRequestMapper {
   fun map(searchRequestsDBO: SearchRequestDBO): SearchRequest {

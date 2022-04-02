@@ -1,38 +1,28 @@
 package com.ferelin.core.data.entity.cryptoPrice
 
-import com.ferelin.core.data.api.endPoints.cryptoPrice
-import io.ktor.client.*
-import io.ktor.client.request.*
-import kotlinx.serialization.SerialName
-import javax.inject.Inject
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 internal interface CryptoPriceApi {
-  suspend fun load(options: CryptoPriceOptions): List<CryptoPricePojo>
+  @GET("currencies/ticker")
+  suspend fun load(
+    @Query("key") token: String,
+    @Query("ids") cryptoTickers: String,
+  ): List<CryptoPricePojo>
 }
 
-internal class CryptoPriceApiImpl @Inject constructor(
-  private val client: HttpClient
-) : CryptoPriceApi {
-  override suspend fun load(options: CryptoPriceOptions): List<CryptoPricePojo> {
-    return client.get { cryptoPrice(options) }
-  }
-}
-
-internal data class CryptoPriceOptions(
-  val token: String,
-  val cryptoTickers: String
-)
-
-@kotlinx.serialization.Serializable
+@JsonClass(generateAdapter = true)
 internal data class CryptoPricePojo(
-  @SerialName(value = "symbol") val ticker: String,
-  @SerialName(value = "price") val price: String,
-  @SerialName(value = "price_timestamp") val priceTimestamp: String,
-  @SerialName(value = "7d") val priceChangeInfo: PriceChangeInfo
+  @Json(name = "symbol") val ticker: String,
+  @Json(name = "price") val price: String,
+  @Json(name = "price_timestamp") val priceTimestamp: String,
+  @Json(name = "7d") val priceChangeInfo: PriceChangeInfo
 )
 
-@kotlinx.serialization.Serializable
+@JsonClass(generateAdapter = true)
 internal data class PriceChangeInfo(
-  @SerialName(value = "price_change") val value: String,
-  @SerialName(value = "price_change_pct") val percents: String
+  @Json(name = "price_change") val value: String,
+  @Json(name = "price_change_pct") val percents: String
 )

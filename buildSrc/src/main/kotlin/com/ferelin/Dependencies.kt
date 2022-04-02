@@ -70,19 +70,24 @@ object Libs {
     const val compose = "io.insert-koin:koin-androidx-compose:$version"
   }
 
-  object SqlDelight {
-    const val version = "1.5.3"
-    const val plugin = "com.squareup.sqldelight:gradle-plugin:$version"
-    const val core = "com.squareup.sqldelight:android-driver:$version"
-    const val coroutinesExt = "com.squareup.sqldelight:coroutines-extensions-jvm:$version"
+  object Room {
+    const val version = "2.4.2"
+    const val core = "androidx.room:room-runtime:$version"
+    const val ktx = "androidx.room:room-ktx:$version"
+    const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
+    const val compilerKapt = "androidx.room:room-compiler:$version"
   }
 
-  object Ktor {
-    const val version = "1.6.8"
-    const val core = "io.ktor:ktor-client-core:$version"
-    const val android = "io.ktor:ktor-client-android:$version"
-    const val serialization = "io.ktor:ktor-client-serialization:$version"
-    const val logging = "io.ktor:ktor-client-logging:$version"
+  object Retrofit {
+    const val version = "2.9.0"
+    const val core = "com.squareup.retrofit2:retrofit:$version"
+    const val converter = "com.squareup.retrofit2:converter-moshi:$version"
+  }
+
+  object OkHttp {
+    const val version = "4.9.1"
+    const val core = "com.squareup.okhttp3:okhttp:$version"
+    const val interceptor = "com.squareup.okhttp3:logging-interceptor:$version"
   }
 
   object Firebase {
