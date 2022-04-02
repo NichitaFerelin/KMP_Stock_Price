@@ -1,9 +1,9 @@
 package com.ferelin.core.data.mapper
 
-import com.ferelin.core.data.entity.crypto.CryptoDBO
 import com.ferelin.core.data.entity.crypto.CryptoJson
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoId
+import stockprice.CryptoDBO
 
 internal object CryptoMapper {
   fun map(crypto: Crypto): CryptoDBO {

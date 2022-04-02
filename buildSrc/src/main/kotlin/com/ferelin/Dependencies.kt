@@ -69,12 +69,11 @@ object Libs {
     const val compilerKapt = "com.google.dagger:dagger-compiler:$version"
   }
 
-  object Room {
-    const val version = "2.4.2"
-    const val core = "androidx.room:room-runtime:$version"
-    const val ktx = "androidx.room:room-ktx:$version"
-    const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
-    const val compilerKapt = "androidx.room:room-compiler:$version"
+  object SqlDelight {
+    const val version = "1.5.3"
+    const val plugin = "com.squareup.sqldelight:gradle-plugin:$version"
+    const val core = "com.squareup.sqldelight:android-driver:$version"
+    const val coroutinesExt = "com.squareup.sqldelight:coroutines-extensions-jvm:$version"
   }
 
   object Ktor {

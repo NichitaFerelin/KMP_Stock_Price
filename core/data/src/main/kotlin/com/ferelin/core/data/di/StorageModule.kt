@@ -2,22 +2,34 @@ package com.ferelin.core.data.di
 
 import android.content.Context
 import com.ferelin.core.data.entity.company.CompanyDao
+import com.ferelin.core.data.entity.company.CompanyDaoImpl
 import com.ferelin.core.data.entity.company.CompanyJsonSource
 import com.ferelin.core.data.entity.company.CompanyJsonSourceImpl
 import com.ferelin.core.data.entity.crypto.CryptoDao
+import com.ferelin.core.data.entity.crypto.CryptoDaoImpl
 import com.ferelin.core.data.entity.crypto.CryptoJsonSource
 import com.ferelin.core.data.entity.crypto.CryptoJsonSourceImpl
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceDao
+import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceDaoImpl
 import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyDao
+import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyDaoImpl
 import com.ferelin.core.data.entity.news.NewsDao
+import com.ferelin.core.data.entity.news.NewsDaoImpl
 import com.ferelin.core.data.entity.pastPrice.PastPriceDao
+import com.ferelin.core.data.entity.pastPrice.PastPriceDaoImpl
 import com.ferelin.core.data.entity.profile.ProfileDao
+import com.ferelin.core.data.entity.profile.ProfileDaoImpl
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
+import com.ferelin.core.data.entity.searchRequest.SearchRequestDaoImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
-import com.ferelin.core.data.storage.AppDatabase
+import com.ferelin.core.data.entity.stockPrice.StockPriceDaoImpl
+import com.ferelin.stockprice.StockPriceDb
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import stockprice.*
 import javax.inject.Singleton
 
 @Module(
@@ -29,53 +41,59 @@ import javax.inject.Singleton
 class StorageModule {
   @Provides
   @Singleton
-  internal fun appDatabase(context: Context): AppDatabase {
-    return AppDatabase.buildDatabase(context)
+  fun appDatabase(driver: SqlDriver): StockPriceDb {
+    return StockPriceDb(driver)
   }
 
   @Provides
-  internal fun companyDao(appDatabase: AppDatabase): CompanyDao {
-    return appDatabase.companyDao()
+  @Singleton
+  fun sqlDriver(context: Context): SqlDriver {
+    return AndroidSqliteDriver(StockPriceDb.Schema, context, "StockPriceDb")
   }
 
   @Provides
-  internal fun cryptoDao(appDatabase: AppDatabase): CryptoDao {
-    return appDatabase.cryptoDao()
+  fun companyQueries(stockPriceDb: StockPriceDb): CompanyQueries {
+    return stockPriceDb.companyQueries
   }
 
   @Provides
-  internal fun cryptoPriceDao(appDatabase: AppDatabase): CryptoPriceDao {
-    return appDatabase.cryptoPriceDao()
+  fun cryptoQueries(stockPriceDb: StockPriceDb): CryptoQueries {
+    return stockPriceDb.cryptoQueries
   }
 
   @Provides
-  internal fun favouriteCompanyDao(appDatabase: AppDatabase): FavouriteCompanyDao {
-    return appDatabase.favouriteCompanyDao()
+  fun cryptoPriceQueries(stockPriceDb: StockPriceDb): CryptoPriceQueries {
+    return stockPriceDb.cryptoPriceQueries
   }
 
   @Provides
-  internal fun newsDao(appDatabase: AppDatabase): NewsDao {
-    return appDatabase.newsDao()
+  fun favouriteCompanyQueries(stockPriceDb: StockPriceDb): FavouriteCompanyQueries {
+    return stockPriceDb.favouriteCompanyQueries
   }
 
   @Provides
-  internal fun pastPriceDao(appDatabase: AppDatabase): PastPriceDao {
-    return appDatabase.pastPriceDao()
+  fun newsQueries(stockPriceDb: StockPriceDb): NewsQueries {
+    return stockPriceDb.newsQueries
   }
 
   @Provides
-  internal fun profileDao(appDatabase: AppDatabase): ProfileDao {
-    return appDatabase.profileDao()
+  fun pastPriceQueries(stockPriceDb: StockPriceDb): PastPriceQueries {
+    return stockPriceDb.pastPriceQueries
   }
 
   @Provides
-  internal fun searchRequestDao(appDatabase: AppDatabase): SearchRequestDao {
-    return appDatabase.searchRequestDao()
+  fun profileQueries(stockPriceDb: StockPriceDb): ProfileQueries {
+    return stockPriceDb.profileQueries
   }
 
   @Provides
-  internal fun stockPriceDao(appDatabase: AppDatabase): StockPriceDao {
-    return appDatabase.stockPriceDao()
+  fun searchRequestQueries(stockPriceDb: StockPriceDb): SearchRequestQueries {
+    return stockPriceDb.searchRequestQueries
+  }
+
+  @Provides
+  fun stockPriceQueries(stockPriceDb: StockPriceDb): StockPriceQueries {
+    return stockPriceDb.stockPriceQueries
   }
 }
 
@@ -87,4 +105,31 @@ internal interface StorageModuleBinds {
 
   @Binds
   fun cryptoJsonSource(impl: CryptoJsonSourceImpl): CryptoJsonSource
+
+  @Binds
+  fun companyDao(impl: CompanyDaoImpl): CompanyDao
+
+  @Binds
+  fun cryptoDao(impl: CryptoDaoImpl): CryptoDao
+
+  @Binds
+  fun cryptoPriceDao(impl: CryptoPriceDaoImpl): CryptoPriceDao
+
+  @Binds
+  fun favouriteCompanyDao(impl: FavouriteCompanyDaoImpl): FavouriteCompanyDao
+
+  @Binds
+  fun newsDao(impl: NewsDaoImpl): NewsDao
+
+  @Binds
+  fun pastPriceDao(impl: PastPriceDaoImpl): PastPriceDao
+
+  @Binds
+  fun profileDao(impl: ProfileDaoImpl): ProfileDao
+
+  @Binds
+  fun searchRequestDao(impl: SearchRequestDaoImpl): SearchRequestDao
+
+  @Binds
+  fun stockPriceDao(impl: StockPriceDaoImpl): StockPriceDao
 }

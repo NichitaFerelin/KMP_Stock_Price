@@ -1,0 +1,14 @@
+CREATE TABLE ProfileDBO(
+     id INTEGER AS Int NOT NULL PRIMARY KEY,
+     country TEXT NOT NULL,
+     phone TEXT NOT NULL,
+     webUrl TEXT NOT NULL,
+     industry TEXT NOT NULL,
+     capitalization TEXT NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO ProfileDBO VALUES ?;
+
+getBy:
+SELECT * FROM ProfileDBO WHERE id = :id LIMIT 1;

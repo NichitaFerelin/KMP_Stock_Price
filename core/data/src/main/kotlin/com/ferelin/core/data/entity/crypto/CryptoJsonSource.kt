@@ -4,6 +4,7 @@ import android.content.Context
 import com.ferelin.core.data.mapper.CryptoMapper
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import stockprice.CryptoDBO
 import javax.inject.Inject
 
 internal interface CryptoJsonSource {
