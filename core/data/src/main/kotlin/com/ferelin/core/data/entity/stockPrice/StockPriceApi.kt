@@ -4,13 +4,12 @@ import com.ferelin.core.data.api.endPoints.stockPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
-import javax.inject.Inject
 
 internal interface StockPriceApi {
   suspend fun load(options: StockPriceOptions): StockPriceResponse
 }
 
-internal class StockPriceApiImpl @Inject constructor(
+internal class StockPriceApiImpl(
   private val client: HttpClient
 ) : StockPriceApi {
   override suspend fun load(options: StockPriceOptions): StockPriceResponse {

@@ -5,13 +5,12 @@ import com.ferelin.core.data.api.endPoints.pastPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
-import javax.inject.Inject
 
 internal interface PastPriceApi {
   suspend fun load(options: PastPricesOptions): PastPricesResponse
 }
 
-internal class PastPriceApiImpl @Inject constructor(
+internal class PastPriceApiImpl(
   private val client: HttpClient
 ) : PastPriceApi {
   override suspend fun load(options: PastPricesOptions): PastPricesResponse {

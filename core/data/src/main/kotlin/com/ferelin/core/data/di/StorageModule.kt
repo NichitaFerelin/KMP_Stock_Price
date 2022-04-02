@@ -23,33 +23,33 @@ import com.ferelin.core.data.entity.searchRequest.SearchRequestDaoImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
 import com.ferelin.core.data.entity.stockPrice.StockPriceDaoImpl
 import com.ferelin.core.data.storage.PreferencesProvider
-import com.ferelin.stockprice.StockPriceDb
+import com.ferelin.stockprice.StockPrice
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val storageModule = module {
-  single { StockPriceDb(get()) }
+  single { StockPrice(get()) }
   single { PreferencesProvider(get()) }
 
   single<SqlDriver> {
     AndroidSqliteDriver(
-      StockPriceDb.Schema,
+      StockPrice.Schema,
       androidContext(),
-      "StockPriceDb"
+      DATABASE_NAME
     )
   }
 
-  factory { get<StockPriceDb>().companyQueries }
-  factory { get<StockPriceDb>().newsQueries }
-  factory { get<StockPriceDb>().cryptoQueries }
-  factory { get<StockPriceDb>().cryptoPriceQueries }
-  factory { get<StockPriceDb>().favouriteCompanyQueries }
-  factory { get<StockPriceDb>().pastPriceQueries }
-  factory { get<StockPriceDb>().profileQueries }
-  factory { get<StockPriceDb>().searchRequestQueries }
-  factory { get<StockPriceDb>().stockPriceQueries }
+  factory { get<StockPrice>().companyQueries }
+  factory { get<StockPrice>().newsQueries }
+  factory { get<StockPrice>().cryptoQueries }
+  factory { get<StockPrice>().cryptoPriceQueries }
+  factory { get<StockPrice>().favouriteCompanyQueries }
+  factory { get<StockPrice>().pastPriceQueries }
+  factory { get<StockPrice>().profileQueries }
+  factory { get<StockPrice>().searchRequestQueries }
+  factory { get<StockPrice>().stockPriceQueries }
 
   factory<CompanyDao> { CompanyDaoImpl(get()) }
   factory<CryptoDao> { CryptoDaoImpl(get()) }
@@ -63,3 +63,5 @@ val storageModule = module {
   factory<CompanyJsonSource> { CompanyJsonSourceImpl(get(), get()) }
   factory<CryptoJsonSource> { CryptoJsonSourceImpl(get(), get()) }
 }
+
+internal const val DATABASE_NAME = "StockPrice"

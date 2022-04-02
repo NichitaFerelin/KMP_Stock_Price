@@ -5,7 +5,6 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 import stockprice.PastPriceDBO
 import stockprice.PastPriceQueries
-import javax.inject.Inject
 
 internal interface PastPriceDao {
   fun getAllBy(companyId: Int): Flow<List<PastPriceDBO>>
@@ -13,7 +12,7 @@ internal interface PastPriceDao {
   suspend fun eraseAllBy(companyId: Int)
 }
 
-internal class PastPriceDaoImpl @Inject constructor(
+internal class PastPriceDaoImpl(
   private val queries: PastPriceQueries
 ) : PastPriceDao {
   override fun getAllBy(companyId: Int): Flow<List<PastPriceDBO>> {

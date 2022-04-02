@@ -14,16 +14,16 @@ val repositoryModule = module {
     FavouriteCompanyRepositoryImpl(get(), get(), get(), get(named(NAMED_EXTERNAL_SCOPE)), get())
   }
   factory<CryptoPriceRepository> {
-    CryptoPriceRepositoryImpl(get(), get(), get(named(CRYPTOS_TOKEN)))
+    CryptoPriceRepositoryImpl(get(), get(), get(named(NAMED_CRYPTOS_TOKEN)))
   }
   factory<NewsRepository> {
-    NewsRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+    NewsRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
   }
   factory<PastPriceRepository> {
-    PastPriceRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+    PastPriceRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
   }
   factory<StockPriceRepository> {
-    StockPriceRepositoryImpl(get(), get(), get(named(STOCKS_TOKEN)))
+    StockPriceRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
   }
 
   factory<AuthRepository> { AuthRepositoryImpl(get()) }

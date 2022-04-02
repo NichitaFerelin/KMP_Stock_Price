@@ -19,11 +19,9 @@ internal fun buildKtorHttpClient(): HttpClient {
         }
       )
     }
-    if (BuildConfig.DEBUG) {
-      install(Logging) {
-        logger = Logger.DEFAULT
-        level = LogLevel.ALL
-      }
+    install(Logging) {
+      logger = Logger.DEFAULT
+      level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.INFO
     }
   }
 }

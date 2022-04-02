@@ -7,13 +7,12 @@ import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 internal interface NewsApi {
   suspend fun load(options: NewsRequestOptions): List<NewsPojo>
 }
 
-internal class NewsApiImpl @Inject constructor(
+internal class NewsApiImpl(
   private val client: HttpClient
 ) : NewsApi {
   override suspend fun load(options: NewsRequestOptions): List<NewsPojo> {

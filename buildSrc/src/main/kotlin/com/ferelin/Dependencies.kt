@@ -3,7 +3,6 @@ package com.ferelin
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object Libs {
 
-
   const val androidCore = "androidx.core:core-ktx:1.7.0"
   const val timber = "com.jakewharton.timber:timber:5.0.1"
   const val browser = "androidx.browser:browser:1.4.0"

@@ -89,7 +89,7 @@ internal fun AppNavigationGraph(
 }
 
 private fun AboutDestination.buildNavigationPath(stockViewData: StockViewData): String {
-  return AboutDestination.key +
+  return this.key +
           "/${stockViewData.id.value}" +
           "/${stockViewData.name}" +
           "/${stockViewData.ticker}"

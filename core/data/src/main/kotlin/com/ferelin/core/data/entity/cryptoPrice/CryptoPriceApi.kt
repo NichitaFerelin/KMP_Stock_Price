@@ -4,13 +4,12 @@ import com.ferelin.core.data.api.endPoints.cryptoPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
-import javax.inject.Inject
 
 internal interface CryptoPriceApi {
   suspend fun load(options: CryptoPriceOptions): List<CryptoPricePojo>
 }
 
-internal class CryptoPriceApiImpl @Inject constructor(
+internal class CryptoPriceApiImpl(
   private val client: HttpClient
 ) : CryptoPriceApi {
   override suspend fun load(options: CryptoPriceOptions): List<CryptoPricePojo> {

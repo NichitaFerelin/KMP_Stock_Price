@@ -75,7 +75,7 @@ dependencies {
   api(Libs.SqlDelight.coroutinesExt)
 }
 sqldelight {
-  database("StockPriceDb") {
+  database("StockPrice") {
     packageName = "com.ferelin.stockprice"
   }
 }

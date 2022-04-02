@@ -22,26 +22,25 @@ import org.koin.dsl.module
 
 val networkModule = module {
   single { buildKtorHttpClient() }
+  single { FirebaseAuth.getInstance().apply { useAppLanguage() } }
+  single { FirebaseDatabase.getInstance().reference }
 
   factory(
-    qualifier = named(STOCKS_TOKEN)
+    qualifier = named(NAMED_STOCKS_TOKEN)
   ) { androidContext().resources.getString(R.string.api_finnhub_token) }
 
   factory(
-    qualifier = named(CRYPTOS_TOKEN)
+    qualifier = named(NAMED_CRYPTOS_TOKEN)
   ) { androidContext().resources.getString(R.string.api_nomics_token) }
+
+  factory { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
 
   factory<FavouriteCompanyApi> { FavouriteCompanyApiImpl(get()) }
   factory<CryptoPriceApi> { CryptoPriceApiImpl(get()) }
   factory<NewsApi> { NewsApiImpl(get()) }
   factory<PastPriceApi> { PastPriceApiImpl(get()) }
   factory<StockPriceApi> { StockPriceApiImpl(get()) }
-
-  factory { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-
-  single { FirebaseAuth.getInstance().apply { useAppLanguage() } }
-  single { FirebaseDatabase.getInstance().reference }
 }
 
-internal const val STOCKS_TOKEN = "stocks_token"
-internal const val CRYPTOS_TOKEN = "cryptos_token"
+internal const val NAMED_STOCKS_TOKEN = "stocks_token"
+internal const val NAMED_CRYPTOS_TOKEN = "cryptos_token"
