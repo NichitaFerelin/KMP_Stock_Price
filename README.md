@@ -1,3 +1,5 @@
+## NOT DEVELOPING. USED FOR EXAMPLE ONLY. [ACTUAL VERSION](https://github.com/NichitaFerelin/Stock_Price)
+
 # Stock Price
 
 ## About
