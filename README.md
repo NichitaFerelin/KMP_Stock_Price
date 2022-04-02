@@ -11,13 +11,13 @@ Stock Price - is an android application which displays actual price of stocks at
 
 
 ## Stack
-- Compose UI | [XML](https://github.com/NichitaFerelin/Android_Stock_Price/tree/xml)
+- **Compose UI** | [XML](https://github.com/NichitaFerelin/Android_Stock_Price/tree/xml)
 - Clean Architecture
 - MVI
-- Kotlin Flow / Coroutines | [RXJava / Coroutines](https://github.com/NichitaFerelin/Android_Stock_Price/tree/rx_java_as_data_stream_instead_of_kotlin_flow)
-- Koin | [Dagger](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
-- Ktor | [Retrofit](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
-- SQLDelight | [Room](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
+- **Kotlin Flow / Coroutines** | [RXJava / Coroutines](https://github.com/NichitaFerelin/Android_Stock_Price/tree/rx_java_as_data_stream_instead_of_kotlin_flow)
+- **Koin** | [Dagger](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
+- **Ktor** | [Retrofit](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
+- **SQLDelight** | [Room](https://github.com/NichitaFerelin/Android_Stock_Price/tree/retrofit_dagger2_room)
 - Data Store Preferences
 - Moshi / Kotlin Serialization
 - Glide
@@ -30,7 +30,7 @@ Stock Price - is an android application which displays actual price of stocks at
 <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/Preview_2.gif" height="400" width = "200"/>
 </p>
 
-## XML Version
+## XML
 <p float="middle">
 <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
   <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
