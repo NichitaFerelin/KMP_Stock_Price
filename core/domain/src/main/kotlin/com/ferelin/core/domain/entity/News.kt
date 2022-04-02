@@ -7,7 +7,7 @@ data class News(
   val source: String,
   val sourceUrl: String,
   val summary: String,
-  val date: Long
+  val dateMillis: Long
 )
 
 @JvmInline

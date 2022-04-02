@@ -4,6 +4,7 @@ plugins {
   id("com.android.library")
   id("kotlin-android")
   id("kotlin-kapt")
+  id("com.squareup.sqldelight")
   kotlin("plugin.serialization") version com.ferelin.Libs.Kotlin.version
 }
 
@@ -70,7 +71,11 @@ dependencies {
 
   api(Libs.dataStorePreferences)
 
-  api(Libs.Room.core)
-  api(Libs.Room.ktx)
-  kapt(Libs.Room.compilerKapt)
+  api(Libs.SqlDelight.core)
+  api(Libs.SqlDelight.coroutinesExt)
+}
+sqldelight {
+  database("StockPriceDb") {
+    packageName = "com.ferelin.stockprice"
+  }
 }

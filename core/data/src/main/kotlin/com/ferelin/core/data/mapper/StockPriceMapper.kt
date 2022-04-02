@@ -1,9 +1,9 @@
 package com.ferelin.core.data.mapper
 
-import com.ferelin.core.data.entity.stockPrice.StockPriceDBO
 import com.ferelin.core.data.entity.stockPrice.StockPriceResponse
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.StockPrice
+import stockprice.StockPriceDBO
 
 internal object StockPriceMapper {
   fun map(stockPrice: StockPrice): StockPriceDBO {

@@ -1,7 +1,8 @@
 package com.ferelin.core.data.repository
 
+import com.ferelin.core.data.entity.pastPrice.PastPriceApi
 import com.ferelin.core.data.entity.pastPrice.PastPriceDao
-import com.ferelin.core.data.entity.pastPrice.PastPricesApi
+import com.ferelin.core.data.entity.pastPrice.PastPricesOptions
 import com.ferelin.core.data.mapper.PastPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.PastPrice
@@ -9,7 +10,7 @@ import com.ferelin.core.domain.repository.PastPriceRepository
 import kotlinx.coroutines.flow.*
 
 internal class PastPriceRepositoryImpl(
-  private val api: PastPricesApi,
+  private val api: PastPriceApi,
   private val dao: PastPriceDao,
   private val token: String
 ) : PastPriceRepository {
@@ -21,7 +22,8 @@ internal class PastPriceRepositoryImpl(
 
   override suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String) {
     try {
-      val response = api.load(token, companyTicker)
+      val options = PastPricesOptions(token, companyTicker)
+      val response = api.load(options)
       dao.eraseAllBy(companyId.value)
       dao.insertAll(PastPriceMapper.map(response, companyId))
       fetchErrorState.value = null

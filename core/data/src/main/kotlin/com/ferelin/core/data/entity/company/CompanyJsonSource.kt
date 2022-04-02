@@ -1,11 +1,12 @@
 package com.ferelin.core.data.entity.company
 
 import android.content.Context
-import com.ferelin.core.data.entity.profile.ProfileDBO
 import com.ferelin.core.data.mapper.CompanyMapper
 import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import stockprice.CompanyDBO
+import stockprice.ProfileDBO
 
 internal interface CompanyJsonSource {
   fun parseJson(): List<Pair<CompanyDBO, ProfileDBO>>

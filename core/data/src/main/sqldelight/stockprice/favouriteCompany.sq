@@ -1,0 +1,15 @@
+CREATE TABLE FavouriteCompanyDBO(
+    id INTEGER AS Int NOT NULL PRIMARY KEY
+);
+
+insert:
+INSERT OR REPLACE INTO FavouriteCompanyDBO VALUES (?);
+
+getAll:
+SELECT * FROM FavouriteCompanyDBO;
+
+eraseBy :
+DELETE FROM FavouriteCompanyDBO WHERE id = :id;
+
+eraseAll:
+DELETE FROM FavouriteCompanyDBO;

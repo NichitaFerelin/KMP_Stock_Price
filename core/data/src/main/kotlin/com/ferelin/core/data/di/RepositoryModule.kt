@@ -1,8 +1,6 @@
 package com.ferelin.core.data.di
 
 import com.ferelin.core.NAMED_EXTERNAL_SCOPE
-import com.ferelin.core.data.api.CRYPTOS_TOKEN
-import com.ferelin.core.data.api.STOCKS_TOKEN
 import com.ferelin.core.data.repository.*
 import com.ferelin.core.domain.repository.*
 import org.koin.core.qualifier.named
