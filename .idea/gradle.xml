@@ -10,19 +10,21 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/androidApp" />
+            <option value="$PROJECT_DIR$/androidApp/app" />
+            <option value="$PROJECT_DIR$/androidApp/core" />
+            <option value="$PROJECT_DIR$/androidApp/core/data" />
+            <option value="$PROJECT_DIR$/androidApp/core/domain" />
+            <option value="$PROJECT_DIR$/androidApp/core/ui" />
+            <option value="$PROJECT_DIR$/androidApp/features" />
+            <option value="$PROJECT_DIR$/androidApp/features/about" />
+            <option value="$PROJECT_DIR$/androidApp/features/home" />
+            <option value="$PROJECT_DIR$/androidApp/features/login" />
+            <option value="$PROJECT_DIR$/androidApp/features/search" />
+            <option value="$PROJECT_DIR$/androidApp/features/settings" />
+            <option value="$PROJECT_DIR$/androidApp/features/splash" />
             <option value="$PROJECT_DIR$/buildSrc" />
-            <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/core/data" />
-            <option value="$PROJECT_DIR$/core/domain" />
-            <option value="$PROJECT_DIR$/core/ui" />
-            <option value="$PROJECT_DIR$/features" />
-            <option value="$PROJECT_DIR$/features/about" />
-            <option value="$PROJECT_DIR$/features/home" />
-            <option value="$PROJECT_DIR$/features/login" />
-            <option value="$PROJECT_DIR$/features/search" />
-            <option value="$PROJECT_DIR$/features/settings" />
-            <option value="$PROJECT_DIR$/features/splash" />
+            <option value="$PROJECT_DIR$/shared" />
           </set>
         </option>
       </GradleProjectSettings>

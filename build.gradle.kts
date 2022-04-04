@@ -14,8 +14,8 @@ buildscript {
 }
 allprojects {
   repositories {
-    mavenCentral()
     google()
+    mavenCentral()
   }
 }
 tasks.register("clean", Delete::class) {
