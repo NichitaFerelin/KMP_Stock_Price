@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/androidApp/features/settings" />
             <option value="$PROJECT_DIR$/androidApp/features/splash" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/desktopApp" />
             <option value="$PROJECT_DIR$/shared" />
           </set>
         </option>
