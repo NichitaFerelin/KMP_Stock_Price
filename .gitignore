@@ -4,13 +4,16 @@
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
+/.idea/modules
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /.idea/codeStyles
 /.idea/.name
 /.idea/.gitignore
+/.idea/shelf
 .DS_Store
+/shared/build
 /build
 /captures
 .externalNativeBuild
