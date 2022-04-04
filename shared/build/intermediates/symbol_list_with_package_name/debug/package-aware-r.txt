@@ -1,1 +1,0 @@
-com.ferelin.stockprice
