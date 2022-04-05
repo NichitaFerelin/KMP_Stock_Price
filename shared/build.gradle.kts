@@ -26,6 +26,8 @@ kotlin {
         api(Libs.Ktor.logging)
 
         api(Libs.Koin.core)
+
+        api(Libs.serializationJson)
       }
     }
 
@@ -41,7 +43,10 @@ kotlin {
 }
 android {
   compileSdk = Libs.Project.currentSDK
+
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+  sourceSets["main"].resources.srcDirs("src/commonMain/assets")
+
   defaultConfig {
     minSdk = Libs.Project.minSDK
     targetSdk = Libs.Project.currentSDK

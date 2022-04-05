@@ -20,4 +20,3 @@ fun initKoin(
     nativeModule()
   )
 }
-

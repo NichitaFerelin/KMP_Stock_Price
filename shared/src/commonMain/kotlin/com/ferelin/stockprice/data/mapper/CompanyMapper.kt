@@ -1,6 +1,8 @@
 package com.ferelin.stockprice.data.mapper
 
+import com.ferelin.stockprice.data.entity.company.CompanyJson
 import com.ferelin.stockprice.db.CompanyDBO
+import com.ferelin.stockprice.db.ProfileDBO
 import com.ferelin.stockprice.domain.entity.Company
 import com.ferelin.stockprice.domain.entity.CompanyId
 
@@ -23,7 +25,7 @@ internal object CompanyMapper {
     )
   }
 
-  /*fun map(companiesJson: List<CompanyJson>): List<Pair<CompanyDBO, ProfileDBO>> {
+  fun map(companiesJson: List<CompanyJson>): List<Pair<CompanyDBO, ProfileDBO>> {
     return companiesJson.mapIndexed { index, json ->
       Pair(
         CompanyDBO(
@@ -42,5 +44,5 @@ internal object CompanyMapper {
         )
       )
     }
-  }*/
+  }
 }
