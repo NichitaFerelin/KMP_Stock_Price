@@ -1,8 +1,8 @@
 package com.ferelin.core.ui.viewData
 
 import androidx.compose.runtime.Immutable
-import com.ferelin.core.domain.entity.CompanyId
-import com.ferelin.core.domain.entity.CryptoId
+import com.ferelin.stockprice.domain.entity.CompanyId
+import com.ferelin.stockprice.domain.entity.CryptoId
 
 @Immutable
 data class StockViewData(

@@ -1,7 +1,7 @@
 package com.ferelin.core.domain.usecase
 
-import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.repository.ProjectRepository
+import com.ferelin.stockprice.domain.entity.LceState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

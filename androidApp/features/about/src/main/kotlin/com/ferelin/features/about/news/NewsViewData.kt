@@ -1,6 +1,6 @@
 package com.ferelin.features.about.news
 
-import com.ferelin.core.domain.entity.NewsId
+import com.ferelin.stockprice.domain.entity.NewsId
 
 internal data class NewsViewData(
   val id: NewsId,

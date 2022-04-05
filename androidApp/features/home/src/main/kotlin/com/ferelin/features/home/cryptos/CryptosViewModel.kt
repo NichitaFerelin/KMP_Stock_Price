@@ -4,13 +4,13 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.Crypto
-import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.CryptoPriceUseCase
-import com.ferelin.core.domain.usecase.CryptoUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.mapper.CryptoMapper
 import com.ferelin.core.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.domain.entity.Crypto
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.CryptoPriceUseCase
+import com.ferelin.common.domain.usecase.CryptoUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

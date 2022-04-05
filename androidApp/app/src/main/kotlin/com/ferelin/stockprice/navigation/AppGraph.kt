@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.params.AboutParams
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.features.about.about.AboutRoute
@@ -81,7 +80,7 @@ internal fun AppNavigationGraph(
       val ticker = requireNotNull(args.getString(AboutDestination.ARG_TICKER))
 
       AboutRoute(
-        params = AboutParams(CompanyId(id), ticker, name),
+        params = AboutParams(id, ticker, name),
         onBackRoute = { navHostController.popBackStack() }
       )
     }

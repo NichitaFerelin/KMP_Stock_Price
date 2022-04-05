@@ -3,11 +3,11 @@ package com.ferelin.features.home.favourite
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.viewData.StockViewData
 import com.ferelin.core.ui.viewModel.BaseStocksViewModel
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.CompanyUseCase
+import com.ferelin.common.domain.usecase.FavouriteCompanyUseCase
 import kotlinx.coroutines.flow.*
 
 @Immutable

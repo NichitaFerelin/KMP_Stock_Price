@@ -4,8 +4,9 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.params.AboutParams
+import com.ferelin.stockprice.domain.entity.CompanyId
+import com.ferelin.common.domain.usecase.FavouriteCompanyUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,7 @@ internal class AboutViewModel(
 
   private val onFavouriteSwitchEvent = MutableSharedFlow<Unit>()
   private val isCompanyFavourite = favouriteCompanyUseCase.favouriteCompanies
-    .map { companies -> companies.find { it == aboutParams.companyId } != null }
+    .map { companies -> companies.find { it.value == aboutParams.companyId } != null }
 
   init {
     isCompanyFavourite
@@ -61,10 +62,11 @@ internal class AboutViewModel(
   }
 
   private suspend fun switchRequested(isFavourite: Boolean) {
+    val companyId = CompanyId(aboutParams.companyId)
     if (isFavourite) {
-      favouriteCompanyUseCase.removeFromFavourite(aboutParams.companyId)
+      favouriteCompanyUseCase.removeFromFavourite(companyId)
     } else {
-      favouriteCompanyUseCase.addToFavourite(aboutParams.companyId)
+      favouriteCompanyUseCase.addToFavourite(companyId)
     }
   }
 

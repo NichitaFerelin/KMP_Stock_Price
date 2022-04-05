@@ -1,10 +1,10 @@
 package com.ferelin.features.about.chart
 
-import com.ferelin.core.domain.entity.PastPrice
 import com.ferelin.core.ui.viewData.utils.parseMonthFromDate
 import com.ferelin.core.ui.viewData.utils.parseYearFromDate
 import com.ferelin.core.ui.viewData.utils.toDateStr
 import com.ferelin.core.ui.viewData.utils.toStrPrice
+import com.ferelin.stockprice.domain.entity.PastPrice
 
 internal object ChartMapper {
   fun map(pastPrice: PastPrice): PastPriceViewData {

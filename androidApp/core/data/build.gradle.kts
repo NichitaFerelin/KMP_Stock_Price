@@ -71,11 +71,6 @@ dependencies {
 
   api(Libs.dataStorePreferences)
 
-  api(Libs.SqlDelight.core)
+  api(Libs.SqlDelight.android)
   api(Libs.SqlDelight.coroutinesExt)
-}
-sqldelight {
-  database("StockPrice") {
-    packageName = "com.ferelin.stockprice"
-  }
 }

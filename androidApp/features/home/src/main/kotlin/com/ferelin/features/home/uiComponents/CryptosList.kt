@@ -23,10 +23,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.core.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.domain.entity.LceState
 import kotlinx.coroutines.launch
 
 @Composable

@@ -4,12 +4,16 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.entity.StoragePath
 import com.ferelin.core.domain.repository.AuthUserStateRepository
-import com.ferelin.core.domain.usecase.*
+import com.ferelin.core.domain.usecase.AuthUseCase
+import com.ferelin.core.domain.usecase.DownloadProjectUseCase
+import com.ferelin.core.domain.usecase.StoragePathUseCase
 import com.ferelin.core.permission.PermissionManager
 import com.ferelin.core.storage.StoragePathBuilder
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.FavouriteCompanyUseCase
+import com.ferelin.common.domain.usecase.SearchRequestsUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -25,7 +29,6 @@ internal data class SettingsStateUi(
 )
 
 internal class SettingsViewModel(
-  private val notifyPriceUseCase: NotifyPriceUseCase,
   private val storagePathUseCase: StoragePathUseCase,
   private val downloadProjectUseCase: DownloadProjectUseCase,
   private val permissionManager: PermissionManager,

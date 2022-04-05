@@ -4,10 +4,11 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.NewsUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.params.NewsParams
+import com.ferelin.stockprice.domain.entity.CompanyId
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.NewsUseCase
 import kotlinx.coroutines.flow.*
 
 @Immutable
@@ -27,7 +28,7 @@ internal class NewsViewModel(
   val uiState = viewModelState.asStateFlow()
 
   init {
-    newsUseCase.getNewsBy(newsParams.companyId)
+    newsUseCase.getNewsBy(companyId = CompanyId(newsParams.companyId))
       .map { it.map(NewsMapper::map) }
       .onEach(this::onNews)
       .launchIn(viewModelScope)
@@ -53,6 +54,9 @@ internal class NewsViewModel(
 
   private suspend fun onNetwork(available: Boolean) {
     viewModelState.update { it.copy(showNetworkError = !available) }
-    if (available) newsUseCase.fetchNews(newsParams.companyId, newsParams.companyTicker)
+    if (available) {
+      val companyId = CompanyId(newsParams.companyId)
+      newsUseCase.fetchNews(companyId, newsParams.companyTicker)
+    }
   }
 }
