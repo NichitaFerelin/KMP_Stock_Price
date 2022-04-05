@@ -17,12 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.startActivitySafety
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.params.NewsParams
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.about.uiComponents.NewsItem
+import com.ferelin.stockprice.domain.entity.LceState
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 

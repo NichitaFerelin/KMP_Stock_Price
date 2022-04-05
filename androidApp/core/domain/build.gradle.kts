@@ -18,5 +18,6 @@ android {
 }
 
 dependencies {
+  api(project(":shared"))
   api(project(":androidApp:core"))
 }

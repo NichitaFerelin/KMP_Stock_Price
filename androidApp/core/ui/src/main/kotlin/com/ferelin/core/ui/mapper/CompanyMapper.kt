@@ -1,8 +1,8 @@
 package com.ferelin.core.ui.mapper
 
-import com.ferelin.core.domain.entity.Company
-import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.ui.viewData.StockViewData
+import com.ferelin.stockprice.domain.entity.Company
+import com.ferelin.stockprice.domain.entity.CompanyId
 
 object CompanyMapper {
   fun map(

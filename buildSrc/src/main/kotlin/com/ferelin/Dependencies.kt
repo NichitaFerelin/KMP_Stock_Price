@@ -12,26 +12,26 @@ object Libs {
 
   object Project {
     const val minSDK = 21
-    const val currentSDK = 31
+    const val currentSDK = 32
     const val codeVersion = 12
     const val codeVersionName = "4.2.0"
   }
 
   object Plugins {
-    const val gradle = "com.android.tools.build:gradle:7.1.2"
+    const val gradle = "com.android.tools.build:gradle:7.3.0-alpha07"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}"
     const val google = "com.google.gms:google-services:4.3.10"
     const val firebase = "com.google.firebase:firebase-crashlytics-gradle:2.8.1"
   }
 
   object Kotlin {
-    const val version = "1.6.10"
+    const val version = "1.6.20-M1"
     const val stdLib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
     const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
   }
 
   object Coroutines {
-    const val version = "1.6.0"
+    const val version = "1.6.1"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
@@ -71,9 +71,10 @@ object Libs {
 
   object SqlDelight {
     const val version = "1.5.3"
+    const val core = "com.squareup.sqldelight:runtime:$version"
     const val plugin = "com.squareup.sqldelight:gradle-plugin:$version"
-    const val core = "com.squareup.sqldelight:android-driver:$version"
-    const val coroutinesExt = "com.squareup.sqldelight:coroutines-extensions-jvm:$version"
+    const val coroutinesExt = "com.squareup.sqldelight:coroutines-extensions:$version"
+    const val android = "com.squareup.sqldelight:android-driver:$version"
   }
 
   object Ktor {

@@ -3,8 +3,8 @@ import com.ferelin.Libs
 plugins {
   id("com.android.application")
   id("kotlin-android")
-  id("com.google.gms.google-services")
-  id("com.google.firebase.crashlytics")
+  // id("com.google.gms.google-services")
+  // id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -32,7 +32,6 @@ android {
   kotlinOptions {
     jvmTarget = "1.8"
   }
-
   buildTypes {
     release {
       isMinifyEnabled = true

@@ -4,10 +4,11 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.ProfileUseCase
 import com.ferelin.core.ui.params.ProfileParams
+import com.ferelin.stockprice.domain.entity.CompanyId
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.CompanyUseCase
+import com.ferelin.common.domain.usecase.ProfileUseCase
 import kotlinx.coroutines.flow.*
 
 @Immutable
@@ -27,10 +28,10 @@ internal class ProfileViewModel(
 
   init {
     companyUseCase.companies
-      .map { companies -> companies.find { it.id == profileParams.companyId } }
+      .map { companies -> companies.find { it.id.value == profileParams.companyId } }
       .filterNotNull()
       .zip(
-        other = profileUseCase.getProfileBy(profileParams.companyId),
+        other = profileUseCase.getProfileBy(CompanyId(profileParams.companyId)),
         transform = { company, profile -> ProfileMapper.map(profile, company) }
       )
       .onEach(this::onProfile)

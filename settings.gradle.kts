@@ -1,3 +1,11 @@
+pluginManagement {
+  repositories {
+    google()
+    gradlePluginPortal()
+    mavenCentral()
+  }
+}
+
 rootProject.name = "Stock Price"
 include(
   ":androidApp",

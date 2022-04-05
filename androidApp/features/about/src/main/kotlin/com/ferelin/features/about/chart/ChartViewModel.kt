@@ -4,13 +4,14 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.PastPricesUseCase
-import com.ferelin.core.domain.usecase.StockPriceUseCase
 import com.ferelin.core.network.NetworkListener
 import com.ferelin.core.ui.mapper.StockPriceMapper
 import com.ferelin.core.ui.params.ChartParams
 import com.ferelin.core.ui.viewData.StockPriceViewData
+import com.ferelin.stockprice.domain.entity.CompanyId
+import com.ferelin.stockprice.domain.entity.LceState
+import com.ferelin.common.domain.usecase.PastPricesUseCase
+import com.ferelin.common.domain.usecase.StockPriceUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,8 @@ internal class ChartViewModel(
   private val viewModelState = MutableStateFlow(ChartScreenStateUi())
   val uiState = viewModelState.asStateFlow()
 
-  private val pastPrices = pastPricesUseCase.getAllBy(chartParams.companyId)
+  private val pastPrices = pastPricesUseCase
+    .getAllBy(companyId = CompanyId(chartParams.companyId))
     .map { it.map(ChartMapper::map) }
 
   init {
@@ -48,7 +50,7 @@ internal class ChartViewModel(
       .launchIn(viewModelScope)
 
     stockPricesUseCase.stockPrice
-      .map { it.find { stockPrice -> stockPrice.id == chartParams.companyId } }
+      .map { it.find { stockPrice -> stockPrice.id.value == chartParams.companyId } }
       .filterNotNull()
       .map(StockPriceMapper::map)
       .onEach(this::onStockPrice)
@@ -111,8 +113,9 @@ internal class ChartViewModel(
     viewModelState.update { it.copy(showNetworkError = !available) }
 
     if (available) {
-      stockPricesUseCase.fetchPrice(chartParams.companyId, chartParams.companyTicker)
-      pastPricesUseCase.fetchPastPrices(chartParams.companyId, chartParams.companyTicker)
+      val companyId = CompanyId(chartParams.companyId)
+      stockPricesUseCase.fetchPrice(companyId, chartParams.companyTicker)
+      pastPricesUseCase.fetchPastPrices(companyId, chartParams.companyTicker)
     }
   }
 }

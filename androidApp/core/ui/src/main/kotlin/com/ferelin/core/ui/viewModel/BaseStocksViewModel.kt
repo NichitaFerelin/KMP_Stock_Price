@@ -3,10 +3,10 @@ package com.ferelin.core.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.mapper.CompanyMapper
 import com.ferelin.core.ui.viewData.StockViewData
+import com.ferelin.common.domain.usecase.CompanyUseCase
+import com.ferelin.common.domain.usecase.FavouriteCompanyUseCase
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch

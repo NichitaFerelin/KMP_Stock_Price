@@ -10,10 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.search.SearchViewData
+import com.ferelin.stockprice.domain.entity.LceState
 
 private val START_PADDING = 20.dp
 

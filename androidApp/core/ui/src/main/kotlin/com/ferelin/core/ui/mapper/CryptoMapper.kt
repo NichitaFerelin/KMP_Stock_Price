@@ -1,10 +1,10 @@
 package com.ferelin.core.ui.mapper
 
-import com.ferelin.core.domain.entity.Crypto
-import com.ferelin.core.domain.entity.CryptoPrice
 import com.ferelin.core.ui.viewData.CryptoViewData
 import com.ferelin.core.ui.viewData.utils.formatProfitString
 import com.ferelin.core.ui.viewData.utils.toStrPrice
+import com.ferelin.stockprice.domain.entity.Crypto
+import com.ferelin.stockprice.domain.entity.CryptoPrice
 
 object CryptoMapper {
   fun map(crypto: Crypto, cryptoPrice: CryptoPrice?): CryptoViewData {

@@ -1,8 +1,8 @@
 package com.ferelin.features.about.profile
 
-import com.ferelin.core.domain.entity.Company
-import com.ferelin.core.domain.entity.Profile
 import com.ferelin.core.ui.viewData.utils.toStrPrice
+import com.ferelin.stockprice.domain.entity.Company
+import com.ferelin.stockprice.domain.entity.Profile
 
 internal object ProfileMapper {
   fun map(profile: Profile, company: Company): ProfileViewData {
