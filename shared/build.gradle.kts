@@ -11,7 +11,6 @@ version = com.ferelin.Libs.Project.codeVersionName
 
 kotlin {
   android()
-  iosX64()
   jvm()
 
   sourceSets {
@@ -38,7 +37,6 @@ kotlin {
       }
     }
     val jvmMain by getting
-    val iosX64Main by getting
   }
 }
 android {
