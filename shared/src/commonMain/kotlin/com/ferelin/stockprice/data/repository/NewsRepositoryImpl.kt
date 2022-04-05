@@ -7,6 +7,7 @@ import com.ferelin.stockprice.data.mapper.NewsMapper
 import com.ferelin.stockprice.domain.entity.CompanyId
 import com.ferelin.stockprice.domain.entity.News
 import com.ferelin.common.domain.repository.NewsRepository
+import com.ferelin.stockprice.data.entity.news.NewsApiSpecifications
 import kotlinx.coroutines.flow.*
 
 internal class NewsRepositoryImpl(
@@ -23,8 +24,7 @@ internal class NewsRepositoryImpl(
   override suspend fun fetchNews(companyId: CompanyId, companyTicker: String) {
     try {
       val options = NewsRequestOptions(token, companyTicker)
-      val response = api.load(options)
-        // .map(NewsApiSpecifications::convertToUnixTime)
+      val response = api.load(options).map(NewsApiSpecifications::convertToUnixTime)
 
       dao.eraseAllBy(companyId.value)
       dao.insertAll(NewsMapper.map(response, companyId))
