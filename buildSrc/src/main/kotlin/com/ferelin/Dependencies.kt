@@ -25,13 +25,13 @@ object Libs {
   }
 
   object Kotlin {
-    const val version = "1.6.20-M1"
+    const val version = "1.6.10"
     const val stdLib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
     const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
   }
 
   object Coroutines {
-    const val version = "1.6.1"
+    const val version = "1.6.0"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
