@@ -9,6 +9,7 @@ object Libs {
   const val documentFile = "androidx.documentfile:documentfile:1.0.1"
   const val material = "com.google.android.material:material:1.5.0"
   const val dataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
+  const val serializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
 
   object Project {
     const val minSDK = 21
