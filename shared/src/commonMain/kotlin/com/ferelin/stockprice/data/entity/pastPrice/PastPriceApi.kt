@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.data.entity.pastPrice
 
+import com.ferelin.stockprice.ONE_YEAR_MILLIS
 import com.ferelin.stockprice.data.endpoints.pastPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -20,18 +21,18 @@ internal class PastPriceApiImpl(
 internal data class PastPricesOptions(
   val token: String,
   val companyTicker: String,
-  val from: Long = 0L,
-  val to: Long = 0L,
-  val resolution: String = "PastPricesApiSpecifics.resolution"
+  val from: Long = PastPricesApiSpecifics.yearAgoMillis,
+  val to: Long = PastPricesApiSpecifics.currentMillis,
+  val resolution: String = PastPricesApiSpecifics.resolution
 )
 
+@Suppress("PLUGIN_IS_NOT_ENABLED")
 @kotlinx.serialization.Serializable
 internal data class PastPricesResponse(
   @SerialName(value = "c") val closePrices: List<Double>,
   @SerialName(value = "t") val timestamps: List<Long>,
 )
 
-/*
 internal object PastPricesApiSpecifics {
   const val resolution = "D"
 
@@ -52,4 +53,4 @@ internal object PastPricesApiSpecifics {
       else -> str.substring(0, str.length - 3).toLong()
     }
   }
-}*/
+}

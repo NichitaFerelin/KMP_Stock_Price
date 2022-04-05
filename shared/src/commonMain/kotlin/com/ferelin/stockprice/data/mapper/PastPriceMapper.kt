@@ -1,5 +1,6 @@
 package com.ferelin.stockprice.data.mapper
 
+import com.ferelin.stockprice.data.entity.pastPrice.PastPricesApiSpecifics.fromRequestFormat
 import com.ferelin.stockprice.data.entity.pastPrice.PastPricesResponse
 import com.ferelin.stockprice.db.PastPriceDBO
 import com.ferelin.stockprice.domain.entity.CompanyId
@@ -26,7 +27,7 @@ internal object PastPriceMapper {
         id = 0L,
         companyId = companyId.value,
         closePrice = closePrice,
-        dateMillis = pastPricesResponse.timestamps[index] //.fromRequestFormat()
+        dateMillis = pastPricesResponse.timestamps[index].fromRequestFormat()
       )
     }
   }

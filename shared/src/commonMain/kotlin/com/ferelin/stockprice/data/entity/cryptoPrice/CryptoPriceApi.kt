@@ -1,3 +1,5 @@
+@file:Suppress("PLUGIN_IS_NOT_ENABLED")
+
 package com.ferelin.stockprice.data.entity.cryptoPrice
 
 import com.ferelin.stockprice.data.endpoints.cryptoPrice

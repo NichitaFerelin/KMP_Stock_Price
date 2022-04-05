@@ -22,6 +22,7 @@ internal data class StockPriceOptions(
   val companyTicker: String
 )
 
+@Suppress("PLUGIN_IS_NOT_ENABLED")
 @kotlinx.serialization.Serializable
 internal data class StockPriceResponse(
   @SerialName(value = "o") val openPrice: Double,
