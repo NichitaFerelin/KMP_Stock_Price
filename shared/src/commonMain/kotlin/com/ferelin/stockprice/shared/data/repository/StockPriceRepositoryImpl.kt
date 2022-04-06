@@ -1,12 +1,12 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceDao
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceOptions
-import com.ferelin.stockprice.androidApp.data.mapper.StockPriceMapper
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.StockPrice
-import com.ferelin.stockprice.androidApp.domain.repository.StockPriceRepository
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceApi
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceDao
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceOptions
+import com.ferelin.stockprice.shared.data.mapper.StockPriceMapper
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.StockPrice
+import com.ferelin.stockprice.shared.domain.repository.StockPriceRepository
 import kotlinx.coroutines.flow.*
 
 internal class StockPriceRepositoryImpl(
@@ -21,8 +21,7 @@ internal class StockPriceRepositoryImpl(
 
   override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
     try {
-      val options =
-        StockPriceOptions(token, companyTicker)
+      val options = StockPriceOptions(token, companyTicker)
       val response = api.load(options)
       dao.insert(stockPriceDBO = StockPriceMapper.map(response, companyId))
       fetchErrorState.emit(null)

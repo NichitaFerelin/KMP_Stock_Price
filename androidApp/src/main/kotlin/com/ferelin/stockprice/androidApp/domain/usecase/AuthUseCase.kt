@@ -4,8 +4,8 @@ import android.app.Activity
 import com.ferelin.stockprice.androidApp.domain.repository.AuthRepository
 import com.ferelin.stockprice.androidApp.domain.repository.AuthState
 import com.ferelin.stockprice.androidApp.domain.repository.AuthUserStateRepository
-import com.ferelin.stockprice.androidApp.domain.repository.FavouriteCompanyRepository
-import com.ferelin.stockprice.androidApp.domain.repository.SearchRequestsRepository
+import com.ferelin.stockprice.shared.domain.repository.FavouriteCompanyRepository
+import com.ferelin.stockprice.shared.domain.repository.SearchRequestsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -1,10 +1,10 @@
 package com.ferelin.stockprice.shared.ui.mapper
 
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoPrice
-import com.ferelin.stockprice.androidApp.ui.formatProfitString
-import com.ferelin.stockprice.androidApp.ui.toStrPrice
-import com.ferelin.stockprice.androidApp.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.CryptoPrice
+import com.ferelin.stockprice.shared.ui.formatProfitString
+import com.ferelin.stockprice.shared.ui.toStrPrice
+import com.ferelin.stockprice.shared.ui.viewData.CryptoViewData
 
 object CryptoMapper {
   fun map(crypto: Crypto, cryptoPrice: CryptoPrice?): CryptoViewData {

@@ -19,12 +19,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.startActivitySafety
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.ui.params.NewsParams
+import com.ferelin.stockprice.shared.ui.viewModel.NewsStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.NewsViewModel
 import com.ferelin.stockprice.sharedComposables.components.NewsItem
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.ui.params.NewsParams
-import com.ferelin.stockprice.androidApp.ui.viewModel.NewsStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.NewsViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable

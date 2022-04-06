@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.domain.repository
 
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.News
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.News
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {

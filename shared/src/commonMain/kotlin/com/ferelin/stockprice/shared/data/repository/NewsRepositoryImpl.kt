@@ -1,13 +1,13 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsApi
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsDao
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsRequestOptions
-import com.ferelin.stockprice.androidApp.data.mapper.NewsMapper
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.News
-import com.ferelin.stockprice.androidApp.domain.repository.NewsRepository
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsApiSpecifications
+import com.ferelin.stockprice.shared.data.entity.news.NewsApi
+import com.ferelin.stockprice.shared.data.entity.news.NewsApiSpecifications
+import com.ferelin.stockprice.shared.data.entity.news.NewsDao
+import com.ferelin.stockprice.shared.data.entity.news.NewsRequestOptions
+import com.ferelin.stockprice.shared.data.mapper.NewsMapper
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.News
+import com.ferelin.stockprice.shared.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.*
 
 internal class NewsRepositoryImpl(

@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.data.mapper
 
 import com.ferelin.stockprice.db.SearchRequestDBO
-import com.ferelin.stockprice.androidApp.domain.entity.SearchId
-import com.ferelin.stockprice.androidApp.domain.entity.SearchRequest
+import com.ferelin.stockprice.shared.domain.entity.SearchId
+import com.ferelin.stockprice.shared.domain.entity.SearchRequest
 
 internal object SearchRequestMapper {
   fun map(searchRequestsDBO: SearchRequestDBO): SearchRequest {

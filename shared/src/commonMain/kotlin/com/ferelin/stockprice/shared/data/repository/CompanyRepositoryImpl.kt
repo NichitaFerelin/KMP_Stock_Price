@@ -1,11 +1,11 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.domain.repository.CompanyRepository
-import com.ferelin.stockprice.androidApp.data.entity.company.CompanyDao
-import com.ferelin.stockprice.androidApp.data.entity.company.CompanyJsonSource
-import com.ferelin.stockprice.androidApp.data.entity.profile.ProfileDao
-import com.ferelin.stockprice.androidApp.data.mapper.CompanyMapper
-import com.ferelin.stockprice.androidApp.domain.entity.Company
+import com.ferelin.stockprice.shared.data.entity.company.CompanyDao
+import com.ferelin.stockprice.shared.data.entity.company.CompanyJsonSource
+import com.ferelin.stockprice.shared.data.entity.profile.ProfileDao
+import com.ferelin.stockprice.shared.data.mapper.CompanyMapper
+import com.ferelin.stockprice.shared.domain.entity.Company
+import com.ferelin.stockprice.shared.domain.repository.CompanyRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.domain.usecase
 
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.domain.entity.News
-import com.ferelin.stockprice.androidApp.domain.repository.NewsRepository
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.entity.News
+import com.ferelin.stockprice.shared.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.*
 
 interface NewsUseCase {

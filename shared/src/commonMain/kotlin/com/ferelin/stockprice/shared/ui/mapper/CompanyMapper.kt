@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.ui.mapper
 
-import com.ferelin.stockprice.androidApp.domain.entity.Company
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.ui.viewData.StockViewData
+import com.ferelin.stockprice.shared.domain.entity.Company
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 
 object CompanyMapper {
   fun map(

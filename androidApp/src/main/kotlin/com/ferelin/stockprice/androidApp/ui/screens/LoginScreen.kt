@@ -29,13 +29,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.shared.ui.viewModel.LoginStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.LoginViewModel
 import com.ferelin.stockprice.sharedComposables.components.ClickableIcon
 import com.ferelin.stockprice.sharedComposables.components.TextField
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
-import com.ferelin.stockprice.androidApp.R
-import com.ferelin.stockprice.androidApp.ui.viewModel.LoginStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.LoginViewModel
 import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel

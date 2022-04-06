@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.data.entity.pastPrice
 
-import com.ferelin.stockprice.ONE_YEAR_MILLIS
-import com.ferelin.stockprice.androidApp.data.endpoints.pastPrice
+import com.ferelin.stockprice.shared.ONE_YEAR_MILLIS
+import com.ferelin.stockprice.shared.data.endpoints.pastPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName

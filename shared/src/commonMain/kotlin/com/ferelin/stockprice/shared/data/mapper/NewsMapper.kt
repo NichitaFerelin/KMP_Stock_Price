@@ -1,10 +1,10 @@
 package com.ferelin.stockprice.shared.data.mapper
 
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsPojo
 import com.ferelin.stockprice.db.NewsDBO
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.News
-import com.ferelin.stockprice.androidApp.domain.entity.NewsId
+import com.ferelin.stockprice.shared.data.entity.news.NewsPojo
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.News
+import com.ferelin.stockprice.shared.domain.entity.NewsId
 
 internal object NewsMapper {
   fun map(newsDBO: NewsDBO): News {

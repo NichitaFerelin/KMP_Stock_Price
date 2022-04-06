@@ -1,10 +1,10 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.domain.repository.CryptoRepository
-import com.ferelin.stockprice.androidApp.data.entity.crypto.CryptoDao
-import com.ferelin.stockprice.androidApp.data.entity.crypto.CryptoJsonSource
-import com.ferelin.stockprice.androidApp.data.mapper.CryptoMapper
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoDao
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoJsonSource
+import com.ferelin.stockprice.shared.data.mapper.CryptoMapper
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.repository.CryptoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

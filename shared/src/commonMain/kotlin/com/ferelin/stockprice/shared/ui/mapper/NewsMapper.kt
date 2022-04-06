@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.ui.mapper
 
-import com.ferelin.stockprice.androidApp.domain.entity.News
-import com.ferelin.stockprice.androidApp.ui.toDateStr
-import com.ferelin.stockprice.androidApp.ui.viewData.NewsViewData
+import com.ferelin.stockprice.shared.domain.entity.News
+import com.ferelin.stockprice.shared.ui.toDateStr
+import com.ferelin.stockprice.shared.ui.viewData.NewsViewData
 
 object NewsMapper {
   fun map(news: News): NewsViewData {

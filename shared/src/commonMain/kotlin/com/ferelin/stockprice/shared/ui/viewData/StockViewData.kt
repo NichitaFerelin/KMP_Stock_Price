@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.ui.viewData
 
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoId
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.CryptoId
 
 data class StockViewData(
   val id: CompanyId,

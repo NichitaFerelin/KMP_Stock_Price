@@ -26,13 +26,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
-import com.ferelin.stockprice.sharedComposables.theme.AppTheme
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.ui.viewData.SearchViewData
+import com.ferelin.stockprice.shared.ui.viewData.StockViewData
+import com.ferelin.stockprice.shared.ui.viewModel.SearchStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.SearchViewModel
 import com.ferelin.stockprice.sharedComposables.components.*
-import com.ferelin.stockprice.androidApp.ui.viewData.SearchViewData
-import com.ferelin.stockprice.androidApp.ui.viewData.StockViewData
-import com.ferelin.stockprice.androidApp.ui.viewModel.SearchStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.SearchViewModel
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import org.koin.androidx.compose.getViewModel
 
