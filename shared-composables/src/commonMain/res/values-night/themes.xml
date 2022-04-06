@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.StockPrice" parent="Theme.MaterialComponents.NoActionBar" />
+</resources>
