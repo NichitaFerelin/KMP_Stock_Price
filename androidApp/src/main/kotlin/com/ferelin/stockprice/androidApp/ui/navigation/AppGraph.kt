@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.navigation
+package com.ferelin.stockprice.androidApp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -6,15 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ferelin.stockprice.ui.params.AboutParams
-import com.ferelin.stockprice.ui.viewData.StockViewData
-import com.ferelin.features.about.about.AboutRoute
-import com.ferelin.features.home.home.HomeScreenRoute
-import com.ferelin.features.login.LoginRoute
-import com.ferelin.features.search.SearchRoute
-import com.ferelin.features.settings.SettingsRoute
-import com.ferelin.features.splash.LoadingScreen
-import com.ferelin.stockprice.navigation.Destination.*
+import com.ferelin.stockprice.androidApp.ui.navigation.Destination.*
+import com.ferelin.stockprice.androidApp.ui.params.AboutParams
+import com.ferelin.stockprice.androidApp.ui.screens.*
+import com.ferelin.stockprice.androidApp.ui.viewData.StockViewData
 
 @Composable
 internal fun AppNavigationGraph(

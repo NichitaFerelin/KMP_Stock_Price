@@ -1,0 +1,96 @@
+<resources>
+    <string name="app_name">Stock Price</string>
+
+    <!-- Titles -->
+    <string name="titleHome">Home</string>
+    <string name="titleChart">Chart</string>
+    <string name="titleNews">News</string>
+    <string name="titleStocks">Stocks</string>
+    <string name="titleFavourite">Favourites</string>
+    <string name="titlePopularRequests">Popular requests</string>
+    <string name="titleYourSearches">You\'ve searched for this</string>
+    <string name="titleChartCardDays">D</string>
+    <string name="titleChartCardWeeks">W</string>
+    <string name="titleChartCardMonths">M</string>
+    <string name="titleChartCardHalfYear">6M</string>
+    <string name="titleChartCardYear">1Y</string>
+    <string name="titleChartCardAll">All</string>
+    <string name="titleProfile">Profile</string>
+    <string name="titleAuthorized">Authorized</string>
+    <string name="titleNotAuthorized">Not authorized</string>
+    <string name="titleAuthorization">Authorization</string>
+    <string name="titleClearData">Clear data</string>
+    <string name="titleDownload">Stock Price</string>
+    <string name="titleSettings">App settings</string>
+    <string name="titleCryptos">Cryptos</string>
+
+    <!-- Errors -->
+    <string name="errorDownload">Data loading error</string>
+    <string name="errorNoAppToResolve">App that can resolve it do not found</string>
+    <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
+    <string name="errorUndefined">Undefined error</string>
+    <string name="errorEmptyPhone">Empty phone number</string>
+    <string name="errorPath">Path error. Try to choose another one</string>
+
+    <!-- Descriptions -->
+    <string name="descriptionBack">Navigate back</string>
+    <string name="descriptionCompanyIcon">Company icon</string>
+    <string name="descriptionScrollToTop">Scroll to top</string>
+    <string name="descriptionIconClose">Clear search request</string>
+    <string name="descriptionImageSearch">Search company or ticker</string>
+    <string name="descriptionApply">Apply</string>
+    <string name="descriptionLogOut">Log out</string>
+    <string name="descriptionLogIn">Log in</string>
+    <string name="descriptionSettings">Settings</string>
+    <string name="descriptionDownload">Downloading project</string>
+    <string name="descriptionShare">Share</string>
+    <string name="descriptionDelete">Delete all user data</string>
+    <string name="descriptionAddToFavourites">Click to add to favourites</string>
+    <string name="descriptionRemoveFromFavourites">Click to remove from favourites</string>
+    <string name="descriptionNotificationChannelUpdates">Notifies about stock price updates</string>
+    <string name="descriptionNoSearchResults">No request results</string>
+    <string name="descriptionDecorative">decorative icon</string>
+
+    <!-- Hints -->
+    <string name="hintFindCompany">Find company or ticker</string>
+    <string name="hintOpenInBrowser">Open in browser:</string>
+    <string name="hintStocks">Stocks</string>
+    <string name="hintName">Name</string>
+    <string name="hintWebsite">Website</string>
+    <string name="hintCountry">Country:</string>
+    <string name="hintIndustry">Industry: </string>
+    <string name="hintPhone">Phone:</string>
+    <string name="hintCapitalization">Capitalization:</string>
+    <string name="hintPhoneEdit">Phone</string>
+    <string name="hintEnterPhone">Enter phone number</string>
+    <string name="hintEnterCode">Enter code</string>
+    <string name="hintOk">OK</string>
+    <string name="hintAuthentication">Authentication by phone number</string>
+    <string name="hintAuthenticationHelp">Save a list of your favorite stocks in the cloud. To
+        do this, you need to log in</string>
+    <string name="hintChoose">Choose</string>
+    <string name="hintEnterSearchRequest">Enter search request</string>
+    <string name="hintNoSearchResults">No search results</string>
+    <string name="hintNoSearchRequestsHistory">No search requests history</string>
+    <string name="hintSendCode">GET CODE</string>
+
+    <!-- Messages -->
+    <string name="messageNetworkNotAvailable">Network is not available</string>
+    <string name="messageNetworkAvailable">Network available</string>
+    <string name="messageLogOutComplete">Log out complete</string>
+    <string name="messageDataCleared">Data has been cleared</string>
+    <string name="messageDataClearedNoNetwork">Only local data has been cleared. No network available</string>
+    <string name="messageDownloadingWillStart">Downloading will be started soon</string>
+    <string name="messagePermissionsNotGranted">Permissions not granted</string>
+
+    <!-- Others -->
+    <string name="sourceNotAuthorized">You are not authorized. Login</string>
+    <string name="sourceAuthorized">You are logged in. Log off.\nYour current favourite stocks
+        and searches will only be deleted locally. The next time you sign in, you
+        will be able to sync your data</string>
+    <string name="sourceClearData">Clear the shareholding and search queries. If you are authorized,
+        the data will also be deleted from the cloud database.</string>
+    <string name="sourceDownload">Download source project code from GitHub</string>
+    <string name="sourceNotify">Once every few hours you will receive notifications
+        about price changes for your favorite stocks</string>
+</resources>
