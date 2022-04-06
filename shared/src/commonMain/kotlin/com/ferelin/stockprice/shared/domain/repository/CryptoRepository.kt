@@ -1,6 +1,6 @@
 package com.ferelin.stockprice.shared.domain.repository
 
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.Crypto
 import kotlinx.coroutines.flow.Flow
 
 interface CryptoRepository {

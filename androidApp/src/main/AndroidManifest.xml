@@ -11,7 +11,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name=".App"
+        android:name="com.ferelin.stockprice.androidApp.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,7 +20,7 @@
         android:theme="@style/Theme.StockPrice">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.ferelin.stockprice.androidApp.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

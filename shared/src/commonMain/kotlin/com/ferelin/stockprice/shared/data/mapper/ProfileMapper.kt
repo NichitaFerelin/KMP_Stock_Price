@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.data.mapper
 
 import com.ferelin.stockprice.db.ProfileDBO
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.Profile
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.Profile
 
 internal object ProfileMapper {
   fun map(profile: Profile): ProfileDBO {

@@ -1,6 +1,6 @@
 package com.ferelin.stockprice.shared.data.entity.stockPrice
 
-import com.ferelin.stockprice.androidApp.data.endpoints.stockPrice
+import com.ferelin.stockprice.shared.data.endpoints.stockPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName

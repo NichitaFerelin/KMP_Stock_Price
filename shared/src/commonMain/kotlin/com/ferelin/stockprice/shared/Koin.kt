@@ -1,10 +1,10 @@
-package com.ferelin.stockprice
+package com.ferelin.stockprice.shared
 
-import com.ferelin.stockprice.androidApp.data.di.apiModule
-import com.ferelin.stockprice.androidApp.data.di.repositoryModule
-import com.ferelin.stockprice.androidApp.data.di.storageModule
-import com.ferelin.stockprice.androidApp.domain.di.useCaseModule
-import com.ferelin.stockprice.androidApp.ui.di.viewModelModule
+import com.ferelin.stockprice.shared.data.di.apiModule
+import com.ferelin.stockprice.shared.data.di.repositoryModule
+import com.ferelin.stockprice.shared.data.di.storageModule
+import com.ferelin.stockprice.shared.domain.di.useCaseModule
+import com.ferelin.stockprice.shared.ui.di.viewModelModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 

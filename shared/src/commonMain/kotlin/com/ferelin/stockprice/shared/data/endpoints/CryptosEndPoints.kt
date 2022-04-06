@@ -1,6 +1,6 @@
 package com.ferelin.stockprice.shared.data.endpoints
 
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceOptions
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceOptions
 import io.ktor.client.request.*
 
 internal fun HttpRequestBuilder.cryptoPrice(options: CryptoPriceOptions) {

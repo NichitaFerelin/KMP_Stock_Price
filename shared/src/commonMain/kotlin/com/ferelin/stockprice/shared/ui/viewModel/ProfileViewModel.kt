@@ -1,13 +1,13 @@
 package com.ferelin.stockprice.shared.ui.viewModel
 
-import com.ferelin.stockprice.androidApp.domain.usecase.CompanyUseCase
-import com.ferelin.stockprice.androidApp.domain.usecase.ProfileUseCase
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
-import com.ferelin.stockprice.androidApp.ui.mapper.ProfileMapper
-import com.ferelin.stockprice.androidApp.ui.params.ProfileParams
-import com.ferelin.stockprice.androidApp.ui.viewData.ProfileViewData
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.usecase.CompanyUseCase
+import com.ferelin.stockprice.shared.domain.usecase.ProfileUseCase
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.ui.mapper.ProfileMapper
+import com.ferelin.stockprice.shared.ui.params.ProfileParams
+import com.ferelin.stockprice.shared.ui.viewData.ProfileViewData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 

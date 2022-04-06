@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.data.mapper
 
-import com.ferelin.stockprice.androidApp.data.entity.crypto.CryptoJson
 import com.ferelin.stockprice.db.CryptoDBO
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoId
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoJson
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.CryptoId
 
 internal object CryptoMapper {
   fun map(crypto: Crypto): CryptoDBO {

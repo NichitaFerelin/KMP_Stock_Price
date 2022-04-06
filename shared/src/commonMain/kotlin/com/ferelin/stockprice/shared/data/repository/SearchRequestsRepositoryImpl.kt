@@ -1,10 +1,10 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.entity.searchRequest.SearchRequestDao
-import com.ferelin.stockprice.androidApp.data.mapper.SearchRequestMapper
-import com.ferelin.stockprice.androidApp.domain.entity.SearchId
-import com.ferelin.stockprice.androidApp.domain.entity.SearchRequest
-import com.ferelin.stockprice.androidApp.domain.repository.SearchRequestsRepository
+import com.ferelin.stockprice.shared.data.entity.searchRequest.SearchRequestDao
+import com.ferelin.stockprice.shared.data.mapper.SearchRequestMapper
+import com.ferelin.stockprice.shared.domain.entity.SearchId
+import com.ferelin.stockprice.shared.domain.entity.SearchRequest
+import com.ferelin.stockprice.shared.domain.repository.SearchRequestsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow

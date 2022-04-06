@@ -1,10 +1,9 @@
-package com.ferelin.stockprice.theme
+package com.ferelin.stockprice.sharedComposables.theme
 
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.ferelin.stockprice.theme.AppColors
 
 internal class AppRippleTheme(
   private val colors: AppColors

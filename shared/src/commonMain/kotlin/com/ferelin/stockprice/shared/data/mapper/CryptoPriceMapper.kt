@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.data.mapper
 
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPricePojo
 import com.ferelin.stockprice.db.CryptoPriceDBO
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoId
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoPrice
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPricePojo
+import com.ferelin.stockprice.shared.domain.entity.CryptoId
+import com.ferelin.stockprice.shared.domain.entity.CryptoPrice
 
 internal object CryptoPriceMapper {
   fun map(cryptoPrice: CryptoPrice): CryptoPriceDBO {

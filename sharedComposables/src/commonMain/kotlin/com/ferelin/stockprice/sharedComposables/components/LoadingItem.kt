@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape

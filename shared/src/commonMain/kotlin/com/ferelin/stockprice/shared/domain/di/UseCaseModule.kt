@@ -1,9 +1,6 @@
 package com.ferelin.stockprice.shared.domain.di
 
-import com.ferelin.stockprice.androidApp.domain.usecase.*
-import com.ferelin.stockprice.androidApp.domain.usecase.CompanyUseCaseImpl
-import com.ferelin.stockprice.androidApp.domain.usecase.CryptoPriceUseCaseImpl
-import com.ferelin.stockprice.androidApp.domain.usecase.CryptoUseCaseImpl
+import com.ferelin.stockprice.shared.domain.usecase.*
 import org.koin.dsl.module
 
 internal val useCaseModule = module {

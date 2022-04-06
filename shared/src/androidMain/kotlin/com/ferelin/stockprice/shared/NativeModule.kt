@@ -1,4 +1,4 @@
-package com.ferelin.stockprice
+package com.ferelin.stockprice.shared
 
 import com.ferelin.stockprice.db.StockPriceDb
 import com.squareup.sqldelight.android.AndroidSqliteDriver

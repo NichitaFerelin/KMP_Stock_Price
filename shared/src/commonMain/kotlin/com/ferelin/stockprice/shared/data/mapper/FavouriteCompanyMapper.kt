@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.data.mapper
 
 import com.ferelin.stockprice.db.FavouriteCompanyDBO
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
 
 internal object FavouriteCompanyMapper {
   fun map(companyId: CompanyId): FavouriteCompanyDBO {

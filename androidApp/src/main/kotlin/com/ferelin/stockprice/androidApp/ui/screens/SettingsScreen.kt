@@ -16,14 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.shared.ui.viewModel.SettingsStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.SettingsViewModel
 import com.ferelin.stockprice.sharedComposables.components.ClickableIcon
 import com.ferelin.stockprice.sharedComposables.components.SettingsDivider
 import com.ferelin.stockprice.sharedComposables.components.SettingsItem
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
-import com.ferelin.stockprice.androidApp.R
-import com.ferelin.stockprice.androidApp.ui.viewModel.SettingsStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.SettingsViewModel
 import com.google.accompanist.insets.statusBarsPadding
 import org.koin.androidx.compose.getViewModel
 

@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.mapper.FavouriteCompanyMapper
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.repository.FavouriteCompanyRepository
-import com.ferelin.stockprice.androidApp.data.entity.favouriteCompany.FavouriteCompanyDao
+import com.ferelin.stockprice.shared.data.entity.favouriteCompany.FavouriteCompanyDao
+import com.ferelin.stockprice.shared.data.mapper.FavouriteCompanyMapper
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.repository.FavouriteCompanyRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

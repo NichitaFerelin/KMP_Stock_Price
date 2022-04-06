@@ -1,12 +1,12 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPriceDao
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPricesOptions
-import com.ferelin.stockprice.androidApp.data.mapper.PastPriceMapper
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.PastPrice
-import com.ferelin.stockprice.androidApp.domain.repository.PastPriceRepository
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPriceApi
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPriceDao
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPricesOptions
+import com.ferelin.stockprice.shared.data.mapper.PastPriceMapper
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.PastPrice
+import com.ferelin.stockprice.shared.domain.repository.PastPriceRepository
 import kotlinx.coroutines.flow.*
 
 internal class PastPriceRepositoryImpl(

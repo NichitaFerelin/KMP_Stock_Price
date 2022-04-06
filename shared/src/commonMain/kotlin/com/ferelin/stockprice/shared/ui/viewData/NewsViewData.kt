@@ -1,6 +1,6 @@
 package com.ferelin.stockprice.shared.ui.viewData
 
-import com.ferelin.stockprice.androidApp.domain.entity.NewsId
+import com.ferelin.stockprice.shared.domain.entity.NewsId
 
 data class NewsViewData(
   val id: NewsId,

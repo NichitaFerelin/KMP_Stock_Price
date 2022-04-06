@@ -1,14 +1,14 @@
 import org.jetbrains.compose.compose
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  id("org.jetbrains.compose") version "1.1.1"
-  application
+  id("org.jetbrains.compose") version com.ferelin.Libs.composeDesktopVersion
 }
 
 repositories {
   mavenCentral()
+  maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+  google()
 }
 
 dependencies {
@@ -16,10 +16,8 @@ dependencies {
   implementation(compose.desktop.currentOs)
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "1.8"
-}
-
-application {
-  mainClass.set("MainKt")
+compose.desktop {
+  application {
+    mainClass = "MainKt"
+  }
 }

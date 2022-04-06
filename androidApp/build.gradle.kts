@@ -29,7 +29,7 @@ android {
     kotlinCompilerExtensionVersion = Libs.Compose.version
   }
   kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
   }
   buildTypes {
     release {
@@ -48,16 +48,47 @@ android {
 }
 
 dependencies {
-  implementation(project(":androidApp:core"))
-  implementation(project(":androidApp:core:ui"))
-  implementation(project(":androidApp:core:domain"))
-  implementation(project(":androidApp:core:data"))
-  implementation(project(":androidApp:features:splash"))
-  implementation(project(":androidApp:features:home"))
-  implementation(project(":androidApp:features:search"))
-  implementation(project(":androidApp:features:settings"))
-  implementation(project(":androidApp:features:about"))
-  implementation(project(":androidApp:features:login"))
+  implementation(project(":shared"))
+  implementation(project(":sharedComposables"))
+
+  implementation(Libs.androidCore)
+  implementation(Libs.documentFile)
+  implementation(Libs.timber)
+
+  implementation(Libs.Kotlin.stdLib)
+  implementation(Libs.Coroutines.core)
+  implementation(Libs.Coroutines.android)
+
+  implementation(Libs.Koin.core)
+  implementation(Libs.Koin.android)
+
+  implementation(Libs.material)
+
+  implementation(Libs.Compose.ui)
+  implementation(Libs.Compose.util)
+  implementation(Libs.Compose.tooling)
+  implementation(Libs.Compose.runtime)
+  implementation(Libs.Compose.activity)
+  implementation(Libs.Compose.navigation)
+  implementation(Libs.Compose.animations)
+  implementation(Libs.Compose.viewModel)
+  implementation(Libs.Compose.glide)
+  implementation(Libs.Koin.compose)
+
+  implementation(Libs.Accompanist.insets)
+  implementation(Libs.Accompanist.systemUiController)
+  implementation(Libs.Accompanist.pager)
+  implementation(Libs.Accompanist.pagerIndicators)
+  implementation(Libs.Accompanist.swipeRefresh)
+  implementation(Libs.Accompanist.flowLayout)
+
+  implementation(Libs.dataStorePreferences)
+
+  implementation(platform(Libs.Firebase.platform))
+  implementation(Libs.Firebase.databaseKtx)
+  implementation(Libs.Firebase.analyticsKtx)
+  implementation(Libs.Firebase.authenticationKtx)
+  implementation(Libs.Firebase.crashlyticsKtx)
 
   implementation(platform(Libs.Firebase.platform))
   implementation(Libs.Firebase.crashlyticsKtx)

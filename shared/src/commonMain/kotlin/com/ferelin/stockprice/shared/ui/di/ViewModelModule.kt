@@ -1,10 +1,10 @@
 package com.ferelin.stockprice.shared.ui.di
 
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
-import com.ferelin.stockprice.androidApp.ui.params.AboutParams
-import com.ferelin.stockprice.androidApp.ui.params.NewsParams
-import com.ferelin.stockprice.androidApp.ui.params.ProfileParams
-import com.ferelin.stockprice.androidApp.ui.viewModel.*
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.ui.params.AboutParams
+import com.ferelin.stockprice.shared.ui.params.NewsParams
+import com.ferelin.stockprice.shared.ui.params.ProfileParams
+import com.ferelin.stockprice.shared.ui.viewModel.*
 import org.koin.dsl.module
 
 val viewModelModule = module {

@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.data.endpoints
 
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsRequestOptions
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPricesOptions
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceOptions
+import com.ferelin.stockprice.shared.data.entity.news.NewsRequestOptions
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPricesOptions
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceOptions
 import io.ktor.client.request.*
 
 internal fun HttpRequestBuilder.news(options: NewsRequestOptions) {

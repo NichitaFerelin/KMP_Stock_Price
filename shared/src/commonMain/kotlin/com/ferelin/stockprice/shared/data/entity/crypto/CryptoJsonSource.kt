@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.data.entity.crypto
 
-import com.ferelin.stockprice.androidApp.data.mapper.CryptoMapper
 import com.ferelin.stockprice.db.CryptoDBO
+import com.ferelin.stockprice.shared.data.mapper.CryptoMapper
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

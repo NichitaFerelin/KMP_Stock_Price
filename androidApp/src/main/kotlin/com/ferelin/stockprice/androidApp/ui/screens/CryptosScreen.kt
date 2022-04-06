@@ -5,9 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.shared.ui.viewModel.CryptosStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.CryptosViewModel
 import com.ferelin.stockprice.sharedComposables.components.CryptosList
-import com.ferelin.stockprice.androidApp.ui.viewModel.CryptosStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.CryptosViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable

@@ -1,11 +1,11 @@
 package com.ferelin.stockprice.shared.data.mapper
 
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPricesApiSpecifics.fromRequestFormat
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPricesResponse
 import com.ferelin.stockprice.db.PastPriceDBO
-import com.ferelin.stockprice.androidApp.domain.entity.CompanyId
-import com.ferelin.stockprice.androidApp.domain.entity.PastPrice
-import com.ferelin.stockprice.androidApp.domain.entity.PastPriceId
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPricesApiSpecifics.fromRequestFormat
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPricesResponse
+import com.ferelin.stockprice.shared.domain.entity.CompanyId
+import com.ferelin.stockprice.shared.domain.entity.PastPrice
+import com.ferelin.stockprice.shared.domain.entity.PastPriceId
 
 internal object PastPriceMapper {
   fun map(pastPriceDBO: PastPriceDBO): PastPrice {
