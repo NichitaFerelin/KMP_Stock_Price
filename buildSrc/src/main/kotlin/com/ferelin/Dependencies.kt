@@ -11,6 +11,8 @@ object Libs {
   const val dataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
   const val serializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
 
+  const val composeDesktopVersion = "1.1.1"
+
   object Project {
     const val minSDK = 21
     const val currentSDK = 32

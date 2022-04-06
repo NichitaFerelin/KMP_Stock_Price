@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.components.ConstrainedText
-import com.ferelin.stockprice.theme.AppTheme
+import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun ProfileInfoColumn(
@@ -27,8 +27,8 @@ fun ProfileInfoColumn(
   ) {
     Text(
       text = name,
-      style = com.ferelin.stockprice.theme.AppTheme.typography.body1,
-      color = com.ferelin.stockprice.theme.AppTheme.colors.textTertiary
+      style = AppTheme.typography.body1,
+      color = AppTheme.colors.textTertiary
     )
     Spacer(modifier = Modifier.height(12.dp))
     ConstrainedText(
@@ -52,8 +52,8 @@ fun ProfileInfoColumnClickable(
   ) {
     Text(
       text = name,
-      style = com.ferelin.stockprice.theme.AppTheme.typography.body1,
-      color = com.ferelin.stockprice.theme.AppTheme.colors.textTertiary
+      style = AppTheme.typography.body1,
+      color = AppTheme.colors.textTertiary
     )
     Spacer(modifier = Modifier.height(12.dp))
     ConstrainedText(

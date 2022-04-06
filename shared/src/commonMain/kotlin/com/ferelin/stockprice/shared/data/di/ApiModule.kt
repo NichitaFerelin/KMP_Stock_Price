@@ -1,13 +1,13 @@
 package com.ferelin.stockprice.shared.data.di
 
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceApiImpl
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsApi
-import com.ferelin.stockprice.androidApp.data.entity.news.NewsApiImpl
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.pastPrice.PastPriceApiImpl
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.stockPrice.StockPriceApiImpl
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceApi
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceApiImpl
+import com.ferelin.stockprice.shared.data.entity.news.NewsApi
+import com.ferelin.stockprice.shared.data.entity.news.NewsApiImpl
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPriceApi
+import com.ferelin.stockprice.shared.data.entity.pastPrice.PastPriceApiImpl
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceApi
+import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceApiImpl
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.features.json.*

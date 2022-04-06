@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.theme
+package com.ferelin.stockprice.sharedComposables.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

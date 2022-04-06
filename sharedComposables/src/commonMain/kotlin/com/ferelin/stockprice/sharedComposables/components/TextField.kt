@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.theme.AppTheme
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun TextField(

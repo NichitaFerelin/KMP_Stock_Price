@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.ui.viewModel
 
-import com.ferelin.stockprice.androidApp.domain.usecase.FavouriteCompanyUseCase
-import com.ferelin.stockprice.androidApp.domain.usecase.SearchRequestsUseCase
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.usecase.FavouriteCompanyUseCase
+import com.ferelin.stockprice.shared.domain.usecase.SearchRequestsUseCase
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

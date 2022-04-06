@@ -7,6 +7,7 @@ import com.ferelin.core.di.permissionModule
 import com.ferelin.core.di.storagePathBuilderModule
 import com.ferelin.stockprice.androidApp.ui.viewModelWrapperModule
 import com.ferelin.stockprice.androidApp.utils.di.coroutineModule
+import com.ferelin.stockprice.shared.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.logger.Level

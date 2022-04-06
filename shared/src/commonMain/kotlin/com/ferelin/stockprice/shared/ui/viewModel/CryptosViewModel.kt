@@ -1,12 +1,12 @@
 package com.ferelin.stockprice.shared.ui.viewModel
 
-import com.ferelin.stockprice.androidApp.domain.usecase.CryptoPriceUseCase
-import com.ferelin.stockprice.androidApp.domain.usecase.CryptoUseCase
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
-import com.ferelin.stockprice.androidApp.ui.mapper.CryptoMapper
-import com.ferelin.stockprice.androidApp.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.usecase.CryptoPriceUseCase
+import com.ferelin.stockprice.shared.domain.usecase.CryptoUseCase
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.ui.mapper.CryptoMapper
+import com.ferelin.stockprice.shared.ui.viewData.CryptoViewData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

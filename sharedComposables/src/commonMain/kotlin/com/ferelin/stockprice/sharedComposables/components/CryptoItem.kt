@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.components.ConstrainedText
-import com.ferelin.stockprice.theme.AppTheme
+import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun CryptoItem(
@@ -22,7 +22,7 @@ internal fun CryptoItem(
       .fillMaxWidth()
       .height(100.dp)
       .padding(horizontal = 12.dp),
-    backgroundColor = com.ferelin.stockprice.theme.AppTheme.colors.backgroundPrimary,
+    backgroundColor = AppTheme.colors.backgroundPrimary,
     elevation = 6.dp
   ) {
     Row(
@@ -63,7 +63,7 @@ internal fun CryptoItem(
 @Preview
 @Composable
 private fun CryptoItemLight() {
-  com.ferelin.stockprice.theme.AppTheme(useDarkTheme = false) {
+  com.ferelin.stockprice.sharedComposables.theme.AppTheme(useDarkTheme = false) {
     CryptoItem(
       name = "Bitcoin",
       iconUrl = "",
@@ -76,7 +76,7 @@ private fun CryptoItemLight() {
 @Preview
 @Composable
 private fun CryptoItemDark() {
-  com.ferelin.stockprice.theme.AppTheme(useDarkTheme = true) {
+  com.ferelin.stockprice.sharedComposables.theme.AppTheme(useDarkTheme = true) {
     CryptoItem(
       name = "Bitcoin",
       iconUrl = "",
@@ -89,7 +89,7 @@ private fun CryptoItemDark() {
 @Preview
 @Composable
 private fun CryptoItemLongText() {
-  com.ferelin.stockprice.theme.AppTheme {
+  com.ferelin.stockprice.sharedComposables.theme.AppTheme {
     CryptoItem(
       name = "AaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAa",
       iconUrl = "",

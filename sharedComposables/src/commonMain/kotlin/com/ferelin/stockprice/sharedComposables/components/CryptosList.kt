@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -20,9 +20,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.components.CryptoItem
-import com.ferelin.stockprice.domain.entity.LceState
-import com.ferelin.stockprice.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.ui.viewData.CryptoViewData
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,7 +45,7 @@ fun CryptosList(
   Crossfade(
     modifier = Modifier
       .fillMaxSize()
-      .background(com.ferelin.stockprice.theme.AppTheme.colors.backgroundPrimary),
+      .background(AppTheme.colors.backgroundPrimary),
     targetState = cryptosLce
   ) { lce ->
     Box(
@@ -87,7 +87,7 @@ fun CryptosList(
             exit = fadeOut()
           ) {
             FloatingActionButton(
-              backgroundColor = com.ferelin.stockprice.theme.AppTheme.colors.buttonSecondary,
+              backgroundColor = AppTheme.colors.buttonSecondary,
               onClick = {
                 fabIsVisible = false
                 coroutineScope.launch {
@@ -98,7 +98,7 @@ fun CryptosList(
               /*Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_up_24),
                 contentDescription = stringResource(id = R.string.descriptionScrollToTop),
-                tint = com.ferelin.stockprice.theme.AppTheme.colors.buttonPrimary
+                tint = com.ferelin.stockprice.sharedComposables.theme.AppTheme.colors.buttonPrimary
               )*/
             }
           }
@@ -106,15 +106,15 @@ fun CryptosList(
         is LceState.Loading -> {
           CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center),
-            color = com.ferelin.stockprice.theme.AppTheme.colors.contendTertiary
+            color = AppTheme.colors.contendTertiary
           )
         }
         is LceState.Error -> {
           Text(
             modifier = Modifier.align(Alignment.Center),
             text = "temp"/*stringResource(id = R.string.errorDownload)*/,
-            style = com.ferelin.stockprice.theme.AppTheme.typography.body1,
-            color = com.ferelin.stockprice.theme.AppTheme.colors.textPrimary
+            style = AppTheme.typography.body1,
+            color = AppTheme.colors.textPrimary
           )
         }
         else -> Unit

@@ -2,7 +2,7 @@
 
 package com.ferelin.stockprice.shared.data.entity.cryptoPrice
 
-import com.ferelin.stockprice.androidApp.data.endpoints.cryptoPrice
+import com.ferelin.stockprice.shared.data.endpoints.cryptoPrice
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName

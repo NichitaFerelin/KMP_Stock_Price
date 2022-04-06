@@ -1,9 +1,9 @@
 package com.ferelin.stockprice.shared.domain.usecase
 
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoPrice
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
-import com.ferelin.stockprice.androidApp.domain.repository.CryptoPriceRepository
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.CryptoPrice
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.repository.CryptoPriceRepository
 import kotlinx.coroutines.flow.*
 
 interface CryptoPriceUseCase {

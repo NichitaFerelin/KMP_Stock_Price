@@ -21,11 +21,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.startActivitySafety
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.shared.ui.params.ProfileParams
+import com.ferelin.stockprice.shared.ui.viewModel.ProfileStateUi
+import com.ferelin.stockprice.shared.ui.viewModel.ProfileViewModel
 import com.ferelin.stockprice.sharedComposables.components.*
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
-import com.ferelin.stockprice.androidApp.ui.params.ProfileParams
-import com.ferelin.stockprice.androidApp.ui.viewModel.ProfileStateUi
-import com.ferelin.stockprice.androidApp.ui.viewModel.ProfileViewModel
 import com.google.accompanist.insets.statusBarsPadding
 import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel

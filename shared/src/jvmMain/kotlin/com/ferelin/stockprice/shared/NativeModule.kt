@@ -1,4 +1,4 @@
-package com.ferelin.stockprice
+package com.ferelin.stockprice.shared
 
 import org.koin.core.module.Module
 

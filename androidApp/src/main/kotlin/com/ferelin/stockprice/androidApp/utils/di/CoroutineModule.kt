@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.androidApp.utils.di
 
 import com.ferelin.core.NAMED_EXTERNAL_SCOPE
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.koin.core.qualifier.named

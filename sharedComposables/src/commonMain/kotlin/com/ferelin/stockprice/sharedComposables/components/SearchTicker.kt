@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 internal val SEARCH_TICKER_HEIGHT = 37.dp
 
@@ -27,15 +28,15 @@ internal fun SearchTicker(
       .widthIn(min = 40.dp)
       .height(SEARCH_TICKER_HEIGHT)
       .clip(RoundedCornerShape(12.dp))
-      .background(com.ferelin.stockprice.theme.AppTheme.colors.contendSecondary)
+      .background(AppTheme.colors.contendSecondary)
       .clickable(onClick = onClick),
     contentAlignment = Alignment.Center
   ) {
     Text(
       modifier = Modifier.padding(horizontal = 6.dp),
       text = text,
-      style = com.ferelin.stockprice.theme.AppTheme.typography.body2,
-      color = com.ferelin.stockprice.theme.AppTheme.colors.textPrimary
+      style = AppTheme.typography.body2,
+      color = AppTheme.colors.textPrimary
     )
   }
 }

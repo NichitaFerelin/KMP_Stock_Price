@@ -1,12 +1,12 @@
 package com.ferelin.stockprice.shared.data.repository
 
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceApi
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceDao
-import com.ferelin.stockprice.androidApp.data.entity.cryptoPrice.CryptoPriceOptions
-import com.ferelin.stockprice.androidApp.data.mapper.CryptoPriceMapper
-import com.ferelin.stockprice.androidApp.domain.entity.Crypto
-import com.ferelin.stockprice.androidApp.domain.entity.CryptoPrice
-import com.ferelin.stockprice.androidApp.domain.repository.CryptoPriceRepository
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceApi
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceDao
+import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceOptions
+import com.ferelin.stockprice.shared.data.mapper.CryptoPriceMapper
+import com.ferelin.stockprice.shared.domain.entity.Crypto
+import com.ferelin.stockprice.shared.domain.entity.CryptoPrice
+import com.ferelin.stockprice.shared.domain.repository.CryptoPriceRepository
 import kotlinx.coroutines.flow.*
 
 internal class CryptoPriceRepositoryImpl(

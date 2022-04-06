@@ -7,9 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ferelin.stockprice.androidApp.ui.navigation.Destination.*
-import com.ferelin.stockprice.androidApp.ui.params.AboutParams
 import com.ferelin.stockprice.androidApp.ui.screens.*
-import com.ferelin.stockprice.androidApp.ui.viewData.StockViewData
+import com.ferelin.stockprice.shared.ui.params.AboutParams
+import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 
 @Composable
 internal fun AppNavigationGraph(

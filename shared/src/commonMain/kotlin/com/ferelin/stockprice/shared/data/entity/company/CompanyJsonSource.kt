@@ -1,8 +1,8 @@
 package com.ferelin.stockprice.shared.data.entity.company
 
-import com.ferelin.stockprice.androidApp.data.mapper.CompanyMapper
 import com.ferelin.stockprice.db.CompanyDBO
 import com.ferelin.stockprice.db.ProfileDBO
+import com.ferelin.stockprice.shared.data.mapper.CompanyMapper
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

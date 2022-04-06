@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.theme
+package com.ferelin.stockprice.sharedComposables.theme
 
 internal val LightColorPalette = AppColors(
   statusBar = Light1,

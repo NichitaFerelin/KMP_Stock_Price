@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.androidApp.domain.usecase
 
 import com.ferelin.stockprice.androidApp.domain.repository.ProjectRepository
-import com.ferelin.stockprice.androidApp.domain.entity.LceState
+import com.ferelin.stockprice.shared.domain.entity.LceState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

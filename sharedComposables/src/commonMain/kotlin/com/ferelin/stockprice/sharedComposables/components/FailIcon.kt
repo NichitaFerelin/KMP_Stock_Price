@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material.Icon
@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ferelin.stockprice.theme.AppTheme
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun BoxScope.FailIcon(

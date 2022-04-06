@@ -1,6 +1,6 @@
 package com.ferelin.stockprice.shared.domain.repository
 
-import com.ferelin.stockprice.androidApp.domain.entity.SearchRequest
+import com.ferelin.stockprice.shared.domain.entity.SearchRequest
 import kotlinx.coroutines.flow.Flow
 
 interface SearchRequestsRepository {

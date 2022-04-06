@@ -2,7 +2,7 @@ package com.ferelin.stockprice.androidApp.domain.usecase
 
 import com.ferelin.stockprice.androidApp.domain.entity.StoragePath
 import com.ferelin.stockprice.androidApp.domain.repository.StoragePathRepository
-import com.ferelin.stockprice.androidApp.ui.DispatchersProvider
+import com.ferelin.stockprice.shared.ui.DispatchersProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn

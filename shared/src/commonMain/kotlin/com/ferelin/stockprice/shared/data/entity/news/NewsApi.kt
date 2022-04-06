@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.data.entity.news
 
-import com.ferelin.stockprice.ONE_YEAR_MILLIS
-import com.ferelin.stockprice.androidApp.data.endpoints.news
+import com.ferelin.stockprice.shared.ONE_YEAR_MILLIS
+import com.ferelin.stockprice.shared.data.endpoints.news
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName

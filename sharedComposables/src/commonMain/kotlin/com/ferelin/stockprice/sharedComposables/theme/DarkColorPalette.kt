@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.theme
+package com.ferelin.stockprice.sharedComposables.theme
 
 internal val DarkColorPalette = AppColors(
   statusBar = Dark1,

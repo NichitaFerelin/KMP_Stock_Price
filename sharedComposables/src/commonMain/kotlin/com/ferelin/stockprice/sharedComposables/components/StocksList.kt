@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -20,10 +20,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.components.StockItem
-import com.ferelin.stockprice.domain.entity.LceState
-import com.ferelin.stockprice.theme.AppTheme
-import com.ferelin.stockprice.ui.viewData.StockViewData
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.ui.viewData.StockViewData
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @Composable

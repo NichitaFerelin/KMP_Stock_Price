@@ -1,4 +1,4 @@
-package com.ferelin.stockprice.components
+package com.ferelin.stockprice.sharedComposables.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -9,8 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.domain.entity.LceState
-import com.ferelin.stockprice.ui.viewData.SearchViewData
+import com.ferelin.stockprice.shared.domain.entity.LceState
+import com.ferelin.stockprice.shared.ui.viewData.SearchViewData
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 private val START_PADDING = 20.dp
 
@@ -28,8 +29,8 @@ fun SearchRequests(
     Text(
       modifier = Modifier.padding(start = START_PADDING),
       text = title,
-      style = com.ferelin.stockprice.theme.AppTheme.typography.title2,
-      color = com.ferelin.stockprice.theme.AppTheme.colors.textPrimary
+      style = AppTheme.typography.title2,
+      color = AppTheme.colors.textPrimary
     )
     Spacer(modifier = Modifier.height(10.dp))
 
@@ -53,8 +54,8 @@ fun SearchRequests(
           Text(
             modifier = Modifier.padding(start = START_PADDING),
             text = "temp"/*stringResource(id = R.string.hintNoSearchResults)*/,
-            style = com.ferelin.stockprice.theme.AppTheme.typography.body2,
-            color = com.ferelin.stockprice.theme.AppTheme.colors.textPrimary
+            style = AppTheme.typography.body2,
+            color = AppTheme.colors.textPrimary
           )
         }
       }
@@ -67,13 +68,13 @@ fun SearchRequests(
         ) {
           when (searchRequestsLce) {
             is LceState.Loading -> {
-              CircularProgressIndicator(color = com.ferelin.stockprice.theme.AppTheme.colors.contendTertiary)
+              CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
             }
             is LceState.Error -> {
               Text(
                 text = "temp"/*stringResource(id = R.string.errorDownload)*/,
-                style = com.ferelin.stockprice.theme.AppTheme.typography.body1,
-                color = com.ferelin.stockprice.theme.AppTheme.colors.textPrimary
+                style = AppTheme.typography.body1,
+                color = AppTheme.colors.textPrimary
               )
             }
             else -> Unit
