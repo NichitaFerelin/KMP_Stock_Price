@@ -1,8 +1,19 @@
 package com.ferelin.stockprice.sharedComposables.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun StockItem(
@@ -15,74 +26,59 @@ fun StockItem(
   onFavouriteIconClick: () -> Unit,
   onClick: () -> Unit
 ) {
-  /*Card(
+  Card(
     modifier = modifier
       .fillMaxWidth()
       .height(75.dp),
-    backgroundColor = if (index % 2 == 0) AppTheme.colors.contendPrimary else AppTheme.colors.contendSecondary,
+    backgroundColor = if (index % 2 == 0) {
+      AppTheme.colors.contendPrimary
+    } else AppTheme.colors.contendSecondary,
     shape = RoundedCornerShape(12.dp),
     elevation = 0.dp
   ) {
-    ConstraintLayout(
-      modifier = modifier
+    Row(
+      modifier = Modifier
         .fillMaxSize()
         .clickable(onClick = onClick)
+        .padding(horizontal = 14.dp),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically
     ) {
-      val (icon, title, subtitle, star) = createRefs()
-      val centerGuideline = createGuidelineFromTop(0.55f)
-
-      GlideImage(
-        modifier = Modifier
-          .size(50.dp)
-          .clip(CircleShape)
-          .constrainAs(icon) {
-            top.linkTo(parent.top)
-            bottom.linkTo(parent.bottom)
-            start.linkTo(parent.start, margin = HORIZONTAL_MARGIN)
-          },
-        imageModel = iconUrl,
-        contentScale = ContentScale.Inside,
-        failure = { FailIcon() }
-      )
-      ConstrainedText(
-        modifier = Modifier.constrainAs(title) {
-          bottom.linkTo(centerGuideline, margin = TEXT_SECTION_BETWEEN_MARGIN)
-          start.linkTo(icon.end, margin = TEXT_SECTION_START_MARGIN)
-          end.linkTo(star.start, margin = TEXT_SECTION_END_MARGIN)
-          width = Dimension.fillToConstraints
-        },
-        text = ticker,
-        style = AppTheme.typography.title2,
-        color = AppTheme.colors.textPrimary
-      )
-      ConstrainedText(
-        modifier = Modifier.constrainAs(subtitle) {
-          top.linkTo(centerGuideline, margin = TEXT_SECTION_BETWEEN_MARGIN)
-          start.linkTo(icon.end, margin = TEXT_SECTION_START_MARGIN)
-          end.linkTo(star.start, margin = TEXT_SECTION_END_MARGIN)
-          width = Dimension.fillToConstraints
-        },
-        text = name,
-        style = AppTheme.typography.body2,
-        color = AppTheme.colors.textPrimary
-      )
+      Row(
+        modifier = Modifier.fillMaxHeight(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Icon(
+          imageVector = Icons.Default.Image,
+          contentDescription = "",
+          tint = Color.Blue
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+          ConstrainedText(
+            text = ticker,
+            style = AppTheme.typography.body1,
+            color = AppTheme.colors.textPrimary
+          )
+          ConstrainedText(
+            text = name,
+            style = AppTheme.typography.body2,
+            color = AppTheme.colors.textPrimary
+          )
+        }
+      }
       ClickableIcon(
-        modifier = Modifier.constrainAs(star) {
-          top.linkTo(parent.top)
-          bottom.linkTo(parent.bottom)
-          end.linkTo(parent.end, margin = HORIZONTAL_MARGIN)
-        },
-        backgroundColor = if (index % 2 == 0) AppTheme.colors.contendPrimary else AppTheme.colors.contendSecondary,
-        painter = painterResource(id = R.drawable.ic_favourite_16),
-        contentDescription = ""*//*TODO*//*,
-        iconTint = if (isFavourite) AppTheme.colors.iconActive else AppTheme.colors.iconDisabled,
+        modifier = Modifier,
+        backgroundColor = if (index % 2 == 0) {
+          AppTheme.colors.contendPrimary
+        } else AppTheme.colors.contendSecondary,
+        imageVector = Icons.Default.Star/*painterResource(id = R.drawable.ic_favourite_16)*/,
+        contentDescription = "" /*TODO*/,
+        iconTint = if (isFavourite) {
+          AppTheme.colors.iconActive
+        } else AppTheme.colors.iconDisabled,
         onClick = onFavouriteIconClick
       )
     }
-  }*/
+  }
 }
-
-private val HORIZONTAL_MARGIN = 12.dp
-private val TEXT_SECTION_START_MARGIN = 16.dp
-private val TEXT_SECTION_END_MARGIN = 4.dp
-private val TEXT_SECTION_BETWEEN_MARGIN = 1.dp

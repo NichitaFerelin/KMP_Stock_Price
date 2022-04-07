@@ -78,12 +78,14 @@ object Libs {
     const val plugin = "com.squareup.sqldelight:gradle-plugin:$version"
     const val coroutinesExt = "com.squareup.sqldelight:coroutines-extensions:$version"
     const val android = "com.squareup.sqldelight:android-driver:$version"
+    const val jvm = "com.squareup.sqldelight:sqlite-driver:$version"
   }
 
   object Ktor {
     const val version = "1.6.8"
     const val core = "io.ktor:ktor-client-core:$version"
     const val android = "io.ktor:ktor-client-android:$version"
+    const val jvm = "io.ktor:ktor-client-java:$version"
     const val serialization = "io.ktor:ktor-client-serialization:$version"
     const val logging = "io.ktor:ktor-client-logging:$version"
   }

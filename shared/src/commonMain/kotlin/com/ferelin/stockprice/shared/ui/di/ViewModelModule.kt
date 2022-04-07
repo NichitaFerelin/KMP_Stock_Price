@@ -1,7 +1,6 @@
 package com.ferelin.stockprice.shared.ui.di
 
 import com.ferelin.stockprice.shared.ui.DispatchersProvider
-import com.ferelin.stockprice.shared.ui.params.AboutParams
 import com.ferelin.stockprice.shared.ui.params.NewsParams
 import com.ferelin.stockprice.shared.ui.params.ProfileParams
 import com.ferelin.stockprice.shared.ui.viewModel.*
@@ -10,28 +9,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
   factory { DispatchersProvider() }
 
-  factory { params ->
-    AboutParams(
-      companyId = params.get(),
-      companyTicker = params.get(),
-      companyName = params.get()
-    )
-  }
-  factory { params ->
-    NewsParams(
-      companyId = params.get(),
-      companyTicker = params.get()
-    )
-  }
-  factory { params ->
-    ProfileViewModel(
-      get(parameters = { params }),
-      get(),
-      get(),
-      viewModelScope = params.get(),
-      get()
-    )
-  }
+  factory { HomeViewModel() }
   factory { params ->
     CryptosViewModel(get(), viewModelScope = params.get(), get(), get())
   }
@@ -50,11 +28,19 @@ val viewModelModule = module {
   factory { params ->
     StocksViewModel(get(), get(), viewModelScope = params.get(), get())
   }
-  factory { HomeViewModel() }
 
   factory { params ->
     AboutViewModel(
-      get(parameters = { params }),
+      aboutParams = params.get(),
+      get(),
+      viewModelScope = params.get(),
+      get()
+    )
+  }
+  factory { params ->
+    ProfileViewModel(
+      profileParams = params.get(),
+      get(),
       get(),
       viewModelScope = params.get(),
       get()
@@ -62,15 +48,10 @@ val viewModelModule = module {
   }
   factory { params ->
     NewsViewModel(
-      get(parameters = { params }),
+      newsParams = params.get(),
       get(),
       viewModelScope = params.get(),
       get()
-    )
-  }
-  factory { params ->
-    ProfileParams(
-      companyId = params.get()
     )
   }
 }

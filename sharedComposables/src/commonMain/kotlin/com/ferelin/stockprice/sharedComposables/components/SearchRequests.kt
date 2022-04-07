@@ -53,7 +53,7 @@ fun SearchRequests(
         } else {
           Text(
             modifier = Modifier.padding(start = START_PADDING),
-            text = "temp"/*stringResource(id = R.string.hintNoSearchResults)*/,
+            text = "No search requests"/*stringResource(id = R.string.hintNoSearchResults)*/,
             style = AppTheme.typography.body2,
             color = AppTheme.colors.textPrimary
           )

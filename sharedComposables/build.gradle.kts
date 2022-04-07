@@ -22,6 +22,8 @@ kotlin {
         implementation(compose.uiTooling)
         implementation(compose.material)
         implementation(compose.materialIconsExtended)
+        implementation(compose.animation)
+        implementation(compose.animationGraphics)
       }
     }
 

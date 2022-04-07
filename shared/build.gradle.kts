@@ -38,14 +38,18 @@ kotlin {
         implementation(Libs.SqlDelight.android)
       }
     }
-    val jvmMain by getting
+    val jvmMain by getting {
+      dependencies {
+        implementation(Libs.SqlDelight.jvm)
+        implementation(Libs.Ktor.jvm)
+      }
+    }
   }
 }
 android {
   compileSdk = Libs.Project.currentSDK
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-  sourceSets["main"].resources.srcDirs("src/commonMain/assets")
 
   defaultConfig {
     minSdk = Libs.Project.minSDK

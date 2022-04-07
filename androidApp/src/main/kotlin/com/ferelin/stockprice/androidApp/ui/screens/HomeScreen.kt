@@ -4,7 +4,6 @@ package com.ferelin.stockprice.androidApp.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.androidApp.R
@@ -22,10 +20,9 @@ import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 import com.ferelin.stockprice.shared.ui.viewModel.HomeStateUi
 import com.ferelin.stockprice.shared.ui.viewModel.HomeViewModel
 import com.ferelin.stockprice.sharedComposables.components.ClickableIcon
-import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.components.HomeTab
-import com.ferelin.stockprice.sharedComposables.components.SearchField
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
+import com.ferelin.stockprice.sharedComposables.components.TopSearchField
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.flow.launchIn
@@ -117,37 +114,6 @@ private fun HomeScreen(
   }
 }
 
-@Composable
-private fun TopSearchField(
-  modifier: Modifier = Modifier,
-  onClick: () -> Unit
-) {
-  SearchField(
-    modifier = modifier,
-    borderWidth = 1.dp,
-    onClick = onClick
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 8.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Spacer(modifier = Modifier.padding(start = 12.dp))
-      Icon(
-        painter = painterResource(R.drawable.ic_search_17x18),
-        contentDescription = stringResource(id = R.string.descriptionImageSearch),
-        tint = AppTheme.colors.buttonPrimary
-      )
-      Spacer(modifier = Modifier.width(12.dp))
-      ConstrainedText(
-        text = stringResource(R.string.hintFindCompany),
-        style = AppTheme.typography.body1,
-        color = AppTheme.colors.textPrimary
-      )
-    }
-  }
-}
 
 @Composable
 private fun Tabs(

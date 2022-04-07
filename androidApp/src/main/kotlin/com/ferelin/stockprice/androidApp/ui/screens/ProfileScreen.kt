@@ -33,9 +33,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ProfileRoute(params: ProfileParams) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: ProfileViewModel by remember {
-    viewModelWrapper.viewModel(params.companyId)
-  }
+  val viewModel: ProfileViewModel = remember { viewModelWrapper.viewModel(params) }
   val uiState by viewModel.uiState.collectAsState()
   val context = LocalContext.current
 

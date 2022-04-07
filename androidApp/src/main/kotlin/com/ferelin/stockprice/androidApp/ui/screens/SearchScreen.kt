@@ -3,18 +3,10 @@
 package com.ferelin.stockprice.androidApp.ui.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,8 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
 import com.ferelin.stockprice.shared.domain.entity.LceState
@@ -42,7 +32,7 @@ fun SearchRoute(
   onStockRoute: (StockViewData) -> Unit
 ) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: SearchViewModel by remember { viewModelWrapper.viewModel() }
+  val viewModel: SearchViewModel = remember { viewModelWrapper.viewModel() }
   val uiState by viewModel.uiState.collectAsState()
 
   SearchScreen(
@@ -75,7 +65,7 @@ private fun SearchScreen(
       .background(AppTheme.colors.backgroundPrimary)
   ) {
     Spacer(modifier = Modifier.height(8.dp))
-    TopSearchField(
+    TopSearchFieldEditable(
       inputText = uiState.inputSearchRequest,
       showCloseIcon = uiState.showCloseIcon,
       onTextChanged = onSearchTextChanged,
@@ -91,7 +81,8 @@ private fun SearchScreen(
         }
       }
       uiState.inputSearchRequest.isNotEmpty() && uiState.searchResults.isEmpty() -> {
-        NoSearchResultsSection()
+        Spacer(modifier = Modifier.height(30.dp))
+        NoSearchResults()
       }
       uiState.inputSearchRequest.isEmpty() -> {
         SearchRequestsSection(
@@ -114,74 +105,6 @@ private fun SearchScreen(
 }
 
 @Composable
-private fun TopSearchField(
-  modifier: Modifier = Modifier,
-  inputText: String,
-  showCloseIcon: Boolean,
-  onTextChanged: (String) -> Unit,
-  onBackClick: () -> Unit
-) {
-  val keyboardController = LocalSoftwareKeyboardController.current
-
-  SearchField(modifier = modifier, borderWidth = 2.dp, onClick = { /**/ }) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Spacer(modifier = Modifier.padding(start = 12.dp))
-      ClickableIcon(imageVector = Icons.Default.ArrowBack,
-        backgroundColor = AppTheme.colors.backgroundPrimary,
-        contentDescription = ""/*stringResource(R.string.descriptionBack)*/,
-        iconTint = AppTheme.colors.buttonPrimary,
-        onClick = {
-          keyboardController?.hide()
-          onBackClick.invoke()
-        })
-      Spacer(modifier = Modifier.width(8.dp))
-      TextField(inputValue = inputText,
-        placeholder = ""/*stringResource(id = R.string.hintEnterSearchRequest)*/,
-        onValueChange = onTextChanged,
-        keyboardActions = KeyboardActions { keyboardController?.hide() },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        trailingIcon = {
-          AnimatedVisibility(
-            visible = showCloseIcon, enter = scaleIn(), exit = scaleOut()
-          ) {
-            ClickableIcon(backgroundColor = AppTheme.colors.backgroundPrimary,
-              imageVector = Icons.Default.Close,
-              iconTint = AppTheme.colors.buttonPrimary,
-              contentDescription = ""/*stringResource(id = R.string.descriptionIconClose)*/,
-              onClick = { onTextChanged("") })
-          }
-        })
-    }
-  }
-}
-
-@Composable
-private fun SearchRequestsSection(
-  searchRequests: List<SearchViewData>,
-  searchRequestsLce: LceState,
-  popularSearchRequests: List<SearchViewData>,
-  popularSearchRequestsLce: LceState,
-  onTickerClick: (SearchViewData) -> Unit
-) {
-  Spacer(modifier = Modifier.height(16.dp))
-  SearchRequests(
-    title = ""/*stringResource(R.string.titlePopularRequests)*/,
-    searchRequests = popularSearchRequests,
-    searchRequestsLce = popularSearchRequestsLce,
-    onTickerClick = onTickerClick
-  )
-  Spacer(modifier = Modifier.height(16.dp))
-  SearchRequests(
-    title = ""/*stringResource(R.string.titleYourSearches)*/,
-    searchRequests = searchRequests,
-    searchRequestsLce = searchRequestsLce,
-    onTickerClick = onTickerClick
-  )
-}
-
-@Composable
 private fun SearchResultsSection(
   searchResults: List<StockViewData>,
   onFavouriteIconClick: (StockViewData) -> Unit,
@@ -194,23 +117,4 @@ private fun SearchResultsSection(
     onFavouriteIconClick = onFavouriteIconClick,
     onStockClick = onStockClick
   )
-}
-
-@Composable
-private fun NoSearchResultsSection() {
-  Spacer(modifier = Modifier.height(30.dp))
-  Column(
-    modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-    /*Image(
-      painter = painterResource(id = R.mipmap.ic_pointing_glass),
-      contentDescription = stringResource(id = R.string.descriptionNoSearchResults)
-    )
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-      text = stringResource(id = R.string.hintNoSearchResults),
-      style = AppTheme.typography.body1,
-      color = AppTheme.colors.textPrimary
-    )*/
-  }
 }
