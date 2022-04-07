@@ -38,6 +38,11 @@ class CryptosViewModel(
       .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
 
+    cryptoUseCase.cryptos
+      .onEach(this::onNetworkAvailable)
+      .flowOn(dispatchersProvider.IO)
+      .launchIn(viewModelScope)
+
     cryptoUseCase.cryptosLce
       .combine(
         flow = cryptoPriceUseCase.cryptoPricesLce,
@@ -49,16 +54,6 @@ class CryptosViewModel(
       )
       .onEach(this::onCryptosLce)
       .launchIn(viewModelScope)
-
-    /*networkListener.networkState
-      .filter { it }
-      .combine(
-        flow = cryptoUseCase.cryptos,
-        transform = { _, cryptos -> cryptos }
-      )
-      .onEach(this::onNetworkAvailable)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)*/
   }
 
   private fun onCryptos(cryptos: List<CryptoViewData>) {

@@ -13,11 +13,12 @@ repositories {
 
 dependencies {
   implementation(project(":shared"))
+  implementation(project(":sharedComposables"))
   implementation(compose.desktop.currentOs)
 }
 
 compose.desktop {
   application {
-    mainClass = "MainKt"
+    mainClass = "AppKt"
   }
 }

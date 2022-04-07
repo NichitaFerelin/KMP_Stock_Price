@@ -1,12 +1,18 @@
 package com.ferelin.stockprice.sharedComposables.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
@@ -23,18 +29,20 @@ internal fun CryptoItem(
       .height(100.dp)
       .padding(horizontal = 12.dp),
     backgroundColor = AppTheme.colors.backgroundPrimary,
-    elevation = 6.dp
+    elevation = 2.dp
   ) {
     Row(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 12.dp),
       verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceAround
+      horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      /*GlideImage(
-        modifier = Modifier.size(40.dp),
-        imageModel = iconUrl,
-        failure = { FailIcon() }
-      )*/
+      Icon(
+        imageVector = Icons.Default.Image,
+        contentDescription = "",
+        tint = Color.Blue
+      )
       Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
@@ -58,43 +66,3 @@ internal fun CryptoItem(
     }
   }
 }
-
-/*
-@Preview
-@Composable
-private fun CryptoItemLight() {
-  com.ferelin.stockprice.sharedComposables.theme.AppTheme(useDarkTheme = false) {
-    CryptoItem(
-      name = "Bitcoin",
-      iconUrl = "",
-      price = "43 333 $",
-      profit = "+1333 $"
-    )
-  }
-}
-
-@Preview
-@Composable
-private fun CryptoItemDark() {
-  com.ferelin.stockprice.sharedComposables.theme.AppTheme(useDarkTheme = true) {
-    CryptoItem(
-      name = "Bitcoin",
-      iconUrl = "",
-      price = "43 333 $",
-      profit = "+1333 $"
-    )
-  }
-}
-
-@Preview
-@Composable
-private fun CryptoItemLongText() {
-  com.ferelin.stockprice.sharedComposables.theme.AppTheme {
-    CryptoItem(
-      name = "AaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAa",
-      iconUrl = "",
-      price = "fffffffffffffffffffffffffffffffffffffffffffffffff",
-      profit = "pppppppppppppppppppppppppppppppppppppppppppppppppp"
-    )
-  }
-}*/

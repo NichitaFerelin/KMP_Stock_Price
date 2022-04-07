@@ -2,7 +2,7 @@ package com.ferelin.stockprice.shared.data.mapper
 
 import com.ferelin.stockprice.db.CompanyDBO
 import com.ferelin.stockprice.db.ProfileDBO
-import com.ferelin.stockprice.shared.data.entity.company.CompanyJson
+import com.ferelin.stockprice.shared.data.entity.company.CompanyPojo
 import com.ferelin.stockprice.shared.domain.entity.Company
 import com.ferelin.stockprice.shared.domain.entity.CompanyId
 
@@ -25,24 +25,24 @@ internal object CompanyMapper {
     )
   }
 
-  fun map(companiesJson: List<CompanyJson>): List<Pair<CompanyDBO, ProfileDBO>> {
-    return companiesJson.mapIndexed { index, json ->
+  fun map(companiesPojo: List<CompanyPojo>): Pair<List<CompanyDBO>, List<ProfileDBO>> {
+    return companiesPojo.mapIndexed { index, companyPojo ->
       Pair(
         CompanyDBO(
           id = index,
-          name = json.name,
-          ticker = json.symbol,
-          logoUrl = json.logo
+          name = companyPojo.name,
+          ticker = companyPojo.symbol,
+          logoUrl = companyPojo.logo
         ),
         ProfileDBO(
           id = index,
-          country = json.country,
-          phone = json.phone,
-          webUrl = json.webUrl,
-          industry = json.industry,
-          capitalization = json.capitalization
+          country = companyPojo.country,
+          phone = companyPojo.phone,
+          webUrl = companyPojo.webUrl,
+          industry = companyPojo.industry,
+          capitalization = companyPojo.capitalization
         )
       )
-    }
+    }.unzip()
   }
 }

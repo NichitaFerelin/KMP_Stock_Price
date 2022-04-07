@@ -3,12 +3,8 @@ package com.ferelin.stockprice.shared.data.di
 import com.ferelin.stockprice.db.StockPriceDb
 import com.ferelin.stockprice.shared.data.entity.company.CompanyDao
 import com.ferelin.stockprice.shared.data.entity.company.CompanyDaoImpl
-import com.ferelin.stockprice.shared.data.entity.company.CompanyJsonSource
-import com.ferelin.stockprice.shared.data.entity.company.CompanyJsonSourceImpl
 import com.ferelin.stockprice.shared.data.entity.crypto.CryptoDao
 import com.ferelin.stockprice.shared.data.entity.crypto.CryptoDaoImpl
-import com.ferelin.stockprice.shared.data.entity.crypto.CryptoJsonSource
-import com.ferelin.stockprice.shared.data.entity.crypto.CryptoJsonSourceImpl
 import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceDao
 import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceDaoImpl
 import com.ferelin.stockprice.shared.data.entity.favouriteCompany.FavouriteCompanyDao
@@ -46,7 +42,4 @@ internal val storageModule = module {
   factory<ProfileDao> { ProfileDaoImpl(get()) }
   factory<SearchRequestDao> { SearchRequestDaoImpl(get()) }
   factory<StockPriceDao> { StockPriceDaoImpl(get()) }
-
-  factory<CompanyJsonSource> { CompanyJsonSourceImpl() }
-  factory<CryptoJsonSource> { CryptoJsonSourceImpl() }
 }

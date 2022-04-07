@@ -8,13 +8,13 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
-val viewModelWrapperModule = module {
+internal val viewModelWrapperModule = module {
   viewModel { ViewModelWrapper() }
 }
 
-class ViewModelWrapper : ViewModel(), KoinComponent {
-  inline fun <reified T> viewModel(vararg parameters: Any?): T {
-    val viewModel: T by inject { parametersOf(viewModelScope, parameters) }
+internal class ViewModelWrapper : ViewModel(), KoinComponent {
+  inline fun <reified T> viewModel(parameter: Any? = null): T {
+    val viewModel: T by inject { parametersOf(viewModelScope, parameter) }
     return viewModel
   }
 }

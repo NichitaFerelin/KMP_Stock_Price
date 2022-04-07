@@ -8,4 +8,5 @@
 /captures
 .externalNativeBuild
 .cxx
+*.bak
 local.properties

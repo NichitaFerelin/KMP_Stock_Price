@@ -6,13 +6,20 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -100,11 +107,11 @@ fun StocksList(
                 }
               }
             ) {
-              /*Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_up_24),
-                contentDescription = stringResource(id = R.string.descriptionScrollToTop),
+              Icon(
+                imageVector = Icons.Default.ArrowUpward,
+                contentDescription = ""/*stringResource(id = R.string.descriptionScrollToTop)*/,
                 tint = AppTheme.colors.buttonPrimary
-              )*/
+              )
             }
           }
         }
@@ -117,7 +124,7 @@ fun StocksList(
         is LceState.Error -> {
           Text(
             modifier = Modifier.align(Alignment.Center),
-            text = "temp"/*stringResource(id = R.string.errorDownload)*/,
+            text = lce.message ?: ""/*stringResource(id = R.string.errorDownload)*/,
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
           )
