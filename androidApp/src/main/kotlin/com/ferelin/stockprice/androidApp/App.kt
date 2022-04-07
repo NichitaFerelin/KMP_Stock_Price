@@ -2,11 +2,7 @@ package com.ferelin.stockprice.androidApp
 
 import android.app.Application
 import android.os.StrictMode
-import com.ferelin.core.di.networkListenerModule
-import com.ferelin.core.di.permissionModule
-import com.ferelin.core.di.storagePathBuilderModule
 import com.ferelin.stockprice.androidApp.ui.viewModelWrapperModule
-import com.ferelin.stockprice.androidApp.utils.di.coroutineModule
 import com.ferelin.stockprice.shared.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -27,7 +23,7 @@ class App : Application() {
     initKoin {
       androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
       androidContext(this@App)
-      modules(koinModules)
+      modules(viewModelWrapperModule)
     }
   }
 
@@ -45,11 +41,3 @@ class App : Application() {
     StrictMode.setVmPolicy(vmPolicy)
   }
 }
-
-private val koinModules = listOf(
-  coroutineModule,
-  networkListenerModule,
-  permissionModule,
-  storagePathBuilderModule,
-  viewModelWrapperModule
-)

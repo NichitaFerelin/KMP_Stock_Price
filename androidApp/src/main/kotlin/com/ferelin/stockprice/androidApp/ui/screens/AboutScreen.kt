@@ -11,6 +11,7 @@ import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +29,10 @@ import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
-import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun AboutRoute(
+internal fun AboutScreenRoute(
   params: AboutParams,
   onBackRoute: () -> Unit
 ) {
@@ -47,11 +47,11 @@ fun AboutRoute(
     onBackRoute = onBackRoute,
     onProfileRoute = {
       val profileParams = remember { ProfileParams(params.companyId) }
-      ProfileRoute(profileParams)
+      ProfileScreenRoute(profileParams)
     },
     onNewsRoute = {
       val newsParams = remember { NewsParams(params.companyId, params.companyTicker) }
-      NewsRoute(newsParams)
+      NewsScreenRoute(newsParams)
     }
   )
 }
@@ -89,7 +89,7 @@ private fun AboutScreen(
       onBackClick = onBackRoute
     )
     Spacer(modifier = Modifier.height(8.dp))
-    Tabs(
+    PagerTabs(
       modifier = Modifier.fillMaxWidth(),
       pagerState = pagerState,
       onScreenTabClicked = onScreenSelected
@@ -120,7 +120,7 @@ private fun TopBar(
       imageVector = Icons.Default.ArrowBack,
       backgroundColor = AppTheme.colors.backgroundPrimary,
       iconTint = AppTheme.colors.buttonPrimary,
-      contentDescription = "" /*stringResource(R.string.descriptionBack)*/,
+      contentDescription = stringResource(R.string.descriptionBack),
       onClick = onBackClick
     )
     Column(
@@ -140,8 +140,10 @@ private fun TopBar(
     }
     ClickableIcon(
       backgroundColor = AppTheme.colors.backgroundPrimary,
-      painter = painterResource(R.drawable.ic_favourite_16),
-      iconTint = if (isFavourite) AppTheme.colors.iconActive else AppTheme.colors.iconDisabled,
+      imageVector = Icons.Default.Star,
+      iconTint = if (isFavourite) {
+        AppTheme.colors.iconActive
+      } else AppTheme.colors.iconDisabled,
       contentDescription = if (isFavourite) {
         stringResource(R.string.descriptionRemoveFromFavourites)
       } else stringResource(R.string.descriptionAddToFavourites),
@@ -151,7 +153,7 @@ private fun TopBar(
 }
 
 @Composable
-private fun Tabs(
+private fun PagerTabs(
   modifier: Modifier = Modifier,
   pagerState: PagerState,
   onScreenTabClicked: (Int) -> Unit

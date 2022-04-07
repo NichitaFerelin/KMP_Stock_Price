@@ -27,7 +27,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun SearchRoute(
+internal fun SearchScreenRoute(
   onBackRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {

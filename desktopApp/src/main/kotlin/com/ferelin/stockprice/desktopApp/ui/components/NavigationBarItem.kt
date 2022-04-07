@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ferelin.stockprice.desktopApp.ui.APP_NAV_ITEM_HEIGHT
-import com.ferelin.stockprice.desktopApp.ui.APP_NAV_ITEM_WIDTH
-import com.ferelin.stockprice.desktopApp.ui.APP_START_PADDING
 import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 

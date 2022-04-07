@@ -9,7 +9,7 @@ import com.ferelin.stockprice.desktopApp.navigation.AppNavigationGraph
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun ApplicationScope.MainWindow() {
+internal fun ApplicationScope.MainWindow() {
   Window(
     onCloseRequest = ::exitApplication,
     title = "Stock Price",

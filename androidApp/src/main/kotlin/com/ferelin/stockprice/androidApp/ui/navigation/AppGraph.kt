@@ -7,7 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ferelin.stockprice.androidApp.ui.navigation.Destination.*
-import com.ferelin.stockprice.androidApp.ui.screens.*
+import com.ferelin.stockprice.androidApp.ui.screens.AboutScreenRoute
+import com.ferelin.stockprice.androidApp.ui.screens.HomeScreenRoute
+import com.ferelin.stockprice.androidApp.ui.screens.SearchScreenRoute
 import com.ferelin.stockprice.shared.ui.params.AboutParams
 import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 
@@ -17,18 +19,10 @@ internal fun AppNavigationGraph(
 ) {
   NavHost(
     navController = navHostController,
-    startDestination = SplashDestination.key
+    startDestination = HomeDestination.key
   ) {
-    composable(route = SplashDestination.key) {
-      LoadingScreen {
-        navHostController.navigate(HomeDestination.key) {
-          popUpTo(SplashDestination.key) { inclusive = true }
-        }
-      }
-    }
     composable(route = HomeDestination.key) {
       HomeScreenRoute(
-        onSettingsRoute = { navHostController.navigate(route = SettingsDestination.key) },
         onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
         onStockRoute = {
           navHostController.navigate(
@@ -37,19 +31,8 @@ internal fun AppNavigationGraph(
         }
       )
     }
-    composable(route = SettingsDestination.key) {
-      SettingsRoute(
-        onLogInRoute = { navHostController.navigate(route = AuthenticationDestination.key) },
-        onBackRoute = { navHostController.popBackStack() }
-      )
-    }
-    composable(route = AuthenticationDestination.key) {
-      LoginRoute(
-        onBackRoute = { navHostController.popBackStack() }
-      )
-    }
     composable(route = SearchDestination.key) {
-      SearchRoute(
+      SearchScreenRoute(
         onBackRoute = { navHostController.popBackStack() },
         onStockRoute = {
           navHostController.navigate(
@@ -74,7 +57,7 @@ internal fun AppNavigationGraph(
       val name = requireNotNull(args.getString(AboutDestination.ARG_NAME))
       val ticker = requireNotNull(args.getString(AboutDestination.ARG_TICKER))
 
-      AboutRoute(
+      AboutScreenRoute(
         params = AboutParams(id, ticker, name),
         onBackRoute = { navHostController.popBackStack() }
       )

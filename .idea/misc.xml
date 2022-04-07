@@ -6,6 +6,15 @@
         <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/core/ui/src/main/kotlin/com/ferelin/core/ui/components/ConstrainedText.kt" value="0.2222222222222222" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/core/ui/src/main/kotlin/com/ferelin/core/ui/components/SearchField.kt" value="0.8923841059602649" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/features/home/src/main/kotlin/com/ferelin/features/home/uiComponents/CryptoItem.kt" value="0.5494623655913978" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_arrow_up_24.xml" value="0.132" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_delete_30.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_download_30.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_favourite_16.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_load_error_20.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_login_30.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_logout_30.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/drawable/ic_search_17x18.xml" value="0.124" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/androidApp/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.132" />
       </map>
     </option>
   </component>
