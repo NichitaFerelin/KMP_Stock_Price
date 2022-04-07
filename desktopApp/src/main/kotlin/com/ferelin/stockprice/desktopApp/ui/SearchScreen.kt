@@ -8,6 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.desktopApp.ViewModelWrapper
+import com.ferelin.stockprice.desktopApp.ui.components.APP_START_PADDING
+import com.ferelin.stockprice.desktopApp.ui.components.APP_TOP_PADDING
 import com.ferelin.stockprice.desktopApp.ui.components.NavButtonBack
 import com.ferelin.stockprice.shared.domain.entity.LceState
 import com.ferelin.stockprice.shared.ui.viewData.SearchViewData
@@ -21,7 +23,7 @@ import com.ferelin.stockprice.sharedComposables.components.TopSearchFieldEditabl
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun SearchScreenRoute(
+internal fun SearchScreenRoute(
   onBackRoute: () -> Unit,
 ) {
   val viewModelScope = rememberCoroutineScope()
@@ -32,7 +34,7 @@ fun SearchScreenRoute(
     uiState = uiState,
     onSearchTextChanged = viewModel::onSearchTextChanged,
     onTickerClick = viewModel::onTickerClick,
-    onStockClick = { },
+    onStockClick = { /**/ },
     onFavouriteIconClick = viewModel::onFavouriteIconClick,
     onBackClick = onBackRoute
   )

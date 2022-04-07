@@ -20,7 +20,7 @@ import com.ferelin.stockprice.sharedComposables.components.NewsItem
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun NewsScreenRoute(
+internal fun NewsScreenRoute(
   newsParams: NewsParams
 ) {
   val viewModelScope = rememberCoroutineScope()
@@ -72,7 +72,7 @@ private fun NewsScreen(
         }
         is LceState.Error -> {
           Text(
-            text = "Error"/*stringResource(id = R.string.errorDownload)*/,
+            text = "Error",
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
           )

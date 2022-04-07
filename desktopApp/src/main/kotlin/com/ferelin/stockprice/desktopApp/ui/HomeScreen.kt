@@ -6,6 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.desktopApp.ViewModelWrapper
+import com.ferelin.stockprice.desktopApp.ui.components.APP_START_PADDING
+import com.ferelin.stockprice.desktopApp.ui.components.APP_TOP_PADDING
 import com.ferelin.stockprice.desktopApp.ui.components.NavigationBarItem
 import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 import com.ferelin.stockprice.shared.ui.viewModel.*
@@ -13,7 +15,7 @@ import com.ferelin.stockprice.sharedComposables.components.TopSearchField
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun HomeRoute(
+internal fun HomeScreenRoute(
   onSearchRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
@@ -95,7 +97,7 @@ private fun NavigationBar(
             onClick = { onScreenSelected(SCREEN_CRYPTOS_INDEX) }
           )
         }
-        else -> throw IllegalStateException("No screen for index [$screenIndex]")
+        else -> error("No screen for index [$screenIndex]")
       }
     }
   }
@@ -110,6 +112,6 @@ private fun SelectedScreenContent(
     SCREEN_STOCKS_INDEX -> StocksScreenRoute(onStockRoute = onStockClick)
     SCREEN_FAVOURITE_STOCKS_INDEX -> FavouriteStocksScreenRoute(onStockRoute = onStockClick)
     SCREEN_CRYPTOS_INDEX -> CryptosScreenRoute()
-    else -> throw IllegalStateException("No screen for index [$selectedScreenIndex]")
+    else -> error("No screen for index [$selectedScreenIndex]")
   }
 }

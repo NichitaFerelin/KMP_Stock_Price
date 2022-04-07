@@ -11,7 +11,7 @@ import com.ferelin.stockprice.sharedComposables.components.CryptosList
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun CryptosRoute() {
+internal fun CryptosScreenRoute() {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
   val viewModel: CryptosViewModel = remember { viewModelWrapper.viewModel() }
   val uiState by viewModel.uiState.collectAsState()

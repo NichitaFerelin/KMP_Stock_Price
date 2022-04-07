@@ -26,7 +26,7 @@ import com.ferelin.stockprice.sharedComposables.components.ProfileInfoRowClickab
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun ProfileScreenRoute(
+internal fun ProfileScreenRoute(
   profileParams: ProfileParams
 ) {
   val viewModelScope = rememberCoroutineScope()
@@ -51,19 +51,19 @@ private fun ProfileScreen(
     Spacer(modifier = Modifier.height(12.dp))
     Icon(
       imageVector = Icons.Default.Info,
-      contentDescription = "",
+      contentDescription = "Company information",
       tint = Color.Blue
     )
     Spacer(modifier = Modifier.height(12.dp))
     ProfileInfoColumn(
-      name = "Name: " /*stringResource(R.string.hintName)*/,
+      name = "Name: ",
       content = uiState.profile.companyName
     )
     Spacer(modifier = Modifier.height(12.dp))
 
     if (uiState.profile.webUrl.isNotEmpty()) {
       ProfileInfoColumnClickable(
-        name = "Web url: "/*stringResource(R.string.hintWebsite)*/,
+        name = "Web url: ",
         content = uiState.profile.webUrl,
         onClick = { /**/ }
       )
@@ -77,21 +77,21 @@ private fun ProfileScreen(
 
     if (uiState.profile.country.isNotEmpty()) {
       ProfileInfoRow(
-        name = "Country: "/*stringResource(R.string.hintCountry)*/,
+        name = "Country: ",
         content = uiState.profile.country
       )
       Spacer(modifier = Modifier.height(14.dp))
     }
     if (uiState.profile.industry.isNotEmpty()) {
       ProfileInfoRow(
-        name = "Industry: "/*stringResource(R.string.hintIndustry)*/,
+        name = "Industry: ",
         content = uiState.profile.industry
       )
       Spacer(modifier = Modifier.height(14.dp))
     }
     if (uiState.profile.phone.isNotEmpty()) {
       ProfileInfoRowClickable(
-        name = "Phone: "/*stringResource(R.string.hintPhone)*/,
+        name = "Phone: ",
         content = uiState.profile.phone,
         onClick = { /**/ }
       )
@@ -99,7 +99,7 @@ private fun ProfileScreen(
     }
     if (uiState.profile.capitalization.isNotEmpty()) {
       ProfileInfoRow(
-        name = "Capitalization: "/*stringResource(R.string.hintCapitalization)*/,
+        name = "Capitalization: ",
         content = uiState.profile.capitalization
       )
       Spacer(modifier = Modifier.height(30.dp))

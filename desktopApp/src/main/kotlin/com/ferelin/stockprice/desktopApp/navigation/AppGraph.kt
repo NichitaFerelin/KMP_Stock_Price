@@ -2,7 +2,7 @@ package com.ferelin.stockprice.desktopApp.navigation
 
 import androidx.compose.runtime.*
 import com.ferelin.stockprice.desktopApp.ui.AboutScreenRoute
-import com.ferelin.stockprice.desktopApp.ui.HomeRoute
+import com.ferelin.stockprice.desktopApp.ui.HomeScreenRoute
 import com.ferelin.stockprice.desktopApp.ui.SearchScreenRoute
 import com.ferelin.stockprice.shared.ui.params.AboutParams
 
@@ -14,7 +14,7 @@ internal fun AppNavigationGraph() {
 
   when (screenDestination) {
     is Destination.HomeDestination -> {
-      HomeRoute(
+      HomeScreenRoute(
         onSearchRoute = { screenDestination = Destination.SearchDestination },
         onStockRoute = { selectedStock ->
           val aboutParams = AboutParams(
