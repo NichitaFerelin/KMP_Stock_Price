@@ -7,7 +7,7 @@ import com.ferelin.stockprice.shared.ui.viewModel.CryptosViewModel
 import com.ferelin.stockprice.sharedComposables.components.CryptosList
 
 @Composable
-fun CryptosScreenRoute() {
+internal fun CryptosScreenRoute() {
   val viewModelScope = rememberCoroutineScope()
   val viewModel: CryptosViewModel = remember {
     ViewModelWrapper().viewModel(viewModelScope)

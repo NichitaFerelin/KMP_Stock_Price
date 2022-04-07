@@ -10,25 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ferelin.stockprice.desktopApp.ui.APP_NAV_ITEM_HEIGHT
-import com.ferelin.stockprice.desktopApp.ui.APP_NAV_ITEM_WIDTH
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun NavButtonBack(
+internal fun NavButtonBack(
   onClick: () -> Unit
 ) {
   Row(
     modifier = Modifier
       .width(APP_NAV_ITEM_WIDTH)
       .height(APP_NAV_ITEM_HEIGHT)
-      .clickable(onClick = onClick),
-    horizontalArrangement = Arrangement.Center,
+      .clickable(onClick = onClick)
+      .padding(start = APP_START_PADDING),
     verticalAlignment = Alignment.CenterVertically
   ) {
     Icon(
       imageVector = Icons.Default.ArrowBack,
-      contentDescription = "",
+      contentDescription = "Navigation back",
       tint = AppTheme.colors.buttonPrimary
     )
     Spacer(modifier = Modifier.width(6.dp))

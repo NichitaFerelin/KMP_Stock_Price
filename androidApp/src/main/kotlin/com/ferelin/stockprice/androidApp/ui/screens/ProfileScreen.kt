@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.startActivitySafety
+import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
 import com.ferelin.stockprice.shared.ui.params.ProfileParams
 import com.ferelin.stockprice.shared.ui.viewModel.ProfileStateUi
@@ -31,7 +33,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ProfileRoute(params: ProfileParams) {
+internal fun ProfileScreenRoute(params: ProfileParams) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
   val viewModel: ProfileViewModel = remember { viewModelWrapper.viewModel(params) }
   val uiState by viewModel.uiState.collectAsState()
@@ -44,7 +46,7 @@ fun ProfileRoute(params: ProfileParams) {
         val shareText = "$companyName [$country]\n$phone\n$webUrl"
         val intent = Intent(Intent.ACTION_SEND).apply {
           putExtra(Intent.EXTRA_TEXT, shareText)
-          type = "text/plain"
+          type = INTENT_TEXT_SEND_TYPE
         }
         context.startActivitySafety(intent)
       }
@@ -57,7 +59,7 @@ fun ProfileRoute(params: ProfileParams) {
     onPhoneClick = {
       val intent = Intent(
         Intent.ACTION_DIAL,
-        Uri.fromParts("tel", uiState.profile.phone, null)
+        Uri.fromParts(INTENT_ACTION_TEL_SCHEMA, uiState.profile.phone, null)
       )
       context.startActivitySafety(intent)
     }
@@ -84,7 +86,7 @@ private fun ProfileScreen(
         .padding(top = 6.dp, end = 16.dp),
       backgroundColor = AppTheme.colors.backgroundPrimary,
       imageVector = Icons.Default.Share,
-      contentDescription = "" /*stringResource(id = R.string.descriptionShare)*/,
+      contentDescription = stringResource(id = R.string.descriptionShare),
       iconTint = AppTheme.colors.buttonPrimary,
       onClick = onShareClick
     )
@@ -101,14 +103,14 @@ private fun ProfileScreen(
       )
       Spacer(modifier = Modifier.height(12.dp))
       ProfileInfoColumn(
-        name = "" /*stringResource(R.string.hintName)*/,
+        name = stringResource(R.string.hintName),
         content = uiState.profile.companyName
       )
       Spacer(modifier = Modifier.height(12.dp))
 
       if (uiState.profile.webUrl.isNotEmpty()) {
         ProfileInfoColumnClickable(
-          name = ""/*stringResource(R.string.hintWebsite)*/,
+          name = stringResource(R.string.hintWebsite),
           content = uiState.profile.webUrl,
           onClick = onUrlClick
         )
@@ -122,21 +124,21 @@ private fun ProfileScreen(
 
       if (uiState.profile.country.isNotEmpty()) {
         ProfileInfoRow(
-          name = ""/*stringResource(R.string.hintCountry)*/,
+          name = stringResource(R.string.hintCountry),
           content = uiState.profile.country
         )
         Spacer(modifier = Modifier.height(14.dp))
       }
       if (uiState.profile.industry.isNotEmpty()) {
         ProfileInfoRow(
-          name = ""/*stringResource(R.string.hintIndustry)*/,
+          name = stringResource(R.string.hintIndustry),
           content = uiState.profile.industry
         )
         Spacer(modifier = Modifier.height(14.dp))
       }
       if (uiState.profile.phone.isNotEmpty()) {
         ProfileInfoRowClickable(
-          name = ""/*stringResource(R.string.hintPhone)*/,
+          name = stringResource(R.string.hintPhone),
           content = uiState.profile.phone,
           onClick = onPhoneClick
         )
@@ -144,7 +146,7 @@ private fun ProfileScreen(
       }
       if (uiState.profile.capitalization.isNotEmpty()) {
         ProfileInfoRow(
-          name = ""/*stringResource(R.string.hintCapitalization)*/,
+          name = stringResource(R.string.hintCapitalization),
           content = uiState.profile.capitalization
         )
         Spacer(modifier = Modifier.height(30.dp))
@@ -152,3 +154,6 @@ private fun ProfileScreen(
     }
   }
 }
+
+internal const val INTENT_TEXT_SEND_TYPE = "text/plain"
+internal const val INTENT_ACTION_TEL_SCHEMA = "tel"

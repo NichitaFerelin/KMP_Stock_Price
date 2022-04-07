@@ -9,7 +9,7 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.ferelin.stockprice.androidApp.ui.navigation.AppNavigationGraph
 import com.google.accompanist.insets.ProvideWindowInsets
 
-class MainActivity : AppCompatActivity() {
+internal class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

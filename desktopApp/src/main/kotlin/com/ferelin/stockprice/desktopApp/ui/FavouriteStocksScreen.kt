@@ -8,7 +8,7 @@ import com.ferelin.stockprice.shared.ui.viewModel.FavouriteStocksViewModel
 import com.ferelin.stockprice.sharedComposables.components.StocksList
 
 @Composable
-fun FavouriteStocksScreenRoute(
+internal fun FavouriteStocksScreenRoute(
   onStockRoute: (StockViewData) -> Unit
 ) {
   val viewModelScope = rememberCoroutineScope()

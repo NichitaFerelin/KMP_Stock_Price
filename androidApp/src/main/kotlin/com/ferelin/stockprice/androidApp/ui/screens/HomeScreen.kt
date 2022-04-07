@@ -7,22 +7,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
 import com.ferelin.stockprice.shared.ui.viewData.StockViewData
-import com.ferelin.stockprice.shared.ui.viewModel.HomeStateUi
-import com.ferelin.stockprice.shared.ui.viewModel.HomeViewModel
-import com.ferelin.stockprice.sharedComposables.components.ClickableIcon
+import com.ferelin.stockprice.shared.ui.viewModel.*
 import com.ferelin.stockprice.sharedComposables.components.HomeTab
-import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.ferelin.stockprice.sharedComposables.components.TopSearchField
+import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.flow.launchIn
@@ -30,9 +25,8 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun HomeScreenRoute(
+internal fun HomeScreenRoute(
   onSearchRoute: () -> Unit,
-  onSettingsRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
@@ -43,10 +37,9 @@ fun HomeScreenRoute(
     uiState = uiState,
     onScreenSelected = viewModel::onScreenSelected,
     onSearchClick = onSearchRoute,
-    onSettingsClick = onSettingsRoute,
-    onCryptosRoute = { CryptosRoute() },
-    onStocksRoute = { StocksRoute(onStockRoute = onStockRoute) },
-    onFavouriteStocksRoute = { FavouriteStocksRoute(onStockRoute = onStockRoute) }
+    onCryptosRoute = { CryptosScreenRoute() },
+    onStocksRoute = { StocksScreenRoute(onStockRoute = onStockRoute) },
+    onFavouriteStocksRoute = { FavouriteStocksScreenRoute(onStockRoute = onStockRoute) }
   )
 }
 
@@ -55,7 +48,6 @@ private fun HomeScreen(
   uiState: HomeStateUi,
   onScreenSelected: (Int) -> Unit,
   onSearchClick: () -> Unit,
-  onSettingsClick: () -> Unit,
   onCryptosRoute: @Composable () -> Unit,
   onStocksRoute: @Composable () -> Unit,
   onFavouriteStocksRoute: @Composable () -> Unit
@@ -77,30 +69,15 @@ private fun HomeScreen(
       .background(AppTheme.colors.backgroundPrimary)
   ) {
     Spacer(modifier = Modifier.height(14.dp))
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Text(
-        text = stringResource(id = R.string.titleHome),
-        style = AppTheme.typography.title1,
-        color = AppTheme.colors.textPrimary
-      )
-      ClickableIcon(
-        backgroundColor = AppTheme.colors.backgroundPrimary,
-        iconTint = AppTheme.colors.buttonPrimary,
-        imageVector = Icons.Default.Settings,
-        contentDescription = stringResource(id = R.string.descriptionSettings),
-        onClick = onSettingsClick
-      )
-    }
+    Text(
+      text = stringResource(id = R.string.titleHome),
+      style = AppTheme.typography.title1,
+      color = AppTheme.colors.textPrimary
+    )
     Spacer(modifier = Modifier.height(12.dp))
     TopSearchField(onClick = onSearchClick)
     Spacer(modifier = Modifier.height(12.dp))
-    Tabs(
+    PagerTabs(
       modifier = Modifier.fillMaxWidth(),
       pagerState = pagerState,
       onTabClick = onScreenSelected
@@ -116,7 +93,7 @@ private fun HomeScreen(
 
 
 @Composable
-private fun Tabs(
+private fun PagerTabs(
   modifier: Modifier = Modifier,
   pagerState: PagerState,
   onTabClick: (Int) -> Unit
@@ -131,27 +108,27 @@ private fun Tabs(
       )
     }
   ) {
-    repeat(TOTAL_SCREENS) { index ->
+    repeat(HOME_TOTAL_SCREENS) { index ->
       when (index) {
-        CRYPTOS_SCREEN_INDEX -> {
+        SCREEN_CRYPTOS_INDEX -> {
           HomeTab(
             title = stringResource(id = R.string.titleCryptos),
-            isSelected = pagerState.currentPage == CRYPTOS_SCREEN_INDEX,
-            onClick = { onTabClick(CRYPTOS_SCREEN_INDEX) }
+            isSelected = pagerState.currentPage == SCREEN_CRYPTOS_INDEX,
+            onClick = { onTabClick(SCREEN_CRYPTOS_INDEX) }
           )
         }
-        STOCKS_SCREEN_INDEX -> {
+        SCREEN_STOCKS_INDEX -> {
           HomeTab(
             title = stringResource(id = R.string.titleStocks),
-            isSelected = pagerState.currentPage == STOCKS_SCREEN_INDEX,
-            onClick = { onTabClick(STOCKS_SCREEN_INDEX) }
+            isSelected = pagerState.currentPage == SCREEN_STOCKS_INDEX,
+            onClick = { onTabClick(SCREEN_STOCKS_INDEX) }
           )
         }
-        FAVOURITE_STOCKS_SCREEN_INDEX -> {
+        SCREEN_FAVOURITE_STOCKS_INDEX -> {
           HomeTab(
             title = stringResource(id = R.string.titleFavourite),
-            isSelected = pagerState.currentPage == FAVOURITE_STOCKS_SCREEN_INDEX,
-            onClick = { onTabClick(FAVOURITE_STOCKS_SCREEN_INDEX) }
+            isSelected = pagerState.currentPage == SCREEN_FAVOURITE_STOCKS_INDEX,
+            onClick = { onTabClick(SCREEN_FAVOURITE_STOCKS_INDEX) }
           )
         }
         else -> error("There is no tab for screen index [$index] ")
@@ -168,19 +145,14 @@ private fun ScreensPager(
   onFavouriteStocksRoute: @Composable () -> Unit
 ) {
   HorizontalPager(
-    count = TOTAL_SCREENS,
+    count = HOME_TOTAL_SCREENS,
     state = pagerState
   ) { pageIndex ->
     when (pageIndex) {
-      CRYPTOS_SCREEN_INDEX -> onCryptosRoute()
-      STOCKS_SCREEN_INDEX -> onStocksRoute()
-      FAVOURITE_STOCKS_SCREEN_INDEX -> onFavouriteStocksRoute()
+      SCREEN_CRYPTOS_INDEX -> onCryptosRoute()
+      SCREEN_STOCKS_INDEX -> onStocksRoute()
+      SCREEN_FAVOURITE_STOCKS_INDEX -> onFavouriteStocksRoute()
       else -> error("There is no screen for index [$pageIndex]")
     }
   }
 }
-
-private const val TOTAL_SCREENS = 3
-internal const val CRYPTOS_SCREEN_INDEX = 0
-internal const val STOCKS_SCREEN_INDEX = 1
-internal const val FAVOURITE_STOCKS_SCREEN_INDEX = 2

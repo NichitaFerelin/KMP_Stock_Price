@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.startActivitySafety
+import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
 import com.ferelin.stockprice.shared.domain.entity.LceState
 import com.ferelin.stockprice.shared.ui.params.NewsParams
@@ -28,7 +30,7 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun NewsRoute(params: NewsParams) {
+internal fun NewsScreenRoute(params: NewsParams) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
   val viewModel: NewsViewModel = remember { viewModelWrapper.viewModel(params) }
   val uiState by viewModel.uiState.collectAsState()
@@ -85,7 +87,7 @@ private fun NewsScreen(
         }
         is LceState.Error -> {
           Text(
-            text = ""/*stringResource(id = R.string.errorDownload)*/,
+            text = stringResource(id = R.string.errorDownload),
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
           )

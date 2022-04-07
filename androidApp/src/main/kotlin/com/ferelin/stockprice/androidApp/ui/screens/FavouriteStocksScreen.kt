@@ -12,7 +12,7 @@ import com.ferelin.stockprice.sharedComposables.components.StocksList
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun FavouriteStocksRoute(
+internal fun FavouriteStocksScreenRoute(
   onStockRoute: (StockViewData) -> Unit
 ) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
