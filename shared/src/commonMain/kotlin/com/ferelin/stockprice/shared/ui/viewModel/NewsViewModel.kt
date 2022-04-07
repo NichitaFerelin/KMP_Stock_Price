@@ -29,17 +29,12 @@ class NewsViewModel(
     newsUseCase.getNewsBy(companyId = CompanyId(newsParams.companyId))
       .map { it.map(NewsMapper::map) }
       .onEach(this::onNews)
+      .onEach { onNetwork(true) }
       .launchIn(viewModelScope)
 
     newsUseCase.newsLce
       .onEach(this::onNewsLce)
       .launchIn(viewModelScope)
-
-    /*networkListener.networkState
-      .distinctUntilChanged()
-      .onEach(this::onNetwork)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)*/
   }
 
   private fun onNews(news: List<NewsViewData>) {

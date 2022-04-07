@@ -28,6 +28,7 @@ import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
+import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -36,13 +37,7 @@ fun AboutRoute(
   onBackRoute: () -> Unit
 ) {
   val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: AboutViewModel by remember {
-    viewModelWrapper.viewModel(
-      params.companyId,
-      params.companyName,
-      params.companyTicker
-    )
-  }
+  val viewModel: AboutViewModel = remember { viewModelWrapper.viewModel(params) }
   val uiState by viewModel.uiState.collectAsState()
 
   AboutScreen(

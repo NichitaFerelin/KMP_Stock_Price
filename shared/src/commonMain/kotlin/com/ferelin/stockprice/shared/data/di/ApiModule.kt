@@ -1,5 +1,9 @@
 package com.ferelin.stockprice.shared.data.di
 
+import com.ferelin.stockprice.shared.data.entity.company.CompanyApi
+import com.ferelin.stockprice.shared.data.entity.company.CompanyApiImpl
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoApi
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoApiImpl
 import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceApi
 import com.ferelin.stockprice.shared.data.entity.cryptoPrice.CryptoPriceApiImpl
 import com.ferelin.stockprice.shared.data.entity.news.NewsApi
@@ -26,6 +30,8 @@ internal val apiModule = module {
   factory<NewsApi> { NewsApiImpl(get()) }
   factory<PastPriceApi> { PastPriceApiImpl(get()) }
   factory<StockPriceApi> { StockPriceApiImpl(get()) }
+  factory<CompanyApi> { CompanyApiImpl(get()) }
+  factory<CryptoApi> { CryptoApiImpl(get()) }
 }
 
 internal const val NAMED_STOCKS_TOKEN = "stocks_token"

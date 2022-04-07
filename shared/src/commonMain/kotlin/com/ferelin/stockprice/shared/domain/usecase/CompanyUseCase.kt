@@ -17,7 +17,10 @@ internal class CompanyUseCaseImpl(
     get() = companyRepository.companies
       .onStart { companiesLceState.value = LceState.Loading }
       .onEach { companiesLceState.value = LceState.Content }
-      .catch { e -> companiesLceState.value = LceState.Error(e.message) }
+      .catch { e ->
+        e.printStackTrace()
+        companiesLceState.value = LceState.Error(e.message)
+      }
 
   private val companiesLceState = MutableStateFlow<LceState>(LceState.None)
   override val companiesLce: Flow<LceState> = companiesLceState.asStateFlow()

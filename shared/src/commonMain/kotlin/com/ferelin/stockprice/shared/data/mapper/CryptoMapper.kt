@@ -1,7 +1,7 @@
 package com.ferelin.stockprice.shared.data.mapper
 
 import com.ferelin.stockprice.db.CryptoDBO
-import com.ferelin.stockprice.shared.data.entity.crypto.CryptoJson
+import com.ferelin.stockprice.shared.data.entity.crypto.CryptoPojo
 import com.ferelin.stockprice.shared.domain.entity.Crypto
 import com.ferelin.stockprice.shared.domain.entity.CryptoId
 
@@ -24,13 +24,13 @@ internal object CryptoMapper {
     )
   }
 
-  fun map(cryptosJson: List<CryptoJson>): List<CryptoDBO> {
-    return cryptosJson.mapIndexed { index, cryptoJson ->
+  fun map(cryptosJson: List<CryptoPojo>): List<CryptoDBO> {
+    return cryptosJson.mapIndexed { index, cryptoPojo ->
       CryptoDBO(
         id = index,
-        ticker = cryptoJson.symbol,
-        name = cryptoJson.name,
-        logoUrl = cryptoJson.logoUrl
+        ticker = cryptoPojo.symbol,
+        name = cryptoPojo.name,
+        logoUrl = cryptoPojo.logoUrl
       )
     }
   }
