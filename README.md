@@ -31,4 +31,18 @@ Stock Price - is an application which displays actual price of stocks at marketp
 - Kotlin Serialization
 
 ## UI
-TODO
+### Android
+<p float="middle">
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/android_1.jpg" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/android_2.jpg" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/android_3.jpg" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/android_4.jpg" height="400" width = "200"/>
+ </p>
+
+### Jvm (Desktop)
+<p float="middle">
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/desktop_1.png" height="400"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/desktop_2.png" height="400"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/desktop_3.png" height="400"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/master/dev-preview/desktop_4.png" height="400"/>
+ </p>
