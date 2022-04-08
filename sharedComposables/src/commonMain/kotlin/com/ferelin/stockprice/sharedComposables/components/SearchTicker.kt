@@ -15,10 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
-internal val SEARCH_TICKER_HEIGHT = 37.dp
-
 @Composable
-internal fun SearchTicker(
+fun SearchTicker(
   modifier: Modifier = Modifier,
   text: String,
   onClick: () -> Unit
@@ -40,3 +38,5 @@ internal fun SearchTicker(
     )
   }
 }
+
+internal val SEARCH_TICKER_HEIGHT = 37.dp

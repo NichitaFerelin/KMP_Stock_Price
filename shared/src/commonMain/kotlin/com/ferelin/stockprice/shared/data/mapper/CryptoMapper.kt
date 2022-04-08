@@ -25,12 +25,12 @@ internal object CryptoMapper {
   }
 
   fun map(cryptosJson: List<CryptoPojo>): List<CryptoDBO> {
-    return cryptosJson.mapIndexed { index, cryptoPojo ->
+    return cryptosJson.mapIndexed { index, pojo ->
       CryptoDBO(
         id = index,
-        ticker = cryptoPojo.symbol,
-        name = cryptoPojo.name,
-        logoUrl = cryptoPojo.logoUrl
+        ticker = pojo.symbol,
+        name = pojo.name,
+        logoUrl = pojo.logoUrl
       )
     }
   }

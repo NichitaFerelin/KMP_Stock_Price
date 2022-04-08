@@ -8,14 +8,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class AboutStateUi(
+data class AboutStateUi internal constructor(
   val companyTicker: String,
   val companyName: String,
   val isFavourite: Boolean = false,
   val selectedScreenIndex: Int = SCREEN_PROFILE_INDEX
 )
 
-class AboutViewModel(
+class AboutViewModel internal constructor(
   private val aboutParams: AboutParams,
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val viewModelScope: CoroutineScope,

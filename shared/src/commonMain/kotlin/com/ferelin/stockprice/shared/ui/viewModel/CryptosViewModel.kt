@@ -11,12 +11,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class CryptosStateUi(
+data class CryptosStateUi internal constructor(
   val cryptos: List<CryptoViewData> = emptyList(),
   val cryptosLce: LceState = LceState.None
 )
 
-class CryptosViewModel(
+class CryptosViewModel internal constructor(
   private val cryptoPriceUseCase: CryptoPriceUseCase,
   private val viewModelScope: CoroutineScope,
   private val dispatchersProvider: DispatchersProvider,
@@ -27,6 +27,7 @@ class CryptosViewModel(
 
   init {
     cryptoUseCase.cryptos
+      .onEach(this::fetchData)
       .combine(
         flow = cryptoPriceUseCase.cryptoPrices,
         transform = { cryptos, prices ->
@@ -35,11 +36,6 @@ class CryptosViewModel(
         }
       )
       .onEach(this::onCryptos)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
-
-    cryptoUseCase.cryptos
-      .onEach(this::onNetworkAvailable)
       .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
 
@@ -64,7 +60,7 @@ class CryptosViewModel(
     viewModelState.update { it.copy(cryptosLce = lceState) }
   }
 
-  private fun onNetworkAvailable(cryptos: List<Crypto>) {
+  private fun fetchData(cryptos: List<Crypto>) {
     viewModelScope.launch(dispatchersProvider.IO) {
       cryptoPriceUseCase.fetchPriceFor(cryptos)
     }

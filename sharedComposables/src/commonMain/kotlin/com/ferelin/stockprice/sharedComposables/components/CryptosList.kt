@@ -11,7 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,11 +98,11 @@ fun CryptosList(
                 }
               }
             ) {
-              /*Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_up_24),
-                contentDescription = stringResource(id = R.string.descriptionScrollToTop),
-                tint = com.ferelin.stockprice.sharedComposables.theme.AppTheme.colors.buttonPrimary
-              )*/
+              Icon(
+                imageVector = Icons.Default.ArrowUpward,
+                contentDescription = "Scroll up",
+                tint = AppTheme.colors.buttonPrimary
+              )
             }
           }
         }
@@ -112,7 +115,7 @@ fun CryptosList(
         is LceState.Error -> {
           Text(
             modifier = Modifier.align(Alignment.Center),
-            text = "temp"/*stringResource(id = R.string.errorDownload)*/,
+            text = "Download error",
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
           )

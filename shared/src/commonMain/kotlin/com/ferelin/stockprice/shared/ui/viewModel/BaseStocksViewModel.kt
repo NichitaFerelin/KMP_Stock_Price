@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-open class BaseStocksViewModel(
+open class BaseStocksViewModel internal constructor(
   private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   protected val viewModelScope: CoroutineScope,
   protected val dispatchersProvider: DispatchersProvider,

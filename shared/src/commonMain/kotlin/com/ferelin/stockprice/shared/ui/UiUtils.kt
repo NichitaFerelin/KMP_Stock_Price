@@ -84,11 +84,3 @@ fun formatProfitString(priceProfit: String, priceProfitPercents: String): String
   } else ",$remainderResult"
   return "$profitResult ($mainPart$secondPart%)"
 }
-
-fun parseMonthFromDate(date: String): String {
-  return date.filter { it.isLetter() }
-}
-
-fun parseYearFromDate(date: String): String {
-  return date.split(" ").getOrNull(2) ?: ""
-}

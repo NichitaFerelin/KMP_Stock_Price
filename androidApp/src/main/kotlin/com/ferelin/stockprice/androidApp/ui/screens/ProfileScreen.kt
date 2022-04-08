@@ -20,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.startActivitySafety
 import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.androidApp.ui.startActivitySafety
 import com.ferelin.stockprice.shared.ui.params.ProfileParams
 import com.ferelin.stockprice.shared.ui.viewModel.ProfileStateUi
 import com.ferelin.stockprice.shared.ui.viewModel.ProfileViewModel

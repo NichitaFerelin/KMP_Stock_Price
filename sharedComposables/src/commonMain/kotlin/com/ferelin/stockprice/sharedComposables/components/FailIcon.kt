@@ -16,7 +16,7 @@ fun BoxScope.FailIcon(
   Icon(
     modifier = modifier.align(Alignment.Center),
     imageVector = Icons.Default.Close,
-    contentDescription = null,
+    contentDescription = "Download failed",
     tint = AppTheme.colors.contendTertiary
   )
 }
