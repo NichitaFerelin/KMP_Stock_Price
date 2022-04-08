@@ -30,13 +30,13 @@ Stock Price - is an android application which displays actual price of stocks at
 
 ## Compose UI
 <p float="middle">
-<img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/Preview_1.gif" height="400" width = "200"/>
-<img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/Preview_2.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/retrofit_dagger2_room/dev-preview/Preview_1.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/retrofit_dagger2_room/dev-preview/Preview_2.gif" height="400" width = "200"/>
 </p>
 
 ## XML
 <p float="middle">
-<img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
-  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
-  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/retrofit_dagger2_room/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/retrofit_dagger2_room/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/retrofit_dagger2_room/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
 </p>
