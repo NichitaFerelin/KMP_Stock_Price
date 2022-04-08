@@ -27,7 +27,7 @@ Stock Price - is an android application which displays actual price of stocks at
 
 ## XML
 <p float="middle">
-<img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
-  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
-  <img src="https://github.com/NikitaFerelin/Android_Stock_Price/blob/master/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/simplified_for_android_only/dev-preview/XML_preview_1.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/simplified_for_android_only/dev-preview/XML_preview_2.gif" height="400" width = "200"/>
+  <img src="https://github.com/NichitaFerelin/Stock_Price/blob/simplified_for_android_only/dev-preview/XML_preview_3.gif" height="400" width = "200"/>
 </p>
