@@ -48,18 +48,15 @@ android {
 }
 
 dependencies {
-  implementation(project(":shared"))
+  api(project(":shared"))
   implementation(project(":sharedComposables"))
 
+  implementation(Libs.Kotlin.stdLib)
   implementation(Libs.androidCore)
-  implementation(Libs.documentFile)
   implementation(Libs.timber)
 
-  implementation(Libs.Kotlin.stdLib)
-  implementation(Libs.Coroutines.core)
-  implementation(Libs.Coroutines.android)
 
-  implementation(Libs.Koin.core)
+  implementation(Libs.Coroutines.android)
   implementation(Libs.Koin.android)
 
   implementation(Libs.material)
@@ -71,25 +68,14 @@ dependencies {
   implementation(Libs.Compose.activity)
   implementation(Libs.Compose.navigation)
   implementation(Libs.Compose.animations)
-  implementation(Libs.Compose.viewModel)
   implementation(Libs.Compose.glide)
   implementation(Libs.Koin.compose)
 
-  implementation(Libs.Accompanist.insets)
-  implementation(Libs.Accompanist.systemUiController)
   implementation(Libs.Accompanist.pager)
+  implementation(Libs.Accompanist.insets)
   implementation(Libs.Accompanist.pagerIndicators)
-  implementation(Libs.Accompanist.swipeRefresh)
-  implementation(Libs.Accompanist.flowLayout)
-
-  implementation(Libs.dataStorePreferences)
 
   implementation(platform(Libs.Firebase.platform))
-  implementation(Libs.Firebase.databaseKtx)
   implementation(Libs.Firebase.analyticsKtx)
-  implementation(Libs.Firebase.authenticationKtx)
-  implementation(Libs.Firebase.crashlyticsKtx)
-
-  implementation(platform(Libs.Firebase.platform))
   implementation(Libs.Firebase.crashlyticsKtx)
 }

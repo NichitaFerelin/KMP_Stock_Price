@@ -22,11 +22,11 @@ fun NoSearchResults() {
   ) {
     Icon(
       imageVector = Icons.Default.ImageSearch,
-      contentDescription = ""/*stringResource(id = R.string.descriptionNoSearchResults)*/
+      contentDescription = "No search results"
     )
     Spacer(modifier = Modifier.height(12.dp))
     Text(
-      text = "No search results"/*stringResource(id = R.string.hintNoSearchResults)*/,
+      text = "No search results",
       style = AppTheme.typography.body1,
       color = AppTheme.colors.textPrimary
     )

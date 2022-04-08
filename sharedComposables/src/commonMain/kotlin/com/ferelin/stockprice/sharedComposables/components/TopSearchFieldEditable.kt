@@ -34,14 +34,19 @@ fun TopSearchFieldEditable(
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
 
-  SearchField(modifier = modifier, borderWidth = 2.dp, onClick = { /**/ }) {
+  SearchField(
+    modifier = modifier,
+    borderWidth = 2.dp,
+    onClick = { /**/ }
+  ) {
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
       Spacer(modifier = Modifier.padding(start = 12.dp))
-      ClickableIcon(imageVector = Icons.Default.ArrowBack,
+      ClickableIcon(
+        imageVector = Icons.Default.ArrowBack,
         backgroundColor = AppTheme.colors.backgroundPrimary,
-        contentDescription = ""/*stringResource(R.string.descriptionBack)*/,
+        contentDescription = "Clear search field",
         iconTint = AppTheme.colors.buttonPrimary,
         onClick = {
           keyboardController?.hide()
@@ -49,7 +54,7 @@ fun TopSearchFieldEditable(
         })
       Spacer(modifier = Modifier.width(8.dp))
       TextField(inputValue = inputText,
-        placeholder = "Enter search request"/*stringResource(id = R.string.hintEnterSearchRequest)*/,
+        placeholder = "Enter search request",
         onValueChange = onTextChanged,
         keyboardActions = KeyboardActions { keyboardController?.hide() },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -62,7 +67,7 @@ fun TopSearchFieldEditable(
             ClickableIcon(backgroundColor = AppTheme.colors.backgroundPrimary,
               imageVector = Icons.Default.Close,
               iconTint = AppTheme.colors.buttonPrimary,
-              contentDescription = ""/*stringResource(id = R.string.descriptionIconClose)*/,
+              contentDescription = "Clear search request",
               onClick = { onTextChanged("") })
           }
         })

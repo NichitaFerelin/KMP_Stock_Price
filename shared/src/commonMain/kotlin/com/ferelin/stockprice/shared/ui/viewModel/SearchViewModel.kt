@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.timerTask
 
-data class SearchStateUi(
+data class SearchStateUi internal constructor(
   val searchResults: List<StockViewData> = emptyList(),
   val searchResultsLce: LceState = LceState.None,
   val showCloseIcon: Boolean = false,
@@ -25,7 +25,7 @@ data class SearchStateUi(
   val popularSearchRequestsLce: LceState = LceState.None
 )
 
-class SearchViewModel(
+class SearchViewModel internal constructor(
   private val searchRequestsUseCase: SearchRequestsUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   companyUseCase: CompanyUseCase,
@@ -44,27 +44,34 @@ class SearchViewModel(
   private var searchTaskTimer: Timer? = null
 
   init {
-    searchRequest.combine(flow = companies,
-      transform = { searchRequest, stocks -> searchRequest to stocks }).onEach(this::doSearch)
+    searchRequest
+      .combine(
+        flow = companies,
+        transform = { searchRequest, stocks -> searchRequest to stocks }
+      )
+      .onEach(this::doSearch)
       .launchIn(viewModelScope)
 
-    searchRequestsUseCase.searchRequests.map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onSearchRequests).flowOn(dispatchersProvider.IO).launchIn(viewModelScope)
-
-    searchRequestsUseCase.searchRequestsLce.onEach(this::onSearchRequestsLce)
+    searchRequestsUseCase.searchRequests
+      .map { requests -> requests.map(SearchRequestMapper::map) }
+      .onEach(this::onSearchRequests)
+      .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
 
-    searchRequestsUseCase.popularSearchRequests.map { requests -> requests.map(SearchRequestMapper::map) }
-      .onEach(this::onPopularSearchRequests).flowOn(dispatchersProvider.IO).launchIn(viewModelScope)
+    searchRequestsUseCase.searchRequestsLce
+      .onEach(this::onSearchRequestsLce)
+      .launchIn(viewModelScope)
 
-    searchRequestsUseCase.popularSearchRequestsLce.onEach(this::onPopularSearchRequestsLce)
+    searchRequestsUseCase.popularSearchRequests
+      .map { requests -> requests.map(SearchRequestMapper::map) }
+      .onEach(this::onPopularSearchRequests)
+      .flowOn(dispatchersProvider.IO)
+      .launchIn(viewModelScope)
+
+    searchRequestsUseCase.popularSearchRequestsLce
+      .onEach(this::onPopularSearchRequestsLce)
       .launchIn(viewModelScope)
   }
-
-  /* override fun onCleared() {
-     searchTaskTimer?.cancel()
-     super.onCleared()
-   }*/
 
   fun onSearchTextChanged(searchText: String) {
     viewModelState.update { it.copy(showCloseIcon = searchText.isNotEmpty()) }

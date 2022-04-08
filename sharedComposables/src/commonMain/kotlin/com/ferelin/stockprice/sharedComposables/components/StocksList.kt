@@ -109,7 +109,7 @@ fun StocksList(
             ) {
               Icon(
                 imageVector = Icons.Default.ArrowUpward,
-                contentDescription = ""/*stringResource(id = R.string.descriptionScrollToTop)*/,
+                contentDescription = "Scroll up",
                 tint = AppTheme.colors.buttonPrimary
               )
             }
@@ -124,7 +124,7 @@ fun StocksList(
         is LceState.Error -> {
           Text(
             modifier = Modifier.align(Alignment.Center),
-            text = lce.message ?: ""/*stringResource(id = R.string.errorDownload)*/,
+            text = "Error",
             style = AppTheme.typography.body1,
             color = AppTheme.colors.textPrimary
           )

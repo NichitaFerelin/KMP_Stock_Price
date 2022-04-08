@@ -8,12 +8,12 @@ import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
-data class FavouriteStocksStateUi(
+data class FavouriteStocksStateUi internal constructor(
   val companies: List<StockViewData> = emptyList(),
   val companiesLce: LceState = LceState.None
 )
 
-class FavouriteStocksViewModel(
+class FavouriteStocksViewModel internal constructor(
   companyUseCase: CompanyUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
   viewModelScope: CoroutineScope,

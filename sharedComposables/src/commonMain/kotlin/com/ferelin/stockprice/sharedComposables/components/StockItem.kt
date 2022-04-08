@@ -4,19 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.sharedComposables.NativeStockImage
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun StockItem(
+internal fun StockItem(
   modifier: Modifier = Modifier,
   index: Int,
   iconUrl: String,
@@ -48,11 +46,7 @@ fun StockItem(
         modifier = Modifier.fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically
       ) {
-        Icon(
-          imageVector = Icons.Default.Image,
-          contentDescription = "",
-          tint = Color.Blue
-        )
+        NativeStockImage(iconUrl = iconUrl)
         Spacer(modifier = Modifier.width(12.dp))
         Column {
           ConstrainedText(
@@ -72,8 +66,10 @@ fun StockItem(
         backgroundColor = if (index % 2 == 0) {
           AppTheme.colors.contendPrimary
         } else AppTheme.colors.contendSecondary,
-        imageVector = Icons.Default.Star/*painterResource(id = R.drawable.ic_favourite_16)*/,
-        contentDescription = "" /*TODO*/,
+        imageVector = Icons.Default.Star,
+        contentDescription = if (isFavourite) {
+          "Remove from favourites"
+        } else "Add to favourites",
         iconTint = if (isFavourite) {
           AppTheme.colors.iconActive
         } else AppTheme.colors.iconDisabled,

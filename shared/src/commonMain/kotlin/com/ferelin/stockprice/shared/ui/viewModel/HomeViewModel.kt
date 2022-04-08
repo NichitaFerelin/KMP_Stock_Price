@@ -4,11 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class HomeStateUi(
+data class HomeStateUi internal constructor(
   val selectedScreenIndex: Int = SCREEN_STOCKS_INDEX
 )
 
-class HomeViewModel {
+class HomeViewModel internal constructor() {
   private val viewModelState = MutableStateFlow(HomeStateUi())
   val uiState = viewModelState.asStateFlow()
 

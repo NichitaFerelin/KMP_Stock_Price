@@ -17,13 +17,7 @@ val viewModelModule = module {
     FavouriteStocksViewModel(get(), get(), viewModelScope = params.get(), get())
   }
   factory { params ->
-    LoginViewModel(viewModelScope = params.get(), get())
-  }
-  factory { params ->
     SearchViewModel(get(), get(), get(), viewModelScope = params.get(), get())
-  }
-  factory { params ->
-    SettingsViewModel(get(), get(), viewModelScope = params.get(), get())
   }
   factory { params ->
     StocksViewModel(get(), get(), viewModelScope = params.get(), get())

@@ -9,6 +9,7 @@ import androidx.compose.material.Typography
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import com.ferelin.stockprice.sharedComposables.NativeThemeSettings
 
 @Composable
 fun AppTheme(
@@ -27,13 +28,7 @@ fun AppTheme(
     )
   }
 
-  /*val sysUiController = rememberSystemUiController()
-  SideEffect {
-    sysUiController.setSystemBarsColor(
-      color = colors.statusBar,
-      darkIcons = !useDarkTheme,
-    )
-  }*/
+  NativeThemeSettings(useDarkTheme, colors)
 
   MaterialTheme(
     colors = debugColors(),

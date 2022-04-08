@@ -65,7 +65,7 @@ fun NewsItem(
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
         Text(
-          text = "Open in browser:" /*stringResource(R.string.hintOpenInBrowser)*/,
+          text = "Open in browser:",
           style = AppTheme.typography.caption1,
           color = AppTheme.colors.textTertiary
         )

@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ferelin.core.startActivitySafety
 import com.ferelin.stockprice.androidApp.R
 import com.ferelin.stockprice.androidApp.ui.ViewModelWrapper
+import com.ferelin.stockprice.androidApp.ui.startActivitySafety
 import com.ferelin.stockprice.shared.domain.entity.LceState
 import com.ferelin.stockprice.shared.ui.params.NewsParams
 import com.ferelin.stockprice.shared.ui.viewModel.NewsStateUi

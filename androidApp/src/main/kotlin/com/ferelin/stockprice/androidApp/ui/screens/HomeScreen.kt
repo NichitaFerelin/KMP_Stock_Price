@@ -70,6 +70,7 @@ private fun HomeScreen(
   ) {
     Spacer(modifier = Modifier.height(14.dp))
     Text(
+      modifier = Modifier.padding(start = 8.dp),
       text = stringResource(id = R.string.titleHome),
       style = AppTheme.typography.title1,
       color = AppTheme.colors.textPrimary

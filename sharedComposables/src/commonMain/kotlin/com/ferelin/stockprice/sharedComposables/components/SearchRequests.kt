@@ -13,8 +13,6 @@ import com.ferelin.stockprice.shared.domain.entity.LceState
 import com.ferelin.stockprice.shared.ui.viewData.SearchViewData
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
-private val START_PADDING = 20.dp
-
 @Composable
 fun SearchRequests(
   modifier: Modifier = Modifier,
@@ -53,7 +51,7 @@ fun SearchRequests(
         } else {
           Text(
             modifier = Modifier.padding(start = START_PADDING),
-            text = "No search requests"/*stringResource(id = R.string.hintNoSearchResults)*/,
+            text = "No search requests",
             style = AppTheme.typography.body2,
             color = AppTheme.colors.textPrimary
           )
@@ -72,7 +70,7 @@ fun SearchRequests(
             }
             is LceState.Error -> {
               Text(
-                text = "temp"/*stringResource(id = R.string.errorDownload)*/,
+                text = "Error",
                 style = AppTheme.typography.body1,
                 color = AppTheme.colors.textPrimary
               )
@@ -84,3 +82,5 @@ fun SearchRequests(
     }
   }
 }
+
+private val START_PADDING = 20.dp
