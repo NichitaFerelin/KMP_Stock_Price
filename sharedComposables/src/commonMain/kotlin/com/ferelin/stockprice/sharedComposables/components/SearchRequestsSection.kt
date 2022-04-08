@@ -18,14 +18,14 @@ fun SearchRequestsSection(
 ) {
   Spacer(modifier = Modifier.height(16.dp))
   SearchRequests(
-    title = "Popular search requests"/*stringResource(R.string.titlePopularRequests)*/,
+    title = "Popular search requests",
     searchRequests = popularSearchRequests,
     searchRequestsLce = popularSearchRequestsLce,
     onTickerClick = onTickerClick
   )
   Spacer(modifier = Modifier.height(16.dp))
   SearchRequests(
-    title = "You've searched for"/*stringResource(R.string.titleYourSearches)*/,
+    title = "You've searched for",
     searchRequests = searchRequests,
     searchRequestsLce = searchRequestsLce,
     onTickerClick = onTickerClick

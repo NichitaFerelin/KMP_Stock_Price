@@ -26,21 +26,21 @@ internal object CompanyMapper {
   }
 
   fun map(companiesPojo: List<CompanyPojo>): Pair<List<CompanyDBO>, List<ProfileDBO>> {
-    return companiesPojo.mapIndexed { index, companyPojo ->
+    return companiesPojo.mapIndexed { index, pojo ->
       Pair(
         CompanyDBO(
           id = index,
-          name = companyPojo.name,
-          ticker = companyPojo.symbol,
-          logoUrl = companyPojo.logo
+          name = pojo.name,
+          ticker = pojo.symbol,
+          logoUrl = pojo.logo
         ),
         ProfileDBO(
           id = index,
-          country = companyPojo.country,
-          phone = companyPojo.phone,
-          webUrl = companyPojo.webUrl,
-          industry = companyPojo.industry,
-          capitalization = companyPojo.capitalization
+          country = pojo.country,
+          phone = pojo.phone,
+          webUrl = pojo.webUrl,
+          industry = pojo.industry,
+          capitalization = pojo.capitalization
         )
       )
     }.unzip()

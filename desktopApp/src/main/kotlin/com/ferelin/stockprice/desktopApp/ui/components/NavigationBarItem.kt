@@ -13,7 +13,7 @@ import com.ferelin.stockprice.sharedComposables.components.ConstrainedText
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-fun NavigationBarItem(
+internal fun NavigationBarItem(
   modifier: Modifier = Modifier,
   title: String,
   isSelected: Boolean,

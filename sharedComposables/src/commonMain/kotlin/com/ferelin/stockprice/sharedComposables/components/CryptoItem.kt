@@ -1,8 +1,6 @@
 package com.ferelin.stockprice.sharedComposables.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -10,13 +8,13 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ferelin.stockprice.sharedComposables.NativeCryptoImage
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
-internal fun CryptoItem(
+fun CryptoItem(
   modifier: Modifier = Modifier,
   name: String,
   iconUrl: String,
@@ -38,11 +36,7 @@ internal fun CryptoItem(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      Icon(
-        imageVector = Icons.Default.Image,
-        contentDescription = "",
-        tint = Color.Blue
-      )
+      NativeCryptoImage(iconUrl = iconUrl)
       Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround

@@ -11,12 +11,12 @@ import com.ferelin.stockprice.shared.ui.viewData.ProfileViewData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
-data class ProfileStateUi(
+data class ProfileStateUi internal constructor(
   val profile: ProfileViewData = ProfileViewData(),
   val profileLce: LceState = LceState.None
 )
 
-class ProfileViewModel(
+class ProfileViewModel internal constructor(
   profileParams: ProfileParams,
   profileUseCase: ProfileUseCase,
   companyUseCase: CompanyUseCase,

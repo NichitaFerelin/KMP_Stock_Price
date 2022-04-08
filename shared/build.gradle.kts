@@ -16,18 +16,18 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api(Libs.Coroutines.core)
+        implementation(Libs.Coroutines.core)
 
-        api(Libs.SqlDelight.core)
-        api(Libs.SqlDelight.coroutinesExt)
+        implementation(Libs.SqlDelight.core)
+        implementation(Libs.SqlDelight.coroutinesExt)
 
-        api(Libs.Ktor.core)
-        api(Libs.Ktor.serialization)
-        api(Libs.Ktor.logging)
+        implementation(Libs.Ktor.core)
+        implementation(Libs.Ktor.serialization)
+        implementation(Libs.Ktor.logging)
 
         api(Libs.Koin.core)
 
-        api(Libs.serializationJson)
+        implementation(Libs.serializationJson)
       }
     }
 

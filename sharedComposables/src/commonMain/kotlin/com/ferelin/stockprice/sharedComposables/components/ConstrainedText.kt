@@ -55,32 +55,3 @@ fun ConstrainedText(
     style = style
   )
 }
-
-/*
-@Preview
-@Composable
-private fun ConstrainedTextDefaultPreview() {
-  ConstrainedText(
-    text = "Possession her thoroughly remarkably terminated man continuing. Removed greater"
-  )
-}
-
-@Preview
-@Composable
-private fun ConstrainedTextWidthPreview() {
-  ConstrainedText(
-    maxWidth = 30.dp,
-    text = "Possession her thoroughly"
-  )
-}
-
-@Preview
-@Composable
-private fun ConstrainedTextLinesPreview() {
-  ConstrainedText(
-    maxLines = 3,
-    text = "An do on frankness so cordially immediate recommend contained. Imprudence insensible be literature " +
-            "unsatiable do. Of or imprudence solicitude affronting in mr possession. Compass journey he request on " +
-            "suppose limited of or."
-  )
-}*/

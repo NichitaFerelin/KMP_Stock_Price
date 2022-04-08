@@ -29,12 +29,12 @@ fun TopSearchField(
       Spacer(modifier = Modifier.padding(start = 12.dp))
       Icon(
         imageVector = Icons.Default.Search,
-        contentDescription = ""/*stringResource(id = R.string.descriptionImageSearch)*/,
+        contentDescription = "Search",
         tint = AppTheme.colors.buttonPrimary
       )
       Spacer(modifier = Modifier.width(12.dp))
       ConstrainedText(
-        text = "Find company by name or ticker"/*stringResource(R.string.hintFindCompany)*/,
+        text = "Find company by name or ticker",
         style = AppTheme.typography.body1,
         color = AppTheme.colors.textPrimary
       )

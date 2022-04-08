@@ -15,7 +15,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api(project(":shared"))
+        implementation(project(":shared"))
         implementation(compose.ui)
         implementation(compose.runtime)
         implementation(compose.foundation)
@@ -29,7 +29,11 @@ kotlin {
 
     val androidMain by getting {
       dependencies {
-        implementation(Libs.Compose.activity)
+        implementation(Libs.Compose.ui)
+        implementation(Libs.Compose.util)
+        implementation(Libs.Compose.material)
+        implementation(Libs.Compose.glide)
+        implementation(Libs.Accompanist.systemUiController)
       }
     }
   }

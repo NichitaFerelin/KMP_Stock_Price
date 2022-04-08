@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
 @Stable
-class AppColors(
+class AppColors internal constructor(
   statusBar: Color,
   contendAccentPrimary: Color,
   backgroundPrimary: Color,
