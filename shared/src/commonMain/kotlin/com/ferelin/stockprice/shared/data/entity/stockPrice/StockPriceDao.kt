@@ -7,20 +7,20 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 
 internal interface StockPriceDao {
-  fun getAll(): Flow<List<StockPriceDBO>>
-  suspend fun insert(stockPriceDBO: StockPriceDBO)
+    fun getAll(): Flow<List<StockPriceDBO>>
+    suspend fun insert(stockPriceDBO: StockPriceDBO)
 }
 
 internal class StockPriceDaoImpl(
-  private val queries: StockPriceQueries
+    private val queries: StockPriceQueries
 ) : StockPriceDao {
-  override fun getAll(): Flow<List<StockPriceDBO>> {
-    return queries.getAll()
-      .asFlow()
-      .mapToList()
-  }
+    override fun getAll(): Flow<List<StockPriceDBO>> {
+        return queries.getAll()
+            .asFlow()
+            .mapToList()
+    }
 
-  override suspend fun insert(stockPriceDBO: StockPriceDBO) {
-    queries.insert(stockPriceDBO)
-  }
+    override suspend fun insert(stockPriceDBO: StockPriceDBO) {
+        queries.insert(stockPriceDBO)
+    }
 }

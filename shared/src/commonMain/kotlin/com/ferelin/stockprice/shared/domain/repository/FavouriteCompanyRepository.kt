@@ -4,8 +4,8 @@ import com.ferelin.stockprice.shared.domain.entity.CompanyId
 import kotlinx.coroutines.flow.Flow
 
 interface FavouriteCompanyRepository {
-  val favouriteCompanies: Flow<List<CompanyId>>
-  suspend fun addToFavourite(companyId: CompanyId)
-  suspend fun removeFromFavourite(companyId: CompanyId)
-  suspend fun eraseAll(clearCloud: Boolean)
+    val favouriteCompanies: Flow<List<CompanyId>>
+    suspend fun addToFavourite(companyId: CompanyId)
+    suspend fun removeFromFavourite(companyId: CompanyId)
+    suspend fun eraseAll(clearCloud: Boolean)
 }

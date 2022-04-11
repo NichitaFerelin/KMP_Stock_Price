@@ -12,19 +12,19 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 internal fun CryptosScreenRoute() {
-  val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: CryptosViewModel = remember { viewModelWrapper.viewModel() }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelWrapper = getViewModel<ViewModelWrapper>()
+    val viewModel: CryptosViewModel = remember { viewModelWrapper.viewModel() }
+    val uiState by viewModel.uiState.collectAsState()
 
-  CryptosScreen(uiState = uiState)
+    CryptosScreen(uiState = uiState)
 }
 
 @Composable
 private fun CryptosScreen(
-  uiState: CryptosStateUi
+    uiState: CryptosStateUi
 ) {
-  CryptosList(
-    cryptos = uiState.cryptos,
-    cryptosLce = uiState.cryptosLce
-  )
+    CryptosList(
+        cryptos = uiState.cryptos,
+        cryptosLce = uiState.cryptosLce
+    )
 }

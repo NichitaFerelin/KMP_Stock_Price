@@ -25,148 +25,148 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun AboutScreenRoute(
-  params: AboutParams,
-  onBackRoute: () -> Unit
+    params: AboutParams,
+    onBackRoute: () -> Unit
 ) {
-  val viewModelScope = rememberCoroutineScope()
-  val viewModel: AboutViewModel = remember {
-    ViewModelWrapper().viewModel(viewModelScope, params)
-  }
-  val uiState by viewModel.uiState.collectAsState()
-
-  AboutScreen(
-    uiState = uiState,
-    onFavouriteIconClick = viewModel::switchFavourite,
-    onScreenSelected = viewModel::onScreenSelected,
-    onBackClick = onBackRoute,
-    onProfileRoute = {
-      val profileParams = remember { ProfileParams(params.companyId) }
-      ProfileScreenRoute(profileParams)
-    },
-    onNewsRoute = {
-      val newsParams = remember { NewsParams(params.companyId, params.companyTicker) }
-      NewsScreenRoute(newsParams)
+    val viewModelScope = rememberCoroutineScope()
+    val viewModel: AboutViewModel = remember {
+        ViewModelWrapper().viewModel(viewModelScope, params)
     }
-  )
+    val uiState by viewModel.uiState.collectAsState()
+
+    AboutScreen(
+        uiState = uiState,
+        onFavouriteIconClick = viewModel::switchFavourite,
+        onScreenSelected = viewModel::onScreenSelected,
+        onBackClick = onBackRoute,
+        onProfileRoute = {
+            val profileParams = remember { ProfileParams(params.companyId) }
+            ProfileScreenRoute(profileParams)
+        },
+        onNewsRoute = {
+            val newsParams = remember { NewsParams(params.companyId, params.companyTicker) }
+            NewsScreenRoute(newsParams)
+        }
+    )
 }
 
 @Composable
 private fun AboutScreen(
-  uiState: AboutStateUi,
-  onFavouriteIconClick: () -> Unit,
-  onScreenSelected: (Int) -> Unit,
-  onBackClick: () -> Unit,
-  onProfileRoute: @Composable () -> Unit,
-  onNewsRoute: @Composable () -> Unit
+    uiState: AboutStateUi,
+    onFavouriteIconClick: () -> Unit,
+    onScreenSelected: (Int) -> Unit,
+    onBackClick: () -> Unit,
+    onProfileRoute: @Composable () -> Unit,
+    onNewsRoute: @Composable () -> Unit
 ) {
-  Row {
-    NavigationBar(
-      modifier = Modifier.padding(top = APP_TOP_PADDING),
-      selectedScreenIndex = uiState.selectedScreenIndex,
-      onScreenSelected = onScreenSelected,
-      onBackClick = onBackClick
-    )
-    Column {
-      TopBar(
-        modifier = Modifier.fillMaxWidth(),
-        companyTicker = uiState.companyTicker,
-        companyName = uiState.companyName,
-        isFavourite = uiState.isFavourite,
-        onFavouriteIconClick = onFavouriteIconClick,
-      )
-      Spacer(modifier = Modifier.height(6.dp))
+    Row {
+        NavigationBar(
+            modifier = Modifier.padding(top = APP_TOP_PADDING),
+            selectedScreenIndex = uiState.selectedScreenIndex,
+            onScreenSelected = onScreenSelected,
+            onBackClick = onBackClick
+        )
+        Column {
+            TopBar(
+                modifier = Modifier.fillMaxWidth(),
+                companyTicker = uiState.companyTicker,
+                companyName = uiState.companyName,
+                isFavourite = uiState.isFavourite,
+                onFavouriteIconClick = onFavouriteIconClick,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
-      when (uiState.selectedScreenIndex) {
-        SCREEN_PROFILE_INDEX -> onProfileRoute()
-        SCREEN_NEWS_INDEX -> onNewsRoute()
-        else -> error("No screen for index [$uiState.selectedScreenIndex]")
-      }
+            when (uiState.selectedScreenIndex) {
+                SCREEN_PROFILE_INDEX -> onProfileRoute()
+                SCREEN_NEWS_INDEX -> onNewsRoute()
+                else -> error("No screen for index [$uiState.selectedScreenIndex]")
+            }
+        }
     }
-  }
 }
 
 @Composable
 private fun NavigationBar(
-  modifier: Modifier = Modifier,
-  selectedScreenIndex: Int,
-  onScreenSelected: (Int) -> Unit,
-  onBackClick: () -> Unit
+    modifier: Modifier = Modifier,
+    selectedScreenIndex: Int,
+    onScreenSelected: (Int) -> Unit,
+    onBackClick: () -> Unit
 ) {
-  Column(
-    modifier = modifier
-  ) {
-    Text(
-      modifier = Modifier.padding(start = APP_START_PADDING),
-      text = "Profile",
-      style = AppTheme.typography.title1,
-      color = AppTheme.colors.textPrimary
-    )
-    Spacer(modifier = Modifier.height(24.dp))
-    NavButtonBack(onClick = onBackClick)
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            modifier = Modifier.padding(start = APP_START_PADDING),
+            text = "Profile",
+            style = AppTheme.typography.title1,
+            color = AppTheme.colors.textPrimary
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        NavButtonBack(onClick = onBackClick)
 
-    repeat(ABOUT_TOTAL_SCREENS) { screenIndex ->
-      when (screenIndex) {
-        SCREEN_PROFILE_INDEX -> {
-          NavigationBarItem(
-            title = "Company info",
-            isSelected = selectedScreenIndex == SCREEN_PROFILE_INDEX,
-            onClick = { onScreenSelected(SCREEN_PROFILE_INDEX) }
-          )
+        repeat(ABOUT_TOTAL_SCREENS) { screenIndex ->
+            when (screenIndex) {
+                SCREEN_PROFILE_INDEX -> {
+                    NavigationBarItem(
+                        title = "Company info",
+                        isSelected = selectedScreenIndex == SCREEN_PROFILE_INDEX,
+                        onClick = { onScreenSelected(SCREEN_PROFILE_INDEX) }
+                    )
+                }
+                SCREEN_NEWS_INDEX -> {
+                    NavigationBarItem(
+                        title = "Company news",
+                        isSelected = selectedScreenIndex == SCREEN_NEWS_INDEX,
+                        onClick = { onScreenSelected(SCREEN_NEWS_INDEX) }
+                    )
+                }
+                else -> error("No screen for index [$screenIndex]")
+            }
         }
-        SCREEN_NEWS_INDEX -> {
-          NavigationBarItem(
-            title = "Company news",
-            isSelected = selectedScreenIndex == SCREEN_NEWS_INDEX,
-            onClick = { onScreenSelected(SCREEN_NEWS_INDEX) }
-          )
-        }
-        else -> error("No screen for index [$screenIndex]")
-      }
     }
-  }
 }
 
 @Composable
 private fun TopBar(
-  modifier: Modifier = Modifier,
-  companyTicker: String,
-  companyName: String,
-  isFavourite: Boolean,
-  onFavouriteIconClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    companyTicker: String,
+    companyName: String,
+    isFavourite: Boolean,
+    onFavouriteIconClick: () -> Unit,
 ) {
-  Row(
-    modifier = modifier.padding(horizontal = 50.dp),
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.SpaceBetween
-  ) {
-    Icon(
-      imageVector = Icons.Default.Info,
-      tint = AppTheme.colors.buttonPrimary,
-      contentDescription = "Company information",
-    )
-    Column(
-      verticalArrangement = Arrangement.SpaceAround,
-      horizontalAlignment = Alignment.CenterHorizontally
+    Row(
+        modifier = modifier.padding(horizontal = 50.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      ConstrainedText(
-        text = companyTicker,
-        color = AppTheme.colors.textPrimary,
-        style = AppTheme.typography.body1
-      )
-      ConstrainedText(
-        text = companyName,
-        color = AppTheme.colors.textPrimary,
-        style = AppTheme.typography.body2
-      )
+        Icon(
+            imageVector = Icons.Default.Info,
+            tint = AppTheme.colors.buttonPrimary,
+            contentDescription = "Company information",
+        )
+        Column(
+            verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ConstrainedText(
+                text = companyTicker,
+                color = AppTheme.colors.textPrimary,
+                style = AppTheme.typography.body1
+            )
+            ConstrainedText(
+                text = companyName,
+                color = AppTheme.colors.textPrimary,
+                style = AppTheme.typography.body2
+            )
+        }
+        ClickableIcon(
+            backgroundColor = AppTheme.colors.backgroundPrimary,
+            imageVector = Icons.Default.Star,
+            iconTint = if (isFavourite) {
+                AppTheme.colors.iconActive
+            } else AppTheme.colors.iconDisabled,
+            contentDescription = "",
+            onClick = onFavouriteIconClick
+        )
     }
-    ClickableIcon(
-      backgroundColor = AppTheme.colors.backgroundPrimary,
-      imageVector = Icons.Default.Star,
-      iconTint = if (isFavourite) {
-        AppTheme.colors.iconActive
-      } else AppTheme.colors.iconDisabled,
-      contentDescription = "",
-      onClick = onFavouriteIconClick
-    )
-  }
 }

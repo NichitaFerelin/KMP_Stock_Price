@@ -14,40 +14,40 @@ import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 actual fun NativeThemeSettings(
-  useDarkTheme: Boolean,
-  colors: AppColors
+    useDarkTheme: Boolean,
+    colors: AppColors
 ) {
-  val sysUiController = rememberSystemUiController()
-  SideEffect {
-    sysUiController.setSystemBarsColor(
-      color = colors.statusBar,
-      darkIcons = !useDarkTheme,
-    )
-  }
+    val sysUiController = rememberSystemUiController()
+    SideEffect {
+        sysUiController.setSystemBarsColor(
+            color = colors.statusBar,
+            darkIcons = !useDarkTheme,
+        )
+    }
 }
 
 @Composable
 actual fun NativeCryptoImage(
-  modifier: Modifier,
-  iconUrl: String
+    modifier: Modifier,
+    iconUrl: String
 ) {
-  GlideImage(
-    modifier = Modifier.size(40.dp),
-    imageModel = iconUrl,
-    failure = { FailIcon() }
-  )
+    GlideImage(
+        modifier = Modifier.size(40.dp),
+        imageModel = iconUrl,
+        failure = { FailIcon() }
+    )
 }
 
 @Composable
 actual fun NativeStockImage(
-  modifier: Modifier,
-  iconUrl: String
+    modifier: Modifier,
+    iconUrl: String
 ) {
-  GlideImage(
-    modifier = Modifier
-      .size(50.dp)
-      .clip(CircleShape),
-    imageModel = iconUrl,
-    failure = { FailIcon() }
-  )
+    GlideImage(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(CircleShape),
+        imageModel = iconUrl,
+        failure = { FailIcon() }
+    )
 }

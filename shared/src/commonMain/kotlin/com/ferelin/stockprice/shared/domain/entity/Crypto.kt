@@ -1,17 +1,17 @@
 package com.ferelin.stockprice.shared.domain.entity
 
 data class Crypto(
-  val id: CryptoId,
-  val ticker: String,
-  val name: String,
-  val logoUrl: String
+    val id: CryptoId,
+    val ticker: String,
+    val name: String,
+    val logoUrl: String
 )
 
 data class CryptoPrice(
-  val cryptoId: CryptoId,
-  val price: Double,
-  val priceChange: Double,
-  val priceChangePercents: Double
+    val cryptoId: CryptoId,
+    val price: Double,
+    val priceChange: Double,
+    val priceChangePercents: Double
 )
 
 @JvmInline

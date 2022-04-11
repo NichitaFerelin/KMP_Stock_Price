@@ -26,51 +26,51 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun TopSearchFieldEditable(
-  modifier: Modifier = Modifier,
-  inputText: String,
-  showCloseIcon: Boolean,
-  onTextChanged: (String) -> Unit,
-  onBackClick: () -> Unit
+    modifier: Modifier = Modifier,
+    inputText: String,
+    showCloseIcon: Boolean,
+    onTextChanged: (String) -> Unit,
+    onBackClick: () -> Unit
 ) {
-  val keyboardController = LocalSoftwareKeyboardController.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-  SearchField(
-    modifier = modifier,
-    borderWidth = 2.dp,
-    onClick = { /**/ }
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically
+    SearchField(
+        modifier = modifier,
+        borderWidth = 2.dp,
+        onClick = { /**/ }
     ) {
-      Spacer(modifier = Modifier.padding(start = 12.dp))
-      ClickableIcon(
-        imageVector = Icons.Default.ArrowBack,
-        backgroundColor = AppTheme.colors.backgroundPrimary,
-        contentDescription = "Clear search field",
-        iconTint = AppTheme.colors.buttonPrimary,
-        onClick = {
-          keyboardController?.hide()
-          onBackClick.invoke()
-        })
-      Spacer(modifier = Modifier.width(8.dp))
-      TextField(inputValue = inputText,
-        placeholder = "Enter search request",
-        onValueChange = onTextChanged,
-        keyboardActions = KeyboardActions { keyboardController?.hide() },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        trailingIcon = {
-          AnimatedVisibility(
-            visible = showCloseIcon,
-            enter = scaleIn(),
-            exit = scaleOut()
-          ) {
-            ClickableIcon(backgroundColor = AppTheme.colors.backgroundPrimary,
-              imageVector = Icons.Default.Close,
-              iconTint = AppTheme.colors.buttonPrimary,
-              contentDescription = "Clear search request",
-              onClick = { onTextChanged("") })
-          }
-        })
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.padding(start = 12.dp))
+            ClickableIcon(
+                imageVector = Icons.Default.ArrowBack,
+                backgroundColor = AppTheme.colors.backgroundPrimary,
+                contentDescription = "Clear search field",
+                iconTint = AppTheme.colors.buttonPrimary,
+                onClick = {
+                    keyboardController?.hide()
+                    onBackClick.invoke()
+                })
+            Spacer(modifier = Modifier.width(8.dp))
+            TextField(inputValue = inputText,
+                placeholder = "Enter search request",
+                onValueChange = onTextChanged,
+                keyboardActions = KeyboardActions { keyboardController?.hide() },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = showCloseIcon,
+                        enter = scaleIn(),
+                        exit = scaleOut()
+                    ) {
+                        ClickableIcon(backgroundColor = AppTheme.colors.backgroundPrimary,
+                            imageVector = Icons.Default.Close,
+                            iconTint = AppTheme.colors.buttonPrimary,
+                            contentDescription = "Clear search request",
+                            onClick = { onTextChanged("") })
+                    }
+                })
+        }
     }
-  }
 }

@@ -12,42 +12,42 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
 data class ProfileStateUi internal constructor(
-  val profile: ProfileViewData = ProfileViewData(),
-  val profileLce: LceState = LceState.None
+    val profile: ProfileViewData = ProfileViewData(),
+    val profileLce: LceState = LceState.None
 )
 
 class ProfileViewModel internal constructor(
-  profileParams: ProfileParams,
-  profileUseCase: ProfileUseCase,
-  companyUseCase: CompanyUseCase,
-  viewModelScope: CoroutineScope,
-  dispatchersProvider: DispatchersProvider
+    profileParams: ProfileParams,
+    profileUseCase: ProfileUseCase,
+    companyUseCase: CompanyUseCase,
+    viewModelScope: CoroutineScope,
+    dispatchersProvider: DispatchersProvider
 ) {
-  private val viewModelState = MutableStateFlow(ProfileStateUi())
-  val uiState = viewModelState.asStateFlow()
+    private val viewModelState = MutableStateFlow(ProfileStateUi())
+    val uiState = viewModelState.asStateFlow()
 
-  init {
-    companyUseCase.companies
-      .map { companies -> companies.find { it.id.value == profileParams.companyId } }
-      .filterNotNull()
-      .zip(
-        other = profileUseCase.getProfileBy(CompanyId(profileParams.companyId)),
-        transform = { company, profile -> ProfileMapper.map(profile, company) }
-      )
-      .onEach(this::onProfile)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+    init {
+        companyUseCase.companies
+            .map { companies -> companies.find { it.id.value == profileParams.companyId } }
+            .filterNotNull()
+            .zip(
+                other = profileUseCase.getProfileBy(CompanyId(profileParams.companyId)),
+                transform = { company, profile -> ProfileMapper.map(profile, company) }
+            )
+            .onEach(this::onProfile)
+            .flowOn(dispatchersProvider.IO)
+            .launchIn(viewModelScope)
 
-    profileUseCase.profileLce
-      .onEach(this::onProfileLce)
-      .launchIn(viewModelScope)
-  }
+        profileUseCase.profileLce
+            .onEach(this::onProfileLce)
+            .launchIn(viewModelScope)
+    }
 
-  private fun onProfile(profileViewData: ProfileViewData) {
-    viewModelState.update { it.copy(profile = profileViewData) }
-  }
+    private fun onProfile(profileViewData: ProfileViewData) {
+        viewModelState.update { it.copy(profile = profileViewData) }
+    }
 
-  private fun onProfileLce(lceState: LceState) {
-    viewModelState.update { it.copy(profileLce = lceState) }
-  }
+    private fun onProfileLce(lceState: LceState) {
+        viewModelState.update { it.copy(profileLce = lceState) }
+    }
 }

@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 internal class CryptoRepositoryImpl(
-  private val dao: CryptoDao,
-  private val api: CryptoApi
+    private val dao: CryptoDao,
+    private val api: CryptoApi
 ) : CryptoRepository {
-  override val cryptos: Flow<List<Crypto>>
-    get() = dao.getAll()
-      .distinctUntilChanged()
-      .map { it.map(CryptoMapper::map) }
-      .onEach { dbCryptos ->
-        if (dbCryptos.isEmpty()) {
-          val apiCryptos = api.load()
-          dao.insertAll(cryptosDBO = CryptoMapper.map(apiCryptos))
-        }
-      }
+    override val cryptos: Flow<List<Crypto>>
+        get() = dao.getAll()
+            .distinctUntilChanged()
+            .map { it.map(CryptoMapper::map) }
+            .onEach { dbCryptos ->
+                if (dbCryptos.isEmpty()) {
+                    val apiCryptos = api.load()
+                    dao.insertAll(cryptosDBO = CryptoMapper.map(apiCryptos))
+                }
+            }
 }

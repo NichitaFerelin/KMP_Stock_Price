@@ -16,19 +16,19 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun NoSearchResults() {
-  Column(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-    Icon(
-      imageVector = Icons.Default.ImageSearch,
-      contentDescription = "No search results"
-    )
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-      text = "No search results",
-      style = AppTheme.typography.body1,
-      color = AppTheme.colors.textPrimary
-    )
-  }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.ImageSearch,
+            contentDescription = "No search results"
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "No search results",
+            style = AppTheme.typography.body1,
+            color = AppTheme.colors.textPrimary
+        )
+    }
 }

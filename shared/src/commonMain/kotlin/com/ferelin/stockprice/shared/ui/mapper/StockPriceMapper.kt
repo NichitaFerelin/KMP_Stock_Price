@@ -6,15 +6,15 @@ import com.ferelin.stockprice.shared.ui.toStrPrice
 import com.ferelin.stockprice.shared.ui.viewData.StockPriceViewData
 
 object StockPriceMapper {
-  fun map(stockPrice: StockPrice): StockPriceViewData {
-    return StockPriceViewData(
-      price = stockPrice.currentPrice.toStrPrice(),
-      profit = buildProfitString(
-        stockPrice.currentPrice,
-        stockPrice.previousClosePrice
-      ),
-      currentPrice = stockPrice.currentPrice,
-      previousClosePrice = stockPrice.previousClosePrice
-    )
-  }
+    fun map(stockPrice: StockPrice): StockPriceViewData {
+        return StockPriceViewData(
+            price = stockPrice.currentPrice.toStrPrice(),
+            profit = buildProfitString(
+                stockPrice.currentPrice,
+                stockPrice.previousClosePrice
+            ),
+            currentPrice = stockPrice.currentPrice,
+            previousClosePrice = stockPrice.previousClosePrice
+        )
+    }
 }

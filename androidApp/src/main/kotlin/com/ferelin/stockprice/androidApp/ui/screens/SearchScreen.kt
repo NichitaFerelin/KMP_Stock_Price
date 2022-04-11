@@ -21,100 +21,103 @@ import com.ferelin.stockprice.shared.ui.viewData.SearchViewData
 import com.ferelin.stockprice.shared.ui.viewData.StockViewData
 import com.ferelin.stockprice.shared.ui.viewModel.SearchStateUi
 import com.ferelin.stockprice.shared.ui.viewModel.SearchViewModel
-import com.ferelin.stockprice.sharedComposables.components.*
+import com.ferelin.stockprice.sharedComposables.components.NoSearchResults
+import com.ferelin.stockprice.sharedComposables.components.SearchRequestsSection
+import com.ferelin.stockprice.sharedComposables.components.StocksList
+import com.ferelin.stockprice.sharedComposables.components.TopSearchFieldEditable
 import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 import com.google.accompanist.insets.statusBarsPadding
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 internal fun SearchScreenRoute(
-  onBackRoute: () -> Unit,
-  onStockRoute: (StockViewData) -> Unit
+    onBackRoute: () -> Unit,
+    onStockRoute: (StockViewData) -> Unit
 ) {
-  val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: SearchViewModel = remember { viewModelWrapper.viewModel() }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelWrapper = getViewModel<ViewModelWrapper>()
+    val viewModel: SearchViewModel = remember { viewModelWrapper.viewModel() }
+    val uiState by viewModel.uiState.collectAsState()
 
-  SearchScreen(
-    uiState = uiState,
-    onSearchTextChanged = viewModel::onSearchTextChanged,
-    onTickerClick = viewModel::onTickerClick,
-    onStockClick = onStockRoute,
-    onFavouriteIconClick = viewModel::onFavouriteIconClick,
-    onBackClick = onBackRoute
-  )
+    SearchScreen(
+        uiState = uiState,
+        onSearchTextChanged = viewModel::onSearchTextChanged,
+        onTickerClick = viewModel::onTickerClick,
+        onStockClick = onStockRoute,
+        onFavouriteIconClick = viewModel::onFavouriteIconClick,
+        onBackClick = onBackRoute
+    )
 }
 
 @Composable
 private fun SearchScreen(
-  uiState: SearchStateUi,
-  onSearchTextChanged: (String) -> Unit,
-  onTickerClick: (SearchViewData) -> Unit,
-  onStockClick: (StockViewData) -> Unit,
-  onFavouriteIconClick: (StockViewData) -> Unit,
-  onBackClick: () -> Unit,
+    uiState: SearchStateUi,
+    onSearchTextChanged: (String) -> Unit,
+    onTickerClick: (SearchViewData) -> Unit,
+    onStockClick: (StockViewData) -> Unit,
+    onFavouriteIconClick: (StockViewData) -> Unit,
+    onBackClick: () -> Unit,
 ) {
-  BackHandler(enabled = uiState.inputSearchRequest.isNotEmpty()) {
-    onSearchTextChanged("")
-  }
-
-  Column(
-    modifier = Modifier
-      .statusBarsPadding()
-      .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary)
-  ) {
-    Spacer(modifier = Modifier.height(8.dp))
-    TopSearchFieldEditable(
-      inputText = uiState.inputSearchRequest,
-      showCloseIcon = uiState.showCloseIcon,
-      onTextChanged = onSearchTextChanged,
-      onBackClick = onBackClick
-    )
-
-    when {
-      uiState.searchResultsLce is LceState.Loading -> {
-        Box(
-          modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-        ) {
-          CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
-        }
-      }
-      uiState.inputSearchRequest.isNotEmpty() && uiState.searchResults.isEmpty() -> {
-        Spacer(modifier = Modifier.height(30.dp))
-        NoSearchResults()
-      }
-      uiState.inputSearchRequest.isEmpty() -> {
-        SearchRequestsSection(
-          searchRequests = uiState.searchRequests,
-          searchRequestsLce = uiState.searchRequestsLce,
-          popularSearchRequests = uiState.popularSearchRequests,
-          popularSearchRequestsLce = uiState.popularSearchRequestsLce,
-          onTickerClick = onTickerClick
-        )
-      }
-      uiState.searchResults.isNotEmpty() -> {
-        SearchResultsSection(
-          searchResults = uiState.searchResults,
-          onFavouriteIconClick = onFavouriteIconClick,
-          onStockClick = onStockClick
-        )
-      }
+    BackHandler(enabled = uiState.inputSearchRequest.isNotEmpty()) {
+        onSearchTextChanged("")
     }
-  }
+
+    Column(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxSize()
+            .background(AppTheme.colors.backgroundPrimary)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+        TopSearchFieldEditable(
+            inputText = uiState.inputSearchRequest,
+            showCloseIcon = uiState.showCloseIcon,
+            onTextChanged = onSearchTextChanged,
+            onBackClick = onBackClick
+        )
+
+        when {
+            uiState.searchResultsLce is LceState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+                }
+            }
+            uiState.inputSearchRequest.isNotEmpty() && uiState.searchResults.isEmpty() -> {
+                Spacer(modifier = Modifier.height(30.dp))
+                NoSearchResults()
+            }
+            uiState.inputSearchRequest.isEmpty() -> {
+                SearchRequestsSection(
+                    searchRequests = uiState.searchRequests,
+                    searchRequestsLce = uiState.searchRequestsLce,
+                    popularSearchRequests = uiState.popularSearchRequests,
+                    popularSearchRequestsLce = uiState.popularSearchRequestsLce,
+                    onTickerClick = onTickerClick
+                )
+            }
+            uiState.searchResults.isNotEmpty() -> {
+                SearchResultsSection(
+                    searchResults = uiState.searchResults,
+                    onFavouriteIconClick = onFavouriteIconClick,
+                    onStockClick = onStockClick
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun SearchResultsSection(
-  searchResults: List<StockViewData>,
-  onFavouriteIconClick: (StockViewData) -> Unit,
-  onStockClick: (StockViewData) -> Unit
+    searchResults: List<StockViewData>,
+    onFavouriteIconClick: (StockViewData) -> Unit,
+    onStockClick: (StockViewData) -> Unit
 ) {
-  Spacer(modifier = Modifier.height(8.dp))
-  StocksList(
-    stocks = searchResults,
-    stocksLce = LceState.Content,
-    onFavouriteIconClick = onFavouriteIconClick,
-    onStockClick = onStockClick
-  )
+    Spacer(modifier = Modifier.height(8.dp))
+    StocksList(
+        stocks = searchResults,
+        stocksLce = LceState.Content,
+        onFavouriteIconClick = onFavouriteIconClick,
+        onStockClick = onStockClick
+    )
 }

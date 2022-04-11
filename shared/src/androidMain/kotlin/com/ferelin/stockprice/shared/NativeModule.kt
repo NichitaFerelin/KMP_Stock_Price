@@ -9,12 +9,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun nativeModule(): Module = module {
-  single<SqlDriver> {
-    AndroidSqliteDriver(
-      StockPriceDb.Schema,
-      androidContext(),
-      "StockPriceDb"
-    )
-  }
-  single { Android.create() }
+    single<SqlDriver> {
+        AndroidSqliteDriver(
+            StockPriceDb.Schema,
+            androidContext(),
+            "StockPriceDb"
+        )
+    }
+    single { Android.create() }
 }

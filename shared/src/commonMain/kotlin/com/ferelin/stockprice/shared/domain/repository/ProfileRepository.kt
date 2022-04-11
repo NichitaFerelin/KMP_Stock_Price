@@ -5,5 +5,5 @@ import com.ferelin.stockprice.shared.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-  fun getBy(companyId: CompanyId): Flow<Profile>
+    fun getBy(companyId: CompanyId): Flow<Profile>
 }

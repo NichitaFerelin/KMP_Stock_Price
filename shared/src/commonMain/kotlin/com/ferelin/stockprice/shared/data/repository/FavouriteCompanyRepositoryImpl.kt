@@ -8,21 +8,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class FavouriteCompanyRepositoryImpl(
-  private val dao: FavouriteCompanyDao,
+    private val dao: FavouriteCompanyDao,
 ) : FavouriteCompanyRepository {
 
-  override val favouriteCompanies: Flow<List<CompanyId>>
-    get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
+    override val favouriteCompanies: Flow<List<CompanyId>>
+        get() = dao.getAll().map { it.map(FavouriteCompanyMapper::map) }
 
-  override suspend fun addToFavourite(companyId: CompanyId) {
-    dao.insert(companyId.value)
-  }
+    override suspend fun addToFavourite(companyId: CompanyId) {
+        dao.insert(companyId.value)
+    }
 
-  override suspend fun removeFromFavourite(companyId: CompanyId) {
-    dao.eraseBy(companyId.value)
-  }
+    override suspend fun removeFromFavourite(companyId: CompanyId) {
+        dao.eraseBy(companyId.value)
+    }
 
-  override suspend fun eraseAll(clearCloud: Boolean) {
-    dao.eraseAll()
-  }
+    override suspend fun eraseAll(clearCloud: Boolean) {
+        dao.eraseAll()
+    }
 }

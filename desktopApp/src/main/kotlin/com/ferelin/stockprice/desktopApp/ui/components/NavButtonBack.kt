@@ -14,26 +14,26 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun NavButtonBack(
-  onClick: () -> Unit
+    onClick: () -> Unit
 ) {
-  Row(
-    modifier = Modifier
-      .width(APP_NAV_ITEM_WIDTH)
-      .height(APP_NAV_ITEM_HEIGHT)
-      .clickable(onClick = onClick)
-      .padding(start = APP_START_PADDING),
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Icon(
-      imageVector = Icons.Default.ArrowBack,
-      contentDescription = "Navigation back",
-      tint = AppTheme.colors.buttonPrimary
-    )
-    Spacer(modifier = Modifier.width(6.dp))
-    Text(
-      text = "Back",
-      style = AppTheme.typography.title2,
-      color = AppTheme.colors.textPrimary
-    )
-  }
+    Row(
+        modifier = Modifier
+            .width(APP_NAV_ITEM_WIDTH)
+            .height(APP_NAV_ITEM_HEIGHT)
+            .clickable(onClick = onClick)
+            .padding(start = APP_START_PADDING),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Navigation back",
+            tint = AppTheme.colors.buttonPrimary
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = "Back",
+            style = AppTheme.typography.title2,
+            color = AppTheme.colors.textPrimary
+        )
+    }
 }

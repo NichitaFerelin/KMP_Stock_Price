@@ -17,26 +17,26 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun SearchTicker(
-  modifier: Modifier = Modifier,
-  text: String,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit
 ) {
-  Box(
-    modifier = modifier
-      .widthIn(min = 40.dp)
-      .height(SEARCH_TICKER_HEIGHT)
-      .clip(RoundedCornerShape(12.dp))
-      .background(AppTheme.colors.contendSecondary)
-      .clickable(onClick = onClick),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(
-      modifier = Modifier.padding(horizontal = 6.dp),
-      text = text,
-      style = AppTheme.typography.body2,
-      color = AppTheme.colors.textPrimary
-    )
-  }
+    Box(
+        modifier = modifier
+            .widthIn(min = 40.dp)
+            .height(SEARCH_TICKER_HEIGHT)
+            .clip(RoundedCornerShape(12.dp))
+            .background(AppTheme.colors.contendSecondary)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 6.dp),
+            text = text,
+            style = AppTheme.typography.body2,
+            color = AppTheme.colors.textPrimary
+        )
+    }
 }
 
 internal val SEARCH_TICKER_HEIGHT = 37.dp

@@ -9,16 +9,16 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
 fun initKoin(
-  appDeclaration: KoinAppDeclaration = {}
+    appDeclaration: KoinAppDeclaration = {}
 ) = startKoin {
-  allowOverride(override = false)
-  appDeclaration()
-  modules(
-    apiModule,
-    repositoryModule,
-    storageModule,
-    useCaseModule,
-    viewModelModule,
-    nativeModule()
-  )
+    allowOverride(override = false)
+    appDeclaration()
+    modules(
+        apiModule,
+        repositoryModule,
+        storageModule,
+        useCaseModule,
+        viewModelModule,
+        nativeModule()
+    )
 }

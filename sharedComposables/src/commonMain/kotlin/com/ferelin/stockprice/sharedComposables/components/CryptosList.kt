@@ -30,98 +30,98 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CryptosList(
-  cryptos: List<CryptoViewData>,
-  cryptosLce: LceState
+    cryptos: List<CryptoViewData>,
+    cryptosLce: LceState
 ) {
-  val listState = rememberLazyListState()
-  val coroutineScope = rememberCoroutineScope()
-  var fabIsVisible by remember { mutableStateOf(false) }
-  val nestedScrollConnection = remember {
-    object : NestedScrollConnection {
-      override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        fabIsVisible = available.y < 0
-        return Offset.Zero
-      }
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    var fabIsVisible by remember { mutableStateOf(false) }
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                fabIsVisible = available.y < 0
+                return Offset.Zero
+            }
+        }
     }
-  }
 
-  Crossfade(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary),
-    targetState = cryptosLce
-  ) { lce ->
-    Box(
-      modifier = Modifier.fillMaxSize(),
-      contentAlignment = Alignment.Center
-    ) {
-      when (lce) {
-        is LceState.Content -> {
-          LazyColumn(
-            modifier = Modifier
-              .fillMaxSize()
-              .nestedScroll(nestedScrollConnection),
-            contentPadding = PaddingValues(
-              start = 12.dp,
-              end = 12.dp,
-              top = 12.dp,
-              bottom = 70.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            state = listState
-          ) {
-            items(
-              items = cryptos
-            ) { cryptoViewData ->
-              CryptoItem(
-                name = cryptoViewData.name,
-                iconUrl = cryptoViewData.logoUrl,
-                price = cryptoViewData.price,
-                profit = cryptoViewData.profit
-              )
-            }
-          }
-          AnimatedVisibility(
-            modifier = Modifier
-              .align(Alignment.BottomEnd)
-              .padding(16.dp),
-            visible = fabIsVisible,
-            enter = fadeIn(),
-            exit = fadeOut()
-          ) {
-            FloatingActionButton(
-              backgroundColor = AppTheme.colors.buttonSecondary,
-              onClick = {
-                fabIsVisible = false
-                coroutineScope.launch {
-                  listState.animateScrollToItem(0)
+    Crossfade(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppTheme.colors.backgroundPrimary),
+        targetState = cryptosLce
+    ) { lce ->
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (lce) {
+                is LceState.Content -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .nestedScroll(nestedScrollConnection),
+                        contentPadding = PaddingValues(
+                            start = 12.dp,
+                            end = 12.dp,
+                            top = 12.dp,
+                            bottom = 70.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        state = listState
+                    ) {
+                        items(
+                            items = cryptos
+                        ) { cryptoViewData ->
+                            CryptoItem(
+                                name = cryptoViewData.name,
+                                iconUrl = cryptoViewData.logoUrl,
+                                price = cryptoViewData.price,
+                                profit = cryptoViewData.profit
+                            )
+                        }
+                    }
+                    AnimatedVisibility(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        visible = fabIsVisible,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        FloatingActionButton(
+                            backgroundColor = AppTheme.colors.buttonSecondary,
+                            onClick = {
+                                fabIsVisible = false
+                                coroutineScope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = "Scroll up",
+                                tint = AppTheme.colors.buttonPrimary
+                            )
+                        }
+                    }
                 }
-              }
-            ) {
-              Icon(
-                imageVector = Icons.Default.ArrowUpward,
-                contentDescription = "Scroll up",
-                tint = AppTheme.colors.buttonPrimary
-              )
+                is LceState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = AppTheme.colors.contendTertiary
+                    )
+                }
+                is LceState.Error -> {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = "Download error",
+                        style = AppTheme.typography.body1,
+                        color = AppTheme.colors.textPrimary
+                    )
+                }
+                else -> Unit
             }
-          }
         }
-        is LceState.Loading -> {
-          CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.Center),
-            color = AppTheme.colors.contendTertiary
-          )
-        }
-        is LceState.Error -> {
-          Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = "Download error",
-            style = AppTheme.typography.body1,
-            color = AppTheme.colors.textPrimary
-          )
-        }
-        else -> Unit
-      }
     }
-  }
 }

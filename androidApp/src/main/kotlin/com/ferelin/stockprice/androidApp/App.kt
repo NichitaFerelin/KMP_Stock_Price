@@ -11,33 +11,33 @@ import timber.log.Timber
 
 class App : Application() {
 
-  override fun onCreate() {
-    super.onCreate()
-    Timber.plant(Timber.DebugTree())
-    startKoin()
+    override fun onCreate() {
+        super.onCreate()
+        Timber.plant(Timber.DebugTree())
+        startKoin()
 
-    if (BuildConfig.DEBUG) attachStrictMode()
-  }
-
-  private fun startKoin() {
-    initKoin {
-      androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
-      androidContext(this@App)
-      modules(viewModelWrapperModule)
+        if (BuildConfig.DEBUG) attachStrictMode()
     }
-  }
 
-  private fun attachStrictMode() {
-    val threadPolicy = StrictMode.ThreadPolicy.Builder()
-      .detectAll()
-      .penaltyLog()
-      .build()
-    StrictMode.setThreadPolicy(threadPolicy)
+    private fun startKoin() {
+        initKoin {
+            androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
+            androidContext(this@App)
+            modules(viewModelWrapperModule)
+        }
+    }
 
-    val vmPolicy = StrictMode.VmPolicy.Builder()
-      .detectAll()
-      .penaltyLog()
-      .build()
-    StrictMode.setVmPolicy(vmPolicy)
-  }
+    private fun attachStrictMode() {
+        val threadPolicy = StrictMode.ThreadPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setThreadPolicy(threadPolicy)
+
+        val vmPolicy = StrictMode.VmPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setVmPolicy(vmPolicy)
+    }
 }

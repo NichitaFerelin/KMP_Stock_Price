@@ -8,21 +8,21 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun HomeTab(
-  modifier: Modifier = Modifier,
-  title: String,
-  isSelected: Boolean,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
-  Tab(
-    modifier = modifier,
-    text = {
-      Text(
-        text = title,
-        style = AppTheme.typography.title2,
-        color = AppTheme.colors.textTertiary
-      )
-    },
-    selected = isSelected,
-    onClick = onClick,
-  )
+    Tab(
+        modifier = modifier,
+        text = {
+            Text(
+                text = title,
+                style = AppTheme.typography.title2,
+                color = AppTheme.colors.textTertiary
+            )
+        },
+        selected = isSelected,
+        onClick = onClick,
+    )
 }

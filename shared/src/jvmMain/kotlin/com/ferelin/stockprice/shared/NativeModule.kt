@@ -8,10 +8,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun nativeModule(): Module = module {
-  single<SqlDriver> {
-    JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
-      StockPriceDb.Schema.create(it)
+    single<SqlDriver> {
+        JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
+            StockPriceDb.Schema.create(it)
+        }
     }
-  }
-  single { Java.create() }
+    single { Java.create() }
 }

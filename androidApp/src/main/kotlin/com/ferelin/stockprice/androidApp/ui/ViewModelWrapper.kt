@@ -9,12 +9,12 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
 internal val viewModelWrapperModule = module {
-  viewModel { ViewModelWrapper() }
+    viewModel { ViewModelWrapper() }
 }
 
 internal class ViewModelWrapper : ViewModel(), KoinComponent {
-  inline fun <reified T> viewModel(parameter: Any? = null): T {
-    val viewModel: T by inject { parametersOf(viewModelScope, parameter) }
-    return viewModel
-  }
+    inline fun <reified T> viewModel(parameter: Any? = null): T {
+        val viewModel: T by inject { parametersOf(viewModelScope, parameter) }
+        return viewModel
+    }
 }

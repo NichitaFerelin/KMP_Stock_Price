@@ -11,27 +11,27 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 open class BaseStocksViewModel internal constructor(
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
-  protected val viewModelScope: CoroutineScope,
-  protected val dispatchersProvider: DispatchersProvider,
-  companyUseCase: CompanyUseCase
+    private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
+    protected val viewModelScope: CoroutineScope,
+    protected val dispatchersProvider: DispatchersProvider,
+    companyUseCase: CompanyUseCase
 ) {
-  protected val companies = companyUseCase.companies
-    .combine(
-      flow = favouriteCompanyUseCase.favouriteCompanies,
-      transform = { companies, favouriteCompaniesIds ->
-        CompanyMapper.map(companies, favouriteCompaniesIds)
-      }
-    )
-    .flowOn(dispatchersProvider.IO)
+    protected val companies = companyUseCase.companies
+        .combine(
+            flow = favouriteCompanyUseCase.favouriteCompanies,
+            transform = { companies, favouriteCompaniesIds ->
+                CompanyMapper.map(companies, favouriteCompaniesIds)
+            }
+        )
+        .flowOn(dispatchersProvider.IO)
 
-  fun onFavouriteIconClick(stockViewData: StockViewData) {
-    viewModelScope.launch(dispatchersProvider.IO) {
-      if (stockViewData.isFavourite) {
-        favouriteCompanyUseCase.removeFromFavourite(stockViewData.id)
-      } else {
-        favouriteCompanyUseCase.addToFavourite(stockViewData.id)
-      }
+    fun onFavouriteIconClick(stockViewData: StockViewData) {
+        viewModelScope.launch(dispatchersProvider.IO) {
+            if (stockViewData.isFavourite) {
+                favouriteCompanyUseCase.removeFromFavourite(stockViewData.id)
+            } else {
+                favouriteCompanyUseCase.addToFavourite(stockViewData.id)
+            }
+        }
     }
-  }
 }

@@ -12,20 +12,20 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 internal class CompanyRepositoryImpl(
-  private val companyDao: CompanyDao,
-  private val profileDao: ProfileDao,
-  private val companyApi: CompanyApi
+    private val companyDao: CompanyDao,
+    private val profileDao: ProfileDao,
+    private val companyApi: CompanyApi
 ) : CompanyRepository {
-  override val companies: Flow<List<Company>>
-    get() = companyDao.getAll()
-      .distinctUntilChanged()
-      .map { it.map(CompanyMapper::map) }
-      .onEach { dbCompanies ->
-        if (dbCompanies.isEmpty()) {
-          val apiCompanies = companyApi.load()
-          val resultData = CompanyMapper.map(apiCompanies)
-          companyDao.insertAll(resultData.first)
-          profileDao.insertAll(resultData.second)
-        }
-      }
+    override val companies: Flow<List<Company>>
+        get() = companyDao.getAll()
+            .distinctUntilChanged()
+            .map { it.map(CompanyMapper::map) }
+            .onEach { dbCompanies ->
+                if (dbCompanies.isEmpty()) {
+                    val apiCompanies = companyApi.load()
+                    val resultData = CompanyMapper.map(apiCompanies)
+                    companyDao.insertAll(resultData.first)
+                    profileDao.insertAll(resultData.second)
+                }
+            }
 }

@@ -34,125 +34,125 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 internal fun ProfileScreenRoute(params: ProfileParams) {
-  val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: ProfileViewModel = remember { viewModelWrapper.viewModel(params) }
-  val uiState by viewModel.uiState.collectAsState()
-  val context = LocalContext.current
+    val viewModelWrapper = getViewModel<ViewModelWrapper>()
+    val viewModel: ProfileViewModel = remember { viewModelWrapper.viewModel(params) }
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-  ProfileScreen(
-    uiState = uiState,
-    onShareClick = {
-      with(uiState.profile) {
-        val shareText = "$companyName [$country]\n$phone\n$webUrl"
-        val intent = Intent(Intent.ACTION_SEND).apply {
-          putExtra(Intent.EXTRA_TEXT, shareText)
-          type = INTENT_TEXT_SEND_TYPE
+    ProfileScreen(
+        uiState = uiState,
+        onShareClick = {
+            with(uiState.profile) {
+                val shareText = "$companyName [$country]\n$phone\n$webUrl"
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    putExtra(Intent.EXTRA_TEXT, shareText)
+                    type = INTENT_TEXT_SEND_TYPE
+                }
+                context.startActivitySafety(intent)
+            }
+        },
+        onUrlClick = {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(uiState.profile.webUrl)
+            context.startActivitySafety(intent)
+        },
+        onPhoneClick = {
+            val intent = Intent(
+                Intent.ACTION_DIAL,
+                Uri.fromParts(INTENT_ACTION_TEL_SCHEMA, uiState.profile.phone, null)
+            )
+            context.startActivitySafety(intent)
         }
-        context.startActivitySafety(intent)
-      }
-    },
-    onUrlClick = {
-      val intent = Intent(Intent.ACTION_VIEW)
-      intent.data = Uri.parse(uiState.profile.webUrl)
-      context.startActivitySafety(intent)
-    },
-    onPhoneClick = {
-      val intent = Intent(
-        Intent.ACTION_DIAL,
-        Uri.fromParts(INTENT_ACTION_TEL_SCHEMA, uiState.profile.phone, null)
-      )
-      context.startActivitySafety(intent)
-    }
-  )
+    )
 }
 
 @Composable
 private fun ProfileScreen(
-  uiState: ProfileStateUi,
-  onShareClick: () -> Unit,
-  onUrlClick: () -> Unit,
-  onPhoneClick: () -> Unit
+    uiState: ProfileStateUi,
+    onShareClick: () -> Unit,
+    onUrlClick: () -> Unit,
+    onPhoneClick: () -> Unit
 ) {
-  Box(
-    modifier = Modifier
-      .statusBarsPadding()
-      .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary)
-      .verticalScroll(rememberScrollState())
-  ) {
-    ClickableIcon(
-      modifier = Modifier
-        .align(Alignment.TopEnd)
-        .padding(top = 6.dp, end = 16.dp),
-      backgroundColor = AppTheme.colors.backgroundPrimary,
-      imageVector = Icons.Default.Share,
-      contentDescription = stringResource(id = R.string.descriptionShare),
-      iconTint = AppTheme.colors.buttonPrimary,
-      onClick = onShareClick
-    )
-    Column(
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      Spacer(modifier = Modifier.height(12.dp))
-      GlideImage(
+    Box(
         modifier = Modifier
-          .size(50.dp)
-          .clip(CircleShape),
-        imageModel = uiState.profile.logoUrl,
-        failure = { FailIcon() }
-      )
-      Spacer(modifier = Modifier.height(12.dp))
-      ProfileInfoColumn(
-        name = stringResource(R.string.hintName),
-        content = uiState.profile.companyName
-      )
-      Spacer(modifier = Modifier.height(12.dp))
+            .statusBarsPadding()
+            .fillMaxSize()
+            .background(AppTheme.colors.backgroundPrimary)
+            .verticalScroll(rememberScrollState())
+    ) {
+        ClickableIcon(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 6.dp, end = 16.dp),
+            backgroundColor = AppTheme.colors.backgroundPrimary,
+            imageVector = Icons.Default.Share,
+            contentDescription = stringResource(id = R.string.descriptionShare),
+            iconTint = AppTheme.colors.buttonPrimary,
+            onClick = onShareClick
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            GlideImage(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape),
+                imageModel = uiState.profile.logoUrl,
+                failure = { FailIcon() }
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileInfoColumn(
+                name = stringResource(R.string.hintName),
+                content = uiState.profile.companyName
+            )
+            Spacer(modifier = Modifier.height(12.dp))
 
-      if (uiState.profile.webUrl.isNotEmpty()) {
-        ProfileInfoColumnClickable(
-          name = stringResource(R.string.hintWebsite),
-          content = uiState.profile.webUrl,
-          onClick = onUrlClick
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-      }
-      Divider(
-        modifier = Modifier.fillMaxWidth(),
-        color = AppTheme.colors.contendSecondary
-      )
-      Spacer(modifier = Modifier.height(6.dp))
+            if (uiState.profile.webUrl.isNotEmpty()) {
+                ProfileInfoColumnClickable(
+                    name = stringResource(R.string.hintWebsite),
+                    content = uiState.profile.webUrl,
+                    onClick = onUrlClick
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+            Divider(
+                modifier = Modifier.fillMaxWidth(),
+                color = AppTheme.colors.contendSecondary
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
-      if (uiState.profile.country.isNotEmpty()) {
-        ProfileInfoRow(
-          name = stringResource(R.string.hintCountry),
-          content = uiState.profile.country
-        )
-        Spacer(modifier = Modifier.height(14.dp))
-      }
-      if (uiState.profile.industry.isNotEmpty()) {
-        ProfileInfoRow(
-          name = stringResource(R.string.hintIndustry),
-          content = uiState.profile.industry
-        )
-        Spacer(modifier = Modifier.height(14.dp))
-      }
-      if (uiState.profile.phone.isNotEmpty()) {
-        ProfileInfoRowClickable(
-          name = stringResource(R.string.hintPhone),
-          content = uiState.profile.phone,
-          onClick = onPhoneClick
-        )
-        Spacer(modifier = Modifier.height(14.dp))
-      }
-      if (uiState.profile.capitalization.isNotEmpty()) {
-        ProfileInfoRow(
-          name = stringResource(R.string.hintCapitalization),
-          content = uiState.profile.capitalization
-        )
-        Spacer(modifier = Modifier.height(30.dp))
-      }
+            if (uiState.profile.country.isNotEmpty()) {
+                ProfileInfoRow(
+                    name = stringResource(R.string.hintCountry),
+                    content = uiState.profile.country
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+            if (uiState.profile.industry.isNotEmpty()) {
+                ProfileInfoRow(
+                    name = stringResource(R.string.hintIndustry),
+                    content = uiState.profile.industry
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+            if (uiState.profile.phone.isNotEmpty()) {
+                ProfileInfoRowClickable(
+                    name = stringResource(R.string.hintPhone),
+                    content = uiState.profile.phone,
+                    onClick = onPhoneClick
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+            if (uiState.profile.capitalization.isNotEmpty()) {
+                ProfileInfoRow(
+                    name = stringResource(R.string.hintCapitalization),
+                    content = uiState.profile.capitalization
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+        }
     }
-  }
 }
 
 internal const val INTENT_TEXT_SEND_TYPE = "text/plain"

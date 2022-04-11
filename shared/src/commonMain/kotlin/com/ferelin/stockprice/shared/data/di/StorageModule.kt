@@ -22,24 +22,24 @@ import com.ferelin.stockprice.shared.data.entity.stockPrice.StockPriceDaoImpl
 import org.koin.dsl.module
 
 internal val storageModule = module {
-  single { StockPriceDb(get()) }
-  factory { get<StockPriceDb>().companyQueries }
-  factory { get<StockPriceDb>().newsQueries }
-  factory { get<StockPriceDb>().cryptoQueries }
-  factory { get<StockPriceDb>().cryptoPriceQueries }
-  factory { get<StockPriceDb>().favouriteCompanyQueries }
-  factory { get<StockPriceDb>().pastPriceQueries }
-  factory { get<StockPriceDb>().profileQueries }
-  factory { get<StockPriceDb>().searchRequestQueries }
-  factory { get<StockPriceDb>().stockPriceQueries }
+    single { StockPriceDb(get()) }
+    factory { get<StockPriceDb>().companyQueries }
+    factory { get<StockPriceDb>().newsQueries }
+    factory { get<StockPriceDb>().cryptoQueries }
+    factory { get<StockPriceDb>().cryptoPriceQueries }
+    factory { get<StockPriceDb>().favouriteCompanyQueries }
+    factory { get<StockPriceDb>().pastPriceQueries }
+    factory { get<StockPriceDb>().profileQueries }
+    factory { get<StockPriceDb>().searchRequestQueries }
+    factory { get<StockPriceDb>().stockPriceQueries }
 
-  factory<CompanyDao> { CompanyDaoImpl(get()) }
-  factory<CryptoDao> { CryptoDaoImpl(get()) }
-  factory<CryptoPriceDao> { CryptoPriceDaoImpl(get()) }
-  factory<FavouriteCompanyDao> { FavouriteCompanyDaoImpl(get()) }
-  factory<NewsDao> { NewsDaoImpl(get()) }
-  factory<PastPriceDao> { PastPriceDaoImpl(get()) }
-  factory<ProfileDao> { ProfileDaoImpl(get()) }
-  factory<SearchRequestDao> { SearchRequestDaoImpl(get()) }
-  factory<StockPriceDao> { StockPriceDaoImpl(get()) }
+    factory<CompanyDao> { CompanyDaoImpl(get()) }
+    factory<CryptoDao> { CryptoDaoImpl(get()) }
+    factory<CryptoPriceDao> { CryptoPriceDaoImpl(get()) }
+    factory<FavouriteCompanyDao> { FavouriteCompanyDaoImpl(get()) }
+    factory<NewsDao> { NewsDaoImpl(get()) }
+    factory<PastPriceDao> { PastPriceDaoImpl(get()) }
+    factory<ProfileDao> { ProfileDaoImpl(get()) }
+    factory<SearchRequestDao> { SearchRequestDaoImpl(get()) }
+    factory<StockPriceDao> { StockPriceDaoImpl(get()) }
 }

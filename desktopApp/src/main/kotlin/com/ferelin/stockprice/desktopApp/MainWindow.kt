@@ -10,13 +10,13 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun ApplicationScope.MainWindow() {
-  Window(
-    onCloseRequest = ::exitApplication,
-    title = "Stock Price",
-    state = rememberWindowState(width = 1400.dp, height = 600.dp)
-  ) {
-    AppTheme {
-      AppNavigationGraph()
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "Stock Price",
+        state = rememberWindowState(width = 1400.dp, height = 600.dp)
+    ) {
+        AppTheme {
+            AppNavigationGraph()
+        }
     }
-  }
 }

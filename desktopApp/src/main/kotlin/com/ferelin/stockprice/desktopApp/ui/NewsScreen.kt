@@ -21,64 +21,64 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun NewsScreenRoute(
-  newsParams: NewsParams
+    newsParams: NewsParams
 ) {
-  val viewModelScope = rememberCoroutineScope()
-  val viewModel: NewsViewModel = remember {
-    ViewModelWrapper().viewModel(viewModelScope, newsParams)
-  }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelScope = rememberCoroutineScope()
+    val viewModel: NewsViewModel = remember {
+        ViewModelWrapper().viewModel(viewModelScope, newsParams)
+    }
+    val uiState by viewModel.uiState.collectAsState()
 
-  NewsScreen(uiState)
+    NewsScreen(uiState)
 }
 
 @Composable
 private fun NewsScreen(
-  uiState: NewsStateUi
+    uiState: NewsStateUi
 ) {
-  Crossfade(targetState = uiState.newsLce) { lceState ->
-    Box(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(AppTheme.colors.backgroundPrimary),
-      contentAlignment = Alignment.Center
-    ) {
-      when (lceState) {
-        is LceState.Content -> {
-          LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(
-              start = 6.dp,
-              end = 6.dp,
-              top = 12.dp,
-              bottom = 70.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-          ) {
-            items(items = uiState.news) { newsViewData ->
-              NewsItem(
-                source = newsViewData.source,
-                url = newsViewData.sourceUrl,
-                date = newsViewData.date,
-                title = newsViewData.headline,
-                content = newsViewData.summary,
-                onUrlClick = { /**/ }
-              )
+    Crossfade(targetState = uiState.newsLce) { lceState ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.colors.backgroundPrimary),
+            contentAlignment = Alignment.Center
+        ) {
+            when (lceState) {
+                is LceState.Content -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(
+                            start = 6.dp,
+                            end = 6.dp,
+                            top = 12.dp,
+                            bottom = 70.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(items = uiState.news) { newsViewData ->
+                            NewsItem(
+                                source = newsViewData.source,
+                                url = newsViewData.sourceUrl,
+                                date = newsViewData.date,
+                                title = newsViewData.headline,
+                                content = newsViewData.summary,
+                                onUrlClick = { /**/ }
+                            )
+                        }
+                    }
+                }
+                is LceState.Loading -> {
+                    CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+                }
+                is LceState.Error -> {
+                    Text(
+                        text = "Error",
+                        style = AppTheme.typography.body1,
+                        color = AppTheme.colors.textPrimary
+                    )
+                }
+                else -> Unit
             }
-          }
         }
-        is LceState.Loading -> {
-          CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
-        }
-        is LceState.Error -> {
-          Text(
-            text = "Error",
-            style = AppTheme.typography.body1,
-            color = AppTheme.colors.textPrimary
-          )
-        }
-        else -> Unit
-      }
     }
-  }
 }

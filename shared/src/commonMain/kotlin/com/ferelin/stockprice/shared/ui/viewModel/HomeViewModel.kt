@@ -5,16 +5,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class HomeStateUi internal constructor(
-  val selectedScreenIndex: Int = SCREEN_STOCKS_INDEX
+    val selectedScreenIndex: Int = SCREEN_STOCKS_INDEX
 )
 
 class HomeViewModel internal constructor() {
-  private val viewModelState = MutableStateFlow(HomeStateUi())
-  val uiState = viewModelState.asStateFlow()
+    private val viewModelState = MutableStateFlow(HomeStateUi())
+    val uiState = viewModelState.asStateFlow()
 
-  fun onScreenSelected(screenIndex: Int) {
-    viewModelState.update { it.copy(selectedScreenIndex = screenIndex) }
-  }
+    fun onScreenSelected(screenIndex: Int) {
+        viewModelState.update { it.copy(selectedScreenIndex = screenIndex) }
+    }
 }
 
 const val HOME_TOTAL_SCREENS = 3

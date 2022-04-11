@@ -27,82 +27,82 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun ProfileScreenRoute(
-  profileParams: ProfileParams
+    profileParams: ProfileParams
 ) {
-  val viewModelScope = rememberCoroutineScope()
-  val viewModel: ProfileViewModel = remember {
-    ViewModelWrapper().viewModel(viewModelScope, profileParams)
-  }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelScope = rememberCoroutineScope()
+    val viewModel: ProfileViewModel = remember {
+        ViewModelWrapper().viewModel(viewModelScope, profileParams)
+    }
+    val uiState by viewModel.uiState.collectAsState()
 
-  ProfileScreen(uiState)
+    ProfileScreen(uiState)
 }
 
 @Composable
 private fun ProfileScreen(
-  uiState: ProfileStateUi
+    uiState: ProfileStateUi
 ) {
-  Column(
-    modifier = Modifier.verticalScroll(
-      state = rememberScrollState()
-    ),
-    horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-    Spacer(modifier = Modifier.height(12.dp))
-    Icon(
-      imageVector = Icons.Default.Info,
-      contentDescription = "Company information",
-      tint = Color.Blue
-    )
-    Spacer(modifier = Modifier.height(12.dp))
-    ProfileInfoColumn(
-      name = "Name: ",
-      content = uiState.profile.companyName
-    )
-    Spacer(modifier = Modifier.height(12.dp))
+    Column(
+        modifier = Modifier.verticalScroll(
+            state = rememberScrollState()
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = "Company information",
+            tint = Color.Blue
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        ProfileInfoColumn(
+            name = "Name: ",
+            content = uiState.profile.companyName
+        )
+        Spacer(modifier = Modifier.height(12.dp))
 
-    if (uiState.profile.webUrl.isNotEmpty()) {
-      ProfileInfoColumnClickable(
-        name = "Web url: ",
-        content = uiState.profile.webUrl,
-        onClick = { /**/ }
-      )
-      Spacer(modifier = Modifier.height(6.dp))
-    }
-    Divider(
-      modifier = Modifier.fillMaxWidth(),
-      color = AppTheme.colors.contendSecondary
-    )
-    Spacer(modifier = Modifier.height(6.dp))
+        if (uiState.profile.webUrl.isNotEmpty()) {
+            ProfileInfoColumnClickable(
+                name = "Web url: ",
+                content = uiState.profile.webUrl,
+                onClick = { /**/ }
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+        }
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            color = AppTheme.colors.contendSecondary
+        )
+        Spacer(modifier = Modifier.height(6.dp))
 
-    if (uiState.profile.country.isNotEmpty()) {
-      ProfileInfoRow(
-        name = "Country: ",
-        content = uiState.profile.country
-      )
-      Spacer(modifier = Modifier.height(14.dp))
+        if (uiState.profile.country.isNotEmpty()) {
+            ProfileInfoRow(
+                name = "Country: ",
+                content = uiState.profile.country
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+        if (uiState.profile.industry.isNotEmpty()) {
+            ProfileInfoRow(
+                name = "Industry: ",
+                content = uiState.profile.industry
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+        if (uiState.profile.phone.isNotEmpty()) {
+            ProfileInfoRowClickable(
+                name = "Phone: ",
+                content = uiState.profile.phone,
+                onClick = { /**/ }
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+        if (uiState.profile.capitalization.isNotEmpty()) {
+            ProfileInfoRow(
+                name = "Capitalization: ",
+                content = uiState.profile.capitalization
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+        }
     }
-    if (uiState.profile.industry.isNotEmpty()) {
-      ProfileInfoRow(
-        name = "Industry: ",
-        content = uiState.profile.industry
-      )
-      Spacer(modifier = Modifier.height(14.dp))
-    }
-    if (uiState.profile.phone.isNotEmpty()) {
-      ProfileInfoRowClickable(
-        name = "Phone: ",
-        content = uiState.profile.phone,
-        onClick = { /**/ }
-      )
-      Spacer(modifier = Modifier.height(14.dp))
-    }
-    if (uiState.profile.capitalization.isNotEmpty()) {
-      ProfileInfoRow(
-        name = "Capitalization: ",
-        content = uiState.profile.capitalization
-      )
-      Spacer(modifier = Modifier.height(30.dp))
-    }
-  }
 }

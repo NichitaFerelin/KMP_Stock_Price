@@ -4,5 +4,5 @@ import com.ferelin.stockprice.shared.domain.entity.Crypto
 import kotlinx.coroutines.flow.Flow
 
 interface CryptoRepository {
-  val cryptos: Flow<List<Crypto>>
+    val cryptos: Flow<List<Crypto>>
 }

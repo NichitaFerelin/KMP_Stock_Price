@@ -17,52 +17,52 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ClickableIcon(
-  modifier: Modifier = Modifier,
-  imageVector: ImageVector,
-  contentDescription: String,
-  backgroundColor: Color,
-  iconTint: Color,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    contentDescription: String,
+    backgroundColor: Color,
+    iconTint: Color,
+    onClick: () -> Unit
 ) {
-  Box(
-    modifier = modifier
-      .size(DEFAULT_ICON_HOLDER)
-      .background(backgroundColor)
-      .clip(CircleShape)
-      .clickable(onClick = onClick),
-    contentAlignment = Alignment.Center
-  ) {
-    Icon(
-      imageVector = imageVector,
-      contentDescription = contentDescription,
-      tint = iconTint
-    )
-  }
+    Box(
+        modifier = modifier
+            .size(DEFAULT_ICON_HOLDER)
+            .background(backgroundColor)
+            .clip(CircleShape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = iconTint
+        )
+    }
 }
 
 @Composable
 fun ClickableIcon(
-  modifier: Modifier = Modifier,
-  painter: Painter,
-  contentDescription: String,
-  backgroundColor: Color,
-  iconTint: Color,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    painter: Painter,
+    contentDescription: String,
+    backgroundColor: Color,
+    iconTint: Color,
+    onClick: () -> Unit
 ) {
-  Box(
-    modifier = modifier
-      .size(DEFAULT_ICON_HOLDER)
-      .background(backgroundColor)
-      .clip(CircleShape)
-      .clickable(onClick = onClick),
-    contentAlignment = Alignment.Center
-  ) {
-    Icon(
-      painter = painter,
-      contentDescription = contentDescription,
-      tint = iconTint
-    )
-  }
+    Box(
+        modifier = modifier
+            .size(DEFAULT_ICON_HOLDER)
+            .background(backgroundColor)
+            .clip(CircleShape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            tint = iconTint
+        )
+    }
 }
 
 private val DEFAULT_ICON_HOLDER = 40.dp

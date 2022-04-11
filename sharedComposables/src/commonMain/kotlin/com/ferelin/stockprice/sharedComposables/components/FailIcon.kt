@@ -11,12 +11,12 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun BoxScope.FailIcon(
-  modifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
-  Icon(
-    modifier = modifier.align(Alignment.Center),
-    imageVector = Icons.Default.Close,
-    contentDescription = "Download failed",
-    tint = AppTheme.colors.contendTertiary
-  )
+    Icon(
+        modifier = modifier.align(Alignment.Center),
+        imageVector = Icons.Default.Close,
+        contentDescription = "Download failed",
+        tint = AppTheme.colors.contendTertiary
+    )
 }

@@ -13,29 +13,29 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 internal fun FavouriteStocksScreenRoute(
-  onStockRoute: (StockViewData) -> Unit
+    onStockRoute: (StockViewData) -> Unit
 ) {
-  val viewModelWrapper = getViewModel<ViewModelWrapper>()
-  val viewModel: FavouriteStocksViewModel = remember { viewModelWrapper.viewModel() }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelWrapper = getViewModel<ViewModelWrapper>()
+    val viewModel: FavouriteStocksViewModel = remember { viewModelWrapper.viewModel() }
+    val uiState by viewModel.uiState.collectAsState()
 
-  FavouriteStocksScreen(
-    uiState = uiState,
-    onFavouriteIconClick = viewModel::onFavouriteIconClick,
-    onStockClick = onStockRoute
-  )
+    FavouriteStocksScreen(
+        uiState = uiState,
+        onFavouriteIconClick = viewModel::onFavouriteIconClick,
+        onStockClick = onStockRoute
+    )
 }
 
 @Composable
 private fun FavouriteStocksScreen(
-  uiState: FavouriteStocksStateUi,
-  onFavouriteIconClick: (StockViewData) -> Unit,
-  onStockClick: (StockViewData) -> Unit
+    uiState: FavouriteStocksStateUi,
+    onFavouriteIconClick: (StockViewData) -> Unit,
+    onStockClick: (StockViewData) -> Unit
 ) {
-  StocksList(
-    stocks = uiState.companies,
-    stocksLce = uiState.companiesLce,
-    onFavouriteIconClick = onFavouriteIconClick,
-    onStockClick = onStockClick
-  )
+    StocksList(
+        stocks = uiState.companies,
+        stocksLce = uiState.companiesLce,
+        onFavouriteIconClick = onFavouriteIconClick,
+        onStockClick = onStockClick
+    )
 }

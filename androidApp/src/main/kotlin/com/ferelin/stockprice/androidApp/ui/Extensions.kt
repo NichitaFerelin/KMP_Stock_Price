@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 
 fun Context.startActivitySafety(intent: Intent) {
-  try {
-    startActivity(intent)
-  } catch (e: ActivityNotFoundException) {
-    /**/
-  }
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        /*show error*/
+    }
 }

@@ -15,72 +15,72 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun SearchRequests(
-  modifier: Modifier = Modifier,
-  title: String,
-  searchRequests: List<SearchViewData>,
-  searchRequestsLce: LceState,
-  onTickerClick: (SearchViewData) -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    searchRequests: List<SearchViewData>,
+    searchRequestsLce: LceState,
+    onTickerClick: (SearchViewData) -> Unit
 ) {
-  Column(
-    modifier = modifier.fillMaxWidth()
-  ) {
-    Text(
-      modifier = Modifier.padding(start = START_PADDING),
-      text = title,
-      style = AppTheme.typography.title2,
-      color = AppTheme.colors.textPrimary
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-
-    when (searchRequestsLce) {
-      is LceState.Content -> {
-        if (searchRequests.isNotEmpty()) {
-          LazyRow(
-            contentPadding = PaddingValues(horizontal = START_PADDING),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-          ) {
-            items(
-              items = searchRequests
-            ) { searchViewData ->
-              SearchTicker(
-                text = searchViewData.text,
-                onClick = { onTickerClick.invoke(searchViewData) }
-              )
-            }
-          }
-        } else {
-          Text(
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
             modifier = Modifier.padding(start = START_PADDING),
-            text = "No search requests",
-            style = AppTheme.typography.body2,
+            text = title,
+            style = AppTheme.typography.title2,
             color = AppTheme.colors.textPrimary
-          )
-        }
-      }
-      else -> {
-        Box(
-          modifier = Modifier
-            .fillMaxWidth()
-            .height(SEARCH_TICKER_HEIGHT),
-          contentAlignment = Alignment.Center
-        ) {
-          when (searchRequestsLce) {
-            is LceState.Loading -> {
-              CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        when (searchRequestsLce) {
+            is LceState.Content -> {
+                if (searchRequests.isNotEmpty()) {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = START_PADDING),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            items = searchRequests
+                        ) { searchViewData ->
+                            SearchTicker(
+                                text = searchViewData.text,
+                                onClick = { onTickerClick.invoke(searchViewData) }
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        modifier = Modifier.padding(start = START_PADDING),
+                        text = "No search requests",
+                        style = AppTheme.typography.body2,
+                        color = AppTheme.colors.textPrimary
+                    )
+                }
             }
-            is LceState.Error -> {
-              Text(
-                text = "Error",
-                style = AppTheme.typography.body1,
-                color = AppTheme.colors.textPrimary
-              )
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(SEARCH_TICKER_HEIGHT),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (searchRequestsLce) {
+                        is LceState.Loading -> {
+                            CircularProgressIndicator(color = AppTheme.colors.contendTertiary)
+                        }
+                        is LceState.Error -> {
+                            Text(
+                                text = "Error",
+                                style = AppTheme.typography.body1,
+                                color = AppTheme.colors.textPrimary
+                            )
+                        }
+                        else -> Unit
+                    }
+                }
             }
-            else -> Unit
-          }
         }
-      }
     }
-  }
 }
 
 private val START_PADDING = 20.dp

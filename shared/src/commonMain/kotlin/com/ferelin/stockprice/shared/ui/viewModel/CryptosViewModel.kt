@@ -12,57 +12,57 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class CryptosStateUi internal constructor(
-  val cryptos: List<CryptoViewData> = emptyList(),
-  val cryptosLce: LceState = LceState.None
+    val cryptos: List<CryptoViewData> = emptyList(),
+    val cryptosLce: LceState = LceState.None
 )
 
 class CryptosViewModel internal constructor(
-  private val cryptoPriceUseCase: CryptoPriceUseCase,
-  private val viewModelScope: CoroutineScope,
-  private val dispatchersProvider: DispatchersProvider,
-  cryptoUseCase: CryptoUseCase,
+    private val cryptoPriceUseCase: CryptoPriceUseCase,
+    private val viewModelScope: CoroutineScope,
+    private val dispatchersProvider: DispatchersProvider,
+    cryptoUseCase: CryptoUseCase,
 ) {
-  private val viewModelState = MutableStateFlow(CryptosStateUi())
-  val uiState = viewModelState.asStateFlow()
+    private val viewModelState = MutableStateFlow(CryptosStateUi())
+    val uiState = viewModelState.asStateFlow()
 
-  init {
-    cryptoUseCase.cryptos
-      .onEach(this::fetchData)
-      .combine(
-        flow = cryptoPriceUseCase.cryptoPrices,
-        transform = { cryptos, prices ->
-          val pricesContainer = prices.associateBy { it.cryptoId }
-          cryptos.map { CryptoMapper.map(it, pricesContainer[it.id]) }
-        }
-      )
-      .onEach(this::onCryptos)
-      .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+    init {
+        cryptoUseCase.cryptos
+            .onEach(this::fetchData)
+            .combine(
+                flow = cryptoPriceUseCase.cryptoPrices,
+                transform = { cryptos, prices ->
+                    val pricesContainer = prices.associateBy { it.cryptoId }
+                    cryptos.map { CryptoMapper.map(it, pricesContainer[it.id]) }
+                }
+            )
+            .onEach(this::onCryptos)
+            .flowOn(dispatchersProvider.IO)
+            .launchIn(viewModelScope)
 
-    cryptoUseCase.cryptosLce
-      .combine(
-        flow = cryptoPriceUseCase.cryptoPricesLce,
-        transform = { cryptoLce, priceLce ->
-          if (cryptoLce is LceState.Loading || priceLce is LceState.Loading) {
-            LceState.Loading
-          } else priceLce
-        }
-      )
-      .onEach(this::onCryptosLce)
-      .launchIn(viewModelScope)
-  }
-
-  private fun onCryptos(cryptos: List<CryptoViewData>) {
-    viewModelState.update { it.copy(cryptos = cryptos) }
-  }
-
-  private fun onCryptosLce(lceState: LceState) {
-    viewModelState.update { it.copy(cryptosLce = lceState) }
-  }
-
-  private fun fetchData(cryptos: List<Crypto>) {
-    viewModelScope.launch(dispatchersProvider.IO) {
-      cryptoPriceUseCase.fetchPriceFor(cryptos)
+        cryptoUseCase.cryptosLce
+            .combine(
+                flow = cryptoPriceUseCase.cryptoPricesLce,
+                transform = { cryptoLce, priceLce ->
+                    if (cryptoLce is LceState.Loading || priceLce is LceState.Loading) {
+                        LceState.Loading
+                    } else priceLce
+                }
+            )
+            .onEach(this::onCryptosLce)
+            .launchIn(viewModelScope)
     }
-  }
+
+    private fun onCryptos(cryptos: List<CryptoViewData>) {
+        viewModelState.update { it.copy(cryptos = cryptos) }
+    }
+
+    private fun onCryptosLce(lceState: LceState) {
+        viewModelState.update { it.copy(cryptosLce = lceState) }
+    }
+
+    private fun fetchData(cryptos: List<Crypto>) {
+        viewModelScope.launch(dispatchersProvider.IO) {
+            cryptoPriceUseCase.fetchPriceFor(cryptos)
+        }
+    }
 }

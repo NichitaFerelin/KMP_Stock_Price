@@ -8,18 +8,18 @@ import com.ferelin.stockprice.sharedComposables.theme.AppColors
 
 @Composable
 expect fun NativeThemeSettings(
-  useDarkTheme: Boolean,
-  colors: AppColors
+    useDarkTheme: Boolean,
+    colors: AppColors
 )
 
 @Composable
 expect fun NativeCryptoImage(
-  modifier: Modifier = Modifier,
-  iconUrl: String
+    modifier: Modifier = Modifier,
+    iconUrl: String
 )
 
 @Composable
 expect fun NativeStockImage(
-  modifier: Modifier = Modifier,
-  iconUrl: String
+    modifier: Modifier = Modifier,
+    iconUrl: String
 )

@@ -6,11 +6,11 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 internal class ViewModelWrapper : KoinComponent {
-  inline fun <reified T> viewModel(
-    viewModelScope: CoroutineScope,
-    parameter: Any? = null
-  ): T {
-    val viewModel: T by inject { parametersOf(viewModelScope, parameter) }
-    return viewModel
-  }
+    inline fun <reified T> viewModel(
+        viewModelScope: CoroutineScope,
+        parameter: Any? = null
+    ): T {
+        val viewModel: T by inject { parametersOf(viewModelScope, parameter) }
+        return viewModel
+    }
 }

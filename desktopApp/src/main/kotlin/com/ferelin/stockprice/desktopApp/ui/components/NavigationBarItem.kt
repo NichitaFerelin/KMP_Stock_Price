@@ -14,28 +14,28 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 internal fun NavigationBarItem(
-  modifier: Modifier = Modifier,
-  title: String,
-  isSelected: Boolean,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
-  Box(
-    modifier = modifier
-      .height(APP_NAV_ITEM_HEIGHT)
-      .width(APP_NAV_ITEM_WIDTH)
-      .background(
-        color = if (isSelected) {
-          AppTheme.colors.backgroundSecondary
-        } else AppTheme.colors.backgroundPrimary
-      )
-      .clickable(onClick = onClick),
-    contentAlignment = Alignment.CenterStart
-  ) {
-    ConstrainedText(
-      modifier = Modifier.padding(start = APP_START_PADDING),
-      text = title,
-      style = AppTheme.typography.title2,
-      color = AppTheme.colors.textPrimary
-    )
-  }
+    Box(
+        modifier = modifier
+            .height(APP_NAV_ITEM_HEIGHT)
+            .width(APP_NAV_ITEM_WIDTH)
+            .background(
+                color = if (isSelected) {
+                    AppTheme.colors.backgroundSecondary
+                } else AppTheme.colors.backgroundPrimary
+            )
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        ConstrainedText(
+            modifier = Modifier.padding(start = APP_START_PADDING),
+            text = title,
+            style = AppTheme.typography.title2,
+            color = AppTheme.colors.textPrimary
+        )
+    }
 }

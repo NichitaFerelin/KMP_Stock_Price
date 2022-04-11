@@ -12,32 +12,32 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun TopSearchField(
-  modifier: Modifier = Modifier,
-  onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-  SearchField(
-    modifier = modifier,
-    borderWidth = 1.dp,
-    onClick = onClick
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 8.dp),
-      verticalAlignment = Alignment.CenterVertically
+    SearchField(
+        modifier = modifier,
+        borderWidth = 1.dp,
+        onClick = onClick
     ) {
-      Spacer(modifier = Modifier.padding(start = 12.dp))
-      Icon(
-        imageVector = Icons.Default.Search,
-        contentDescription = "Search",
-        tint = AppTheme.colors.buttonPrimary
-      )
-      Spacer(modifier = Modifier.width(12.dp))
-      ConstrainedText(
-        text = "Find company by name or ticker",
-        style = AppTheme.typography.body1,
-        color = AppTheme.colors.textPrimary
-      )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.padding(start = 12.dp))
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = AppTheme.colors.buttonPrimary
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            ConstrainedText(
+                text = "Find company by name or ticker",
+                style = AppTheme.typography.body1,
+                color = AppTheme.colors.textPrimary
+            )
+        }
     }
-  }
 }

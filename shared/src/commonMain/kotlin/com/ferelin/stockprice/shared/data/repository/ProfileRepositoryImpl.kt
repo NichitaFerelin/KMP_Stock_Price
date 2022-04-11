@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 internal class ProfileRepositoryImpl(
-  private val dao: ProfileDao
+    private val dao: ProfileDao
 ) : ProfileRepository {
-  override fun getBy(companyId: CompanyId): Flow<Profile> {
-    return dao.getBy(companyId.value)
-      .distinctUntilChanged()
-      .map(ProfileMapper::map)
-  }
+    override fun getBy(companyId: CompanyId): Flow<Profile> {
+        return dao.getBy(companyId.value)
+            .distinctUntilChanged()
+            .map(ProfileMapper::map)
+    }
 }

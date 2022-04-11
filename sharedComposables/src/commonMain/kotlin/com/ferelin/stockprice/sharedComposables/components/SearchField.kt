@@ -16,28 +16,28 @@ import com.ferelin.stockprice.sharedComposables.theme.AppTheme
 
 @Composable
 fun SearchField(
-  modifier: Modifier = Modifier,
-  borderWidth: Dp,
-  onClick: () -> Unit,
-  innerContent: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    borderWidth: Dp,
+    onClick: () -> Unit,
+    innerContent: @Composable () -> Unit
 ) {
-  Card(
-    modifier = modifier
-      .fillMaxWidth()
-      .height(55.dp)
-      .padding(horizontal = 20.dp),
-    backgroundColor = AppTheme.colors.backgroundPrimary,
-    shape = RoundedCornerShape(20.dp),
-    border = BorderStroke(
-      width = borderWidth,
-      color = AppTheme.colors.buttonPrimary
-    ),
-    elevation = 0.dp
-  ) {
-    Box(
-      modifier = Modifier.clickable(onClick = onClick)
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 20.dp),
+        backgroundColor = AppTheme.colors.backgroundPrimary,
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(
+            width = borderWidth,
+            color = AppTheme.colors.buttonPrimary
+        ),
+        elevation = 0.dp
     ) {
-      innerContent()
+        Box(
+            modifier = Modifier.clickable(onClick = onClick)
+        ) {
+            innerContent()
+        }
     }
-  }
 }

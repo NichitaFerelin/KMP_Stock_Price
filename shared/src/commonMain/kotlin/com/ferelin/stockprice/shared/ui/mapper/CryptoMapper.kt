@@ -7,16 +7,16 @@ import com.ferelin.stockprice.shared.ui.toStrPrice
 import com.ferelin.stockprice.shared.ui.viewData.CryptoViewData
 
 object CryptoMapper {
-  fun map(crypto: Crypto, cryptoPrice: CryptoPrice?): CryptoViewData {
-    return CryptoViewData(
-      id = crypto.id,
-      name = crypto.name,
-      logoUrl = crypto.logoUrl,
-      price = cryptoPrice?.price?.toStrPrice() ?: "",
-      profit = formatProfitString(
-        priceProfit = cryptoPrice?.priceChange?.toString() ?: "",
-        priceProfitPercents = cryptoPrice?.priceChangePercents?.toString() ?: ""
-      ),
-    )
-  }
+    fun map(crypto: Crypto, cryptoPrice: CryptoPrice?): CryptoViewData {
+        return CryptoViewData(
+            id = crypto.id,
+            name = crypto.name,
+            logoUrl = crypto.logoUrl,
+            price = cryptoPrice?.price?.toStrPrice() ?: "",
+            profit = formatProfitString(
+                priceProfit = cryptoPrice?.priceChange?.toString() ?: "",
+                priceProfitPercents = cryptoPrice?.priceChangePercents?.toString() ?: ""
+            ),
+        )
+    }
 }

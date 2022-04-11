@@ -8,21 +8,21 @@ import com.ferelin.stockprice.sharedComposables.components.CryptosList
 
 @Composable
 internal fun CryptosScreenRoute() {
-  val viewModelScope = rememberCoroutineScope()
-  val viewModel: CryptosViewModel = remember {
-    ViewModelWrapper().viewModel(viewModelScope)
-  }
-  val uiState by viewModel.uiState.collectAsState()
+    val viewModelScope = rememberCoroutineScope()
+    val viewModel: CryptosViewModel = remember {
+        ViewModelWrapper().viewModel(viewModelScope)
+    }
+    val uiState by viewModel.uiState.collectAsState()
 
-  CryptosScreen(uiState = uiState)
+    CryptosScreen(uiState = uiState)
 }
 
 @Composable
 private fun CryptosScreen(
-  uiState: CryptosStateUi
+    uiState: CryptosStateUi
 ) {
-  CryptosList(
-    cryptos = uiState.cryptos,
-    cryptosLce = uiState.cryptosLce
-  )
+    CryptosList(
+        cryptos = uiState.cryptos,
+        cryptosLce = uiState.cryptosLce
+    )
 }
