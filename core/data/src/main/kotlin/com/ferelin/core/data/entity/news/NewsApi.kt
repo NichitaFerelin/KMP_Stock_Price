@@ -3,6 +3,7 @@ package com.ferelin.core.data.entity.news
 import com.ferelin.core.ONE_YEAR_MILLIS
 import com.ferelin.core.data.api.endPoints.news
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 import java.text.SimpleDateFormat
@@ -16,7 +17,7 @@ internal class NewsApiImpl(
     private val client: HttpClient
 ) : NewsApi {
     override suspend fun load(options: NewsRequestOptions): List<NewsPojo> {
-        return client.get { news(options) }
+        return client.get { news(options) }.body()
     }
 }
 

@@ -11,12 +11,13 @@ import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
 fun BoxScope.FailIcon(
-  modifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
-  Icon(
-    modifier = modifier.align(Alignment.Center),
-    imageVector = Icons.Default.Close,
-    contentDescription = null,
-    tint = AppTheme.colors.contendTertiary
-  )
+    // TODO
+    /*Icon(
+        modifier = modifier.align(Alignment.Center),
+        imageVector = Icons.Default.Close,
+        contentDescription = null,
+        tint = AppTheme.colors.contendTertiary
+    )*/
 }

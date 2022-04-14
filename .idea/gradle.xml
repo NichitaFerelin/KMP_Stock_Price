@@ -17,12 +17,7 @@
             <option value="$PROJECT_DIR$/core/domain" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/features" />
-            <option value="$PROJECT_DIR$/features/about" />
             <option value="$PROJECT_DIR$/features/home" />
-            <option value="$PROJECT_DIR$/features/login" />
-            <option value="$PROJECT_DIR$/features/search" />
-            <option value="$PROJECT_DIR$/features/settings" />
-            <option value="$PROJECT_DIR$/features/splash" />
           </set>
         </option>
       </GradleProjectSettings>

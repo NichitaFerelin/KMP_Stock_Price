@@ -2,6 +2,7 @@ package com.ferelin.core.data.entity.stockPrice
 
 import com.ferelin.core.data.api.endPoints.stockPrice
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 
@@ -13,7 +14,7 @@ internal class StockPriceApiImpl(
     private val client: HttpClient
 ) : StockPriceApi {
     override suspend fun load(options: StockPriceOptions): StockPriceResponse {
-        return client.get { stockPrice(options) }
+        return client.get { stockPrice(options) }.body()
     }
 }
 

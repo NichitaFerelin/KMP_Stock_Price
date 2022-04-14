@@ -25,10 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.ui.R
+import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.home.uiComponents.PreviewHolder
-import com.ferelin.features.home.uiComponents.StockPreview
+import com.ferelin.features.home.components.PreviewHolder
+import com.ferelin.features.home.components.StockPreview
 import com.google.accompanist.insets.statusBarsPadding
 import org.koin.androidx.compose.getViewModel
 
@@ -188,7 +189,7 @@ private fun MenuContent(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
+                            AppCircularProgressIndicator()
                         }
                     }
                     is LceState.Content -> {

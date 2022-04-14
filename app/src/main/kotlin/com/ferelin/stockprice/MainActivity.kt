@@ -11,20 +11,20 @@ import com.google.accompanist.insets.ProvideWindowInsets
 
 class MainActivity : AppCompatActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent { StockPriceApp() }
-  }
-
-  @Composable
-  private fun StockPriceApp() {
-    AppTheme {
-      ProvideWindowInsets(consumeWindowInsets = true) {
-        val navController = rememberNavController()
-        AppNavigationGraph(
-          navHostController = navController
-        )
-      }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent { StockPriceApp() }
     }
-  }
+
+    @Composable
+    private fun StockPriceApp() {
+        AppTheme {
+            ProvideWindowInsets(consumeWindowInsets = true) {
+                val navController = rememberNavController()
+                AppNavigationGraph(
+                    navHostController = navController
+                )
+            }
+        }
+    }
 }

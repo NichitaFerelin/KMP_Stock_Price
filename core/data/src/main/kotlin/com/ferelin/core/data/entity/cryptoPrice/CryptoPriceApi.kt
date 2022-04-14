@@ -2,6 +2,7 @@ package com.ferelin.core.data.entity.cryptoPrice
 
 import com.ferelin.core.data.api.endPoints.cryptoPrice
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 
@@ -13,7 +14,7 @@ internal class CryptoPriceApiImpl(
     private val client: HttpClient
 ) : CryptoPriceApi {
     override suspend fun load(options: CryptoPriceOptions): List<CryptoPricePojo> {
-        return client.get { cryptoPrice(options) }
+        return client.get { cryptoPrice(options) }.body()
     }
 }
 
