@@ -1,219 +1,270 @@
-@file:OptIn(ExperimentalPagerApi::class)
-
 package com.ferelin.features.home.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.domain.entity.LceState
+import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
-import com.ferelin.core.ui.components.ConstrainedText
-import com.ferelin.core.ui.components.SearchField
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.features.home.R
-import com.ferelin.features.home.cryptos.CryptosRoute
-import com.ferelin.features.home.favourite.FavouriteStocksRoute
-import com.ferelin.features.home.stocks.StocksRoute
-import com.ferelin.features.home.uiComponents.HomeTab
+import com.ferelin.features.home.uiComponents.PreviewHolder
+import com.ferelin.features.home.uiComponents.StockPreview
 import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.pager.*
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun HomeScreenRoute(
-  onSearchRoute: () -> Unit,
-  onSettingsRoute: () -> Unit,
-  onStockRoute: (StockViewData) -> Unit
+    onSettingsRoute: () -> Unit,
+    onStocksRoute: () -> Unit,
+    onCryptosRoute: () -> Unit,
+    onNewsRoute: () -> Unit,
+    onSupportRoute: () -> Unit
 ) {
-  val viewModel = getViewModel<HomeViewModel>()
-  val uiState by viewModel.uiState.collectAsState()
-
-  HomeScreen(
-    uiState = uiState,
-    onScreenSelected = viewModel::onScreenSelected,
-    onSearchClick = onSearchRoute,
-    onSettingsClick = onSettingsRoute,
-    onCryptosRoute = { CryptosRoute() },
-    onStocksRoute = { StocksRoute(onStockRoute = onStockRoute) },
-    onFavouriteStocksRoute = { FavouriteStocksRoute(onStockRoute = onStockRoute) }
-  )
+    val viewModel = getViewModel<HomeViewModel>()
+    val uiState by viewModel.uiState.collectAsState()
+    HomeScreen(
+        uiState = uiState,
+        onSettingsClick = onSettingsRoute,
+        onStocksClick = onStocksRoute,
+        onCryptosClick = onCryptosRoute,
+        onNewsClick = onNewsRoute,
+        onSupportClick = onSupportRoute
+    )
 }
 
 @Composable
 private fun HomeScreen(
-  uiState: HomeStateUi,
-  onScreenSelected: (Int) -> Unit,
-  onSearchClick: () -> Unit,
-  onSettingsClick: () -> Unit,
-  onCryptosRoute: @Composable () -> Unit,
-  onStocksRoute: @Composable () -> Unit,
-  onFavouriteStocksRoute: @Composable () -> Unit
+    uiState: HomeUiState,
+    onSettingsClick: () -> Unit,
+    onStocksClick: () -> Unit,
+    onCryptosClick: () -> Unit,
+    onNewsClick: () -> Unit,
+    onSupportClick: () -> Unit
 ) {
-  val pagerState = rememberPagerState(initialPage = uiState.selectedScreenIndex)
-  LaunchedEffect(key1 = uiState.selectedScreenIndex) {
-    pagerState.animateScrollToPage(uiState.selectedScreenIndex)
-  }
-  LaunchedEffect(key1 = pagerState) {
-    snapshotFlow { pagerState.currentPage }
-      .onEach { onScreenSelected.invoke(it) }
-      .launchIn(this)
-  }
-
-  Column(
-    modifier = Modifier
-      .statusBarsPadding()
-      .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary)
-  ) {
-    Spacer(modifier = Modifier.height(14.dp))
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxSize()
     ) {
-      Text(
-        text = stringResource(id = R.string.titleHome),
-        style = AppTheme.typography.title1,
-        color = AppTheme.colors.textPrimary
-      )
-      ClickableIcon(
-        backgroundColor = AppTheme.colors.backgroundPrimary,
-        iconTint = AppTheme.colors.buttonPrimary,
-        imageVector = Icons.Default.Settings,
-        contentDescription = stringResource(id = R.string.descriptionSettings),
-        onClick = onSettingsClick
-      )
+        TopBar(onSettingsClick = onSettingsClick)
+        BodyContent(
+            stocks = uiState.stocks,
+            stocksLce = uiState.stocksLce,
+            onStocksClick = onStocksClick,
+            onCryptosClick = onCryptosClick,
+            onNewsClick = onNewsClick,
+            onSupportClick = onSupportClick
+        )
     }
-    Spacer(modifier = Modifier.height(12.dp))
-    TopSearchField(onClick = onSearchClick)
-    Spacer(modifier = Modifier.height(12.dp))
-    Tabs(
-      modifier = Modifier.fillMaxWidth(),
-      pagerState = pagerState,
-      onTabClick = onScreenSelected
-    )
-    ScreensPager(
-      pagerState = pagerState,
-      onCryptosRoute = onCryptosRoute,
-      onStocksRoute = onStocksRoute,
-      onFavouriteStocksRoute = onFavouriteStocksRoute
-    )
-  }
 }
 
 @Composable
-private fun TopSearchField(
-  modifier: Modifier = Modifier,
-  onClick: () -> Unit
+private fun TopBar(
+    modifier: Modifier = Modifier,
+    onSettingsClick: () -> Unit
 ) {
-  SearchField(
-    modifier = modifier,
-    borderWidth = 1.dp,
-    onClick = onClick
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 8.dp),
-      verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(TOOLBAR_BASELINE + ROUNDED_CORNER)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        AppTheme.colors.backgroundPrimary,
+                        AppTheme.colors.backgroundSecondary
+                    ),
+                    startY = LocalDensity.current.run { (TOOLBAR_BASELINE / 3).toPx() }
+                )
+            )
     ) {
-      Spacer(modifier = Modifier.padding(start = 12.dp))
-      Icon(
-        painter = painterResource(R.drawable.ic_search_17x18),
-        contentDescription = stringResource(id = R.string.descriptionImageSearch),
-        tint = AppTheme.colors.buttonPrimary
-      )
-      Spacer(modifier = Modifier.width(12.dp))
-      ConstrainedText(
-        text = stringResource(R.string.hintFindCompany),
-        style = AppTheme.typography.body1,
-        color = AppTheme.colors.textPrimary
-      )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = CONTENT_PADDING,
+                    end = CONTENT_PADDING,
+                    top = TOOLBAR_BASELINE / 4
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.titleHome),
+                style = AppTheme.typography.title1,
+                color = AppTheme.colors.textPrimary
+            )
+            ClickableIcon(
+                painter = painterResource(id = R.drawable.ic_settings_24),
+                contentDescription = stringResource(id = R.string.descriptionSettings),
+                backgroundColor = AppTheme.colors.backgroundSecondary.copy(alpha = 0f),
+                iconTint = AppTheme.colors.buttonPrimary,
+                onClick = onSettingsClick
+            )
+        }
     }
-  }
 }
 
 @Composable
-private fun Tabs(
-  modifier: Modifier = Modifier,
-  pagerState: PagerState,
-  onTabClick: (Int) -> Unit
+private fun BodyContent(
+    modifier: Modifier = Modifier,
+    stocks: List<HomeStockViewData>,
+    stocksLce: LceState,
+    onStocksClick: () -> Unit,
+    onCryptosClick: () -> Unit,
+    onNewsClick: () -> Unit,
+    onSupportClick: () -> Unit
 ) {
-  TabRow(
-    modifier = modifier,
-    backgroundColor = AppTheme.colors.backgroundPrimary,
-    selectedTabIndex = pagerState.currentPage,
-    indicator = { tabPositions ->
-      TabRowDefaults.Indicator(
-        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-      )
+    Box(
+        modifier = modifier
+            .padding(top = TOOLBAR_BASELINE)
+            .fillMaxSize()
+            .background(
+                color = AppTheme.colors.backgroundPrimary,
+                shape = RoundedCornerShape(topStart = ROUNDED_CORNER)
+            )
+    ) {
+        MenuContent(
+            stocks = stocks,
+            stocksLce = stocksLce,
+            onStocksClick = onStocksClick,
+            onCryptosClick = onCryptosClick,
+            onNewsClick = onNewsClick
+        )
+        SupportFab(onClick = onSupportClick)
     }
-  ) {
-    repeat(TOTAL_SCREENS) { index ->
-      when (index) {
-        CRYPTOS_SCREEN_INDEX -> {
-          HomeTab(
-            title = stringResource(id = R.string.titleCryptos),
-            isSelected = pagerState.currentPage == CRYPTOS_SCREEN_INDEX,
-            onClick = { onTabClick(CRYPTOS_SCREEN_INDEX) }
-          )
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun MenuContent(
+    modifier: Modifier = Modifier,
+    stocks: List<HomeStockViewData>,
+    stocksLce: LceState,
+    onStocksClick: () -> Unit,
+    onCryptosClick: () -> Unit,
+    onNewsClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = CONTENT_PADDING)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(modifier = Modifier.height(ROUNDED_CORNER / 2))
+        PreviewHolder(
+            painter = painterResource(id = R.drawable.ic_stock_24),
+            title = stringResource(id = R.string.hintStocks),
+            contentDescription = stringResource(id = R.string.descriptionSelectStocks),
+            onClick = onStocksClick
+        ) {
+            AnimatedContent(
+                modifier = Modifier.padding(top = 8.dp),
+                targetState = stocksLce
+            ) { lceState ->
+                when (lceState) {
+                    is LceState.Loading -> {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is LceState.Content -> {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LazyRow(
+                            contentPadding = PaddingValues(
+                                horizontal = 10.dp
+                            ),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(
+                                items = stocks,
+                                key = { it.id }
+                            ) {
+                                StockPreview(
+                                    name = it.name,
+                                    isFavourite = it.isFavourite,
+                                    industry = it.industry,
+                                    iconUrl = it.logoUrl
+                                )
+                            }
+                        }
+                    }
+                    is LceState.Error -> {
+                        Text(
+                            text = stringResource(id = R.string.errorDownload),
+                            style = AppTheme.typography.body2,
+                            color = AppTheme.colors.textPrimary
+                        )
+                    }
+                    else -> Unit
+                }
+            }
         }
-        STOCKS_SCREEN_INDEX -> {
-          HomeTab(
-            title = stringResource(id = R.string.titleStocks),
-            isSelected = pagerState.currentPage == STOCKS_SCREEN_INDEX,
-            onClick = { onTabClick(STOCKS_SCREEN_INDEX) }
-          )
-        }
-        FAVOURITE_STOCKS_SCREEN_INDEX -> {
-          HomeTab(
-            title = stringResource(id = R.string.titleFavourite),
-            isSelected = pagerState.currentPage == FAVOURITE_STOCKS_SCREEN_INDEX,
-            onClick = { onTabClick(FAVOURITE_STOCKS_SCREEN_INDEX) }
-          )
-        }
-        else -> error("There is no tab for screen index [$index] ")
-      }
+        Spacer(modifier = Modifier.height(16.dp))
+        PreviewHolder(
+            painter = painterResource(id = R.drawable.ic_bitcoin_24),
+            title = stringResource(id = R.string.hintCryptos),
+            contentDescription = stringResource(id = R.string.descriptionSelectCryptos),
+            onClick = onCryptosClick
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        PreviewHolder(
+            painter = painterResource(id = R.drawable.ic_news_24),
+            title = stringResource(id = R.string.hintNews),
+            contentDescription = stringResource(id = R.string.descriptionSelectNews),
+            onClick = onNewsClick
+        )
     }
-  }
 }
 
 @Composable
-private fun ScreensPager(
-  pagerState: PagerState,
-  onCryptosRoute: @Composable () -> Unit,
-  onStocksRoute: @Composable () -> Unit,
-  onFavouriteStocksRoute: @Composable () -> Unit
+private fun BoxScope.SupportFab(
+    onClick: () -> Unit
 ) {
-  HorizontalPager(
-    count = TOTAL_SCREENS,
-    state = pagerState
-  ) { pageIndex ->
-    when (pageIndex) {
-      CRYPTOS_SCREEN_INDEX -> onCryptosRoute()
-      STOCKS_SCREEN_INDEX -> onStocksRoute()
-      FAVOURITE_STOCKS_SCREEN_INDEX -> onFavouriteStocksRoute()
-      else -> error("There is no screen for index [$pageIndex]")
+    FloatingActionButton(
+        modifier = Modifier.Companion
+            .align(Alignment.BottomEnd)
+            .padding(16.dp),
+        onClick = onClick,
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = AppTheme.colors.backgroundSecondary,
+    ) {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_info_24),
+                contentDescription = stringResource(id = R.string.descriptionSelectSupport),
+                tint = AppTheme.colors.buttonPrimary
+            )
+        }
     }
-  }
 }
 
-private const val TOTAL_SCREENS = 3
-internal const val CRYPTOS_SCREEN_INDEX = 0
-internal const val STOCKS_SCREEN_INDEX = 1
-internal const val FAVOURITE_STOCKS_SCREEN_INDEX = 2
+private val TOOLBAR_BASELINE = 150.dp
+private val ROUNDED_CORNER = 70.dp
+internal val CONTENT_PADDING = ROUNDED_CORNER / 2
+internal const val COMPANIES_FOR_PREVIEW = 5

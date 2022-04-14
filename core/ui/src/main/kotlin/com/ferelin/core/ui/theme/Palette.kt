@@ -3,7 +3,7 @@ package com.ferelin.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 internal val Light1 = Color(color = 0xFFFFFFFF)
-internal val Light2 = Color(color = 0xFFF0F4F7)
+internal val Light2 = Color(color = 0xFFC5E7FF)
 internal val Light3 = Color(color = 0xFFBABABA)
 
 internal val Dark1 = Color(color = 0xFF312C39)

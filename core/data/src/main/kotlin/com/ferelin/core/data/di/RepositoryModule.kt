@@ -10,9 +10,6 @@ val repositoryModule = module {
   single<AuthUserStateRepository> {
     AuthUserStateRepositoryImpl(get())
   }
-  single<FavouriteCompanyRepository> {
-    FavouriteCompanyRepositoryImpl(get(), get(), get(), get(named(NAMED_EXTERNAL_SCOPE)), get())
-  }
   factory<CryptoPriceRepository> {
     CryptoPriceRepositoryImpl(get(), get(), get(named(NAMED_CRYPTOS_TOKEN)))
   }
@@ -27,10 +24,9 @@ val repositoryModule = module {
   }
 
   factory<AuthRepository> { AuthRepositoryImpl(get()) }
-  factory<CompanyRepository> { CompanyRepositoryImpl(get(), get(), get()) }
+  factory<CompanyRepository> { CompanyRepositoryImpl(get(), get()) }
   factory<CryptoRepository> { CryptoRepositoryImpl(get(), get()) }
   factory<NotifyPriceRepository> { NotifyPriceRepositoryImpl(get()) }
-  factory<ProfileRepository> { ProfileRepositoryImpl(get()) }
   factory<ProjectRepository> { ProjectRepositoryImpl(get()) }
   factory<SearchRequestsRepository> { SearchRequestsRepositoryImpl(get()) }
   factory<StoragePathRepository> { StoragePathRepositoryImpl(get()) }

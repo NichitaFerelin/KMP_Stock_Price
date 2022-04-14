@@ -35,12 +35,10 @@ internal fun AppNavigationGraph(
     composable(route = HomeDestination.key) {
       HomeScreenRoute(
         onSettingsRoute = { navHostController.navigate(route = SettingsDestination.key) },
-        onSearchRoute = { navHostController.navigate(route = SearchDestination.key) },
-        onStockRoute = {
-          navHostController.navigate(
-            route = AboutDestination.buildNavigationPath(it)
-          )
-        }
+        onCryptosRoute = { },
+        onNewsRoute =  { },
+        onStocksRoute = { },
+        onSupportRoute =  { }
       )
     }
     composable(route = SettingsDestination.key) {

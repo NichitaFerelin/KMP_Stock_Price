@@ -10,7 +10,6 @@ val profileModule = module {
       get(parameters = { params }),
       get(),
       get(),
-      get()
     )
   }
 
