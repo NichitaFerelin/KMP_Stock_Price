@@ -1,8 +1,8 @@
 package com.ferelin.core.domain.entity
 
 data class SearchRequest(
-  val id: SearchId,
-  val request: String
+    val id: SearchId,
+    val request: String
 )
 
 @JvmInline

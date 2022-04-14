@@ -7,31 +7,30 @@ import com.ferelin.core.data.mapper.PastPriceMapper
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.PastPrice
 import com.ferelin.core.domain.repository.PastPriceRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 internal class PastPriceRepositoryImpl(
-  private val api: PastPriceApi,
-  private val dao: PastPriceDao,
-  private val token: String
+    private val api: PastPriceApi,
+    private val dao: PastPriceDao,
+    private val token: String
 ) : PastPriceRepository {
-  override fun getAllBy(companyId: CompanyId): Flow<List<PastPrice>> {
-    return dao.getAllBy(companyId.value)
-      .distinctUntilChanged()
-      .map { it.map(PastPriceMapper::map) }
-  }
-
-  override suspend fun fetchPastPrices(companyId: CompanyId, companyTicker: String) {
-    try {
-      val options = PastPricesOptions(token, companyTicker)
-      val response = api.load(options)
-      dao.eraseAllBy(companyId.value)
-      dao.insertAll(PastPriceMapper.map(response, companyId))
-      fetchErrorState.value = null
-    } catch (e: Exception) {
-      fetchErrorState.value = e
+    override fun getAllBy(companyId: CompanyId): Flow<List<PastPrice>> {
+        return dao.getAllBy(companyId.value)
+            .distinctUntilChanged()
+            .map { it.map(PastPriceMapper::map) }
     }
-  }
 
-  private val fetchErrorState = MutableStateFlow<Exception?>(null)
-  override val fetchError: Flow<Exception?> = fetchErrorState.asStateFlow()
+    override suspend fun fetchPastPrices(
+        companyId: CompanyId,
+        companyTicker: String
+    ): Result<Any> = runCatching {
+        val requestOptions = PastPricesOptions(token, companyTicker)
+        val response = api.load(requestOptions)
+        val dbPastPrices = PastPriceMapper.map(response, companyId)
+
+        dao.eraseAllBy(companyId.value)
+        dao.insertAll(dbPastPrices)
+    }
 }

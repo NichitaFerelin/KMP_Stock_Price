@@ -18,7 +18,6 @@ import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDaoImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
 import com.ferelin.core.data.entity.stockPrice.StockPriceDaoImpl
-import com.ferelin.core.data.storage.PreferencesProvider
 import com.ferelin.stockprice.StockPrice
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
@@ -27,7 +26,6 @@ import org.koin.dsl.module
 
 val storageModule = module {
     single { StockPrice(get()) }
-    single { PreferencesProvider(get()) }
 
     single<SqlDriver> {
         AndroidSqliteDriver(
@@ -52,8 +50,8 @@ val storageModule = module {
     factory<PastPriceDao> { PastPriceDaoImpl(get()) }
     factory<SearchRequestDao> { SearchRequestDaoImpl(get()) }
     factory<StockPriceDao> { StockPriceDaoImpl(get()) }
-    factory<CompanyJsonSource> { CompanyJsonSourceImpl(get(), get()) }
-    factory<CryptoJsonSource> { CryptoJsonSourceImpl(get(), get()) }
+    factory<CompanyJsonSource> { CompanyJsonSourceImpl(get()) }
+    factory<CryptoJsonSource> { CryptoJsonSourceImpl(get()) }
 }
 
 internal const val DATABASE_NAME = "StockPrice"

@@ -3,7 +3,6 @@ package com.ferelin.core.data.entity.company
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import stockprice.CompanyDBO
 import stockprice.CompanyQueries
 

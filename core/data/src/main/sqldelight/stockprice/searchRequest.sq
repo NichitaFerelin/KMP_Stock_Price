@@ -11,6 +11,3 @@ SELECT * FROM SearchRequestDBO;
 
 eraseBy:
 DELETE FROM SearchRequestDBO WHERE id = :id;
-
-eraseAll:
-DELETE FROM SearchRequestDBO;

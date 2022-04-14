@@ -36,14 +36,14 @@ internal object CompanyMapper {
         )
     }
 
-    fun map(companiesJson: List<CompanyJson>) : List<CompanyDBO> {
+    fun map(companiesJson: List<CompanyJson>): List<CompanyDBO> {
         return companiesJson.mapIndexed { index, companyJson ->
             CompanyDBO(
                 id = index,
                 name = companyJson.name,
-                ticker = companyJson.symbol,
+                ticker = companyJson.ticker,
                 industry = companyJson.industry,
-                logoUrl = companyJson.logo,
+                logoUrl = companyJson.logoUrl,
                 country = companyJson.country,
                 phone = companyJson.phone,
                 webUrl = companyJson.webUrl,
