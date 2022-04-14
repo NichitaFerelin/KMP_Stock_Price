@@ -1,8 +1,14 @@
 CREATE TABLE CompanyDBO(
-    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    id INTEGER AS Int PRIMARY KEY,
     name TEXT NOT NULL,
     ticker TEXT NOT NULL,
-    logoUrl TEXT NOT NULL
+    logoUrl TEXT NOT NULL,
+    industry TEXT NOT NULL,
+    country TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    webUrl TEXT NOT NULL,
+    capitalization TEXT NOT NULL,
+    isFavourite INTEGER AS Boolean NOT NULL
 );
 
 insert:
@@ -10,3 +16,6 @@ INSERT OR REPLACE INTO CompanyDBO VALUES ?;
 
 getAll:
 SELECT * FROM CompanyDBO;
+
+getAllFavourites:
+SELECT * FROM CompanyDBO WHERE isFavourite = 1;

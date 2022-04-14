@@ -1,31 +1,22 @@
 package com.ferelin.features.search
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.viewModelScope
-import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
-import com.ferelin.core.domain.usecase.SearchRequestsUseCase
 import com.ferelin.core.ui.viewData.StockViewData
-import com.ferelin.core.ui.viewModel.BaseStocksViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.timerTask
 
 @Immutable
 internal data class SearchStateUi(
-  val searchResults: List<StockViewData> = emptyList(),
-  val searchResultsLce: LceState = LceState.None,
-  val showCloseIcon: Boolean = false,
-  val inputSearchRequest: String = "",
-  val searchRequests: List<SearchViewData> = emptyList(),
-  val searchRequestsLce: LceState = LceState.None,
-  val popularSearchRequests: List<SearchViewData> = emptyList(),
-  val popularSearchRequestsLce: LceState = LceState.None
+    val searchResults: List<StockViewData> = emptyList(),
+    val searchResultsLce: LceState = LceState.None,
+    val showCloseIcon: Boolean = false,
+    val inputSearchRequest: String = "",
+    val searchRequests: List<SearchViewData> = emptyList(),
+    val searchRequestsLce: LceState = LceState.None,
+    val popularSearchRequests: List<SearchViewData> = emptyList(),
+    val popularSearchRequestsLce: LceState = LceState.None
 )
 
+/*
 internal class SearchViewModel(
   private val searchRequestsUseCase: SearchRequestsUseCase,
   favouriteCompanyUseCase: FavouriteCompanyUseCase,
@@ -131,4 +122,4 @@ internal fun List<StockViewData>.filterBySearch(searchText: String): List<StockV
       .contains(searchText.lowercase(Locale.ROOT)) || item.ticker.lowercase(Locale.ROOT)
       .contains(searchText.lowercase(Locale.ROOT))
   }
-}
+}*/

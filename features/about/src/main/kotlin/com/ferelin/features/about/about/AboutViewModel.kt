@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
-import com.ferelin.core.domain.usecase.FavouriteCompanyUseCase
 import com.ferelin.core.ui.params.AboutParams
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,7 +18,6 @@ internal data class AboutStateUi(
 
 internal class AboutViewModel(
   private val aboutParams: AboutParams,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val dispatchersProvider: DispatchersProvider,
 ) : ViewModel() {
   private val viewModelState = MutableStateFlow(
@@ -31,11 +29,11 @@ internal class AboutViewModel(
   val uiState = viewModelState.asStateFlow()
 
   private val onFavouriteSwitchEvent = MutableSharedFlow<Unit>()
-  private val isCompanyFavourite = favouriteCompanyUseCase.favouriteCompanies
-    .map { companies -> companies.find { it == aboutParams.companyId } != null }
+ /* private val isCompanyFavourite = favouriteCompanyUseCase.favouriteCompanies
+    .map { companies -> companies.find { it == aboutParams.companyId } != null }*/
 
   init {
-    isCompanyFavourite
+    /*isCompanyFavourite
       .onEach(this::onCompanyIsFavourite)
       .flowOn(dispatchersProvider.IO)
       .launchIn(viewModelScope)
@@ -47,7 +45,7 @@ internal class AboutViewModel(
       )
       .onEach(this::switchRequested)
       .flowOn(dispatchersProvider.IO)
-      .launchIn(viewModelScope)
+      .launchIn(viewModelScope)*/
   }
 
   fun onScreenSelected(index: Int) {
@@ -61,11 +59,11 @@ internal class AboutViewModel(
   }
 
   private suspend fun switchRequested(isFavourite: Boolean) {
-    if (isFavourite) {
+    /*if (isFavourite) {
       favouriteCompanyUseCase.removeFromFavourite(aboutParams.companyId)
     } else {
       favouriteCompanyUseCase.addToFavourite(aboutParams.companyId)
-    }
+    }*/
   }
 
   private fun onCompanyIsFavourite(isFavourite: Boolean) {

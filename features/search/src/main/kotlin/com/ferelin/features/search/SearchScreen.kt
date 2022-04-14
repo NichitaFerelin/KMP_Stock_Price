@@ -45,9 +45,8 @@ fun SearchRoute(
   onBackRoute: () -> Unit,
   onStockRoute: (StockViewData) -> Unit
 ) {
-  val viewModel = getViewModel<SearchViewModel>()
-  val uiState by viewModel.uiState.collectAsState()
-
+//  val uiState by viewModel.uiState.collectAsState()
+/*
   SearchScreen(
     uiState = uiState,
     onSearchTextChanged = viewModel::onSearchTextChanged,
@@ -55,7 +54,7 @@ fun SearchRoute(
     onStockClick = onStockRoute,
     onFavouriteIconClick = viewModel::onFavouriteIconClick,
     onBackClick = onBackRoute
-  )
+  )*/
 }
 
 @Composable

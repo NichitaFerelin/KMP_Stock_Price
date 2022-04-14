@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.LceState
 import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.ProfileUseCase
 import com.ferelin.core.ui.params.ProfileParams
 import kotlinx.coroutines.flow.*
 
@@ -18,7 +17,6 @@ internal data class ProfileStateUi(
 
 internal class ProfileViewModel(
   profileParams: ProfileParams,
-  profileUseCase: ProfileUseCase,
   companyUseCase: CompanyUseCase,
   dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
@@ -26,7 +24,7 @@ internal class ProfileViewModel(
   val uiState = viewModelState.asStateFlow()
 
   init {
-    companyUseCase.companies
+    /*companyUseCase.companies
       .map { companies -> companies.find { it.id == profileParams.companyId } }
       .filterNotNull()
       .zip(
@@ -39,7 +37,7 @@ internal class ProfileViewModel(
 
     profileUseCase.profileLce
       .onEach(this::onProfileLce)
-      .launchIn(viewModelScope)
+      .launchIn(viewModelScope)*/
   }
 
   private fun onProfile(profileViewData: ProfileViewData) {

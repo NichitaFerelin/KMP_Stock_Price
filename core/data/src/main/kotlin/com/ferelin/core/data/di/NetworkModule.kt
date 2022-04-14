@@ -4,8 +4,6 @@ import com.ferelin.core.data.R
 import com.ferelin.core.data.api.buildKtorHttpClient
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApiImpl
-import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApi
-import com.ferelin.core.data.entity.favouriteCompany.FavouriteCompanyApiImpl
 import com.ferelin.core.data.entity.news.NewsApi
 import com.ferelin.core.data.entity.news.NewsApiImpl
 import com.ferelin.core.data.entity.pastPrice.PastPriceApi
@@ -35,7 +33,6 @@ val networkModule = module {
 
   factory { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
 
-  factory<FavouriteCompanyApi> { FavouriteCompanyApiImpl(get()) }
   factory<CryptoPriceApi> { CryptoPriceApiImpl(get()) }
   factory<NewsApi> { NewsApiImpl(get()) }
   factory<PastPriceApi> { PastPriceApiImpl(get()) }

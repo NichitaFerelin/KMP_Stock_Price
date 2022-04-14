@@ -9,7 +9,6 @@ val aboutModule = module {
     AboutViewModel(
       get(parameters = { params }),
       get(),
-      get()
     )
   }
 

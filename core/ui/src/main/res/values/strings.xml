@@ -24,6 +24,10 @@
     <string name="titleSettings">App settings</string>
     <string name="titleCryptos">Cryptos</string>
 
+    <string name="hintStocks">Over 1500+ companies and their stocks\nInformation and news</string>
+    <string name="hintCryptos">Popular cryptos\nBitcoin, Чёто еще и чёто еще</string>
+    <string name="hintNews">Global stock market news</string>
+
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
     <string name="errorNoAppToResolve">App that can resolve it do not found</string>
@@ -51,10 +55,19 @@
     <string name="descriptionNoSearchResults">No request results</string>
     <string name="descriptionDecorative">decorative icon</string>
 
+    <string name="descriptionSelectStocks">select stocks</string>
+    <string name="descriptionSelectCryptos">select cryptos</string>
+    <string name="descriptionSelectNews">select news</string>
+    <string name="descriptionSelectSupport">select support</string>
+
+    <string name="descriptionStockIcon">stock decorative icon</string>
+
+    <string name="descriptionFavouriteStock">favourite stock</string>
+    <string name="descriptionDefaultStock">defaultStock</string>
+
     <!-- Hints -->
     <string name="hintFindCompany">Find company or ticker</string>
     <string name="hintOpenInBrowser">Open in browser:</string>
-    <string name="hintStocks">Stocks</string>
     <string name="hintName">Name</string>
     <string name="hintWebsite">Website</string>
     <string name="hintCountry">Country:</string>

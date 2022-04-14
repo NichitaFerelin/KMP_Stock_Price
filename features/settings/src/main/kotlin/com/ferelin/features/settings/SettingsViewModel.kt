@@ -30,7 +30,6 @@ internal class SettingsViewModel(
   private val downloadProjectUseCase: DownloadProjectUseCase,
   private val permissionManager: PermissionManager,
   private val storageManager: StoragePathBuilder,
-  private val favouriteCompanyUseCase: FavouriteCompanyUseCase,
   private val searchRequestsUseCase: SearchRequestsUseCase,
   private val authUseCase: AuthUseCase,
   private val dispatchersProvider: DispatchersProvider,
@@ -99,7 +98,6 @@ internal class SettingsViewModel(
   fun onClearDataClick() {
     viewModelScope.launch(dispatchersProvider.IO) {
       searchRequestsUseCase.eraseAll()
-      favouriteCompanyUseCase.eraseCache()
       viewModelState.update { it.copy(showDataCleared = true) }
     }
   }
