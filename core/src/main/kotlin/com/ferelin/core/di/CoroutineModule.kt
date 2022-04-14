@@ -8,11 +8,11 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val coroutineModule = module {
-  factory { DispatchersProvider() }
+    factory { DispatchersProvider() }
 
-  factory(
-    qualifier = named(NAMED_EXTERNAL_SCOPE)
-  ) {
-    CoroutineScope(SupervisorJob() + get<DispatchersProvider>().IO)
-  }
+    factory(
+        qualifier = named(NAMED_EXTERNAL_SCOPE)
+    ) {
+        CoroutineScope(SupervisorJob() + get<DispatchersProvider>().IO)
+    }
 }

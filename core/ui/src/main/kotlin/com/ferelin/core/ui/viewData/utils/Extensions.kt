@@ -10,8 +10,8 @@ internal const val PRICE_PATTERN = "###,##0.00"
 internal const val PRICE_SPLIT_SYMBOL = '.'
 
 fun Long.toDateStr(): String {
-  val dateFormat = SimpleDateFormat(DATE_PATTERN, Locale.ROOT)
-  return dateFormat.format(Date(this)).filter { it != ',' }
+    val dateFormat = SimpleDateFormat(DATE_PATTERN, Locale.ROOT)
+    return dateFormat.format(Date(this)).filter { it != ',' }
 }
 
 /*
@@ -20,10 +20,10 @@ fun Long.toDateStr(): String {
 * Result:   $2 253.14
 * */
 fun Double.toStrPrice(): String {
-  val balanceFormatSymbols = DecimalFormatSymbols().apply {
-    groupingSeparator = ' '
-    decimalSeparator = PRICE_SPLIT_SYMBOL
-  }
-  val formattedBalance = DecimalFormat(PRICE_PATTERN, balanceFormatSymbols).format(this)
-  return "$$formattedBalance"
+    val balanceFormatSymbols = DecimalFormatSymbols().apply {
+        groupingSeparator = ' '
+        decimalSeparator = PRICE_SPLIT_SYMBOL
+    }
+    val formattedBalance = DecimalFormat(PRICE_PATTERN, balanceFormatSymbols).format(this)
+    return "$$formattedBalance"
 }

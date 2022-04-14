@@ -24,14 +24,25 @@
         <entry key="..\:/IDE Projects/Android/Android_Stock_Price/core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.124" />
         <entry key="..\:/IDE Projects/Android/Android_Stock_Price/core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.124" />
         <entry key="..\:/IDE Projects/Android/Android_Stock_Price/features/stocks/src/main/kotlin/com/ferelin/features/stocks/uiComponents/CryptoItem.kt" value="0.5795698924731183" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/kotlin/com/ferelin/core/ui/components/SearchField.kt" value="0.8923841059602649" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_24.xml" value="0.169" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_arrow_up_24.xml" value="0.184" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_baseline_settings_applications_24.xml" value="0.169" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_bitcoin_24.xml" value="0.184" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_delete_30.xml" value="0.184" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_download_30.xml" value="0.184" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_forward_24.xml" value="0.169" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_info_24.xml" value="0.184" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_load_error_20.xml" value="0.184" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_login_30.xml" value="0.169" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_logout_30.xml" value="0.169" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_search_17x18.xml" value="0.169" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_settings_24.xml" value="0.169" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/ic_stock_24.xml" value="0.184" />
         <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/drawable/icons8_settings.xml" value="0.169" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.184" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.184" />
+        <entry key="..\:/IDE Projects/Android/Stock_Price/features/home/src/main/res/drawable/ic_baseline_settings_applications_24.xml" value="0.184" />
       </map>
     </option>
   </component>

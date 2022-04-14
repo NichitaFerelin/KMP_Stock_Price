@@ -10,18 +10,18 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val networkListenerModule = module {
-  factory { buildNetworkRequest() }
+    factory { buildNetworkRequest() }
 
-  factory {
-    androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-  }
+    factory {
+        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
 
-  single<NetworkListener> { NetworkListenerImpl(get(), get()) }
+    single<NetworkListener> { NetworkListenerImpl(get(), get()) }
 }
 
 internal fun buildNetworkRequest(): NetworkRequest {
-  return NetworkRequest.Builder()
-    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-    .build()
+    return NetworkRequest.Builder()
+        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        .build()
 }

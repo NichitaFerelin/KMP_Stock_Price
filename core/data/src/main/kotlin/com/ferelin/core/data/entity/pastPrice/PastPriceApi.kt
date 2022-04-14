@@ -3,6 +3,7 @@ package com.ferelin.core.data.entity.pastPrice
 import com.ferelin.core.ONE_YEAR_MILLIS
 import com.ferelin.core.data.api.endPoints.pastPrice
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 
@@ -14,7 +15,7 @@ internal class PastPriceApiImpl(
     private val client: HttpClient
 ) : PastPriceApi {
     override suspend fun load(options: PastPricesOptions): PastPricesResponse {
-        return client.get { pastPrice(options) }
+        return client.get { pastPrice(options) }.body()
     }
 }
 

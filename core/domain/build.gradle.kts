@@ -3,7 +3,6 @@ import com.ferelin.Libs
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("kotlin-parcelize")
 }
 
 android {

@@ -18,7 +18,7 @@ import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDaoImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
 import com.ferelin.core.data.entity.stockPrice.StockPriceDaoImpl
-import com.ferelin.stockprice.StockPrice
+import com.ferelin.stockprice.db.StockPrice
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.android.ext.koin.androidContext

@@ -13,6 +13,9 @@ android {
     defaultConfig {
         minSdk = Libs.Project.minSDK
     }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 
     buildTypes {
         val publicFinnhubDebugToken = "c5n906iad3ido15tstu0"
@@ -43,34 +46,24 @@ android {
             )
         }
     }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = freeCompilerArgs +
-                ("-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
-    }
 }
 
 dependencies {
-    api(project(":core:domain"))
+    implementation(project(":core:domain"))
 
     implementation(Libs.Kotlin.serialization)
 
-    api(platform(Libs.Firebase.platform))
-    api(Libs.Firebase.crashlyticsKtx)
+    implementation(Libs.Ktor.core)
+    implementation(Libs.Ktor.negotiation)
+    implementation(Libs.Ktor.jsonSerialization)
+    implementation(Libs.Ktor.logging)
+    implementation(Libs.Ktor.android)
 
-    api(Libs.Ktor.core)
-    api(Libs.Ktor.android)
-    api(Libs.Ktor.serialization)
-    api(Libs.Ktor.logging)
-
-    api(Libs.dataStorePreferences)
-
-    api(Libs.SqlDelight.core)
-    api(Libs.SqlDelight.coroutinesExt)
+    implementation(Libs.SqlDelight.core)
+    implementation(Libs.SqlDelight.coroutinesExt)
 }
 sqldelight {
     database("StockPrice") {
-        packageName = "com.ferelin.stockprice"
+        packageName = "com.ferelin.stockprice.db"
     }
 }
