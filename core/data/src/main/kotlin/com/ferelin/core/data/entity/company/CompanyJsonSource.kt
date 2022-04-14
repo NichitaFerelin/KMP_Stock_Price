@@ -2,42 +2,39 @@ package com.ferelin.core.data.entity.company
 
 import android.content.Context
 import com.ferelin.core.data.mapper.CompanyMapper
-import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import stockprice.CompanyDBO
 
 internal interface CompanyJsonSource {
-    fun parseJson(): List<CompanyDBO>
+    suspend fun parseJson(): List<CompanyDBO>
 }
 
 internal class CompanyJsonSourceImpl(
-    private val context: Context,
-    private val moshi: Moshi
+    private val context: Context
 ) : CompanyJsonSource {
-    override fun parseJson(): List<CompanyDBO> {
-        val type = Types.newParameterizedType(List::class.java, CompanyJson::class.java)
+    override suspend fun parseJson(): List<CompanyDBO> {
         val json = context.assets
             .open(COMPANIES_JSON_FILE)
             .bufferedReader()
             .use { it.readText() }
-
-        val adapter = moshi.adapter<List<CompanyJson>?>(type)
-        val jsonCompanies = adapter.fromJson(json)!!
-        return CompanyMapper.map(jsonCompanies)
+        val companiesJson = Json.decodeFromString<List<CompanyJson>>(json)
+        return CompanyMapper.map(companiesJson)
     }
 }
 
+@kotlinx.serialization.Serializable
 internal data class CompanyJson(
-    @Json(name = "name") val name: String,
-    @Json(name = "symbol") val symbol: String,
-    @Json(name = "logo") val logo: String,
-    @Json(name = "country") val country: String,
-    @Json(name = "phone") val phone: String,
-    @Json(name = "weburl") val webUrl: String,
-    @Json(name = "finnhubIndustry") val industry: String,
-    @Json(name = "currency") val currency: String,
-    @Json(name = "marketCapitalization") val capitalization: String
+    @SerialName(value = "name") val name: String,
+    @SerialName(value = "symbol") val ticker: String,
+    @SerialName(value = "logo") val logoUrl: String,
+    @SerialName(value = "country") val country: String,
+    @SerialName(value = "phone") val phone: String,
+    @SerialName(value = "weburl") val webUrl: String,
+    @SerialName(value = "finnhubIndustry") val industry: String,
+    @SerialName(value = "currency") val currency: String,
+    @SerialName(value = "marketCapitalization") val capitalization: String
 )
 
 internal const val COMPANIES_JSON_FILE = "companies.json"

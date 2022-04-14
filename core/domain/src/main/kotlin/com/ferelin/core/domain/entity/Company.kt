@@ -4,16 +4,16 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 data class Company(
-  val id: CompanyId,
-  val name: String,
-  val ticker: String,
-  val logoUrl: String,
-  val country: String,
-  val industry: String,
-  val phone: String,
-  val webUrl: String,
-  val capitalization: String,
-  val isFavourite: Boolean
+    val id: CompanyId,
+    val name: String,
+    val ticker: String,
+    val logoUrl: String,
+    val country: String,
+    val industry: String,
+    val phone: String,
+    val webUrl: String,
+    val capitalization: String,
+    val isFavourite: Boolean
 )
 
 @Parcelize

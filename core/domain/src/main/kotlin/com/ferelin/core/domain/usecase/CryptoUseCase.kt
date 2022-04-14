@@ -7,20 +7,20 @@ import com.ferelin.core.domain.repository.CryptoRepository
 import kotlinx.coroutines.flow.*
 
 interface CryptoUseCase {
-  val cryptos: Flow<List<Crypto>>
-  val cryptosLce: Flow<LceState>
+    val cryptos: Flow<List<Crypto>>
+    val cryptosLce: Flow<LceState>
 }
 
 internal class CryptoUseCaseImpl(
-  cryptoRepository: CryptoRepository,
-  dispatchersProvider: DispatchersProvider
+    cryptoRepository: CryptoRepository,
+    dispatchersProvider: DispatchersProvider
 ) : CryptoUseCase {
-  override val cryptos: Flow<List<Crypto>> = cryptoRepository.cryptos
-    .onStart { cryptosLceState.value = LceState.Loading }
-    .onEach { cryptosLceState.value = LceState.Content }
-    .catch { e -> cryptosLceState.value = LceState.Error(e.message) }
-    .flowOn(dispatchersProvider.IO)
+    override val cryptos: Flow<List<Crypto>> = cryptoRepository.cryptos
+        .onStart { cryptosLceState.value = LceState.Loading }
+        .onEach { cryptosLceState.value = LceState.Content }
+        .catch { e -> cryptosLceState.value = LceState.Error(e.message) }
+        .flowOn(dispatchersProvider.IO)
 
-  private val cryptosLceState = MutableStateFlow<LceState>(LceState.None)
-  override val cryptosLce: Flow<LceState> = cryptosLceState.asStateFlow()
+    private val cryptosLceState = MutableStateFlow<LceState>(LceState.None)
+    override val cryptosLce: Flow<LceState> = cryptosLceState.asStateFlow()
 }

@@ -2,35 +2,33 @@ package com.ferelin.core.data.entity.crypto
 
 import android.content.Context
 import com.ferelin.core.data.mapper.CryptoMapper
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import stockprice.CryptoDBO
 
 internal interface CryptoJsonSource {
-  fun parseJson(): List<CryptoDBO>
+    suspend fun parseJson(): List<CryptoDBO>
 }
 
 internal class CryptoJsonSourceImpl(
-  private val context: Context,
-  private val moshi: Moshi
+    private val context: Context
 ) : CryptoJsonSource {
-  override fun parseJson(): List<CryptoDBO> {
-    val type = Types.newParameterizedType(List::class.java, CryptoJson::class.java)
-    val json = context.assets
-      .open(CRYPTO_JSON_FILE)
-      .bufferedReader()
-      .use { it.readText() }
-
-    val adapter = moshi.adapter<List<CryptoJson>?>(type)
-    val parsedItems = adapter.fromJson(json)!!
-    return CryptoMapper.map(parsedItems)
-  }
+    override suspend fun parseJson(): List<CryptoDBO> {
+        val json = context.assets
+            .open(CRYPTO_JSON_FILE)
+            .bufferedReader()
+            .use { it.readText() }
+        val cryptosJson = Json.decodeFromString<List<CryptoJson>>(json)
+        return CryptoMapper.map(cryptosJson)
+    }
 }
 
+@kotlinx.serialization.Serializable
 internal data class CryptoJson(
-  val symbol: String,
-  val name: String,
-  val logo_url: String
+    @SerialName(value = "symbol") val symbol: String,
+    @SerialName(value = "name") val name: String,
+    @SerialName(value = "logo_url") val logoUrl: String
 )
 
 internal const val CRYPTO_JSON_FILE = "crypto.json"

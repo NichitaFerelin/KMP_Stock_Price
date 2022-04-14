@@ -8,33 +8,30 @@ import com.ferelin.core.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.*
 
 interface NewsUseCase {
-  fun getNewsBy(companyId: CompanyId): Flow<List<News>>
-  suspend fun fetchNews(companyId: CompanyId, companyTicker: String)
-  val newsLce: Flow<LceState>
+    val newsLce: Flow<LceState>
+    fun getNewsBy(companyId: CompanyId): Flow<List<News>>
+    suspend fun fetchNews(companyId: CompanyId, companyTicker: String): Result<Any>
 }
 
 internal class NewsUseCaseImpl(
-  private val newsRepository: NewsRepository,
-  private val dispatchersProvider: DispatchersProvider
+    private val newsRepository: NewsRepository,
+    private val dispatchersProvider: DispatchersProvider
 ) : NewsUseCase {
-  override fun getNewsBy(companyId: CompanyId): Flow<List<News>> {
-    return newsRepository.getAllBy(companyId)
-      .onStart { newsLceState.value = LceState.Loading }
-      .onEach { newsLceState.value = LceState.Content }
-      .catch { e -> newsLceState.value = LceState.Error(e.message) }
-      .flowOn(dispatchersProvider.IO)
-  }
-
-  override suspend fun fetchNews(companyId: CompanyId, companyTicker: String) {
-    try {
-      newsLceState.value = LceState.Loading
-      newsRepository.fetchNews(companyId, companyTicker)
-      newsLceState.value = LceState.Content
-    } catch (e: Exception) {
-      newsLceState.value = LceState.Error(e.message)
+    override fun getNewsBy(companyId: CompanyId): Flow<List<News>> {
+        return newsRepository.getAllBy(companyId)
+            .onStart { newsLceState.value = LceState.Loading }
+            .onEach { newsLceState.value = LceState.Content }
+            .catch { e -> newsLceState.value = LceState.Error(e.message) }
+            .flowOn(dispatchersProvider.IO)
     }
-  }
 
-  private val newsLceState = MutableStateFlow<LceState>(LceState.None)
-  override val newsLce: Flow<LceState> = newsLceState.asStateFlow()
+    override suspend fun fetchNews(
+        companyId: CompanyId,
+        companyTicker: String
+    ): Result<Any> {
+        return newsRepository.fetchNews(companyId, companyTicker)
+    }
+
+    private val newsLceState = MutableStateFlow<LceState>(LceState.None)
+    override val newsLce: Flow<LceState> = newsLceState.asStateFlow()
 }

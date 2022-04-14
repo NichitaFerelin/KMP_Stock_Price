@@ -8,34 +8,28 @@ import com.ferelin.core.domain.repository.StockPriceRepository
 import kotlinx.coroutines.flow.*
 
 interface StockPriceUseCase {
-  val stockPrice: Flow<List<StockPrice>>
-  suspend fun fetchPrice(companyId: CompanyId, companyTicker: String)
-  val stockPriceLce: Flow<LceState>
+    val stockPrice: Flow<List<StockPrice>>
+    val stockPriceLce: Flow<LceState>
+    suspend fun fetchPrice(companyId: CompanyId, companyTicker: String): Result<Any>
 }
 
 internal class StockPriceUseCaseImpl(
-  private val stockPriceRepository: StockPriceRepository,
-  dispatchersProvider: DispatchersProvider
+    private val stockPriceRepository: StockPriceRepository,
+    dispatchersProvider: DispatchersProvider
 ) : StockPriceUseCase {
-  override val stockPrice: Flow<List<StockPrice>> = stockPriceRepository.stockPrice
-    .zip(
-      other = stockPriceRepository.fetchError,
-      transform = { stockPrices, exception ->
-        if (exception != null) {
-          stockPriceLceState.value = LceState.Error(exception.message)
-        }
-        stockPrices
-      }
-    )
-    .onStart { stockPriceLceState.value = LceState.Loading }
-    .onEach { stockPriceLceState.value = LceState.Content }
-    .catch { e -> stockPriceLceState.value = LceState.Error(e.message) }
-    .flowOn(dispatchersProvider.IO)
+    override val stockPrice: Flow<List<StockPrice>> = stockPriceRepository.stockPrice
+        .onStart { stockPriceLceState.value = LceState.Loading }
+        .onEach { stockPriceLceState.value = LceState.Content }
+        .catch { e -> stockPriceLceState.value = LceState.Error(e.message) }
+        .flowOn(dispatchersProvider.IO)
 
-  override suspend fun fetchPrice(companyId: CompanyId, companyTicker: String) {
-    stockPriceRepository.fetchPrice(companyId, companyTicker)
-  }
+    override suspend fun fetchPrice(
+        companyId: CompanyId,
+        companyTicker: String
+    ): Result<Any> {
+        return stockPriceRepository.fetchPrice(companyId, companyTicker)
+    }
 
-  private val stockPriceLceState = MutableStateFlow<LceState>(LceState.None)
-  override val stockPriceLce: Flow<LceState> = stockPriceLceState.asStateFlow()
+    private val stockPriceLceState = MutableStateFlow<LceState>(LceState.None)
+    override val stockPriceLce: Flow<LceState> = stockPriceLceState.asStateFlow()
 }

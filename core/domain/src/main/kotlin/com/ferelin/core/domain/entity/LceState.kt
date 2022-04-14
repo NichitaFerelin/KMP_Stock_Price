@@ -12,6 +12,7 @@ fun LceState.compare(other: LceState): LceState {
         this is LceState.Loading || other is LceState.Loading -> LceState.Loading
         this is LceState.Error -> this
         other is LceState.Error -> other
-        else -> this
+        this is LceState.Content -> this
+        else -> other
     }
 }

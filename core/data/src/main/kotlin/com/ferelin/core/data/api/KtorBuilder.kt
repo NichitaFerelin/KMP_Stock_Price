@@ -8,20 +8,20 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 
 internal fun buildKtorHttpClient(): HttpClient {
-  return HttpClient(Android) {
-    engine {
-      connectTimeout = 60_000
-    }
-    install(JsonFeature) {
-      serializer = KotlinxSerializer(
-        json = kotlinx.serialization.json.Json {
-          ignoreUnknownKeys = true
+    return HttpClient(Android) {
+        engine {
+            connectTimeout = 60_000
         }
-      )
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(
+                json = kotlinx.serialization.json.Json {
+                    ignoreUnknownKeys = true
+                }
+            )
+        }
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.INFO
+        }
     }
-    install(Logging) {
-      logger = Logger.DEFAULT
-      level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.INFO
-    }
-  }
 }
