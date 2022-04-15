@@ -5,33 +5,48 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 import stockprice.CompanyDBO
 import stockprice.CompanyQueries
+import stockprice.FavoriteCompanyQueries
+import stockprice.GetAll
+
+internal typealias CompanyWithFavoriteState = GetAll
 
 internal interface CompanyDao {
     fun getAll(): Flow<List<CompanyDBO>>
-    fun getAllFavourites(): Flow<List<CompanyDBO>>
+    fun getAllFavorites(): Flow<List<GetAll>>
     suspend fun insertAll(companies: List<CompanyDBO>)
+    suspend fun addToFavorites(companyId: Int)
+    suspend fun eraseFromFavorites(companyId: Int)
 }
 
 internal class CompanyDaoImpl(
-    private val queries: CompanyQueries
+    private val companyQueries: CompanyQueries,
+    private val favoriteCompanyQueries: FavoriteCompanyQueries
 ) : CompanyDao {
     override fun getAll(): Flow<List<CompanyDBO>> {
-        return queries.getAll()
+        return companyQueries.getAll()
             .asFlow()
             .mapToList()
     }
 
-    override fun getAllFavourites(): Flow<List<CompanyDBO>> {
-        return queries.getAllFavourites()
+    override fun getAllFavorites(): Flow<List<CompanyWithFavoriteState>> {
+        return favoriteCompanyQueries.getAll()
             .asFlow()
             .mapToList()
     }
 
     override suspend fun insertAll(companies: List<CompanyDBO>) {
-        queries.transaction {
+        companyQueries.transaction {
             companies.forEach {
-                queries.insert(it)
+                companyQueries.insert(it)
             }
         }
+    }
+
+    override suspend fun addToFavorites(companyId: Int) {
+        favoriteCompanyQueries.insert(null, companyId)
+    }
+
+    override suspend fun eraseFromFavorites(companyId: Int) {
+        favoriteCompanyQueries.eraseBy(companyId)
     }
 }

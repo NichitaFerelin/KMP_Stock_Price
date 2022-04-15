@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.ferelin.features.home.components
 
 import androidx.compose.foundation.background
@@ -7,8 +9,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -18,12 +19,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.ui.APP_CONTENT_PADDING
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.home.home.CONTENT_PADDING
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun PreviewHolder(
     modifier: Modifier = Modifier,
@@ -34,10 +35,11 @@ internal fun PreviewHolder(
     innerContent: @Composable () -> Unit = {}
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val boxWidth = remember { screenWidth - CONTENT_PADDING / 2 }
-    val radialXCenter = remember { boxWidth - boxWidth / 4 }
-    val radialYCenter = remember { PREVIEW_MIN_HEIGHT / 5 }
-    val gradientRadius = remember { boxWidth / 2 }
+    var topBarBackground by remember { mutableStateOf(TopBarBackground(screenWidth)) }
+
+    LaunchedEffect(key1 = screenWidth.value) {
+        topBarBackground = TopBarBackground(screenWidth)
+    }
 
     Card(
         modifier = modifier
@@ -58,10 +60,10 @@ internal fun PreviewHolder(
                             AppTheme.colors.backgroundPrimary
                         ),
                         center = Offset(
-                            x = LocalDensity.current.run { radialXCenter.toPx() },
-                            y = LocalDensity.current.run { radialYCenter.toPx() }
+                            x = LocalDensity.current.run { topBarBackground.radialXCenter.toPx() },
+                            y = LocalDensity.current.run { topBarBackground.radialYCenter.toPx() }
                         ),
-                        radius = LocalDensity.current.run { gradientRadius.toPx() }
+                        radius = LocalDensity.current.run { topBarBackground.gradientRadius.toPx() }
                     )
                 ),
             contentAlignment = Alignment.Center
@@ -105,5 +107,14 @@ internal fun PreviewHolder(
         }
     }
 }
+
+@Immutable
+private data class TopBarBackground(
+    val screenWidth: Dp,
+    val boxWidth: Dp = screenWidth - APP_CONTENT_PADDING / 2,
+    val radialYCenter: Dp = PREVIEW_MIN_HEIGHT / 5,
+    val radialXCenter: Dp = boxWidth - boxWidth / 4,
+    val gradientRadius: Dp = boxWidth / 2
+)
 
 private val PREVIEW_MIN_HEIGHT = 80.dp

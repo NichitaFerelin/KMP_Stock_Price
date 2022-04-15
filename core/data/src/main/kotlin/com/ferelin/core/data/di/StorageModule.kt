@@ -36,6 +36,7 @@ val storageModule = module {
     }
 
     factory { get<StockPrice>().companyQueries }
+    factory { get<StockPrice>().favoriteCompanyQueries }
     factory { get<StockPrice>().newsQueries }
     factory { get<StockPrice>().cryptoQueries }
     factory { get<StockPrice>().cryptoPriceQueries }
@@ -43,7 +44,7 @@ val storageModule = module {
     factory { get<StockPrice>().searchRequestQueries }
     factory { get<StockPrice>().stockPriceQueries }
 
-    factory<CompanyDao> { CompanyDaoImpl(get()) }
+    factory<CompanyDao> { CompanyDaoImpl(get(), get()) }
     factory<CryptoDao> { CryptoDaoImpl(get()) }
     factory<CryptoPriceDao> { CryptoPriceDaoImpl(get()) }
     factory<NewsDao> { NewsDaoImpl(get()) }

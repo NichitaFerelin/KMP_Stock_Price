@@ -1,6 +1,5 @@
 package stockprice
 
-import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 
@@ -13,8 +12,7 @@ public data class CompanyDBO(
   public val country: String,
   public val phone: String,
   public val webUrl: String,
-  public val capitalization: String,
-  public val isFavourite: Boolean
+  public val capitalization: String
 ) {
   public override fun toString(): String = """
   |CompanyDBO [
@@ -27,7 +25,6 @@ public data class CompanyDBO(
   |  phone: $phone
   |  webUrl: $webUrl
   |  capitalization: $capitalization
-  |  isFavourite: $isFavourite
   |]
   """.trimMargin()
 }

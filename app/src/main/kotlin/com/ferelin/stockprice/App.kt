@@ -9,6 +9,7 @@ import com.ferelin.core.di.coroutineModule
 import com.ferelin.core.di.networkListenerModule
 import com.ferelin.core.domain.di.useCaseModule
 import com.ferelin.features.home.home.homeModule
+import com.ferelin.features.stocks.stocks.stocksModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -56,5 +57,6 @@ private val koinModules = listOf(
     useCaseModule,
     coroutineModule,
     networkListenerModule,
-    homeModule
+    homeModule,
+    stocksModule
 )

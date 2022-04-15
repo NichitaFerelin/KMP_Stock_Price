@@ -5,9 +5,11 @@
 /app/build
 /core/build
 /core/data/build
+/core/data/build/generated
 /core/domain/build
 /core/ui/build
 /features/home/build
+/features/stocks/build
 *.iml
 .gradle
 .idea

@@ -1,8 +1,10 @@
 package com.ferelin.core.data.mapper
 
 import com.ferelin.core.data.entity.company.CompanyJson
+import com.ferelin.core.data.entity.company.CompanyWithFavoriteState
 import com.ferelin.core.domain.entity.Company
 import com.ferelin.core.domain.entity.CompanyId
+import com.ferelin.core.domain.entity.FavoriteCompany
 import stockprice.CompanyDBO
 
 internal object CompanyMapper {
@@ -17,7 +19,6 @@ internal object CompanyMapper {
             phone = company.phone,
             webUrl = company.webUrl,
             capitalization = company.capitalization,
-            isFavourite = company.isFavourite
         )
     }
 
@@ -32,7 +33,23 @@ internal object CompanyMapper {
             phone = companyDBO.phone,
             webUrl = companyDBO.webUrl,
             capitalization = companyDBO.capitalization,
-            isFavourite = companyDBO.isFavourite
+        )
+    }
+
+    fun map(company: CompanyWithFavoriteState): FavoriteCompany {
+        return FavoriteCompany(
+            company = Company(
+                id = CompanyId(company.id),
+                name = company.name,
+                ticker = company.ticker,
+                logoUrl = company.logoUrl,
+                country = company.country,
+                industry = company.industry,
+                phone = company.phone,
+                webUrl = company.webUrl,
+                capitalization = company.capitalization
+            ),
+            insertOrder = company.insertOrder
         )
     }
 
@@ -48,7 +65,6 @@ internal object CompanyMapper {
                 phone = companyJson.phone,
                 webUrl = companyJson.webUrl,
                 capitalization = companyJson.capitalization,
-                isFavourite = false,
             )
         }
     }

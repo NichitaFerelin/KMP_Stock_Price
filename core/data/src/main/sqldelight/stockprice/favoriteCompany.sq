@@ -1,0 +1,25 @@
+CREATE TABLE FavoriteCompanyDBO(
+    insertOrder INTEGER AS Int PRIMARY KEY AUTOINCREMENT,
+    companyOwnerId INTEGER AS Int NOT NULL,
+    FOREIGN KEY (companyOwnerId) REFERENCES CompanyDBO(id) ON DELETE CASCADE
+);
+
+eraseBy:
+DELETE FROM FavoriteCompanyDBO WHERE companyOwnerId = :companyId;
+
+insert:
+INSERT OR REPLACE INTO FavoriteCompanyDBO VALUES (?, ?);
+
+getAll:
+SELECT FavoriteCompanyDBO.insertOrder,
+CompanyDBO.id,
+CompanyDBO.name,
+CompanyDBO.ticker,
+CompanyDBO.logoUrl,
+CompanyDBO.industry,
+CompanyDBO.country,
+CompanyDBO.phone,
+CompanyDBO.webUrl,
+CompanyDBO.capitalization
+FROM FavoriteCompanyDBO
+INNER JOIN CompanyDBO ON FavoriteCompanyDBO.companyOwnerId = CompanyDBO.id;
