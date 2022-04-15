@@ -7,8 +7,7 @@ CREATE TABLE CompanyDBO(
     country TEXT NOT NULL,
     phone TEXT NOT NULL,
     webUrl TEXT NOT NULL,
-    capitalization TEXT NOT NULL,
-    isFavourite INTEGER AS Boolean NOT NULL
+    capitalization TEXT NOT NULL
 );
 
 insert:
@@ -16,6 +15,3 @@ INSERT OR REPLACE INTO CompanyDBO VALUES ?;
 
 getAll:
 SELECT * FROM CompanyDBO;
-
-getAllFavourites:
-SELECT * FROM CompanyDBO WHERE isFavourite = 1;

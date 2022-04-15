@@ -12,47 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-
-@Composable
-fun ClickableIcon(
-    modifier: Modifier = Modifier,
-    imageVector: ImageVector,
-    contentDescription: String,
-    backgroundColor: Color,
-    iconTint: Color,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .size(DEFAULT_ICON_HOLDER)
-            .background(backgroundColor)
-            .clip(CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = contentDescription,
-            tint = iconTint
-        )
-    }
-}
+import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
 fun ClickableIcon(
     modifier: Modifier = Modifier,
     painter: Painter,
     contentDescription: String,
-    backgroundColor: Color,
-    iconTint: Color,
+    tint: Color,
     onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
-            .size(DEFAULT_ICON_HOLDER)
-            .background(backgroundColor)
+            .size(40.dp)
+            .background(AppTheme.colors.backgroundPrimary.copy(alpha = 0f))
             .clip(CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
@@ -60,9 +34,7 @@ fun ClickableIcon(
         Icon(
             painter = painter,
             contentDescription = contentDescription,
-            tint = iconTint
+            tint = tint
         )
     }
 }
-
-private val DEFAULT_ICON_HOLDER = 40.dp

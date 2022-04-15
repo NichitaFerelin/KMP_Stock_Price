@@ -7,6 +7,7 @@ import com.squareup.sqldelight.db.SqlDriver
 import stockprice.CompanyQueries
 import stockprice.CryptoPriceQueries
 import stockprice.CryptoQueries
+import stockprice.FavoriteCompanyQueries
 import stockprice.NewsQueries
 import stockprice.PastPriceQueries
 import stockprice.SearchRequestQueries
@@ -18,6 +19,8 @@ public interface StockPrice : Transacter {
   public val cryptoQueries: CryptoQueries
 
   public val cryptoPriceQueries: CryptoPriceQueries
+
+  public val favoriteCompanyQueries: FavoriteCompanyQueries
 
   public val newsQueries: NewsQueries
 

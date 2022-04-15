@@ -22,7 +22,7 @@ internal fun StockPreview(
     modifier: Modifier = Modifier,
     name: String,
     industry: String,
-    isFavourite: Boolean,
+    isFavorite: Boolean,
     iconUrl: String
 ) {
     Surface(
@@ -47,13 +47,13 @@ internal fun StockPreview(
                 )
                 Icon(
                     modifier = Modifier.size(16.dp),
-                    painter = painterResource(id = R.drawable.ic_favourite_16),
+                    painter = painterResource(id = R.drawable.ic_favorite_16),
                     contentDescription = stringResource(
-                        id = if (isFavourite) {
-                            R.string.descriptionFavouriteStock
+                        id = if (isFavorite) {
+                            R.string.descriptionFavoriteStock
                         } else R.string.descriptionDefaultStock
                     ),
-                    tint = if (isFavourite) {
+                    tint = if (isFavorite) {
                         AppTheme.colors.iconActive
                     } else {
                         AppTheme.colors.iconDisabled

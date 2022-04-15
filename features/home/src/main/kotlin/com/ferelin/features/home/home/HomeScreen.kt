@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package com.ferelin.features.home.home
 
 import androidx.compose.animation.AnimatedContent
@@ -9,9 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,8 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.domain.entity.LceState
+import com.ferelin.core.ui.APP_CONTENT_PADDING
+import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
+import com.ferelin.core.ui.HOME_ROUNDED_CORNER
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
+import com.ferelin.core.ui.components.AppFab
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.home.components.PreviewHolder
@@ -87,41 +90,18 @@ private fun TopBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(TOOLBAR_BASELINE + ROUNDED_CORNER)
+            .height(APP_TOOLBAR_BASELINE + HOME_ROUNDED_CORNER)
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         AppTheme.colors.backgroundPrimary,
                         AppTheme.colors.backgroundSecondary
                     ),
-                    startY = LocalDensity.current.run { (TOOLBAR_BASELINE / 3).toPx() }
+                    startY = LocalDensity.current.run { (APP_TOOLBAR_BASELINE / 3).toPx() }
                 )
             )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = CONTENT_PADDING,
-                    end = CONTENT_PADDING,
-                    top = TOOLBAR_BASELINE / 4
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = stringResource(id = R.string.titleHome),
-                style = AppTheme.typography.title1,
-                color = AppTheme.colors.textPrimary
-            )
-            ClickableIcon(
-                painter = painterResource(id = R.drawable.ic_settings_24),
-                contentDescription = stringResource(id = R.string.descriptionSettings),
-                backgroundColor = AppTheme.colors.backgroundSecondary.copy(alpha = 0f),
-                iconTint = AppTheme.colors.buttonPrimary,
-                onClick = onSettingsClick
-            )
-        }
+        HomeHeader(onSettingsClick = onSettingsClick)
     }
 }
 
@@ -137,11 +117,11 @@ private fun BodyContent(
 ) {
     Box(
         modifier = modifier
-            .padding(top = TOOLBAR_BASELINE)
+            .padding(top = APP_TOOLBAR_BASELINE)
             .fillMaxSize()
             .background(
                 color = AppTheme.colors.backgroundPrimary,
-                shape = RoundedCornerShape(topStart = ROUNDED_CORNER)
+                shape = RoundedCornerShape(topStart = HOME_ROUNDED_CORNER)
             )
     ) {
         MenuContent(
@@ -151,11 +131,14 @@ private fun BodyContent(
             onCryptosClick = onCryptosClick,
             onNewsClick = onNewsClick
         )
-        SupportFab(onClick = onSupportClick)
+        AppFab(
+            painter = painterResource(id = R.drawable.ic_info_24),
+            contentDescription = stringResource(id = R.string.descriptionSelectSupport),
+            onClick = onSupportClick
+        )
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MenuContent(
     modifier: Modifier = Modifier,
@@ -168,10 +151,10 @@ private fun MenuContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = CONTENT_PADDING)
+            .padding(horizontal = APP_CONTENT_PADDING)
             .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(ROUNDED_CORNER / 2))
+        Spacer(modifier = Modifier.height(HOME_ROUNDED_CORNER / 2))
         PreviewHolder(
             painter = painterResource(id = R.drawable.ic_stock_24),
             title = stringResource(id = R.string.hintStocks),
@@ -206,7 +189,7 @@ private fun MenuContent(
                             ) {
                                 StockPreview(
                                     name = it.name,
-                                    isFavourite = it.isFavourite,
+                                    isFavorite = it.isFavorite,
                                     industry = it.industry,
                                     iconUrl = it.logoUrl
                                 )
@@ -214,11 +197,17 @@ private fun MenuContent(
                         }
                     }
                     is LceState.Error -> {
-                        Text(
-                            text = stringResource(id = R.string.errorDownload),
-                            style = AppTheme.typography.body2,
-                            color = AppTheme.colors.textPrimary
-                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.errorDownload),
+                                style = AppTheme.typography.body2,
+                                color = AppTheme.colors.textPrimary
+                            )
+                        }
                     }
                     else -> Unit
                 }
@@ -242,30 +231,30 @@ private fun MenuContent(
 }
 
 @Composable
-private fun BoxScope.SupportFab(
-    onClick: () -> Unit
-) {
-    FloatingActionButton(
-        modifier = Modifier.Companion
-            .align(Alignment.BottomEnd)
-            .padding(16.dp),
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = AppTheme.colors.backgroundSecondary,
+private fun HomeHeader(onSettingsClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = APP_CONTENT_PADDING,
+                end = APP_CONTENT_PADDING,
+                top = APP_TOOLBAR_BASELINE / 4
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_info_24),
-                contentDescription = stringResource(id = R.string.descriptionSelectSupport),
-                tint = AppTheme.colors.buttonPrimary
-            )
-        }
+        Text(
+            text = stringResource(id = R.string.titleHome),
+            style = AppTheme.typography.title1,
+            color = AppTheme.colors.textPrimary
+        )
+        ClickableIcon(
+            painter = painterResource(id = R.drawable.ic_settings_24),
+            contentDescription = stringResource(id = R.string.descriptionSettings),
+            tint = AppTheme.colors.buttonPrimary,
+            onClick = onSettingsClick
+        )
     }
 }
 
-private val TOOLBAR_BASELINE = 150.dp
-private val ROUNDED_CORNER = 70.dp
-internal val CONTENT_PADDING = ROUNDED_CORNER / 2
 internal const val COMPANIES_FOR_PREVIEW = 5

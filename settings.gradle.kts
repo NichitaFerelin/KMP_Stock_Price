@@ -6,4 +6,5 @@ include(
   ":core:data",
   ":core:domain",
   ":features:home",
+  ":features:stocks",
 )

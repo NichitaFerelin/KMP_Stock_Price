@@ -5,8 +5,6 @@
     <string name="titleHome">Home</string>
     <string name="titleChart">Chart</string>
     <string name="titleNews">News</string>
-    <string name="titleStocks">Stocks</string>
-    <string name="titleFavourite">Favourites</string>
     <string name="titlePopularRequests">Popular requests</string>
     <string name="titleYourSearches">You\'ve searched for this</string>
     <string name="titleChartCardDays">D</string>
@@ -20,9 +18,13 @@
     <string name="titleSettings">App settings</string>
     <string name="titleCryptos">Cryptos</string>
     <string name="hintStocks">Over 1500+ companies and their stocks\nInformation and news</string>
-    <string name="hintCryptos">Popular cryptos\nBitcoin, Чёто еще и чёто еще</string>
+    <string name="hintCryptos">Popular cryptos\nBitcoin, Ethereum,Tether, etc.</string>
     <string name="hintNews">Global stock market news</string>
 
+    <string name="hintBack">BACK</string>
+    <string name="titleStocks">Stocks</string>
+    <string name="titleSectionFavorites">FAVORITES</string>
+    <string name="titleSectionStocks">STOCKS</string>
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
     <string name="errorNoAppToResolve">App that can resolve it do not found</string>
@@ -31,7 +33,7 @@
     <!-- Descriptions -->
     <string name="descriptionBack">Navigate back</string>
     <string name="descriptionIconClose">Clear search request</string>
-    <string name="descriptionImageSearch">Search company or ticker</string>
+    <string name="descriptionSearch">Search company or ticker</string>
     <string name="descriptionApply">Apply</string>
     <string name="descriptionLogOut">Log out</string>
     <string name="descriptionLogIn">Log in</string>
@@ -44,8 +46,10 @@
     <string name="descriptionSelectNews">select news</string>
     <string name="descriptionSelectSupport">select support</string>
     <string name="descriptionStockIcon">stock decorative icon</string>
-    <string name="descriptionFavouriteStock">favourite stock</string>
+    <string name="descriptionFavoriteStock">favorite stock</string>
     <string name="descriptionDefaultStock">defaultStock</string>
+    <string name="descriptionScrollUp">scroll up</string>
+    <string name="descriptionDecorativeArrowDown">decorative arrow down</string>
 
     <!-- Hints -->
     <string name="hintFindCompany">Find company or ticker</string>
@@ -56,6 +60,7 @@
     <string name="hintIndustry">Industry: </string>
     <string name="hintPhone">Phone:</string>
     <string name="hintCapitalization">Capitalization:</string>
+    <string name="hintSearch">Find company or ticker</string>
 
     <!-- Messages -->
     <string name="messageNetworkNotAvailable">Network is not available</string>

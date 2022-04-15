@@ -10,7 +10,11 @@ data class Company(
     val phone: String,
     val webUrl: String,
     val capitalization: String,
-    val isFavourite: Boolean
+)
+
+data class FavoriteCompany(
+    val company: Company,
+    val insertOrder: Int
 )
 
 @JvmInline

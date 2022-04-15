@@ -7,7 +7,6 @@ import com.squareup.sqldelight.`internal`.copyOnWriteList
 import com.squareup.sqldelight.db.SqlCursor
 import com.squareup.sqldelight.db.SqlDriver
 import kotlin.Any
-import kotlin.Boolean
 import kotlin.Double
 import kotlin.Int
 import kotlin.Long
@@ -21,6 +20,8 @@ import stockprice.CryptoDBO
 import stockprice.CryptoPriceDBO
 import stockprice.CryptoPriceQueries
 import stockprice.CryptoQueries
+import stockprice.FavoriteCompanyQueries
+import stockprice.GetAll
 import stockprice.NewsDBO
 import stockprice.NewsQueries
 import stockprice.PastPriceDBO
@@ -44,6 +45,9 @@ private class StockPriceImpl(
 
   public override val cryptoPriceQueries: CryptoPriceQueriesImpl = CryptoPriceQueriesImpl(this,
       driver)
+
+  public override val favoriteCompanyQueries: FavoriteCompanyQueriesImpl =
+      FavoriteCompanyQueriesImpl(this, driver)
 
   public override val newsQueries: NewsQueriesImpl = NewsQueriesImpl(this, driver)
 
@@ -69,8 +73,7 @@ private class StockPriceImpl(
           |    country TEXT NOT NULL,
           |    phone TEXT NOT NULL,
           |    webUrl TEXT NOT NULL,
-          |    capitalization TEXT NOT NULL,
-          |    isFavourite INTEGER NOT NULL
+          |    capitalization TEXT NOT NULL
           |)
           """.trimMargin(), 0)
       driver.execute(null, """
@@ -87,6 +90,13 @@ private class StockPriceImpl(
           |    price REAL NOT NULL,
           |    priceChange REAL NOT NULL,
           |    priceChangePercents REAL NOT NULL
+          |)
+          """.trimMargin(), 0)
+      driver.execute(null, """
+          |CREATE TABLE FavoriteCompanyDBO(
+          |    insertOrder INTEGER PRIMARY KEY AUTOINCREMENT,
+          |    companyOwnerId INTEGER NOT NULL,
+          |    FOREIGN KEY (companyOwnerId) REFERENCES CompanyDBO(id) ON DELETE CASCADE
           |)
           """.trimMargin(), 0)
       driver.execute(null, """
@@ -141,8 +151,6 @@ private class CompanyQueriesImpl(
 ) : TransacterImpl(driver), CompanyQueries {
   internal val getAll: MutableList<Query<*>> = copyOnWriteList()
 
-  internal val getAllFavourites: MutableList<Query<*>> = copyOnWriteList()
-
   public override fun <T : Any> getAll(mapper: (
     id: Int,
     name: String,
@@ -152,8 +160,7 @@ private class CompanyQueriesImpl(
     country: String,
     phone: String,
     webUrl: String,
-    capitalization: String,
-    isFavourite: Boolean
+    capitalization: String
   ) -> T): Query<T> = Query(1569199887, getAll, driver, "company.sq", "getAll",
       "SELECT * FROM CompanyDBO") { cursor ->
     mapper(
@@ -165,13 +172,12 @@ private class CompanyQueriesImpl(
       cursor.getString(5)!!,
       cursor.getString(6)!!,
       cursor.getString(7)!!,
-      cursor.getString(8)!!,
-      cursor.getLong(9)!! == 1L
+      cursor.getString(8)!!
     )
   }
 
   public override fun getAll(): Query<CompanyDBO> = getAll { id, name, ticker, logoUrl, industry,
-      country, phone, webUrl, capitalization, isFavourite ->
+      country, phone, webUrl, capitalization ->
     CompanyDBO(
       id,
       name,
@@ -181,57 +187,13 @@ private class CompanyQueriesImpl(
       country,
       phone,
       webUrl,
-      capitalization,
-      isFavourite
-    )
-  }
-
-  public override fun <T : Any> getAllFavourites(mapper: (
-    id: Int,
-    name: String,
-    ticker: String,
-    logoUrl: String,
-    industry: String,
-    country: String,
-    phone: String,
-    webUrl: String,
-    capitalization: String,
-    isFavourite: Boolean
-  ) -> T): Query<T> = Query(-222420647, getAllFavourites, driver, "company.sq", "getAllFavourites",
-      "SELECT * FROM CompanyDBO WHERE isFavourite = 1") { cursor ->
-    mapper(
-      cursor.getLong(0)!!.toInt(),
-      cursor.getString(1)!!,
-      cursor.getString(2)!!,
-      cursor.getString(3)!!,
-      cursor.getString(4)!!,
-      cursor.getString(5)!!,
-      cursor.getString(6)!!,
-      cursor.getString(7)!!,
-      cursor.getString(8)!!,
-      cursor.getLong(9)!! == 1L
-    )
-  }
-
-  public override fun getAllFavourites(): Query<CompanyDBO> = getAllFavourites { id, name, ticker,
-      logoUrl, industry, country, phone, webUrl, capitalization, isFavourite ->
-    CompanyDBO(
-      id,
-      name,
-      ticker,
-      logoUrl,
-      industry,
-      country,
-      phone,
-      webUrl,
-      capitalization,
-      isFavourite
+      capitalization
     )
   }
 
   public override fun insert(CompanyDBO: CompanyDBO): Unit {
     driver.execute(1634774877,
-        """INSERT OR REPLACE INTO CompanyDBO VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 10) {
+        """INSERT OR REPLACE INTO CompanyDBO VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", 9) {
       bindLong(1, CompanyDBO.id.toLong())
       bindString(2, CompanyDBO.name)
       bindString(3, CompanyDBO.ticker)
@@ -241,9 +203,8 @@ private class CompanyQueriesImpl(
       bindString(7, CompanyDBO.phone)
       bindString(8, CompanyDBO.webUrl)
       bindString(9, CompanyDBO.capitalization)
-      bindLong(10, if (CompanyDBO.isFavourite) 1L else 0L)
     }
-    notifyQueries(1634774877, {database.companyQueries.getAllFavourites +
+    notifyQueries(1634774877, {database.favoriteCompanyQueries.getAll +
         database.companyQueries.getAll})
   }
 }
@@ -329,6 +290,83 @@ private class CryptoPriceQueriesImpl(
       bindDouble(4, CryptoPriceDBO.priceChangePercents)
     }
     notifyQueries(-1064706648, {database.cryptoPriceQueries.getAll})
+  }
+}
+
+private class FavoriteCompanyQueriesImpl(
+  private val database: StockPriceImpl,
+  private val driver: SqlDriver
+) : TransacterImpl(driver), FavoriteCompanyQueries {
+  internal val getAll: MutableList<Query<*>> = copyOnWriteList()
+
+  public override fun <T : Any> getAll(mapper: (
+    insertOrder: Int,
+    id: Int,
+    name: String,
+    ticker: String,
+    logoUrl: String,
+    industry: String,
+    country: String,
+    phone: String,
+    webUrl: String,
+    capitalization: String
+  ) -> T): Query<T> = Query(-1698943021, getAll, driver, "favoriteCompany.sq", "getAll", """
+  |SELECT FavoriteCompanyDBO.insertOrder,
+  |CompanyDBO.id,
+  |CompanyDBO.name,
+  |CompanyDBO.ticker,
+  |CompanyDBO.logoUrl,
+  |CompanyDBO.industry,
+  |CompanyDBO.country,
+  |CompanyDBO.phone,
+  |CompanyDBO.webUrl,
+  |CompanyDBO.capitalization
+  |FROM FavoriteCompanyDBO
+  |INNER JOIN CompanyDBO ON FavoriteCompanyDBO.companyOwnerId = CompanyDBO.id
+  """.trimMargin()) { cursor ->
+    mapper(
+      cursor.getLong(0)!!.toInt(),
+      cursor.getLong(1)!!.toInt(),
+      cursor.getString(2)!!,
+      cursor.getString(3)!!,
+      cursor.getString(4)!!,
+      cursor.getString(5)!!,
+      cursor.getString(6)!!,
+      cursor.getString(7)!!,
+      cursor.getString(8)!!,
+      cursor.getString(9)!!
+    )
+  }
+
+  public override fun getAll(): Query<GetAll> = getAll { insertOrder, id, name, ticker, logoUrl,
+      industry, country, phone, webUrl, capitalization ->
+    GetAll(
+      insertOrder,
+      id,
+      name,
+      ticker,
+      logoUrl,
+      industry,
+      country,
+      phone,
+      webUrl,
+      capitalization
+    )
+  }
+
+  public override fun eraseBy(companyId: Int): Unit {
+    driver.execute(1748447541, """DELETE FROM FavoriteCompanyDBO WHERE companyOwnerId = ?""", 1) {
+      bindLong(1, companyId.toLong())
+    }
+    notifyQueries(1748447541, {database.favoriteCompanyQueries.getAll})
+  }
+
+  public override fun insert(insertOrder: Int?, companyOwnerId: Int): Unit {
+    driver.execute(-1633368031, """INSERT OR REPLACE INTO FavoriteCompanyDBO VALUES (?, ?)""", 2) {
+      bindLong(1, insertOrder?.let { it.toLong() })
+      bindLong(2, companyOwnerId.toLong())
+    }
+    notifyQueries(-1633368031, {database.favoriteCompanyQueries.getAll})
   }
 }
 
