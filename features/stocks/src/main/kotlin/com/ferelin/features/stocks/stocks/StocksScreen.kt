@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalAnimationApi::class)
 
 package com.ferelin.features.stocks.stocks
 
@@ -6,18 +6,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -30,11 +24,8 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
-import com.ferelin.core.ui.components.ConstrainedText
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.stocks.components.DefaultStockItem
-import com.ferelin.features.stocks.components.FavoriteStockItem
-import com.ferelin.features.stocks.components.StocksSectionHeader
+import com.ferelin.features.stocks.components.*
 import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -222,63 +213,6 @@ private fun BodyContent(
                 onFavoriteIconClick = { onFavoriteIconClick(stock) }
             )
         }
-    }
-}
-
-@Composable
-private fun SearchField(
-    modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(55.dp),
-        elevation = 1.dp,
-        shape = RoundedCornerShape(24.dp),
-        backgroundColor = AppTheme.colors.backgroundPrimary,
-        onClick = onSearchClick
-    ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width(20.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_search_17x18),
-                tint = AppTheme.colors.buttonPrimary,
-                contentDescription = stringResource(id = R.string.descriptionSearch)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            ConstrainedText(
-                text = stringResource(id = R.string.descriptionSearch),
-                style = AppTheme.typography.body1,
-                color = AppTheme.colors.textPrimary
-            )
-        }
-    }
-}
-
-@Composable
-private fun BackField(onBackClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onBackClick)
-            .padding(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_back_24),
-            tint = AppTheme.colors.buttonPrimary,
-            contentDescription = stringResource(id = R.string.descriptionBack)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = stringResource(id = R.string.hintBack),
-            style = AppTheme.typography.body2,
-            color = AppTheme.colors.textPrimary
-        )
     }
 }
 

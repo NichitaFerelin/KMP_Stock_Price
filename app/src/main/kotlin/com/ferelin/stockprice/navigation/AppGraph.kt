@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ferelin.features.home.home.HomeScreenRoute
+import com.ferelin.features.stocks.search.SearchScreenRoute
 import com.ferelin.features.stocks.stocks.StocksScreenRoute
 import com.ferelin.stockprice.navigation.Destination.HomeDestination
 
@@ -29,7 +30,15 @@ internal fun AppNavigationGraph(
         }
         composable(route = Destination.StocksDestination.key) {
             StocksScreenRoute(
-                onSearchRoute = { },
+                onSearchRoute = {
+                    navHostController.navigate(route = Destination.SearchDestination.key)
+                },
+                onStockRoute = { },
+                onBackRoute = { }
+            )
+        }
+        composable(route = Destination.SearchDestination.key) {
+            SearchScreenRoute(
                 onStockRoute = { },
                 onBackRoute = { }
             )
