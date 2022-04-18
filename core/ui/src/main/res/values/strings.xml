@@ -25,12 +25,14 @@
     <string name="titleStocks">Stocks</string>
     <string name="titleSectionFavorites">FAVORITES</string>
     <string name="titleSectionStocks">STOCKS</string>
+    <string name="titleSearch">Search</string>
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
     <string name="errorNoAppToResolve">App that can resolve it do not found</string>
     <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
 
     <!-- Descriptions -->
+    <string name="descriptionClearSearchRequest">clear search request</string>
     <string name="descriptionBack">Navigate back</string>
     <string name="descriptionIconClose">Clear search request</string>
     <string name="descriptionSearch">Search company or ticker</string>
