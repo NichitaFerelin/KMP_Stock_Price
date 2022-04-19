@@ -11,6 +11,7 @@
 /features/home/build
 /features/stocks/build
 /features/about/build
+/features/cryptos/build
 *.iml
 .gradle
 .idea

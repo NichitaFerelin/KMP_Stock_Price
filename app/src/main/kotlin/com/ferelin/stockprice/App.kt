@@ -10,6 +10,7 @@ import com.ferelin.core.di.networkListenerModule
 import com.ferelin.core.domain.di.useCaseModule
 import com.ferelin.features.about.about.aboutModule
 import com.ferelin.features.about.news.newsModule
+import com.ferelin.features.cryptos.cryptos.cryptosModule
 import com.ferelin.features.home.home.homeModule
 import com.ferelin.features.stocks.search.searchModule
 import com.ferelin.features.stocks.stocks.stocksModule
@@ -64,5 +65,6 @@ private val koinModules = listOf(
     stocksModule,
     searchModule,
     aboutModule,
-    newsModule
+    newsModule,
+    cryptosModule
 )

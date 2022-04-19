@@ -7,4 +7,5 @@ internal sealed class Destination(val key: String) {
     object AboutDestination : Destination("about") {
         const val ARG_ID = "id"
     }
+    object CryptosDestination : Destination("cryptos")
 }

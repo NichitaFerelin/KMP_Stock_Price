@@ -72,8 +72,8 @@ private fun withFavoritesPriority(
     defaults: List<Company>,
     favorites: List<FavoriteCompany>
 ): List<HomeStockViewData> {
-    val favoritesResult = favorites.take(COMPANIES_FOR_PREVIEW).map(HomeViewDataMapper::map)
+    val favoritesResult = favorites.take(COMPANIES_FOR_PREVIEW).map { it.toHomeStockViewData() }
     val remainder = COMPANIES_FOR_PREVIEW - favoritesResult.size
-    val defaultsResult = defaults.take(remainder).map(HomeViewDataMapper::map)
+    val defaultsResult = defaults.take(remainder).map { it.toHomeStockViewData() }
     return favoritesResult + defaultsResult
 }
