@@ -1,4 +1,4 @@
-package com.ferelin.core.data.entity.news
+package com.ferelin.core.data.entity.companyNews
 
 import com.ferelin.core.ONE_YEAR_MILLIS
 import com.ferelin.core.data.api.endPoints.news
@@ -9,27 +9,27 @@ import kotlinx.serialization.SerialName
 import java.text.SimpleDateFormat
 import java.util.*
 
-internal interface NewsApi {
-    suspend fun load(options: NewsRequestOptions): List<NewsPojo>
+internal interface CompanyNewsApi {
+    suspend fun load(options: CompanyNewsRequestOptions): List<CompanyNewsPojo>
 }
 
-internal class NewsApiImpl(
+internal class CompanyNewsApiImpl(
     private val client: HttpClient
-) : NewsApi {
-    override suspend fun load(options: NewsRequestOptions): List<NewsPojo> {
+) : CompanyNewsApi {
+    override suspend fun load(options: CompanyNewsRequestOptions): List<CompanyNewsPojo> {
         return client.get { news(options) }.body()
     }
 }
 
-internal data class NewsRequestOptions(
+internal data class CompanyNewsRequestOptions(
     val token: String,
     val companyTicker: String,
-    val from: String = NewsApiSpecifications.yearAgoDate,
-    val to: String = NewsApiSpecifications.currentDate
+    val from: String = CompanyNewsApiSpecifications.yearAgoDate,
+    val to: String = CompanyNewsApiSpecifications.currentDate
 )
 
 @kotlinx.serialization.Serializable
-internal data class NewsPojo(
+internal data class CompanyNewsPojo(
     @SerialName(value = "id") val id: Long,
     @SerialName(value = "datetime") val datetime: Long,
     @SerialName(value = "headline") val headline: String,
@@ -38,7 +38,7 @@ internal data class NewsPojo(
     @SerialName(value = "summary") val summary: String
 )
 
-internal object NewsApiSpecifications {
+internal object CompanyNewsApiSpecifications {
     val currentDate: String
         get() {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
@@ -55,10 +55,4 @@ internal object NewsApiSpecifications {
             val yearAgoDate = Date(yearAgoTimeMillis)
             return dateFormat.format(yearAgoDate)
         }
-
-    fun convertToUnixTime(pojo: NewsPojo): NewsPojo {
-        return pojo.copy(
-            datetime = (pojo.datetime.toString() + "000").toLong()
-        )
-    }
 }

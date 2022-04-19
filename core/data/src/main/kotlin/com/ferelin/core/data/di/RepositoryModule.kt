@@ -9,11 +9,14 @@ val repositoryModule = module {
     factory<CryptoPriceRepository> {
         CryptoPriceRepositoryImpl(get(), get(), get(named(NAMED_CRYPTOS_TOKEN)))
     }
-    factory<NewsRepository> {
-        NewsRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
+    factory<CompanyNewsRepository> {
+        CompanyNewsRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
     }
     factory<StockPriceRepository> {
         StockPriceRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
+    }
+    factory<MarketNewsRepository> {
+        MarketNewsRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
     }
 
     factory<CompanyRepository> { CompanyRepositoryImpl(get(), get()) }

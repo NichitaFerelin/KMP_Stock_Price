@@ -17,6 +17,7 @@
     <string name="titleDownload">Stock Price</string>
     <string name="titleSettings">App settings</string>
     <string name="titleCryptos">Cryptos</string>
+    <string name="titleMarketNews">Market News</string>
     <string name="hintStocks">Over 1500+ companies and their stocks\nInformation and news</string>
     <string name="hintCryptos">Popular cryptos\nBitcoin, Ethereum,Tether, etc.</string>
     <string name="hintNews">Global stock market news</string>

@@ -15,6 +15,8 @@ import kotlin.Unit
 import kotlin.collections.MutableList
 import kotlin.reflect.KClass
 import stockprice.CompanyDBO
+import stockprice.CompanyNewsDBO
+import stockprice.CompanyNewsQueries
 import stockprice.CompanyQueries
 import stockprice.CryptoDBO
 import stockprice.CryptoPriceDBO
@@ -22,8 +24,8 @@ import stockprice.CryptoPriceQueries
 import stockprice.CryptoQueries
 import stockprice.FavoriteCompanyQueries
 import stockprice.GetAll
-import stockprice.NewsDBO
-import stockprice.NewsQueries
+import stockprice.MarketNewsDBO
+import stockprice.MarketNewsQueries
 import stockprice.SearchRequestDBO
 import stockprice.SearchRequestQueries
 import stockprice.StockPriceDBO
@@ -39,6 +41,9 @@ private class StockPriceImpl(
 ) : TransacterImpl(driver), StockPrice {
   public override val companyQueries: CompanyQueriesImpl = CompanyQueriesImpl(this, driver)
 
+  public override val companyNewsQueries: CompanyNewsQueriesImpl = CompanyNewsQueriesImpl(this,
+      driver)
+
   public override val cryptoQueries: CryptoQueriesImpl = CryptoQueriesImpl(this, driver)
 
   public override val cryptoPriceQueries: CryptoPriceQueriesImpl = CryptoPriceQueriesImpl(this,
@@ -47,7 +52,7 @@ private class StockPriceImpl(
   public override val favoriteCompanyQueries: FavoriteCompanyQueriesImpl =
       FavoriteCompanyQueriesImpl(this, driver)
 
-  public override val newsQueries: NewsQueriesImpl = NewsQueriesImpl(this, driver)
+  public override val marketNewsQueries: MarketNewsQueriesImpl = MarketNewsQueriesImpl(this, driver)
 
   public override val searchRequestQueries: SearchRequestQueriesImpl =
       SearchRequestQueriesImpl(this, driver)
@@ -70,6 +75,17 @@ private class StockPriceImpl(
           |    phone TEXT NOT NULL,
           |    webUrl TEXT NOT NULL,
           |    capitalization TEXT NOT NULL
+          |)
+          """.trimMargin(), 0)
+      driver.execute(null, """
+          |CREATE TABLE CompanyNewsDBO(
+          |    id INTEGER NOT NULL PRIMARY KEY,
+          |    companyId INTEGER NOT NULL,
+          |    headline TEXT NOT NULL,
+          |    source TEXT NOT NULL,
+          |    sourceUrl TEXT NOT NULL,
+          |    summary TEXT NOT NULL,
+          |    dateMillis INTEGER NOT NULL
           |)
           """.trimMargin(), 0)
       driver.execute(null, """
@@ -96,13 +112,13 @@ private class StockPriceImpl(
           |)
           """.trimMargin(), 0)
       driver.execute(null, """
-          |CREATE TABLE NewsDBO(
+          |CREATE TABLE MarketNewsDBO(
           |    id INTEGER NOT NULL PRIMARY KEY,
-          |    companyId INTEGER NOT NULL,
           |    headline TEXT NOT NULL,
-          |    source TEXT NOT NULL,
-          |    sourceUrl TEXT NOT NULL,
+          |    category TEXT NOT NULL,
           |    summary TEXT NOT NULL,
+          |    imageUrl TEXT NOT NULL,
+          |    url TEXT NOT NULL,
           |    dateMillis INTEGER NOT NULL
           |)
           """.trimMargin(), 0)
@@ -247,6 +263,79 @@ private class CompanyQueriesImpl(
     }
 
     public override fun toString(): String = "company.sq:getBy"
+  }
+}
+
+private class CompanyNewsQueriesImpl(
+  private val database: StockPriceImpl,
+  private val driver: SqlDriver
+) : TransacterImpl(driver), CompanyNewsQueries {
+  internal val getAllBy: MutableList<Query<*>> = copyOnWriteList()
+
+  public override fun <T : Any> getAllBy(companyId: Int, mapper: (
+    id: Long,
+    companyId: Int,
+    headline: String,
+    source: String,
+    sourceUrl: String,
+    summary: String,
+    dateMillis: Long
+  ) -> T): Query<T> = GetAllByQuery(companyId) { cursor ->
+    mapper(
+      cursor.getLong(0)!!,
+      cursor.getLong(1)!!.toInt(),
+      cursor.getString(2)!!,
+      cursor.getString(3)!!,
+      cursor.getString(4)!!,
+      cursor.getString(5)!!,
+      cursor.getLong(6)!!
+    )
+  }
+
+  public override fun getAllBy(companyId: Int): Query<CompanyNewsDBO> = getAllBy(companyId) { id,
+      companyId_, headline, source, sourceUrl, summary, dateMillis ->
+    CompanyNewsDBO(
+      id,
+      companyId_,
+      headline,
+      source,
+      sourceUrl,
+      summary,
+      dateMillis
+    )
+  }
+
+  public override fun insert(CompanyNewsDBO: CompanyNewsDBO): Unit {
+    driver.execute(751087504,
+        """INSERT OR REPLACE INTO CompanyNewsDBO VALUES (?, ?, ?, ?, ?, ?, ?)""", 7) {
+      bindLong(1, CompanyNewsDBO.id)
+      bindLong(2, CompanyNewsDBO.companyId.toLong())
+      bindString(3, CompanyNewsDBO.headline)
+      bindString(4, CompanyNewsDBO.source)
+      bindString(5, CompanyNewsDBO.sourceUrl)
+      bindString(6, CompanyNewsDBO.summary)
+      bindLong(7, CompanyNewsDBO.dateMillis)
+    }
+    notifyQueries(751087504, {database.companyNewsQueries.getAllBy})
+  }
+
+  public override fun eraseAllBy(companyId: Int): Unit {
+    driver.execute(-760906711, """DELETE FROM CompanyNewsDBO WHERE companyId = ?""", 1) {
+      bindLong(1, companyId.toLong())
+    }
+    notifyQueries(-760906711, {database.companyNewsQueries.getAllBy})
+  }
+
+  private inner class GetAllByQuery<out T : Any>(
+    public val companyId: Int,
+    mapper: (SqlCursor) -> T
+  ) : Query<T>(getAllBy, mapper) {
+    public override fun execute(): SqlCursor = driver.executeQuery(1647531833,
+        """SELECT * FROM CompanyNewsDBO WHERE companyId = ?""", 1) {
+      bindLong(1, companyId.toLong())
+    }
+
+    public override fun toString(): String = "companyNews.sq:getAllBy"
   }
 }
 
@@ -411,24 +500,25 @@ private class FavoriteCompanyQueriesImpl(
   }
 }
 
-private class NewsQueriesImpl(
+private class MarketNewsQueriesImpl(
   private val database: StockPriceImpl,
   private val driver: SqlDriver
-) : TransacterImpl(driver), NewsQueries {
-  internal val getAllBy: MutableList<Query<*>> = copyOnWriteList()
+) : TransacterImpl(driver), MarketNewsQueries {
+  internal val getAll: MutableList<Query<*>> = copyOnWriteList()
 
-  public override fun <T : Any> getAllBy(companyId: Int, mapper: (
+  public override fun <T : Any> getAll(mapper: (
     id: Long,
-    companyId: Int,
     headline: String,
-    source: String,
-    sourceUrl: String,
+    category: String,
     summary: String,
+    imageUrl: String,
+    url: String,
     dateMillis: Long
-  ) -> T): Query<T> = GetAllByQuery(companyId) { cursor ->
+  ) -> T): Query<T> = Query(1258334767, getAll, driver, "marketNews.sq", "getAll",
+      "SELECT * FROM MarketNewsDBO") { cursor ->
     mapper(
       cursor.getLong(0)!!,
-      cursor.getLong(1)!!.toInt(),
+      cursor.getString(1)!!,
       cursor.getString(2)!!,
       cursor.getString(3)!!,
       cursor.getString(4)!!,
@@ -437,50 +527,31 @@ private class NewsQueriesImpl(
     )
   }
 
-  public override fun getAllBy(companyId: Int): Query<NewsDBO> = getAllBy(companyId) { id,
-      companyId_, headline, source, sourceUrl, summary, dateMillis ->
-    NewsDBO(
+  public override fun getAll(): Query<MarketNewsDBO> = getAll { id, headline, category, summary,
+      imageUrl, url, dateMillis ->
+    MarketNewsDBO(
       id,
-      companyId_,
       headline,
-      source,
-      sourceUrl,
+      category,
       summary,
+      imageUrl,
+      url,
       dateMillis
     )
   }
 
-  public override fun insert(NewsDBO: NewsDBO): Unit {
-    driver.execute(-851270559, """INSERT OR REPLACE INTO NewsDBO VALUES (?, ?, ?, ?, ?, ?, ?)""", 7)
-        {
-      bindLong(1, NewsDBO.id)
-      bindLong(2, NewsDBO.companyId.toLong())
-      bindString(3, NewsDBO.headline)
-      bindString(4, NewsDBO.source)
-      bindString(5, NewsDBO.sourceUrl)
-      bindString(6, NewsDBO.summary)
-      bindLong(7, NewsDBO.dateMillis)
+  public override fun insert(MarketNewsDBO: MarketNewsDBO): Unit {
+    driver.execute(1323909757,
+        """INSERT OR REPLACE INTO MarketNewsDBO VALUES (?, ?, ?, ?, ?, ?, ?)""", 7) {
+      bindLong(1, MarketNewsDBO.id)
+      bindString(2, MarketNewsDBO.headline)
+      bindString(3, MarketNewsDBO.category)
+      bindString(4, MarketNewsDBO.summary)
+      bindString(5, MarketNewsDBO.imageUrl)
+      bindString(6, MarketNewsDBO.url)
+      bindLong(7, MarketNewsDBO.dateMillis)
     }
-    notifyQueries(-851270559, {database.newsQueries.getAllBy})
-  }
-
-  public override fun eraseAllBy(companyId: Int): Unit {
-    driver.execute(1720361082, """DELETE FROM NewsDBO WHERE companyId = ?""", 1) {
-      bindLong(1, companyId.toLong())
-    }
-    notifyQueries(1720361082, {database.newsQueries.getAllBy})
-  }
-
-  private inner class GetAllByQuery<out T : Any>(
-    public val companyId: Int,
-    mapper: (SqlCursor) -> T
-  ) : Query<T>(getAllBy, mapper) {
-    public override fun execute(): SqlCursor = driver.executeQuery(-620274742,
-        """SELECT * FROM NewsDBO WHERE companyId = ?""", 1) {
-      bindLong(1, companyId.toLong())
-    }
-
-    public override fun toString(): String = "news.sq:getAllBy"
+    notifyQueries(1323909757, {database.marketNewsQueries.getAll})
   }
 }
 

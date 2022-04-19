@@ -1,0 +1,15 @@
+CREATE TABLE MarketNewsDBO(
+    id INTEGER NOT NULL PRIMARY KEY,
+    headline TEXT NOT NULL,
+    category TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    imageUrl TEXT NOT NULL,
+    url TEXT NOT NULL,
+    dateMillis INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO MarketNewsDBO VALUES ?;
+
+getAll:
+SELECT * FROM MarketNewsDBO;

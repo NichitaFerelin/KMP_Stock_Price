@@ -1,4 +1,4 @@
-CREATE TABLE NewsDBO(
+CREATE TABLE CompanyNewsDBO(
     id INTEGER NOT NULL PRIMARY KEY,
     companyId INTEGER AS Int NOT NULL,
     headline TEXT NOT NULL,
@@ -9,10 +9,10 @@ CREATE TABLE NewsDBO(
 );
 
 insert:
-INSERT OR REPLACE INTO NewsDBO VALUES ?;
+INSERT OR REPLACE INTO CompanyNewsDBO VALUES ?;
 
 getAllBy:
-SELECT * FROM NewsDBO WHERE companyId = :companyId;
+SELECT * FROM CompanyNewsDBO WHERE companyId = :companyId;
 
 eraseAllBy:
-DELETE FROM NewsDBO WHERE companyId = :companyId;
+DELETE FROM CompanyNewsDBO WHERE companyId = :companyId;

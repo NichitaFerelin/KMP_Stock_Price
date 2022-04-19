@@ -9,4 +9,5 @@ include(
   ":features:stocks",
   ":features:about",
   ":features:cryptos",
+  ":features:marketNews",
 )

@@ -4,16 +4,19 @@ import com.ferelin.stockprice.db.`data`.newInstance
 import com.ferelin.stockprice.db.`data`.schema
 import com.squareup.sqldelight.Transacter
 import com.squareup.sqldelight.db.SqlDriver
+import stockprice.CompanyNewsQueries
 import stockprice.CompanyQueries
 import stockprice.CryptoPriceQueries
 import stockprice.CryptoQueries
 import stockprice.FavoriteCompanyQueries
-import stockprice.NewsQueries
+import stockprice.MarketNewsQueries
 import stockprice.SearchRequestQueries
 import stockprice.StockPriceQueries
 
 public interface StockPrice : Transacter {
   public val companyQueries: CompanyQueries
+
+  public val companyNewsQueries: CompanyNewsQueries
 
   public val cryptoQueries: CryptoQueries
 
@@ -21,7 +24,7 @@ public interface StockPrice : Transacter {
 
   public val favoriteCompanyQueries: FavoriteCompanyQueries
 
-  public val newsQueries: NewsQueries
+  public val marketNewsQueries: MarketNewsQueries
 
   public val searchRequestQueries: SearchRequestQueries
 

@@ -12,6 +12,7 @@
 /features/stocks/build
 /features/about/build
 /features/cryptos/build
+/features/marketNews/build
 *.iml
 .gradle
 .idea

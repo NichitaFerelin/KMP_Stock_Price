@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.entity.News
+import com.ferelin.core.domain.entity.CompanyNews
 import com.ferelin.core.domain.usecase.CompanyUseCase
-import com.ferelin.core.domain.usecase.NewsUseCase
+import com.ferelin.core.domain.usecase.CompanyNewsUseCase
 import com.ferelin.core.network.NetworkListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ internal data class NewsUiState(
 internal class NewsViewModel(
     private val companyId: CompanyId,
     private val companyUseCase: CompanyUseCase,
-    private val newsUseCase: NewsUseCase,
+    private val newsUseCase: CompanyNewsUseCase,
     private val dispatchersProvider: DispatchersProvider,
     networkListener: NetworkListener
 ) : ViewModel() {
@@ -78,7 +78,7 @@ internal class NewsViewModel(
     }
 }
 
-private fun Flow<List<News>>.toNewsViewData(): Flow<List<NewsViewData>> {
+private fun Flow<List<CompanyNews>>.toNewsViewData(): Flow<List<NewsViewData>> {
     return this.map { news ->
         news.map { it.toNewsViewData() }
     }

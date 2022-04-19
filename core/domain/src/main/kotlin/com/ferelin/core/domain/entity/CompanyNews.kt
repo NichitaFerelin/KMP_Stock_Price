@@ -1,7 +1,7 @@
 package com.ferelin.core.domain.entity
 
-data class News(
-    val id: NewsId,
+data class CompanyNews(
+    val id: CompanyNewsId,
     val companyId: CompanyId,
     val headline: String,
     val source: String,
@@ -11,4 +11,4 @@ data class News(
 )
 
 @JvmInline
-value class NewsId(val value: Long)
+value class CompanyNewsId(val value: Long)
