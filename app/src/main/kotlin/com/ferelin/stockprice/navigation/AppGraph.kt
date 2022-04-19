@@ -10,6 +10,7 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.features.about.about.AboutScreenRoute
 import com.ferelin.features.cryptos.cryptos.CryptosScreenRoute
 import com.ferelin.features.home.home.HomeScreenRoute
+import com.ferelin.features.marketNews.marketNews.MarketNewsScreenRoute
 import com.ferelin.features.stocks.search.SearchScreenRoute
 import com.ferelin.features.stocks.stocks.StocksScreenRoute
 import com.ferelin.stockprice.navigation.Destination.*
@@ -28,7 +29,9 @@ internal fun AppNavigationGraph(
                 onCryptosRoute = {
                     navHostController.navigate(route = CryptosDestination.key)
                 },
-                onNewsRoute = { },
+                onNewsRoute = {
+                    navHostController.navigate(route = MarketNewsDestination.key)
+                },
                 onStocksRoute = {
                     navHostController.navigate(route = StocksDestination.key)
                 },
@@ -74,6 +77,11 @@ internal fun AppNavigationGraph(
         }
         composable(route = CryptosDestination.key) {
             CryptosScreenRoute(
+                onBackRoute = { navHostController.popBackStack() }
+            )
+        }
+        composable(route = MarketNewsDestination.key) {
+            MarketNewsScreenRoute(
                 onBackRoute = { navHostController.popBackStack() }
             )
         }

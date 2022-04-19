@@ -8,4 +8,5 @@ internal sealed class Destination(val key: String) {
         const val ARG_ID = "id"
     }
     object CryptosDestination : Destination("cryptos")
+    object MarketNewsDestination : Destination("market-news")
 }

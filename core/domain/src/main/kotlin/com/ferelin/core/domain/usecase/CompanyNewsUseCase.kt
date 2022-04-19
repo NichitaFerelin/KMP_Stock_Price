@@ -3,22 +3,22 @@ package com.ferelin.core.domain.usecase
 import com.ferelin.core.coroutine.DispatchersProvider
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.LceState
-import com.ferelin.core.domain.entity.News
-import com.ferelin.core.domain.repository.NewsRepository
+import com.ferelin.core.domain.entity.CompanyNews
+import com.ferelin.core.domain.repository.CompanyNewsRepository
 import kotlinx.coroutines.flow.*
 
-interface NewsUseCase {
+interface CompanyNewsUseCase {
     val newsLce: Flow<LceState>
     val newsFetchLce: Flow<LceState>
-    fun getNewsBy(companyId: CompanyId): Flow<List<News>>
+    fun getNewsBy(companyId: CompanyId): Flow<List<CompanyNews>>
     suspend fun fetchNews(companyId: CompanyId, companyTicker: String)
 }
 
-internal class NewsUseCaseImpl(
-    private val newsRepository: NewsRepository,
+internal class CompanyNewsUseCaseImpl(
+    private val newsRepository: CompanyNewsRepository,
     private val dispatchersProvider: DispatchersProvider
-) : NewsUseCase {
-    override fun getNewsBy(companyId: CompanyId): Flow<List<News>> {
+) : CompanyNewsUseCase {
+    override fun getNewsBy(companyId: CompanyId): Flow<List<CompanyNews>> {
         return newsRepository.getAllBy(companyId)
             .onStart { newsLceState.value = LceState.Loading }
             .onEach { newsLceState.value = LceState.Content }

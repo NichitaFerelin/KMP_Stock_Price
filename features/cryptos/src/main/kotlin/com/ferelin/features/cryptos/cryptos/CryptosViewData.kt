@@ -22,8 +22,8 @@ internal fun Crypto.toCryptoViewData(cryptoPrice: CryptoPrice?): CryptoViewData 
         logoUrl = this.logoUrl,
         price = cryptoPrice?.price?.toStrPrice() ?: "",
         profit = formatProfitString(
-            priceProfit = cryptoPrice?.priceChange.toString(),
-            priceProfitPercents = cryptoPrice?.priceChangePercents.toString()
+            priceProfit = cryptoPrice?.priceChange?.toString() ?: "",
+            priceProfitPercents = cryptoPrice?.priceChangePercents?.toString() ?: ""
         )
     )
 }
