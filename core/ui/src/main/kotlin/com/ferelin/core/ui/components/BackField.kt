@@ -1,4 +1,4 @@
-package com.ferelin.features.stocks.components
+package com.ferelin.core.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -19,7 +19,7 @@ import com.ferelin.core.ui.R
 import com.ferelin.core.ui.theme.AppTheme
 
 @Composable
-internal fun BackField(onBackClick: () -> Unit) {
+fun BackField(onBackClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))

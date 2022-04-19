@@ -8,4 +8,5 @@ include(
   ":features:home",
   ":features:stocks",
   ":features:about",
+  ":features:cryptos",
 )

@@ -24,8 +24,12 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
+import com.ferelin.core.ui.components.BackField
 import com.ferelin.core.ui.theme.AppTheme
-import com.ferelin.features.stocks.components.*
+import com.ferelin.features.stocks.components.DefaultStockItem
+import com.ferelin.features.stocks.components.FavoriteStockItem
+import com.ferelin.features.stocks.components.SearchField
+import com.ferelin.features.stocks.components.StocksSectionHeader
 import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel

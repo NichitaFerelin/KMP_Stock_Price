@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.features.about.about.AboutScreenRoute
+import com.ferelin.features.cryptos.cryptos.CryptosScreenRoute
 import com.ferelin.features.home.home.HomeScreenRoute
 import com.ferelin.features.stocks.search.SearchScreenRoute
 import com.ferelin.features.stocks.stocks.StocksScreenRoute
@@ -24,7 +25,9 @@ internal fun AppNavigationGraph(
         composable(route = HomeDestination.key) {
             HomeScreenRoute(
                 onSettingsRoute = { },
-                onCryptosRoute = { },
+                onCryptosRoute = {
+                    navHostController.navigate(route = CryptosDestination.key)
+                },
                 onNewsRoute = { },
                 onStocksRoute = {
                     navHostController.navigate(route = StocksDestination.key)
@@ -42,7 +45,7 @@ internal fun AppNavigationGraph(
                         route = AboutDestination.buildNavigationPath(it)
                     )
                 },
-                onBackRoute = { }
+                onBackRoute = { navHostController.popBackStack() }
             )
         }
         composable(route = SearchDestination.key) {
@@ -52,7 +55,7 @@ internal fun AppNavigationGraph(
                         route = AboutDestination.buildNavigationPath(it)
                     )
                 },
-                onBackRoute = { }
+                onBackRoute = { navHostController.popBackStack() }
             )
         }
         composable(
@@ -66,7 +69,12 @@ internal fun AppNavigationGraph(
 
             AboutScreenRoute(
                 companyId = id,
-                onBackRoute = { }
+                onBackRoute = { navHostController.popBackStack() }
+            )
+        }
+        composable(route = CryptosDestination.key) {
+            CryptosScreenRoute(
+                onBackRoute = { navHostController.popBackStack() }
             )
         }
     }

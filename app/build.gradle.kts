@@ -56,6 +56,7 @@ dependencies {
     implementation(project(":features:home"))
     implementation(project(":features:stocks"))
     implementation(project(":features:about"))
+    implementation(project(":features:cryptos"))
 
     implementation(platform(Libs.Firebase.platform))
     implementation(Libs.Firebase.crashlytics)
