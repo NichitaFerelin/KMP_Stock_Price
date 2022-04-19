@@ -13,5 +13,8 @@ CREATE TABLE CompanyDBO(
 insert:
 INSERT OR REPLACE INTO CompanyDBO VALUES ?;
 
+getBy:
+SELECT * FROM CompanyDBO WHERE id = :id;
+
 getAll:
 SELECT * FROM CompanyDBO;

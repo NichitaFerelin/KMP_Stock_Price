@@ -10,5 +10,5 @@ CREATE TABLE StockPriceDBO(
 insert:
 INSERT OR REPLACE INTO StockPriceDBO VALUES ?;
 
-getAll:
-SELECT * FROM StockPriceDBO;
+getBy:
+SELECT * FROM StockPriceDBO WHERE id = :id;

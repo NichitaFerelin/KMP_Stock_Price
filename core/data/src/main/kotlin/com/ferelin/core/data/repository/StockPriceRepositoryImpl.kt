@@ -8,7 +8,6 @@ import com.ferelin.core.domain.entity.CompanyId
 import com.ferelin.core.domain.entity.StockPrice
 import com.ferelin.core.domain.repository.StockPriceRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 internal class StockPriceRepositoryImpl(
@@ -16,10 +15,13 @@ internal class StockPriceRepositoryImpl(
     private val api: StockPriceApi,
     private val token: String
 ) : StockPriceRepository {
-    override val stockPrice: Flow<List<StockPrice>>
-        get() = dao.getAll()
-            .distinctUntilChanged()
-            .map { it.map(StockPriceMapper::map) }
+    override fun getBy(id: CompanyId): Flow<StockPrice?> {
+        return dao.getBy(id.value).map {
+            if (it != null) {
+                StockPriceMapper.map(it)
+            } else it
+        }
+    }
 
     override suspend fun fetchPrice(
         companyId: CompanyId,

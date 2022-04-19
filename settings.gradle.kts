@@ -7,4 +7,5 @@ include(
   ":core:domain",
   ":features:home",
   ":features:stocks",
+  ":features:about",
 )

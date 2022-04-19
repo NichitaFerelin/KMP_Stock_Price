@@ -13,6 +13,7 @@ interface CompanyUseCase {
     val companiesLce: StateFlow<LceState>
     val favoriteCompanies: Flow<List<FavoriteCompany>>
     val favoriteCompaniesLce: StateFlow<LceState>
+    fun getBy(id: CompanyId): Flow<Company>
     suspend fun addToFavorites(id: CompanyId)
     suspend fun eraseFromFavorites(id: CompanyId)
 }
@@ -41,6 +42,10 @@ internal class CompanyUseCaseImpl(
     private val favoriteCompaniesLceState = MutableStateFlow<LceState>(LceState.None)
     override val favoriteCompaniesLce: StateFlow<LceState> =
         favoriteCompaniesLceState.asStateFlow()
+
+    override fun getBy(id: CompanyId): Flow<Company> {
+        return companyRepository.getBy(id)
+    }
 
     override suspend fun addToFavorites(id: CompanyId) {
         companyRepository.addToFavorites(id)

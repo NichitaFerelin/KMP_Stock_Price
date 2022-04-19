@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.*
 
 interface NewsUseCase {
     val newsLce: Flow<LceState>
+    val newsFetchLce: Flow<LceState>
     fun getNewsBy(companyId: CompanyId): Flow<List<News>>
-    suspend fun fetchNews(companyId: CompanyId, companyTicker: String): Result<Any>
+    suspend fun fetchNews(companyId: CompanyId, companyTicker: String)
 }
 
 internal class NewsUseCaseImpl(
@@ -25,13 +26,16 @@ internal class NewsUseCaseImpl(
             .flowOn(dispatchersProvider.IO)
     }
 
-    override suspend fun fetchNews(
-        companyId: CompanyId,
-        companyTicker: String
-    ): Result<Any> {
-        return newsRepository.fetchNews(companyId, companyTicker)
-    }
-
     private val newsLceState = MutableStateFlow<LceState>(LceState.None)
     override val newsLce: Flow<LceState> = newsLceState.asStateFlow()
+
+    override suspend fun fetchNews(companyId: CompanyId, companyTicker: String) {
+        newsFetchLceState.value = LceState.Loading
+        newsRepository.fetchNews(companyId, companyTicker)
+            .onSuccess { newsFetchLceState.value = LceState.Content }
+            .onFailure { newsFetchLceState.value = LceState.Error(it.message) }
+    }
+
+    private val newsFetchLceState = MutableStateFlow<LceState>(LceState.None)
+    override val newsFetchLce: Flow<LceState> = newsFetchLceState.asStateFlow()
 }

@@ -4,7 +4,7 @@
     <!-- Titles -->
     <string name="titleHome">Home</string>
     <string name="titleChart">Chart</string>
-    <string name="titleNews">News</string>
+    <string name="titleNews">NEWS</string>
     <string name="titlePopularRequests">Popular requests</string>
     <string name="titleYourSearches">You\'ve searched for this</string>
     <string name="titleChartCardDays">D</string>

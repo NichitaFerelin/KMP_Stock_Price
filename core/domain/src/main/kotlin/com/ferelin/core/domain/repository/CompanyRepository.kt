@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface CompanyRepository {
     val companies: Flow<List<Company>>
     val favoriteCompanies: Flow<List<FavoriteCompany>>
+    fun getBy(companyId: CompanyId) : Flow<Company>
     suspend fun addToFavorites(id: CompanyId)
     suspend fun eraseFromFavorites(id: CompanyId)
 }

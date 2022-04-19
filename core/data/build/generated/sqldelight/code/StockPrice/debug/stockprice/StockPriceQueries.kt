@@ -8,7 +8,7 @@ import kotlin.Int
 import kotlin.Unit
 
 public interface StockPriceQueries : Transacter {
-  public fun <T : Any> getAll(mapper: (
+  public fun <T : Any> getBy(id: Int, mapper: (
     id: Int,
     currentPrice: Double,
     previousClosePrice: Double,
@@ -17,7 +17,7 @@ public interface StockPriceQueries : Transacter {
     lowPrice: Double
   ) -> T): Query<T>
 
-  public fun getAll(): Query<StockPriceDBO>
+  public fun getBy(id: Int): Query<StockPriceDBO>
 
   public fun insert(StockPriceDBO: StockPriceDBO): Unit
 }

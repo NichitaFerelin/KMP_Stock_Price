@@ -9,7 +9,6 @@ import stockprice.CryptoPriceQueries
 import stockprice.CryptoQueries
 import stockprice.FavoriteCompanyQueries
 import stockprice.NewsQueries
-import stockprice.PastPriceQueries
 import stockprice.SearchRequestQueries
 import stockprice.StockPriceQueries
 
@@ -23,8 +22,6 @@ public interface StockPrice : Transacter {
   public val favoriteCompanyQueries: FavoriteCompanyQueries
 
   public val newsQueries: NewsQueries
-
-  public val pastPriceQueries: PastPriceQueries
 
   public val searchRequestQueries: SearchRequestQueries
 

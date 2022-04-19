@@ -5,9 +5,6 @@ import com.ferelin.core.domain.entity.StockPrice
 import kotlinx.coroutines.flow.Flow
 
 interface StockPriceRepository {
-    val stockPrice: Flow<List<StockPrice>>
-    suspend fun fetchPrice(
-        companyId: CompanyId,
-        companyTicker: String
-    ): Result<Any>
+    fun getBy(id: CompanyId): Flow<StockPrice?>
+    suspend fun fetchPrice(companyId: CompanyId, companyTicker: String): Result<Any>
 }
