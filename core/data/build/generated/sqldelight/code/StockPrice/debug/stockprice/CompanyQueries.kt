@@ -8,6 +8,20 @@ import kotlin.String
 import kotlin.Unit
 
 public interface CompanyQueries : Transacter {
+  public fun <T : Any> getBy(id: Int, mapper: (
+    id: Int,
+    name: String,
+    ticker: String,
+    logoUrl: String,
+    industry: String,
+    country: String,
+    phone: String,
+    webUrl: String,
+    capitalization: String
+  ) -> T): Query<T>
+
+  public fun getBy(id: Int): Query<CompanyDBO>
+
   public fun <T : Any> getAll(mapper: (
     id: Int,
     name: String,

@@ -5,12 +5,12 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 interface NetworkListener {
-    val networkState: Flow<Boolean>
+    val networkState: StateFlow<Boolean>
 }
 
 @SuppressLint("MissingPermission")
@@ -26,7 +26,7 @@ internal class NetworkListenerImpl(
             service.activeNetworkInfo != null && service.activeNetworkInfo!!.isConnected
         }
     )
-    override val networkState: Flow<Boolean> = _networkState.asStateFlow()
+    override val networkState: StateFlow<Boolean> = _networkState.asStateFlow()
 
     init {
         service.registerNetworkCallback(

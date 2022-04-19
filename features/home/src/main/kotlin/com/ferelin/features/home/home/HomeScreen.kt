@@ -46,6 +46,7 @@ fun HomeScreenRoute(
 ) {
     val viewModel = getViewModel<HomeViewModel>()
     val uiState by viewModel.uiState.collectAsState()
+
     HomeScreen(
         uiState = uiState,
         onSettingsClick = onSettingsRoute,

@@ -24,8 +24,6 @@ import stockprice.FavoriteCompanyQueries
 import stockprice.GetAll
 import stockprice.NewsDBO
 import stockprice.NewsQueries
-import stockprice.PastPriceDBO
-import stockprice.PastPriceQueries
 import stockprice.SearchRequestDBO
 import stockprice.SearchRequestQueries
 import stockprice.StockPriceDBO
@@ -50,8 +48,6 @@ private class StockPriceImpl(
       FavoriteCompanyQueriesImpl(this, driver)
 
   public override val newsQueries: NewsQueriesImpl = NewsQueriesImpl(this, driver)
-
-  public override val pastPriceQueries: PastPriceQueriesImpl = PastPriceQueriesImpl(this, driver)
 
   public override val searchRequestQueries: SearchRequestQueriesImpl =
       SearchRequestQueriesImpl(this, driver)
@@ -111,14 +107,6 @@ private class StockPriceImpl(
           |)
           """.trimMargin(), 0)
       driver.execute(null, """
-          |CREATE TABLE PastPriceDBO(
-          |    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          |    companyId INTEGER NOT NULL,
-          |    closePrice REAL NOT NULL,
-          |    dateMillis INTEGER NOT NULL
-          |)
-          """.trimMargin(), 0)
-      driver.execute(null, """
           |CREATE TABLE SearchRequestDBO(
           |    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           |    request TEXT NOT NULL
@@ -149,7 +137,48 @@ private class CompanyQueriesImpl(
   private val database: StockPriceImpl,
   private val driver: SqlDriver
 ) : TransacterImpl(driver), CompanyQueries {
+  internal val getBy: MutableList<Query<*>> = copyOnWriteList()
+
   internal val getAll: MutableList<Query<*>> = copyOnWriteList()
+
+  public override fun <T : Any> getBy(id: Int, mapper: (
+    id: Int,
+    name: String,
+    ticker: String,
+    logoUrl: String,
+    industry: String,
+    country: String,
+    phone: String,
+    webUrl: String,
+    capitalization: String
+  ) -> T): Query<T> = GetByQuery(id) { cursor ->
+    mapper(
+      cursor.getLong(0)!!.toInt(),
+      cursor.getString(1)!!,
+      cursor.getString(2)!!,
+      cursor.getString(3)!!,
+      cursor.getString(4)!!,
+      cursor.getString(5)!!,
+      cursor.getString(6)!!,
+      cursor.getString(7)!!,
+      cursor.getString(8)!!
+    )
+  }
+
+  public override fun getBy(id: Int): Query<CompanyDBO> = getBy(id) { id_, name, ticker, logoUrl,
+      industry, country, phone, webUrl, capitalization ->
+    CompanyDBO(
+      id_,
+      name,
+      ticker,
+      logoUrl,
+      industry,
+      country,
+      phone,
+      webUrl,
+      capitalization
+    )
+  }
 
   public override fun <T : Any> getAll(mapper: (
     id: Int,
@@ -205,7 +234,19 @@ private class CompanyQueriesImpl(
       bindString(9, CompanyDBO.capitalization)
     }
     notifyQueries(1634774877, {database.favoriteCompanyQueries.getAll +
-        database.companyQueries.getAll})
+        database.companyQueries.getBy + database.companyQueries.getAll})
+  }
+
+  private inner class GetByQuery<out T : Any>(
+    public val id: Int,
+    mapper: (SqlCursor) -> T
+  ) : Query<T>(getBy, mapper) {
+    public override fun execute(): SqlCursor = driver.executeQuery(1436092713,
+        """SELECT * FROM CompanyDBO WHERE id = ?""", 1) {
+      bindLong(1, id.toLong())
+    }
+
+    public override fun toString(): String = "company.sq:getBy"
   }
 }
 
@@ -443,71 +484,6 @@ private class NewsQueriesImpl(
   }
 }
 
-private class PastPriceQueriesImpl(
-  private val database: StockPriceImpl,
-  private val driver: SqlDriver
-) : TransacterImpl(driver), PastPriceQueries {
-  internal val getAllBy: MutableList<Query<*>> = copyOnWriteList()
-
-  public override fun <T : Any> getAllBy(companyId: Int, mapper: (
-    id: Long,
-    companyId: Int,
-    closePrice: Double,
-    dateMillis: Long
-  ) -> T): Query<T> = GetAllByQuery(companyId) { cursor ->
-    mapper(
-      cursor.getLong(0)!!,
-      cursor.getLong(1)!!.toInt(),
-      cursor.getDouble(2)!!,
-      cursor.getLong(3)!!
-    )
-  }
-
-  public override fun getAllBy(companyId: Int): Query<PastPriceDBO> = getAllBy(companyId) { id,
-      companyId_, closePrice, dateMillis ->
-    PastPriceDBO(
-      id,
-      companyId_,
-      closePrice,
-      dateMillis
-    )
-  }
-
-  public override fun insert(
-    id: Long?,
-    companyId: Int,
-    closePrice: Double,
-    dateMillis: Long
-  ): Unit {
-    driver.execute(-2103191433, """INSERT OR REPLACE INTO PastPriceDBO VALUES (?, ?, ?, ?)""", 4) {
-      bindLong(1, id)
-      bindLong(2, companyId.toLong())
-      bindDouble(3, closePrice)
-      bindLong(4, dateMillis)
-    }
-    notifyQueries(-2103191433, {database.pastPriceQueries.getAllBy})
-  }
-
-  public override fun eraseAllBy(companyId: Int): Unit {
-    driver.execute(1634195856, """DELETE FROM PastPriceDBO WHERE companyId = ?""", 1) {
-      bindLong(1, companyId.toLong())
-    }
-    notifyQueries(1634195856, {database.pastPriceQueries.getAllBy})
-  }
-
-  private inner class GetAllByQuery<out T : Any>(
-    public val companyId: Int,
-    mapper: (SqlCursor) -> T
-  ) : Query<T>(getAllBy, mapper) {
-    public override fun execute(): SqlCursor = driver.executeQuery(-1125391776,
-        """SELECT * FROM PastPriceDBO WHERE companyId = ?""", 1) {
-      bindLong(1, companyId.toLong())
-    }
-
-    public override fun toString(): String = "pastPrice.sq:getAllBy"
-  }
-}
-
 private class SearchRequestQueriesImpl(
   private val database: StockPriceImpl,
   private val driver: SqlDriver
@@ -550,17 +526,16 @@ private class StockPriceQueriesImpl(
   private val database: StockPriceImpl,
   private val driver: SqlDriver
 ) : TransacterImpl(driver), StockPriceQueries {
-  internal val getAll: MutableList<Query<*>> = copyOnWriteList()
+  internal val getBy: MutableList<Query<*>> = copyOnWriteList()
 
-  public override fun <T : Any> getAll(mapper: (
+  public override fun <T : Any> getBy(id: Int, mapper: (
     id: Int,
     currentPrice: Double,
     previousClosePrice: Double,
     openPrice: Double,
     highPrice: Double,
     lowPrice: Double
-  ) -> T): Query<T> = Query(-1898553389, getAll, driver, "stockPrice.sq", "getAll",
-      "SELECT * FROM StockPriceDBO") { cursor ->
+  ) -> T): Query<T> = GetByQuery(id) { cursor ->
     mapper(
       cursor.getLong(0)!!.toInt(),
       cursor.getDouble(1)!!,
@@ -571,10 +546,10 @@ private class StockPriceQueriesImpl(
     )
   }
 
-  public override fun getAll(): Query<StockPriceDBO> = getAll { id, currentPrice,
+  public override fun getBy(id: Int): Query<StockPriceDBO> = getBy(id) { id_, currentPrice,
       previousClosePrice, openPrice, highPrice, lowPrice ->
     StockPriceDBO(
-      id,
+      id_,
       currentPrice,
       previousClosePrice,
       openPrice,
@@ -593,6 +568,18 @@ private class StockPriceQueriesImpl(
       bindDouble(5, StockPriceDBO.highPrice)
       bindDouble(6, StockPriceDBO.lowPrice)
     }
-    notifyQueries(-1832978399, {database.stockPriceQueries.getAll})
+    notifyQueries(-1832978399, {database.stockPriceQueries.getBy})
+  }
+
+  private inner class GetByQuery<out T : Any>(
+    public val id: Int,
+    mapper: (SqlCursor) -> T
+  ) : Query<T>(getBy, mapper) {
+    public override fun execute(): SqlCursor = driver.executeQuery(-2000906267,
+        """SELECT * FROM StockPriceDBO WHERE id = ?""", 1) {
+      bindLong(1, id.toLong())
+    }
+
+    public override fun toString(): String = "stockPrice.sq:getBy"
   }
 }

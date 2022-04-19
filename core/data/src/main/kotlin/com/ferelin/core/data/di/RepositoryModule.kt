@@ -12,9 +12,6 @@ val repositoryModule = module {
     factory<NewsRepository> {
         NewsRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
     }
-    factory<PastPriceRepository> {
-        PastPriceRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
-    }
     factory<StockPriceRepository> {
         StockPriceRepositoryImpl(get(), get(), get(named(NAMED_STOCKS_TOKEN)))
     }

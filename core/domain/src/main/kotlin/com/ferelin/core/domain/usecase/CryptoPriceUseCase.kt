@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.*
 interface CryptoPriceUseCase {
     val cryptoPrices: Flow<List<CryptoPrice>>
     val cryptoPricesLce: Flow<LceState>
-    suspend fun fetchPriceFor(cryptos: List<Crypto>): Result<Any>
+    val cryptoPricesFetchLce: Flow<LceState>
+    suspend fun fetchPriceFor(cryptos: List<Crypto>)
 }
 
 internal class CryptoPriceUseCaseImpl(
@@ -24,10 +25,16 @@ internal class CryptoPriceUseCaseImpl(
             .catch { e -> cryptoPricesLceState.value = LceState.Error(e.message) }
             .flowOn(dispatchersProvider.IO)
 
-    override suspend fun fetchPriceFor(cryptos: List<Crypto>): Result<Any> {
-        return cryptoPriceRepository.fetchPriceFor(cryptos)
-    }
-
     private val cryptoPricesLceState = MutableStateFlow<LceState>(LceState.None)
     override val cryptoPricesLce: Flow<LceState> = cryptoPricesLceState.asStateFlow()
+
+    override suspend fun fetchPriceFor(cryptos: List<Crypto>) {
+        cryptosPricesFetchLceState.value = LceState.Loading
+        cryptoPriceRepository.fetchPriceFor(cryptos)
+            .onSuccess { cryptosPricesFetchLceState.value = LceState.Content }
+            .onFailure { cryptosPricesFetchLceState.value = LceState.Error(it.message) }
+    }
+
+    private val cryptosPricesFetchLceState = MutableStateFlow<LceState>(LceState.Content)
+    override val cryptoPricesFetchLce: Flow<LceState> = cryptosPricesFetchLceState.asStateFlow()
 }

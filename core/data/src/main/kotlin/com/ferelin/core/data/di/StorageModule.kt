@@ -12,8 +12,6 @@ import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceDao
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceDaoImpl
 import com.ferelin.core.data.entity.news.NewsDao
 import com.ferelin.core.data.entity.news.NewsDaoImpl
-import com.ferelin.core.data.entity.pastPrice.PastPriceDao
-import com.ferelin.core.data.entity.pastPrice.PastPriceDaoImpl
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDao
 import com.ferelin.core.data.entity.searchRequest.SearchRequestDaoImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceDao
@@ -40,7 +38,6 @@ val storageModule = module {
     factory { get<StockPrice>().newsQueries }
     factory { get<StockPrice>().cryptoQueries }
     factory { get<StockPrice>().cryptoPriceQueries }
-    factory { get<StockPrice>().pastPriceQueries }
     factory { get<StockPrice>().searchRequestQueries }
     factory { get<StockPrice>().stockPriceQueries }
 
@@ -48,7 +45,6 @@ val storageModule = module {
     factory<CryptoDao> { CryptoDaoImpl(get()) }
     factory<CryptoPriceDao> { CryptoPriceDaoImpl(get()) }
     factory<NewsDao> { NewsDaoImpl(get()) }
-    factory<PastPriceDao> { PastPriceDaoImpl(get()) }
     factory<SearchRequestDao> { SearchRequestDaoImpl(get()) }
     factory<StockPriceDao> { StockPriceDaoImpl(get()) }
     factory<CompanyJsonSource> { CompanyJsonSourceImpl(get()) }

@@ -6,8 +6,6 @@ import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApi
 import com.ferelin.core.data.entity.cryptoPrice.CryptoPriceApiImpl
 import com.ferelin.core.data.entity.news.NewsApi
 import com.ferelin.core.data.entity.news.NewsApiImpl
-import com.ferelin.core.data.entity.pastPrice.PastPriceApi
-import com.ferelin.core.data.entity.pastPrice.PastPriceApiImpl
 import com.ferelin.core.data.entity.stockPrice.StockPriceApi
 import com.ferelin.core.data.entity.stockPrice.StockPriceApiImpl
 import org.koin.android.ext.koin.androidContext
@@ -27,7 +25,6 @@ val networkModule = module {
 
     factory<CryptoPriceApi> { CryptoPriceApiImpl(get()) }
     factory<NewsApi> { NewsApiImpl(get()) }
-    factory<PastPriceApi> { PastPriceApiImpl(get()) }
     factory<StockPriceApi> { StockPriceApiImpl(get()) }
 }
 

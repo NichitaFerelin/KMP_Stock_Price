@@ -44,6 +44,7 @@ dependencies {
 
     api(Libs.Accompanist.insets)
     api(Libs.Accompanist.systemUiController)
+    api(Libs.Accompanist.swipeRefresh)
 
     api(Libs.Coroutines.android)
     api(Libs.Koin.android)

@@ -10,6 +10,7 @@
 /core/ui/build
 /features/home/build
 /features/stocks/build
+/features/about/build
 *.iml
 .gradle
 .idea

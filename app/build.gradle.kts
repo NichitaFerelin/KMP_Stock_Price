@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":features:home"))
     implementation(project(":features:stocks"))
+    implementation(project(":features:about"))
 
     implementation(platform(Libs.Firebase.platform))
     implementation(Libs.Firebase.crashlytics)

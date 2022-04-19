@@ -8,7 +8,6 @@ val useCaseModule = module {
     single<CryptoPriceUseCase> { CryptoPriceUseCaseImpl(get(), get()) }
     single<CryptoUseCase> { CryptoUseCaseImpl(get(), get()) }
     single<NewsUseCase> { NewsUseCaseImpl(get(), get()) }
-    single<PastPricesUseCase> { PastPricesUseCaseImpl(get(), get()) }
     single<SearchRequestsUseCase> { SearchRequestsUseCaseImpl(get(), get()) }
     single<StockPriceUseCase> { StockPriceUseCaseImpl(get(), get()) }
 }

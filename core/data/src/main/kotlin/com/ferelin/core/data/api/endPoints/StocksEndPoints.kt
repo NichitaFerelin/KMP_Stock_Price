@@ -1,7 +1,6 @@
 package com.ferelin.core.data.api.endPoints
 
 import com.ferelin.core.data.entity.news.NewsRequestOptions
-import com.ferelin.core.data.entity.pastPrice.PastPricesOptions
 import com.ferelin.core.data.entity.stockPrice.StockPriceOptions
 import io.ktor.client.request.*
 
@@ -11,15 +10,6 @@ internal fun HttpRequestBuilder.news(options: NewsRequestOptions) {
     parameter("symbol", options.companyTicker)
     parameter("from", options.from)
     parameter("to", options.to)
-}
-
-internal fun HttpRequestBuilder.pastPrice(options: PastPricesOptions) {
-    url(STOCKS_BASE_URL + "stock/candle")
-    parameter("token", options.token)
-    parameter("symbol", options.companyTicker)
-    parameter("from", options.from)
-    parameter("to", options.to)
-    parameter("resolution", options.resolution)
 }
 
 internal fun HttpRequestBuilder.stockPrice(options: StockPriceOptions) {

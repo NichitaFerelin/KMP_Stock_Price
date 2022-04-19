@@ -32,6 +32,10 @@ internal class CompanyRepositoryImpl(
             .distinctUntilChanged()
             .map { it.map(CompanyMapper::map) }
 
+    override fun getBy(companyId: CompanyId): Flow<Company> {
+        return companyDao.getBy(companyId.value).map(CompanyMapper::map)
+    }
+
     override suspend fun addToFavorites(id: CompanyId) {
         companyDao.addToFavorites(id.value)
     }
