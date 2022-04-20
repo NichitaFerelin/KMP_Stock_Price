@@ -4,7 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.ferelin.core.domain.entity.Crypto
 import com.ferelin.core.domain.entity.CryptoId
 import com.ferelin.core.domain.entity.CryptoPrice
-import com.ferelin.core.ui.viewData.utils.toStrPrice
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 @Immutable
 internal data class CryptoViewData(
@@ -64,4 +65,22 @@ private fun formatProfitString(
         ""
     } else ",$remainderResult"
     return "$profitResult ($mainPart$secondPart%)"
+}
+
+
+private const val PRICE_PATTERN = "###,##0.00"
+private const val PRICE_SPLIT_SYMBOL = '.'
+
+/*
+* Builds price string from double
+* Call:     adaptPrice(2253.14)
+* Result:   $2 253.14
+* */
+private fun Double.toStrPrice(): String {
+    val balanceFormatSymbols = DecimalFormatSymbols().apply {
+        groupingSeparator = ' '
+        decimalSeparator = PRICE_SPLIT_SYMBOL
+    }
+    val formattedBalance = DecimalFormat(PRICE_PATTERN, balanceFormatSymbols).format(this)
+    return "$$formattedBalance"
 }

@@ -5,7 +5,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val newsModule = module {
-    viewModel { params ->
+    viewModel {
         val id = get<Int>()
         NewsViewModel(CompanyId(id), get(), get(), get(), get())
     }

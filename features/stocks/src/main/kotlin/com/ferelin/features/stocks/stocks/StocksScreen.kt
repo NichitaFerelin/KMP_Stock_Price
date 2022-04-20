@@ -24,7 +24,7 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
-import com.ferelin.core.ui.components.BackField
+import com.ferelin.core.ui.components.ScreenTitle
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.stocks.components.DefaultStockItem
 import com.ferelin.features.stocks.components.FavoriteStockItem
@@ -124,18 +124,10 @@ private fun TopBar(
                 top = 10.dp
             )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BackField(onBackClick = onBackClick)
-            Text(
-                text = stringResource(id = R.string.titleStocks),
-                style = AppTheme.typography.title1,
-                color = AppTheme.colors.textPrimary
-            )
-        }
+        ScreenTitle(
+            title = stringResource(id = R.string.titleStocks),
+            onBackClick = onBackClick
+        )
         Spacer(modifier = Modifier.height(12.dp))
         SearchField(onSearchClick = onSearchClick)
     }
@@ -267,6 +259,7 @@ private fun FavoritesSection(
                         ) {
                             items(
                                 items = stocks,
+                                key = { it.name }
                             ) {
                                 FavoriteStockItem(
                                     name = it.name,

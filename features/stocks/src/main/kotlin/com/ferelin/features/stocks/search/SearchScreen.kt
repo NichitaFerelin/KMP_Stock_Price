@@ -26,6 +26,7 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
+import com.ferelin.core.ui.components.ScreenTitle
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.stocks.components.ExpandedStockItem
 import com.ferelin.features.stocks.components.SearchRequestsSection
@@ -127,21 +128,14 @@ private fun TopBar(
                 top = 10.dp
             )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                text = stringResource(id = R.string.titleSearch),
-                style = AppTheme.typography.title1,
-                color = AppTheme.colors.textPrimary
-            )
-        }
+        ScreenTitle(
+            title = stringResource(id = R.string.titleSearch),
+            onBackClick = onBackClick
+        )
         Spacer(modifier = Modifier.height(12.dp))
         SearchTextField(
             searchRequest = uiState.inputSearchRequest,
-            onSearchRequestsChanged = onSearchRequestsChanged,
-            onBackClick = onBackClick
+            onSearchRequestsChanged = onSearchRequestsChanged
         )
     }
 }
@@ -167,7 +161,7 @@ private fun BodyContent(
                 ) {
                     Spacer(modifier = Modifier.height(30.dp))
                     Text(
-                        text = stringResource(id = R.string.descriptionNoSearchResults),
+                        text = stringResource(id = R.string.hintNoSearchResults),
                         style = AppTheme.typography.title2,
                         color = AppTheme.colors.textPrimary
                     )

@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
 import com.ferelin.core.ui.theme.AppTheme
+import com.ferelin.core.ui.viewData.utils.openUrl
 import com.ferelin.features.about.components.NewsItem
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -38,17 +40,20 @@ fun NewsScreenRoute(
         parameters = { parametersOf(companyId) }
     )
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     NewsScreen(
         uiState = uiState,
-        onNewsRefresh = viewModel::fetchNews
+        onNewsRefresh = viewModel::fetchNews,
+        onUrlClick = { context.openUrl(it) }
     )
 }
 
 @Composable
 private fun NewsScreen(
     uiState: NewsUiState,
-    onNewsRefresh: () -> Unit
+    onNewsRefresh: () -> Unit,
+    onUrlClick: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -64,7 +69,8 @@ private fun NewsScreen(
             news = uiState.news,
             newsLce = uiState.newsLce,
             newsFetchLceState = uiState.newsFetchLce,
-            onNewsRefresh = onNewsRefresh
+            onNewsRefresh = onNewsRefresh,
+            onUrlClick = onUrlClick
         )
         AppFab(
             painter = painterResource(id = R.drawable.ic_up_24),
@@ -84,7 +90,8 @@ private fun BodyContent(
     news: List<NewsViewData>,
     newsLce: LceState,
     newsFetchLceState: LceState,
-    onNewsRefresh: () -> Unit
+    onNewsRefresh: () -> Unit,
+    onUrlClick: (String) -> Unit
 ) {
     when (newsLce) {
         is LceState.Content -> {
@@ -92,7 +99,8 @@ private fun BodyContent(
                 news = news,
                 listState = listState,
                 newsFetchLceState = newsFetchLceState,
-                onNewsRefresh = onNewsRefresh
+                onNewsRefresh = onNewsRefresh,
+                onUrlClick = onUrlClick
             )
         }
         is LceState.Loading -> {
@@ -125,7 +133,8 @@ private fun NewsSection(
     news: List<NewsViewData>,
     listState: LazyListState,
     newsFetchLceState: LceState,
-    onNewsRefresh: () -> Unit
+    onNewsRefresh: () -> Unit,
+    onUrlClick: (String) -> Unit
 ) {
     SwipeRefresh(
         modifier = modifier.fillMaxWidth(),
@@ -159,7 +168,7 @@ private fun NewsSection(
                     date = it.date,
                     title = it.headline,
                     content = it.summary,
-                    onUrlClick = { /**/ }
+                    onUrlClick = { onUrlClick(it.sourceUrl) }
                 )
             }
         }

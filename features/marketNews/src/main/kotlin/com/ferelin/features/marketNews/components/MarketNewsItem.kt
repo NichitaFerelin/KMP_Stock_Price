@@ -9,12 +9,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ConstrainedText
+import com.ferelin.core.ui.components.GlideIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 internal fun MarketNewsItem(
@@ -24,7 +25,8 @@ internal fun MarketNewsItem(
     sourceUrl: String,
     imageUrl: String,
     category: String,
-    date: String
+    date: String,
+    onUrlClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -39,30 +41,20 @@ internal fun MarketNewsItem(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            GlideImage(
+            GlideIcon(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp),
-                imageModel = imageUrl
+                imageModel = imageUrl,
+                contentScale = ContentScale.None
             )
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    ConstrainedText(
-                        text = category,
-                        style = AppTheme.typography.caption1,
-                        color = AppTheme.colors.textTertiary
-                    )
-                    ConstrainedText(
-                        text = date,
-                        style = AppTheme.typography.caption1,
-                        color = AppTheme.colors.textClickable
-                    )
-                }
+                RowWithDateAndCategory(
+                    category = category,
+                    date = date
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 ConstrainedText(
                     text = headline,
@@ -78,26 +70,61 @@ internal fun MarketNewsItem(
                     maxLines = 4
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.hintOpenInBrowser),
-                        style = AppTheme.typography.caption1,
-                        color = AppTheme.colors.textTertiary
-                    )
-                    ConstrainedText(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .clickable { /**/ }
-                            .widthIn(max = 150.dp),
-                        text = sourceUrl,
-                        style = AppTheme.typography.caption1,
-                        color = AppTheme.colors.textClickable
-                    )
-                }
+                RowOpenInBrowser(
+                    sourceUrl = sourceUrl,
+                    onUrlClick = onUrlClick
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun RowWithDateAndCategory(
+    modifier: Modifier = Modifier,
+    category: String,
+    date: String
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        ConstrainedText(
+            text = category,
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textTertiary
+        )
+        ConstrainedText(
+            text = date,
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textClickable
+        )
+    }
+}
+
+@Composable
+private fun RowOpenInBrowser(
+    modifier: Modifier = Modifier,
+    sourceUrl: String,
+    onUrlClick: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.hintOpenInBrowser),
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textTertiary
+        )
+        ConstrainedText(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .clickable(onClick = onUrlClick)
+                .widthIn(max = 150.dp),
+            text = sourceUrl,
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textClickable
+        )
     }
 }
