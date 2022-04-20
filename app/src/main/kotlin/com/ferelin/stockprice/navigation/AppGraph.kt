@@ -11,6 +11,7 @@ import com.ferelin.features.about.about.AboutScreenRoute
 import com.ferelin.features.cryptos.cryptos.CryptosScreenRoute
 import com.ferelin.features.home.home.HomeScreenRoute
 import com.ferelin.features.marketNews.marketNews.MarketNewsScreenRoute
+import com.ferelin.features.splash.SplashScreen
 import com.ferelin.features.stocks.search.SearchScreenRoute
 import com.ferelin.features.stocks.stocks.StocksScreenRoute
 import com.ferelin.stockprice.navigation.Destination.*
@@ -21,8 +22,17 @@ internal fun AppNavigationGraph(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = HomeDestination.key
+        startDestination = SplashDestination.key
     ) {
+        composable(route = SplashDestination.key) {
+            SplashScreen(
+                onSplashTimeout = {
+                    navHostController.navigate(route = HomeDestination.key) {
+                        popUpTo(SplashDestination.key) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(route = HomeDestination.key) {
             HomeScreenRoute(
                 onCryptosRoute = {

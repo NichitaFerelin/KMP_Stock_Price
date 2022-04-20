@@ -13,6 +13,7 @@
 /features/about/build
 /features/cryptos/build
 /features/marketNews/build
+/features/splash/build
 *.iml
 .gradle
 .idea

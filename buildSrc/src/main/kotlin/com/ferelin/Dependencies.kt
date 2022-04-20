@@ -40,6 +40,7 @@ object Libs {
         const val navigation = "androidx.navigation:navigation-compose:2.4.1"
         const val viewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
         const val glide = "com.github.skydoves:landscapist-glide:1.5.0"
+        const val lottie = "com.airbnb.android:lottie-compose:5.0.3"
     }
 
     object Accompanist {

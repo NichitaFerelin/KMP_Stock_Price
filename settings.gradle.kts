@@ -10,4 +10,5 @@ include(
   ":features:about",
   ":features:cryptos",
   ":features:marketNews",
+  ":features:splash",
 )

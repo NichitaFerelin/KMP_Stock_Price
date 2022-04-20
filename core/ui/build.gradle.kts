@@ -41,6 +41,7 @@ dependencies {
     api(Libs.Compose.animations)
     api(Libs.Compose.viewModel)
     api(Libs.Compose.glide)
+    api(Libs.Compose.lottie)
 
     api(Libs.Accompanist.insets)
     api(Libs.Accompanist.systemUiController)
