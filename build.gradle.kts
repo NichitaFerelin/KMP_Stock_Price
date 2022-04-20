@@ -15,6 +15,7 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 tasks.register("clean", Delete::class) {
