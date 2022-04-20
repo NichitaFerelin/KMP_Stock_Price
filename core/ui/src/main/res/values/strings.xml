@@ -2,52 +2,26 @@
     <string name="app_name">Stock Price</string>
 
     <!-- Titles -->
-    <string name="titleHome">Home</string>
-    <string name="titleChart">Chart</string>
+    <string name="titleHome">HOME</string>
+    <string name="titleStocks">STOCKS</string>
     <string name="titleNews">NEWS</string>
-    <string name="titlePopularRequests">Popular requests</string>
-    <string name="titleYourSearches">You\'ve searched for this</string>
-    <string name="titleChartCardDays">D</string>
-    <string name="titleChartCardWeeks">W</string>
-    <string name="titleChartCardMonths">M</string>
-    <string name="titleChartCardHalfYear">6M</string>
-    <string name="titleChartCardYear">1Y</string>
-    <string name="titleChartCardAll">All</string>
-    <string name="titleProfile">Profile</string>
-    <string name="titleDownload">Stock Price</string>
-    <string name="titleSettings">App settings</string>
-    <string name="titleCryptos">Cryptos</string>
-    <string name="titleMarketNews">Market News</string>
-    <string name="hintStocks">Over 1500+ companies and their stocks\nInformation and news</string>
-    <string name="hintCryptos">Popular cryptos\nBitcoin, Ethereum,Tether, etc.</string>
-    <string name="hintNews">Global stock market news</string>
-
-    <string name="hintBack">BACK</string>
-    <string name="titleStocks">Stocks</string>
+    <string name="titleCryptos">CRYPTOS</string>
+    <string name="titleMarketNews">MARKET NEWS</string>
     <string name="titleSectionFavorites">FAVORITES</string>
     <string name="titleSectionStocks">STOCKS</string>
-    <string name="titleSearch">Search</string>
+    <string name="titleSearch">SEARCH</string>
+    <string name="titlePopularRequests">Popular requests</string>
+    <string name="titleYourSearches">You\'ve searched for this</string>
+
     <!-- Errors -->
     <string name="errorDownload">Data loading error</string>
-    <string name="errorNoAppToResolve">App that can resolve it do not found</string>
-    <string name="errorTooManyRequests">Too many requests. Please wait for a minute</string>
 
     <!-- Descriptions -->
-    <string name="descriptionClearSearchRequest">clear search request</string>
-    <string name="descriptionBack">Navigate back</string>
-    <string name="descriptionIconClose">Clear search request</string>
-    <string name="descriptionSearch">Search company or ticker</string>
-    <string name="descriptionApply">Apply</string>
-    <string name="descriptionLogOut">Log out</string>
-    <string name="descriptionLogIn">Log in</string>
-    <string name="descriptionSettings">Settings</string>
-    <string name="descriptionShare">Share</string>
-    <string name="descriptionNotificationChannelUpdates">Notifies about stock price updates</string>
-    <string name="descriptionNoSearchResults">No request results</string>
+    <string name="descriptionBack">navigate back</string>
+    <string name="descriptionSearch">search company or ticker</string>
     <string name="descriptionSelectStocks">select stocks</string>
     <string name="descriptionSelectCryptos">select cryptos</string>
     <string name="descriptionSelectNews">select news</string>
-    <string name="descriptionSelectSupport">select support</string>
     <string name="descriptionStockIcon">stock decorative icon</string>
     <string name="descriptionFavoriteStock">favorite stock</string>
     <string name="descriptionDefaultStock">defaultStock</string>
@@ -57,15 +31,13 @@
     <!-- Hints -->
     <string name="hintFindCompany">Find company or ticker</string>
     <string name="hintOpenInBrowser">Open in browser:</string>
-    <string name="hintName">Name</string>
-    <string name="hintWebsite">Website</string>
-    <string name="hintCountry">Country:</string>
-    <string name="hintIndustry">Industry: </string>
+    <string name="hintWebsite">Website:</string>
     <string name="hintPhone">Phone:</string>
     <string name="hintCapitalization">Capitalization:</string>
     <string name="hintSearch">Find company or ticker</string>
-
-    <!-- Messages -->
-    <string name="messageNetworkNotAvailable">Network is not available</string>
-    <string name="messageNetworkAvailable">Network available</string>
+    <string name="hintStocks">Over 1500+ companies and their stocks\nInformation and news</string>
+    <string name="hintCryptos">Popular cryptos\nBitcoin, Ethereum,Tether, etc.</string>
+    <string name="hintNews">Global stock market news</string>
+    <string name="hintBack">BACK</string>
+    <string name="hintNoSearchResults">No request results</string>
 </resources>

@@ -9,9 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.ferelin.core.ui.components.GlideIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 internal fun CryptoItem(
@@ -36,11 +37,12 @@ internal fun CryptoItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            GlideImage(
+            GlideIcon(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(6.dp)),
-                imageModel = logoUrl
+                imageModel = logoUrl,
+                contentScale = ContentScale.Fit
             )
             Column(
                 horizontalAlignment = Alignment.End

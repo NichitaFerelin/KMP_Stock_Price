@@ -22,7 +22,7 @@ internal fun NewsItem(
     date: String,
     title: String,
     content: String,
-    onUrlClick: (String) -> Unit
+    onUrlClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -32,22 +32,10 @@ internal fun NewsItem(
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                ConstrainedText(
-                    text = source,
-                    style = AppTheme.typography.body2,
-                    color = AppTheme.colors.textTertiary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                ConstrainedText(
-                    text = date,
-                    style = AppTheme.typography.body2,
-                    color = AppTheme.colors.textTertiary
-                )
-            }
+            RowWithDateAndCategory(
+                source = source,
+                date = date
+            )
             Spacer(modifier = Modifier.height(8.dp))
             ConstrainedText(
                 text = title,
@@ -62,25 +50,61 @@ internal fun NewsItem(
                 color = AppTheme.colors.textPrimary
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(id = R.string.hintOpenInBrowser),
-                    style = AppTheme.typography.caption1,
-                    color = AppTheme.colors.textTertiary
-                )
-                ConstrainedText(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .clickable { onUrlClick(url) }
-                        .widthIn(max = 150.dp),
-                    text = url,
-                    style = AppTheme.typography.caption1,
-                    color = AppTheme.colors.textClickable
-                )
-            }
+            RowOpenInBrowser(
+                url = url,
+                onUrlClick = onUrlClick
+            )
         }
+    }
+}
+
+@Composable
+private fun RowWithDateAndCategory(
+    modifier: Modifier = Modifier,
+    source: String,
+    date: String
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        ConstrainedText(
+            text = source,
+            style = AppTheme.typography.body2,
+            color = AppTheme.colors.textTertiary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        ConstrainedText(
+            text = date,
+            style = AppTheme.typography.body2,
+            color = AppTheme.colors.textTertiary
+        )
+    }
+}
+
+@Composable
+private fun RowOpenInBrowser(
+    modifier: Modifier = Modifier,
+    url: String,
+    onUrlClick: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.hintOpenInBrowser),
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textTertiary
+        )
+        ConstrainedText(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { onUrlClick() }
+                .widthIn(max = 150.dp),
+            text = url,
+            style = AppTheme.typography.caption1,
+            color = AppTheme.colors.textClickable
+        )
     }
 }

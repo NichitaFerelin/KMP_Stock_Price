@@ -25,7 +25,6 @@ internal fun AppNavigationGraph(
     ) {
         composable(route = HomeDestination.key) {
             HomeScreenRoute(
-                onSettingsRoute = { },
                 onCryptosRoute = {
                     navHostController.navigate(route = CryptosDestination.key)
                 },
@@ -34,8 +33,7 @@ internal fun AppNavigationGraph(
                 },
                 onStocksRoute = {
                     navHostController.navigate(route = StocksDestination.key)
-                },
-                onSupportRoute = { }
+                }
             )
         }
         composable(route = StocksDestination.key) {

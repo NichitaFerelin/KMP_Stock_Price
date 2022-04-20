@@ -11,15 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ClickableIcon
 import com.ferelin.core.ui.components.ConstrainedText
+import com.ferelin.core.ui.components.GlideIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 internal fun FavoriteStockItem(
@@ -51,11 +50,10 @@ internal fun FavoriteStockItem(
                     .fillMaxSize()
                     .padding(12.dp)
             ) {
-                GlideImage(
+                GlideIcon(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Inside,
                     imageModel = logoUrl
                 )
                 Spacer(modifier = Modifier.height(8.dp))

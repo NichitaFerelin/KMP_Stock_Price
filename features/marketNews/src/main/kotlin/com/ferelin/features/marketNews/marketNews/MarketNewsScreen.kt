@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,8 +24,9 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.AppFab
-import com.ferelin.core.ui.components.BackField
+import com.ferelin.core.ui.components.ScreenTitle
 import com.ferelin.core.ui.theme.AppTheme
+import com.ferelin.core.ui.viewData.utils.openUrl
 import com.ferelin.features.marketNews.components.MarketNewsItem
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -39,11 +41,13 @@ fun MarketNewsScreenRoute(
 ) {
     val viewModel = getViewModel<MarketNewsViewModel>()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     MarketNewsScreen(
         uiState = uiState,
         onMarketNewsRefresh = viewModel::fetchNews,
-        onBackClick = onBackRoute
+        onBackClick = onBackRoute,
+        onUrlClick = { context.openUrl(it) }
     )
 }
 
@@ -51,7 +55,8 @@ fun MarketNewsScreenRoute(
 private fun MarketNewsScreen(
     uiState: MarketNewsUiState,
     onMarketNewsRefresh: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onUrlClick: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -71,7 +76,8 @@ private fun MarketNewsScreen(
                         listState = listState,
                         marketNews = uiState.marketNews,
                         marketNewsFetchLce = uiState.marketNewsFetchLce,
-                        onMarketNewsRefresh = onMarketNewsRefresh
+                        onMarketNewsRefresh = onMarketNewsRefresh,
+                        onUrlClick = onUrlClick
                     )
                 }
                 is LceState.Loading -> {
@@ -125,17 +131,10 @@ private fun TopBar(
                 top = 10.dp
             )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            BackField(onBackClick = onBackClick)
-            Text(
-                text = stringResource(id = R.string.titleMarketNews),
-                style = AppTheme.typography.title1,
-                color = AppTheme.colors.textPrimary
-            )
-        }
+        ScreenTitle(
+            title = stringResource(id = R.string.titleMarketNews),
+            onBackClick = onBackClick
+        )
     }
 }
 
@@ -145,7 +144,8 @@ private fun MarketNewsSection(
     listState: LazyListState,
     marketNews: List<MarketNewsViewData>,
     marketNewsFetchLce: LceState,
-    onMarketNewsRefresh: () -> Unit
+    onMarketNewsRefresh: () -> Unit,
+    onUrlClick: (String) -> Unit
 ) {
     SwipeRefresh(
         modifier = modifier.fillMaxWidth(),
@@ -178,7 +178,8 @@ private fun MarketNewsSection(
                     sourceUrl = it.sourceUrl,
                     imageUrl = it.imageUrl,
                     category = it.category,
-                    date = it.date
+                    date = it.date,
+                    onUrlClick = { onUrlClick(it.sourceUrl) }
                 )
             }
         }

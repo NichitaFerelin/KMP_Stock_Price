@@ -8,15 +8,13 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.ConstrainedText
-import com.ferelin.core.ui.components.FailIcon
+import com.ferelin.core.ui.components.GlideIcon
 import com.ferelin.core.ui.theme.AppTheme
-import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 internal fun StockPreview(
@@ -35,33 +33,10 @@ internal fun StockPreview(
         Column(
             modifier = Modifier.padding(all = 8.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                GlideImage(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape),
-                    imageModel = iconUrl,
-                    contentScale = ContentScale.Inside,
-                    failure = { FailIcon() }
-                )
-                Icon(
-                    modifier = Modifier.size(16.dp),
-                    painter = painterResource(id = R.drawable.ic_favorite_16),
-                    contentDescription = stringResource(
-                        id = if (isFavorite) {
-                            R.string.descriptionFavoriteStock
-                        } else R.string.descriptionDefaultStock
-                    ),
-                    tint = if (isFavorite) {
-                        AppTheme.colors.iconActive
-                    } else {
-                        AppTheme.colors.iconDisabled
-                    }
-                )
-            }
+            CompanyImageWithFavorite(
+                iconUrl = iconUrl,
+                isFavorite = isFavorite
+            )
             Spacer(modifier = Modifier.height(4.dp))
             ConstrainedText(
                 text = name,
@@ -74,5 +49,38 @@ internal fun StockPreview(
                 color = AppTheme.colors.textPrimary
             )
         }
+    }
+}
+
+@Composable
+private fun CompanyImageWithFavorite(
+    modifier: Modifier = Modifier,
+    iconUrl: String,
+    isFavorite: Boolean
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        GlideIcon(
+            modifier = Modifier
+                .size(16.dp)
+                .clip(CircleShape),
+            imageModel = iconUrl
+        )
+        Icon(
+            modifier = Modifier.size(16.dp),
+            painter = painterResource(id = R.drawable.ic_favorite_16),
+            contentDescription = stringResource(
+                id = if (isFavorite) {
+                    R.string.descriptionFavoriteStock
+                } else R.string.descriptionDefaultStock
+            ),
+            tint = if (isFavorite) {
+                AppTheme.colors.iconActive
+            } else {
+                AppTheme.colors.iconDisabled
+            }
+        )
     }
 }

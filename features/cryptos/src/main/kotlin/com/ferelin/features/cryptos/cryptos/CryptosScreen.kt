@@ -18,7 +18,7 @@ import com.ferelin.core.ui.APP_CONTENT_PADDING
 import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
-import com.ferelin.core.ui.components.BackField
+import com.ferelin.core.ui.components.ScreenTitle
 import com.ferelin.core.ui.theme.AppTheme
 import com.ferelin.features.cryptos.components.CryptoItem
 import com.google.accompanist.insets.statusBarsPadding
@@ -108,17 +108,10 @@ private fun TopBar(
                 top = 10.dp
             )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            BackField(onBackClick = onBackClick)
-            Text(
-                text = stringResource(id = R.string.titleCryptos),
-                style = AppTheme.typography.title1,
-                color = AppTheme.colors.textPrimary
-            )
-        }
+        ScreenTitle(
+            title = stringResource(id = R.string.titleCryptos),
+            onBackClick = onBackClick
+        )
     }
 }
 

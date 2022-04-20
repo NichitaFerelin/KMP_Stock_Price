@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,12 +22,13 @@ import com.ferelin.core.ui.APP_TOOLBAR_BASELINE
 import com.ferelin.core.ui.R
 import com.ferelin.core.ui.components.AppCircularProgressIndicator
 import com.ferelin.core.ui.components.ClickableIcon
+import com.ferelin.core.ui.components.GlideIcon
 import com.ferelin.core.ui.theme.AppTheme
+import com.ferelin.core.ui.viewData.utils.openUrl
 import com.ferelin.features.about.components.ProfileRow
 import com.ferelin.features.about.components.ProfitValue
 import com.ferelin.features.about.news.NewsScreenRoute
 import com.google.accompanist.insets.statusBarsPadding
-import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -40,11 +41,13 @@ fun AboutScreenRoute(
         parameters = { parametersOf(companyId) }
     )
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     AboutScreen(
         uiState = uiState,
         onBackClick = onBackRoute,
         onFavoriteIconClick = viewModel::switchFavorite,
+        onUrlClick = { context.openUrl(uiState.companyProfile.webUrl) },
         onNewsRoute = { NewsScreenRoute(companyId = companyId) }
     )
 }
@@ -54,6 +57,7 @@ private fun AboutScreen(
     uiState: AboutUiState,
     onBackClick: () -> Unit,
     onFavoriteIconClick: () -> Unit,
+    onUrlClick: () -> Unit,
     onNewsRoute: @Composable () -> Unit
 ) {
     Column(
@@ -78,7 +82,8 @@ private fun AboutScreen(
             stockPriceLceState = uiState.stockPriceLce,
             stockPriceFetchLceState = uiState.stockPriceFetchLce,
             onBackClick = onBackClick,
-            onFavoriteIconClick = onFavoriteIconClick
+            onFavoriteIconClick = onFavoriteIconClick,
+            onUrlClick = onUrlClick
         )
         BodyContent(onNewsRoute = onNewsRoute)
     }
@@ -92,7 +97,8 @@ private fun TopBarWithProfile(
     stockPriceLceState: LceState,
     stockPriceFetchLceState: LceState,
     onBackClick: () -> Unit,
-    onFavoriteIconClick: () -> Unit
+    onFavoriteIconClick: () -> Unit,
+    onUrlClick: () -> Unit
 ) {
     TopRowWithCompanyIcon(
         modifier = Modifier.padding(
@@ -115,7 +121,8 @@ private fun TopBarWithProfile(
     CompanyProfile(
         modifier = Modifier.padding(horizontal = APP_CONTENT_PADDING),
         companyProfile = companyProfile,
-        companiesLce = companiesLce
+        companiesLce = companiesLce,
+        onUrlClick = onUrlClick
     )
     Spacer(modifier = Modifier.height(6.dp))
 }
@@ -177,12 +184,11 @@ private fun TopRowWithCompanyIcon(
                 }
             }
             is LceState.Content -> {
-                GlideImage(
+                GlideIcon(
                     modifier = Modifier
                         .size(PROFILE_IMAGE_SIZE)
                         .clip(RoundedCornerShape(6.dp)),
-                    imageModel = companyProfile.logoUrl,
-                    contentScale = ContentScale.Inside
+                    imageModel = companyProfile.logoUrl
                 )
             }
             else -> Unit
@@ -203,14 +209,17 @@ private fun TopRowWithCompanyIcon(
 private fun CompanyProfile(
     modifier: Modifier = Modifier,
     companyProfile: CompanyProfileViewData,
-    companiesLce: LceState
+    companiesLce: LceState,
+    onUrlClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when (companiesLce) {
-            is LceState.Loading -> AppCircularProgressIndicator()
+            is LceState.Loading -> {
+                AppCircularProgressIndicator()
+            }
             is LceState.Content -> {
                 if (companyProfile.phone.isNotEmpty()) {
                     ProfileRow(
@@ -222,7 +231,8 @@ private fun CompanyProfile(
                 if (companyProfile.webUrl.isNotEmpty()) {
                     ProfileRow(
                         title = stringResource(id = R.string.hintWebsite),
-                        value = companyProfile.webUrl
+                        value = companyProfile.webUrl,
+                        onClick = onUrlClick
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }
