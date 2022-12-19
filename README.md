@@ -1,3 +1,6 @@
+# DEVELOPMENT STOPPED
+
+
 # Stock Price. Kotlin Multiplatform version. 
 ## [Simplified version for Android only](https://github.com/NichitaFerelin/Stock_Price/tree/simplified_for_android_only)
 
