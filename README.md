@@ -5,7 +5,7 @@
 ## [Simplified version for Android only](https://github.com/NichitaFerelin/Stock_Price/tree/simplified_for_android_only)
 
 ## About
-Stock Price - is an application which displays actual price of stocks at marketplace. The application contains over 1000 companies from different industries. There is a base information such as website, country, industry and capitalization in company's profile.
+Stock Price - is an application which displays actual price of stocks at marketplace. 
 
 **Used API: [Stocks](https://finnhub.io/) | [Crypto](https://nomics.com/docs/)**
 
